@@ -119,6 +119,7 @@ public class ObjectsLookupSettings extends ProjectConfiguration<ObjectsLookupSet
         return "lookup-filters";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         Element visibleObjectsElement = element.getChild("lookup-objects");
         for (Object o : visibleObjectsElement.getChildren()) {
@@ -138,6 +139,7 @@ public class ObjectsLookupSettings extends ProjectConfiguration<ObjectsLookupSet
         promptSchemaSelection.readConfiguration(element);
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         Element visibleObjectsElement = new Element("lookup-objects");
         element.addContent(visibleObjectsElement);
@@ -170,26 +172,32 @@ public class ObjectsLookupSettings extends ProjectConfiguration<ObjectsLookupSet
             return objectType;
         }
 
+        @Override
         public Icon getIcon() {
             return objectType.getIcon();
         }
 
+        @Override
         public String getName() {
             return objectType.getName().toUpperCase();
         }
 
+        @Override
         public String getError() {
             return null;
         }
 
+        @Override
         public boolean isSelected() {
             return enabled;
         }
 
+        @Override
         public boolean isMasterSelected() {
             return true;
         }
 
+        @Override
         public void setSelected(boolean selected) {
             this.enabled = selected;
         }

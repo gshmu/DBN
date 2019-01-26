@@ -96,6 +96,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         return FailsafeUtil.getComponent(project, FileConnectionMappingManager.class);
     }
 
+    @Override
     @NotNull
     public String getComponentName() {
         return COMPONENT_NAME;
@@ -801,6 +802,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             removeMapping(event.getFile());
         }
 
+        @Override
         public void fileMoved(@NotNull VirtualFileMoveEvent event) {
             String oldFileUrl = event.getOldParent().getUrl() + "/" + event.getFileName();
             FileConnectionMapping fileConnectionMapping = lookupMapping(oldFileUrl);
@@ -809,6 +811,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             }
         }
 
+        @Override
         public void propertyChanged(@NotNull VirtualFilePropertyEvent event) {
             VirtualFile file = event.getFile();
             VirtualFile parent = file.getParent();
@@ -845,9 +848,13 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     /***************************************
      *          ProjectComponent         *
      ***************************************/
+    @Override
     public void projectOpened() {}
+    @Override
     public void projectClosed() {}
+    @Override
     public void initComponent() {}
+    @Override
     public void disposeComponent() {
         super.disposeComponent();
         mappings.clear();

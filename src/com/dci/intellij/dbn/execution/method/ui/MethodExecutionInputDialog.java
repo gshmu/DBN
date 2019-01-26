@@ -28,6 +28,7 @@ public class MethodExecutionInputDialog extends DBNDialog<MethodExecutionInputFo
         return new MethodExecutionInputForm(this, executionInput, true, debuggerType);
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{
@@ -49,6 +50,7 @@ public class MethodExecutionInputDialog extends DBNDialog<MethodExecutionInputFo
             putValue(FOCUSED_ACTION, Boolean.TRUE);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             try {
                 getComponent().updateExecutionInput();

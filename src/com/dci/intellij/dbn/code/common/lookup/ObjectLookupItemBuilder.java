@@ -55,6 +55,7 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
         return DBObjectRef.get(objectRef);
     }
 
+    @Override
     public String getTextHint() {
         DBObject object = getObject();
         if (object != null) {
@@ -78,6 +79,7 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
         return "";
     }
 
+    @Override
     public boolean isBold() {
         return false;
     }
@@ -123,6 +125,7 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
         return text;
     }
 
+    @Override
     public Icon getIcon() {
         DBObject object = getObject();
         return object == null ? objectRef.getObjectType().getIcon() : object.getIcon();

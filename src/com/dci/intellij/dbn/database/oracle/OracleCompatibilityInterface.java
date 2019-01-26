@@ -19,10 +19,12 @@ public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface
         super(parent);
     }
 
+    @Override
     public boolean supportsObjectType(DatabaseObjectTypeId objectTypeId) {
         return objectTypeId != DatabaseObjectTypeId.CHARSET;
     }
 
+    @Override
     public boolean supportsFeature(DatabaseFeature feature) {
         switch (feature) {
             case OBJECT_INVALIDATION: return true;
@@ -49,6 +51,7 @@ public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface
         }
     }
 
+    @Override
     public QuoteDefinition getIdentifierQuotes() {
         return IDENTIFIER_QUOTE_DEFINITION;
     }

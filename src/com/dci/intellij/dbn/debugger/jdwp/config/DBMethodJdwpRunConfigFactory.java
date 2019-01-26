@@ -27,6 +27,7 @@ public class DBMethodJdwpRunConfigFactory extends DBMethodRunConfigFactory<DBMet
         return new DBMethodJdwpRunConfig(project, this, name, category);
     }
 
+    @Override
     public DBMethodJdwpRunConfig createConfiguration(DBMethod method) {
         String name = DatabaseDebuggerManager.createMethodConfigurationName(method);
         name = name + " (JDWP)";

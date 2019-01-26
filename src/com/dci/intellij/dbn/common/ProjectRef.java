@@ -12,11 +12,13 @@ public class ProjectRef extends WeakRef<Project> {
         super(project);
     }
 
+    @Override
     @Nullable
     public Project get() {
         return super.get();
     }
 
+    @Override
     @NotNull
     public Project getnn() {
         return FailsafeUtil.get(get());

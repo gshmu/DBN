@@ -40,6 +40,7 @@ public class PendingTransactionsDetailDialog extends DBNDialog<PendingTransactio
         return connectionHandlerRef.getnn();
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{
@@ -60,6 +61,7 @@ public class PendingTransactionsDetailDialog extends DBNDialog<PendingTransactio
             super("Commit", Icons.CONNECTION_COMMIT);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             try {
                 DatabaseTransactionManager transactionManager = getTransactionManager();
@@ -80,6 +82,7 @@ public class PendingTransactionsDetailDialog extends DBNDialog<PendingTransactio
             super("Rollback", Icons.CONNECTION_ROLLBACK);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             try {
                 DatabaseTransactionManager transactionManager = getTransactionManager();

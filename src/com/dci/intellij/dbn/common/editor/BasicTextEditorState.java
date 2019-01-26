@@ -30,6 +30,7 @@ public class BasicTextEditorState implements FileEditorState {
     private float verticalScrollProportion;
     private CodeFoldingState foldingState;
 
+    @Override
     public boolean canBeMergedWith(FileEditorState fileEditorState, FileEditorStateLevel fileEditorStateLevel) {
         return fileEditorState instanceof BasicTextEditorState;
     }

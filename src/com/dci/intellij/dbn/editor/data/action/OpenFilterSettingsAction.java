@@ -15,6 +15,7 @@ public class OpenFilterSettingsAction extends DumbAwareAction {
         this.datasetEditor = datasetEditor;
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         if (datasetEditor != null) {
             DBDataset dataset = datasetEditor.getDataset();
@@ -22,6 +23,7 @@ public class OpenFilterSettingsAction extends DumbAwareAction {
         }
     }
 
+    @Override
     public void update(AnActionEvent e) {
         boolean enabled =
                 datasetEditor != null &&

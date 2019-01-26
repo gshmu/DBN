@@ -42,6 +42,7 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
         return tnsNames;
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{
@@ -56,6 +57,7 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
             super("Import All");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             tnsNames = getComponent().getAllTnsNames();
             doOKAction();
@@ -67,6 +69,7 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
             super("Import Selected");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             tnsNames = getComponent().getSelectedTnsNames();
             doOKAction();

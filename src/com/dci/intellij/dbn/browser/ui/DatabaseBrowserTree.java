@@ -159,6 +159,7 @@ public class DatabaseBrowserTree extends DBNTree {
     }
 
 
+    @Override
     public String getToolTipText(MouseEvent event) {
         TreePath path = getClosestPathForLocation(event.getX(), event.getY());
         if (path != null) {
@@ -293,6 +294,7 @@ public class DatabaseBrowserTree extends DBNTree {
      *                 TreeSelectionListener                *
      ********************************************************/
     private TreeSelectionListener treeSelectionListener = new TreeSelectionListener() {
+        @Override
         public void valueChanged(TreeSelectionEvent e) {
             if (!isDisposed() && listenersEnabled) {
                 Object object = e.getPath().getLastPathComponent();
@@ -312,6 +314,7 @@ public class DatabaseBrowserTree extends DBNTree {
      *                      MouseListener                   *
      ********************************************************/
     private MouseListener mouseListener = new MouseAdapter() {
+        @Override
         public void mouseClicked(MouseEvent event) {
             if (event.getButton() == MouseEvent.BUTTON1) {
                 DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(getProject());
@@ -322,6 +325,7 @@ public class DatabaseBrowserTree extends DBNTree {
             }
         }
 
+        @Override
         public void mouseReleased(final MouseEvent event) {
             if (event.getButton() == MouseEvent.BUTTON3) {
                 final TreePath path = getPathForLocation(event.getX(), event.getY());
@@ -364,6 +368,7 @@ public class DatabaseBrowserTree extends DBNTree {
      *                      KeyListener                     *
      ********************************************************/
     private KeyListener keyListener = new KeyAdapter() {
+        @Override
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == 10) {  // ENTER
                 TreePath path = getSelectionPath();
@@ -375,6 +380,7 @@ public class DatabaseBrowserTree extends DBNTree {
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
+    @Override
     public void dispose() {
         super.dispose();
         targetSelection = null;

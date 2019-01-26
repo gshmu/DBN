@@ -135,6 +135,7 @@ public class CompilerMessage extends ConsoleMessage implements Comparable<Compil
         return position;
     }
 
+    @Override
     public String getText() {
         return text;
     }
@@ -143,6 +144,7 @@ public class CompilerMessage extends ConsoleMessage implements Comparable<Compil
         return isEcho;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         compilerResult = null;

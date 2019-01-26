@@ -23,6 +23,7 @@ public enum DatasetFilterType implements Presentable{
         this.errIcon = errIcon;
     }
 
+    @Override
     @NotNull
     public String getName() {
         return name;
@@ -35,6 +36,7 @@ public enum DatasetFilterType implements Presentable{
     }
 
 
+    @Override
     @Nullable
     public Icon getIcon() {
         return icon;

@@ -36,6 +36,7 @@ public class CodeStyleSettingsForm extends CompositeConfigurationEditorForm<Proj
     }
 
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }

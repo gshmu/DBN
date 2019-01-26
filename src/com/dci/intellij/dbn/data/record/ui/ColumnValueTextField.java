@@ -46,6 +46,7 @@ class ColumnValueTextField extends JTextField {
 
     }
 
+    @Override
     protected void processMouseMotionEvent(MouseEvent e) {
         DBColumn column = getColumn();
         if (column != null && column.isForeignKey()) {
@@ -103,6 +104,7 @@ class ColumnValueTextField extends JTextField {
     }
 
     private MouseListener mouseListener = new MouseAdapter() {
+        @Override
         public void mouseClicked(MouseEvent event) {
             DBColumn column = getColumn();
             if (column != null && MouseUtil.isNavigationEvent(event)) {

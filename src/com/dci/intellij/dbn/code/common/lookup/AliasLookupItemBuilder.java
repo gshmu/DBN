@@ -13,10 +13,12 @@ public class AliasLookupItemBuilder extends LookupItemBuilder {
         this.isDefinition = isDefinition;
     }
 
+    @Override
     public String getTextHint() {
         return isDefinition ? "alias def" : "alias ref";
     }
 
+    @Override
     public boolean isBold() {
         return false;
     }
@@ -26,6 +28,7 @@ public class AliasLookupItemBuilder extends LookupItemBuilder {
         return text;
     }
 
+    @Override
     public Icon getIcon() {
         return null;
     }

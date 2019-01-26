@@ -37,10 +37,12 @@ public class DebuggerSettingsForm extends ConfigurationEditorForm<DebuggerSettin
         registerComponent(mainPanel);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         DebuggerSettings settings = getConfiguration();
 
@@ -48,6 +50,7 @@ public class DebuggerSettingsForm extends ConfigurationEditorForm<DebuggerSettin
         settings.setUseGenericRunners(useGenericRunnersCheckBox.isSelected());
     }
 
+    @Override
     public void resetFormChanges() {
         DebuggerSettings settings = getConfiguration();
         setSelection(debuggerTypeComboBox, settings.getDebuggerType().get());

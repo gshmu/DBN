@@ -27,6 +27,7 @@ public abstract class LoadInProgressRegistry<T extends Disposable> extends Dispo
     }
 
     private class RefreshTask extends TimerTask {
+        @Override
         public void run() {
             for (T node : nodes) {
                 try {

@@ -15,6 +15,7 @@ public class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter impl
     }
 
 
+    @Override
     @NotNull
     public DynamicContent getSourceContent() {
         return contentDependency.getSourceContent();
@@ -36,6 +37,7 @@ public class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter impl
         contentDependency.markSourcesDirty();
     }
 
+    @Override
     public boolean isDirty() {
         return contentDependency.isDirty();
     }
@@ -50,12 +52,14 @@ public class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter impl
         contentDependency.reset();
     }
 
+    @Override
     public void beforeReload(DynamicContent dynamicContent) {
 /*        DynamicContent sourceContent = contentDependency.getSourceContent();
         sourceContent.getDependencyAdapter().beforeReload(sourceContent);
         sourceContent.removeElements(dynamicContent.getElements());*/
     }
 
+    @Override
     public void afterReload(DynamicContent dynamicContent) {
 /*        DynamicContent sourceContent = contentDependency.getSourceContent();
         if (sourceContent.getClass().isAssignableFrom(dynamicContent.getClass())) {
@@ -76,6 +80,7 @@ public class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter impl
         return true;
     }
 
+    @Override
     public void dispose() {
         Disposer.dispose(contentDependency);
         contentDependency = VoidContentDependency.INSTANCE;

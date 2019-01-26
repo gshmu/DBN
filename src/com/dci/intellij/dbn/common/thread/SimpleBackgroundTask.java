@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutorService;
 public abstract class SimpleBackgroundTask extends SimpleTask{
     private SimpleBackgroundTask() {}
 
+    @Override
     public final void start() {
         ExecutorService executorService = ThreadFactory.backgroundExecutor();
         executorService.submit(this);

@@ -14,10 +14,12 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
     private SessionBrowserFilterState filterState = new SessionBrowserFilterState();
     private int refreshInterval = 0;
 
+    @Override
     public boolean canBeMergedWith(FileEditorState fileEditorState, FileEditorStateLevel fileEditorStateLevel) {
         return false;
     }
 
+    @Override
     public void readState(@NotNull Element element) {
         refreshInterval = SettingsUtil.getInteger(element, "refresh-interval", refreshInterval);
 
@@ -32,6 +34,7 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
         }
     }
 
+    @Override
     public void writeState(Element element) {
         SettingsUtil.setInteger(element, "refresh-interval", refreshInterval);
 
@@ -54,6 +57,7 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
         this.refreshInterval = refreshInterval;
     }
 
+    @Override
     public SessionBrowserState clone() {
         SessionBrowserState clone = new SessionBrowserState();
         clone.refreshInterval = refreshInterval;

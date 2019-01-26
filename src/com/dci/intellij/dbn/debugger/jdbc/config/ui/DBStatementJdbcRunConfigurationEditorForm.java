@@ -27,20 +27,24 @@ public class DBStatementJdbcRunConfigurationEditorForm extends DBProgramRunConfi
 
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void writeConfiguration(DBStatementJdbcRunConfig configuration) {
         configuration.setCompileDependencies(compileDependenciesCheckBox.isSelected());
         //selectMethodAction.setConfiguration(configuration);
     }
 
+    @Override
     public void readConfiguration(DBStatementJdbcRunConfig configuration) {
         compileDependenciesCheckBox.setSelected(configuration.isCompileDependencies());
     }
 
 
+    @Override
     public void dispose() {
         super.dispose();
     }

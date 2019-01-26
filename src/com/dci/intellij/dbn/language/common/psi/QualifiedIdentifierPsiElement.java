@@ -25,6 +25,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
         super(astNode, elementType);
     }
 
+    @Override
     public QualifiedIdentifierElementType getElementType() {
         return (QualifiedIdentifierElementType) super.getElementType();
     }

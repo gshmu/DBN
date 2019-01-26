@@ -17,6 +17,7 @@ public class CodeCompletionFiltersSettings extends CompositeConfiguration<CodeCo
 
     }
 
+    @Override
     public String getDisplayName() {
         return "Code completion filter";
     }
@@ -59,6 +60,7 @@ public class CodeCompletionFiltersSettings extends CompositeConfiguration<CodeCo
     /*********************************************************
     *                   Configuration                       *
     *********************************************************/
+    @Override
     @NotNull
     protected CodeCompletionFiltersSettingsForm createConfigurationEditor() {
         return new CodeCompletionFiltersSettingsForm(this);
@@ -69,6 +71,7 @@ public class CodeCompletionFiltersSettings extends CompositeConfiguration<CodeCo
         return "filters";
     }
 
+    @Override
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
                 basicFilterSettings,

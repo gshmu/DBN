@@ -21,16 +21,19 @@ public class DataGridGeneralSettingsForm extends ConfigurationEditorForm<DataGri
         registerComponent(mainPanel);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         DataGridGeneralSettings settings = getConfiguration();
         settings.setZoomingEnabled(enableZoomingCheckBox.isSelected());
         settings.setColumnTooltipEnabled(enableColumnTooltipsCheckBox.isSelected());
     }
 
+    @Override
     public void resetFormChanges() {
         DataGridGeneralSettings settings = getConfiguration();
         enableZoomingCheckBox.setSelected(settings.isZoomingEnabled());

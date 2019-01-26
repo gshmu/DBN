@@ -7,6 +7,7 @@ import com.intellij.ui.SimpleTextAttributes;
 import javax.swing.*;
 
 public class DDLFileNameListCellRenderer extends ColoredListCellRenderer {
+    @Override
     protected void customizeCellRenderer(JList list, Object value, int index, boolean selected, boolean hasFocus) {
         DDLFileNameProvider fileNameProvider = (DDLFileNameProvider) value;
 

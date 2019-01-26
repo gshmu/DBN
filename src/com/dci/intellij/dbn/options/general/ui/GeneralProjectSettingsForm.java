@@ -32,6 +32,7 @@ public class GeneralProjectSettingsForm extends CompositeConfigurationEditorForm
         environmentSettingsPanel.add(generalSettings.getEnvironmentSettings().createComponent(), BorderLayout.CENTER);
     }
 
+    @Override
     protected ActionListener createActionListener() {
         return e -> {
             getConfiguration().setModified(true);
@@ -40,15 +41,18 @@ public class GeneralProjectSettingsForm extends CompositeConfigurationEditorForm
         };
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() {
         DatabaseNavigator.getInstance().setDebugModeEnabled(enableDebugCheckBox.isSelected());
         DatabaseNavigator.getInstance().setDeveloperModeEnabled(enableDeveloperCheckBox.isSelected());
     }
 
+    @Override
     public void resetFormChanges() {
         enableDebugCheckBox.setSelected(DatabaseNavigator.getInstance().isDebugModeEnabled());
         debugInfoLabel.setVisible(enableDebugCheckBox.isSelected());

@@ -31,11 +31,13 @@ public class BasicDataModelRow<T extends DataModelCell> extends PropertyHolderIm
         getCells().add(cell);
     }
 
+    @Override
     @NotNull
     public BasicDataModel getModel() {
         return FailsafeUtil.get(model);
     }
 
+    @Override
     public List<T> getCells() {
         FailsafeUtil.ensure(this);
         return FailsafeUtil.get(cells);
@@ -66,15 +68,18 @@ public class BasicDataModelRow<T extends DataModelCell> extends PropertyHolderIm
 
 
 
+    @Override
     public T getCellAtIndex(int index) {
         List<T> cells = getCells();
         return cells.size()> index ? cells.get(index) : null;
     }
 
+    @Override
     public int getIndex() {
         return index;
     }
 
+    @Override
     public void setIndex(int index) {
         this.index = index;
     }
@@ -96,6 +101,7 @@ public class BasicDataModelRow<T extends DataModelCell> extends PropertyHolderIm
         return is(RecordStatus.DISPOSED);
     }
 
+    @Override
     public void dispose() {
         if (!isDisposed()) {
             set(RecordStatus.DISPOSED, true);

@@ -35,6 +35,7 @@ public class SessionBrowserTextAttributes extends CommonUtil implements DataGrid
         load();
     }
 
+    @Override
     public void load() {
         EditorColorsScheme globalScheme = EditorColorsManager.getInstance().getGlobalScheme();
         caretRowBgColor = globalScheme.getAttributes(DataGridTextAttributesKeys.CARET_ROW).getBackgroundColor();
@@ -77,18 +78,22 @@ public class SessionBrowserTextAttributes extends CommonUtil implements DataGrid
         return atCaretRow ? killedSessionAtCaretRow : killedSession;
     }
 
+    @Override
     public SimpleTextAttributes getLoadingData(boolean atCaretRow) {
         return atCaretRow ? loadingDataAtCaretRow : loadingData;
     }
 
+    @Override
     public SimpleTextAttributes getSelection() {
         return selection;
     }
 
+    @Override
     public SimpleTextAttributes getSearchResult() {
         return searchResult;
     }
 
+    @Override
     public Color getCaretRowBgColor() {
         return caretRowBgColor;
     }

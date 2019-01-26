@@ -28,6 +28,7 @@ public class DatasetColumnSetupDialog extends DBNDialog<DatasetColumnSetupForm> 
         return new DatasetColumnSetupForm(datasetEditor);
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{

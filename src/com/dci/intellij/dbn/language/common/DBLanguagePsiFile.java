@@ -124,22 +124,23 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
 
     public DBObject getUnderlyingObject() {
         VirtualFile virtualFile = getVirtualFile();
-        if (virtualFile instanceof DBObjectVirtualFile) {
-            DBObjectVirtualFile databaseObjectFile = (DBObjectVirtualFile) virtualFile;
-            return databaseObjectFile.getObject();
-        }
+        if (virtualFile != null) {
+            if (virtualFile instanceof DBObjectVirtualFile) {
+                DBObjectVirtualFile databaseObjectFile = (DBObjectVirtualFile) virtualFile;
+                return databaseObjectFile.getObject();
+            }
 
-        if (virtualFile instanceof DBSourceCodeVirtualFile) {
-            DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
-            return sourceCodeFile.getObject();
-        }
+            if (virtualFile instanceof DBSourceCodeVirtualFile) {
+                DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
+                return sourceCodeFile.getObject();
+            }
 
-        DDLFileAttachmentManager instance = DDLFileAttachmentManager.getInstance(getProject());
-        DBSchemaObject editableObject = instance.getEditableObject(virtualFile);
-        if (editableObject != null) {
-            return editableObject;
+            DDLFileAttachmentManager instance = DDLFileAttachmentManager.getInstance(getProject());
+            DBSchemaObject editableObject = instance.getEditableObject(virtualFile);
+            if (editableObject != null) {
+                return editableObject;
+            }
         }
-
 
         return DBObjectRef.get(underlyingObjectRef);
     }
@@ -164,6 +165,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
                 "Language " + baseLanguage + " doesn't participate in view provider " + viewProvider + ": " + new ArrayList<Language>(languages));
     }
 
+    @Override
     public void accept(@NotNull PsiElementVisitor visitor) {
         // TODO: check if any other visitor relevant
         String name = visitor.getClass().getName();
@@ -204,6 +206,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         return null;
     }
 
+    @Override
     public VirtualFile getVirtualFile() {
 /*
         PsiFile originalFile = getOriginalFile();
@@ -222,6 +225,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         return FileConnectionMappingManager.getInstance(getProject());
     }
 
+    @Override
     @Nullable
     public ConnectionHandler getConnectionHandler() {
         VirtualFile file = getVirtualFile();
@@ -240,6 +244,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         }
     }
 
+    @Override
     @Nullable
     public DBSchema getDatabaseSchema() {
         VirtualFile file = getVirtualFile();
@@ -307,6 +312,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         }
     }
 
+    @Override
     @NotNull
     public DBLanguageFileType getFileType() {
         return fileType;

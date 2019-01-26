@@ -20,6 +20,7 @@ public class MultipleContentDependencyAdapter extends BasicDependencyAdapter imp
         }
     }
 
+    @Override
     public boolean canLoad(ConnectionHandler connectionHandler) {
         if (dependencies != null && canConnect(connectionHandler)) {
             for (ContentDependency dependency : dependencies) {
@@ -41,6 +42,7 @@ public class MultipleContentDependencyAdapter extends BasicDependencyAdapter imp
         }
     }
 
+    @Override
     public boolean isDirty() {
         if (dependencies != null) {
             for (ContentDependency dependency : dependencies) {

@@ -17,6 +17,7 @@ public class ExportDataAction extends AnAction {
         this.dataset = dataset;
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         ExportDataDialog dialog = new ExportDataDialog(table, dataset);
         dialog.show();

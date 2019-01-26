@@ -147,8 +147,10 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         return clone;
     }
 
+    @Override
     protected ActionListener createActionListener() {
         return new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 Object source = e.getSource();
                 ConnectionSettings configuration = getConfiguration();
@@ -209,6 +211,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         return TabbedPaneUtil.getSelectedTabName(configTabbedPane);
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }

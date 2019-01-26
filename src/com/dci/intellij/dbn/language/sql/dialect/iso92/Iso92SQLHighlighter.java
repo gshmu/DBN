@@ -13,6 +13,7 @@ public class Iso92SQLHighlighter extends SQLSyntaxHighlighter {
         super(languageDialect, "iso92_sql_highlighter_tokens.xml");
     }
 
+    @Override
     @NotNull
     protected Lexer createLexer() {
         FlexLexer flexLexer = new Iso92SQLHighlighterFlexLexer(getTokenTypes());

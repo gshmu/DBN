@@ -44,6 +44,7 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
         list.setBackground(BACKGROUND_COLOR);
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
@@ -54,6 +55,7 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
         valuesProvider.getValues();
     }
 
+    @Override
     public JBPopup createPopup() {
         List<String> possibleValues = valuesProvider.getValues();
         if (possibleValues.size() > 0) {
@@ -77,6 +79,7 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
         }
     }
 
+    @Override
     public void handleKeyPressedEvent(KeyEvent e) {
         assert isShowingPopup();
         int keyCode = e.getKeyCode();
@@ -127,22 +130,26 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
         }
     }
 
+    @Override
     public void handleKeyReleasedEvent(KeyEvent e) {
         if (e.getKeyCode() == 36 || e.getKeyCode() == 35) { // HOME or END
             updateList();
         }
     }
 
+    @Override
     public void handleFocusLostEvent(FocusEvent e) {
         if (getPopup().getContent().getParent().getParent().getParent().getParent() != e.getOppositeComponent()) {
             hidePopup();
         }
     }
 
+    @Override
     public String getKeyShortcutName() {
         return IdeActions.ACTION_CODE_COMPLETION;
     }
 
+    @Override
     public String getDescription() {
         return "Possible Values List";
     }
@@ -188,6 +195,7 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
     }
 
     private class DynamicFilter extends Filter<String> {
+        @Override
         public boolean accepts(String string) {
             if (getEditorComponent().isSelected()) return true;
 
@@ -262,10 +270,12 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
             return elements instanceof FiltrableList;
         }
 
+        @Override
         public int getSize() {
             return elements.size();
         }
 
+        @Override
         public Object getElementAt(int index) {
             return index == -1 ? null : elements.get(index);
         }
@@ -285,6 +295,7 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
         }
     }
 
+    @Override
     public void dispose() {
         super.dispose();
     }

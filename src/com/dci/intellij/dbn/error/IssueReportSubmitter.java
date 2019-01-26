@@ -63,6 +63,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         return "Submit Issue Report";
     }
 
+    @Override
     public SubmittedReportInfo submit(IdeaLoggingEvent[] events, Component parentComponent) {
         final SubmittedReportInfo[] reportInfo = new SubmittedReportInfo[1];
         Consumer<SubmittedReportInfo> consumer = new Consumer<SubmittedReportInfo>() {
@@ -76,6 +77,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         return reportInfo[0];
     }
 
+    @Override
     public boolean submit(@NotNull final IdeaLoggingEvent[] events, String additionalInfo, @NotNull Component parentComponent, @NotNull final Consumer<SubmittedReportInfo> consumer) {
         DataContext dataContext = DataManager.getInstance().getDataContext(parentComponent);
         final Project project = PlatformDataKeys.PROJECT.getData(dataContext);

@@ -92,6 +92,7 @@ public class DatasetTableCellEditorFactory implements Disposable {
         return null;
     }
 
+    @Override
     public void dispose() {
         for (TableCellEditor cellEditor : cache.values()) {
             if (cellEditor instanceof Disposable) {

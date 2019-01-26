@@ -73,6 +73,7 @@ public class DataGridTrackingColumnSettings extends ProjectConfiguration<DataGri
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @Override
     @NotNull
     public DataGridTrackingColumnSettingsForm createConfigurationEditor() {
         return new DataGridTrackingColumnSettingsForm(this);
@@ -83,6 +84,7 @@ public class DataGridTrackingColumnSettings extends ProjectConfiguration<DataGri
         return "tracking-columns";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         this.columnNames.clear();
         StringTokenizer columnNames = new StringTokenizer(SettingsUtil.getString(element, "columnNames", ""), ",");
@@ -96,6 +98,7 @@ public class DataGridTrackingColumnSettings extends ProjectConfiguration<DataGri
         allowEditing = SettingsUtil.getBoolean(element, "editable", allowEditing);
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         StringBuilder buffer = new StringBuilder();
         for (String columnName : columnNames) {

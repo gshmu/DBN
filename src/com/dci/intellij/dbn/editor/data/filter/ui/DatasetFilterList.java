@@ -19,6 +19,7 @@ public class DatasetFilterList extends JList {
     }
 
     private static final ListCellRenderer LIST_CELL_RENDERER = new ColoredListCellRenderer(){
+        @Override
         protected void customizeCellRenderer(JList list, Object value, int index, boolean selected, boolean hasFocus) {
             DatasetFilter filter = (DatasetFilter) value;
             setIcon(filter.getIcon());

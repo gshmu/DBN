@@ -82,6 +82,7 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
         return headerForm;
     }
 
+    @Override
     public MethodFactoryInput createFactoryInput(ObjectFactoryInput parent) {
         MethodFactoryInput methodFactoryInput = new MethodFactoryInput(getSchema(), nameTextField.getText(), getObjectType(), getIndex());
         methodFactoryInput.setArguments(argumentListPanel.createFactoryInputs(methodFactoryInput));
@@ -102,10 +103,12 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
         returnArgumentDataTypeEditor = new DataTypeEditor(getConnectionHandler());
     }
 
+    @Override
     public void focus() {
         nameTextField.requestFocus();
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }

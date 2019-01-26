@@ -73,6 +73,7 @@ public abstract class ExecutionContext extends PropertyHolderImpl<ExecutionStatu
         return isNot(QUEUED) && isNot(EXECUTING) && isNot(CANCELLED);
     }
 
+    @Override
     public void reset() {
         super.reset();
         timeout = 0;

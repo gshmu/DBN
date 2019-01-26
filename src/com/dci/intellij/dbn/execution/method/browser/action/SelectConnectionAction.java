@@ -18,6 +18,7 @@ public class SelectConnectionAction extends DumbAwareAction {
 
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         browserComponent.setConnectionHandler(connectionHandler);
     }

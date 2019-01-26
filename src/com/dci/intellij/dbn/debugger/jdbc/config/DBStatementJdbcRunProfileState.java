@@ -16,6 +16,7 @@ public class DBStatementJdbcRunProfileState extends DBRunProfileState {
         super(environment);
     }
 
+    @Override
     public ExecutionResult execute(Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
         return null;
     }

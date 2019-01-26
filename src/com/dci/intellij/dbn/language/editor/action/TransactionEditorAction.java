@@ -27,6 +27,7 @@ public abstract class TransactionEditorAction extends DumbAwareAction {
         super(text, description, icon);
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         VirtualFile virtualFile = getVirtualFile(e);
         boolean enabled = false;

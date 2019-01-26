@@ -59,6 +59,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
         splitter.setProportion((float) 0.32);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -78,6 +79,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
         return (MethodExecutionHistoryTree) executionInputsTree;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         executionInputsTree = null;
@@ -123,6 +125,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
             super("Delete", null, Icons.ACTION_REMOVE);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             getTree().removeSelectedEntries();
         }
@@ -135,12 +138,14 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
     }
 
     public static class OpenSettingsAction extends DumbAwareAction {
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             Project project = ActionUtil.ensureProject(e);
             ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
             settingsManager.openProjectSettings(ConfigId.EXECUTION_ENGINE);
         }
 
+        @Override
         public void update(@NotNull AnActionEvent e) {
             Presentation presentation = e.getPresentation();
             presentation.setIcon(Icons.ACTION_SETTINGS);

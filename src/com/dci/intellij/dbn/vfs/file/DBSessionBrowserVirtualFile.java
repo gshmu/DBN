@@ -33,10 +33,12 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
     }
 
+    @Override
     public Icon getIcon() {
         return Icons.FILE_SESSION_BROWSER;
     }
 
+    @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.getnn();
@@ -93,9 +95,11 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
         return SQLFileType.INSTANCE;
     }
 
+    @Override
     @NotNull
     public OutputStream getOutputStream(Object requestor, final long modificationTimestamp, long newTimeStamp) throws IOException {
         return new ByteArrayOutputStream() {
+            @Override
             public void close() {
                 DBSessionBrowserVirtualFile.this.modificationTimestamp = modificationTimestamp;
                 content = toString();
@@ -103,6 +107,7 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
         };
     }
 
+    @Override
     @NotNull
     public byte[] contentsToByteArray() throws IOException {
         Charset charset = getCharset();
@@ -114,6 +119,7 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
         return 0;
     }
 
+  @Override
   public long getModificationStamp() {
     return modificationTimestamp;
   }

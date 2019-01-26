@@ -77,6 +77,7 @@ public class ConnectionAuthenticationDialog extends DBNDialog<ConnectionAuthenti
         getOKAction().setEnabled(authenticationInfo.isProvided());
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{

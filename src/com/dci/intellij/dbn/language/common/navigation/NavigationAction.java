@@ -24,6 +24,7 @@ public abstract class NavigationAction extends AnAction {
         return DBObjectRef.get(parentObjectRef);
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         navigate();
     }

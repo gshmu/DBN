@@ -102,6 +102,7 @@ public class ExplainPlanManager extends AbstractProjectComponent {
     /*********************************************************
      *                    ProjectComponent                   *
      *********************************************************/
+    @Override
     @NotNull
     @NonNls
     public String getComponentName() {

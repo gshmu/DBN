@@ -46,14 +46,17 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
         return FailsafeUtil.get(DBObjectRef.get(columnRef));
     }
 
+    @Override
     public String getName() {
         return columnRef.getObjectName();
     }
 
+    @Override
     public int getColumnIndex() {
         return columnIndex;
     }
 
+    @Override
     @NotNull
     public DBDataType getDataType() {
         return getColumn().getDataType();
@@ -102,10 +105,12 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
         this.possibleValues = possibleValues;
     }
 
+    @Override
     public void dispose() {
         if (possibleValues != null) possibleValues.clear();
     }
 
+    @Override
     public boolean isSortable() {
         DBDataType type = getColumn().getDataType();
         return type != null && type.isNative() &&

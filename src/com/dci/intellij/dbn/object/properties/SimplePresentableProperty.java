@@ -20,18 +20,22 @@ public class SimplePresentableProperty extends PresentableProperty{
         this.icon = icon;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getValue() {
         return value;
     }
 
+    @Override
     public Icon getIcon() {
         return icon;
     }
 
+    @Override
     public Navigatable getNavigatable() {
         return null;
     }

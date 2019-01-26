@@ -25,6 +25,7 @@ public abstract class DBLanguageParserDefinition implements ParserDefinition {
         return parser;
     }
 
+    @Override
     @NotNull
     public PsiElement createElement(ASTNode astNode) {
         IElementType et = astNode.getElementType();
@@ -36,31 +37,37 @@ public abstract class DBLanguageParserDefinition implements ParserDefinition {
         return new ASTWrapperPsiElement(astNode);
     }
 
+    @Override
     public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
         return null;
     }
 
+    @Override
     public IFileElementType getFileNodeType() {
         return parser.getLanguageDialect().getBaseLanguage().getFileElementType();
         /*DBLanguageDialect languageDialect = parser.getLanguageDialect();
         return languageDialect.getFileElementType();*/
     }
 
+    @Override
     @NotNull
     public TokenSet getWhitespaceTokens() {
         return parser.getTokenTypes().getSharedTokenTypes().getWhitespaceTokens();
     }
 
+    @Override
     @NotNull
     public TokenSet getCommentTokens() {
         return parser.getTokenTypes().getSharedTokenTypes().getCommentTokens();
     }
 
+    @Override
     @NotNull
     public TokenSet getStringLiteralElements() {
         return parser.getTokenTypes().getSharedTokenTypes().getStringTokens();
     }
 
+    @Override
     public final PsiFile createFile(FileViewProvider viewProvider) {
         if (viewProvider instanceof DatabaseFileViewProvider) {
             // ensure the document is initialized

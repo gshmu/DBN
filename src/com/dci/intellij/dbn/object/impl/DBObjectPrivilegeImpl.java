@@ -13,6 +13,7 @@ public class DBObjectPrivilegeImpl extends DBPrivilegeImpl implements DBObjectPr
         super(connectionHandler, resultSet);
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return DBObjectType.OBJECT_PRIVILEGE;
     }

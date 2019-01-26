@@ -29,6 +29,7 @@ public class DebugProgramMethodAction extends ObjectListShowAction {
     }
 
 
+    @Override
     public List<? extends DBObject> getObjectList() {
         DBProgram program = (DBProgram) getSourceObject();
         List objects = new ArrayList();
@@ -37,19 +38,23 @@ public class DebugProgramMethodAction extends ObjectListShowAction {
         return objects;
     }
 
+    @Override
     public String getTitle() {
         return "Select method to debug";
     }
 
+    @Override
     public String getEmptyListMessage() {
         DBProgram program = (DBProgram) getSourceObject();
         return "The " + program.getQualifiedNameWithType() + " has no methods.";
     }
 
+     @Override
      public String getListName() {
         return "executable elements";
     }
 
+    @Override
     protected AnAction createObjectAction(DBObject object) {
         return new DebugMethodAction((DBProgram) getSourceObject(), (DBMethod) object);
     }

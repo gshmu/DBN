@@ -16,6 +16,7 @@ public class ExpandTreeAction extends DumbAwareAction {
         super("Expand all", null, Icons.ACTION_EXPAND_ALL);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
@@ -25,6 +26,7 @@ public class ExpandTreeAction extends DumbAwareAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Expand All");

@@ -31,6 +31,7 @@ public class GeneralProjectSettings extends CompositeProjectConfiguration<Genera
         return "DBNavigator.Project.GeneralSettings";
     }
 
+    @Override
     public String getDisplayName() {
         return "General";
     }
@@ -60,6 +61,7 @@ public class GeneralProjectSettings extends CompositeProjectConfiguration<Genera
     /*********************************************************
      *                      Configuration                    *
      *********************************************************/
+    @Override
     @NotNull
     public GeneralProjectSettingsForm createConfigurationEditor() {
         return new GeneralProjectSettingsForm(this);
@@ -70,6 +72,7 @@ public class GeneralProjectSettings extends CompositeProjectConfiguration<Genera
         return "general-settings";
     }
 
+    @Override
     protected Configuration[] createConfigurations() {
         return new Configuration[] {regionalSettings, environmentSettings};
     }

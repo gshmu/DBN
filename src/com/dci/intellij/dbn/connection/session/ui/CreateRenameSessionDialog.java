@@ -35,6 +35,7 @@ public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm
         return new CreateRenameSessionForm(this, connectionHandler, session);
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{
@@ -63,6 +64,7 @@ public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm
         return session;
     }
 
+    @Override
     @NotNull
     public Action getOKAction() {
         return super.getOKAction();

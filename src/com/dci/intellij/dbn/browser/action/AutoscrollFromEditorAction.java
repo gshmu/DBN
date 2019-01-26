@@ -15,6 +15,7 @@ public class AutoscrollFromEditorAction extends ToggleAction implements DumbAwar
     }
 
 
+    @Override
     public boolean isSelected(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         if (project != null) {
@@ -24,6 +25,7 @@ public class AutoscrollFromEditorAction extends ToggleAction implements DumbAwar
         return false;
     }
 
+    @Override
     public void setSelected(@NotNull AnActionEvent e, boolean state) {
         Project project = ActionUtil.getProject(e);
         if (project != null) {

@@ -233,16 +233,19 @@ public class PsiUtil {
     public static Iterator<PsiElement> getChildrenIterator(final @NotNull PsiElement element) {
         return new Iterator<PsiElement>() {
             private PsiElement current = element.getFirstChild();
+            @Override
             public boolean hasNext() {
                 return current != null;
             }
 
+            @Override
             public PsiElement next() {
                 PsiElement oldCurrent = current;
                 current = current.getNextSibling();
                 return oldCurrent;
             }
 
+            @Override
             public void remove() {
 
             }

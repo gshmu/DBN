@@ -44,6 +44,7 @@ public class BasicTableCellRenderer extends ColoredTableCellRenderer {
         return attributes;
     }
 
+    @Override
     protected void customizeCellRenderer(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int columnIndex) {
 
         SortableTable sortableTable = (SortableTable) table;

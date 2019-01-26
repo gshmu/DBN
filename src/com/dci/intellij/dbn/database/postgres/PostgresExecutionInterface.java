@@ -15,10 +15,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class PostgresExecutionInterface extends DatabaseExecutionInterfaceImpl {
+    @Override
     public MethodExecutionProcessor createExecutionProcessor(DBMethod method) {
         return new PostgresMethodExecutionProcessor(method);
     }
 
+    @Override
     public MethodExecutionProcessor createDebugExecutionProcessor(DBMethod method) {
         return null;
     }

@@ -36,14 +36,17 @@ public interface BrowserTreeNode extends TreeNode, NavigationItem, ItemPresentat
 
     Icon getIcon(int flags);
 
+    @Override
     String getPresentableText();
 
     String getPresentableTextDetails();
 
     String getPresentableTextConditionalDetails();
 
+    @Override
     BrowserTreeNode getChildAt(int index);
 
+    @Override
     @Nullable
     BrowserTreeNode getParent();
 

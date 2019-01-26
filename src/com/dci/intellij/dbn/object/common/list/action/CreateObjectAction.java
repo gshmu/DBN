@@ -15,6 +15,7 @@ public class CreateObjectAction extends AnAction {
         this.objectList = objectList;
     }
 
+    @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
         DBSchema schema = (DBSchema) objectList.getParentElement();
         DatabaseObjectFactory factory =

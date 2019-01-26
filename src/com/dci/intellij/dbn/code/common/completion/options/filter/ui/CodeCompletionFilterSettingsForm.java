@@ -20,14 +20,17 @@ public class CodeCompletionFilterSettingsForm extends ConfigurationEditorForm<Co
         mainPanel.add(tree, BorderLayout.CENTER);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         treeModel.applyChanges();
     }
 
+    @Override
     public void resetFormChanges() {
         treeModel.resetChanges();
     }

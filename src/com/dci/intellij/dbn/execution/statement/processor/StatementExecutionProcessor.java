@@ -27,6 +27,7 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
 
     boolean isDirty();
 
+    @Override
     @Nullable
     ConnectionHandler getConnectionHandler();
 

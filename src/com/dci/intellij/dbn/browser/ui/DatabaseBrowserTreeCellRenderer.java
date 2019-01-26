@@ -33,16 +33,19 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
         browserSettings = DatabaseBrowserSettings.getInstance(project);
     }
 
+    @Override
     public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         return cellRenderer.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
     }
 
     private class DefaultTreeCellRenderer extends ColoredTreeCellRenderer {
+        @Override
         public Font getFont() {
             Font font = super.getFont();
             return font == null ? UIUtil.getTreeFont() : font;
         }
 
+        @Override
         public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
             try {
                 if (value instanceof LoadInProgressTreeNode) {

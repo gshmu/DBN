@@ -16,6 +16,7 @@ public class MethodExecutionMessagesObjectNode extends BundleTreeNode {
         this.databaseFile = databaseFile;
     }
 
+    @Override
     public DBEditableObjectVirtualFile getVirtualFile() {
         return databaseFile;
     }

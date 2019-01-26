@@ -6,15 +6,29 @@ import com.intellij.formatting.Spacing;
 import org.jdom.Element;
 
 public enum SpacingDefinition implements FormattingAttribute<Spacing>{
-    NO_SPACE  (new Loader(){Spacing load(){return CodeStylePreset.SPACING_NO_SPACE;}}),
-    ONE_SPACE (new Loader(){Spacing load(){return CodeStylePreset.SPACING_ONE_SPACE;}}),
+    NO_SPACE  (new Loader(){
+        @Override
+        Spacing load(){return CodeStylePreset.SPACING_NO_SPACE;}}),
+    ONE_SPACE (new Loader(){
+        @Override
+        Spacing load(){return CodeStylePreset.SPACING_ONE_SPACE;}}),
 
-    LINE_BREAK (new Loader(){Spacing load(){return CodeStylePreset.SPACING_LINE_BREAK;}}),
-    ONE_LINE  (new Loader(){Spacing load(){return CodeStylePreset.SPACING_ONE_LINE;}}),
+    LINE_BREAK (new Loader(){
+        @Override
+        Spacing load(){return CodeStylePreset.SPACING_LINE_BREAK;}}),
+    ONE_LINE  (new Loader(){
+        @Override
+        Spacing load(){return CodeStylePreset.SPACING_ONE_LINE;}}),
 
-    MIN_LINE_BREAK (new Loader(){Spacing load(){return CodeStylePreset.SPACING_MIN_LINE_BREAK;}}),
-    MIN_ONE_LINE  (new Loader(){Spacing load(){return CodeStylePreset.SPACING_MIN_ONE_LINE;}}),
-    MIN_ONE_SPACE  (new Loader(){Spacing load(){return CodeStylePreset.SPACING_MIN_ONE_SPACE;}}),
+    MIN_LINE_BREAK (new Loader(){
+        @Override
+        Spacing load(){return CodeStylePreset.SPACING_MIN_LINE_BREAK;}}),
+    MIN_ONE_LINE  (new Loader(){
+        @Override
+        Spacing load(){return CodeStylePreset.SPACING_MIN_ONE_LINE;}}),
+    MIN_ONE_SPACE  (new Loader(){
+        @Override
+        Spacing load(){return CodeStylePreset.SPACING_MIN_ONE_SPACE;}}),
     ;
 
     private Spacing value;
@@ -24,6 +38,7 @@ public enum SpacingDefinition implements FormattingAttribute<Spacing>{
         this.loader = loader;
     }
 
+    @Override
     public Spacing getValue() {
         if (value == null && loader != null) {
             value = loader.load();

@@ -17,11 +17,13 @@ public class ImportDataAction extends AbstractDataEditorAction {
         super("Import Data", Icons.DATA_IMPORT);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         MessageUtil.showInfoDialog(project, "Not implemented", "Data import is not implemented yet.");
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Import Data");

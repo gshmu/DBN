@@ -23,6 +23,7 @@ public class ResourceMonitorDialog extends DBNDialog<ResourceMonitorForm> {
         return new ResourceMonitorForm(this);
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{

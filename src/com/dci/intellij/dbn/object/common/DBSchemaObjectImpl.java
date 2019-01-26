@@ -49,6 +49,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
         super(parent, resultSet);
     }
 
+    @Override
     protected void initProperties() {
         properties.set(EDITABLE, true);
         properties.set(REFERENCEABLE, true);
@@ -64,6 +65,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
         }
     }
 
+    @Override
     public DBObjectStatusHolder getStatus() {
         if (objectStatus == null) {
             synchronized (this) {
@@ -75,22 +77,27 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
         return objectStatus;
     }
 
+    @Override
     public boolean isEditable(DBContentType contentType) {
         return false;
     }
 
+    @Override
     public List<DBObject> getReferencedObjects() {
         return referencedObjects == null ? Collections.emptyList() : referencedObjects.getObjects();
     }
 
+    @Override
     public List<DBObject> getReferencingObjects() {
         return referencingObjects == null ? Collections.emptyList() : referencingObjects.getObjects();
     }
 
+    @Override
     protected List<DBObjectNavigationList> createNavigationLists() {
         return new ArrayList<>();
     }
 
+    @Override
     @NotNull
     public ChangeTimestamp loadChangeTimestamp(DBContentType contentType) throws SQLException {
         if (DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(this)) {
@@ -104,18 +111,22 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
         return new DBObjectTimestampLoader(getTypeName().toUpperCase());
     }
 
+    @Override
     public String loadCodeFromDatabase(DBContentType contentType) throws SQLException {
         return null;
     }
 
+    @Override
     public DBLanguage getCodeLanguage(DBContentType contentType) {
         return PSQLLanguage.INSTANCE;
     }
 
+    @Override
     public String getCodeParseRootId(DBContentType contentType) {
         return null;
     }
 
+    @Override
     @NotNull
     public DBObjectVirtualFile getVirtualFile() {
         if (getObjectType().isSchemaObject()) {
@@ -167,6 +178,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
         return schemas;
     }
 
+    @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBNConnection connection = connectionHandler.getPoolConnection(getSchema(), true);
@@ -183,12 +195,14 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
      *********************************************************/
     static {
         new DynamicContentResultSetLoader(null, INCOMING_DEPENDENCY) {
+            @Override
             public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
                 DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
                 return metadataInterface.loadReferencedObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
             }
 
+            @Override
             public DBObject createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
                 String objectOwner = resultSet.getString("OBJECT_OWNER");
                 String objectName = resultSet.getString("OBJECT_NAME");
@@ -211,12 +225,14 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
         };
 
         new DynamicContentResultSetLoader(null, OUTGOING_DEPENDENCY) {
+            @Override
             public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
                 DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
                 return metadataInterface.loadReferencingObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
             }
 
+            @Override
             public DBObject createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
                 String objectOwner = resultSet.getString("OBJECT_OWNER");
                 String objectName = resultSet.getString("OBJECT_NAME");

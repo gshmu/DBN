@@ -29,6 +29,7 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
         return tokenText != null && tokenText.contains(CodeCompletionContributor.DUMMY_TOKEN);
     }
 
+    @Override
     public T getElementType() {
         return elementType;
     }

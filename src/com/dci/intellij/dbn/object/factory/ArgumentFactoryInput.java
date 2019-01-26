@@ -31,6 +31,7 @@ public class ArgumentFactoryInput extends ObjectFactoryInput{
         return isOutput;
     }
 
+    @Override
     public void validate(List<String> errors) {
         if (getObjectName().length() == 0) {
             errors.add("argument name is not specified at index " + getIndex());

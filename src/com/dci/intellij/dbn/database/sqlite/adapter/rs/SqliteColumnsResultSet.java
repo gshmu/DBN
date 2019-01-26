@@ -36,6 +36,7 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
         super(ownerName, datasetName, connection);
     }
 
+    @Override
     protected void init(String ownerName, String datasetName) throws SQLException {
         RawTableInfo tableInfo = getTableInfo(datasetName);
 
@@ -77,6 +78,7 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
     protected abstract ResultSet loadTableInfo(String datasetName) throws SQLException;
     protected abstract ResultSet loadForeignKeyInfo(String datasetName) throws SQLException;
 
+    @Override
     public String getString(String columnLabel) throws SQLException {
         Column element = getCurrentElement();
             return
@@ -91,6 +93,7 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
                 columnLabel.equals("IS_PRIMARY_KEY") ? toFlag(element.isPrimaryKey()) : null;
     }
 
+    @Override
     public int getInt(String columnLabel) throws SQLException {
         Column element = getCurrentElement();
         return
@@ -100,6 +103,7 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
             columnLabel.equals("DATA_SCALE") ? element.getDataScale() : 0;
     }
 
+    @Override
     public long getLong(String columnLabel) throws SQLException {
         return getInt(columnLabel);
     }

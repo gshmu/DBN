@@ -14,6 +14,7 @@ public class DatasetEditorHeaderMouseListener extends MouseAdapter {
         this.table = table;
     }
 
+    @Override
     public void mouseReleased(final MouseEvent event) {
         if (event.getButton() == MouseEvent.BUTTON3) {
             Point mousePoint = event.getPoint();

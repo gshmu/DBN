@@ -14,6 +14,7 @@ public class OpenConnectionSettingsAction extends AbstractConnectionAction {
         super("Settings", "Connection settings", Icons.ACTION_EDIT, connectionHandler);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);

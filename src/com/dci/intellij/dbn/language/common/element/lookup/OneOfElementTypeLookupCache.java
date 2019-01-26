@@ -25,6 +25,7 @@ public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheBaseIndex
         return notInitialized && source.getLookupCache().shouldStartWithLeaf(leaf);
     }
 
+    @Override
     public boolean checkStartsWithIdentifier() {
         for(ElementTypeRef child : getElementType().getChildren()){
             if (child.getLookupCache().startsWithIdentifier()) return true;
@@ -45,6 +46,7 @@ public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheBaseIndex
         return bucket;
     }
 
+    @Override
     public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, Set<TokenType> bucket) {
         bucket = super.collectFirstPossibleTokens(context, bucket);
         ElementTypeRef[] elementTypeRefs = getElementType().getChildren();

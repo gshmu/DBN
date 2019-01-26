@@ -31,6 +31,7 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
         return FailsafeUtil.get(component);
     }
 
+    @Override
     @NotNull
     protected final JComponent createCenterPanel() {
         return getComponent().getComponent();
@@ -38,6 +39,7 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
 
     protected abstract @NotNull C createComponent();
 
+    @Override
     protected String getDimensionServiceKey() {
         return "DBNavigator." + getClass().getSimpleName();
     }
@@ -56,6 +58,7 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
         super.doHelpAction();
     }
 
+    @Override
     @NotNull
     public Project getProject() {
         return FailsafeUtil.get(project);
@@ -80,6 +83,7 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
         }
     }
 
+    @Override
     public boolean isDisposed() {
         return disposed;
     }

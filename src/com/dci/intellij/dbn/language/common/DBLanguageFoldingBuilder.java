@@ -19,6 +19,7 @@ import java.util.List;
 
 public abstract class DBLanguageFoldingBuilder implements FoldingBuilder, DumbAware {
 
+    @Override
     @NotNull
     public final FoldingDescriptor[] buildFoldRegions(@NotNull ASTNode node, @NotNull Document document) {
         if (node.getTextLength() == 0) {

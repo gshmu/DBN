@@ -52,6 +52,7 @@ public class DatasetEditorModelHeader extends ResultSetDataModelHeader<DatasetEd
     }
 
     private static final Comparator<DBColumn> COLUMN_POSITION_COMPARATOR = new Comparator<DBColumn>() {
+        @Override
         public int compare(DBColumn column1, DBColumn column2) {
             return column1.getPosition()-column2.getPosition();
         }

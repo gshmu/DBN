@@ -15,20 +15,24 @@ public class NavigationGutterRenderer extends GutterIconRenderer {
         this.alignment = alignment;
     }
 
+    @Override
     @NotNull
     public Icon getIcon() {
         return action.getTemplatePresentation().getIcon();
     }
 
+    @Override
     public boolean isNavigateAction() {
         return true;
     }
 
+    @Override
     @Nullable
     public AnAction getClickAction() {
         return action;
     }
 
+    @Override
     @Nullable
     public String getTooltipText() {
         return action.getTemplatePresentation().getText();

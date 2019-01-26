@@ -14,6 +14,7 @@ public class FunctionFactoryInputForm extends MethodFactoryInputForm {
         super(project, schema, objectType, index);
     }
 
+    @Override
     public MethodFactoryInput createFactoryInput(ObjectFactoryInput parent) {
         MethodFactoryInput methodFactoryInput = super.createFactoryInput(parent);
 
@@ -28,10 +29,12 @@ public class FunctionFactoryInputForm extends MethodFactoryInputForm {
         return methodFactoryInput;
     }
 
+    @Override
     public boolean hasReturnArgument() {
         return true;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
     }

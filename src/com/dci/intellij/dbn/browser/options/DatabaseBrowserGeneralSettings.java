@@ -45,6 +45,7 @@ public class DatabaseBrowserGeneralSettings extends ProjectConfiguration<Databas
         return showObjectDetails;
     }
 
+    @Override
     public void readConfiguration(Element element) {
         displayMode = SettingsUtil.getEnum(element, "display-mode", BrowserDisplayMode.TABBED);
         if (displayMode == BrowserDisplayMode.SINGLE) displayMode = BrowserDisplayMode.SIMPLE;
@@ -52,6 +53,7 @@ public class DatabaseBrowserGeneralSettings extends ProjectConfiguration<Databas
         showObjectDetails.readConfiguration(element);
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         SettingsUtil.setEnum(element, "display-mode", displayMode);
         navigationHistorySize.writeConfiguration(element);

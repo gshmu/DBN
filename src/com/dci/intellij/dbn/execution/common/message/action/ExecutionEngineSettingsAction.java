@@ -14,6 +14,7 @@ public class ExecutionEngineSettingsAction extends ExecutionMessagesAction {
         super(messagesTree, "Settings", Icons.EXEC_RESULT_OPTIONS);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);

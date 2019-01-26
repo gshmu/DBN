@@ -26,10 +26,12 @@ public class ObjectDependencyTreeDialog extends DBNDialog<ObjectDependencyTreeFo
         return new ObjectDependencyTreeForm(this, object);
     }
 
+    @Override
     public void doCancelAction() {
         super.doCancelAction();
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{getCancelAction()};

@@ -19,10 +19,12 @@ public class ConnectionSslSettings extends Configuration<ConnectionSslSettingsFo
         this.parent = parent;
     }
 
+    @Override
     public String getDisplayName() {
         return "Connection SSL Settings";
     }
 
+    @Override
     public String getHelpTopic() {
         return "connectionSslSettings";
     }

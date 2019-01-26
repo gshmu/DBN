@@ -19,14 +19,17 @@ public class DBDataTypePresentableProperty extends PresentableProperty{
         this.dataType = dataType;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getValue() {
         return dataType.getQualifiedName();
     }
 
+    @Override
     public Icon getIcon() {
         DBType declaredType = dataType.getDeclaredType();
         return declaredType == null ? null : declaredType.getIcon();

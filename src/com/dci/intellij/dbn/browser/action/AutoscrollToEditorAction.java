@@ -15,6 +15,7 @@ public class AutoscrollToEditorAction extends ToggleAction implements DumbAware{
     }
 
 
+    @Override
     public boolean isSelected(@NotNull AnActionEvent e) {
         Project project = ActionUtil.getProject(e);
         if (project != null) {
@@ -24,6 +25,7 @@ public class AutoscrollToEditorAction extends ToggleAction implements DumbAware{
         return false;
     }
 
+    @Override
     public void setSelected(@NotNull AnActionEvent e, boolean state) {
         Project project = ActionUtil.getProject(e);
         if (project != null) {

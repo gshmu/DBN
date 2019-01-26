@@ -14,10 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawForeignKeyInfo;
-import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawIndexDetailInfo;
-import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawIndexInfo;
-import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawTableInfo;
+import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.*;
 
 public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetElement<T>> extends SqliteDatasetInfoResultSetStub<T> {
 
@@ -29,6 +26,7 @@ public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetEleme
         super(ownerName, datasetName, connection);
     }
 
+    @Override
     protected abstract void init(String ownerName, String datasetName) throws SQLException;
 
     protected abstract ResultSet loadTableInfo(String ownerName, String datasetName) throws SQLException;

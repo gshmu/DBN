@@ -123,10 +123,12 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
         return filtersTree;
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         Set<DBObjectType> filterObjectTypes = new HashSet<>();
         ObjectNameFilterSettings filterSettings = getConfiguration();
@@ -152,5 +154,6 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
         });
     }
 
+    @Override
     public void resetFormChanges() {}
 }

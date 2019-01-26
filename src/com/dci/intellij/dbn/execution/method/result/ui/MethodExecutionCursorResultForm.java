@@ -78,10 +78,12 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
         return argumentRef.get();
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         dataSearchComponent = null;
@@ -95,6 +97,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
     /*********************************************************
      *              SearchableDataComponent                  *
      *********************************************************/
+    @Override
     public void showSearchHeader() {
         resultTable.clearSelection();
 
@@ -114,6 +117,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
         return dataSearchComponent.get();
     }
 
+    @Override
     public void hideSearchHeader() {
         getSearchComponent().resetFindModel();
         searchPanel.setVisible(false);
@@ -154,6 +158,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
         }
     };
 
+    @Override
     @Nullable
     public DataProvider getDataProvider() {
         return dataProvider;

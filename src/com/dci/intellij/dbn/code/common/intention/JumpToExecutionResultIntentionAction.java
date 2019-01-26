@@ -21,11 +21,13 @@ import javax.swing.*;
 public class JumpToExecutionResultIntentionAction extends GenericIntentionAction implements HighPriorityAction {
     private WeakRef<StatementExecutionProcessor> cachedExecutionProcessor;
 
+    @Override
     @NotNull
     public String getText() {
         return "Navigate to result";
     }
 
+    @Override
     @NotNull
     public String getFamilyName() {
         return IntentionActionGroups.STATEMENT_EXECUTION;
@@ -56,6 +58,7 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
         return Icons.STMT_EXECUTION_NAVIGATE;
     }
 
+    @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile instanceof DBLanguagePsiFile) {
             ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
@@ -73,6 +76,7 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
         return false;
     }
 
+    @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
         FileEditor fileEditor = EditorUtil.getFileEditor(editor);
@@ -85,6 +89,7 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
         }
     }
 
+    @Override
     public boolean startInWriteAction() {
         return false;
     }

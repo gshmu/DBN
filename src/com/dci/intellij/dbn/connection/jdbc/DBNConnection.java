@@ -102,6 +102,7 @@ public class DBNConnection extends DBNConnectionBase {
         this.sessionId = sessionId;
     }
 
+    @Override
     protected <S extends Statement> S wrap(S statement) {
         updateLastAccess();
         if (statement instanceof CallableStatement) {
@@ -313,6 +314,7 @@ public class DBNConnection extends DBNConnectionBase {
         return isValid(2);
     }
 
+    @Override
     public boolean isValid(int timeout) {
         return !isInvalid();
     }
@@ -322,6 +324,7 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
 
+    @Override
     public boolean set(ResourceStatus status, boolean value) {
         boolean changed;
         if (status == ACTIVE) {

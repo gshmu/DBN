@@ -15,10 +15,12 @@ public abstract class DBNEditableTableModel extends DisposableBase implements DB
     private Set<TableModelListener> tableModelListeners = new HashSet<TableModelListener>();
     private Latent<DBNTableGutterModel> listModel = DisposableLatent.create(this, () -> new DBNTableGutterModel<>(DBNEditableTableModel.this));
 
+    @Override
     public void addTableModelListener(TableModelListener listener) {
         tableModelListeners.add(listener);
     }
 
+    @Override
     public void removeTableModelListener(TableModelListener listener) {
         tableModelListeners.remove(listener);
     }
@@ -47,6 +49,7 @@ public abstract class DBNEditableTableModel extends DisposableBase implements DB
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
+    @Override
     public void dispose() {
         super.dispose();
         tableModelListeners.clear();

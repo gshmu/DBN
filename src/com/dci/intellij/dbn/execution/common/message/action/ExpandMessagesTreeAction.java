@@ -12,6 +12,7 @@ public class ExpandMessagesTreeAction extends ExecutionMessagesAction {
         super(messagesTree, "Expand All", Icons.ACTION_EXPAND_ALL);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         TreeUtil.expandAll(getMessagesTree());
     }

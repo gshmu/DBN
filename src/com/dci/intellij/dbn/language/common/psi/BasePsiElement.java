@@ -81,6 +81,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         this.elementType = elementType;
     }
 
+    @Override
     public FormattingAttributes getFormattingAttributes() {
         FormattingDefinition formattingDefinition = elementType.getFormatting();
         if (formattingAttributes == null && formattingDefinition != null) {
@@ -90,6 +91,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return formattingAttributes;
     }
 
+    @Override
     public FormattingAttributes getFormattingAttributesRecursive(boolean left) {
         FormattingAttributes formattingAttributes = getFormattingAttributes();
         if (formattingAttributes == null) {
@@ -203,6 +205,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
                         (isScopeIsolation() ? " SCOPE_ISOLATION" : "");
     }
 
+    @Override
     public void acceptChildren(@NotNull PsiElementVisitor visitor) {
             final PsiElement psiChild = getFirstChild();
         if (psiChild == null) return;
@@ -222,11 +225,13 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return new LocalSearchScope(getFile());
     }
 
+    @Override
     public void accept(@NotNull PsiElementVisitor visitor) {
         // TODO: check if any visitor relevant
         super.accept(visitor);
     }
 
+    @Override
     public String getText() {
         if (ApplicationManager.getApplication().isReadAccessAllowed()) {
             return super.getText();
@@ -235,6 +240,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     }
 
 
+    @Override
     public PsiElement findElementAt(int offset) {
         return super.findElementAt(offset);
     }
@@ -308,6 +314,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return getElementType().isVirtualObject();
     }
 
+    @Override
     public void navigate(boolean requestFocus) {
         if (isValid()) {
             OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(this);
@@ -652,6 +659,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     /*********************************************************
      *                       ItemPresentation                *
      *********************************************************/
+    @Override
     public String getPresentableText() {
         ElementType elementType = getSpecificElementType();
         return elementType.getDescription();
@@ -680,11 +688,13 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return false;
     }
 
+    @Override
     @Nullable
     public String getLocationString() {
         return null;
     }
 
+    @Override
     @Nullable
     public Icon getIcon(boolean open) {
         return getSpecificElementType().getIcon();
@@ -697,6 +707,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
     public abstract boolean hasErrors();
 
+    @Override
     @NotNull
     public DBLanguage getLanguage() {
         return getLanguageDialect().getBaseLanguage();

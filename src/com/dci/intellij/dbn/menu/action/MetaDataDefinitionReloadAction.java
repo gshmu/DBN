@@ -8,10 +8,12 @@ import com.intellij.openapi.project.DumbAwareAction;
 
 public class MetaDataDefinitionReloadAction extends DumbAwareAction {
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         DatabaseInterfaceProviderFactory.reset();
     }
 
+    @Override
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setVisible(DatabaseNavigator.getInstance().isDeveloperModeEnabled());

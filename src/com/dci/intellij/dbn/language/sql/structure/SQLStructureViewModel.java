@@ -14,6 +14,7 @@ public class SQLStructureViewModel extends DBLanguageStructureViewModel {
         super(editor, psiFile);
     }
 
+    @Override
     @NotNull
     public StructureViewTreeElement getRoot() {
         return new SQLStructureViewElement(getPsiFile());

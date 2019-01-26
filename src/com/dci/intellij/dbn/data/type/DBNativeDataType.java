@@ -27,10 +27,12 @@ public class DBNativeDataType implements DynamicContentElement{
         this.dataTypeDefinition = dataTypeDefinition;
     }
 
+    @Override
     public boolean isDisposed() {
         return false;
     }
 
+    @Override
     public String getName() {
         return dataTypeDefinition.getName();
     }
@@ -212,10 +214,12 @@ public class DBNativeDataType implements DynamicContentElement{
      *                 DynamicContentElement                 *
      *********************************************************/
 
+    @Override
     public String getDescription() {
         return null;
     }
 
+    @Override
     public void reload() {
     }
 
@@ -224,6 +228,7 @@ public class DBNativeDataType implements DynamicContentElement{
 
     }
 
+    @Override
     public void dispose() {
 
     }
@@ -233,6 +238,7 @@ public class DBNativeDataType implements DynamicContentElement{
         return null;
     }
 
+    @Override
     public int compareTo(@NotNull Object o) {
         DBNativeDataType remote = (DBNativeDataType) o;
         return getName().compareTo(remote.getName());

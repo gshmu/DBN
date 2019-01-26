@@ -67,6 +67,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return instructions;
     }
 
+    @Override
     public DatabaseType getDatabaseType() {return databaseType;}
 
     @Override
@@ -74,6 +75,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return databaseVersion;
     }
 
+    @Override
     public Filter<BrowserTreeNode> getObjectTypeFilter() {
         return null;
     }
@@ -95,13 +97,16 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return null;
     }
 
+    @Override
     public DBLanguageDialect getLanguageDialect(DBLanguage language) {
         return getInterfaceProvider().getLanguageDialect(language);
     }
 
+    @Override
     @NotNull
     public Project getProject() {return project;}
 
+    @Override
     public boolean isEnabled() {
         return true;
     }
@@ -132,6 +137,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     public Map<String, String> getProperties() {return properties;}
 
+    @Override
     public DatabaseInterfaceProvider getInterfaceProvider() {
         if (interfaceProvider == null) {
             try {
@@ -229,18 +235,22 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override
     public boolean isDatabaseInitialized() {return true;}
 
+    @Override
     @NotNull
     public ConnectionBundle getConnectionBundle() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     @NotNull
     public ConnectionPool getConnectionPool() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     @NotNull
     public DBObjectBundle getObjectBundle() {return objectBundle;}
+    @Override
     public DBSchema getUserSchema() {return null;}
 
     @Override
@@ -292,6 +302,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return null;
     }
 
+    @Override
     public ConnectionHandler clone() {return null;}
     @Override
     public boolean hasUncommittedChanges() {return false;}

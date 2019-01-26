@@ -15,11 +15,13 @@ public class ClauseChopDownNeverPreset extends ClauseAbstractPreset {
         super("do_not_chop_down", "Do not chop down");
     }
 
+    @Override
     @Nullable
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         return WRAP_NONE;
     }
 
+    @Override
     @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         PsiElement previousPsiElement = psiElement.getPrevSibling();

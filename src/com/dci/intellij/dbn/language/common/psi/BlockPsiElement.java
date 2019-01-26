@@ -9,6 +9,7 @@ public class BlockPsiElement extends SequencePsiElement {
     }
 
 
+    @Override
     public BlockElementType getElementType() {
         return (BlockElementType) super.getElementType();
     }

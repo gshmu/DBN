@@ -26,10 +26,12 @@ public class ExplainPlanMessageNode extends DisposableBase implements MessageTre
         return FailsafeUtil.get(explainPlanMessage);
     }
 
+    @Override
     public VirtualFile getVirtualFile() {
         return getParent().getVirtualFile();
     }
 
+    @Override
     public MessagesTreeModel getTreeModel() {
         return getParent().getTreeModel();
     }
@@ -37,30 +39,37 @@ public class ExplainPlanMessageNode extends DisposableBase implements MessageTre
     /*********************************************************
      *                        TreeNode                       *
      *********************************************************/
+    @Override
     public TreeNode getChildAt(int childIndex) {
         return null;
     }
 
+    @Override
     public int getChildCount() {
         return 0;
     }
 
+    @Override
     public ExplainPlanMessagesFileNode getParent() {
         return FailsafeUtil.get(parent);
     }
 
+    @Override
     public int getIndex(TreeNode node) {
         return -1;
     }
 
+    @Override
     public boolean getAllowsChildren() {
         return false;
     }
 
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
+    @Override
     public Enumeration children() {
         return null;
     }
@@ -79,6 +88,7 @@ public class ExplainPlanMessageNode extends DisposableBase implements MessageTre
         return getExplainPlanMessage();
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         explainPlanMessage = null;

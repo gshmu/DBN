@@ -60,10 +60,12 @@ public class DatabaseBrowserSortingSettings extends ProjectConfiguration<Databas
         return "sorting";
     }
 
+    @Override
     public String getDisplayName() {
         return "Database Browser";
     }
 
+    @Override
     public String getHelpTopic() {
         return "browserSettings";
     }
@@ -76,6 +78,7 @@ public class DatabaseBrowserSortingSettings extends ProjectConfiguration<Databas
      *                     Configuration                     *
      *********************************************************/
 
+    @Override
     public void readConfiguration(Element element) {
         List<DBObjectComparator> newComparators = new ArrayList<DBObjectComparator>();
         List<Element> children = element.getChildren();
@@ -97,6 +100,7 @@ public class DatabaseBrowserSortingSettings extends ProjectConfiguration<Databas
         comparators = newComparators;
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         for (DBObjectComparator comparator : comparators) {
             Element child = new Element("object-type");

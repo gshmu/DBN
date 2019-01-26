@@ -25,10 +25,12 @@ public class CodeEditorGeneralSettingsForm extends ConfigurationEditorForm<CodeE
         registerComponent(mainPanel);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         CodeEditorGeneralSettings settings = getConfiguration();
         settings.setShowObjectsNavigationGutter(showObjectNavigationGutterCheckBox.isSelected());
@@ -48,6 +50,7 @@ public class CodeEditorGeneralSettingsForm extends ConfigurationEditorForm<CodeE
         }
     }
 
+    @Override
     public void resetFormChanges() {
         CodeEditorGeneralSettings settings = getConfiguration();
         showObjectNavigationGutterCheckBox.setSelected(settings.isShowObjectsNavigationGutter());

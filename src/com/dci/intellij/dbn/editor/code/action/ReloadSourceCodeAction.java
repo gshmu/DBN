@@ -19,6 +19,7 @@ public class ReloadSourceCodeAction extends AbstractSourceCodeEditorAction {
         super("", null, Icons.CODE_EDITOR_RELOAD);
     }
 
+    @Override
     public void actionPerformed(@NotNull final AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         SourceCodeEditor fileEditor = getFileEditor(e);
@@ -29,6 +30,7 @@ public class ReloadSourceCodeAction extends AbstractSourceCodeEditorAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();

@@ -31,6 +31,7 @@ public class SimpleBrowserTreeModel extends BrowserTreeModel {
         }
     };
 
+    @Override
     public void dispose() {
         super.dispose();
     }

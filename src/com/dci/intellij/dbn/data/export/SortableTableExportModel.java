@@ -25,26 +25,31 @@ public class SortableTableExportModel implements DataExportModel{
         }
     }
 
+    @Override
     public Project getProject() {
         return table.getProject();
     }
 
+    @Override
     public String getTableName() {
         return table.getName();
     }
 
+    @Override
     public int getColumnCount() {
         return selection ?
             selectedColumns.length :
             table.getModel().getColumnCount();
     }
 
+    @Override
     public int getRowCount() {
         return selection ?
             selectedRows.length :
             table.getModel().getRowCount();
     }
 
+    @Override
     public Object getValue(int rowIndex, int columnIndex) {
         int realRowIndex = getRealRowIndex(rowIndex);
         int realColumnIndex = getRealColumnIndex(columnIndex);
@@ -52,11 +57,13 @@ public class SortableTableExportModel implements DataExportModel{
         return dataModelCell == null ? null : dataModelCell.getUserValue();
     }
 
+    @Override
     public String getColumnName(int columnIndex) {
         int realColumnIndex = getRealColumnIndex(columnIndex);
         return table.getModel().getColumnName(realColumnIndex);
     }
 
+    @Override
     public GenericDataType getGenericDataType(int columnIndex) {
         int realColumnIndex = getRealColumnIndex(columnIndex);
         ColumnInfo columnInfo = table.getModel().getColumnInfo(realColumnIndex);

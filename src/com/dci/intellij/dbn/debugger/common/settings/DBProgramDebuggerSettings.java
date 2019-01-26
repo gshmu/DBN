@@ -17,10 +17,12 @@ public class DBProgramDebuggerSettings extends XDebuggerSettings<DBProgramDebugg
         return new DBProgramDebuggerConfigurable();
     }
 
+    @Override
     public DBProgramDebuggerState getState() {
         return state;
     }
 
+    @Override
     public void loadState(DBProgramDebuggerState state) {
         this.state = state;
     }

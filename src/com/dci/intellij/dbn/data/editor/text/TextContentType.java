@@ -41,10 +41,12 @@ public class TextContentType implements Selectable<TextContentType> {
         return get(project, "Text");
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getError() {
         return null;
     }
@@ -53,18 +55,22 @@ public class TextContentType implements Selectable<TextContentType> {
         return fileType;
     }
 
+    @Override
     public Icon getIcon() {
         return fileType.getIcon();
     }
 
+    @Override
     public boolean isSelected() {
         return enabled;
     }
 
+    @Override
     public boolean isMasterSelected() {
         return true;
     }
 
+    @Override
     public void setSelected(boolean selected) {
         this.enabled = selected;
     }

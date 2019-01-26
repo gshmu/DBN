@@ -24,6 +24,7 @@ public abstract class DBObjectStructureViewElement<T extends DBObject> implement
         return treeParent;
     }
 
+    @Override
     public Object getValue() {
         return this;
     }
@@ -32,18 +33,22 @@ public abstract class DBObjectStructureViewElement<T extends DBObject> implement
         return object;
     }
 
+    @Override
     @NotNull
     public ItemPresentation getPresentation() {
         return new ItemPresentation() {
+            @Override
             public String getPresentableText() {
                 return object.getPresentableText();
             }
 
+            @Override
             @Nullable
             public String getLocationString() {
                 return null;
             }
 
+            @Override
             @Nullable
             public Icon getIcon(boolean open) {
                 return object.getIcon(0);
@@ -56,23 +61,28 @@ public abstract class DBObjectStructureViewElement<T extends DBObject> implement
         };
     }
 
+    @Override
     public boolean canNavigate() {
         return false;
     }
 
+    @Override
     public boolean canNavigateToSource() {
         return false;
     }
 
+    @Override
     @NotNull
     public TreeElement[] getChildren() {
         return EMPTY_ARRAY;
     }
 
+    @Override
     public void navigate(boolean requestFocus) {
 
     }
 
+    @Override
     public int compareTo(@NotNull Object o) {
         if (o instanceof DBObject) {
             DBObject remote = (DBObject) o;

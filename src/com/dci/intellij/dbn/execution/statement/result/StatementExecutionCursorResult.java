@@ -59,6 +59,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         super(executionProcessor, resultName, updateCount);
     }
 
+    @Override
     @NotNull
     public StatementExecutionCursorProcessor getExecutionProcessor() {
         return (StatementExecutionCursorProcessor) super.getExecutionProcessor();
@@ -106,6 +107,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         resultPanel.updateVisibleComponents();
     }
 
+    @Override
     public StatementExecutionResultForm getForm(boolean create) {
         return resultPanel;
     }
@@ -179,6 +181,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         }
     };
 
+    @Override
     @Nullable
     public DataProvider getDataProvider() {
         return dataProvider;

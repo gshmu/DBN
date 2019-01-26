@@ -43,10 +43,12 @@ public class DataEditorPopupSettingsForm extends ConfigurationEditorForm<DataEdi
         delayTextField.setEnabled(enabled);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         DataEditorPopupSettings settings = getConfiguration();
         settings.setActive(activeCheckBox.isSelected());
@@ -57,6 +59,7 @@ public class DataEditorPopupSettingsForm extends ConfigurationEditorForm<DataEdi
         }
     }
 
+    @Override
     public void resetFormChanges() {
         DataEditorPopupSettings settings = getConfiguration();
         activeCheckBox.setSelected(settings.isActive());

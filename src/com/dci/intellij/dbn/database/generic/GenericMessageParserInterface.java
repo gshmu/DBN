@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 
 public class GenericMessageParserInterface implements DatabaseMessageParserInterface {
+    @Override
     @Nullable
     public DatabaseObjectIdentifier identifyObject(SQLException exception) {
          return null;

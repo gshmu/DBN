@@ -70,6 +70,7 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
         }
     }
 
+    @Override
     public void loadContent(DynamicContent<T> dynamicContent, boolean forceReload) throws DynamicContentLoadException, InterruptedException {
         boolean addDelay = DatabaseNavigator.getInstance().isSlowDatabaseModeEnabled();
         ProgressMonitor.setTaskDescription("Loading " + dynamicContent.getContentDescription());
@@ -154,6 +155,7 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
         }
     }
 
+    @Override
     public void reloadContent(DynamicContent<T> dynamicContent) throws DynamicContentLoadException, InterruptedException {
         loadContent(dynamicContent, true);
     }

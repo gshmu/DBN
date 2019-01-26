@@ -4,14 +4,17 @@ import javax.swing.*;
 
 public class BasicDataEditorComponent extends JTextField implements DataEditorComponent{
     private UserValueHolder userValueHolder;
+    @Override
     public JTextField getTextField() {
         return this;
     }
 
+    @Override
     public void setUserValueHolder(UserValueHolder userValueHolder) {
         this.userValueHolder = userValueHolder;
     }
 
+    @Override
     public UserValueHolder getUserValueHolder() {
         return userValueHolder;
     }

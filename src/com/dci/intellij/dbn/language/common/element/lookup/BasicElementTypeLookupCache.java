@@ -33,6 +33,7 @@ public class BasicElementTypeLookupCache extends ElementTypeLookupCacheBaseIndex
         return false;
     }
 
+    @Override
     public boolean checkStartsWithIdentifier() {return false;}
 
     @Override

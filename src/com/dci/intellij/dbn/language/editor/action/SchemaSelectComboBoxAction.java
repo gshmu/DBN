@@ -23,6 +23,7 @@ import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 public class SchemaSelectComboBoxAction extends DBNComboBoxAction implements DumbAware {
     private static final String NAME = "Schema";
 
+    @Override
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
         DefaultActionGroup actionGroup = new DefaultActionGroup();
@@ -40,6 +41,7 @@ public class SchemaSelectComboBoxAction extends DBNComboBoxAction implements Dum
         return actionGroup;
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Project project = getProject(e);
         VirtualFile virtualFile = getVirtualFile(e);

@@ -14,11 +14,13 @@ import org.jetbrains.annotations.NotNull;
 public class DBStatementJdbcRunner extends DBProgramRunner<StatementExecutionInput> {
     public static final String RUNNER_ID = "DBNStatementRunner";
 
+    @Override
     @NotNull
     public String getRunnerId() {
         return RUNNER_ID;
     }
 
+    @Override
     public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
         return false;
     }

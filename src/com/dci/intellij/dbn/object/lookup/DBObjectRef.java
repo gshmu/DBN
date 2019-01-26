@@ -96,6 +96,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return null;
     }
 
+    @Override
     public void readState(Element element) {
         if (element != null) {
             ConnectionId connectionId = ConnectionId.get(element.getAttributeValue("connection-id"));
@@ -169,6 +170,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
 
     }
 
+    @Override
     public void writeState(Element element) {
         String value = serialize();
 
@@ -309,6 +311,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return objectRefs;
     }
 
+    @Override
     @Nullable
     public T get() {
         return load(null);

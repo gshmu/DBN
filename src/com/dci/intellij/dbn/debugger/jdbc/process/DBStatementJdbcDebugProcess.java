@@ -42,6 +42,7 @@ public class DBStatementJdbcDebugProcess extends DBJdbcDebugProcess<StatementExe
         }
     }
 
+    @Override
     public VirtualFile getRuntimeInfoFile(DebuggerRuntimeInfo runtimeInfo) {
         DBSchemaObject schemaObject = getDatabaseObject(runtimeInfo);
         return schemaObject == null ?

@@ -16,6 +16,7 @@ public class DBMethodJdbcRunConfig extends DBMethodRunConfig {
         super(project, factory, name, category);
     }
 
+    @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
         return new DBMethodJdbcRunProfileState(env);
     }

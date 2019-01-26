@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.StringTokenizer;
 
 public class DBLanguageElementSignatureProvider implements ElementSignatureProvider {
+    @Override
     public String getSignature(@NotNull PsiElement psiElement) {
         if (psiElement.getContainingFile() instanceof DBLanguagePsiFile) {
             TextRange textRange = psiElement.getTextRange();
@@ -28,6 +29,7 @@ public class DBLanguageElementSignatureProvider implements ElementSignatureProvi
         return null;
     }
 
+    @Override
     public PsiElement restoreBySignature(@NotNull PsiFile psifile, @NotNull String signature, @Nullable StringBuilder processingInfoStorage) {
         if (psifile instanceof DBLanguagePsiFile) {
             StringTokenizer tokenizer = new StringTokenizer(signature, "#");

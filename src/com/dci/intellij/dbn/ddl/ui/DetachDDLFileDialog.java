@@ -32,6 +32,7 @@ public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         return new SelectDDLFileForm(object, virtualFiles, hint, false);
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{
@@ -47,6 +48,7 @@ public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
             super("Detach all");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             getComponent().selectAll();
             doOKAction();
@@ -58,12 +60,14 @@ public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
             super("Detach none");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             getComponent().selectNone();
             doOKAction();
         }
     }
 
+    @Override
     protected void doOKAction() {
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(getProject());
         Object[] selectedPsiFiles = getComponent().getSelection();

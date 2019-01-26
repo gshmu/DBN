@@ -34,12 +34,14 @@ public class DatasetColumnState implements Comparable<DatasetColumnState>, Persi
         readState(element);
     }
 
+    @Override
     public void readState(Element element) {
         name = element.getAttributeValue("name");
         position = SettingsUtil.getIntegerAttribute(element, "position", -1);
         visible = SettingsUtil.getBooleanAttribute(element, "visible", true);
     }
 
+    @Override
     public void writeState(Element element) {
         element.setAttribute("name", name);
         SettingsUtil.setIntegerAttribute(element, "position", position);

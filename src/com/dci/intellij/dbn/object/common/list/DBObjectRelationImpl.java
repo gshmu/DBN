@@ -23,14 +23,17 @@ public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObjec
 
 
 
+    @Override
     public DBObjectRelationType getObjectRelationType() {
         return objectRelationType;
     }
 
+    @Override
     public S getSourceObject() {
         return DBObjectRef.get(sourceObject);
     }
 
+    @Override
     public T getTargetObject() {
         return DBObjectRef.get(targetObject);
     }
@@ -44,6 +47,7 @@ public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObjec
     /*********************************************************
     *               DynamicContentElement                   *
     *********************************************************/
+    @Override
     public String getName() {
         return null;
     }
@@ -53,10 +57,12 @@ public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObjec
         return 0;
     }
 
+    @Override
     public String getDescription() {
         return null;
     }
 
+    @Override
     public void dispose() {
     }
 
@@ -65,6 +71,7 @@ public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObjec
         return getSourceObject() == null || getTargetObject() == null;
     }
 
+    @Override
     public void reload() {
     }
 
@@ -73,6 +80,7 @@ public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObjec
 
     }
 
+    @Override
     public int compareTo(@NotNull Object o) {
         DBObjectRelationImpl remote = (DBObjectRelationImpl) o;
         return sourceObject.compareTo(remote.sourceObject);

@@ -20,15 +20,18 @@ public class CodeCompletionFormatSettingsForm extends ConfigurationEditorForm<Co
         registerComponent(mainPanel);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         CodeCompletionFormatSettings settings = getConfiguration();
         settings.setEnforceCodeStyleCase(enforceCaseCheckBox.isSelected());
     }
 
+    @Override
     public void resetFormChanges() {
         CodeCompletionFormatSettings settings = getConfiguration();
         enforceCaseCheckBox.setSelected(settings.isEnforceCodeStyleCase());

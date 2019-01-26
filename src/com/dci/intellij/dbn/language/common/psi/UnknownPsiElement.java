@@ -22,6 +22,7 @@ public class UnknownPsiElement extends BasePsiElement {
         return FormattingAttributes.NO_ATTRIBUTES;
     }
 
+    @Override
     public int approximateLength() {
         return getTextLength();
     }

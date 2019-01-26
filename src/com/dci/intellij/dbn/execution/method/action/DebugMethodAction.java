@@ -17,6 +17,7 @@ public class DebugMethodAction extends AnObjectAction<DBMethod> {
         super(method);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         DBMethod method = getObject();
         if (method != null) {

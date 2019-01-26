@@ -17,20 +17,24 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class ExecuteScriptIntentionAction extends GenericIntentionAction {
+    @Override
     @NotNull
     public String getText() {
         return "Execute SQL script...";
     }
 
+    @Override
     @NotNull
     public String getFamilyName() {
         return IntentionActionGroups.STATEMENT_EXECUTION;
     }
 
+    @Override
     public Icon getIcon(int flags) {
         return Icons.EXECUTE_SQL_SCRIPT;
     }
 
+    @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile != null && psiFile.getLanguage() instanceof DBLanguage) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
@@ -41,6 +45,7 @@ public class ExecuteScriptIntentionAction extends GenericIntentionAction {
         return false;
     }
 
+    @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         if (psiFile != null && editor != null && psiFile.getLanguage() instanceof DBLanguage) {
             FileDocumentManager.getInstance().saveDocument(editor.getDocument());
@@ -49,6 +54,7 @@ public class ExecuteScriptIntentionAction extends GenericIntentionAction {
         }
     }
 
+    @Override
     public boolean startInWriteAction() {
         return false;
     }

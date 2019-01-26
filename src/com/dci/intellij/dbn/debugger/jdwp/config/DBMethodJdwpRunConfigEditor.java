@@ -15,6 +15,7 @@ public class DBMethodJdwpRunConfigEditor extends DBRunConfigEditor<DBMethodJdwpR
     }
 
 
+    @Override
     public void setExecutionInput(MethodExecutionInput executionInput) {
         DBMethodJdwpRunConfigEditorForm configurationEditorForm = getConfigurationEditorForm(false);
         if (configurationEditorForm != null) {

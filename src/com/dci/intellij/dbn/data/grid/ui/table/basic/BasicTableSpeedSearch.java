@@ -18,10 +18,12 @@ public class BasicTableSpeedSearch extends SpeedSearchBase<BasicTable<? extends 
         return getComponent();
     }
 
+    @Override
     protected int getSelectedIndex() {
         return columnIndex;
     }
 
+    @Override
     protected Object[] getAllElements() {
         if (columnInfos == null) {
             DataModelHeader<ColumnInfo> modelHeader = getTable().getModel().getHeader();
@@ -30,11 +32,13 @@ public class BasicTableSpeedSearch extends SpeedSearchBase<BasicTable<? extends 
         return columnInfos;
     }
 
+    @Override
     protected String getElementText(Object o) {
         ColumnInfo columnInfo = (ColumnInfo) o;
         return columnInfo.getName();
     }
 
+    @Override
     protected void selectElement(Object o, String s) {
         for(ColumnInfo columnInfo : columnInfos) {
             if (columnInfo == o) {

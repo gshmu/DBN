@@ -16,6 +16,7 @@ public class ChangeSortingDirectionAction extends DumbAwareAction {
         this.form = form;
     }
 
+    @Override
     public void update(AnActionEvent e) {
         SortingInstruction sortingInstruction = form.getSortingInstruction();
         SortDirection direction = sortingInstruction.getDirection();
@@ -26,6 +27,7 @@ public class ChangeSortingDirectionAction extends DumbAwareAction {
         e.getPresentation().setText("Change Sorting Direction");
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         form.getSortingInstruction().switchDirection();
     }

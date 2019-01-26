@@ -218,6 +218,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
         return familyTypes;
     }
 
+    @Override
     public DBObjectType getGenericType() {
         return genericType == null ? this : genericType.getGenericType();
     }
@@ -264,6 +265,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
         return false;
     }
 
+    @Override
     public boolean matches(DBObjectType objectType) {
         if (this == ANY || objectType == ANY) {
             return true;

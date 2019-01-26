@@ -45,6 +45,7 @@ public class ConnectionInfoDialog extends DBNDialog<ConnectionInfoForm> {
         }
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{

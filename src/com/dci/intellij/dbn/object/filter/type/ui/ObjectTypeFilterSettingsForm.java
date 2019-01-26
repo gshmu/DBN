@@ -62,6 +62,7 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
         return visibleObjectsList.isSelected(objectFilterEntry);
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }

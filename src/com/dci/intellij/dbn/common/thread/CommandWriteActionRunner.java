@@ -20,8 +20,10 @@ public abstract class CommandWriteActionRunner {
 
     public final void start() {
         Runnable command = new Runnable() {
+            @Override
             public void run() {
                 Runnable writeAction = new Runnable() {
+                    @Override
                     public void run() {
                         CommandWriteActionRunner.this.run();
                     }

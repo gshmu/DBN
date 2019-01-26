@@ -13,6 +13,7 @@ public class PostgresPSQLParserDefinition extends PSQLParserDefinition {
         super(parser);
     }
 
+    @Override
     @NotNull
     public Lexer createLexer(Project project) {
         return new FlexAdapter(new PostgresPSQLParserFlexLexer(getTokenTypes()));

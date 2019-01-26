@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nls;
 import javax.swing.*;
 
 public class DBProgramDebuggerConfigurable implements Configurable {
+    @Override
     @Nls
     public String getDisplayName() {
         return "Database";
@@ -17,24 +18,30 @@ public class DBProgramDebuggerConfigurable implements Configurable {
         return null;
     }
 
+    @Override
     public String getHelpTopic() {
         return null;
     }
 
+    @Override
     public JComponent createComponent() {
         return new DBProgramDebuggerSettingsForm().getComponent();
     }
 
+    @Override
     public boolean isModified() {
         return false;
     }
 
+    @Override
     public void apply() throws ConfigurationException {
     }
 
+    @Override
     public void reset() {
     }
 
+    @Override
     public void disposeUIResources() {
     }
 }

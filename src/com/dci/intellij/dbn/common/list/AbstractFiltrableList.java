@@ -32,24 +32,32 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
     public void sort(Comparator<? super T> comparator)          {
         Collections.sort(list, comparator);}
 
+    @Override
     public boolean add(T o)                             {return list.add(o);}
 
+    @Override
     public boolean addAll(@NotNull Collection<? extends T> c)    {return list.addAll(c);}
 
+    @Override
     public boolean remove(Object o)                     {return list.remove(o);}
 
+    @Override
     public boolean removeAll(@NotNull Collection c)              {return list.removeAll(c);}
 
+    @Override
     public boolean retainAll(@NotNull Collection c)              {return list.retainAll(c);}
 
+    @Override
     public void clear()                                 {if (!list.isEmpty()) list.clear();}
 
+    @Override
     public boolean isEmpty()                            {return size() == 0;}
 
     private boolean isFiltered() {
         return getFilter() != null;
     }
 
+    @Override
     public int size() {
         Filter<T> filter = getFilter();
         if (filter != null) {
@@ -62,6 +70,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
         }
     }
 
+    @Override
     @NotNull
     public Iterator<T> iterator(){
         final Filter<T> filter = getFilter();
@@ -77,12 +86,15 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
                     return null;
                 }
 
+                @Override
                 public boolean hasNext() { return next != null;}
+                @Override
                 public T next() {
                     T result = next;
                     next = findNext();
                     return result;
                 }
+                @Override
                 public void remove(){
                     throw new UnsupportedOperationException("Iterator remove not implemented in filtrable list");
                 }
@@ -93,6 +105,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
         }
     }
 
+    @Override
     @NotNull
     public Object[] toArray() {
         Filter<T> filter = getFilter();
@@ -105,6 +118,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
         }
     }
 
+    @Override
     @NotNull
     public <E> E[] toArray(@NotNull E[] e) {
         Filter<T> filter = getFilter();
@@ -118,6 +132,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
 
     }
 
+    @Override
     public boolean contains(Object o){
         if (isFiltered()) {
             return indexOf(o) > -1;
@@ -127,6 +142,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
 
     }
 
+    @Override
     public int indexOf(Object o) {
         Filter<T> filter = getFilter();
         if (filter != null) {
@@ -143,6 +159,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
         }
     }
 
+    @Override
     public int lastIndexOf(Object o) {
         Filter<T> filter = getFilter();
         if (filter != null) {
@@ -161,6 +178,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
 
     }
 
+    @Override
     public boolean containsAll(@NotNull Collection c) {
         if (isFiltered()) {
             List list = Arrays.asList(toArray());
@@ -191,6 +209,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
         return -1;
     }
 
+    @Override
     public void add(int index, T element){
         if (isFiltered()) {
             int idx = findIndex(index);
@@ -200,6 +219,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
         }
     }
 
+    @Override
     public boolean addAll(int index, @NotNull Collection<? extends T> c){
         if (isFiltered()) {
             int idx = findIndex(index);
@@ -209,6 +229,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
         }
     }
 
+    @Override
     public T get(int index){
         if (isFiltered()) {
             int idx = findIndex(index);
@@ -218,6 +239,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
         }
     }
 
+    @Override
     public T set(int index, T element) {
         if (isFiltered()) {
             int idx = findIndex(index);
@@ -228,6 +250,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
         }
     }
 
+    @Override
     public T remove(int index) {
         if (isFiltered()) {
             int idx = findIndex(index);
@@ -237,12 +260,15 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
         }
     }
 
+    @Override
     @NotNull
     public ListIterator<T> listIterator()               {throw new UnsupportedOperationException("List iterator not implemented in filtrable list");}
 
+    @Override
     @NotNull
     public ListIterator<T> listIterator(int index)      {throw new UnsupportedOperationException("List iterator not implemented in filtrable list");}
 
+    @Override
     @NotNull
     public List<T> subList(int fromIndex, int toIndex)  {throw new UnsupportedOperationException("Sublist not implemented in filtrable list");}
 

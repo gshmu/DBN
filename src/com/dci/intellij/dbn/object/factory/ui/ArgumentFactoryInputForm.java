@@ -37,6 +37,7 @@ public class ArgumentFactoryInputForm extends ObjectFactoryInputForm {
     }
 
     private ActionListener actionListener = new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == inCheckBox || e.getSource() == outCheckBox) {
                 Icon icon =
@@ -49,6 +50,7 @@ public class ArgumentFactoryInputForm extends ObjectFactoryInputForm {
         }
     };
 
+    @Override
     public ObjectFactoryInput createFactoryInput(ObjectFactoryInput parent) {
         return new ArgumentFactoryInput(
                 parent,
@@ -59,10 +61,12 @@ public class ArgumentFactoryInputForm extends ObjectFactoryInputForm {
                 outCheckBox.isSelected());
     }
 
+    @Override
     public void focus() {
         nameTextField.requestFocus();
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -71,6 +75,7 @@ public class ArgumentFactoryInputForm extends ObjectFactoryInputForm {
         dataTypeEditor = new DataTypeEditor(getConnectionHandler());
     }
 
+    @Override
     public void dispose() {
         super.dispose();
     }

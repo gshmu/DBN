@@ -55,6 +55,7 @@ public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHead
         };
     }
 
+    @Override
     public void doOKAction() {
         try {
             ConnectionFilterSettings configuration = configurationEditor.getConfiguration();
@@ -69,6 +70,7 @@ public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHead
 
     }
 
+    @Override
     public void doCancelAction() {
         super.doCancelAction();
     }

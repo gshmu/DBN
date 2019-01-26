@@ -13,6 +13,7 @@ public class CloseMessagesWindowAction extends ExecutionMessagesAction {
         super(messagesTree, "Close", Icons.EXEC_RESULT_CLOSE);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         ExecutionManager.getInstance(project).removeMessagesTab();

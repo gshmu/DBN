@@ -32,6 +32,7 @@ public abstract class SqliteDatasetNamesResultSet extends SqliteResultSetAdapter
 
     protected abstract ResultSet loadTableNames() throws SQLException;
 
+    @Override
     public String getString(String columnLabel) throws SQLException {
         Dataset element = getCurrentElement();
         if (columnLabel.equals("DATASET_NAME")) {

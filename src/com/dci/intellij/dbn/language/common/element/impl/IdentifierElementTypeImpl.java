@@ -37,14 +37,17 @@ public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements Id
         setTokenType(bundle.getTokenTypeBundle().getIdentifier());
     }
 
+    @Override
     public IdentifierElementTypeLookupCache createLookupCache() {
         return new IdentifierElementTypeLookupCache(this);
     }
 
+    @Override
     public IdentifierElementTypeParser createParser() {
         return new IdentifierElementTypeParser(this);
     }
 
+    @Override
     protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
         super.loadDefinition(def);
         String objectTypeName = ElementTypeBundle.determineMandatoryAttribute(def, "type", "Incomplete definition " + getId() + ". ");
@@ -82,10 +85,12 @@ public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements Id
 
     }
 
+    @Override
     public PsiElement createPsiElement(ASTNode astNode) {
         return new IdentifierPsiElement(astNode, this);
     }
 
+    @Override
     public String getDebugName() {
         String prefix =
                 isObject() ? (isReference() ? "object-ref " : "object-def ") :
@@ -102,26 +107,32 @@ public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements Id
      *                Identifier type acessors               *
      *********************************************************/
 
+    @Override
     public IdentifierType getIdentifierType() {
         return identifierType;
     }
 
+    @Override
     public boolean isObject() {
         return identifierType == IdentifierType.OBJECT;
     }
 
+    @Override
     public boolean isAlias() {
         return identifierType == IdentifierType.ALIAS;
     }
     
+    @Override
     public boolean isVariable() {
         return identifierType == IdentifierType.VARIABLE;
     }
 
+    @Override
     public IdentifierCategory getIdentifierCategory() {
         return identifierCategory;
     }
 
+    @Override
     public boolean isReference() {
         return identifierCategory == IdentifierCategory.REFERENCE;
     }
@@ -131,28 +142,34 @@ public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements Id
         return referenceable;
     }
 
+    @Override
     public boolean isLocalReference() {
         return localReference;
     }
 
+    @Override
     public boolean isDefinition() {
         return identifierCategory == IdentifierCategory.DEFINITION;
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return objectType;
     }
 
 
+    @Override
     public String getObjectTypeName() {
         return objectType.getName();
     }
 
+    @Override
     public String getQualifiedObjectTypeName() {
         return getObjectTypeName() + " " + identifierType.name().toLowerCase();
 
     }
 
+    @Override
     public boolean isObjectOfType(DBObjectType type) {
         return objectType.matches(type);
     }
@@ -162,6 +179,7 @@ public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements Id
         return is(ElementTypeAttribute.SUBJECT);
     }
 
+    @Override
     public boolean isSameAs(LeafElementType elementType) {
         if (elementType instanceof IdentifierElementType) {
             IdentifierElementType identifierElementType = (IdentifierElementType) elementType;
@@ -172,6 +190,7 @@ public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements Id
         return false;
     }
 
+    @Override
     public boolean isIdentifier() {
         return true;
     }

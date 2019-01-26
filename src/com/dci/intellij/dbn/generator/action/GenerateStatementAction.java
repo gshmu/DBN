@@ -27,6 +27,7 @@ public abstract class GenerateStatementAction extends DumbAwareAction implements
         super(text);
     }
 
+    @Override
     public final void actionPerformed(@NotNull AnActionEvent e) {
         ConnectionAction.invoke("generating the statement", this,
                 TaskInstructions.create("Extracting select statement", TaskInstruction.CANCELLABLE),

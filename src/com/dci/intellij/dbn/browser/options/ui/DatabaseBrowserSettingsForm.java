@@ -22,6 +22,7 @@ public class DatabaseBrowserSettingsForm extends CompositeConfigurationEditorFor
         editorSettingsPanel.add(settings.getEditorSettings().createComponent(), BorderLayout.CENTER);
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }

@@ -15,10 +15,12 @@ public class BasicLookupItemBuilder extends LookupItemBuilder {
         this.icon = icon;
     }
 
+    @Override
     public String getTextHint() {
         return hint;
     }
 
+    @Override
     public boolean isBold() {
         return false;
     }
@@ -28,6 +30,7 @@ public class BasicLookupItemBuilder extends LookupItemBuilder {
         return text;
     }
 
+    @Override
     public Icon getIcon() {
         return icon;
     }

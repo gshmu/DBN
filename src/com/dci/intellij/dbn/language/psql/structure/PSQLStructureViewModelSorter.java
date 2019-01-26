@@ -13,40 +13,48 @@ import java.util.Comparator;
 
 public class PSQLStructureViewModelSorter implements Sorter {
 
+    @Override
     public Comparator getComparator() {
         return COMPARATOR;    
     }
 
+    @Override
     public boolean isVisible() {
         return true;
     }
 
+    @Override
     @NotNull
     public ActionPresentation getPresentation() {
         return ACTION_PRESENTATION;
     }
 
+    @Override
     @NotNull
     public String getName() {
         return "Sort by Name";
     }
 
     private static final ActionPresentation ACTION_PRESENTATION = new ActionPresentation() {
+        @Override
         @NotNull
         public String getText() {
             return "Sort by Name";
         }
 
+        @Override
         public String getDescription() {
             return "Sort elements alphabetically by name";
         }
 
+        @Override
         public Icon getIcon() {
             return Icons.ACTION_SORT_ALPHA;
         }
     };
 
     private static final Comparator COMPARATOR = new Comparator() {
+        @Override
         public int compare(Object object1, Object object2) {
 
             if (object1 instanceof PSQLStructureViewElement && object2 instanceof PSQLStructureViewElement) {

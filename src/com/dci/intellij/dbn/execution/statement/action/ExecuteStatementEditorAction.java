@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.dci.intellij.dbn.common.util.ActionUtil.*;
 
 public class ExecuteStatementEditorAction extends AnAction {
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ensureProject(e);
         Editor editor = getEditor(e);
@@ -30,6 +31,7 @@ public class ExecuteStatementEditorAction extends AnAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setEnabled(isEnabled(e));

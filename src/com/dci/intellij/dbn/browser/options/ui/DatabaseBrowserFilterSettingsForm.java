@@ -18,6 +18,7 @@ public class DatabaseBrowserFilterSettingsForm extends CompositeConfigurationEdi
         visibleObjectTypesPanel.add(settings.getObjectTypeFilterSettings().createComponent(), BorderLayout.CENTER);
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }

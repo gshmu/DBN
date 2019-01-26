@@ -17,6 +17,7 @@ public class DataFindAction extends AbstractSessionBrowserAction {
         }
     }
 
+    @Override
     public void update(AnActionEvent e) {
         SessionBrowser sessionBrowser = getSessionBrowser(e);
         e.getPresentation().setEnabled(sessionBrowser != null);

@@ -37,6 +37,7 @@ public class MethodExecutionMessagesNode extends BundleTreeNode {
         return objectNode.getTreePath(executionMessage);
     }
 
+    @Override
     public VirtualFile getVirtualFile() {
         return null;
     }

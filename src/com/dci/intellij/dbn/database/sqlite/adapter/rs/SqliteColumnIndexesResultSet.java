@@ -27,6 +27,7 @@ public abstract class SqliteColumnIndexesResultSet extends SqliteDatasetInfoResu
         super(ownerName, datasetName, connection);
     }
 
+    @Override
     protected void init(String ownerName, String tableName) throws SQLException {
         RawIndexInfo indexInfo = getIndexInfo(tableName);
         for (RawIndexInfo.Row row : indexInfo.getRows()) {
@@ -63,6 +64,7 @@ public abstract class SqliteColumnIndexesResultSet extends SqliteDatasetInfoResu
     protected abstract ResultSet loadIndexDetailInfo(String indexName) throws SQLException;
 
 
+    @Override
     public String getString(String columnLabel) throws SQLException {
         IndexColumn element = getCurrentElement();
         return columnLabel.equals("INDEX_NAME") ? element.getIndexName() :

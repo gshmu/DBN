@@ -41,6 +41,7 @@ public class StatementExecutionInputsDialog extends DBNDialog<StatementExecution
         return null;
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{
@@ -60,6 +61,7 @@ public class StatementExecutionInputsDialog extends DBNDialog<StatementExecution
             putValue(DEFAULT_ACTION, Boolean.TRUE);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             getComponent().updateExecutionInput();
             StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();

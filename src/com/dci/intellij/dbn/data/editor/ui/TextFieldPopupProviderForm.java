@@ -63,6 +63,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         return editorComponent.getTextField();
     }
 
+    @Override
     @NotNull
     public Project getProject() {
         return editorComponent.getProject();
@@ -79,6 +80,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
      */
     @Nullable
     public abstract JBPopup createPopup();
+    @Override
     public final String getKeyShortcutDescription() {
         return KeymapUtil.getShortcutsText(getShortcuts());
     }
@@ -90,6 +92,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
 
     protected abstract String getKeyShortcutName();
 
+    @Override
     public boolean isAutoPopup() {
         return autoPopup;
     }
@@ -99,10 +102,12 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         return buttonVisible;
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
@@ -122,6 +127,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         actions.add(action);
     }
 
+    @Override
     public void keyPressed(KeyEvent e) {
         if (!e.isConsumed()) {
             for (AnAction action : actions) {
@@ -144,6 +150,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
     public void preparePopup() {}
 
     boolean isPreparingPopup = false;
+    @Override
     public void showPopup() {
         if (isPreparingPopup) return;
 
@@ -184,6 +191,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         });
     }
 
+    @Override
     public void hidePopup() {
         if (isShowingPopup()) {
             ConditionalLaterInvocator.invoke(() -> {
@@ -193,6 +201,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         }
     }
 
+    @Override
     public boolean isShowingPopup() {
         return popup != null && popup.isVisible();
     }
@@ -208,6 +217,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         return disposed;
     }
 
+    @Override
     public void dispose() {
         if (!disposed) {
             disposed = true;

@@ -97,10 +97,12 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         ActionUtil.registerDataProvider(mainPanel, this);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         ConnectionBundleSettings connectionBundleSettings = getConfiguration();
 
@@ -118,6 +120,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         connections.addAll(newConnections);
     }
 
+    @Override
     public void resetFormChanges() {
         ConnectionListModel listModel = (ConnectionListModel) connectionsList.getModel();
         for (int i=0; i< listModel.getSize(); i++) {
@@ -140,6 +143,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         }
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent listSelectionEvent) {
         try {
             Object[] selectedValues = connectionsList.getSelectedValues();
@@ -355,6 +359,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         }
     };
 
+    @Override
     @Nullable
     public DataProvider getDataProvider() {
         return dataProvider;

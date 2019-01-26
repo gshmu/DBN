@@ -40,6 +40,7 @@ public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<C
     }
 
 
+    @Override
     protected ActionListener createActionListener() {
          return e -> {
              getConfiguration().setModified(true);
@@ -52,10 +53,12 @@ public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<C
          };
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         List<CodeCompletionSortingItem> sortingItems = getConfiguration().getSortingItems();
         sortingItems.clear();
@@ -66,6 +69,7 @@ public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<C
         getConfiguration().setEnabled(enableCheckBox.isSelected());
     }
 
+    @Override
     public void resetFormChanges() {
         DefaultListModel model = new DefaultListModel();
         for (CodeCompletionSortingItem sortingItem : getConfiguration().getSortingItems()) {
@@ -81,6 +85,7 @@ public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<C
     }
 
     public static ListCellRenderer LIST_CELL_RENDERER = new ColoredListCellRenderer() {
+        @Override
         protected void customizeCellRenderer(JList list, Object value, int index, boolean selected, boolean hasFocus) {
             CodeCompletionSortingItem sortingItem = (CodeCompletionSortingItem) value;
             DBObjectType objectType = sortingItem.getObjectType();

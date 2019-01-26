@@ -125,10 +125,12 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
         textField.addKeyListener(ComboBoxSelectionKeyListener.create(dataTypeComboBox, false));
 
         variable.setPreviewValueProvider(new VariableValueProvider() {
+            @Override
             public String getValue() {
                 return textField.getText().trim();
             }
 
+            @Override
             public GenericDataType getDataType() {
                 return dataTypeComboBox.getSelectedValue();
             }
@@ -199,10 +201,12 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
     }
 
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         variable.setPreviewValueProvider(null);

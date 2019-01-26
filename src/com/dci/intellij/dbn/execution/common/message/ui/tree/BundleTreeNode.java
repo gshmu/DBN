@@ -30,6 +30,7 @@ public abstract class BundleTreeNode extends DisposableBase implements MessagesT
         DisposerUtil.dispose(children);
     }
 
+    @Override
     public MessagesTreeModel getTreeModel() {
         return parent.getTreeModel();
     }
@@ -41,30 +42,37 @@ public abstract class BundleTreeNode extends DisposableBase implements MessagesT
     /*********************************************************
      *                        TreeNode                       *
      *********************************************************/
+    @Override
     public TreeNode getChildAt(int childIndex) {
         return children.get(childIndex);
     }
 
+    @Override
     public int getChildCount() {
         return children.size();
     }
 
+    @Override
     public TreeNode getParent() {
         return parent;
     }
 
+    @Override
     public int getIndex(TreeNode node) {
         return children.indexOf(node);
     }
 
+    @Override
     public boolean getAllowsChildren() {
         return true;
     }
 
+    @Override
     public boolean isLeaf() {
         return children.size() == 0;
     }
 
+    @Override
     public Enumeration children() {
         return Collections.enumeration(children);
     }
@@ -72,6 +80,7 @@ public abstract class BundleTreeNode extends DisposableBase implements MessagesT
     /*********************************************************
      *                      Disposable                       *
      *********************************************************/
+    @Override
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();

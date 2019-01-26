@@ -32,6 +32,7 @@ public class YouTrackIssueReportSubmitter extends IssueReportSubmitter {
         return URL + "issue/" + ticketId;
     }
 
+    @Override
     @NotNull
     public TicketResponse submit(@NotNull IdeaLoggingEvent[] events, String pluginVersion, String summary, String description) throws Exception{
         StringBuilder response = new StringBuilder("");

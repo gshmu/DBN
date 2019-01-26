@@ -37,6 +37,7 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
         return new PendingTransactionsForm(this);
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{
@@ -53,6 +54,7 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
     }
 
     private AbstractAction commitAllAction = new AbstractAction("Commit all", Icons.CONNECTION_COMMIT) {
+        @Override
         public void actionPerformed(ActionEvent e) {
             try {
                 DatabaseTransactionManager transactionManager = getTransactionManager();
@@ -76,6 +78,7 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
     };
 
     private AbstractAction rollbackAllAction = new AbstractAction("Rollback all", Icons.CONNECTION_ROLLBACK) {
+        @Override
         public void actionPerformed(ActionEvent e) {
             try {
                 DatabaseTransactionManager transactionManager = getTransactionManager();

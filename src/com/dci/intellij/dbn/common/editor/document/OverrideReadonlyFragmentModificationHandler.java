@@ -24,6 +24,7 @@ public class OverrideReadonlyFragmentModificationHandler implements
 
     }
 
+    @Override
     public void handle(final ReadOnlyFragmentModificationException e) {
         Document document = e.getGuardedBlock().getDocument();
         String message = document.getUserData(GUARDED_BLOCK_REASON);

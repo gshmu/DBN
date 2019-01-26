@@ -19,29 +19,38 @@ public class ExecVariablePsiElement extends LeafPsiElement {
         super(astNode, elementType);
     }
 
+    @Override
     public ExecVariableElementType getElementType() {
         return (ExecVariableElementType) super.getElementType();
     }
 
+    @Override
     @Nullable
     public BasePsiElement findPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount) {return null;}
+    @Override
     @Nullable
     public Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, @Nullable Set<BasePsiElement> bucket, int scopeCrossCount) {return bucket;}
 
 
+    @Override
     public void collectExecVariablePsiElements(@NotNull Set<ExecVariablePsiElement> bucket) { bucket.add(this);}
+    @Override
     public void collectSubjectPsiElements(@NotNull Set<IdentifierPsiElement> bucket) {}
+    @Override
     public NamedPsiElement findNamedPsiElement(String id) {return null;}
+    @Override
     public BasePsiElement findPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {return null;}
 
 
     /*********************************************************
      *                       PsiReference                    *
      *********************************************************/
+    @Override
     public boolean isReferenceTo(PsiElement element) {
         return false;
     }
 
+    @Override
     public boolean isSoft() {
         return false;
     }
@@ -49,25 +58,30 @@ public class ExecVariablePsiElement extends LeafPsiElement {
     /*********************************************************
      *                       ItemPresentation                *
      *********************************************************/
+    @Override
     public String getPresentableText() {
         return getElementType().getTokenType().getValue();
     }
 
+    @Override
     @Nullable
     public String getLocationString() {
         return null;
     }
 
+    @Override
     @Nullable
     public Icon getIcon(boolean open) {
         return null;
     }
 
+    @Override
     @Nullable
     public TextAttributesKey getTextAttributesKey() {
         return null;
     }
 
+    @Override
     public boolean hasErrors() {
         return false;
     }

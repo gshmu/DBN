@@ -65,10 +65,12 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
         childObjectRelations.createSubcontentObjectRelationList(INDEX_COLUMN, this, schema);
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return TABLE;
     }
 
+    @Override
     @Nullable
     public Icon getIcon() {
         return isTemporary() ?
@@ -76,28 +78,34 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
                 Icons.DBO_TABLE;
     }
 
+    @Override
     public boolean isTemporary() {
         return is(TEMPORARY);
     }
 
+    @Override
     @Nullable
     public List<DBIndex> getIndexes() {
         return indexes.getObjects();
     }
 
+    @Override
     public List<DBNestedTable> getNestedTables() {
         return nestedTables.getObjects();
     }
 
+    @Override
     @Nullable
     public DBIndex getIndex(String name) {
         return indexes.getObject(name);
     }
 
+    @Override
     public DBNestedTable getNestedTable(String name) {
         return nestedTables.getObject(name);
     }
 
+    @Override
     public List<DBColumn> getPrimaryKeyColumns() {
         List<DBColumn> columns = null;
         for (DBColumn column : getColumns()) {
@@ -111,6 +119,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
         return columns == null ? EMPTY_COLUMN_LIST : columns ;
     }
 
+    @Override
     public List<DBColumn> getForeignKeyColumns() {
         List<DBColumn> columns = null;
         for (DBColumn column : getColumns()) {
@@ -124,6 +133,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
         return columns == null ? EMPTY_COLUMN_LIST : columns ;
     }
 
+    @Override
     public List<DBColumn> getUniqueKeyColumns() {
         List<DBColumn> columns = null;
         for (DBColumn column : getColumns()) {
@@ -143,6 +153,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
     }
 
 
+    @Override
     protected List<DBObjectNavigationList> createNavigationLists() {
         List<DBObjectNavigationList> objectNavigationLists = super.createNavigationLists();
         if (indexes.size() > 0) {
@@ -155,6 +166,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
     /*********************************************************
      *                     TreeElement                       *
      *********************************************************/
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return DatabaseBrowserUtils.createList(
@@ -180,20 +192,24 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
     static {
         new DynamicSubcontentLoader<DBNestedTable>(TABLE, NESTED_TABLE, true) {
 
+            @Override
             public boolean match(DBNestedTable nestedTable, DynamicContent dynamicContent) {
                 DBTable table = (DBTable) dynamicContent.getParentElement();
                 return nestedTable.getTable().equals(table);
             }
 
+            @Override
             public DynamicContentLoader<DBNestedTable> createAlternativeLoader() {
                 return new DynamicContentResultSetLoader<DBNestedTable>(TABLE, NESTED_TABLE, false) {
 
+                    @Override
                     public ResultSet createResultSet(DynamicContent<DBNestedTable> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
                         DBTable table = (DBTable) dynamicContent.getParentElement();
                         return metadataInterface.loadNestedTables(table.getSchema().getName(), table.getName(), connection);
                     }
 
+                    @Override
                     public DBNestedTable createElement(DynamicContent<DBNestedTable> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
                         DBTable table = (DBTable) dynamicContent.getParentElement();
                         return new DBNestedTableImpl(table, resultSet);

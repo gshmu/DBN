@@ -27,14 +27,17 @@ public class BasicElementTypeImpl extends AbstractElementType implements BasicEl
         return new BasicElementTypeParser(this);
     }
 
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
+    @Override
     public String getDebugName() {
         return getId();
     }
 
+    @Override
     public PsiElement createPsiElement(ASTNode astNode) {
         return new UnknownPsiElement(astNode, this);
     }

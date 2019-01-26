@@ -70,6 +70,7 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
                 getCancelAction()};
     }
 
+    @Override
     protected void doOKAction() {
         getComponent().validateEntries(
                 ModalTask.create(getProject(), "Creating export file", true, (data, progress) -> {

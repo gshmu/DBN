@@ -18,10 +18,12 @@ public abstract class CodeStylePresetImpl implements CodeStylePreset {
         //CodeStylePresetsRegister.registerWrapPreset(this);
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     @NotNull
     public String getName() {
         return name;

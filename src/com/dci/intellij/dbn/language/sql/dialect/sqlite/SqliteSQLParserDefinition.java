@@ -13,6 +13,7 @@ public class SqliteSQLParserDefinition extends SQLParserDefinition {
         super(parser);
     }
 
+    @Override
     @NotNull
     public Lexer createLexer(Project project) {
         return new FlexAdapter(new SqliteSQLParserFlexLexer(getTokenTypes()));

@@ -83,10 +83,12 @@ public class CompoundFilterCondition extends Filter<DBObject> implements FilterC
         }
     }
 
+    @Override
     public ObjectNameFilterSettings getSettings() {
         return parent == null ? null : parent.getSettings();
     }
 
+    @Override
     public boolean accepts(DBObject object) {
         if (joinType == ConditionJoinType.AND) {
             for (FilterCondition condition : conditions) {
@@ -113,18 +115,22 @@ public class CompoundFilterCondition extends Filter<DBObject> implements FilterC
         this.joinType = joinType;
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return parent.getObjectType();
     }
 
+    @Override
     public void setParent(CompoundFilterCondition parent) {
         this.parent = parent;
     }
 
+    @Override
     public CompoundFilterCondition getParent() {
         return parent;
     }
 
+    @Override
     public String getConditionString() {
         StringBuilder buffer = new StringBuilder();
         for (FilterCondition condition : conditions) {
@@ -160,6 +166,7 @@ public class CompoundFilterCondition extends Filter<DBObject> implements FilterC
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @Override
     public void readConfiguration(Element element) {
         String joinTypeString = element.getAttributeValue("join-type");
         joinType = StringUtil.isEmptyOrSpaces(joinTypeString) ? ConditionJoinType.AND : ConditionJoinType.valueOf(joinTypeString);
@@ -176,6 +183,7 @@ public class CompoundFilterCondition extends Filter<DBObject> implements FilterC
         }
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         element.setAttribute("join-type", joinType.toString());
         for (FilterCondition condition : conditions) {

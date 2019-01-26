@@ -18,16 +18,19 @@ public class LockUnlockDataEditing extends ToggleAction implements DumbAware {
         super("Lock / Unlock Editing", null, Icons.DATA_EDITOR_LOCK_EDITING);
     }
 
+    @Override
     public boolean isSelected(AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
         return datasetEditor != null && datasetEditor.isReadonly();
     }
 
+    @Override
     public void setSelected(AnActionEvent e, boolean selected) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
         if (datasetEditor != null) datasetEditor.setReadonly(selected);
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         super.update(e);
         DatasetEditor datasetEditor = getDatasetEditor(e);

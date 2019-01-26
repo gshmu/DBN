@@ -16,6 +16,7 @@ public class StatementExecutionMessagesFileNode extends BundleTreeNode {
         this.virtualFile = virtualFile;
     }
 
+    @Override
     public VirtualFile getVirtualFile() {
         return virtualFile;
     }

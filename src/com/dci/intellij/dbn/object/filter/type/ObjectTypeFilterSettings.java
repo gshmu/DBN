@@ -95,6 +95,7 @@ public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFil
     }
 
     private Filter<BrowserTreeNode> elementFilter = new Filter<BrowserTreeNode>() {
+        @Override
         public boolean accepts(BrowserTreeNode treeNode) {
             if (treeNode == null) {
                 return false;
@@ -116,6 +117,7 @@ public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFil
     };
 
     private Filter<DBObjectType> typeFilter = new Filter<DBObjectType>() {
+        @Override
         public boolean accepts(DBObjectType objectType) {
             return objectType != null && isVisible(objectType);
         }
@@ -166,10 +168,12 @@ public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFil
     }
 
 
+    @Override
     public String getConfigElementName() {
         return "object-type-filter";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         useMasterSettings.readConfigurationAttribute(element);
         for (Object o : element.getChildren()) {
@@ -183,6 +187,7 @@ public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFil
         }
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         if (!isProjectLevel()) {
             useMasterSettings.writeConfigurationAttribute(element);

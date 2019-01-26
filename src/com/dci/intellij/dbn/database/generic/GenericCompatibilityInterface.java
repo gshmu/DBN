@@ -16,6 +16,7 @@ public class GenericCompatibilityInterface extends DatabaseCompatibilityInterfac
         super(parent);
     }
 
+    @Override
     public boolean supportsObjectType(DatabaseObjectTypeId objectTypeId) {
         return
             objectTypeId == DatabaseObjectTypeId.CHARSET ||
@@ -34,6 +35,7 @@ public class GenericCompatibilityInterface extends DatabaseCompatibilityInterfac
             objectTypeId == DatabaseObjectTypeId.GRANTED_PRIVILEGE;
     }
 
+    @Override
     public boolean supportsFeature(DatabaseFeature feature) {
         switch (feature) {
             case OBJECT_INVALIDATION: return false;
@@ -48,6 +50,7 @@ public class GenericCompatibilityInterface extends DatabaseCompatibilityInterfac
         }
     }
 
+    @Override
     public QuoteDefinition getIdentifierQuotes() {
         return IDENTIFIER_QUOTE_DEFINITION;
     }

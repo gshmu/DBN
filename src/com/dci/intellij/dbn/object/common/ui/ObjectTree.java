@@ -12,10 +12,12 @@ public class ObjectTree extends DBNTree {
         new ObjectTreeSpeedSearch(this);
     }
 
+    @Override
     public void setModel(TreeModel newModel) {
         super.setModel(newModel);
     }
 
+    @Override
     public ObjectTreeModel getModel() {
         return (ObjectTreeModel) super.getModel();
     }

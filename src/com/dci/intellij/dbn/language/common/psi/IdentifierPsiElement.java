@@ -54,10 +54,12 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         }*/
     }
 
+    @Override
     public IdentifierElementType getElementType() {
         return (IdentifierElementType) super.getElementType();
     }
 
+    @Override
     public ItemPresentation getPresentation() {
         return this;
     }
@@ -88,6 +90,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
      * ItemPresentation                *
      * *******************************************************
      */
+    @Override
     public String getPresentableText() {
         StringBuilder builder = new StringBuilder();
         StringUtil.appendToUpperCase(builder,  getUnquotedText());
@@ -97,17 +100,20 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         return builder.toString();
     }
 
+    @Override
     @Nullable
     public String getLocationString() {
         return null;
     }
 
+    @Override
     @Nullable
     public Icon getIcon(boolean open) {
         DBObjectType type = getObjectType();
         return type.getIcon();
     }
 
+    @Override
     @Nullable
     public TextAttributesKey getTextAttributesKey() {
         return null;
@@ -119,6 +125,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
      * Lookup routines                 *
      * *******************************************************
      */
+    @Override
     @Nullable
     public BasePsiElement findPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount) {
         if (lookupAdapter instanceof IdentifierLookupAdapter) {
@@ -139,6 +146,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
 
     }
 
+    @Override
     @Nullable
     public Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, @Nullable Set<BasePsiElement> bucket, int scopeCrossCount) {
         if (lookupAdapter instanceof IdentifierLookupAdapter) {
@@ -154,12 +162,14 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         return bucket;
     }
 
+    @Override
     public void collectSubjectPsiElements(@NotNull Set<IdentifierPsiElement> bucket) {
         if (getElementType().is(ElementTypeAttribute.SUBJECT)) {
             bucket.add(this);
         }
     }
 
+    @Override
     public void collectExecVariablePsiElements(@NotNull Set<ExecVariablePsiElement> bucket) {
     }
 
@@ -237,6 +247,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
      *
      * @return real underlying database object behind the identifier.
      */
+    @Override
     @Nullable
     public DBObject resolveUnderlyingObject() {
         if (isResolvingUnderlyingObject) {
@@ -292,10 +303,12 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         return object;
     }
 
+    @Override
     public NamedPsiElement findNamedPsiElement(String id) {
         return null;
     }
 
+    @Override
     public BasePsiElement findPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {
         if (getElementType().is(attribute) && getElementType().is(ElementTypeAttribute.SUBJECT)) {
             if (subjectType == getObjectType() && StringUtil.equalsIgnoreCase(subjectName, this.getChars())) {
@@ -496,6 +509,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
      ********************************************************/
     private PsiResolveResult ref;
 
+    @Override
     @Nullable
     public PsiElement resolve() {
         if (isResolving()) {
@@ -549,6 +563,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         return text;
     }
 
+    @Override
     public boolean textMatches(@NotNull CharSequence text) {
         CharSequence chars = getChars();
         if (isQuoted())  {
@@ -558,10 +573,12 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         }
     }
 
+    @Override
     public boolean isSoft() {
         return isDefinition();
     }
 
+    @Override
     public boolean hasErrors() {
         return false;
     }
@@ -584,6 +601,7 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
         return ref != null && ref.isResolving();
     }
 
+    @Override
     public PsiElement setName(@NotNull @NonNls String name) throws IncorrectOperationException {
         return null;
     }

@@ -23,6 +23,7 @@ public class DBTypeProcedureImpl extends DBProcedureImpl implements DBTypeProced
         properties.set(DBObjectProperty.NAVIGABLE, true);
     }
 
+    @Override
     public DBType getType() {
         return (DBType) getParentObject();
     }
@@ -32,6 +33,7 @@ public class DBTypeProcedureImpl extends DBProcedureImpl implements DBTypeProced
         return getType();
     }    
 
+    @Override
     public boolean isProgramMethod() {
         return true;
     }
@@ -41,5 +43,6 @@ public class DBTypeProcedureImpl extends DBProcedureImpl implements DBTypeProced
         return DBObjectType.TYPE_PROCEDURE;
     }
 
+    @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {}
 }

@@ -46,6 +46,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericProgramRunner {
+    @Override
     @Nullable
     protected RunContentDescriptor doExecute(@NotNull Project project, @NotNull RunProfileState state, RunContentDescriptor contentToReuse, @NotNull ExecutionEnvironment env) throws ExecutionException {
         return doExecute(project, env.getExecutor(), state, contentToReuse, env);

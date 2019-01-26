@@ -17,6 +17,7 @@ public class PostgresCompatibilityInterface extends DatabaseCompatibilityInterfa
         super(parent);
     }
 
+    @Override
     public boolean supportsObjectType(DatabaseObjectTypeId objectTypeId) {
         return
             objectTypeId == DatabaseObjectTypeId.CHARSET ||
@@ -36,6 +37,7 @@ public class PostgresCompatibilityInterface extends DatabaseCompatibilityInterfa
             objectTypeId == DatabaseObjectTypeId.GRANTED_PRIVILEGE;
     }
 
+    @Override
     public boolean supportsFeature(DatabaseFeature feature) {
         switch (feature) {
             case SESSION_BROWSING: return true;
@@ -56,6 +58,7 @@ public class PostgresCompatibilityInterface extends DatabaseCompatibilityInterfa
         return SessionStatus.SNIPED;
     }
 
+    @Override
     public QuoteDefinition getIdentifierQuotes() {
         return IDENTIFIER_QUOTE_DEFINITION;
     }

@@ -30,6 +30,7 @@ public class SelectDatasetFilterComboBoxAction extends DBNComboBoxAction {
 
 
 
+    @Override
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent button) {
         DataContext dataContext = DataManager.getInstance().getDataContext(button);

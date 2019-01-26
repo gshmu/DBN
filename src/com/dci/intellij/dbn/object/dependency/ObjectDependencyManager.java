@@ -47,12 +47,14 @@ public class ObjectDependencyManager extends AbstractProjectComponent implements
         });
     }
 
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {
         return COMPONENT_NAME;
     }
 
+    @Override
     public Element getState() {
         Element element = new Element("state");
         ConfigurationUtil.setEnum(element, "last-used-dependency-type", lastUserDependencyType);

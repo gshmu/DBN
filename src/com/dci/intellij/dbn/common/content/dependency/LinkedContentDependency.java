@@ -16,6 +16,7 @@ public class LinkedContentDependency extends ContentDependency {
         reset();
     }
 
+    @Override
     @NotNull
     public DynamicContent getSourceContent() {
         if (sourceContentOwner != null) {
@@ -27,6 +28,7 @@ public class LinkedContentDependency extends ContentDependency {
         return VoidDynamicContent.INSTANCE;
     }
 
+    @Override
     public void dispose() {
         sourceContentOwner = null;
     }

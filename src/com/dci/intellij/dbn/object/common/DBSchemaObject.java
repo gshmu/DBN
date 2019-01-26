@@ -29,6 +29,7 @@ public interface DBSchemaObject extends DBObject {
 
     DBObjectStatusHolder getStatus();
 
+    @Override
     @NotNull
     DBObjectVirtualFile getVirtualFile();
 

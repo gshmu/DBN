@@ -22,6 +22,7 @@ public class PSQLCodeStyleSettingsEditorForm extends CompositeConfigurationEdito
         updateBorderTitleForeground(previewPanel);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }

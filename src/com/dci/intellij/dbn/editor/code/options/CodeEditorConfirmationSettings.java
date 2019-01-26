@@ -34,10 +34,12 @@ public class CodeEditorConfirmationSettings extends Configuration<CodeEditorConf
                     CodeEditorChangesOption.CANCEL);
 
 
+    @Override
     public String getDisplayName() {
         return "Code Editor Confirmation Settings";
     }
 
+    @Override
     public String getHelpTopic() {
         return "codeEditorConfirmationSettings";
     }
@@ -62,6 +64,7 @@ public class CodeEditorConfirmationSettings extends Configuration<CodeEditorConf
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @Override
     @NotNull
     public CodeEditorConfirmationSettingsForm createConfigurationEditor() {
         return new CodeEditorConfirmationSettingsForm(this);
@@ -72,11 +75,13 @@ public class CodeEditorConfirmationSettings extends Configuration<CodeEditorConf
         return "confirmations";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         saveChanges.readConfiguration(element);
         revertChanges.readConfiguration(element);
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         saveChanges.writeConfiguration(element);
         revertChanges.writeConfiguration(element);

@@ -28,20 +28,24 @@ public class PSQLColorSettingsPage extends DBLColorSettingsPage {
         attributeDescriptors.add(new AttributesDescriptor("Operator", PSQLTextAttributesKeys.OPERATOR));
     }
 
+    @Override
     @NotNull
     public String getDisplayName() {
         return "PL/SQL (DBN)";
     }
+    @Override
     @Nullable
     public Icon getIcon() {
         return Icons.FILE_PLSQL;
     }
 
+    @Override
     @NotNull
     public SyntaxHighlighter getHighlighter() {
         return PSQLLanguage.INSTANCE.getMainLanguageDialect().getSyntaxHighlighter();
     }
 
+    @Override
     public String getDemoTextFileName() {
         return "plsql_demo_text.txt";  
     }

@@ -20,6 +20,7 @@ public class CodeCompletionSettingsForm extends CompositeConfigurationEditorForm
         formatPanel.add(codeCompletionSettings.getFormatSettings().createComponent(), BorderLayout.CENTER);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }

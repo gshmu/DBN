@@ -11,6 +11,7 @@ public class DeleteFilterAction extends AbstractFilterListAction {
         super(filterList, "Delete filter", Icons.ACTION_REMOVE);
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         Object[] selectedFilters = getFilterList().getSelectedValues();
         for (Object object : selectedFilters) {

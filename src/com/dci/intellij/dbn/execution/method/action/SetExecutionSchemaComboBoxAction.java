@@ -24,6 +24,7 @@ public class SetExecutionSchemaComboBoxAction extends ComboBoxAction {
         }
     }
 
+    @Override
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent jComponent) {
         ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
@@ -37,6 +38,7 @@ public class SetExecutionSchemaComboBoxAction extends ComboBoxAction {
         return actionGroup;
     }
 
+    @Override
     public void update(AnActionEvent e) {
         DBSchema schema = executionInput.getTargetSchema();
         Presentation presentation = e.getPresentation();

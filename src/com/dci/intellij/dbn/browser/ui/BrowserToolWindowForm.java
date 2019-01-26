@@ -124,10 +124,12 @@ public class BrowserToolWindowForm extends DBNFormImpl {
         return browserForm;
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         objectPropertiesForm = null;
@@ -154,6 +156,7 @@ public class BrowserToolWindowForm extends DBNFormImpl {
             rebuild();
         }
 
+        @Override
         public void connectionNameChanged(ConnectionId connectionId) {
             if (browserForm instanceof TabbedBrowserForm && !browserForm.isDisposed()) {
                 TabbedBrowserForm tabbedBrowserForm = (TabbedBrowserForm) browserForm;

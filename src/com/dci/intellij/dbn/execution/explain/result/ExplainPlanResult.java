@@ -93,6 +93,7 @@ public class ExplainPlanResult extends DisposableBase implements ExecutionResult
         return connectionHandlerRef.getConnectionId();
     }
 
+    @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return ConnectionHandlerRef.getnn(connectionHandlerRef);
@@ -156,6 +157,7 @@ public class ExplainPlanResult extends DisposableBase implements ExecutionResult
         }
     };
 
+    @Override
     @Nullable
     public DataProvider getDataProvider() {
         return dataProvider;

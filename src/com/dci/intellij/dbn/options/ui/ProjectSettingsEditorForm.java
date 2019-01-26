@@ -169,6 +169,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
         configurationTabs.addTab(tabInfo);
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
@@ -217,6 +218,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
         return getConfiguration();
     }
 
+    @Override
     public void dispose() {
         dialog = null;
         super.dispose();

@@ -129,6 +129,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         }
     }
 
+    @Override
     public boolean isDirty(){
         if (getConnectionHandler() != executionInput.getConnectionHandler() || // connection changed since execution
             getTargetSchema() != executionInput.getTargetSchema()) { // current schema changed since execution)
@@ -161,6 +162,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         return getCachedExecutable() != null;
     }
 
+    @Override
     @NotNull
     public DBLanguagePsiFile getPsiFile() {
         return FailsafeUtil.get(psiFileRef.get());
@@ -226,14 +228,17 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         return executionInput;
     }
 
+    @Override
     public ExecutionContext getExecutionContext() {
         return executionInput.getExecutionContext();
     }
 
+    @Override
     public ExecutionContext getExecutionContext(boolean reset) {
         return executionInput.getExecutionContext(reset);
     }
 
+    @Override
     public StatementExecutionResult getExecutionResult() {
         if (executionResult != null && executionResult.isDisposed()) {
             executionResult = null;
@@ -256,10 +261,12 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     }
 
+    @Override
     public void execute() throws SQLException {
         execute(null, false);
     }
 
+    @Override
     public void execute(@Nullable DBNConnection connection, boolean debug) throws SQLException {
         ProgressMonitor.setTaskDescription("Executing " + getStatementName());
         try {
@@ -527,6 +534,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         }
     }
 
+    @Override
     @Nullable
     public StatementExecutionVariablesBundle getExecutionVariables() {
         return executionInput.getExecutionVariables();
@@ -616,36 +624,43 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         return ExecutionEngineSettings.getInstance(getProject()).getStatementExecutionSettings();
     }
 
+    @Override
     @Nullable
     public ConnectionHandler getConnectionHandler() {
         return getPsiFile().getConnectionHandler();
     }
 
+    @Override
     @NotNull
     public ConnectionHandler getTargetConnection() {
         return FailsafeUtil.get(getConnectionHandler());
     }
 
+    @Override
     @Nullable
     public DBSchema getTargetSchema() {
         return getPsiFile().getDatabaseSchema();
     }
 
+    @Override
     @Nullable
     public DatabaseSession getTargetSession() {
         return getPsiFile().getDatabaseSession();
     }
 
+    @Override
     @NotNull
     public Project getProject() {
         return getPsiFile().getProject();
     }
 
+    @Override
     @NotNull
     public String getResultName() {
         return resultName.get();
     }
 
+    @Override
     public String getStatementName() {
         ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
         return executablePsiElement == null ? "SQL statement" : executablePsiElement.getSpecificElementType().getDescription();
@@ -659,6 +674,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         return !isDisposed();
     }
 
+    @Override
     public void navigateToResult() {
         StatementExecutionResult executionResult = getExecutionResult();
         if (executionResult != null) {
@@ -667,6 +683,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         }
     }
 
+    @Override
     public void navigateToEditor(NavigationInstruction instruction) {
         FileEditor fileEditor = getFileEditor();
         ExecutablePsiElement cachedExecutable = getCachedExecutable();
@@ -746,6 +763,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         return DBContentType.CODE;
     }
 
+    @Override
     public boolean isQuery() {
         return false;
     }

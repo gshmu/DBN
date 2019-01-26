@@ -68,6 +68,7 @@ public class ObjectPropertiesTable extends DBNTable {
     }
 
 
+    @Override
     protected void processMouseMotionEvent(MouseEvent e) {
         if (e.isControlDown() && e.getID() != MouseEvent.MOUSE_DRAGGED && isNavigableCellAtMousePosition()) {
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -87,6 +88,7 @@ public class ObjectPropertiesTable extends DBNTable {
     }
 
     private TableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
+        @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             PresentableProperty property = (PresentableProperty) value;

@@ -27,10 +27,12 @@ public class CodeEditorSettings extends CompositeProjectConfiguration<CodeEditor
         return "DBNavigator.Project.CodeEditorSettings";
     }
 
+    @Override
     public String getDisplayName() {
         return "Code Editor";
     }
 
+    @Override
     public String getHelpTopic() {
         return "codeEditor";
     }
@@ -61,6 +63,7 @@ public class CodeEditorSettings extends CompositeProjectConfiguration<CodeEditor
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @Override
     @NotNull
     public CodeEditorSettingsForm createConfigurationEditor() {
         return new CodeEditorSettingsForm(this);
@@ -71,6 +74,7 @@ public class CodeEditorSettings extends CompositeProjectConfiguration<CodeEditor
         return "code-editor-settings";
     }
 
+    @Override
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
             generalSettings,

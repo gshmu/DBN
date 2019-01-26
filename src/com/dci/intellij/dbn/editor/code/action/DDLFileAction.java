@@ -20,6 +20,7 @@ public class DDLFileAction extends GroupPopupAction {
         super("DDL File", "DDL File", Icons.CODE_EDITOR_DDL_FILE);
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();

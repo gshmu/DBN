@@ -61,16 +61,19 @@ public class DatasetEditorErrorForm extends DBNFormImpl implements ChangeListene
         return popup;
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void stateChanged(ChangeEvent e) {
         ConditionalLaterInvocator.invoke(() -> {
             if (popup.isVisible()) popup.cancel();
         });
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         popup.dispose();

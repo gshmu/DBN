@@ -14,6 +14,7 @@ public class OpenSortingDialogAction extends AbstractDataEditorAction {
         super("Data Sorting...", Icons.DATA_SORTING);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
 
@@ -24,6 +25,7 @@ public class OpenSortingDialogAction extends AbstractDataEditorAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
 

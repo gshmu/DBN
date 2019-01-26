@@ -11,6 +11,7 @@ public class DuplicateConnectionAction extends ConnectionSettingsAction {
         super("Duplicate Connection", Icons.ACTION_COPY);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         ConnectionBundleSettingsForm settingsForm = getSettingsForm(e);
         if (settingsForm != null) {
@@ -18,6 +19,7 @@ public class DuplicateConnectionAction extends ConnectionSettingsAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         ConnectionBundleSettingsForm settingsForm = getSettingsForm(e);
         Presentation presentation = e.getPresentation();

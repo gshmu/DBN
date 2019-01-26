@@ -50,6 +50,7 @@ public class DatasetTableCellEditorWithTextEditor extends DatasetTableCellEditor
         };
     }
 
+    @Override
     @NotNull
     public TextFieldWithTextEditor getEditorComponent() {
         return (TextFieldWithTextEditor) super.getEditorComponent();
@@ -83,6 +84,7 @@ public class DatasetTableCellEditorWithTextEditor extends DatasetTableCellEditor
     /********************************************************
      *                      KeyListener                     *
      ********************************************************/
+    @Override
     public void keyPressed(KeyEvent keyEvent) {
         Shortcut[] shortcuts = KeyUtil.getShortcuts(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
         if (!keyEvent.isConsumed() && KeyUtil.match(shortcuts, keyEvent)) {

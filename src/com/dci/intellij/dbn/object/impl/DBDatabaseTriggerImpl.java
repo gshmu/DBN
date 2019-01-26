@@ -58,6 +58,7 @@ public class DBDatabaseTriggerImpl extends DBTriggerImpl implements DBDatabaseTr
     }
 
 
+    @Override
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         TriggerType triggerType = getTriggerType();
         TriggeringEvent[] triggeringEvents = getTriggeringEvents();
@@ -88,6 +89,7 @@ public class DBDatabaseTriggerImpl extends DBTriggerImpl implements DBDatabaseTr
             super(object, false);
         }
 
+        @Override
         public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
             ConnectionHandler connectionHandler = getConnectionHandler();
             if (connectionHandler != null) {
@@ -99,6 +101,7 @@ public class DBDatabaseTriggerImpl extends DBTriggerImpl implements DBDatabaseTr
     }
 
 
+    @Override
     public String loadCodeFromDatabase(DBContentType contentType) throws SQLException {
         SourceCodeLoader sourceCodeLoader = new SourceCodeLoader(this);
         return sourceCodeLoader.load();

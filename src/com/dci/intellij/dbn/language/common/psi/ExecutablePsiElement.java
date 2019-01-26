@@ -37,6 +37,7 @@ public class ExecutablePsiElement extends NamedPsiElement{
         super(astNode, elementType);
     }
 
+    @Override
     public NamedElementType getElementType() {
         return (NamedElementType) super.getElementType();
     }
@@ -68,6 +69,7 @@ public class ExecutablePsiElement extends NamedPsiElement{
         return false;
     }
 
+    @Override
     public boolean hasErrors() {
         return false;
     }
@@ -80,6 +82,7 @@ public class ExecutablePsiElement extends NamedPsiElement{
         this.executionProcessor = WeakRef.from(executionProcessor);
     }
 
+    @Override
     public Object clone() {
         return super.clone();
     }
@@ -89,6 +92,7 @@ public class ExecutablePsiElement extends NamedPsiElement{
     /*********************************************************
      *                    ItemPresentation                   *
      *********************************************************/
+    @Override
     public String getPresentableText() {
         ElementType elementType = getSpecificElementType();
         String subject = null;
@@ -129,16 +133,19 @@ public class ExecutablePsiElement extends NamedPsiElement{
         }
     }
 
+    @Override
     @Nullable
     public String getLocationString() {
         return null;
     }
 
+    @Override
     @Nullable
     public Icon getIcon(boolean open) {
         return super.getIcon(open);
     }
 
+    @Override
     @Nullable
     public TextAttributesKey getTextAttributesKey() {
         return null;

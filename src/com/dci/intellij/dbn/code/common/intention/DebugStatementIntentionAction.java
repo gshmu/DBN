@@ -24,11 +24,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class DebugStatementIntentionAction extends GenericIntentionAction implements HighPriorityAction {
+    @Override
     @NotNull
     public String getText() {
         return "Debug statement";
     }
 
+    @Override
     @NotNull
     public String getFamilyName() {
         return IntentionActionGroups.STATEMENT_EXECUTION;
@@ -39,6 +41,7 @@ public class DebugStatementIntentionAction extends GenericIntentionAction implem
         return Icons.STMT_EXECUTION_DEBUG;
     }
 
+    @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile != null) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
@@ -53,6 +56,7 @@ public class DebugStatementIntentionAction extends GenericIntentionAction implem
         return false;
     }
 
+    @Override
     public void invoke(@NotNull final Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         final ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
         final FileEditor fileEditor = EditorUtil.getFileEditor(editor);
@@ -73,6 +77,7 @@ public class DebugStatementIntentionAction extends GenericIntentionAction implem
         }
     }
 
+    @Override
     public boolean startInWriteAction() {
         return false;
     }

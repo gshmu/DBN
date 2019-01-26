@@ -52,6 +52,7 @@ public class RecordViewerColumnForm extends DBNFormImpl<RecordViewerForm> {
         updateColumnValue(column);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -123,6 +124,7 @@ public class RecordViewerColumnForm extends DBNFormImpl<RecordViewerForm> {
     };
 
 
+    @Override
     public void dispose() {
         super.dispose();
         regionalSettings = null;

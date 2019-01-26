@@ -20,6 +20,7 @@ public class SQLParserDefinition extends DBLanguageParserDefinition {
         super(parser);
     }
 
+    @Override
     @NotNull
     public Lexer createLexer(Project project) {
         return getDefaultParseDefinition().createLexer(project);
@@ -29,6 +30,7 @@ public class SQLParserDefinition extends DBLanguageParserDefinition {
         return SQLLanguage.INSTANCE.getMainLanguageDialect().getParserDefinition();
     }
 
+    @Override
     @NotNull
     public DBLanguageParser createParser(Project project) {
         return getParser();
@@ -38,6 +40,7 @@ public class SQLParserDefinition extends DBLanguageParserDefinition {
         return getParser().getTokenTypes();
     }
 
+    @Override
     public PsiFile createPsiFile(FileViewProvider viewProvider) {
         return new SQLFile(viewProvider, SQLLanguage.INSTANCE);
     }

@@ -113,6 +113,7 @@ public class DBLCodeStyleManager extends AbstractProjectComponent implements Per
     /****************************************
     *            ProjectComponent           *
     *****************************************/
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {

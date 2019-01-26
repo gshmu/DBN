@@ -20,6 +20,7 @@ public class SortConnectionsAction extends DumbAwareAction {
         this.connectionBundleSettings = connectionBundleSettings;
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         currentSortDirection = currentSortDirection == SortDirection.ASCENDING ?
                 SortDirection.DESCENDING :
@@ -34,6 +35,7 @@ public class SortConnectionsAction extends DumbAwareAction {
         }
     }
 
+    @Override
     public void update(AnActionEvent e) {
         Icon icon;
         String text;

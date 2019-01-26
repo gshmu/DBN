@@ -14,6 +14,7 @@ import java.sql.SQLTimeoutException;
 public class PostgresMessageParserInterface implements DatabaseMessageParserInterface {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
+    @Override
     @Nullable
     public DatabaseObjectIdentifier identifyObject(SQLException exception) {
          return null;

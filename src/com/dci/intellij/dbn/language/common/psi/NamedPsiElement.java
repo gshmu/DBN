@@ -28,6 +28,7 @@ public class NamedPsiElement extends SequencePsiElement {
         return subjects.size() > 0 ? NamingUtil.createNamesList(subjects, 3) : null;
     }
 
+    @Override
     public boolean hasErrors() {
         PsiElement child = getFirstChild();
         while (child != null) {
@@ -50,6 +51,7 @@ public class NamedPsiElement extends SequencePsiElement {
     /*********************************************************
      *                       ItemPresentation                *
      *********************************************************/
+    @Override
     public String getPresentableText() {
         BasePsiElement subject = findFirstPsiElement(ElementTypeAttribute.SUBJECT);
         if (subject instanceof IdentifierPsiElement && subject.getParent() == this) {
@@ -61,6 +63,7 @@ public class NamedPsiElement extends SequencePsiElement {
         return super.getPresentableText();
     }
 
+    @Override
     @Nullable
     public String getLocationString() {
         BasePsiElement subject = findFirstPsiElement(ElementTypeAttribute.SUBJECT);
@@ -76,6 +79,7 @@ public class NamedPsiElement extends SequencePsiElement {
         return null;
     }
 
+    @Override
     @Nullable
     public Icon getIcon(boolean open) {
         Icon icon = super.getIcon(open);
@@ -107,6 +111,7 @@ public class NamedPsiElement extends SequencePsiElement {
         return super.findPsiElement(lookupAdapter, scopeCrossCount);
     }
 
+    @Override
     @Nullable
     public TextAttributesKey getTextAttributesKey() {
         return null;

@@ -25,6 +25,7 @@ public class SessionBrowserTableCellRenderer extends BasicTableCellRenderer {
         return (SessionBrowserTextAttributes) super.getAttributes();
     }
 
+    @Override
     protected void customizeCellRenderer(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int columnIndex) {
         acquireState(table, isSelected, false, rowIndex, columnIndex);
         SessionBrowserModelCell cell = (SessionBrowserModelCell) value;

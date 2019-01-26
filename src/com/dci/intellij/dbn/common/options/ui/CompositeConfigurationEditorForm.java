@@ -8,9 +8,11 @@ public abstract class CompositeConfigurationEditorForm<E extends CompositeConfig
         super(configuration);
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
     }
 
+    @Override
     public void resetFormChanges() {
     }
 }

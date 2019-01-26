@@ -82,6 +82,7 @@ public class SessionBrowserAction extends DumbAwareAction {
     }
 
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Project project = ActionUtil.getProject(e);

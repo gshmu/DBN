@@ -42,6 +42,7 @@ public abstract class PseudoConstant<T extends PseudoConstant<T>> implements Con
         return registry;
     }
 
+    @Override
     public final String id() {
         return id;
     }

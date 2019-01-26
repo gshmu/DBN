@@ -60,6 +60,7 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
         return this.status.is(status);
     }
 
+    @Override
     @Nullable
     public DBSchema getDatabaseSchema() {
         return getObject().getSchema();
@@ -103,25 +104,30 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
     /*********************************************************
      *                     VirtualFile                       *
      *********************************************************/
+    @Override
     @NotNull
     @NonNls
     public String getName() {
         return name;
     }
 
+    @Override
     @NotNull
     public FileType getFileType() {
         return fileType;
     }
 
+    @Override
     public boolean isWritable() {
         return true;
     }
 
+    @Override
     public boolean isDirectory() {
         return false;
     }
 
+    @Override
     @Nullable
     public VirtualFile getParent() {
         if (!isDisposed()) {
@@ -133,26 +139,32 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
         return null;
     }
 
+    @Override
     public Icon getIcon() {
         return getObject().getOriginalIcon();
     }
 
+    @Override
     public VirtualFile[] getChildren() {
         return VirtualFile.EMPTY_ARRAY;
     }
 
+    @Override
     public long getTimeStamp() {
         return 0;
     }
 
+    @Override
     public void refresh(boolean b, boolean b1, Runnable runnable) {
 
     }
 
+    @Override
     public InputStream getInputStream() throws IOException {
         return DevNullStreams.INPUT_STREAM;
     }
 
+    @Override
     public long getModificationStamp() {
         return 1;
     }

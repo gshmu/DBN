@@ -116,22 +116,27 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
         return enabled ? Icons.DBO_CONSTRAINT : Icons.DBO_CONSTRAINT_DISABLED;
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return CONSTRAINT;
     }
 
+    @Override
     public int getConstraintType() {
         return constraintType;
     }
 
+    @Override
     public boolean isPrimaryKey() {
         return constraintType == PRIMARY_KEY;
     }
 
+    @Override
     public boolean isForeignKey() {
         return constraintType == FOREIGN_KEY;
     }
     
+    @Override
     public boolean isUniqueKey() {
         return constraintType == UNIQUE_KEY;
     }
@@ -140,14 +145,17 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
         return checkCondition;
     }
 
+    @Override
     public DBDataset getDataset() {
         return (DBDataset) getParentObject();
     }
 
+    @Override
     public List<DBColumn> getColumns() {
         return columns.getObjects();
     }
 
+    @Override
     public int getColumnPosition(DBColumn column) {
         DBObjectRelationListContainer childObjectRelations = getDataset().getChildObjectRelations();
         if (childObjectRelations != null) {
@@ -163,6 +171,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
         return 0;
     }
 
+    @Override
     @Nullable
     public DBColumn getColumnForPosition(int position) {
         DBObjectRelationListContainer childObjectRelations = getDataset().getChildObjectRelations();
@@ -179,11 +188,13 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
         return null;
     }
 
+    @Override
     @Nullable
     public DBConstraint getForeignKeyConstraint() {
         return DBObjectRef.get(foreignKeyConstraint);
     }
 
+    @Override
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         switch (constraintType) {
             case CHECK: ttb.append(true, "check constraint - " + (
@@ -221,6 +232,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
         return properties;
     }
 
+    @Override
     protected List<DBObjectNavigationList> createNavigationLists() {
         List<DBObjectNavigationList> objectNavigationLists = new ArrayList<>();
 
@@ -251,10 +263,12 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
      *                     TreeElement                       *
      *********************************************************/
 
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return EMPTY_TREE_NODE_LIST;

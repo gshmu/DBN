@@ -96,6 +96,7 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
         }
     }
 
+    @Override
     public void focus() {
         editor.getContentComponent().requestFocus();
     }
@@ -107,10 +108,12 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
    /*************************************************
     *                  SettingsEditor               *
     *************************************************/
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         DatasetCustomFilter filter = getConfiguration();
         String condition = document.getText().substring(conditionStartOffset);
@@ -120,10 +123,12 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
         filter.setName(nameTextField.getText());
     }
 
+    @Override
     public void resetFormChanges() {
 
     }
 
+    @Override
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();

@@ -22,6 +22,7 @@ public class EnableDisableAction extends DumbAwareAction {
         this.object = object;
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ensureProject(e);
         boolean enabled = object.getStatus().is(DBObjectStatus.ENABLED);

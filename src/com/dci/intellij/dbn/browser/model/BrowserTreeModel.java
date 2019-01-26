@@ -31,10 +31,12 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
         EventUtil.subscribe(project, this, BrowserTreeEventListener.TOPIC, browserTreeEventListener);
     }
 
+    @Override
     public void addTreeModelListener(TreeModelListener listener) {
         treeModelListeners.add(listener);
     }
 
+    @Override
     public void removeTreeModelListener(TreeModelListener listener) {
         treeModelListeners.remove(listener);
     }
@@ -56,10 +58,12 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
     /***************************************
      *              TreeModel              *
      ***************************************/
+    @Override
     public BrowserTreeNode getRoot() {
         return FailsafeUtil.get(root);
     }
 
+    @Override
     public Object getChild(Object parent, int index) {
         BrowserTreeNode treeChild = ((BrowserTreeNode) parent).getChildAt(index);
         if (treeChild instanceof LoadInProgressTreeNode) {
@@ -68,22 +72,27 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
         return treeChild;
     }
 
+    @Override
     public int getChildCount(Object parent) {
         return ((BrowserTreeNode) parent).getChildCount();
     }
 
+    @Override
     public boolean isLeaf(Object node) {
         return ((BrowserTreeNode) node).isLeaf();
     }
 
+    @Override
     public int getIndexOfChild(Object parent, Object child) {
         return ((BrowserTreeNode) parent).getIndex((BrowserTreeNode) child);
     }
 
+    @Override
     public void valueForPathChanged(TreePath path, Object newValue) {
 
     }
 
+    @Override
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();

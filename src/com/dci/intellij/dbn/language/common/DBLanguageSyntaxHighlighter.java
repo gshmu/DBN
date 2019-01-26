@@ -35,6 +35,7 @@ public abstract class DBLanguageSyntaxHighlighter extends SyntaxHighlighterBase 
     @NotNull
     protected abstract Lexer createLexer();
 
+    @Override
     @NotNull
     public TextAttributesKey[] getTokenHighlights(IElementType tokenType) {
         return pack(getAttributeKeys(tokenType, backgrounds), getAttributeKeys(tokenType, colors));
@@ -48,6 +49,7 @@ public abstract class DBLanguageSyntaxHighlighter extends SyntaxHighlighterBase 
         return tokenTypes;
     }
 
+    @Override
     @NotNull
     public Lexer getHighlightingLexer() {
         return createLexer();

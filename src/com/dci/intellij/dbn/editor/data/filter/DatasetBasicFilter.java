@@ -23,6 +23,7 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
         super(parent, name, DatasetFilterType.BASIC);
     }
 
+    @Override
     public void generateName() {
         if (!isCustomNamed()) {
             boolean addSeparator = false;
@@ -75,6 +76,7 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
         return false;
     }
 
+    @Override
     public String getVolatileName() {
         ConfigurationEditorForm configurationEditorForm = getSettingsEditor();
         if (configurationEditorForm != null) {
@@ -84,10 +86,12 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
         return super.getDisplayName();
     }
 
+    @Override
     public boolean isIgnored() {
         return false;
     }
 
+    @Override
     public Icon getIcon() {
         return  isTemporary() ? (
                     getError() == null ?
@@ -98,6 +102,7 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
                         Icons.DATASET_FILTER_BASIC_ERR;
     }
 
+    @Override
     public String createSelectStatement(DBDataset dataset, SortingState sortingState) {
         setError(null);
         StringBuilder buffer = new StringBuilder();
@@ -125,12 +130,14 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+   @Override
    @NotNull
    public ConfigurationEditorForm createConfigurationEditor() {
        DBDataset dataset = FailsafeUtil.get(lookupDataset());
        return new DatasetBasicFilterForm(dataset, this);
    }
 
+   @Override
    public void readConfiguration(Element element) {
        super.readConfiguration(element);
        joinType = SettingsUtil.getEnumAttribute(element, "join-type", ConditionJoinType.class);
@@ -142,6 +149,7 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
        }
    }
 
+    @Override
     public void writeConfiguration(Element element) {
         super.writeConfiguration(element);
         element.setAttribute("type", "basic");

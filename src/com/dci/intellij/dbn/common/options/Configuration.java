@@ -30,10 +30,12 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
     private boolean modified = false;
     private boolean transitory = IS_TRANSITORY.get();
 
+    @Override
     public String getHelpTopic() {
         return null;
     }
 
+    @Override
     @Nls
     public String getDisplayName() {
         return null;
@@ -43,11 +45,13 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
         return null;
     }
 
+    @Override
     @NotNull
     public String getId() {
         return getClass().getName();
     }
 
+    @Override
     public Runnable enableSearch(String option) {
         return null;
     }
@@ -60,6 +64,7 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
     @NotNull
     protected abstract T createConfigurationEditor();
 
+    @Override
     @NotNull
     public JComponent createComponent() {
         configurationEditorForm = createConfigurationEditor();
@@ -86,6 +91,7 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
 
     }
 
+    @Override
     public boolean isModified() {
         return modified;
     }
@@ -94,6 +100,7 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
         return transitory;
     }
 
+    @Override
     public void apply() throws ConfigurationException {
         if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) {
             configurationEditorForm.applyFormChanges();
@@ -134,6 +141,7 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
     @Deprecated
     protected void onApply() {}
 
+    @Override
     public void reset() {
         ConditionalLaterInvocator.invoke(() -> {
             try {
@@ -148,6 +156,7 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
         });
     }
 
+    @Override
     public void disposeUIResources() {
         DisposerUtil.dispose(configurationEditorForm);
         configurationEditorForm = null;

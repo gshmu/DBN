@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 public class SQLLanguageAnnotator implements Annotator {
     public static final SQLLanguageAnnotator INSTANCE = new SQLLanguageAnnotator();
 
+    @Override
     public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
         try {
             if (psiElement instanceof ExecutablePsiElement)  {

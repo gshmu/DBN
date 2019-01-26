@@ -39,17 +39,20 @@ public class SessionBrowserColorSettingsPage implements ColorSettingsPage {
         return new PlainSyntaxHighlighter();
     }
 
+    @Override
     @NonNls
     @NotNull
     public final String getDemoText() {
         return " ";
     }
 
+    @Override
     @NotNull
     public AttributesDescriptor[] getAttributeDescriptors() {
         return attributeDescriptors.toArray(new AttributesDescriptor[0]);
     }
 
+    @Override
     @NotNull
     public ColorDescriptor[] getColorDescriptors() {
         return colorDescriptors.toArray(new ColorDescriptor[0]);
@@ -61,6 +64,7 @@ public class SessionBrowserColorSettingsPage implements ColorSettingsPage {
         return "Session Browser (DBN)";
     }
 
+    @Override
     @Nullable
     public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
         return null;

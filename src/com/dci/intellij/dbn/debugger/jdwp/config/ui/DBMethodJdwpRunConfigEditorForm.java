@@ -69,6 +69,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
         }
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -151,6 +152,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
         return methodExecutionInputForm == null ? null : methodExecutionInputForm.getExecutionInput();
     }
 
+    @Override
     public void writeConfiguration(DBMethodJdwpRunConfig configuration) throws ConfigurationException {
         if (methodExecutionInputForm != null) {
             methodExecutionInputForm.updateExecutionInput();
@@ -170,6 +172,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
         //selectMethodAction.setConfiguration(configuration);
     }
 
+    @Override
     public void readConfiguration(DBMethodJdwpRunConfig configuration) {
         setExecutionInput(configuration.getExecutionInput(), false);
         compileDependenciesCheckBox.setSelected(configuration.isCompileDependencies());
@@ -215,6 +218,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
         mainPanel.repaint();
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         methodExecutionInputForm = null;

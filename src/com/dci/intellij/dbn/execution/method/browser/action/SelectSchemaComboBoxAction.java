@@ -18,6 +18,7 @@ public class SelectSchemaComboBoxAction extends DBNComboBoxAction {
         this.browserComponent = browserComponent;
     }
 
+    @Override
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent jComponent) {
         DefaultActionGroup actionGroup = new DefaultActionGroup();
@@ -31,6 +32,7 @@ public class SelectSchemaComboBoxAction extends DBNComboBoxAction {
         return actionGroup;
     }
 
+    @Override
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         String text = "Schema";

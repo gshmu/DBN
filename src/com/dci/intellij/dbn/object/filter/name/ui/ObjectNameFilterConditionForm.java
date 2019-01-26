@@ -79,6 +79,7 @@ public class ObjectNameFilterConditionForm extends DBNFormImpl<ObjectNameFilterC
         wildcardsHintLabel.setEnabled(operator != null && operator.allowsWildcards());
     }
 
+    @Override
     public JComponent getPreferredFocusedComponent() {
         return textPatternTextField;
     }
@@ -93,10 +94,12 @@ public class ObjectNameFilterConditionForm extends DBNFormImpl<ObjectNameFilterC
         return joinTypeComboBox.getSelectedValue();
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         condition = null;

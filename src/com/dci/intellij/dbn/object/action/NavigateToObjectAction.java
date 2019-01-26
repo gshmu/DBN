@@ -30,6 +30,7 @@ public class NavigateToObjectAction extends DumbAwareAction {
         presentation.setDescription(object.getTypeName());
     }
 
+    @Override
     public void actionPerformed(AnActionEvent event) {
         DBObjectRef.getnn(objectRef).navigate(true);
     }

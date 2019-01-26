@@ -144,11 +144,13 @@ public class MySqlArgumentsResultSet extends ResultSetAdapter {
         throw new SQLException("Could not parse argument list \"" + argumentsString + "\". Unexpected token \"" + token + "\" found. " + customMessage);
     }
 
+    @Override
     public boolean next() throws SQLException {
         currentArgument = arguments.hasNext() ? arguments.next() : null;
         return currentArgument != null;
     }
 
+    @Override
     public String getString(String columnLabel) throws SQLException {
         return
             columnLabel.equals("ARGUMENT_NAME") ? currentArgument.name :
@@ -158,6 +160,7 @@ public class MySqlArgumentsResultSet extends ResultSetAdapter {
             columnLabel.equals("DATA_TYPE_NAME") ? currentArgument.dataTypeName : null;
     }
 
+    @Override
     public int getInt(String columnLabel) throws SQLException {
         return
             columnLabel.equals("POSITION") ? currentArgument.position :
@@ -166,6 +169,7 @@ public class MySqlArgumentsResultSet extends ResultSetAdapter {
             columnLabel.equals("DATA_SCALE") ? (currentArgument.dataScale == null ? 0 : currentArgument.dataScale) : 0;
     }
 
+    @Override
     public long getLong(String columnLabel) throws SQLException {
         return getInt(columnLabel);
     }

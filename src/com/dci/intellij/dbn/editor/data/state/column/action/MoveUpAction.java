@@ -15,6 +15,7 @@ public class MoveUpAction extends AnAction {
         this.list = list;
     }
 
+    @Override
     public void update(AnActionEvent e) {
         int[] indices = list.getSelectedIndices();
         boolean enabled =
@@ -24,6 +25,7 @@ public class MoveUpAction extends AnAction {
         e.getPresentation().setEnabled(enabled);
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         ListUtil.moveSelectedItemsUp(list);
     }

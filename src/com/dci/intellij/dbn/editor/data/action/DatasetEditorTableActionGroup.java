@@ -149,6 +149,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
             super("Hide column");
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             DatasetEditorTable editorTable = datasetEditor.getEditorTable();
             if (editorTable != null) {
@@ -163,6 +164,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
             super("Sort ascending");
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             DatasetEditorTable editorTable = datasetEditor.getEditorTable();
             int modelColumnIndex = columnInfo.getColumnIndex();
@@ -178,6 +180,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
             super("Sort descending");
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             DatasetEditorTable editorTable = datasetEditor.getEditorTable();
             int modelColumnIndex = columnInfo.getColumnIndex();
@@ -195,6 +198,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
             this.filterByValue = filterByValue;
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             DBDataset dataset = datasetEditor.getDataset();
             DatasetFilterManager datasetFilterManager = DatasetFilterManager.getInstance(dataset.getProject());
@@ -212,6 +216,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
             this.like = like;
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             DBDataset dataset = datasetEditor.getDataset();
             DatasetFilterManager datasetFilterManager = DatasetFilterManager.getInstance(dataset.getProject());
@@ -228,6 +233,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
                     "Add this value to filter");
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             DBDataset dataset = datasetEditor.getDataset();
             DatasetFilterManager filterManager = DatasetFilterManager.getInstance(dataset.getProject());

@@ -38,6 +38,7 @@ public class DataGridGeneralSettings extends ProjectConfiguration<DataGridGenera
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @Override
     @NotNull
     public DataGridGeneralSettingsForm createConfigurationEditor() {
         return new DataGridGeneralSettingsForm(this);
@@ -48,11 +49,13 @@ public class DataGridGeneralSettings extends ProjectConfiguration<DataGridGenera
         return "general";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         zoomingEnabled = SettingsUtil.getBoolean(element, "enable-zooming", zoomingEnabled);
         columnTooltipEnabled = SettingsUtil.getBoolean(element, "enable-column-tooltip", columnTooltipEnabled);
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         SettingsUtil.setBoolean(element, "enable-zooming", zoomingEnabled);
         SettingsUtil.setBoolean(element, "enable-column-tooltip", columnTooltipEnabled);

@@ -34,6 +34,7 @@ public class TokenTypeBundle extends DBLanguageTokenTypeBundle {
         return getSharedTokenTypes().getOperatorTokenType(index);
     }
 
+    @Override
     public SimpleTokenType getTokenType(String id) {
         SimpleTokenType tokenType = super.getTokenType(id);
         if (tokenType == null) {
@@ -47,6 +48,7 @@ public class TokenTypeBundle extends DBLanguageTokenTypeBundle {
         return tokenType;
     }
 
+    @Override
     public TokenSet getTokenSet(String id) {
         TokenSet tokenSet = super.getTokenSet(id);
         if (tokenSet == null) {

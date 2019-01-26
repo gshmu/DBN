@@ -31,6 +31,7 @@ public class BasicTableGutterCellRenderer extends JPanel implements ListCellRend
         if (textLabel != null) textLabel.setFont(font);
     }
 
+    @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         BasicTableGutter tableGutter = (BasicTableGutter) list;
         textLabel.setText(Integer.toString(index + 1));

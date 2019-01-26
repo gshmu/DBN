@@ -14,6 +14,7 @@ public class CompareWithOriginalAction extends AbstractDiffAction {
         super("Compare with original", null, Icons.CODE_EDITOR_DIFF);
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         if (sourceCodeFile != null) {
@@ -22,6 +23,7 @@ public class CompareWithOriginalAction extends AbstractDiffAction {
         }
     }
 
+    @Override
     public void update(AnActionEvent e) {
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         e.getPresentation().setText("Compare with Original");

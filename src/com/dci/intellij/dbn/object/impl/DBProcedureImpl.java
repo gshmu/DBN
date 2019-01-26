@@ -37,10 +37,12 @@ public class DBProcedureImpl extends DBMethodImpl implements DBProcedure {
         return resultSet.getString("PROCEDURE_NAME");
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return DBObjectType.PROCEDURE;
     }
 
+    @Override
     @Nullable
     public Icon getIcon() {
         if (getContentType() == DBContentType.CODE) {
@@ -57,10 +59,12 @@ public class DBProcedureImpl extends DBMethodImpl implements DBProcedure {
         return Icons.DBO_PROCEDURE;
     }
 
+    @Override
     public Icon getOriginalIcon() {
         return Icons.DBO_PROCEDURE;
     }
 
+    @Override
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         ttb.append(true, getObjectType().getName(), true);
         ttb.createEmptyRow();
@@ -68,10 +72,12 @@ public class DBProcedureImpl extends DBMethodImpl implements DBProcedure {
     }
 
 
+    @Override
     public DBProgram getProgram() {
         return null;
     }
 
+    @Override
     public String getMethodType() {
         return "PROCEDURE";
     }
@@ -86,6 +92,7 @@ public class DBProcedureImpl extends DBMethodImpl implements DBProcedure {
             super(object, false);
         }
 
+        @Override
         public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
             return getConnectionHandler().getInterfaceProvider().getMetadataInterface().loadObjectSourceCode(
                    getSchema().getName(), getName(), "PROCEDURE", getOverload(), connection);
@@ -97,14 +104,17 @@ public class DBProcedureImpl extends DBMethodImpl implements DBProcedure {
      *                  DBCompilableObject                   *
      *********************************************************/
 
+    @Override
     public String loadCodeFromDatabase(DBContentType contentType) throws SQLException {
         return new SourceCodeLoader(this).load();
     }
 
+    @Override
     public String getCodeParseRootId(DBContentType contentType) {
         return getParentObject() instanceof DBSchema && contentType == DBContentType.CODE ? "procedure_declaration" : null;
     }
 
+    @Override
     public DBObjectTimestampLoader getTimestampLoader(DBContentType contentType) {
         return TIMESTAMP_LOADER;
     }

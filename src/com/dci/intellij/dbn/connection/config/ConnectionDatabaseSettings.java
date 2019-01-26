@@ -60,6 +60,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         }
     }
 
+    @Override
     @NotNull
     public ConnectionDatabaseSettingsForm createConfigurationEditor() {
         return new ConnectionDatabaseSettingsForm(this);
@@ -105,6 +106,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         this.driver = driver;
     }
 
+    @Override
     public String getDisplayName() {
         return name;
     }
@@ -277,6 +279,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     /*********************************************************
     *                 PersistentConfiguration               *
     *********************************************************/
+    @Override
     public void readConfiguration(Element element) {
         ConnectionId connectionId = ConnectionId.get(getString(element, "id", null));
         if (connectionId != null) {
@@ -355,6 +358,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         updateHashCode();
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         String driverLibrary = ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.get() ?
                 FileUtil.convertToRelativePath(getProject(), this.driverLibrary) :

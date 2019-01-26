@@ -31,6 +31,7 @@ public class CodeCompletionFilterOptionBundle implements CheckedTreeNodeProvider
         return filterSettings;
     }
 
+    @Override
     public void readConfiguration(Element element) {
         List children = element.getChildren();
         for (Object child: children) {
@@ -49,6 +50,7 @@ public class CodeCompletionFilterOptionBundle implements CheckedTreeNodeProvider
         }
     }
 
+    @Override
     public void writeConfiguration(Element element){
         for (CodeCompletionFilterOption option : options) {
             Element child = new Element("filter-element");
@@ -57,6 +59,7 @@ public class CodeCompletionFilterOptionBundle implements CheckedTreeNodeProvider
         }
     }
 
+    @Override
     public CheckedTreeNode createCheckedTreeNode() {
         CodeCompletionFilterTreeNode node = new CodeCompletionFilterTreeNode(this, false);
         //node.setChecked(true);

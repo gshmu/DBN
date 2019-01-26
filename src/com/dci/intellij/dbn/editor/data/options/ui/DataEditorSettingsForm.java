@@ -27,6 +27,7 @@ public class DataEditorSettingsForm extends CompositeConfigurationEditorForm<Dat
     }
 
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }

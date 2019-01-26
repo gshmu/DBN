@@ -141,6 +141,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         }
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -168,6 +169,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         return FailsafeUtil.get(datasetEditorTable);
     }
 
+    @Override
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();
@@ -188,6 +190,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     /*********************************************************
      *              SearchableDataComponent                  *
      *********************************************************/
+    @Override
     public void showSearchHeader() {
         DatasetEditorTable editorTable = getEditorTable();
         editorTable.cancelEditing();
@@ -209,6 +212,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         return dataSearchComponent.get();
     }
 
+    @Override
     public void hideSearchHeader() {
         getSearchComponent().resetFindModel();
         searchPanel.setVisible(false);

@@ -15,6 +15,7 @@ public class FetchNextRecordsAction extends AbstractDataEditorAction {
         super("Fetch next records", Icons.DATA_EDITOR_FETCH_NEXT_RECORDS);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
         if (datasetEditor != null) {
@@ -23,6 +24,7 @@ public class FetchNextRecordsAction extends AbstractDataEditorAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Fetch Next Records");

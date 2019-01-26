@@ -78,10 +78,12 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
         return false;
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         transactionListener = null;

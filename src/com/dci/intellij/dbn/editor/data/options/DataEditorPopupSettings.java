@@ -44,6 +44,7 @@ public class DataEditorPopupSettings extends Configuration<DataEditorPopupSettin
         this.delay = delay;
     }
 
+    @Override
     public String getDisplayName() {
         return null;
     }
@@ -51,6 +52,7 @@ public class DataEditorPopupSettings extends Configuration<DataEditorPopupSettin
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+   @Override
    @NotNull
    public DataEditorPopupSettingsForm createConfigurationEditor() {
        return new DataEditorPopupSettingsForm(this);
@@ -61,6 +63,7 @@ public class DataEditorPopupSettings extends Configuration<DataEditorPopupSettin
         return "text-editor-popup";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         active = SettingsUtil.getBoolean(element, "active", active);
         activeIfEmpty = SettingsUtil.getBoolean(element, "active-if-empty", activeIfEmpty);
@@ -68,6 +71,7 @@ public class DataEditorPopupSettings extends Configuration<DataEditorPopupSettin
         delay = SettingsUtil.getInteger(element, "popup-delay", delay);
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         SettingsUtil.setBoolean(element, "active", active);
         SettingsUtil.setBoolean(element, "active-if-empty", activeIfEmpty);

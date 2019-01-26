@@ -24,6 +24,7 @@ public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
         this.debug = debug;
     }
 
+    @Override
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
         DefaultActionGroup actionGroup = new DefaultActionGroup();
@@ -48,6 +49,7 @@ public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
         return actionGroup;
     }
 
+    @Override
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         String text = "Select Connection";

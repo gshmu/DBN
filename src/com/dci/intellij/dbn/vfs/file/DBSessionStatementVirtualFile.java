@@ -45,6 +45,7 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
         //putUserData(PARSE_ROOT_ID_KEY, "subquery");
     }
 
+    @Override
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
         ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
         DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
@@ -55,10 +56,12 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
         return sessionBrowser;
     }
 
+    @Override
     public Icon getIcon() {
         return Icons.FILE_SQL;
     }
 
+    @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         ConnectionHandler connectionHandler = sessionBrowser == null ? null : sessionBrowser.getConnectionHandler();
@@ -113,9 +116,11 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
         return SQLFileType.INSTANCE;
     }
 
+    @Override
     @NotNull
     public OutputStream getOutputStream(Object requestor, final long modificationTimestamp, long newTimeStamp) throws IOException {
         return new ByteArrayOutputStream() {
+            @Override
             public void close() {
                 DBSessionStatementVirtualFile.this.modificationTimestamp = modificationTimestamp;
                 content = toString();
@@ -123,6 +128,7 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
         };
     }
 
+    @Override
     @NotNull
     public byte[] contentsToByteArray() throws IOException {
         Charset charset = getCharset();
@@ -134,6 +140,7 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
         return 0;
     }
 
+  @Override
   public long getModificationStamp() {
     return modificationTimestamp;
   }

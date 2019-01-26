@@ -13,6 +13,7 @@ public class EnableDisableQuickFilterConditionAction extends DumbAwareAction {
         this.conditionForm = conditionForm;
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         e.getPresentation().setIcon(
                 conditionForm.isActive() ?
@@ -24,6 +25,7 @@ public class EnableDisableQuickFilterConditionAction extends DumbAwareAction {
                         "Activate Condition");
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         conditionForm.setActive(!conditionForm.isActive());
     }

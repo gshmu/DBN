@@ -39,6 +39,7 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
         return uniqueIndex;
     }
 
+    @Override
     public String getId() {
         return "";
     }
@@ -62,26 +63,32 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
         return (DBLanguageDialect) super.getLanguage();
     }
 
+    @Override
     public String getDescription() {
         return getDebugName();
     }
 
+    @Override
     public String getDebugName() {
         return toString();
     }
 
+    @Override
     public Icon getIcon() {
         return null;
     }
 
+    @Override
     public ElementType getParent() {
         return null;
     }
 
+    @Override
     public ElementTypeLookupCache getLookupCache() {
         return null;
     }
 
+    @Override
     public ElementTypeParser getParser() {
         return null;
     }
@@ -132,6 +139,7 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
         return 0;
     }
 
+    @Override
     public boolean is(ElementTypeAttribute attribute) {
         return false;
     }
@@ -141,22 +149,27 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
         throw new AbstractMethodError("Operation not allowed");
     }
 
+    @Override
     public boolean isLeaf() {
         return false;
     }
 
+    @Override
     public boolean isVirtualObject() {
         return false;
     }
 
+    @Override
     public DBObjectType getVirtualObjectType() {
         return null;
     }
 
+    @Override
     public PsiElement createPsiElement(ASTNode astNode) {
         return new ChameleonPsiElement(astNode, this);
     }
 
+    @Override
     public ElementTypeBundle getElementBundle() {
         return getLanguageDialect().getParserDefinition().getParser().getElementTypes();
     }
@@ -165,66 +178,82 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
         return parentLanguage;
     }
 
+    @Override
     public int getLookupIndex() {
         return 0;
     }
 
+    @Override
     public String getValue() {
         return null;
     }
 
+    @Override
     public String getTypeName() {
         return null;
     }
 
+    @Override
     public boolean isSuppressibleReservedWord() {
         return false;
     }
 
+    @Override
     public boolean isIdentifier() {
         return false;
     }
 
+    @Override
     public boolean isVariable() {
         return false;
     }
 
+    @Override
     public boolean isQuotedIdentifier() {
         return false;
     }
 
+    @Override
     public boolean isKeyword() {
         return false;
     }
 
+    @Override
     public boolean isFunction() {
         return false;
     }
 
+    @Override
     public boolean isParameter() {
         return false;
     }
 
+    @Override
     public boolean isDataType() {
         return false;
     }
 
+    @Override
     public boolean isCharacter() {
         return false;
     }
 
+    @Override
     public boolean isOperator() {
         return false;
     }
 
+    @Override
     public boolean isChameleon() {
         return true;
     }
 
+    @Override
     public boolean isReservedWord() {
         return false;
     }
 
+    @Override
     public boolean isParserLandmark() {
         return false;
     }
@@ -239,6 +268,7 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
         return false;
     }
 
+    @Override
     @NotNull
     public TokenTypeCategory getCategory() {
         return TokenTypeCategory.CHAMELEON;

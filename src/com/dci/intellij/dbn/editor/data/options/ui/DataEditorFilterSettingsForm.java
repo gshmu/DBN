@@ -37,10 +37,12 @@ public class DataEditorFilterSettingsForm extends ConfigurationEditorForm<DataEd
         };
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         DataEditorFilterSettings settings = getConfiguration();
         settings.setPromptFilterDialog(promptFilterDialogCheckBox.isSelected());
@@ -48,6 +50,7 @@ public class DataEditorFilterSettingsForm extends ConfigurationEditorForm<DataEd
     }
 
 
+    @Override
     public void resetFormChanges() {
         DataEditorFilterSettings settings = getConfiguration();
         promptFilterDialogCheckBox.setSelected(settings.isPromptFilterDialog());

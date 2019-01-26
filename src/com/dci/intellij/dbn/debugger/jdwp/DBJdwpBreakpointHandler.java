@@ -59,6 +59,7 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
         super(session, debugProcess);
     }
 
+    @Override
     public void registerDefaultBreakpoint(DBMethod method) {
         DBEditableObjectVirtualFile mainDatabaseFile = DBDebugUtil.getMainDatabaseFile(method);
         if (mainDatabaseFile != null) {
@@ -140,6 +141,7 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
         return false;
     }
 
+    @Override
     public void registerBreakpoints(@NotNull List<XLineBreakpoint<XBreakpointProperties>> breakpoints, final List<? extends DBObject> objects) {
         ManagedThreadCommand.invoke(getJdiDebugProcess(), PrioritizedTask.Priority.LOW, () -> {
             for (DBObject object : objects) {

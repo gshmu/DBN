@@ -65,14 +65,17 @@ public class DatabaseBrowserEditorSettings extends ProjectConfiguration<Database
         return "default-editors";
     }
 
+    @Override
     public String getDisplayName() {
         return "Database Browser";
     }
 
+    @Override
     public String getHelpTopic() {
         return "browserSettings";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         List<DefaultEditorOption> newOptions = new ArrayList<DefaultEditorOption>();
         List<Element> children = element.getChildren();
@@ -93,6 +96,7 @@ public class DatabaseBrowserEditorSettings extends ProjectConfiguration<Database
         options = newOptions;
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         for (DefaultEditorOption option : options) {
             Element child = new Element("object-type");

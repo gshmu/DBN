@@ -74,6 +74,7 @@ public class ClobValue extends LargeObjectValue {
         }
     }
 
+    @Override
     public void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable String value) throws SQLException {
         try {
             int columnType = resultSet.getMetaData().getColumnType(columnIndex);
@@ -105,11 +106,13 @@ public class ClobValue extends LargeObjectValue {
         return GenericDataType.CLOB;
     }
 
+    @Override
     @Nullable
     public String read() throws SQLException {
         return read(0);
     }
 
+    @Override
     public String read(int maxSize) throws SQLException {
         if (clob == null) {            return null;
         } else {
@@ -130,6 +133,7 @@ public class ClobValue extends LargeObjectValue {
         }
     }
 
+    @Override
     public void release(){
         if (reader != null) {
             try {
@@ -146,6 +150,7 @@ public class ClobValue extends LargeObjectValue {
         return clob == null ? 0 : clob.length();
     }
 
+    @Override
     public String getDisplayValue() {
         /*try {
             return "[CLOB] " + size() + "";

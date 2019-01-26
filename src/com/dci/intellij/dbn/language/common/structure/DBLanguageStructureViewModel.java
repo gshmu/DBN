@@ -19,21 +19,25 @@ public abstract class DBLanguageStructureViewModel extends TextEditorBasedStruct
         super(editor, psiFile);
     }
 
+    @Override
     @NotNull
     protected Class[] getSuitableClasses() {
         return new Class[] {BasePsiElement.class};
     }
 
+    @Override
     @NotNull
     public Grouper[] getGroupers() {
         return Grouper.EMPTY_ARRAY;
     }
 
+    @Override
     @NotNull
     public Sorter[] getSorters() {
         return Sorter.EMPTY_ARRAY;
     }
 
+    @Override
     @NotNull
     public Filter[] getFilters() {
         return Filter.EMPTY_ARRAY;

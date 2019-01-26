@@ -13,10 +13,12 @@ public class IterationChopDownAlwaysPreset extends IterationAbstractPreset {
         super("chop_down", "Chop down");
     }
 
+    @Override
     public boolean accepts(BasePsiElement psiElement) {
         return getParentElementType(psiElement) instanceof IterationElementType;
     }
 
+    @Override
     @Nullable
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
@@ -25,6 +27,7 @@ public class IterationChopDownAlwaysPreset extends IterationAbstractPreset {
         return getWrap(elementType, iterationElementType, true);
     }
 
+    @Override
     @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);

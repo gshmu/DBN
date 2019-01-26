@@ -36,6 +36,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         //mainPanel.add(connectionTabs, BorderLayout.CENTER);
         initTabs();
         connectionTabs.addListener(new TabsListener() {
+            @Override
             public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
 /*
                 ToolWindow toolWindow = browserManager.getBrowserToolWindow();
@@ -45,12 +46,15 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
 */
             }
 
+            @Override
             public void beforeSelectionChanged(TabInfo oldSelection, TabInfo newSelection) {
             }
 
+            @Override
             public void tabRemoved(TabInfo tabInfo) {
             }
 
+            @Override
             public void tabsMoved() {
             }
         });
@@ -109,10 +113,12 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         return null;
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
 
+    @Override
     @Nullable
     public DatabaseBrowserTree getBrowserTree() {
         return getActiveBrowserTree();
@@ -134,6 +140,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         return null;
     }
 
+    @Override
     public void selectElement(BrowserTreeNode treeNode, boolean focus, boolean scroll) {
         ConnectionHandler connectionHandler = treeNode.getConnectionHandler();
         SimpleBrowserForm browserForm = getBrowserForm(connectionHandler);
@@ -153,6 +160,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         }
     }
 
+    @Override
     public void dispose() {
         super.dispose();
     }

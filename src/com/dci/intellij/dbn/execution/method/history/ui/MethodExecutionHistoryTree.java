@@ -83,6 +83,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
         return null;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         executionHistory = null;
@@ -90,6 +91,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     }
 
     private class TreeCellRenderer extends ColoredTreeCellRenderer {
+        @Override
         public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
             try {
                 MethodExecutionHistoryTreeNode node = (MethodExecutionHistoryTreeNode) value;
@@ -123,6 +125,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
      *                         Listeners                      *
      **********************************************************/
     private TreeSelectionListener treeSelectionListener = new TreeSelectionListener(){
+        @Override
         public void valueChanged(TreeSelectionEvent e) {
             MethodExecutionInput executionInput = getSelectedExecutionInput();
             if (executionInput != null) {
@@ -149,6 +152,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     };
 
     private TreeModelListener treeModelListener = new TreeModelHandler() {
+        @Override
         public void treeNodesRemoved(TreeModelEvent e) {
             dialog.setSaveButtonEnabled(true);
         }

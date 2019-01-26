@@ -96,6 +96,7 @@ public class SortingState implements PersistentStateElement<Element>{
         return true;
     }
 
+    @Override
     public SortingState clone() {
         SortingState clone = new SortingState();
         for (SortingInstruction criterion : sortingInstructions) {
@@ -104,6 +105,7 @@ public class SortingState implements PersistentStateElement<Element>{
         return clone;
     }
 
+    @Override
     public void writeState(Element element) {
         for (SortingInstruction sortingInstruction : sortingInstructions) {
             String columnName = sortingInstruction.getColumnName();
@@ -118,6 +120,7 @@ public class SortingState implements PersistentStateElement<Element>{
         }
     }
 
+    @Override
     public void readState(Element element) {
         if (element != null) {
             List<Element> columnElements = element.getChildren();

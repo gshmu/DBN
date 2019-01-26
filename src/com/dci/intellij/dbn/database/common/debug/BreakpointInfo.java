@@ -15,11 +15,13 @@ public class BreakpointInfo extends BasicOperationInfo {
         return breakpointId;
     }
 
+    @Override
     public void registerParameters(CallableStatement statement) throws SQLException {
         statement.registerOutParameter(1, Types.NUMERIC);
         statement.registerOutParameter(2, Types.VARCHAR);
     }
 
+    @Override
     public void read(CallableStatement statement) throws SQLException {
         Object object = statement.getObject(1);
         if (object instanceof BigDecimal) {

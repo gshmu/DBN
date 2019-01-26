@@ -35,22 +35,27 @@ public class DBTypeAttributeImpl extends DBObjectImpl implements DBTypeAttribute
     }
 
 
+    @Override
     public int getPosition() {
         return position;
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return DBObjectType.TYPE_ATTRIBUTE;
     }
 
+    @Override
     public DBType getType() {
         return (DBType) getParentObject();        
     }
 
+    @Override
     public DBDataType getDataType() {
         return dataType;
     }
 
+    @Override
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         ttb.append(true, "type attribute", true);
         ttb.append(false, " - ", true);
@@ -60,6 +65,7 @@ public class DBTypeAttributeImpl extends DBObjectImpl implements DBTypeAttribute
         super.buildToolTip(ttb);            
     }
 
+    @Override
     public List<PresentableProperty> getPresentableProperties() {
         List<PresentableProperty> properties = super.getPresentableProperties();
         properties.add(0, new DBDataTypePresentableProperty(dataType));
@@ -71,6 +77,7 @@ public class DBTypeAttributeImpl extends DBObjectImpl implements DBTypeAttribute
         return dataType.getQualifiedName();
     }
 
+    @Override
     protected List<DBObjectNavigationList> createNavigationLists() {
         List<DBObjectNavigationList> objectNavigationLists = new ArrayList<DBObjectNavigationList>();
 
@@ -81,6 +88,7 @@ public class DBTypeAttributeImpl extends DBObjectImpl implements DBTypeAttribute
         return objectNavigationLists;
     }
 
+    @Override
     public int compareTo(@NotNull Object o) {
         if (o instanceof DBTypeAttribute) {
             DBTypeAttribute typeAttribute = (DBTypeAttribute) o;
@@ -95,10 +103,12 @@ public class DBTypeAttributeImpl extends DBObjectImpl implements DBTypeAttribute
      *                     TreeElement                       *
      *********************************************************/
 
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return EMPTY_TREE_NODE_LIST;

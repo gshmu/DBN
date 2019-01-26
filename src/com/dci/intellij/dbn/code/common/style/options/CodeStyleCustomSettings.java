@@ -28,6 +28,7 @@ public abstract class CodeStyleCustomSettings<T extends CompositeConfigurationEd
     /*********************************************************
     *                     Configuration                     *
     *********************************************************/
+    @Override
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
                 caseSettings,
@@ -36,6 +37,7 @@ public abstract class CodeStyleCustomSettings<T extends CompositeConfigurationEd
 
     protected abstract String getElementName();
 
+    @Override
     public void readConfiguration(Element element) {
         Element child = element.getChild(getElementName());
         if (child != null) {
@@ -44,6 +46,7 @@ public abstract class CodeStyleCustomSettings<T extends CompositeConfigurationEd
         }
     }
 
+    @Override
     public void writeConfiguration(Element element) {
          Element child = new Element(getElementName());
          element.addContent(child);

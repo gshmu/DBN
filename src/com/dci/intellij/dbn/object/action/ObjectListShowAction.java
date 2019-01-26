@@ -50,6 +50,7 @@ public abstract class ObjectListShowAction extends DumbAwareAction {
         return DBObjectRef.getnn(sourceObjectRef);
     }
 
+    @Override
     public final void actionPerformed(@NotNull AnActionEvent e) {
         DBObject sourceObject = getSourceObject();
         ConnectionAction.invoke("loading " + getListName(), sourceObject,

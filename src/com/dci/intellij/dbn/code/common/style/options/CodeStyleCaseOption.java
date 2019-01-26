@@ -50,6 +50,7 @@ public class CodeStyleCaseOption implements PersistentConfiguration {
     /*********************************************************
      *                 PersistentConfiguration               *
      *********************************************************/
+    @Override
     public void readConfiguration(Element element) {
         name = element.getAttributeValue("name");
         String style = element.getAttributeValue("value");
@@ -60,6 +61,7 @@ public class CodeStyleCaseOption implements PersistentConfiguration {
                 style.equals("preserve") ? CodeStyleCase.PRESERVE : CodeStyleCase.PRESERVE;
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         String value =
                 styleCase == CodeStyleCase.UPPER ? "upper" :

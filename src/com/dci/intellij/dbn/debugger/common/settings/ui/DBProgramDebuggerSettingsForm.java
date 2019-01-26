@@ -7,10 +7,12 @@ import javax.swing.*;
 public class DBProgramDebuggerSettingsForm extends DBNFormImpl {
     private JPanel mainPanel;
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
     }

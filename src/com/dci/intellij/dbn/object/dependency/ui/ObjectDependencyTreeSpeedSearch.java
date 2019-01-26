@@ -18,6 +18,7 @@ public class ObjectDependencyTreeSpeedSearch extends SpeedSearchBase<JTree> impl
         super(tree);
     }
 
+    @Override
     protected int getSelectedIndex() {
         Object[] elements = getAllElements();
         ObjectDependencyTreeNode treeNode = getSelectedTreeElement();
@@ -39,6 +40,7 @@ public class ObjectDependencyTreeSpeedSearch extends SpeedSearchBase<JTree> impl
         return null;
     }
 
+    @Override
     protected Object[] getAllElements() {
         List<ObjectDependencyTreeNode> nodes = new ArrayList<ObjectDependencyTreeNode>();
         ObjectDependencyTreeNode root = getComponent().getModel().getRoot();
@@ -62,6 +64,7 @@ public class ObjectDependencyTreeSpeedSearch extends SpeedSearchBase<JTree> impl
         return (ObjectDependencyTree) super.getComponent();
     }
 
+    @Override
     @Nullable
     protected String getElementText(Object o) {
         ObjectDependencyTreeNode treeNode = (ObjectDependencyTreeNode) o;
@@ -80,6 +83,7 @@ public class ObjectDependencyTreeSpeedSearch extends SpeedSearchBase<JTree> impl
         return null;
     }
 
+    @Override
     protected void selectElement(Object o, String s) {
         ObjectDependencyTreeNode treeNode = (ObjectDependencyTreeNode) o;
         getComponent().selectElement(treeNode);

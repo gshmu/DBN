@@ -184,8 +184,10 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
     //protected abstract ConnectionDatabaseSettings createConfig(ConnectionSettings configuration);
 
+    @Override
     protected DocumentListener createDocumentListener() {
         return new DocumentAdapter() {
+            @Override
             protected void textChanged(DocumentEvent e) {
                 ConnectionDatabaseSettings configuration = getConfiguration();
                 configuration.setModified(true);
@@ -211,6 +213,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
     }
 
 
+    @Override
     protected ActionListener createActionListener() {
         return e -> {
             Object source = e.getSource();
@@ -234,10 +237,12 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         return nameTextField.getText();
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges(final ConnectionDatabaseSettings configuration){
         JComboBox<DriverSource> driverSourceComboBox = driverSettingsForm.getDriverSourceComboBox();
         TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();
@@ -268,6 +273,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         configuration.updateHashCode();
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         ConfigurationEditorUtil.validateStringInputValue(nameTextField, "Name", true);
         final ConnectionDatabaseSettings configuration = getConfiguration();
@@ -314,6 +320,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
     }
 
 
+    @Override
     public void resetFormChanges() {
         JComboBox<DriverSource> driverSourceComboBox = driverSettingsForm.getDriverSourceComboBox();
         TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();

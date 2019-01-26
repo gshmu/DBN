@@ -119,6 +119,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl<DatasetRecordEdit
         setCell(cell);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -255,6 +256,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl<DatasetRecordEdit
         }
     };
 
+    @Override
     public void dispose() {
         super.dispose();
         cell = null;

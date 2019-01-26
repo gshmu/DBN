@@ -26,22 +26,27 @@ public class DBObjectNavigationListImpl<T extends DBObject> implements DBObjectN
         this.objectsProvider = objectsProvider;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public T getObject() {
         return object;
     }
 
+    @Override
     public List<T> getObjects() {
         return objects;
     }
 
+    @Override
     public ObjectListProvider<T> getObjectsProvider() {
         return objectsProvider;
     }
 
+    @Override
     public boolean isLazy() {
         return objectsProvider != null;
     }

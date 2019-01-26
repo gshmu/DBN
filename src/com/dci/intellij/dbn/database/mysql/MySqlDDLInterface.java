@@ -24,6 +24,7 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
     }
 
 
+    @Override
     public String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, DBContentType contentType, String code, String alternativeDelimiter) {
         if (StringUtil.isEmpty(alternativeDelimiter)) {
             alternativeDelimiter = getProvider().getCompatibilityInterface().getDefaultAlternativeStatementDelimiter();
@@ -80,6 +81,7 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                   CHANGE statements                   *
      *********************************************************/
+    @Override
     public void updateView(String viewName, String code, DBNConnection connection) throws SQLException {
         String sqlMode = getSessionSqlMode(connection);
         setSessionSqlMode("TRADITIONAL", connection);
@@ -114,6 +116,7 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
         }
     }
 
+    @Override
     public void updateObject(String objectName, String objectType, String oldCode, String newCode, DBNConnection connection) throws SQLException {
         String sqlMode = getSessionSqlMode(connection);
         setSessionSqlMode("TRADITIONAL", connection);
@@ -140,6 +143,7 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                   CREATE statements                   *
      *********************************************************/
+    @Override
     public void createMethod(MethodFactoryInput method, DBNConnection connection) throws SQLException {
         CodeStyleCaseSettings styleCaseSettings = PSQLCodeStyleSettings.getInstance(method.getSchema().getProject()).getCaseSettings();
         CodeStyleCaseOption keywordCaseOption = styleCaseSettings.getKeywordCaseOption();

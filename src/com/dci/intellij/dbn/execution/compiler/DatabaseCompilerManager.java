@@ -323,6 +323,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     /***************************************
      *            ProjectComponent         *
      ***************************************/
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {

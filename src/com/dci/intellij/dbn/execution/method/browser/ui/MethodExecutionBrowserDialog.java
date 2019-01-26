@@ -40,6 +40,7 @@ public class MethodExecutionBrowserDialog extends DBNDialog<MethodExecutionBrows
         super.show();
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         selectAction = new SelectAction();
@@ -73,6 +74,7 @@ public class MethodExecutionBrowserDialog extends DBNDialog<MethodExecutionBrows
             super("Select");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             methodRef = DBObjectRef.from(getComponent().getSelectedMethod());
             close(OK_EXIT_CODE);
@@ -80,6 +82,7 @@ public class MethodExecutionBrowserDialog extends DBNDialog<MethodExecutionBrows
 
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         objectTreeModel = null;

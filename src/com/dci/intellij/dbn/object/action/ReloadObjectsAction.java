@@ -16,6 +16,7 @@ public class ReloadObjectsAction extends DumbAwareAction {
         this.objectList = objectList;
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         String listName = objectList.getName();
         boolean loaded = objectList.isLoaded();

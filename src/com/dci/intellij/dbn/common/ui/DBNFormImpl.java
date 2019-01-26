@@ -40,6 +40,7 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
         return parentComponent;
     }
 
+    @Override
     @NotNull
     public final Project getProject() {
         if (projectRef != null) {

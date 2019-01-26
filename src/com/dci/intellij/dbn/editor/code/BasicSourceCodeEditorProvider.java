@@ -24,6 +24,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvider implements DumbAware {
+    @Override
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
         DBEditableObjectVirtualFile databaseFile;
@@ -108,6 +109,7 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
         Disposer.register(sourceCodeEditor, actionsPanel);
     }
 
+    @Override
     public void disposeEditor(@NotNull FileEditor editor) {
         Disposer.dispose(editor);
     }

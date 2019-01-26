@@ -118,11 +118,13 @@ public abstract class ExecutionInput extends DisposableBase implements Disposabl
 
     public abstract ConnectionId getConnectionHandlerId();
 
+    @Override
     public void readConfiguration(Element element) {
         executionTimeout.set(SettingsUtil.getIntegerAttribute(element, "execution-timeout", executionTimeout.get()));
         debugExecutionTimeout.set(SettingsUtil.getIntegerAttribute(element, "debug-execution-timeout", debugExecutionTimeout.get()));
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         SettingsUtil.setIntegerAttribute(element, "execution-timeout", executionTimeout.get());
         SettingsUtil.setIntegerAttribute(element, "debug-execution-timeout", debugExecutionTimeout.get());

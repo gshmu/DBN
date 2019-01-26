@@ -33,6 +33,7 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
         notifyListeners(0, environmentTypes.size(), -1);
     }
 
+    @Override
     public int getRowCount() {
         return environmentTypes.size();
     }
@@ -45,10 +46,12 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
         }
     };    
 
+    @Override
     public int getColumnCount() {
         return 5;
     }
 
+    @Override
     public String getColumnName(int columnIndex) {
         return columnIndex == 0 ? "Name" :
                columnIndex == 1 ? "Description" :
@@ -57,6 +60,7 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
                columnIndex == 4 ? "Color" : null;
     }
 
+    @Override
     public Class<?> getColumnClass(int columnIndex) {
         return columnIndex == 0 ? String.class :
             columnIndex == 1 ? String.class :
@@ -65,10 +69,12 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
             columnIndex == 4 ? Color.class : String.class;
     }
 
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return true;
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         EnvironmentType environmentType = getEnvironmentType(rowIndex);
         return
@@ -79,6 +85,7 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
            columnIndex == 4 ? environmentType.getColor() : null;
     }
 
+    @Override
     public void setValueAt(Object o, int rowIndex, int columnIndex) {
         Object actualValue = getValueAt(rowIndex, columnIndex);
         if (!CommonUtil.safeEqual(actualValue, o)) {
@@ -107,11 +114,13 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
         return environmentTypes.get(rowIndex);
     }
 
+    @Override
     public void insertRow(int rowIndex) {
         environmentTypes.add(rowIndex, new EnvironmentType());
         notifyListeners(rowIndex, environmentTypes.size()-1, -1);
     }
 
+    @Override
     public void removeRow(int rowIndex) {
         if (environmentTypes.size() > rowIndex) {
             environmentTypes.remove(rowIndex);
@@ -130,6 +139,7 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
+    @Override
     public void dispose() {
         super.dispose();
     }

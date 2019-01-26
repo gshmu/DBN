@@ -11,6 +11,7 @@ public class InteractiveOptionComboBoxRenderer extends ColoredListCellRenderer<I
 
     private InteractiveOptionComboBoxRenderer() {}
 
+    @Override
     protected void customizeCellRenderer(JList list, InteractiveOption value, int index, boolean selected, boolean hasFocus) {
         if (value != null) {
             setIcon(value.getIcon());

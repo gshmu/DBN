@@ -104,10 +104,12 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
         columnsPanelScrollPane.getVerticalScrollBar().setUnitIncrement(scrollUnitIncrement);
     }
 
+    @Override
     public JComponent getPreferredFocusedComponent() {
         return null;//columnForms.get(0).getViewComponent();
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -157,6 +159,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
     }
 
     private static Comparator<ResultSetRecordViewerColumnForm> alphabeticComparator = new Comparator<ResultSetRecordViewerColumnForm>() {
+        @Override
         public int compare(ResultSetRecordViewerColumnForm columnPanel1, ResultSetRecordViewerColumnForm columnPanel2) {
             String name1 = columnPanel1.getCell().getColumnInfo().getName();
             String name2 = columnPanel2.getCell().getColumnInfo().getName();
@@ -165,6 +168,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
     };
 
     private static Comparator<ResultSetRecordViewerColumnForm> indexedComparator = new Comparator<ResultSetRecordViewerColumnForm>() {
+        @Override
         public int compare(ResultSetRecordViewerColumnForm columnPanel1, ResultSetRecordViewerColumnForm columnPanel2) {
             int index1 = columnPanel1.getCell().getColumnInfo().getColumnIndex();
             int index2 = columnPanel2.getCell().getColumnInfo().getColumnIndex();
@@ -196,12 +200,14 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
             super("Sort columns alphabetically", null, Icons.ACTION_SORT_ALPHA);
         }
 
+        @Override
         public boolean isSelected(AnActionEvent anActionEvent) {
             Project project = getProject();
             ColumnSortingType sortingType = DatasetEditorManager.getInstance(project).getRecordViewColumnSortingType();
             return sortingType == ColumnSortingType.ALPHABETICAL;
         }
 
+        @Override
         public void setSelected(AnActionEvent anActionEvent, boolean selected) {
             ColumnSortingType sortingType = selected ? ColumnSortingType.ALPHABETICAL : ColumnSortingType.BY_INDEX;
             Project project = getProject();
@@ -215,6 +221,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
             super("First Record", null, Icons.DATA_EDITOR_FIRST_RECORD);
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             ResultSetDataModelRow row = getRow();
             ResultSetDataModelRow firstRow = (ResultSetDataModelRow) row.getModel().getRowAtIndex(0);
@@ -234,6 +241,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
             super("Previous Record", null, Icons.DATA_EDITOR_PREVIOUS_RECORD);
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             ResultSetDataModelRow row = getRow();
             int index = row.getIndex();
@@ -259,6 +267,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
             super("Next record", null, Icons.DATA_EDITOR_NEXT_RECORD);
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             ResultSetDataModelRow row = getRow();
             ResultSetDataModel model = row.getModel();
@@ -282,6 +291,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
             super("Last record", null, Icons.DATA_EDITOR_LAST_RECORD);
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             ResultSetDataModel model = getRow().getModel();
             int index = model.getRowCount() - 1 ;
@@ -302,6 +312,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
         return FailsafeUtil.get(row);
     }
 
+    @Override
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();

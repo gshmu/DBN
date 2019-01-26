@@ -78,10 +78,12 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
         }
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         transactionListener = null;

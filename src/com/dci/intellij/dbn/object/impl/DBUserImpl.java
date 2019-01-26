@@ -69,14 +69,17 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
     }
 
 
+    @Override
     public DBObjectType getObjectType() {
         return USER;
     }
 
+    @Override
     public DBSchema getSchema() {
         return getObjectBundle().getSchema(getName());
     }
 
+    @Override
     public boolean isExpired() {
         return is(DBObjectProperty.EXPIRED);
     }
@@ -105,14 +108,17 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
         return getSchema();
     }
 
+    @Override
     public List<DBGrantedPrivilege> getPrivileges() {
         return privileges.getObjects();
     }
 
+    @Override
     public List<DBGrantedRole> getRoles() {
         return roles.getObjects();
     }
 
+    @Override
     public boolean hasSystemPrivilege(DBSystemPrivilege systemPrivilege) {
         for (DBGrantedPrivilege grantedPrivilege : getPrivileges()) {
             if (grantedPrivilege.getPrivilege().equals(systemPrivilege)) {
@@ -130,6 +136,7 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
         return false;
     }
 
+    @Override
     public boolean hasRole(DBRole role) {
         for (DBGrantedRole grantedRole : getRoles()) {
             if (grantedRole.getRole().equals(role)) {
@@ -139,6 +146,7 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
         return false;
     }
 
+    @Override
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         ttb.append(true, getObjectType().getName(), true);
         if (isLocked() || isExpired()) {
@@ -169,6 +177,7 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
     /*********************************************************
      *                     TreeElement                       *
      *********************************************************/
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return DatabaseBrowserUtils.createList(roles, privileges);

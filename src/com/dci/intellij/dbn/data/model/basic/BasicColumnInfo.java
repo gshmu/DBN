@@ -16,23 +16,28 @@ public class BasicColumnInfo implements ColumnInfo {
         this.dataType = dataType;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public int getColumnIndex() {
         return columnIndex;
     }
 
+    @Override
     @NotNull
     public DBDataType getDataType() {
         return dataType;
     }
 
+    @Override
     public void dispose() {
         dataType = null;
     }
 
+    @Override
     public boolean isSortable() {
         return dataType.isNative() && dataType.getGenericDataType().is(GenericDataType.LITERAL, GenericDataType.NUMERIC, GenericDataType.DATE_TIME);
     }
