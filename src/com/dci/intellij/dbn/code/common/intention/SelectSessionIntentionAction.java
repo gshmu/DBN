@@ -37,7 +37,7 @@ public class SelectSessionIntentionAction extends GenericIntentionAction impleme
         if (psiFile instanceof DBLanguagePsiFile) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            if (connectionMappingManager.isConnectionSelectable(virtualFile)) {
+            if (connectionMappingManager.isSessionSelectable(virtualFile)) {
                 DBLanguagePsiFile file = (DBLanguagePsiFile) psiFile;
                 ConnectionHandler connectionHandler = file.getConnectionHandler();
                 return
