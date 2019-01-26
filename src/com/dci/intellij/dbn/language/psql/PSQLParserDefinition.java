@@ -20,6 +20,7 @@ public class PSQLParserDefinition extends DBLanguageParserDefinition {
         super(parser);
     }
 
+    @Override
     @NotNull
     public Lexer createLexer(Project project) {
         return getDefaultParseDefinition().createLexer(project);
@@ -29,6 +30,7 @@ public class PSQLParserDefinition extends DBLanguageParserDefinition {
         return PSQLLanguage.INSTANCE.getMainLanguageDialect().getParserDefinition();
     }
 
+    @Override
     @NotNull
     public DBLanguageParser createParser(Project project) {
         return getParser();

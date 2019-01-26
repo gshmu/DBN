@@ -26,6 +26,7 @@ public class MethodExecutionHistorySimpleTreeModel extends MethodExecutionHistor
         }
     }
 
+    @Override
     public List<MethodExecutionInput> getExecutionInputs() {
         List<MethodExecutionInput> executionInputs = new ArrayList<MethodExecutionInput>();
         for (TreeNode connectionTreeNode : getRoot().getChildren()) {
@@ -63,6 +64,7 @@ public class MethodExecutionHistorySimpleTreeModel extends MethodExecutionHistor
         return null;
     }
 
+    @Override
     protected String getMethodName(MethodExecutionInput executionInput) {
         return executionInput.getMethodRef().getQualifiedObjectName();
     }

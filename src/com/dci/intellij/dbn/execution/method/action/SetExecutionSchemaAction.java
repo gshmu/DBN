@@ -20,6 +20,7 @@ public class SetExecutionSchemaAction extends AnObjectAction<DBSchema> {
         return FailsafeUtil.get(getObject());
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         executionInput.setTargetSchema(getSchema());
     }

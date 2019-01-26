@@ -15,6 +15,7 @@ public class InsertRecordAction extends AbstractDataEditorAction {
         super("Insert record", Icons.DATA_EDITOR_INSERT_RECORD);
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
         if (datasetEditor != null) {
@@ -22,6 +23,7 @@ public class InsertRecordAction extends AbstractDataEditorAction {
         }
     }
 
+    @Override
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Insert record");

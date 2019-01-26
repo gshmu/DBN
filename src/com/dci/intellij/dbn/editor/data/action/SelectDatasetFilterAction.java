@@ -18,6 +18,7 @@ public class SelectDatasetFilterAction extends DumbAwareAction {
         this.filter = filter;
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         final Project project = dataset.getProject();
         DatasetFilterManager filterManager = DatasetFilterManager.getInstance(project);

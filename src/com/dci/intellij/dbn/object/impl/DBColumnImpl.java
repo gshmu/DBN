@@ -52,6 +52,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         super(dataset, resultSet);
     }
 
+    @Override
     protected String initObject(ResultSet resultSet) throws SQLException {
         String name = resultSet.getString("COLUMN_NAME");
         set(PRIMARY_KEY, "Y".equals(resultSet.getString("IS_PRIMARY_KEY")));
@@ -65,6 +66,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         return name;
     }
 
+    @Override
     protected void initLists() {
         DBObjectListContainer childObjects = initChildObjects();
         constraints = childObjects.createSubcontentObjectList(CONSTRAINT, this, getDataset(), DBObjectRelationType.CONSTRAINT_COLUMN);
@@ -80,14 +82,17 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         }
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return COLUMN;
     }
 
+    @Override
     public DBDataType getDataType() {
         return dataType;
     }
 
+    @Override
     public int getPosition() {
         return position;
     }
@@ -101,6 +106,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         return null;
     }
 
+    @Override
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         ttb.append(true, getObjectType().getName(), true);
         ttb.append(false, " - ", true);
@@ -122,6 +128,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         super.buildToolTip(ttb);
     }
 
+    @Override
     @Nullable
     public Icon getIcon() {
         return isPrimaryKey() ? isForeignKey() ? Icons.DBO_COLUMN_PFK : Icons.DBO_COLUMN_PK :
@@ -130,30 +137,37 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
                Icons.DBO_COLUMN;
     }
 
+    @Override
     public DBDataset getDataset() {
         return (DBDataset) getParentObject();
     }
 
+    @Override
     public boolean isNullable() {
         return is(NULLABLE);
     }
 
+    @Override
     public boolean isHidden() {
         return is(HIDDEN);
     }
 
+    @Override
     public boolean isPrimaryKey() {
         return is(PRIMARY_KEY);
     }
 
+    @Override
     public boolean isUniqueKey() {
         return is(UNIQUE_KEY);
     }
 
+    @Override
     public boolean isForeignKey() {
         return is(FOREIGN_KEY);
     }
 
+    @Override
     public boolean isSinglePrimaryKey() {
         if (isPrimaryKey()) {
             for (DBConstraint constraint : getConstraints()) {
@@ -165,14 +179,17 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         return false;
     }
 
+    @Override
     public List<DBIndex> getIndexes() {
         return indexes.getObjects();
     }
 
+    @Override
     public List<DBConstraint> getConstraints() {
         return constraints.getObjects();
     }
 
+    @Override
     public int getConstraintPosition(DBConstraint constraint) {
         DBObjectRelationListContainer childObjectRelations = getDataset().getChildObjectRelations();
         if (childObjectRelations != null) {
@@ -188,6 +205,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         return 0;
     }
 
+    @Override
     public DBConstraint getConstraintForPosition(int position) {
         DBObjectRelationListContainer childObjectRelations = getDataset().getChildObjectRelations();
         if (childObjectRelations != null) {
@@ -204,6 +222,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         return null;
     }
 
+    @Override
     @Nullable
     public DBColumn getForeignKeyColumn() {
         for (DBConstraint constraint : getConstraints()) {
@@ -218,6 +237,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         return null;
     }
 
+    @Override
     public List<DBColumn> getReferencingColumns() {
         assert isPrimaryKey();
 
@@ -242,6 +262,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         return list;
     }
 
+    @Override
     protected List<DBObjectNavigationList> createNavigationLists() {
         List<DBObjectNavigationList> navigationLists = new ArrayList<>();
 
@@ -310,15 +331,18 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
      *                     TreeElement                       *
      *********************************************************/
 
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return EMPTY_TREE_NODE_LIST;
     }
 
+    @Override
     public int compareTo(@NotNull Object o) {
         if (o instanceof DBColumn)  {
             DBColumn column = (DBColumn) o;

@@ -15,6 +15,7 @@ public class TransactionRollbackAction extends AbstractConnectionAction {
 
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         DatabaseTransactionManager transactionManager = ActionUtil.getComponent(e, DatabaseTransactionManager.class);

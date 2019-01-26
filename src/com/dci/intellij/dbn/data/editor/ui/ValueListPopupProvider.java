@@ -91,6 +91,7 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
     }
 
     boolean isPreparingPopup = false;
+    @Override
     public void showPopup() {
         if (valuesProvider.isLongLoading()) {
             if (isPreparingPopup) return;

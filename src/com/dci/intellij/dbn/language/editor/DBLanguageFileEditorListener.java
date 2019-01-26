@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 
 public class DBLanguageFileEditorListener implements FileEditorManagerListener{
+    @Override
     public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
         if ((file.isInLocalFileSystem() || file instanceof LightVirtualFile) && file.getFileType() instanceof DBLanguageFileType) {
             FileEditor fileEditor = source.getSelectedEditor(file);
@@ -24,6 +25,7 @@ public class DBLanguageFileEditorListener implements FileEditorManagerListener{
         }
     }
 
+    @Override
     public void fileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
         if ((file.isInLocalFileSystem() || file instanceof LightVirtualFile) && file.getFileType() instanceof DBLanguageFileType) {
             FileEditor editor = source.getSelectedEditor(file);
@@ -37,6 +39,7 @@ public class DBLanguageFileEditorListener implements FileEditorManagerListener{
 
     }
 
+    @Override
     public void selectionChanged(@NotNull FileEditorManagerEvent event) {
     }
 }

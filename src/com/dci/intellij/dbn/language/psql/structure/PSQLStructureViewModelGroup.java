@@ -33,11 +33,13 @@ public class PSQLStructureViewModelGroup implements Group {
         children.add(treeElement);
     }
 
+    @Override
     @NotNull
     public ItemPresentation getPresentation() {
         return itemPresentation;
     }
 
+    @Override
     @NotNull
     public Collection<TreeElement> getChildren() {
         return children;
@@ -45,14 +47,17 @@ public class PSQLStructureViewModelGroup implements Group {
 
 
     private ItemPresentation itemPresentation = new ItemPresentation(){
+        @Override
         public String getPresentableText() {
             return NamingUtil.capitalize(objectType.getListName());
         }
 
+        @Override
         public String getLocationString() {
             return null;
         }
 
+        @Override
         public Icon getIcon(boolean open) {
             return null;//objectType.getListIcon();
         }

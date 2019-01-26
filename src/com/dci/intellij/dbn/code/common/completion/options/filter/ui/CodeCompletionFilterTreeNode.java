@@ -52,6 +52,7 @@ public class CodeCompletionFilterTreeNode extends CheckedTreeNode {
         }
     }
 
+    @Override
     public void setChecked(boolean checked) {
         setCheckedPropagateDown(checked);
         setCheckedPropagateUp(checked);

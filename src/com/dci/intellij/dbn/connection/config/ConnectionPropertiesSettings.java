@@ -63,6 +63,7 @@ public class ConnectionPropertiesSettings extends Configuration<ConnectionProper
     /*********************************************************
     *                 PersistentConfiguration               *
     *********************************************************/
+    @Override
     public void readConfiguration(Element element) {
         enableAutoCommit = getBoolean(element, "auto-commit", enableAutoCommit);
         Element propertiesElement = element.getChild("properties");
@@ -77,6 +78,7 @@ public class ConnectionPropertiesSettings extends Configuration<ConnectionProper
         getParent().getDatabaseSettings().updateHashCode();
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         setBoolean(element, "auto-commit", enableAutoCommit);
         if (properties.size() > 0) {

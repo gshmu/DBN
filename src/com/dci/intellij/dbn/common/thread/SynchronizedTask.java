@@ -6,6 +6,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 public abstract class SynchronizedTask<T> extends SimpleTask<T> {
     private static final SyncObjectProvider SYNC_OBJECT_PROVIDER = new SyncObjectProvider();
 
+    @Override
     public void start() {
         run();
     }

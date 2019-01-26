@@ -53,6 +53,7 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
         return false;
     }
 
+    @Override
     public boolean checkStartsWithIdentifier() {
         ElementTypeRef[] children = getElementType().getChildren();
         for (ElementTypeRef child : children) {

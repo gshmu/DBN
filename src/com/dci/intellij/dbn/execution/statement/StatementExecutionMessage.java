@@ -45,6 +45,7 @@ public class StatementExecutionMessage extends ConsoleMessage {
         
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         executionResult = null;

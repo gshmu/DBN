@@ -36,6 +36,7 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
         registerComponent(mainPanel);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -50,6 +51,7 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
         };
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         final DataGridTrackingColumnSettings settings = getConfiguration();
         final boolean trackingColumnsVisible = visibleCheckBox.isSelected();
@@ -67,6 +69,7 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
         });
     }
 
+    @Override
     public void resetFormChanges() {
         DataGridTrackingColumnSettings settings = getConfiguration();
         visibleCheckBox.setSelected(settings.isShowColumns());

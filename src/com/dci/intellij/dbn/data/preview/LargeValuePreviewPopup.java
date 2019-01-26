@@ -274,11 +274,13 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
         }
 
 
+        @Override
         public boolean isSelected(@NotNull AnActionEvent e) {
             DatasetEditorManager dataEditorManager = getDataEditorManager(e);
             return dataEditorManager != null && dataEditorManager.isValuePreviewTextWrapping();
         }
 
+        @Override
         public void setSelected(@NotNull AnActionEvent e, boolean state) {
             DatasetEditorManager editorManager = getDataEditorManager(e);
             if (editorManager != null) {
@@ -304,10 +306,12 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
             super("Pin/Unpin", "", Icons.ACTION_PIN);
         }
 
+        @Override
         public boolean isSelected(@NotNull AnActionEvent e) {
             return isPinned;
         }
 
+        @Override
         public void setSelected(@NotNull AnActionEvent e, boolean state) {
             DatasetEditorManager editorManager = getDataEditorManager(e);
             if (editorManager != null) {
@@ -329,6 +333,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
             super("Load / Reload content", null, Icons.ACTION_RERUN);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             loadContent(false);
         }
@@ -346,6 +351,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
             super("Close", null, Icons.ACTION_CLOSE);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             isPinned = false;
             popup.cancel();

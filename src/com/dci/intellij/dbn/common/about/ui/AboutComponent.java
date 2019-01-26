@@ -40,10 +40,12 @@ public class AboutComponent extends DBNFormImpl{
         donateLabel.setText("");
         donateLabel.setCursor(handCursor);
         donateLabel.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 BrowserUtil.browse("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=3QAPZFCCARA4J");
             }
 
+            @Override
             public void mouseEntered(MouseEvent e) {
                 donateLabel.setIcon(Icons.DONATE);
             }
@@ -57,6 +59,7 @@ public class AboutComponent extends DBNFormImpl{
         downloadPageLinkLabel.setForeground(CodeInsightColors.HYPERLINK_ATTRIBUTES.getDefaultAttributes().getForegroundColor());
         downloadPageLinkLabel.setCursor(handCursor);
         downloadPageLinkLabel.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 BrowserUtil.browse("http://plugins.jetbrains.com/plugin/?id=1800");
             }
@@ -65,6 +68,7 @@ public class AboutComponent extends DBNFormImpl{
         supportPageLinkLabel.setForeground(CodeInsightColors.HYPERLINK_ATTRIBUTES.getDefaultAttributes().getForegroundColor());
         supportPageLinkLabel.setCursor(handCursor);
         supportPageLinkLabel.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 BrowserUtil.browse("http://confluence.jetbrains.com/display/CONTEST/Database+Navigator");
             }
@@ -73,6 +77,7 @@ public class AboutComponent extends DBNFormImpl{
         requestTrackerPageLinkLabel.setForeground(CodeInsightColors.HYPERLINK_ATTRIBUTES.getDefaultAttributes().getForegroundColor());
         requestTrackerPageLinkLabel.setCursor(handCursor);
         requestTrackerPageLinkLabel.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
                 BrowserUtil.browse("https://database-navigator.atlassian.net/issues/?filter=10104");
             }

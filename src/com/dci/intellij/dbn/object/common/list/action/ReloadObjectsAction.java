@@ -17,6 +17,7 @@ public class ReloadObjectsAction extends AnAction {
         this.objectList = objectList;
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         String listName = objectList.getName();
         final boolean loaded = objectList.isLoaded();

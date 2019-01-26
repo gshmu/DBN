@@ -41,6 +41,7 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
         executeCall(connection, null, "disconnect-jdwp-session");
     }
 
+    @Override
     public DebuggerSessionInfo initializeSession(DBNConnection connection) throws SQLException {
         executeCall(connection, null, "initialize-session-debugging");
         executeCall(connection, null, "initialize-session-compiler-flags");
@@ -52,26 +53,32 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
         return executeCall(connection, new DebuggerVersionInfo(), "get-debugger-version");
     }
 
+    @Override
     public void enableDebugging(DBNConnection connection) throws SQLException {
         executeCall(connection, null, "enable-debugging");
     }
 
+    @Override
     public void disableDebugging(DBNConnection connection) throws SQLException {
         executeCall(connection, null, "disable-debugging");
     }
 
+    @Override
     public void attachSession(DBNConnection connection, String sessionId) throws SQLException {
         executeCall(connection, null, "attach-session", sessionId);
     }
 
+    @Override
     public void detachSession(DBNConnection connection) throws SQLException {
         executeCall(connection, null, "detach-session");
     }
 
+    @Override
     public DebuggerRuntimeInfo synchronizeSession(DBNConnection connection) throws SQLException {
         return executeCall(connection, new DebuggerRuntimeInfo(), "synchronize-session");
     }
 
+    @Override
     public BreakpointInfo addProgramBreakpoint(String programOwner, String programName, String programType, int line, DBNConnection connection) throws SQLException {
         return executeCall(connection, new BreakpointInfo(), "add-program-breakpoint", programOwner, programName, programType, line + 1);
     }
@@ -81,30 +88,37 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
         return executeCall(connection, new BreakpointInfo(), "add-source-breakpoint", line + 1);
     }
 
+    @Override
     public BreakpointOperationInfo removeBreakpoint(int breakpointId, DBNConnection connection) throws SQLException {
         return executeCall(connection, new BreakpointOperationInfo(), "remove-breakpoint", breakpointId);
     }
 
+    @Override
     public BreakpointOperationInfo enableBreakpoint(int breakpointId, DBNConnection connection) throws SQLException {
         return executeCall(connection, new BreakpointOperationInfo(), "enable-breakpoint", breakpointId);
     }
 
+    @Override
     public BreakpointOperationInfo disableBreakpoint(int breakpointId, DBNConnection connection) throws SQLException {
         return executeCall(connection, new BreakpointOperationInfo(), "disable-breakpoint", breakpointId);
     }
 
+    @Override
     public DebuggerRuntimeInfo stepOver(DBNConnection connection) throws SQLException {
         return executeCall(connection, new DebuggerRuntimeInfo(), "step-over");
     }
 
+    @Override
     public DebuggerRuntimeInfo stepInto(DBNConnection connection) throws SQLException {
         return executeCall(connection, new DebuggerRuntimeInfo(), "step-into");
     }
 
+    @Override
     public DebuggerRuntimeInfo stepOut(DBNConnection connection) throws SQLException {
         return executeCall(connection, new DebuggerRuntimeInfo(), "step-out");
     }
 
+    @Override
     public DebuggerRuntimeInfo runToPosition(String programOwner, String programName, String programType, int line, DBNConnection connection) throws SQLException {
         BreakpointInfo breakpointInfo = addProgramBreakpoint(programOwner, programName, programType, line, connection);
         DebuggerRuntimeInfo runtimeInfo = stepOut(connection);
@@ -115,34 +129,42 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
         return runtimeInfo;
     }
 
+    @Override
     public DebuggerRuntimeInfo resumeExecution(DBNConnection connection) throws SQLException {
         return executeCall(connection, new DebuggerRuntimeInfo(), "resume-execution");
     }
 
+    @Override
     public DebuggerRuntimeInfo stopExecution(DBNConnection connection) throws SQLException {
         return executeCall(connection, new DebuggerRuntimeInfo(), "stop-execution");
     }
 
+    @Override
     public DebuggerRuntimeInfo getRuntimeInfo(DBNConnection connection) throws SQLException {
         return executeCall(connection, new DebuggerRuntimeInfo(), "get-runtime-info");
     }
 
+    @Override
     public ExecutionStatusInfo getExecutionStatusInfo(DBNConnection connection) throws SQLException {
         return executeCall(connection, new ExecutionStatusInfo(), "get-execution-status-info");
     }
 
+    @Override
     public VariableInfo getVariableInfo(String variableName, Integer frameNumber, DBNConnection connection) throws SQLException {
         return executeCall(connection, new VariableInfo(), "get-variable", variableName, frameNumber);
     }
 
+    @Override
     public BasicOperationInfo setVariableValue(String variableName, Integer frameNumber, String value, DBNConnection connection) throws SQLException {
         return executeCall(connection, new BasicOperationInfo(), "set-variable-value", frameNumber, variableName, value);
     }
 
+    @Override
     public ExecutionBacktraceInfo getExecutionBacktraceInfo(DBNConnection connection) throws SQLException {
         return executeCall(connection, new ExecutionBacktraceInfo(), "get-execution-backtrace-table");
     }
 
+    @Override
     public String[] getRequiredPrivilegeNames() {
         return new String[]{"DEBUG CONNECT SESSION", "DEBUG ANY PROCEDURE"};
     }
@@ -202,6 +224,7 @@ public class OracleDebuggerInterface extends DatabaseDebuggerInterfaceImpl imple
         return "$Oracle.Block";
     }
 
+    @Override
     public String getJdwpProgramIdentifier(DBObjectType objectType, DBContentType contentType, String qualifiedObjectName) {
         String objectTypeName = "Unknown";
         switch (objectType) {

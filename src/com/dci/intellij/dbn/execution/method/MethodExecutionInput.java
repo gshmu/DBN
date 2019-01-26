@@ -233,6 +233,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     /*********************************************************
      *                 PersistentConfiguration               *
      *********************************************************/
+    @Override
     public void readConfiguration(Element element) {
         super.readConfiguration(element);
         methodRef.readState(element);
@@ -249,6 +250,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         }
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         super.writeConfiguration(element);
         methodRef.writeState(element);
@@ -264,6 +266,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         }
     }
 
+    @Override
     public int compareTo(@NotNull MethodExecutionInput executionInput) {
         DBObjectRef<DBMethod> localMethod = methodRef;
         DBObjectRef<DBMethod> remoteMethod = executionInput.methodRef;
@@ -284,6 +287,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         return methodRef.hashCode();
     }
 
+    @Override
     public MethodExecutionInput clone() {
         MethodExecutionInput clone = new MethodExecutionInput(getProject());
         clone.methodRef = methodRef;
@@ -296,6 +300,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         return clone;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         executionResult = null;

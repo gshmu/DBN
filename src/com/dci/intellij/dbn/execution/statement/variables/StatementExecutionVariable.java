@@ -45,6 +45,7 @@ public class StatementExecutionVariable extends VariableValueProvider implements
         return name;
     }
 
+    @Override
     public GenericDataType getDataType() {
         return dataType;
     }
@@ -53,6 +54,7 @@ public class StatementExecutionVariable extends VariableValueProvider implements
         this.dataType = dataType;
     }
 
+    @Override
     public String getValue() {
         return valueHistory.get();
     }
@@ -78,6 +80,7 @@ public class StatementExecutionVariable extends VariableValueProvider implements
         return useNull || valueHistory.get() != null;
     }
 
+    @Override
     public boolean useNull() {
         return useNull;
     }

@@ -10,11 +10,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class ExportAsDefaultSettingsAction extends DumbAwareAction {
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         ProjectSettingsManager.getInstance(project).exportToDefaultSettings();
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Project project = ActionUtil.getProject(e);

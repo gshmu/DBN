@@ -34,10 +34,12 @@ public class CompilerTypeSelectionForm extends DBNFormImpl<CompilerTypeSelection
         parentComponent.registerRememberSelectionCheckBox(rememberSelectionCheckBox);
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
     }

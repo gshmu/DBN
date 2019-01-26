@@ -19,6 +19,7 @@ public class FileListCellRenderer extends ColoredListCellRenderer<VirtualFile> {
         this.project = project;
     }
 
+    @Override
     protected void customizeCellRenderer(@NotNull JList list, VirtualFile value, int index, boolean selected, boolean hasFocus) {
 
         Module module = ModuleUtil.findModuleForFile(value, project);

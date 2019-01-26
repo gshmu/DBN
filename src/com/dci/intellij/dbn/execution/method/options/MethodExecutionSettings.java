@@ -19,10 +19,12 @@ public class MethodExecutionSettings extends Configuration implements ExecutionT
         this.parent = parent;
     }
 
+    @Override
     public String getDisplayName() {
         return "Method execution settings";
     }
 
+    @Override
     public String getHelpTopic() {
         return "executionEngine";
     }
@@ -31,14 +33,17 @@ public class MethodExecutionSettings extends Configuration implements ExecutionT
     *                       Settings                        *
     *********************************************************/
 
+    @Override
     public int getExecutionTimeout() {
         return executionTimeout;
     }
 
+    @Override
     public int getDebugExecutionTimeout() {
         return debugExecutionTimeout;
     }
 
+    @Override
     public boolean setExecutionTimeout(int executionTimeout) {
         if (this.executionTimeout != executionTimeout) {
             this.executionTimeout = executionTimeout;
@@ -47,6 +52,7 @@ public class MethodExecutionSettings extends Configuration implements ExecutionT
         return false;
     }
 
+    @Override
     public boolean setDebugExecutionTimeout(int debugExecutionTimeout) {
         if (this.debugExecutionTimeout != debugExecutionTimeout) {
             this.debugExecutionTimeout = debugExecutionTimeout;
@@ -66,6 +72,7 @@ public class MethodExecutionSettings extends Configuration implements ExecutionT
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @Override
     @NotNull
     public ConfigurationEditorForm createConfigurationEditor() {
         return new MethodExecutionSettingsForm(this);
@@ -76,6 +83,7 @@ public class MethodExecutionSettings extends Configuration implements ExecutionT
         return "method-execution";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         executionTimeout = SettingsUtil.getInteger(element, "execution-timeout", executionTimeout);
         debugExecutionTimeout = SettingsUtil.getInteger(element, "debug-execution-timeout", debugExecutionTimeout);
@@ -83,6 +91,7 @@ public class MethodExecutionSettings extends Configuration implements ExecutionT
 
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         SettingsUtil.setInteger(element, "execution-timeout", executionTimeout);
         SettingsUtil.setInteger(element, "debug-execution-timeout", debugExecutionTimeout);

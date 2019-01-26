@@ -78,6 +78,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
         Disposer.register(this, resultTable);
     }
 
+    @Override
     public void setExecutionResult(StatementExecutionCursorResult executionResult) {
         if (this.executionResult != executionResult) {
             StatementExecutionCursorResult oldExecutionResult = this.executionResult;
@@ -88,6 +89,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
         }
     }
 
+    @Override
     @NotNull
     public StatementExecutionCursorResult getExecutionResult() {
         return FailsafeUtil.get(executionResult);
@@ -125,6 +127,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
         });
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         executionResult = null;
@@ -136,6 +139,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
         ExecutionManager.getInstance(project).selectResultTab(executionResult);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -150,6 +154,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     /*********************************************************
      *              SearchableDataComponent                  *
      *********************************************************/
+    @Override
     public void showSearchHeader() {
         resultTable.clearSelection();
 
@@ -168,6 +173,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
         return dataSearchComponent.get();
     }
 
+    @Override
     public void hideSearchHeader() {
         getSearchComponent().resetFindModel();
         searchPanel.setVisible(false);

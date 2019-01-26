@@ -76,6 +76,7 @@ public class QualifiedIdentifierVariant implements Comparable{
         return false;
     }
 
+    @Override
     public int compareTo(@NotNull Object o) {
         QualifiedIdentifierVariant variant = (QualifiedIdentifierVariant) o;
         if (variant.incomplete != incomplete) {

@@ -27,10 +27,12 @@ public class DataGridSortingSettingsForm extends ConfigurationEditorForm<DataGri
         registerComponent(mainPanel);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         DataGridSortingSettings settings = getConfiguration();
         settings.setNullsFirst(getSelection(nullsPositionComboBox) == NullSortingOption.FIRST);
@@ -38,6 +40,7 @@ public class DataGridSortingSettingsForm extends ConfigurationEditorForm<DataGri
         settings.setMaxSortingColumns(maxSortingColumns);
     }
 
+    @Override
     public void resetFormChanges() {
         DataGridSortingSettings settings = getConfiguration();
         setSelection(nullsPositionComboBox, settings.isNullsFirst() ? NullSortingOption.FIRST : NullSortingOption.LAST);

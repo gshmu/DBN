@@ -26,6 +26,7 @@ public abstract class SqliteIndexesResultSet extends SqliteDatasetInfoResultSetS
         super(ownerName, datasetName, connection);
     }
 
+    @Override
     protected void init(String ownerName, String tableName) throws SQLException {
         RawIndexInfo indexInfo = getIndexInfo(tableName);
 
@@ -47,6 +48,7 @@ public abstract class SqliteIndexesResultSet extends SqliteDatasetInfoResultSetS
 
     protected abstract ResultSet loadIndexInfo(String tableName) throws SQLException;
 
+    @Override
     public String getString(String columnLabel) throws SQLException {
         Index index = getCurrentElement();
         return

@@ -38,6 +38,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
         this.owner = owner;
     }
 
+    @Override
     public void compact() {
         CollectionUtil.compact(objectLists);
     }
@@ -329,6 +330,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
         }
     }
 
+    @Override
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();

@@ -47,6 +47,7 @@ public class ObjectQuickFilterDialog extends DBNDialog<ObjectQuickFilterForm> {
         };
     }
 
+    @Override
     public void doOKAction() {
         try {
             ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
@@ -56,6 +57,7 @@ public class ObjectQuickFilterDialog extends DBNDialog<ObjectQuickFilterForm> {
         }
     }
 
+    @Override
     public void doCancelAction() {
         super.doCancelAction();
     }

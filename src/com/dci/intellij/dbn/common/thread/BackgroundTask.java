@@ -19,12 +19,16 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
     private T data;
 
     private static PerformInBackgroundOption START_IN_BACKGROUND = new PerformInBackgroundOption() {
+        @Override
         public boolean shouldStartInBackground() { return true;}
+        @Override
         public void processSentToBackground() {}
     };
 
     private static PerformInBackgroundOption DO_NOT_START_IN_BACKGROUND = new PerformInBackgroundOption() {
+        @Override
         public boolean shouldStartInBackground() { return false;}
+        @Override
         public void processSentToBackground() {}
     };
 
@@ -55,6 +59,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
         run(progressIndicator);
     }
 
+    @Override
     public final void run(@NotNull ProgressIndicator progressIndicator) {
         BackgroundMonitor.startBackgroundProcess();
         Thread currentThread = Thread.currentThread();
@@ -81,6 +86,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
 
     protected abstract void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException;
 
+    @Override
     public final void start() {
         boolean conditional = instructions != null && instructions.is(TaskInstruction.CONDITIONAL);
         if (conditional && BackgroundMonitor.isBackgroundProcess()) {

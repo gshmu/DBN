@@ -14,10 +14,12 @@ import java.util.List;
 
 public class SqliteExecutionInterface extends DatabaseExecutionInterfaceImpl {
 
+    @Override
     public MethodExecutionProcessor createExecutionProcessor(DBMethod method) {
         return createSimpleMethodExecutionProcessor(method);
     }
 
+    @Override
     public MethodExecutionProcessor createDebugExecutionProcessor(DBMethod method) {
         return null;
     }

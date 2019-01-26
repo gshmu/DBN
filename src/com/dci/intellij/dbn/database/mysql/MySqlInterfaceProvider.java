@@ -31,30 +31,37 @@ public class MySqlInterfaceProvider extends DatabaseInterfaceProviderImpl {
         return DatabaseType.MYSQL;
     }
 
+    @Override
     public DatabaseNativeDataTypes getNativeDataTypes() {
         return NATIVE_DATA_TYPES;
     }
 
+    @Override
     public DatabaseMessageParserInterface getMessageParserInterface() {
         return MESSAGE_PARSER_INTERFACE;
     }
 
+    @Override
     public DatabaseCompatibilityInterface getCompatibilityInterface() {
         return COMPATIBILITY_INTERFACE;
     }
 
+    @Override
     public DatabaseMetadataInterface getMetadataInterface() {
         return METADATA_INTERFACE;
     }
 
+    @Override
     public DatabaseDebuggerInterface getDebuggerInterface() {
         return null;
     }
 
+    @Override
     public DatabaseDDLInterface getDDLInterface() {
         return DDL_INTERFACE;
     }
 
+    @Override
     public DatabaseExecutionInterface getDatabaseExecutionInterface() {
         return EXECUTION_INTERFACE;
     }

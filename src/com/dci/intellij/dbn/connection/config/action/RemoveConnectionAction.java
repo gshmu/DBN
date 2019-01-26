@@ -11,6 +11,7 @@ public class RemoveConnectionAction extends ConnectionSettingsAction {
         super("Remove connection", Icons.ACTION_REMOVE);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         ConnectionBundleSettingsForm settingsForm = getSettingsForm(e);
         if (settingsForm != null) {
@@ -18,6 +19,7 @@ public class RemoveConnectionAction extends ConnectionSettingsAction {
         }
     }
 
+    @Override
     public void update(AnActionEvent e) {
         ConnectionBundleSettingsForm settingsForm = getSettingsForm(e);
         int length = settingsForm == null ? 0 : settingsForm.getSelectionSize();

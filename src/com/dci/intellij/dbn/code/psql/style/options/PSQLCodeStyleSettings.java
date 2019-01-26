@@ -18,19 +18,23 @@ public class PSQLCodeStyleSettings extends CodeStyleCustomSettings<PSQLCodeStyle
         return ProjectCodeStyleSettings.getInstance(project).getPSQLCodeStyleSettings();    
     }
 
+    @Override
     @Nullable
     public Icon getIcon() {
         return Icons.FILE_PLSQL;
     }
 
+    @Override
     public String getDisplayName() {
         return "PL/SQL";
     }
 
+    @Override
     protected CodeStyleCaseSettings createCaseSettings() {
         return new PSQLCodeStyleCaseSettings();
     }
 
+    @Override
     protected CodeStyleFormattingSettings createAttributeSettings() {
         return new PSQLCodeStyleFormattingSettings();
     }
@@ -43,6 +47,7 @@ public class PSQLCodeStyleSettings extends CodeStyleCustomSettings<PSQLCodeStyle
     /*********************************************************
     *                     Configuration                     *
     *********************************************************/
+    @Override
     @NotNull
     public PSQLCodeStyleSettingsEditorForm createConfigurationEditor() {
         return new PSQLCodeStyleSettingsEditorForm(this);

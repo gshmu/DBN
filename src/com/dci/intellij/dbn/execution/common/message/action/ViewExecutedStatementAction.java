@@ -16,6 +16,7 @@ public class ViewExecutedStatementAction extends ExecutionMessagesAction {
         super(messagesTree, "View SQL statement", Icons.EXEC_RESULT_VIEW_STATEMENT);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         getMessagesTree().grabFocus();
         StatementExecutionMessageNode execMessageNode = (StatementExecutionMessageNode) getMessagesTree().getSelectionPath().getLastPathComponent();
@@ -24,6 +25,7 @@ public class ViewExecutedStatementAction extends ExecutionMessagesAction {
         statementViewer.show((Component) e.getInputEvent().getSource());
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         boolean enabled =
                 getMessagesTree().getSelectionPath() != null &&

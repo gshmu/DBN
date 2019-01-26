@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class OpenDefaultSettingsAction extends DumbAwareAction {
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         if (!project.isDisposed()) {
@@ -19,6 +20,7 @@ public class OpenDefaultSettingsAction extends DumbAwareAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Project project = ActionUtil.getProject(e);

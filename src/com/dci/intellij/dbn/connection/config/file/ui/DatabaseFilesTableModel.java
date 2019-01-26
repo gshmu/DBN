@@ -21,6 +21,7 @@ public class DatabaseFilesTableModel extends DBNEditableTableModel {
         notifyListeners(0, this.databaseFiles.size(), -1);
     }
 
+    @Override
     public int getRowCount() {
         return databaseFiles.size();
     }
@@ -31,23 +32,28 @@ public class DatabaseFilesTableModel extends DBNEditableTableModel {
         }
     };    
 
+    @Override
     public int getColumnCount() {
         return 2;
     }
 
+    @Override
     public String getColumnName(int columnIndex) {
         return columnIndex == 0 ? "File Path" :
                columnIndex == 1 ? "Database Name" : null;
     }
 
+    @Override
     public Class<?> getColumnClass(int columnIndex) {
         return String.class;
     }
 
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return true;
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         DatabaseFile filePathOption = databaseFiles.get(rowIndex);
         return
@@ -55,6 +61,7 @@ public class DatabaseFilesTableModel extends DBNEditableTableModel {
            columnIndex == 1 ? filePathOption.getSchema() : null;
     }
 
+    @Override
     public void setValueAt(Object o, int rowIndex, int columnIndex) {
         Object actualValue = getValueAt(rowIndex, columnIndex);
         if (!CommonUtil.safeEqual(actualValue, o)) {
@@ -80,11 +87,13 @@ public class DatabaseFilesTableModel extends DBNEditableTableModel {
         return databaseFiles;
     }
 
+    @Override
     public void insertRow(int rowIndex) {
         databaseFiles.add(rowIndex, new DatabaseFile());
         notifyListeners(rowIndex, databaseFiles.size()-1, -1);
     }
 
+    @Override
     public void removeRow(int rowIndex) {
         if (databaseFiles.size() > rowIndex) {
             databaseFiles.remove(rowIndex);
@@ -99,6 +108,7 @@ public class DatabaseFilesTableModel extends DBNEditableTableModel {
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
+    @Override
     public void dispose() {
         super.dispose();
     }

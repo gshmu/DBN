@@ -14,6 +14,7 @@ public class NamedElementTypeParser extends SequenceElementTypeParser<NamedEleme
         super(elementType);
     }
 
+    @Override
     public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
         if (isRecursive(parentNode, builder.getCurrentOffset(), 2)) {

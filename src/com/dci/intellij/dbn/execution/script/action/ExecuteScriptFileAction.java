@@ -15,6 +15,7 @@ import static com.dci.intellij.dbn.common.util.ActionUtil.ensureProject;
 import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class ExecuteScriptFileAction extends AnAction {
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ensureProject(e);
         VirtualFile virtualFile = getVirtualFile(e);
@@ -28,6 +29,7 @@ public class ExecuteScriptFileAction extends AnAction {
         return virtualFile != null && (virtualFile.getFileType() == SQLFileType.INSTANCE || virtualFile.getFileType() == PSQLFileType.INSTANCE);
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         VirtualFile virtualFile = getVirtualFile(e);

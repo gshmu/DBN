@@ -24,29 +24,36 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
         this.parent = parent;
     }
 
+    @Override
     public boolean isTreeStructureLoaded() {
         return true;
     }
 
+    @Override
     public void initTreeElement() {}
 
+    @Override
     public boolean canExpand() {
         return false;
     }
 
+    @Override
     public int getTreeDepth() {
         return getParent().getTreeDepth() + 1;
     }
 
+    @Override
     public BrowserTreeNode getChildAt(int index) {
         return null;
     }
 
+    @Override
     @NotNull
     public BrowserTreeNode getParent() {
         return FailsafeUtil.get(parent);
     }
 
+    @Override
     public List getChildren() {
         return null;
     }
@@ -54,40 +61,50 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
     @Override
     public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {}
 
+    @Override
     public void rebuildTreeChildren() {}
 
+    @Override
     public int getChildCount() {
         return 0;
     }
 
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
+    @Override
     public int getIndex(BrowserTreeNode child) {
         return -1;
     }
 
+    @Override
     public Icon getIcon(int flags) {
         return LoadInProgressIcon.INSTANCE;
     }
+    @Override
     public String getPresentableText() {
         return "Loading...";
     }
 
+    @Override
     public String getPresentableTextDetails() {
         return null;
     }
 
+    @Override
     public String getPresentableTextConditionalDetails() {
         return null;
     }
 
+    @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return FailsafeUtil.get(getParent().getConnectionHandler());
     }
 
+    @Override
     @NotNull
     public Project getProject() {
         return getParent().getProject();
@@ -99,6 +116,7 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
         return null;
     }
 
+    @Override
     public GenericDatabaseElement getUndisposedElement() {
         return this;
     }
@@ -106,10 +124,12 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
     /*********************************************************
     *                    ItemPresentation                    *
     *********************************************************/
+    @Override
     public String getLocationString() {
         return null;
     }
 
+    @Override
     public Icon getIcon(boolean open) {
         return null;
     }
@@ -121,14 +141,19 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
     /*********************************************************
     *                    NavigationItem                      *
     *********************************************************/
+    @Override
     public void navigate(boolean requestFocus) {}
+    @Override
     public boolean canNavigate() { return false;}
+    @Override
     public boolean canNavigateToSource() {return false;}
 
+    @Override
     public String getName() {
         return null;
     }
 
+    @Override
     public ItemPresentation getPresentation() {
         return this;
     }
@@ -140,11 +165,13 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
     /*********************************************************
     *                    ToolTipProvider                    *
     *********************************************************/
+    @Override
     public String getToolTip() {
         return null;
     }
 
 
+    @Override
     public void dispose() {
         super.dispose();
         parent = null;

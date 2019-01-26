@@ -64,13 +64,16 @@ public class DatabaseDriverManager implements ApplicationComponent {
         DriverManager.setLoginTimeout(30);
     }
 
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {
         return "DBNavigator.DatabaseDriverManager";
     }
 
+    @Override
     public void initComponent() {}
+    @Override
     public void disposeComponent() {}
 
     public List<Driver> loadDriverClassesWithProgressBar(String libraryName) {
@@ -87,6 +90,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
 
         List<Driver> drivers;
         String libraryName;
+        @Override
         public void run() {
             drivers = loadDrivers(libraryName);
         }

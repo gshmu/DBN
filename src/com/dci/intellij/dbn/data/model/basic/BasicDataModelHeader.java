@@ -19,14 +19,17 @@ public class BasicDataModelHeader<T extends ColumnInfo> extends DisposableBase i
         Disposer.register(this, columnInfo);
     }
 
+    @Override
     public List<T> getColumnInfos() {
         return columnInfos;
     }
 
+    @Override
     public T getColumnInfo(int columnIndex) {
         return columnInfos.get(columnIndex);
     }
 
+    @Override
     public int getColumnIndex(String name) {
         for (int i=0; i<columnInfos.size(); i++) {
             T columnInfo = columnInfos.get(i);
@@ -37,14 +40,17 @@ public class BasicDataModelHeader<T extends ColumnInfo> extends DisposableBase i
         return -1;
     }
 
+    @Override
     public String getColumnName(int columnIndex) {
         return getColumnInfo(columnIndex).getName();
     }
 
+    @Override
     public DBDataType getColumnDataType(int columnIndex) {
         return getColumnInfo(columnIndex).getDataType();
     }
 
+    @Override
     public int getColumnCount() {
         return columnInfos.size();
     }

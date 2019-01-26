@@ -113,6 +113,7 @@ public class FormattingBlock implements Block {
     }
 
 
+    @Override
     @Nullable
     public Indent getIndent() {
         PsiElement psiElement = getPsiElement();
@@ -147,6 +148,7 @@ public class FormattingBlock implements Block {
         }
     }
 
+    @Override
     @Nullable
     public Wrap getWrap() {
         PsiElement psiElement = getPsiElement();
@@ -190,6 +192,7 @@ public class FormattingBlock implements Block {
         return CodeStylePreset.WRAP_NONE;
     }
 
+    @Override
     @Nullable
     public Spacing getSpacing(@Nullable Block child1, @NotNull Block child2) {
         FormattingBlock leftBlock = (FormattingBlock) child1;
@@ -317,11 +320,13 @@ public class FormattingBlock implements Block {
         return null;
     }
 
+    @Override
     @NotNull
     public TextRange getTextRange() {
         return getPsiElement().getTextRange();
     }
 
+    @Override
     @NotNull
     public List<Block> getSubBlocks() {
         Synchronized.run(this,
@@ -355,11 +360,13 @@ public class FormattingBlock implements Block {
         return codeStyleCustomSettings;
     }
 
+    @Override
     @Nullable
     public Alignment getAlignment() {
         return Alignment.createAlignment();
     }
 
+    @Override
     @NotNull
     public ChildAttributes getChildAttributes(final int newChildIndex) {
         List<Block> subBlocks = getSubBlocks();
@@ -371,6 +378,7 @@ public class FormattingBlock implements Block {
         }
     }
 
+    @Override
     public boolean isIncomplete() {
         PsiElement psiElement = getPsiElement();
         if (psiElement instanceof BasePsiElement) {
@@ -389,6 +397,7 @@ public class FormattingBlock implements Block {
         return parentBlock != null && parentBlock.isIncomplete();
     }
 
+    @Override
     public boolean isLeaf() {
         PsiElement psiElement = getPsiElement();
         return psiElement instanceof IdentifierPsiElement ||

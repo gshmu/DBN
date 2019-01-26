@@ -17,16 +17,19 @@ public class DBModuleType<T extends DBModuleBuilder> extends ModuleType<T> {
         super(id);
     }
 
+    @Override
     @NotNull
     public T createModuleBuilder() {
         return (T) new DBModuleBuilder();
     }
 
+    @Override
     @NotNull
     public String getName() {
         return "Database module";
     }
 
+    @Override
     @NotNull
     public String getDescription() {
         return "<b>Database module</b> is a part of a project which bundles all database related objects like ddl/dml scripts, database connections and so on...";
@@ -36,9 +39,11 @@ public class DBModuleType<T extends DBModuleBuilder> extends ModuleType<T> {
         return Icons.DATABASE_MODULE;
     }
 
+    @Override
     public Icon getNodeIcon(boolean isOpened) {
         return isOpened ? Icons.DATABASE_MODULE_SMALL_OPEN : Icons.DATABASE_MODULE_SMALL_CLOSED;
     }
+    @Override
     @NotNull
     public ModuleWizardStep[] createWizardSteps(@NotNull WizardContext wizardContext, @NotNull T moduleBuilder, @NotNull ModulesProvider modulesProvider) {
         List<ModuleWizardStep> wizardSteps = new ArrayList<ModuleWizardStep>();

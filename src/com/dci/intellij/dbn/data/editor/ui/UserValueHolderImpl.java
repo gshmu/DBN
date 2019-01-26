@@ -20,6 +20,7 @@ public class UserValueHolderImpl<T> implements UserValueHolder<T>{
         this.project = project;
     }
 
+    @Override
     public T getUserValue() {
         return userValue;
     }
@@ -29,22 +30,27 @@ public class UserValueHolderImpl<T> implements UserValueHolder<T>{
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void setUserValue(T userValue) {
         this.userValue = userValue;
     }
 
+    @Override
     public void updateUserValue(T userValue, boolean bulk) {
         this.userValue = userValue;
     }
 
+    @Override
     public TextContentType getContentType() {
         return contentType;
     }
 
+    @Override
     public void setContentType(TextContentType contentType) {
         this.contentType = contentType;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -59,6 +65,7 @@ public class UserValueHolderImpl<T> implements UserValueHolder<T>{
         return dataType;
     }
 
+    @Override
     public Project getProject() {
         return project;
     }

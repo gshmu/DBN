@@ -14,6 +14,7 @@ public abstract class StatementAbstractPreset extends CodeStylePresetImpl {
         super(id, name);
     }
 
+    @Override
     public boolean accepts(BasePsiElement psiElement) {
         return psiElement.getElementType().is(ElementTypeAttribute.STATEMENT);
     }

@@ -19,6 +19,7 @@ public class DeleteRecordAction extends AbstractDataEditorAction {
         super("Delete records", Icons.DATA_EDITOR_DELETE_RECORD);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
         if (datasetEditor != null) {
@@ -26,6 +27,7 @@ public class DeleteRecordAction extends AbstractDataEditorAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Delete Records");

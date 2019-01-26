@@ -13,10 +13,12 @@ public class CompilerSettings extends Configuration<CompilerSettingsForm>{
     private CompileDependenciesOption compileDependenciesOption = CompileDependenciesOption.ASK;
     private boolean alwaysShowCompilerControls = false;
 
+    @Override
     public String getDisplayName() {
         return "Data editor general settings";
     }
 
+    @Override
     public String getHelpTopic() {
         return "executionEngine";
     }
@@ -52,6 +54,7 @@ public class CompilerSettings extends Configuration<CompilerSettingsForm>{
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @Override
     @NotNull
     public CompilerSettingsForm createConfigurationEditor() {
         return new CompilerSettingsForm(this);
@@ -62,12 +65,14 @@ public class CompilerSettings extends Configuration<CompilerSettingsForm>{
         return "compiler";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         compileType = CompileType.get(SettingsUtil.getString(element, "compile-type", compileType.name()));
         compileDependenciesOption = CompileDependenciesOption.get(SettingsUtil.getString(element, "compile-dependencies", compileDependenciesOption.name()));
         alwaysShowCompilerControls = SettingsUtil.getBoolean(element, "always-show-controls", alwaysShowCompilerControls);
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         SettingsUtil.setString(element, "compile-type", compileType.name());
         SettingsUtil.setString(element, "compile-dependencies", compileDependenciesOption.name());

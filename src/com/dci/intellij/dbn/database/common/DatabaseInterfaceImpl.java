@@ -34,6 +34,7 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
         reset();
     }
 
+    @Override
     public void reset() {
         processors.clear();
         Document document = CommonUtil.loadXmlFile(getClass(), fileName);

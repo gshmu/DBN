@@ -72,6 +72,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         mainPanel.addKeyListener(this);
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
@@ -95,6 +96,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         }
     }
 
+    @Override
     public JBPopup createPopup() {
         JTextField textField = getTextField();
 
@@ -132,14 +134,19 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         return popupBuilder.createPopup();
     }
 
+    @Override
     public void handleKeyPressedEvent(KeyEvent e) {}
+    @Override
     public void handleKeyReleasedEvent(KeyEvent e) {}
+    @Override
     public void handleFocusLostEvent(FocusEvent e) {}
 
+    @Override
     public String getKeyShortcutName() {
         return IdeActions.ACTION_SHOW_INTENTION_ACTIONS;
     }
 
+    @Override
     public String getDescription() {
         return "Array Editor";
     }
@@ -155,6 +162,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         return Icons.DATA_EDITOR_BROWSE;
     }
 
+    @Override
     public void keyPressed(KeyEvent e) {
         if (!e.isConsumed()) {
             if (e.getKeyCode() == 27) {
@@ -169,6 +177,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
     }
 
     private class DocumentListener extends DocumentAdapter {
+        @Override
         protected void textChanged(DocumentEvent documentEvent) {
             changed = true;
         }
@@ -181,6 +190,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
             registerAction(this);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             list.stopCellEditing();
             UserValueHolder userValueHolder = getEditorComponent().getUserValueHolder();
@@ -212,6 +222,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
             registerAction(this);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             hidePopup();
         }
@@ -229,6 +240,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
             registerAction(this);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             TextFieldWithPopup editorComponent = getEditorComponent();
             editorComponent.getUserValueHolder().updateUserValue(new ArrayList<String>(), false);
@@ -244,6 +256,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
             registerAction(this);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             list.insertRow();
         }
@@ -257,11 +270,13 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
             registerAction(this);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             list.removeRow();
         }
     }
 
+    @Override
     public void dispose() {
         super.dispose();
     }

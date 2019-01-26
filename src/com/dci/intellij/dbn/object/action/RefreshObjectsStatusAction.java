@@ -13,6 +13,7 @@ public class RefreshObjectsStatusAction extends DumbAwareAction {
         this.connectionHandler = connectionHandler;
     }
 
+    @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
         connectionHandler.getObjectBundle().refreshObjectsStatus(null);
     }

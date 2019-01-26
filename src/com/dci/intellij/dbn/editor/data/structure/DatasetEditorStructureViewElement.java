@@ -27,17 +27,21 @@ public class DatasetEditorStructureViewElement implements StructureViewTreeEleme
         this.datasetEditor = datasetEditor;
     }
 
+    @Override
     public BrowserTreeNode getValue() {
         return treeNode;
     }
 
+    @Override
     @NotNull
     public ItemPresentation getPresentation() {
         return new ItemPresentation() {
+            @Override
             public String getPresentableText() {
                 return treeNode.getPresentableText();
             }
 
+            @Override
             @Nullable
             public String getLocationString() {
                 if (treeNode instanceof DBColumn) {
@@ -48,6 +52,7 @@ public class DatasetEditorStructureViewElement implements StructureViewTreeEleme
                 return null;
             }
 
+            @Override
             @Nullable
             public Icon getIcon(boolean open) {
                 return treeNode.getIcon(0);
@@ -60,6 +65,7 @@ public class DatasetEditorStructureViewElement implements StructureViewTreeEleme
         };
     }
 
+    @Override
     @NotNull
     public StructureViewTreeElement[] getChildren() {
         if (children == null) {
@@ -91,6 +97,7 @@ public class DatasetEditorStructureViewElement implements StructureViewTreeEleme
         return children;
     }
 
+    @Override
     public void navigate(boolean requestFocus) {
         if (!datasetEditor.isDisposed()) {
             DatasetEditorTable table = datasetEditor.getEditorTable();
@@ -111,14 +118,17 @@ public class DatasetEditorStructureViewElement implements StructureViewTreeEleme
         }
     }
 
+    @Override
     public boolean canNavigate() {
         return !datasetEditor.isDisposed();
     }
 
+    @Override
     public boolean canNavigateToSource() {
         return treeNode instanceof DBColumn && !datasetEditor.isDisposed() && datasetEditor.getEditorTable().getRowCount() > 0;
     }
 
+    @Override
     public int compareTo(@NotNull Object o) {
         DatasetEditorStructureViewElement desve = (DatasetEditorStructureViewElement) o;
         if (treeNode instanceof DBColumn && desve.treeNode instanceof DBColumn) {

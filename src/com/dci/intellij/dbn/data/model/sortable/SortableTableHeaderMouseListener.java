@@ -15,6 +15,7 @@ public class SortableTableHeaderMouseListener extends MouseAdapter {
         this.table = table;
     }
 
+    @Override
     public void mouseClicked(MouseEvent event) {
         if (event.getButton() == MouseEvent.BUTTON1) {
             Point mousePoint = event.getPoint();

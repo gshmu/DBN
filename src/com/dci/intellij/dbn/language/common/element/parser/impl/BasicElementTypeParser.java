@@ -13,6 +13,7 @@ public class BasicElementTypeParser extends AbstractElementTypeParser<BasicEleme
         super(elementType);
     }
 
+    @Override
     public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
         return ParseResult.createNoMatchResult();
     }

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class OpenAboutPageAction extends DumbAwareAction {
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         AboutComponent aboutComponent = new AboutComponent(project);

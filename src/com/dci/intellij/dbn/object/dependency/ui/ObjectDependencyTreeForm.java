@@ -100,10 +100,12 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
             super("Expand All", null, Icons.ACTION_EXPAND_ALL);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             TreeUtil.expandAll(dependencyTree);
         }
 
+        @Override
         public void update(@NotNull AnActionEvent e) {
             Presentation presentation = e.getPresentation();
             presentation.setText("Expand All");
@@ -115,11 +117,13 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
             super("Previous Selection", null, Icons.BROWSER_BACK);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             DBObject previous = dependencyTree.getSelectionHistory().previous();
             dependencyTree.setRootObject((DBSchemaObject) previous, false);
         }
 
+        @Override
         public void update(@NotNull AnActionEvent e) {
             Presentation presentation = e.getPresentation();
             presentation.setEnabled(dependencyTree.getSelectionHistory().hasPrevious());
@@ -131,11 +135,13 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
             super("Next Selection", null, Icons.BROWSER_NEXT);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             DBObject next = dependencyTree.getSelectionHistory().next();
             dependencyTree.setRootObject((DBSchemaObject) next, false);
         }
 
+        @Override
         public void update(@NotNull AnActionEvent e) {
             Presentation presentation = e.getPresentation();
             presentation.setEnabled(dependencyTree.getSelectionHistory().hasNext());
@@ -148,10 +154,12 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
             super("Collapse All", null, Icons.ACTION_COLLAPSE_ALL);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             TreeUtil.collapseAll(dependencyTree);
         }
 
+        @Override
         public void update(@NotNull AnActionEvent e) {
             Presentation presentation = e.getPresentation();
             presentation.setText("Collapse All");

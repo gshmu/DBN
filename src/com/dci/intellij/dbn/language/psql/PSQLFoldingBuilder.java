@@ -17,6 +17,7 @@ import java.util.List;
 
 public class PSQLFoldingBuilder extends DBLanguageFoldingBuilder {
 
+    @Override
     protected void createFoldingDescriptors(PsiElement psiElement, Document document, List<FoldingDescriptor> descriptors, int nestingIndex) {
         PsiElement child = psiElement.getFirstChild();
         while (child != null) {
@@ -73,6 +74,7 @@ public class PSQLFoldingBuilder extends DBLanguageFoldingBuilder {
         }
     }
 
+    @Override
     public String getPlaceholderText(@NotNull ASTNode node) {
         PsiElement psiElement = node.getPsi();
         if (psiElement instanceof PsiComment) {
@@ -99,6 +101,7 @@ public class PSQLFoldingBuilder extends DBLanguageFoldingBuilder {
         return "";
     }
 
+    @Override
     public boolean isCollapsedByDefault(@NotNull ASTNode node) {
         return false;
     }

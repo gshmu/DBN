@@ -17,6 +17,7 @@ public class BasicPathNode implements PathNode {
         this.parent = parent;
     }
 
+    @Override
     public PathNode getParent() {
         return parent;
     }
@@ -25,10 +26,12 @@ public class BasicPathNode implements PathNode {
         this.parent = parent;
     }
 
+    @Override
     public ElementType getElementType() {
         return elementType;
     }
 
+    @Override
     public PathNode getRootPathNode() {
         PathNode pathNode = parent;
         while (pathNode != null) {
@@ -57,6 +60,7 @@ public class BasicPathNode implements PathNode {
         this.elementType = elementType;
     }
 
+    @Override
     public boolean isRecursive() {
         PathNode node = this.getParent();
         while (node != null) {
@@ -68,6 +72,7 @@ public class BasicPathNode implements PathNode {
         return false;
     }
 
+    @Override
     public boolean isRecursive(ElementType elementType) {
         if (this.elementType == elementType) {
             return true;
@@ -98,6 +103,7 @@ public class BasicPathNode implements PathNode {
         return buffer.toString();
     }
 
+    @Override
     public void detach() {
         parent = null;
     }

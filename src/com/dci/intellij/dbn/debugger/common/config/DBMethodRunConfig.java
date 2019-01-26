@@ -34,6 +34,7 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
         return methodSelectionHistory;
     }
 
+    @Override
     public void setExecutionInput(MethodExecutionInput executionInput) {
         MethodExecutionInput currentExecutionInput = getExecutionInput();
         if (currentExecutionInput != null && !currentExecutionInput.equals(executionInput)) {
@@ -47,6 +48,7 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
         return super.getExecutionInput();
     }
 
+    @Override
     public void checkConfiguration() throws RuntimeConfigurationException {
         if (getCategory() == DBRunConfigCategory.CUSTOM) {
             MethodExecutionInput executionInput = getExecutionInput();

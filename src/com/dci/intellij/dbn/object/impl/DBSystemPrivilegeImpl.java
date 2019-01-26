@@ -16,10 +16,12 @@ public class DBSystemPrivilegeImpl extends DBPrivilegeImpl implements DBSystemPr
         super(connectionHandler, resultSet);
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return DBObjectType.SYSTEM_PRIVILEGE;
     }
 
+    @Override
     public List<DBUser> getUserGrantees() {
         List<DBUser> grantees = new ArrayList<DBUser>();
         List<DBUser> users = getConnectionHandler().getObjectBundle().getUsers();

@@ -26,6 +26,7 @@ public class BlockElementTypeImpl extends SequenceElementTypeImpl implements Blo
         return new BlockElementTypeLookupCache(this);
     }
 
+    @Override
     public BlockElementTypeParser createParser() {
         return new BlockElementTypeParser(this);
     }
@@ -39,10 +40,12 @@ public class BlockElementTypeImpl extends SequenceElementTypeImpl implements Blo
         }
     }
 
+    @Override
     public PsiElement createPsiElement(ASTNode astNode) {
         return new BlockPsiElement(astNode, this);
     }
 
+    @Override
     public String getDebugName() {
         return "block (" + getId() + ")";
     }

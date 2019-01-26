@@ -78,6 +78,7 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
         return filter;
     }
 
+    @Override
     public ObjectNameFilterSettings clone() {
         try {
             ObjectNameFilterSettings clone = new ObjectNameFilterSettings(getProject(), connectionRef);
@@ -104,6 +105,7 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
         return "object-name-filters";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         filters.clear();
         objectFilterMap.clear();
@@ -116,6 +118,7 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
         }
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         for (ObjectNameFilter filter : filters) {
             Element filterElement = new Element("filter");
@@ -129,15 +132,18 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
      *********************************************************/
     private Set<TreeModelListener> listeners = new HashSet<TreeModelListener>();
 
+    @Override
     public Object getRoot() {
         return this;
     }
 
+    @Override
     public Object getChild(Object parent, int index) {
         List children = getChildren(parent);
         return children.size() > index ? children.get(index) : null;
     }
 
+    @Override
     public int getChildCount(Object parent) {
         return getChildren(parent).size();
     }
@@ -156,10 +162,12 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
         return Collections.EMPTY_LIST;
     }
 
+    @Override
     public boolean isLeaf(Object node) {
         return node instanceof SimpleNameFilterCondition;
     }
 
+    @Override
     public int getIndexOfChild(Object parent, Object child) {
         return getChildren(parent).indexOf(child);
     }
@@ -257,12 +265,15 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
     }
 
 
+    @Override
     public void valueForPathChanged(TreePath path, Object newValue) {
         System.out.println("");
     }
 
+    @Override
     public void addTreeModelListener(TreeModelListener listener) { listeners.add(listener); }
 
+    @Override
     public void removeTreeModelListener(TreeModelListener listener) { listeners.remove(listener); }
 
 }

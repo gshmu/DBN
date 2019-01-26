@@ -49,6 +49,7 @@ public class PendingTransactionDialog extends DialogWithTimeout {
         return null;
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{
@@ -64,6 +65,7 @@ public class PendingTransactionDialog extends DialogWithTimeout {
             putValue(DEFAULT_ACTION, Boolean.TRUE);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             try {
                 DBNConnection connection = getConnection();
@@ -85,6 +87,7 @@ public class PendingTransactionDialog extends DialogWithTimeout {
             super("Rollback", Icons.CONNECTION_ROLLBACK);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             try {
                 DBNConnection connection = getConnection();

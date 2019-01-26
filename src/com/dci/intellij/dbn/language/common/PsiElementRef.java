@@ -21,6 +21,7 @@ public class PsiElementRef<T extends PsiElement> extends WeakRef<T>{
         return super.get();
     }
 
+    @Override
     @NotNull
     public T getnn() {
         return FailsafeUtil.get(get());

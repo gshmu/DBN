@@ -48,6 +48,7 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
         attributes = initChildObjects().createObjectList(TYPE_ATTRIBUTE, this, DynamicContentStatus.INDEXED);
     }
 
+    @Override
     public DBPackage getPackage() {
         return (DBPackage) getParentObject();
     }
@@ -63,17 +64,20 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
         return isCollection() ? Icons.DBO_TYPE_COLLECTION : Icons.DBO_TYPE;
     }
 
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return DatabaseBrowserUtils.createList(attributes);
     }
 
+    @Override
     public boolean isEmbedded() {
         return true;
     }
 
     static {
         new DynamicContentResultSetLoader(PACKAGE_TYPE, TYPE_ATTRIBUTE) {
+            @Override
             public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
                 DBPackageTypeImpl type = (DBPackageTypeImpl) dynamicContent.getParentElement();
@@ -83,6 +87,7 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
                         type.getName(), connection);
             }
 
+            @Override
             public DBObject createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
                 DBTypeImpl type = (DBTypeImpl) dynamicContent.getParentElement();
                 return new DBTypeAttributeImpl(type, resultSet);

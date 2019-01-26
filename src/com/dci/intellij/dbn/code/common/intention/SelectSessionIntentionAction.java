@@ -15,20 +15,24 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class SelectSessionIntentionAction extends GenericIntentionAction implements LowPriorityAction {
+    @Override
     @NotNull
     public String getText() {
         return "Select session...";
     }
 
+    @Override
     @NotNull
     public String getFamilyName() {
         return IntentionActionGroups.CONNECTION;
     }
 
+    @Override
     public Icon getIcon(int flags) {
         return Icons.FILE_SESSION_MAPPING;
     }
 
+    @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile instanceof DBLanguagePsiFile) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
@@ -45,6 +49,7 @@ public class SelectSessionIntentionAction extends GenericIntentionAction impleme
         return false;
     }
 
+    @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) psiFile;
@@ -53,6 +58,7 @@ public class SelectSessionIntentionAction extends GenericIntentionAction impleme
         }
     }
 
+    @Override
     public boolean startInWriteAction() {
         return false;
     }

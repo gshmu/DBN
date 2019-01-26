@@ -96,6 +96,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
                 variableValueForms.add(variableValueForm);
                 variablesPanel.add(variableValueForm.getComponent());
                 variableValueForm.addDocumentListener(new DocumentAdapter() {
+                    @Override
                     protected void textChanged(@NotNull DocumentEvent e) {
                         updatePreview();
                     }
@@ -133,10 +134,12 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
         return executionProcessor;
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         variableValueForms.clear();
@@ -144,6 +147,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
         EditorFactory.getInstance().releaseEditor(viewer);
     }
 
+    @Override
     public JComponent getPreferredFocusedComponent() {
         if (variableValueForms.size() > 0) {
             return variableValueForms.get(0).getEditorComponent();

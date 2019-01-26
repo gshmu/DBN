@@ -17,6 +17,7 @@ public class EditObjectCodeAction extends DumbAwareAction {
         setDefaultIcon(true);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         DBSchemaObject schemaObject = DBObjectRef.getnn(objectRef);
         DatabaseFileSystem fileSystem = DatabaseFileSystem.getInstance();

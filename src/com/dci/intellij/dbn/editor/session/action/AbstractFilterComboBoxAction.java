@@ -32,6 +32,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction imp
         this.filterType = filterType;
     }
 
+    @Override
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
         SessionBrowser sessionBrowser = getSessionBrowser(component);
@@ -53,6 +54,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction imp
         return actionGroup;
     }
 
+    @Override
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         String text = filterType.getName();

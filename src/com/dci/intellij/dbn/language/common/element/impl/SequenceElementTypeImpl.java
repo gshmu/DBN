@@ -26,10 +26,12 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
     protected ElementTypeRef[] children;
     private int exitIndex;
 
+    @Override
     public ElementTypeRef[] getChildren() {
         return children;
     }
 
+    @Override
     public ElementTypeRef getFirstChild() {return children[0];}
 
     @Override
@@ -55,6 +57,7 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
         return new SequenceElementTypeParser<SequenceElementType>(this);
     }
 
+    @Override
     protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
         super.loadDefinition(def);
         List children = def.getChildren();
@@ -76,22 +79,27 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
         }
     }
 
+    @Override
     public boolean isLeaf() {
         return false;
     }
 
+    @Override
     public int getChildCount() {
         return children.length;
     }
 
+    @Override
     public PsiElement createPsiElement(ASTNode astNode) {
         return new SequencePsiElement(astNode, this);
     }
 
+    @Override
     public boolean isExitIndex(int index) {
         return index <= exitIndex;
     }
 
+    @Override
     public String getDebugName() {
         return "sequence (" + getId() + ")";
     }
@@ -99,6 +107,7 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
     /*********************************************************
      *                Cached lookup helpers                  *
      *********************************************************/
+    @Override
     public boolean containsLandmarkTokenFromIndex(TokenType tokenType, int index) {
         if (index < children.length) {
             ElementTypeRef child = children[index];
@@ -110,6 +119,7 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
         return false;
     }
 
+    @Override
     public Set<TokenType> getFirstPossibleTokensFromIndex(ElementLookupContext context, int index) {
         if (children[index].isOptional()) {
             Set<TokenType> tokenTypes = new THashSet<TokenType>();
@@ -125,6 +135,7 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
         }
     }
 
+    @Override
     public boolean isPossibleTokenFromIndex(TokenType tokenType, int index) {
         if (index < children.length) {
             for (int i= index; i< children.length; i++) {
@@ -160,6 +171,7 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
         return -1;
     }
 
+    @Override
     public int indexOf(ElementType elementType, int fromIndex) {
         WrappingDefinition wrapping = getWrapping();
         if (wrapping != null && elementType instanceof TokenElementType) {
@@ -181,6 +193,7 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
         return -1;
     }
 
+    @Override
     public int indexOf(ElementType elementType) {
         return indexOf(elementType, 0);
     }

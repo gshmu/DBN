@@ -94,6 +94,7 @@ public class MessagesTree extends DBNTree implements Disposable {
         }
     }
 
+    @Override
     public MessagesTreeModel getModel() {
         return (MessagesTreeModel) super.getModel();
     }
@@ -347,6 +348,7 @@ public class MessagesTree extends DBNTree implements Disposable {
      *                        MouseListener                  *
      *********************************************************/
     private MouseListener mouseListener = new MouseAdapter() {
+        @Override
         public void mouseClicked(MouseEvent event) {
             if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
                 TreePath selectionPath = getSelectionPath();

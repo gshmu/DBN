@@ -26,6 +26,7 @@ public class DBObjectRelationListContainer implements Disposable, Compactable {
         this.owner = owner;
     }
 
+    @Override
     public void compact() {
         CollectionUtil.compactElements(objectRelationLists);
     }
@@ -92,6 +93,7 @@ public class DBObjectRelationListContainer implements Disposable, Compactable {
         return null;
     }
 
+    @Override
     public void dispose() {
         DisposerUtil.dispose(objectRelationLists);
         CollectionUtil.clear(objectRelationLists);

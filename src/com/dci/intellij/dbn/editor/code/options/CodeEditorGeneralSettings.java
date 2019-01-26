@@ -12,10 +12,12 @@ public class CodeEditorGeneralSettings extends Configuration<CodeEditorGeneralSe
     private boolean enableSpellchecking = true;
     private boolean enableReferenceSpellchecking = false;
 
+    @Override
     public String getDisplayName() {
         return "Code editor general settings";
     }
 
+    @Override
     public String getHelpTopic() {
         return "codeEditor";
     }
@@ -59,6 +61,7 @@ public class CodeEditorGeneralSettings extends Configuration<CodeEditorGeneralSe
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @Override
     @NotNull
     public CodeEditorGeneralSettingsForm createConfigurationEditor() {
         return new CodeEditorGeneralSettingsForm(this);
@@ -69,6 +72,7 @@ public class CodeEditorGeneralSettings extends Configuration<CodeEditorGeneralSe
         return "general";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         showObjectsNavigationGutter = SettingsUtil.getBoolean(element, "show-object-navigation-gutter", showObjectsNavigationGutter);
         showSpecDeclarationNavigationGutter = SettingsUtil.getBoolean(element, "show-spec-declaration-navigation-gutter", showSpecDeclarationNavigationGutter);
@@ -76,6 +80,7 @@ public class CodeEditorGeneralSettings extends Configuration<CodeEditorGeneralSe
         enableReferenceSpellchecking = SettingsUtil.getBoolean(element, "enable-reference-spellchecking", enableReferenceSpellchecking);
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         SettingsUtil.setBoolean(element, "show-object-navigation-gutter", showObjectsNavigationGutter);
         SettingsUtil.setBoolean(element, "show-spec-declaration-navigation-gutter", showSpecDeclarationNavigationGutter);

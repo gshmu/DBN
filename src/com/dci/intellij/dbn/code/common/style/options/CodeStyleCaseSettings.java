@@ -22,6 +22,7 @@ public abstract class CodeStyleCaseSettings extends Configuration<CodeStyleCaseS
     }
 
 
+    @Override
     public String getDisplayName() {
         return "Case Options";
     }
@@ -65,6 +66,7 @@ public abstract class CodeStyleCaseSettings extends Configuration<CodeStyleCaseS
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @Override
     @NotNull
     public CodeStyleCaseSettingsForm createConfigurationEditor() {
         return new CodeStyleCaseSettingsForm(this);
@@ -75,6 +77,7 @@ public abstract class CodeStyleCaseSettings extends Configuration<CodeStyleCaseS
         return "case-options";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         enabled = SettingsUtil.getBooleanAttribute(element, "enabled", enabled);
         for (Object object : element.getChildren()) {
@@ -85,6 +88,7 @@ public abstract class CodeStyleCaseSettings extends Configuration<CodeStyleCaseS
         }
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         SettingsUtil.setBooleanAttribute(element, "enabled", enabled);
         for (CodeStyleCaseOption option : options) {

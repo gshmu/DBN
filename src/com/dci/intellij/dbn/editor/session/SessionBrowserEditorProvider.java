@@ -20,20 +20,24 @@ public class SessionBrowserEditorProvider implements FileEditorProvider, Applica
      *                  FileEditorProvider                   *
      *********************************************************/
 
+    @Override
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
         return virtualFile instanceof DBSessionBrowserVirtualFile;
     }
 
+    @Override
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
         DBSessionBrowserVirtualFile sessionBrowserFile = (DBSessionBrowserVirtualFile) file;
         return new SessionBrowser(sessionBrowserFile);
     }
 
+    @Override
     public void disposeEditor(@NotNull final FileEditor editor) {
         Disposer.dispose(editor);
     }
 
+    @Override
     @NotNull
     public FileEditorState readState(@NotNull Element sourceElement, @NotNull Project project, @NotNull VirtualFile virtualFile) {
         if (virtualFile instanceof DBSessionBrowserVirtualFile) {
@@ -44,6 +48,7 @@ public class SessionBrowserEditorProvider implements FileEditorProvider, Applica
         return new SessionBrowserState();
     }
 
+    @Override
     public void writeState(@NotNull FileEditorState state, @NotNull Project project, @NotNull Element targetElement) {
         if (state instanceof SessionBrowserState) {
             SessionBrowserState editorState = (SessionBrowserState) state;
@@ -51,12 +56,14 @@ public class SessionBrowserEditorProvider implements FileEditorProvider, Applica
         }
     }
 
+    @Override
     @NotNull
     @NonNls
     public String getEditorTypeId() {
         return EditorProviderId.SESSION_BROWSER.getId();
     }
 
+    @Override
     @NotNull
     public FileEditorPolicy getPolicy() {
         return FileEditorPolicy.HIDE_DEFAULT_EDITOR;
@@ -65,16 +72,19 @@ public class SessionBrowserEditorProvider implements FileEditorProvider, Applica
     /*********************************************************
      *                ApplicationComponent                   *
      *********************************************************/
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {
         return "DBNavigator.SessionBrowserProvider";
     }
 
+    @Override
     public void initComponent() {
 
     }
 
+    @Override
     public void disposeComponent() {
 
     }

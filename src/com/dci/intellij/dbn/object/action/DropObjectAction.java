@@ -20,6 +20,7 @@ public class DropObjectAction extends DumbAwareAction {
         return DBObjectRef.getnn(objectRef);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         DBSchemaObject object = getObject();
         DatabaseObjectFactory objectFactory = DatabaseObjectFactory.getInstance(object.getProject());

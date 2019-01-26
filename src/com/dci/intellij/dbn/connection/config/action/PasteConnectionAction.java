@@ -15,6 +15,7 @@ public class PasteConnectionAction extends ConnectionSettingsAction {
         super("Paste From Clipboard", Icons.CONNECTION_PASTE);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         ConnectionBundleSettingsForm settingsForm = getSettingsForm(e);
         if (settingsForm != null) {
@@ -23,6 +24,7 @@ public class PasteConnectionAction extends ConnectionSettingsAction {
 
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         try {

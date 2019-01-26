@@ -25,6 +25,7 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
         super(dataset, resultSet);
     }
 
+    @Override
     public DBDataset getDataset() {
         return (DBDataset) getParentObject();
     }
@@ -62,6 +63,7 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
         }
     }
 
+    @Override
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         TriggerType triggerType = getTriggerType();
         TriggeringEvent[] triggeringEvents = getTriggeringEvents();
@@ -92,6 +94,7 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
             super(object, false);
         }
 
+        @Override
         public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
             ConnectionHandler connectionHandler = getConnectionHandler();
             DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
@@ -111,6 +114,7 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
         }
     }
 
+    @Override
     public String loadCodeFromDatabase(DBContentType contentType) throws SQLException {
         SourceCodeLoader sourceCodeLoader = new SourceCodeLoader(this);
         return sourceCodeLoader.load();

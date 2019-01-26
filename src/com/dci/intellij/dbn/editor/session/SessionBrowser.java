@@ -194,22 +194,26 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         return FailsafeUtil.get(sessionBrowserFile.getProject());
     }
 
+    @Override
     @NotNull
     public JComponent getComponent() {
         return disposed ? new JPanel() : editorForm.getComponent();
     }
 
+    @Override
     @Nullable
     public JComponent getPreferredFocusedComponent() {
         return isDisposed() ? null : getEditorTable();
     }
 
+    @Override
     @NonNls
     @NotNull
     public String getName() {
         return "Data";
     }
 
+    @Override
     @NotNull
     public FileEditorState getState(@NotNull FileEditorStateLevel level) {
         if (!isDisposed()) {
@@ -220,6 +224,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         return cachedState;
     }
 
+    @Override
     public void setState(@NotNull FileEditorState fileEditorState) {
         if (fileEditorState instanceof SessionBrowserState) {
             SessionBrowserTable editorTable = getEditorTable();
@@ -231,38 +236,47 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         }
     }
 
+    @Override
     public boolean isModified() {
         return false;
     }
 
+    @Override
     public boolean isValid() {
         return true;
     }
 
+    @Override
     public void selectNotify() {
 
     }
 
+    @Override
     public void deselectNotify() {
 
     }
 
+    @Override
     public void addPropertyChangeListener(@NotNull PropertyChangeListener listener) {
     }
 
+    @Override
     public void removePropertyChangeListener(@NotNull PropertyChangeListener listener) {
     }
 
+    @Override
     @Nullable
     public BackgroundEditorHighlighter getBackgroundHighlighter() {
         return null;
     }
 
+    @Override
     @Nullable
     public FileEditorLocation getCurrentLocation() {
         return null;
     }
 
+    @Override
     @Nullable
     public StructureViewBuilder getStructureViewBuilder() {
         return null;
@@ -350,6 +364,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     }
 
     private class RefreshTask extends TimerTask {
+        @Override
         public void run() {
             loadSessions(false);
         }
@@ -368,6 +383,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         }
     }
 
+    @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return sessionBrowserFile.getConnectionHandler();
@@ -383,6 +399,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         return null;
     };
 
+    @Override
     @Nullable
     public DataProvider getDataProvider() {
         return dataProvider;
@@ -398,6 +415,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         return disposed;
     }
 
+    @Override
     public void dispose() {
         if (!disposed) {
             disposed = true;

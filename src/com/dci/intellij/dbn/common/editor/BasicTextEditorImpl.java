@@ -40,65 +40,80 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
         Disposer.register(this, textEditor);
     }
 
+    @Override
     @NotNull
     public T getVirtualFile() {
         return FailsafeUtil.get(virtualFile);
     }
 
+    @Override
     public <D> D getUserData(@NotNull Key<D> key) {
         return textEditor.getUserData(key);
     }
 
+    @Override
     public <D> void putUserData(@NotNull Key<D> key, D value) {
         textEditor.putUserData(key, value);
     }
 
+    @Override
     public boolean isModified() {
         return textEditor.isModified();
     }
 
+    @Override
     public boolean isValid() {
         return textEditor.isValid();
     }
 
+    @Override
     public void selectNotify() {
         textEditor.selectNotify();
     }
 
+    @Override
     public void deselectNotify() {
         textEditor.deselectNotify();
     }
 
+    @Override
     public void addPropertyChangeListener(@NotNull PropertyChangeListener listener) {
         textEditor.addPropertyChangeListener(listener);
     }
 
+    @Override
     public void removePropertyChangeListener(@NotNull PropertyChangeListener listener) {
         textEditor.removePropertyChangeListener(listener);
     }
 
+    @Override
     @Nullable
     public BackgroundEditorHighlighter getBackgroundHighlighter() {
         return textEditor.getBackgroundHighlighter();
     }
 
+    @Override
     public FileEditorLocation getCurrentLocation() {
         return textEditor.getCurrentLocation();
     }
 
+    @Override
     @NotNull
     public Editor getEditor() {
         return textEditor.getEditor();
     }
 
+    @Override
     public boolean canNavigateTo(@NotNull final Navigatable navigatable) {
         return textEditor.canNavigateTo(navigatable);
     }
 
+    @Override
     public void navigateTo(@NotNull final Navigatable navigatable) {
         textEditor.navigateTo(navigatable);
     }
 
+    @Override
     @NotNull
     public JComponent getComponent() {
         return textEditor.getComponent();
@@ -109,6 +124,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
         return editorProviderId;
     }
 
+    @Override
     @Nullable
     public JComponent getPreferredFocusedComponent() {
         return textEditor.getPreferredFocusedComponent();
@@ -118,6 +134,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
         return new BasicTextEditorState();
     }
 
+    @Override
     @NotNull
     public FileEditorState getState(@NotNull FileEditorStateLevel level) {
         if (!isDisposed()) {
@@ -127,6 +144,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
         return cachedState;
     }
 
+    @Override
     public void setState(@NotNull FileEditorState fileEditorState) {
         if (fileEditorState instanceof BasicTextEditorState) {
             BasicTextEditorState state = (BasicTextEditorState) fileEditorState;
@@ -134,6 +152,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
         }
     }
 
+    @Override
     @NonNls
     @NotNull
     public String getName() {
@@ -150,11 +169,13 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
         return project;
     }
 
+    @Override
     @Nullable
     public StructureViewBuilder getStructureViewBuilder() {
         return getTextEditor().getStructureViewBuilder();
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         virtualFile = null;

@@ -16,10 +16,12 @@ public class ExecutionBacktraceInfo implements CallableStatementOutput {
         return frames;
     }
 
+    @Override
     public void registerParameters(CallableStatement statement) throws SQLException {
         statement.registerOutParameter(1, Types.VARCHAR);
     }
 
+    @Override
     public void read(CallableStatement statement) throws SQLException {
         String backtraceListing = statement.getString(1);
         StringTokenizer tokenizer = new StringTokenizer(backtraceListing, "\r");

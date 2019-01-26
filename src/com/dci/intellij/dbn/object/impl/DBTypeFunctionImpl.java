@@ -24,6 +24,7 @@ public class DBTypeFunctionImpl extends DBFunctionImpl implements DBTypeFunction
         properties.set(NAVIGABLE, true);
     }
 
+    @Override
     public DBType getType() {
         return (DBType) getParentObject();
     }
@@ -33,6 +34,7 @@ public class DBTypeFunctionImpl extends DBFunctionImpl implements DBTypeFunction
         return getType();
     }
 
+    @Override
     public boolean isProgramMethod() {
         return true;
     }
@@ -42,5 +44,6 @@ public class DBTypeFunctionImpl extends DBFunctionImpl implements DBTypeFunction
         return DBObjectType.TYPE_FUNCTION;
     }
 
+    @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {}
 }

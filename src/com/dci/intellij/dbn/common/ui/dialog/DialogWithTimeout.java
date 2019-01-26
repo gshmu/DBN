@@ -34,6 +34,7 @@ public abstract class DialogWithTimeout extends DBNDialog<DialogWithTimeoutForm>
     }
 
     private class TimeoutTask extends TimerTask {
+        @Override
         public void run() {
             try {
                 if (secondsLeft > 0) {

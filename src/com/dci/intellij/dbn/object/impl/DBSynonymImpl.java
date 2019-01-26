@@ -49,6 +49,7 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
         return name;
     }
 
+    @Override
     public void initStatus(ResultSet resultSet) throws SQLException {
         boolean valid = resultSet.getString("IS_VALID").equals("Y");
         getStatus().set(DBObjectStatus.VALID, valid);
@@ -61,6 +62,7 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
         properties.set(INVALIDABLE, true);
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return DBObjectType.SYNONYM;
     }
@@ -71,6 +73,7 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
         return getUnderlyingObject();
     }
 
+    @Override
     @Nullable
     public Icon getIcon() {
         if (getStatus().is(DBObjectStatus.VALID)) {
@@ -80,15 +83,18 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
         }
     }
 
+    @Override
     public Icon getOriginalIcon() {
         return Icons.DBO_SYNONYM;
     }
 
+    @Override
     @Nullable
     public DBObject getUnderlyingObject() {
         return DBObjectRef.get(underlyingObject);
     }
 
+    @Override
     public String getNavigationTooltipText() {
         DBObject parentObject = getParentObject();
         if (parentObject == null) {
@@ -107,6 +113,7 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
         }
     }
 
+    @Override
     protected List<DBObjectNavigationList> createNavigationLists() {
         List<DBObjectNavigationList> objectNavigationLists = super.createNavigationLists();
 
@@ -119,6 +126,7 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
         return objectNavigationLists;
     }
 
+    @Override
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         DBObject underlyingObject = getUnderlyingObject();
         if (underlyingObject!= null) {
@@ -143,10 +151,12 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
      *                     TreeElement                       *
      *********************************************************/
 
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return EMPTY_TREE_NODE_LIST;

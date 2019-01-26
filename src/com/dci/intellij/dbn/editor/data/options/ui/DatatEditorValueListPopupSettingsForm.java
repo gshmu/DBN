@@ -22,10 +22,12 @@ public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorFo
         registerComponent(mainPanel);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         DataEditorValueListPopupSettings settings = getConfiguration();
         settings.setShowPopupButton(showPopupButtonCheckBox.isSelected());
@@ -33,6 +35,7 @@ public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorFo
         settings.setDataLengthThreshold(validateIntegerInputValue(dataLengthThresholdTextBox, "Data length threshold", true, 0, 1000, null));
     }
 
+    @Override
     public void resetFormChanges() {
         DataEditorValueListPopupSettings settings = getConfiguration();
         showPopupButtonCheckBox.setSelected(settings.isShowPopupButton());

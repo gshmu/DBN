@@ -11,11 +11,13 @@ public class StatementLineBreakAtLeastPreset extends StatementAbstractPreset {
         super("one_line_break_at_least", "One line break at least");
     }
 
+    @Override
     @Nullable
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         return WRAP_ALWAYS;
     }
 
+    @Override
     @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         return null;

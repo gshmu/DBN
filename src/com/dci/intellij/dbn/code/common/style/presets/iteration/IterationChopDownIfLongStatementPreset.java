@@ -15,6 +15,7 @@ public class IterationChopDownIfLongStatementPreset extends IterationAbstractPre
         super("chop_down_if_statement_long", "Chop down if statement long");
     }
 
+    @Override
     @Nullable
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
@@ -29,6 +30,7 @@ public class IterationChopDownIfLongStatementPreset extends IterationAbstractPre
         return null;
     }
 
+    @Override
     @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);

@@ -12,6 +12,7 @@ public class ReloadSessionsAction extends AbstractSessionBrowserAction {
         super("Reload", Icons.DATA_EDITOR_RELOAD_DATA);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         SessionBrowser sessionBrowser = getSessionBrowser(e);
         if (sessionBrowser != null) {
@@ -19,6 +20,7 @@ public class ReloadSessionsAction extends AbstractSessionBrowserAction {
         }
     }
 
+    @Override
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         SessionBrowser sessionBrowser = getSessionBrowser(e);

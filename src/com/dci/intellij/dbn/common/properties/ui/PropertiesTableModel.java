@@ -37,34 +37,41 @@ public class PropertiesTableModel extends DBNEditableTableModel {
         return propertiesMap;
     }
 
+    @Override
     public int getRowCount() {
         return properties.size();
     }
 
+    @Override
     public int getColumnCount() {
         return 2;
     }
 
+    @Override
     public String getColumnName(int columnIndex) {
         return columnIndex == 0 ? "Property" :
                columnIndex == 1 ? "Value" : null;
     }
 
+    @Override
     public Class<?> getColumnClass(int columnIndex) {
         return String.class;
 
     }
 
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return true;
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         return
            columnIndex == 0 ? getKey(rowIndex) :
            columnIndex == 1 ? getValue(rowIndex) : null;
     }
 
+    @Override
     public void setValueAt(Object o, int rowIndex, int columnIndex) {
         Object actualValue = getValueAt(rowIndex, columnIndex);
         if (!CommonUtil.safeEqual(actualValue, o)) {
@@ -97,11 +104,13 @@ public class PropertiesTableModel extends DBNEditableTableModel {
         return properties.get(rowIndex);
     }
 
+    @Override
     public void insertRow(int rowIndex) {
         properties.add(rowIndex, new KeyValueProperty());
         notifyListeners(rowIndex, properties.size()-1, -1);
     }
 
+    @Override
     public void removeRow(int rowIndex) {
         if (properties.size() > rowIndex) {
             properties.remove(rowIndex);

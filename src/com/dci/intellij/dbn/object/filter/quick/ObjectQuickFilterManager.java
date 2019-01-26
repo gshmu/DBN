@@ -149,6 +149,7 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
         return FailsafeUtil.getComponent(project, ObjectQuickFilterManager.class);
     }
 
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {

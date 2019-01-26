@@ -18,6 +18,7 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
         super(parent);
     }
 
+    @Override
     public boolean supportsObjectType(DatabaseObjectTypeId objectTypeId) {
         return
             objectTypeId == DatabaseObjectTypeId.CHARSET ||
@@ -36,6 +37,7 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
             objectTypeId == DatabaseObjectTypeId.GRANTED_PRIVILEGE;
     }
 
+    @Override
     public boolean supportsFeature(DatabaseFeature feature) {
         switch (feature) {
             case SESSION_BROWSING: return true;
@@ -48,6 +50,7 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
         }
     }
 
+    @Override
     public QuoteDefinition getIdentifierQuotes() {
         return IDENTIFIER_QUOTE_DEFINITION;
     }

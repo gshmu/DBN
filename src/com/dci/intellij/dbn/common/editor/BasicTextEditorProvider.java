@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public abstract class BasicTextEditorProvider implements FileEditorProvider, ApplicationComponent, DumbAware {
+    @Override
     @NotNull
     public FileEditorState readState(@NotNull Element sourceElement, @NotNull Project project, @NotNull VirtualFile virtualFile) {
         BasicTextEditorState editorState = new BasicTextEditorState();
@@ -29,6 +30,7 @@ public abstract class BasicTextEditorProvider implements FileEditorProvider, App
         return virtualFile;
     }
 
+    @Override
     public void writeState(@NotNull FileEditorState state, @NotNull Project project, @NotNull Element targetElement) {
         if (state instanceof BasicTextEditorState) {
             BasicTextEditorState editorState = (BasicTextEditorState) state;
@@ -56,9 +58,11 @@ public abstract class BasicTextEditorProvider implements FileEditorProvider, App
     /*********************************************************
      *                ApplicationComponent                   *
      *********************************************************/
+    @Override
     public void initComponent() {
     }
 
+    @Override
     public void disposeComponent() {
 
     }

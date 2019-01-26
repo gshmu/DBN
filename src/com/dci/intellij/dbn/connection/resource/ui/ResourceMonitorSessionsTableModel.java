@@ -35,14 +35,17 @@ public class ResourceMonitorSessionsTableModel extends DisposableBase implements
         return FailsafeUtil.get(sessions);
     }
 
+    @Override
     public int getRowCount() {
         return getSessions().size();
     }
 
+    @Override
     public int getColumnCount() {
         return 4;
     }
 
+    @Override
     public String getColumnName(int columnIndex) {
         switch (columnIndex) {
             case 0: return "Session";
@@ -53,14 +56,17 @@ public class ResourceMonitorSessionsTableModel extends DisposableBase implements
         return null;
     }
 
+    @Override
     public Class<?> getColumnClass(int columnIndex) {
         return DatabaseSession.class;
     }
 
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         return getSession(rowIndex);
     }
@@ -70,13 +76,17 @@ public class ResourceMonitorSessionsTableModel extends DisposableBase implements
         return rowIndex == -1 ? null : sessions.get(rowIndex);
     }
 
+    @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
+    @Override
     public void addTableModelListener(TableModelListener l) {}
+    @Override
     public void removeTableModelListener(TableModelListener l) {}
 
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
+    @Override
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();

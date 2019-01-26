@@ -33,6 +33,7 @@ public class CmdLineInterfaceInputDialog extends DBNDialog<CmdLineInterfaceInput
         return null;
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{

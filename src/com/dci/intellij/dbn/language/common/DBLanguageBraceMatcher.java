@@ -19,10 +19,12 @@ public abstract class DBLanguageBraceMatcher implements PairedBraceMatcher {
             new BracePair(tt.getTokenType("CHR_LEFT_BRACKET"), tt.getTokenType("CHR_RIGHT_BRACKET"), false)};
     }
 
+    @Override
     public BracePair[] getPairs() {
         return bracePairs;
     }
 
+    @Override
     public boolean isPairedBracesAllowedBeforeType(@NotNull IElementType iElementType, @Nullable IElementType iElementType1) {
         if (iElementType1 instanceof SimpleTokenType) {
             SimpleTokenType simpleTokenType = (SimpleTokenType) iElementType1;
@@ -37,6 +39,7 @@ public abstract class DBLanguageBraceMatcher implements PairedBraceMatcher {
         return iElementType1 == null;
     }
 
+    @Override
     public int getCodeConstructStart(PsiFile psiFile, int i) {
         return i;
     }

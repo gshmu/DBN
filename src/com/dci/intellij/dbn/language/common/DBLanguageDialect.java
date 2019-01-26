@@ -52,6 +52,7 @@ public abstract class DBLanguageDialect extends Language implements DBFileElemen
         return getParserTokenTypes().isReservedWord(identifier);
     }
 
+    @Override
     @NotNull
     public DBLanguage getBaseLanguage() {
         return FailsafeUtil.get((DBLanguage) super.getBaseLanguage());
@@ -70,6 +71,7 @@ public abstract class DBLanguageDialect extends Language implements DBFileElemen
         return parserDefinition.get();
     }
 
+    @Override
     public IFileElementType getFileElementType() {
         return fileElementType.get();
     }

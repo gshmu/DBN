@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class SQLStructureViewBuilderFactory implements PsiStructureViewFactory {
 
+    @Override
     public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile) {
         return new TreeBasedStructureViewBuilder() {
             @NotNull

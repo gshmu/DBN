@@ -25,10 +25,12 @@ public class ConnectionSshTunnelSettings extends Configuration<ConnectionSshTunn
         this.parent = parent;
     }
 
+    @Override
     public String getDisplayName() {
         return "Connection SSH Tunnel Settings";
     }
 
+    @Override
     public String getHelpTopic() {
         return "connectionSshTunnelSettings";
     }

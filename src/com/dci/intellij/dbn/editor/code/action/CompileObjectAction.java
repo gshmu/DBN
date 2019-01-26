@@ -29,6 +29,7 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
         super("", "", Icons.OBEJCT_COMPILE);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         FileEditor fileEditor = getFileEditor(e);
@@ -44,6 +45,7 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();

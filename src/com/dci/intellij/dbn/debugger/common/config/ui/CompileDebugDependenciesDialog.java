@@ -34,6 +34,7 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
         return null;
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{
@@ -49,6 +50,7 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
             super("Compile selected");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             doOKAction();
         }
@@ -59,6 +61,7 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
             super("Compile all");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             getComponent().selectAll();
             doOKAction();
@@ -70,6 +73,7 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
             super("Compile none");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             getComponent().selectNone();
             doOKAction();

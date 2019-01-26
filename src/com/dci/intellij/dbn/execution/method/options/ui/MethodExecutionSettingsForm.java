@@ -27,10 +27,12 @@ public class MethodExecutionSettingsForm extends ConfigurationEditorForm<MethodE
         registerComponent(mainPanel);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         MethodExecutionSettings settings = getConfiguration();
         int executionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", true, 0, 6000, "\nUse value 0 for no timeout");
@@ -45,6 +47,7 @@ public class MethodExecutionSettingsForm extends ConfigurationEditorForm<MethodE
         }
     }
 
+    @Override
     public void resetFormChanges() {
         MethodExecutionSettings settings = getConfiguration();
         executionTimeoutTextField.setText(Integer.toString(settings.getExecutionTimeout()));

@@ -27,6 +27,7 @@ public class SessionSelectAction extends DumbAwareAction {
     }
 
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ensureProject(e);
         Editor editor = getEditor(e);
@@ -36,6 +37,7 @@ public class SessionSelectAction extends DumbAwareAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         super.update(e);
         boolean enabled = false;

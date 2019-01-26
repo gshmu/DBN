@@ -31,6 +31,7 @@ public class ConsoleSaveToFileAction extends DumbAwareAction {
         super("Save to file", "Save console to file", Icons.CODE_EDITOR_SAVE_TO_FILE);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ensureProject(e);
         VirtualFile virtualFile = getVirtualFile(e);

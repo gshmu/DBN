@@ -12,11 +12,13 @@ public class DeleteSortingCriteriaAction extends DumbAwareAction {
         this.form = form;
     }
 
+    @Override
     public void update(AnActionEvent e) {
         e.getPresentation().setIcon(Icons.ACTION_CLOSE);
         e.getPresentation().setText("Remove Sorting Criteria");
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         form.remove();
     }

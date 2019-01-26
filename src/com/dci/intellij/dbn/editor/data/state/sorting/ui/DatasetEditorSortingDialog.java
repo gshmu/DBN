@@ -24,6 +24,7 @@ public class DatasetEditorSortingDialog extends DBNDialog<DatasetEditorSortingFo
         return new DatasetEditorSortingForm(this, datasetEditor);
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{

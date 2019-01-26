@@ -29,6 +29,7 @@ public class RunProgramMethodAction extends ObjectListShowAction {
     }
 
 
+    @Override
     public List<DBObject> getObjectList() {
         DBProgram program = (DBProgram) getSourceObject();
         List objects = new ArrayList();
@@ -37,20 +38,24 @@ public class RunProgramMethodAction extends ObjectListShowAction {
         return objects;
     }
 
+    @Override
     public String getTitle() {
         return "Select method to execute";
     }
 
+    @Override
     public String getEmptyListMessage() {
         DBProgram program = (DBProgram) getSourceObject();
         return "The " + program.getQualifiedNameWithType() + " has no methods to execute.";
     }
 
 
+    @Override
     public String getListName() {
        return "executable elements";
    }
 
+    @Override
     protected AnAction createObjectAction(DBObject object) {
         return new RunMethodAction((DBProgram) getSourceObject(), (DBMethod) object);
     }

@@ -14,6 +14,7 @@ public class OrderAlphabeticallyAction extends AnAction {
         this.list = list;
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         list.sortElements(ColumnStateSelectable.NAME_COMPARATOR);
     }

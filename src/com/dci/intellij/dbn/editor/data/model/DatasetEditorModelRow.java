@@ -154,6 +154,7 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
     }
 
 
+    @Override
     public int getResultSetRowIndex() {
         return is(RecordStatus.DELETED) ? -1 : super.getResultSetRowIndex();
     }

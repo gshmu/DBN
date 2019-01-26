@@ -26,6 +26,7 @@ public class DBPackageFunctionImpl extends DBFunctionImpl implements DBPackageFu
         properties.set(NAVIGABLE, true);
     }
 
+    @Override
     public DBPackage getPackage() {
         return (DBPackage) getParentObject();
     }
@@ -35,6 +36,7 @@ public class DBPackageFunctionImpl extends DBFunctionImpl implements DBPackageFu
         return getPackage();
     }
 
+    @Override
     public boolean isProgramMethod() {
         return true;
     }
@@ -44,5 +46,6 @@ public class DBPackageFunctionImpl extends DBFunctionImpl implements DBPackageFu
         return DBObjectType.PACKAGE_FUNCTION;
     }
 
+    @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {}
 }

@@ -31,6 +31,7 @@ public class DatabaseSession extends DisposableBase implements Comparable<Databa
         return id;
     }
 
+    @Override
     @NotNull
     public String getName() {
         return name;

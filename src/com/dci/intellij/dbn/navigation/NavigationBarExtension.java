@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class NavigationBarExtension extends AbstractNavBarModelExtension {
+    @Override
     public String getPresentableText(Object object) {
         if (object instanceof DBObject) {
             DBObject dbObject = (DBObject) object;
@@ -25,6 +26,7 @@ public class NavigationBarExtension extends AbstractNavBarModelExtension {
         return null;
     }
 
+    @Override
     public PsiElement getParent(PsiElement psiElement) {
         if (psiElement instanceof DBObjectPsiFile || psiElement instanceof DBObjectPsiDirectory || psiElement instanceof DBConnectionPsiDirectory) {
             return psiElement.getParent();
@@ -32,6 +34,7 @@ public class NavigationBarExtension extends AbstractNavBarModelExtension {
         return null;
     }
 
+    @Override
     public PsiElement adjustElement(PsiElement psiElement) {
         if (psiElement instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile databaseFile = (DBLanguagePsiFile) psiElement;
@@ -46,6 +49,7 @@ public class NavigationBarExtension extends AbstractNavBarModelExtension {
         return psiElement;
     }
 
+    @Override
     public Collection<VirtualFile> additionalRoots(Project project) {
         return Collections.emptyList();
     }

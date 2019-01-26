@@ -55,24 +55,29 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
         return getExecutionInput().createPreviewFile();
     }
 
+    @Override
     @NotNull
     public String getName() {
         return resultName;
     }
 
+    @Override
     public Icon getIcon() {
         return getExecutionProcessor().isDirty() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
     }
 
+    @Override
     @NotNull
     public StatementExecutionProcessor getExecutionProcessor() {
         return FailsafeUtil.get(executionProcessor);
     }
 
+    @Override
     public StatementExecutionMessage getExecutionMessage() {
         return executionMessage;
     }
 
+    @Override
     @NotNull
     public StatementExecutionInput getExecutionInput() {
         return getExecutionProcessor().getExecutionInput();
@@ -84,22 +89,27 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
         return getExecutionInput().getExecutionContext();
     }
 
+    @Override
     public void navigateToEditor(NavigationInstruction instruction) {
           getExecutionProcessor().navigateToEditor(instruction);
     }
 
+    @Override
     public int getExecutionDuration() {
         return executionDuration;
     }
 
+    @Override
     public void calculateExecDuration() {
         this.executionDuration = (int) (System.currentTimeMillis() - getExecutionContext().getExecutionTimestamp());
     }
 
+    @Override
     public StatementExecutionStatus getExecutionStatus() {
         return executionStatus;
     }
 
+    @Override
     public void setExecutionStatus(StatementExecutionStatus executionStatus) {
         this.executionStatus = executionStatus;
     }
@@ -109,14 +119,17 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
         return updateCount;
     }
 
+    @Override
     public void updateExecutionMessage(MessageType messageType, String message, String causeMessage) {
         executionMessage = new StatementExecutionMessage(this, message, causeMessage, messageType);
     }
 
+    @Override
     public void updateExecutionMessage(MessageType messageType, String message) {
         executionMessage = new StatementExecutionMessage(this, message, "", messageType);
     }
 
+    @Override
     public void clearExecutionMessage() {
         if (executionMessage != null) {
             Disposer.dispose(executionMessage);
@@ -124,6 +137,7 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
         }
     }
 
+    @Override
     @NotNull
     public Project getProject() {
         return getExecutionProcessor().getProject();
@@ -134,6 +148,7 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
         return getExecutionInput().getConnectionId();
     }
 
+    @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.getnn();
@@ -144,6 +159,7 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
         return DBObjectRef.get(databaseSchemaRef);
     }
 
+    @Override
     public ExecutionResultForm getForm(boolean create) {
         return null;
     }
@@ -196,6 +212,7 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
+    @Override
     public void dispose() {
         super.dispose();
         executionProcessor = null;

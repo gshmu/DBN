@@ -39,6 +39,7 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFo
         newLabel.setText("Add " + getObjectType().getName());
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -87,6 +88,7 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFo
             super("Add " + getObjectType().getName(), null, Icons.DATASET_FILTER_CONDITION_NEW);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             createObjectPanel();
         }

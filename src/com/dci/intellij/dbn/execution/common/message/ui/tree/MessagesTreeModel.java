@@ -57,6 +57,7 @@ public class MessagesTreeModel implements TreeModel, Disposable {
         notifyTreeModelListeners(treePath, eventType);
     }
 
+    @Override
     public void dispose() {
         treeModelListeners.clear();
         rootNode = new RootNode(this);
@@ -65,39 +66,47 @@ public class MessagesTreeModel implements TreeModel, Disposable {
    /*********************************************************
     *                       TreeModel                      *
     *********************************************************/
+    @Override
     public Object getRoot() {
         return rootNode;
     }
 
+    @Override
     public Object getChild(Object o, int i) {
         TreeNode treeNode = (TreeNode) o;
         return treeNode.getChildAt(i);
     }
 
+    @Override
     public int getChildCount(Object o) {
         TreeNode treeNode = (TreeNode) o;
         return treeNode.getChildCount();
     }
 
+    @Override
     public boolean isLeaf(Object o) {
         TreeNode treeNode = (TreeNode) o;
         return treeNode.isLeaf();
     }
 
+    @Override
     public void valueForPathChanged(TreePath treePath, Object o) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    @Override
     public int getIndexOfChild(Object o, Object o1) {
         TreeNode treeNode = (TreeNode) o;
         TreeNode childTreeNode = (TreeNode) o1;
         return treeNode.getIndex(childTreeNode);
     }
 
+    @Override
     public void addTreeModelListener(TreeModelListener treeModelListener) {
         treeModelListeners.add(treeModelListener);
     }
 
+    @Override
     public void removeTreeModelListener(TreeModelListener treeModelListener) {
         treeModelListeners.remove(treeModelListener);
     }

@@ -3,6 +3,8 @@ package com.dci.intellij.dbn.browser;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
+import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.TreePath;
@@ -11,24 +13,31 @@ import java.util.List;
 
 public class DatabaseBrowserUtils {
     @Nullable
-    public static TreePath createTreePath(BrowserTreeNode treeNode) {
-        boolean isTabbedMode = DatabaseBrowserManager.getInstance(treeNode.getProject()).isTabbedMode();
+    public static TreePath createTreePath(@NotNull BrowserTreeNode treeNode) {
+        try {
+            Project project = treeNode.getProject();
+            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+            boolean isTabbedMode = browserManager.isTabbedMode();
 
-        int treeDepth = treeNode.getTreeDepth();
-        int nodeIndex = isTabbedMode ? treeDepth - 1 : treeDepth + 1;
-        if (nodeIndex < 0) {
+            int treeDepth = treeNode.getTreeDepth();
+            int nodeIndex = isTabbedMode ? treeDepth - 1 : treeDepth + 1;
+            if (nodeIndex < 0) {
+                return null;
+            }
+
+            BrowserTreeNode[] path = new BrowserTreeNode[nodeIndex];
+            while (treeNode != null) {
+                treeDepth = treeNode.getTreeDepth();
+                path[isTabbedMode ? treeDepth -2 : treeDepth] = treeNode;
+                if (treeNode instanceof DatabaseBrowserManager) break;
+                if (isTabbedMode && treeNode instanceof DBObjectBundle) break;
+                treeNode = treeNode.getParent();
+            }
+            return new TreePath(path);
+        } catch (IllegalArgumentException e) {
+            // workaround for TreePath "Path elements must be non-null"
             return null;
         }
-
-        BrowserTreeNode[] path = new BrowserTreeNode[nodeIndex];
-        while (treeNode != null) {
-            treeDepth = treeNode.getTreeDepth();
-            path[isTabbedMode ? treeDepth -2 : treeDepth] = treeNode;
-            if (treeNode instanceof DatabaseBrowserManager) break;
-            if (isTabbedMode && treeNode instanceof DBObjectBundle) break;
-            treeNode = treeNode.getParent();
-        }
-        return new TreePath(path);
     }
 
     public static boolean treeVisibilityChanged(

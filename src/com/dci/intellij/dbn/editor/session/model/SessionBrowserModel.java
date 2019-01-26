@@ -118,6 +118,7 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
     /*********************************************************
      *                      DataModel                       *
      *********************************************************/
+    @Override
     public SessionBrowserModelCell getCellAt(int rowIndex, int columnIndex) {
         return (SessionBrowserModelCell) super.getCellAt(rowIndex, columnIndex);
     }

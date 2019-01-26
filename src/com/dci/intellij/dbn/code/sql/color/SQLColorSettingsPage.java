@@ -32,21 +32,25 @@ public class SQLColorSettingsPage extends DBLColorSettingsPage {
     }
 
 
+    @Override
     @NotNull
     public String getDisplayName() {
         return "SQL (DBN)";
     }
 
+    @Override
     @Nullable
     public Icon getIcon() {
         return Icons.FILE_SQL;
     }
 
+    @Override
     @NotNull
     public SyntaxHighlighter getHighlighter() {
         return SQLLanguage.INSTANCE.getMainLanguageDialect().getSyntaxHighlighter();
     }
 
+    @Override
     public String getDemoTextFileName() {
         return "sql_demo_text.txt";
     }

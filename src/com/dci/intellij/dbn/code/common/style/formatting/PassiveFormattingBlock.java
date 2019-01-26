@@ -23,41 +23,50 @@ public class PassiveFormattingBlock implements Block {
         this.psiElement = psiElement;
     }
 
+    @Override
     @NotNull
     public TextRange getTextRange() {
         return psiElement.getTextRange();
     }
 
+    @Override
     @NotNull
     public List<Block> getSubBlocks() {
         return EMPTY_LIST;
     }
 
+    @Override
     public Wrap getWrap() {
         return CodeStylePreset.WRAP_NONE;
     }
 
+    @Override
     public Indent getIndent() {
         return Indent.getNoneIndent();
     }
 
+    @Override
     public Alignment getAlignment() {
         return null;
     }
 
+    @Override
     public Spacing getSpacing(@Nullable Block child1, @NotNull Block child2) {
         return null;
     }
 
+    @Override
     @NotNull
     public ChildAttributes getChildAttributes(int newChildIndex) {
         return new ChildAttributes(Indent.getNoneIndent(), Alignment.createAlignment());
     }
 
+    @Override
     public boolean isIncomplete() {
         return false;
     }
 
+    @Override
     public boolean isLeaf() {
         return true;
     }

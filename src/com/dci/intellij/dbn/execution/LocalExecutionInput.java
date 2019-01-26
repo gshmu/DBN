@@ -67,6 +67,7 @@ public abstract class LocalExecutionInput extends ExecutionInput{
     /*********************************************************
      *                 PersistentConfiguration               *
      *********************************************************/
+    @Override
     public void readConfiguration(Element element) {
         super.readConfiguration(element);
         targetSessionId = CommonUtil.nvl(SessionId.get(element.getAttributeValue("session-id")), targetSessionId);
@@ -74,6 +75,7 @@ public abstract class LocalExecutionInput extends ExecutionInput{
         options.set(COMMIT_AFTER_EXECUTION, SettingsUtil.getBooleanAttribute(element, "commit-after-execution", true));
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         super.writeConfiguration(element);
         element.setAttribute("session-id", targetSessionId.id());

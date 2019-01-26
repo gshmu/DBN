@@ -16,26 +16,32 @@ public class SimpleNameFilterCondition extends NameFilterCondition implements Fi
         super(operator, pattern);
     }
 
+    @Override
     public ObjectNameFilterSettings getSettings() {
         return parent.getSettings();
     }
 
+    @Override
     public boolean accepts(DBObject object) {
         return accepts(object.getName());
     }
 
+    @Override
     public void setParent(CompoundFilterCondition parent) {
         this.parent = parent;
     }
 
+    @Override
     public CompoundFilterCondition getParent() {
         return parent;
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return parent.getObjectType();
     }
 
+    @Override
     public String getConditionString() {
         return "OBJECT_NAME " + getOperator() + " '" + getPattern() + "'";
     }
@@ -47,11 +53,13 @@ public class SimpleNameFilterCondition extends NameFilterCondition implements Fi
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @Override
     public void readConfiguration(Element element) {
         setOperator(ConditionOperator.valueOf(element.getAttributeValue("operator")));
         setPattern(element.getAttributeValue("text"));
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         element.setAttribute("operator", getOperator().name());
         element.setAttribute("text", getPattern());

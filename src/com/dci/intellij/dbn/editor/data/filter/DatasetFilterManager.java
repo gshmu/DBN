@@ -164,11 +164,13 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
     /***************************************
     *            ProjectComponent           *
     ****************************************/
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {
         return COMPONENT_NAME;
     }
+    @Override
     public void dispose() {
         super.dispose();
         filters.clear();

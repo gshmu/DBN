@@ -23,6 +23,7 @@ public abstract class DBLanguageStructureViewElement<T> implements StructureView
         this.psiElement = psiElement;
     }
 
+    @Override
     public Object getValue() {
         return psiElement;
     }
@@ -31,10 +32,12 @@ public abstract class DBLanguageStructureViewElement<T> implements StructureView
         return psiElement;
     }
 
+    @Override
     @NotNull
     public ItemPresentation getPresentation() {
         if (psiElement instanceof BasePsiElement) return (ItemPresentation) psiElement;
         return new ItemPresentation() {
+            @Override
             public String getPresentableText() {
                 if (psiElement instanceof DBLanguagePsiFile) {
                     DBLanguagePsiFile file = (DBLanguagePsiFile) psiElement;
@@ -43,11 +46,13 @@ public abstract class DBLanguageStructureViewElement<T> implements StructureView
                 return psiElement.getText();
             }
 
+            @Override
             @Nullable
             public String getLocationString() {
                 return null;
             }
 
+            @Override
             @Nullable
             public Icon getIcon(boolean open) {
                 return psiElement.isValid() ? psiElement.getIcon(Iconable.ICON_FLAG_VISIBILITY) : null;
@@ -60,6 +65,7 @@ public abstract class DBLanguageStructureViewElement<T> implements StructureView
         };
     }
 
+    @Override
     @NotNull
     public StructureViewTreeElement[] getChildren() {
         List<T> elements = getChildren(psiElement, null);
@@ -94,6 +100,7 @@ public abstract class DBLanguageStructureViewElement<T> implements StructureView
 
     protected abstract T createChildElement(PsiElement child);
 
+    @Override
     public void navigate(boolean requestFocus) {
         if (psiElement instanceof NavigationItem) {
             NavigationItem navigationItem = (NavigationItem) psiElement;
@@ -101,10 +108,12 @@ public abstract class DBLanguageStructureViewElement<T> implements StructureView
         }
     }
 
+    @Override
     public boolean canNavigate() {
         return true;
     }
 
+    @Override
     public boolean canNavigateToSource() {
         return true;
     }

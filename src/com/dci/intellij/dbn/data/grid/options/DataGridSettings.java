@@ -31,10 +31,12 @@ public class DataGridSettings extends CompositeProjectConfiguration<DataGridSett
         return "DBNavigator.Project.DataGridSettings";
     }
 
+    @Override
     public String getDisplayName() {
         return "Data Grid";
     }
 
+    @Override
     public String getHelpTopic() {
         return "dataGrid";
     }
@@ -69,6 +71,7 @@ public class DataGridSettings extends CompositeProjectConfiguration<DataGridSett
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @Override
     @NotNull
     public DataGridSettingsForm createConfigurationEditor() {
         return new DataGridSettingsForm(this);
@@ -79,6 +82,7 @@ public class DataGridSettings extends CompositeProjectConfiguration<DataGridSett
         return "dataset-grid-settings";
     }
 
+    @Override
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
                 generalSettings,

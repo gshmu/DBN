@@ -93,6 +93,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
         }
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -140,6 +141,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
         return FailsafeUtil.get(editorTable);
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         sessionBrowser = null;
@@ -166,6 +168,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     /*********************************************************
      *              SearchableDataComponent                  *
      *********************************************************/
+    @Override
     public void showSearchHeader() {
         getEditorTable().clearSelection();
 
@@ -185,6 +188,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
         return dataSearchComponent.get();
     }
 
+    @Override
     public void hideSearchHeader() {
         getSearchComponent().resetFindModel();
         searchPanel.setVisible(false);

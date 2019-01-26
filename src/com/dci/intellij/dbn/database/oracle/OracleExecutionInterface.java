@@ -21,10 +21,12 @@ public class OracleExecutionInterface implements DatabaseExecutionInterface {
     private static final String SQLPLUS_CONNECT_PATTERN_SERVICE = "[USER]/[PASSWORD]@\"(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=[HOST])(Port=[PORT]))(CONNECT_DATA=(SERVICE_NAME=[DATABASE])))\"";
     private static final String SQLPLUS_CONNECT_PATTERN_BASIC = "[USER]/[PASSWORD]@[HOST]:[PORT]/[DATABASE]";
 
+    @Override
     public MethodExecutionProcessor createExecutionProcessor(DBMethod method) {
         return new OracleMethodExecutionProcessor(method);
     }
 
+    @Override
     public MethodExecutionProcessor createDebugExecutionProcessor(DBMethod method) {
         return new OracleMethodDebugExecutionProcessor(method);
     }

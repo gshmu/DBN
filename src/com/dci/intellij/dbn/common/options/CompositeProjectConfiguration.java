@@ -13,6 +13,7 @@ public abstract class CompositeProjectConfiguration<T extends CompositeConfigura
         this.projectRef = ProjectRef.from(project);
     }
 
+    @Override
     @NotNull
     public Project getProject() {
         return projectRef.getnn();

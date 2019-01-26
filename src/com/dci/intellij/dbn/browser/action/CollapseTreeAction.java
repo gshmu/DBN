@@ -15,6 +15,7 @@ public class CollapseTreeAction extends DumbAwareAction {
         super("Collapse all", null, Icons.ACTION_COLLAPSE_ALL);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
@@ -24,6 +25,7 @@ public class CollapseTreeAction extends DumbAwareAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Collapse All");

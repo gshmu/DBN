@@ -84,6 +84,7 @@ public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigura
         return executionInput;
     }
 
+    @Override
     public boolean isGeneratedName() {
         return isGeneratedName;
     }

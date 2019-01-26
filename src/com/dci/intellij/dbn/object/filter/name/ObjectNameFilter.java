@@ -14,6 +14,7 @@ public class ObjectNameFilter extends CompoundFilterCondition {
         this.settings = settings;
     }
 
+    @Override
     public ObjectNameFilterSettings getSettings() {
         return settings;
     }
@@ -38,6 +39,7 @@ public class ObjectNameFilter extends CompoundFilterCondition {
         }
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return objectType;
     }

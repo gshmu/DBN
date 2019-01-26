@@ -18,10 +18,12 @@ public class SQLCustomCodeStyleSettings extends CustomCodeStyleSettings {
         return codeStyleSettings;
     }
 
+    @Override
     public void readExternal(Element parentElement) throws InvalidDataException {
         codeStyleSettings.readConfiguration(parentElement);
     }
 
+    @Override
     public void writeExternal(Element parentElement, @NotNull CustomCodeStyleSettings parentSettings) throws WriteExternalException {
         codeStyleSettings.writeConfiguration(parentElement);
     }

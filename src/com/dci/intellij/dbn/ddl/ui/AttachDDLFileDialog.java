@@ -39,6 +39,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         return new SelectDDLFileForm(object, virtualFiles, hint, showLookupOption);
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{
@@ -59,6 +60,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
             super("Attach all");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             getComponent().selectAll();
             doOKAction();
@@ -70,6 +72,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
             super("Attach none");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             SelectDDLFileForm component = getComponent();
             component.selectNone();
@@ -81,6 +84,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         }
     }
 
+    @Override
     protected void doOKAction() {
         SelectDDLFileForm component = getComponent();
         DBSchemaObject object = getObject();

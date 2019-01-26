@@ -11,11 +11,13 @@ public class ClauseChopDownAlwaysPreset extends ClauseAbstractPreset {
         super("chop_down", "Chop down");
     }
 
+    @Override
     @Nullable
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         return WRAP_ALWAYS;
     }
 
+    @Override
     @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         return SPACING_LINE_BREAK;

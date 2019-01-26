@@ -45,17 +45,20 @@ public class DataGridColorSettingsPage implements ColorSettingsPage {
         return new PlainSyntaxHighlighter();
     }
 
+    @Override
     @NonNls
     @NotNull
     public final String getDemoText() {
         return " ";
     }
 
+    @Override
     @NotNull
     public AttributesDescriptor[] getAttributeDescriptors() {
         return attributeDescriptors.toArray(new AttributesDescriptor[0]);
     }
 
+    @Override
     @NotNull
     public ColorDescriptor[] getColorDescriptors() {
         return colorDescriptors.toArray(new ColorDescriptor[0]);
@@ -67,6 +70,7 @@ public class DataGridColorSettingsPage implements ColorSettingsPage {
         return "Data Grid (DBN)";
     }
 
+    @Override
     @Nullable
     public Map<String, TextAttributesKey> getAdditionalHighlightingTagToDescriptorMap() {
         return null;

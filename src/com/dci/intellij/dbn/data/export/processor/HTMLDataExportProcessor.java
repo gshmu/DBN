@@ -17,6 +17,7 @@ import java.util.Date;
 
 
 public class HTMLDataExportProcessor extends DataExportProcessor{
+    @Override
     public DataExportFormat getFormat() {
         return DataExportFormat.HTML;
     }
@@ -34,14 +35,17 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
         return fileName;
     }
 
+    @Override
     public boolean canCreateHeader() {
         return true;
     }
 
+    @Override
     public boolean canExportToClipboard() {
         return true;
     }
 
+    @Override
     public boolean canQuoteValues() {
         return false;
     }
@@ -73,10 +77,12 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
             }
         }
 
+        @Override
         public DataFlavor[] getTransferDataFlavors() {
             return dataFlavors;
         }
 
+        @Override
         public boolean isDataFlavorSupported(DataFlavor flavor) {
             return
                     "text/html".equals(flavor.getMimeType()) ||
@@ -84,12 +90,14 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
                     "text/plain".equals(flavor.getMimeType());
         }
 
+        @Override
         public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException{
             return content;
         }
     }
 
 
+    @Override
     public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
         StringBuilder buffer = new StringBuilder();
         buffer.append("<html>\n");

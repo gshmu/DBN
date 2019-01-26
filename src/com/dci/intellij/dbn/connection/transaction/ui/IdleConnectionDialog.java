@@ -60,6 +60,7 @@ public class IdleConnectionDialog extends DialogWithTimeout {
         ping();
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{
@@ -75,6 +76,7 @@ public class IdleConnectionDialog extends DialogWithTimeout {
             super("Commit", Icons.CONNECTION_COMMIT);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             commit();
         }
@@ -84,6 +86,7 @@ public class IdleConnectionDialog extends DialogWithTimeout {
         RollbackAction() {
             super("Rollback", Icons.CONNECTION_ROLLBACK);
         }
+        @Override
         public void actionPerformed(ActionEvent e) {
             rollback();
         }
@@ -93,6 +96,7 @@ public class IdleConnectionDialog extends DialogWithTimeout {
         KeepAliveAction() {
             super("Keep Alive");
         }
+        @Override
         public void actionPerformed(ActionEvent e) {
             ping();
         }

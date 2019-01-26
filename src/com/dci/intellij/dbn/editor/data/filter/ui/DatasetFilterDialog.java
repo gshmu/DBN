@@ -63,6 +63,7 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
         return filterGroup;
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         if (automaticPrompt) {
@@ -87,11 +88,13 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
             //putValue(DEFAULT_ACTION, Boolean.FALSE);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             doNoFilterAction();
         }
     }
 
+    @Override
     public void doOKAction() {
         DatasetFilterForm component = getComponent();
         Project project = getProject();
@@ -111,6 +114,7 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
         if (!automaticPrompt) DatasetEditorManager.getInstance(project).reloadEditorData(dataset);
     }
 
+    @Override
     public void doCancelAction() {
         DatasetFilterForm component = getComponent();
         component.resetFormChanges();

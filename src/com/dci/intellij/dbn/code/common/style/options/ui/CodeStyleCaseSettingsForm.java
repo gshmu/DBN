@@ -60,10 +60,12 @@ public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyle
         objectCaseComboBox.setEnabled(enabled);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         CodeStyleCaseSettings settings = getConfiguration();
         settings.getKeywordCaseOption().setStyleCase(getSelection(keywordCaseComboBox));
@@ -74,6 +76,7 @@ public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyle
         settings.setEnabled(enableCheckBox.isSelected());
     }
 
+    @Override
     public void resetFormChanges() {
         CodeStyleCaseSettings settings = getConfiguration();
         setSelection(keywordCaseComboBox, settings.getKeywordCaseOption().getStyleCase());

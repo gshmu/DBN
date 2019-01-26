@@ -64,6 +64,7 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
      */
     boolean isDirty();
 
+    @Override
     boolean isDisposed();
 
     void markDirty();

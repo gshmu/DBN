@@ -72,6 +72,7 @@ public class DebugProgramMethodAction extends GroupPopupAction {
         return virtualFile instanceof DBSourceCodeVirtualFile ? (DBSourceCodeVirtualFile) virtualFile : null;
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();

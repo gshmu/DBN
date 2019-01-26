@@ -17,11 +17,13 @@ public class PSQLFileType extends DBLanguageFileType {
     }
 
 
+    @Override
     @NotNull
     public String getName() {
         return "DBN-PSQL";
     }
 
+    @Override
     public Icon getIcon() {
         return Icons.FILE_PLSQL;
     }

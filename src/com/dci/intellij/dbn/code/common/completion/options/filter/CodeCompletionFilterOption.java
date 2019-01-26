@@ -51,6 +51,7 @@ public class CodeCompletionFilterOption implements CheckedTreeNodeProvider, Pers
         return selected;
     }
 
+    @Override
     public void readConfiguration(Element element) {
         if (element != null) {
             String filterElementType = element.getAttributeValue("type");
@@ -66,6 +67,7 @@ public class CodeCompletionFilterOption implements CheckedTreeNodeProvider, Pers
 
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         if (objectType != null) {
             element.setAttribute("type", "OBJECT");
@@ -79,6 +81,7 @@ public class CodeCompletionFilterOption implements CheckedTreeNodeProvider, Pers
         SettingsUtil.setBooleanAttribute(element, "selected", selected);
     }
 
+    @Override
     public CheckedTreeNode createCheckedTreeNode() {
         return new CodeCompletionFilterTreeNode(this, selected);
     }

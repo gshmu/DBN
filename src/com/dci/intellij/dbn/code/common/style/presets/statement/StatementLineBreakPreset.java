@@ -11,11 +11,13 @@ public class StatementLineBreakPreset extends StatementAbstractPreset {
         super("line_break", "One line break");
     }
 
+    @Override
     @Nullable
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         return WRAP_ALWAYS;
     }
 
+    @Override
     @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         return SPACING_LINE_BREAK;

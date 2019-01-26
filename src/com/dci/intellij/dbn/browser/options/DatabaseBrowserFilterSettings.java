@@ -26,10 +26,12 @@ public class DatabaseBrowserFilterSettings extends CompositeProjectConfiguration
         return "filters";
     }
 
+    @Override
     public String getDisplayName() {
         return "Database Browser";
     }
 
+    @Override
     public String getHelpTopic() {
         return "browserSettings";
     }

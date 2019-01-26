@@ -203,39 +203,47 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         }
     };
 
+    @Override
     public boolean isValid() {
         return connectionConfigHash == getConnectionHandler().getSettings().getDatabaseSettings().hashCode();
     }
 
+    @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.getnn();
     }
 
+    @Override
     public List<DBSchema> getSchemas() {
         return schemas.getAllElements();
     }
 
+    @Override
     @Nullable
     public List<DBUser> getUsers() {
         return DBObjectListImpl.getObjects(users);
     }
 
+    @Override
     @Nullable
     public List<DBRole> getRoles() {
         return DBObjectListImpl.getObjects(roles);
     }
 
+    @Override
     @Nullable
     public List<DBSystemPrivilege> getSystemPrivileges() {
         return DBObjectListImpl.getObjects(systemPrivileges);
     }
 
+    @Override
     @Nullable
     public List<DBCharset> getCharsets() {
         return DBObjectListImpl.getObjects(charsets);
     }
 
+    @Override
     @NotNull
     public List<DBNativeDataType> getNativeDataTypes(){
         return nativeDataTypes.get();
@@ -254,6 +262,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         return nativeDataTypes;
     }
 
+    @Override
     @Nullable
     public DBNativeDataType getNativeDataType(String name) {
         String upperCaseName = name.toUpperCase();
@@ -270,16 +279,19 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         return null;
     }
 
+    @Override
     @Nullable
     public DBSchema getSchema(String name) {
         return schemas.getObject(name);
     }
 
+    @Override
     @Nullable
     public DBSchema getPublicSchema() {
         return getSchema("PUBLIC");
     }
 
+    @Override
     @Nullable
     public DBSchema getUserSchema() {
         for (DBSchema schema : getSchemas()) {
@@ -288,11 +300,13 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         return null;
     }
 
+    @Override
     @Nullable
     public DBUser getUser(String name) {
         return DBObjectListImpl.getObject(users, name);
     }
 
+    @Override
     @Nullable
     public DBRole getRole(String name) {
         return DBObjectListImpl.getObject(roles, name);
@@ -304,11 +318,13 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         return DBObjectListImpl.getObject(systemPrivileges, name);
     }
 
+    @Override
     @Nullable
     public DBSystemPrivilege getSystemPrivilege(String name) {
         return DBObjectListImpl.getObject(systemPrivileges, name);
     }
 
+    @Override
     @Nullable
     public DBCharset getCharset(String name) {
         return DBObjectListImpl.getObject(charsets, name);
@@ -323,27 +339,33 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     /*********************************************************
      *                     TreeElement                       *
      *********************************************************/
+    @Override
     public boolean isTreeStructureLoaded() {
         return treeChildrenLoaded;
     }
 
+    @Override
     public boolean canExpand() {
         return treeChildrenLoaded && getChildAt(0).isTreeStructureLoaded();
     }
 
+    @Override
     public int getTreeDepth() {
         return treeParent == null ? 0 : treeParent.getTreeDepth() + 1;
     }
 
+    @Override
     public BrowserTreeNode getChildAt(int index) {
         return getChildren().get(index);
     }
 
+    @Override
     @Nullable
     public BrowserTreeNode getParent() {
         return treeParent;
     }
 
+    @Override
     public List<? extends BrowserTreeNode> getChildren() {
         if (visibleTreeChildren == null) {
             synchronized (this) {
@@ -398,6 +420,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         }
     }
 
+    @Override
     public void rebuildTreeChildren() {
         Filter<BrowserTreeNode> filter = getConnectionHandler().getObjectTypeFilter();
         if (visibleTreeChildren != null && DatabaseBrowserUtils.treeVisibilityChanged(allPossibleTreeChildren, visibleTreeChildren, filter)) {
@@ -411,31 +434,38 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         }
     }
 
+    @Override
     public int getChildCount() {
         return getChildren().size();
     }
 
+    @Override
     public boolean isLeaf() {
         return false;
     }
 
+    @Override
     public int getIndex(BrowserTreeNode child) {
         return getChildren().indexOf(child);
     }
 
+    @Override
     public Icon getIcon(int flags) {
         return getConnectionHandler().getIcon();
     }
 
+    @Override
     public String getPresentableText() {
         return getConnectionHandler().getPresentableText();
     }
 
+    @Override
     public String getPresentableTextDetails() {
         //return getConnectionHandler().isAutoCommit() ? "[Auto Commit]" : null;
         return null;
     }
 
+    @Override
     public String getPresentableTextConditionalDetails() {
         return null;
     }
@@ -443,8 +473,10 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     /*********************************************************
      *                  HtmlToolTipBuilder                   *
      *********************************************************/
+    @Override
     public String getToolTip() {
         return new HtmlToolTipBuilder() {
+            @Override
             public void buildToolTip() {
                 append(true, "connection", true);
                 ConnectionHandler connectionHandler = getConnectionHandler();
@@ -475,17 +507,22 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     /*********************************************************
      *                   NavigationItem                      *
      *********************************************************/
+    @Override
     public void navigate(boolean requestFocus) {
         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(getProject());
         browserManager.navigateToElement(this, requestFocus, true);
     }
+    @Override
     public boolean canNavigate() {return true;}
+    @Override
     public boolean canNavigateToSource() {return false;}
 
+    @Override
     public String getName() {
         return getPresentableText();
     }
 
+    @Override
     public ItemPresentation getPresentation() {
         return this;
     }
@@ -493,10 +530,12 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     /*********************************************************
      *                   NavigationItem                      *
      *********************************************************/
+    @Override
     public String getLocationString() {
         return null;
     }
 
+    @Override
     public Icon getIcon(boolean open) {
         return getIcon(0);
     }
@@ -506,6 +545,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
      *********************************************************/
 
 
+    @Override
     @Nullable
     public DBObject getObject(DatabaseObjectIdentifier objectIdentifier) {
         DBObject object = null;
@@ -522,11 +562,13 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         return object;
     }
 
+    @Override
     @Nullable
     public DBObject getObject(DBObjectType objectType, String name) {
         return getObject(objectType, name, 0);
     }
 
+    @Override
     @Nullable
     public DBObject getObject(DBObjectType objectType, String name, int overload) {
         if (objectType == SCHEMA) return getSchema(name);
@@ -549,6 +591,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         return getConnectionHandler().getSettings().getFilterSettings().getObjectTypeFilterSettings().getTypeFilter();
     }
 
+    @Override
     public void lookupObjectsOfType(LookupConsumer consumer, DBObjectType objectType) throws ConsumerStoppedException {
         if (getConnectionObjectTypeFilter().accepts(objectType)) {
             if (objectType == SCHEMA) consumer.consume(getSchemas()); else
@@ -559,6 +602,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         }
     }
 
+    @Override
     public void lookupChildObjectsOfType(LookupConsumer consumer, DBObject parentObject, DBObjectType objectType, ObjectTypeFilter filter, DBSchema currentSchema) throws ConsumerStoppedException {
         if (getConnectionObjectTypeFilter().accepts(objectType)) {
             if (parentObject != null && currentSchema != null) {
@@ -607,6 +651,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         }
     }
 
+    @Override
     public void refreshObjectsStatus(final @Nullable DBSchemaObject requester) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(connectionHandler)) {
@@ -636,10 +681,12 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         }
     }
 
+    @Override
     public DBObjectListContainer getObjectListContainer() {
         return objectLists;
     }
 
+    @Override
     @NotNull
     public Project getProject() {
         return getConnectionHandler().getProject();
@@ -651,10 +698,12 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         return null;
     }
 
+    @Override
     public GenericDatabaseElement getUndisposedElement() {
         return this;
     }
 
+    @Override
     @Nullable
     public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
         if(dynamicContentType instanceof DBObjectType) {
@@ -672,6 +721,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         return null;
     }
 
+    @Override
     public void initTreeElement() {}
 
     @Override
@@ -679,6 +729,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         return getConnectionHandler().getName();
     }
 
+    @Override
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();
@@ -696,77 +747,91 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
      *********************************************************/
     static {
         new DynamicContentResultSetLoader<DBSchema>(null, SCHEMA) {
+            @Override
             public ResultSet createResultSet(DynamicContent<DBSchema> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
                 return metadataInterface.loadSchemas(connection);
             }
 
+            @Override
             public DBSchema createElement(DynamicContent<DBSchema> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
                 return new DBSchemaImpl(dynamicContent.getConnectionHandler(), resultSet);
             }
         };
 
         new DynamicContentResultSetLoader<DBUser>(null, USER) {
+            @Override
             public ResultSet createResultSet(DynamicContent<DBUser> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
                 return metadataInterface.loadUsers(connection);
             }
 
+            @Override
             public DBUser createElement(DynamicContent<DBUser> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
                 return new DBUserImpl(dynamicContent.getConnectionHandler(), resultSet);
             }
         };
 
         new DynamicContentResultSetLoader<DBRole>(null, ROLE) {
+            @Override
             public ResultSet createResultSet(DynamicContent<DBRole> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
                 return metadataInterface.loadRoles(connection);
             }
 
+            @Override
             public DBRole createElement(DynamicContent<DBRole> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
                 return new DBRoleImpl(dynamicContent.getConnectionHandler(), resultSet);
             }
         };
 
         new DynamicContentResultSetLoader<DBSystemPrivilege>(null, SYSTEM_PRIVILEGE) {
+            @Override
             public ResultSet createResultSet(DynamicContent<DBSystemPrivilege> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
                 return metadataInterface.loadSystemPrivileges(connection);
             }
 
+            @Override
             public DBSystemPrivilege createElement(DynamicContent<DBSystemPrivilege> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
                 return new DBSystemPrivilegeImpl(dynamicContent.getConnectionHandler(), resultSet);
             }
         };
 
         new DynamicContentResultSetLoader<DBObjectPrivilege>(null, OBJECT_PRIVILEGE) {
+            @Override
             public ResultSet createResultSet(DynamicContent<DBObjectPrivilege> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
                 return metadataInterface.loadObjectPrivileges(connection);
             }
 
+            @Override
             public DBObjectPrivilege createElement(DynamicContent<DBObjectPrivilege> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
                 return new DBObjectPrivilegeImpl(dynamicContent.getConnectionHandler(), resultSet);
             }
         };
 
         new DynamicContentResultSetLoader<DBCharset>(null, CHARSET) {
+            @Override
             public ResultSet createResultSet(DynamicContent<DBCharset> dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
                 return metadataInterface.loadCharsets(connection);
             }
 
+            @Override
             public DBCharset createElement(DynamicContent<DBCharset> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
                 return new DBCharsetImpl(dynamicContent.getConnectionHandler(), resultSet);
             }
         };
 
         new DynamicContentResultSetLoader(null, USER_ROLE) {
+            @Override
             public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
                 return metadataInterface.loadAllUserRoles(connection);
             }
 
+            @Override
             public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
                 String userName = resultSet.getString("USER_NAME");
 
@@ -781,11 +846,13 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         };
 
         new DynamicContentResultSetLoader(null, USER_PRIVILEGE) {
+            @Override
             public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
                 return metadataInterface.loadAllUserPrivileges(connection);
             }
 
+            @Override
             public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
                 String userName = resultSet.getString("USER_NAME");
 
@@ -800,11 +867,13 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         };
 
         new DynamicContentResultSetLoader(null, ROLE_ROLE) {
+            @Override
             public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
                 return metadataInterface.loadAllRoleRoles(connection);
             }
 
+            @Override
             public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
                 String roleName = resultSet.getString("ROLE_NAME");
 
@@ -819,11 +888,13 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         };
 
         new DynamicContentResultSetLoader(null, ROLE_PRIVILEGE) {
+            @Override
             public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
                 return metadataInterface.loadAllRolePrivileges(connection);
             }
 
+            @Override
             public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
                 String userName = resultSet.getString("ROLE_NAME");
 

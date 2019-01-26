@@ -74,6 +74,7 @@ public class MethodBrowserSettings implements PersistentConfiguration {
         this.method = DBObjectRef.from(method);
     }
 
+    @Override
     public void readConfiguration(Element element) {
         connectionId = ConnectionId.get(element.getAttributeValue("connection-id"));
         schemaName = element.getAttributeValue("schema");
@@ -85,6 +86,7 @@ public class MethodBrowserSettings implements PersistentConfiguration {
         }
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler != null) element.setAttribute("connection-id", connectionHandler.getId().id());

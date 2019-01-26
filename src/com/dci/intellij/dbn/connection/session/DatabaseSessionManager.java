@@ -75,6 +75,7 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
         EventUtil.notify(getProject(), SessionManagerListener.TOPIC).sessionChanged(session);
     }
 
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {

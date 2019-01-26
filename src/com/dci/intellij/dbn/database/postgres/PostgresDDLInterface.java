@@ -20,6 +20,7 @@ public class PostgresDDLInterface extends DatabaseDDLInterfaceImpl {
         super("postgres_ddl_interface.xml", provider);
     }
 
+    @Override
     public String createDDLStatement(Project project, DatabaseObjectTypeId objectTypeId, String userName, String schemaName, String objectName, DBContentType contentType, String code, String alternativeDelimiter) {
         return objectTypeId == DatabaseObjectTypeId.VIEW ? "create view " + objectName + " as\n" + code :
                 objectTypeId == DatabaseObjectTypeId.FUNCTION ? "create function " + objectName + " as\n" + code :
@@ -44,10 +45,12 @@ public class PostgresDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                   CHANGE statements                   *
      *********************************************************/
+    @Override
     public void updateView(String viewName, String code, DBNConnection connection) throws SQLException {
         executeUpdate(connection, "change-view", viewName, code);
     }
 
+    @Override
     public void updateTrigger(String tableOwner, String tableName, String triggerName, String oldCode, String newCode, DBNConnection connection) throws SQLException {
         executeUpdate(connection, "drop-trigger", tableOwner, tableName, triggerName);
         try {
@@ -58,6 +61,7 @@ public class PostgresDDLInterface extends DatabaseDDLInterfaceImpl {
         }
     }
 
+    @Override
     public void updateObject(String objectName, String objectType, String oldCode, String newCode, DBNConnection connection) throws SQLException {
         executeUpdate(connection, "change-object", newCode);
     }
@@ -72,6 +76,7 @@ public class PostgresDDLInterface extends DatabaseDDLInterfaceImpl {
     /*********************************************************
      *                   CREATE statements                   *
      *********************************************************/
+    @Override
     public void createMethod(MethodFactoryInput method, DBNConnection connection) throws SQLException {
         CodeStyleCaseSettings styleCaseSettings = PSQLCodeStyleSettings.getInstance(method.getSchema().getProject()).getCaseSettings();
         CodeStyleCaseOption keywordCaseOption = styleCaseSettings.getKeywordCaseOption();

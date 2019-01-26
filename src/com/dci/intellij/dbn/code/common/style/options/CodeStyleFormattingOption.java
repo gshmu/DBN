@@ -58,6 +58,7 @@ public class CodeStyleFormattingOption implements PersistentConfiguration {
     /*********************************************************
      *                PersistentConfiguration                *
      *********************************************************/
+    @Override
     public void readConfiguration(Element element) {
         name = element.getAttributeValue("name");
         String presetId = element.getAttributeValue("value");
@@ -65,6 +66,7 @@ public class CodeStyleFormattingOption implements PersistentConfiguration {
         if (newPreset != null) preset = newPreset;
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         element.setAttribute("name", name);
         element.setAttribute("value", preset.getId());

@@ -29,10 +29,12 @@ public class BooleanSetting extends Setting<Boolean, JToggleButton> implements P
     }
 
 
+    @Override
     public boolean to(JToggleButton checkBox) {
         return setValue(checkBox.isSelected());
     }
     
+    @Override
     public void from(JToggleButton checkBox) {
         checkBox.setSelected(value());
     }

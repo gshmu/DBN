@@ -17,11 +17,13 @@ import org.jetbrains.annotations.NotNull;
 public class DBMethodJdbcRunner extends DBProgramRunner<MethodExecutionInput> {
     public static final String RUNNER_ID = "DBNMethodRunner";
 
+    @Override
     @NotNull
     public String getRunnerId() {
         return RUNNER_ID;
     }
 
+    @Override
     public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
         if (DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)) {
             if (profile instanceof DBMethodJdbcRunConfig) {

@@ -14,6 +14,7 @@ public class RevertColumnOrderAction extends AnAction {
         this.list = list;
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         list.sortElements(ColumnStateSelectable.POSITION_COMPARATOR);
     }

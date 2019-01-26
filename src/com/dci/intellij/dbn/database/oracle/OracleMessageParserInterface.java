@@ -11,6 +11,7 @@ import java.sql.SQLTimeoutException;
 import java.util.StringTokenizer;
 
 public class OracleMessageParserInterface implements DatabaseMessageParserInterface {
+    @Override
     @Nullable
     public DatabaseObjectIdentifier identifyObject(SQLException exception) {
         String message = exception.getMessage();

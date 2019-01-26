@@ -16,6 +16,7 @@ import com.intellij.psi.tree.IFileElementType;
 public class PSQLLanguage extends DBLanguage<PSQLLanguageDialect> {
     public static final PSQLLanguage INSTANCE = new PSQLLanguage();
 
+    @Override
     protected PSQLLanguageDialect[] createLanguageDialects() {
         PSQLLanguageDialect oraclePLSQLLanguageDialect = new OraclePLSQLLanguageDialect();
         PSQLLanguageDialect mysqlPSQLLanguageDialect = new MysqlPSQLLanguageDialect();
@@ -28,6 +29,7 @@ public class PSQLLanguage extends DBLanguage<PSQLLanguageDialect> {
                 sqlitePSQLLanguageDialect};
     }
 
+    @Override
     public PSQLLanguageDialect getMainLanguageDialect() {
         return getAvailableLanguageDialects()[0];
     }
@@ -41,6 +43,7 @@ public class PSQLLanguage extends DBLanguage<PSQLLanguageDialect> {
         super("DBN-PSQL", "text/plsql");
     }
 
+    @Override
     public PSQLCodeStyleSettings getCodeStyleSettings(Project project) {
         CodeStyleSettings codeStyleSettings = CodeStyleSettingsManager.getSettings(project);
         PSQLCustomCodeStyleSettings customCodeStyleSettings = codeStyleSettings.getCustomSettings(PSQLCustomCodeStyleSettings.class);

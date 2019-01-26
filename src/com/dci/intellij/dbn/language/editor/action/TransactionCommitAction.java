@@ -15,6 +15,7 @@ public class TransactionCommitAction extends TransactionEditorAction {
         super("Commit", "Commit changes", Icons.CONNECTION_COMMIT);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         ConnectionHandler connectionHandler = getConnectionHandler(e);
         if (connectionHandler != null) {

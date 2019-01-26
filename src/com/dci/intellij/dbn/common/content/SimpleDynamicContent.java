@@ -27,18 +27,22 @@ public class SimpleDynamicContent<T extends DynamicContentElement> extends Dynam
         return null;
     }
 
+    @Override
     public void notifyChangeListeners() {
 
     }
 
+    @Override
     public Project getProject() {
         return null;
     }
 
+    @Override
     public String getContentDescription() {
         return null;
     }
 
+    @Override
     public String getName() {
         return null;
     }

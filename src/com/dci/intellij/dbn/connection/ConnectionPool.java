@@ -173,6 +173,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
         return connectionHandlerRef.getnn();
     }
 
+    @Override
     @NotNull
     public Project getProject() {
         return getConnectionHandler().getProject();
@@ -322,6 +323,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
         return peakPoolSize;
     }
 
+    @Override
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();
@@ -345,6 +347,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
     private static class ConnectionPoolCleanTask extends TimerTask {
         List<WeakRef<ConnectionPool>> connectionPools = CollectionUtil.createConcurrentList();
 
+        @Override
         public void run() {
             for (WeakRef<ConnectionPool> connectionPoolRef : connectionPools) {
                 ConnectionPool connectionPool = connectionPoolRef.get();

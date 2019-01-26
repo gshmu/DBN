@@ -56,43 +56,53 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
         return name;
     }
 
+    @Override
     public DBDataType getDataType() {
         return dataType;
     }
 
+    @Override
     public DBMethod getMethod() {
         return (DBMethod) getParentObject();
     }
 
+    @Override
     public int getOverload() {
         return overload;
     }
 
+    @Override
     public int getPosition() {
         return position;
     }
 
+    @Override
     public int getSequence() {
         return sequence;
     }
 
+    @Override
     public boolean isInput() {
         return is(DBObjectProperty.INPUT);
     }
 
+    @Override
     public boolean isOutput() {
         return is(DBObjectProperty.OUTPUT);
     }
 
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return EMPTY_TREE_NODE_LIST;
     }
 
+    @Override
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         ttb.append(true, getObjectType().getName(), true);
         ttb.append(false, " - ", true);
@@ -134,10 +144,12 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
                isOutput() ? Icons.DBO_ARGUMENT_OUT : Icons.DBO_ARGUMENT;
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return DBObjectType.ARGUMENT;
     }
 
+    @Override
     public int compareTo(@NotNull Object o) {
         if (o instanceof DBArgument) {
             DBArgument argument = (DBArgument) o;

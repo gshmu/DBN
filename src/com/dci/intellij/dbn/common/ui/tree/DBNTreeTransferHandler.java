@@ -6,6 +6,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
 public class DBNTreeTransferHandler extends TransferHandler {
+    @Override
     public void exportToClipboard(JComponent comp, Clipboard clip, int action) {
         JTree tree = (JTree)comp;
         TreePath[] paths = tree.getSelectionPaths();

@@ -74,6 +74,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
             super("Reload", null, Icons.ACTION_REFRESH);
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             sessionBrowser.loadSessions(true);
         }
@@ -84,6 +85,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
             super(multiple ? "Kill Sessions" : "Kill Session", null, Icons.ACTION_KILL_SESSION);
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             if (row != null) {
                 sessionBrowser.interruptSession(
@@ -100,6 +102,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
             super(multiple ? "Disconnect Sessions" : "Disconnect Session", null, Icons.ACTION_DISCONNECT_SESSION);
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             if (row != null) {
                 sessionBrowser.interruptSession(
@@ -115,6 +118,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
             super("Clear Filter", null, Icons.DATASET_FILTER_CLEAR);
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             sessionBrowser.clearFilter();
         }
@@ -129,6 +133,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
             this.name = name;
         }
 
+        @Override
         public void actionPerformed(AnActionEvent e) {
             if (row != null) {
                 SessionBrowserModel tableModel = sessionBrowser.getTableModel();

@@ -101,10 +101,12 @@ public class RootNode extends BundleTreeNode {
     }
 
 
+    @Override
     public MessagesTreeModel getTreeModel() {
         return messagesTreeModel;
     }
 
+    @Override
     public VirtualFile getVirtualFile() {
         return null;
     }

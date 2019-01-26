@@ -19,6 +19,7 @@ public class CodeEditorSettingsForm extends CompositeConfigurationEditorForm<Cod
     }
 
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }

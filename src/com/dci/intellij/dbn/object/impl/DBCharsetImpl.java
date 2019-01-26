@@ -23,15 +23,18 @@ public class DBCharsetImpl extends DBObjectImpl implements DBCharset {
         return resultSet.getString("CHARSET_NAME");
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return DBObjectType.CHARSET;
     }
 
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return EMPTY_TREE_NODE_LIST;
     }
 
+    @Override
     public int getMaxLength() {
         return maxLength;
     }

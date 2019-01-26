@@ -23,6 +23,7 @@ public class CompileInvalidObjectsAction extends DumbAwareAction {
         return DBObjectRef.getnn(schemaRef);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         DBSchema schema = getSchema();
         Project project = schema.getProject();

@@ -49,18 +49,22 @@ public class DBRoleImpl extends DBObjectImpl implements DBRole {
         grantedRoles = ol.createSubcontentObjectList(GRANTED_ROLE, this, sourceContentHolder, DBObjectRelationType.ROLE_ROLE, INDEXED);
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return ROLE;
     }
 
+    @Override
     public List<DBGrantedPrivilege> getPrivileges() {
         return privileges.getObjects();
     }
 
+    @Override
     public List<DBGrantedRole> getGrantedRoles() {
         return grantedRoles.getObjects();
     }
 
+    @Override
     public List<DBUser> getUserGrantees() {
         List<DBUser> grantees = new ArrayList<DBUser>();
         List<DBUser> users = getConnectionHandler().getObjectBundle().getUsers();
@@ -74,6 +78,7 @@ public class DBRoleImpl extends DBObjectImpl implements DBRole {
         return grantees;
     }
 
+    @Override
     public List<DBRole> getRoleGrantees() {
         List<DBRole> grantees = new ArrayList<DBRole>();
         List<DBRole> roles = getConnectionHandler().getObjectBundle().getRoles();
@@ -87,6 +92,7 @@ public class DBRoleImpl extends DBObjectImpl implements DBRole {
         return grantees;
     }
 
+    @Override
     public boolean hasPrivilege(DBPrivilege privilege) {
         for (DBGrantedPrivilege rolePrivilege : getPrivileges()) {
             if (rolePrivilege.getPrivilege().equals(privilege)) {
@@ -101,6 +107,7 @@ public class DBRoleImpl extends DBObjectImpl implements DBRole {
         return false;
     }
 
+    @Override
     public boolean hasRole(DBRole role) {
         for (DBGrantedRole inheritedRole : getGrantedRoles()) {
             if (inheritedRole.getRole().equals(role)) {
@@ -110,6 +117,7 @@ public class DBRoleImpl extends DBObjectImpl implements DBRole {
         return false;
     }
 
+    @Override
     protected List<DBObjectNavigationList> createNavigationLists() {
         List<DBObjectNavigationList> navigationLists = new ArrayList<DBObjectNavigationList>();
         navigationLists.add(new DBObjectNavigationListImpl<DBUser>("User grantees", getUserGrantees()));
@@ -122,6 +130,7 @@ public class DBRoleImpl extends DBObjectImpl implements DBRole {
     /*********************************************************
      *                     TreeElement                       *
      *********************************************************/
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return DatabaseBrowserUtils.createList(privileges, grantedRoles);

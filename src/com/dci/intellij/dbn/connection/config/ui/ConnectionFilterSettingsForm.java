@@ -26,6 +26,7 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
         registerComponent(hideEmptySchemasCheckBox);
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }

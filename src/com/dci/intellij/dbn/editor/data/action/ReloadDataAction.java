@@ -17,6 +17,7 @@ public class ReloadDataAction extends AbstractDataEditorAction {
         super("Reload", Icons.DATA_EDITOR_RELOAD_DATA);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
         if (datasetEditor != null) {
@@ -24,6 +25,7 @@ public class ReloadDataAction extends AbstractDataEditorAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Reload");

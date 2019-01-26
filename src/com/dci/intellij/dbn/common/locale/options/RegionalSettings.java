@@ -98,6 +98,7 @@ public class RegionalSettings extends ProjectConfiguration<RegionalSettingsEdito
     /*********************************************************
      *                      Configuration                    *
      *********************************************************/
+    @Override
     @NotNull
     public RegionalSettingsEditorForm createConfigurationEditor() {
         return new RegionalSettingsEditorForm(this);
@@ -108,6 +109,7 @@ public class RegionalSettings extends ProjectConfiguration<RegionalSettingsEdito
         return "regional-settings";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         formatter.set(null);
         String localeString = SettingsUtil.getString(element, "locale", Locale.getDefault().toString());
@@ -134,6 +136,7 @@ public class RegionalSettings extends ProjectConfiguration<RegionalSettingsEdito
         }
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         SettingsUtil.setEnum(element, "date-format", dateFormatOption);
         SettingsUtil.setEnum(element, "number-format", numberFormatOption);

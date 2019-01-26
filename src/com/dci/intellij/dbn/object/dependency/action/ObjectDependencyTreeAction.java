@@ -17,6 +17,7 @@ public class ObjectDependencyTreeAction extends DumbAwareAction {
         setDefaultIcon(true);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = e.getProject();
         DBSchemaObject schemaObject = DBObjectRef.get(schemaObjectRef);

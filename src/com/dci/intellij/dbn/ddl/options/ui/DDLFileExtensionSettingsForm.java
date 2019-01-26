@@ -72,6 +72,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
         extensionTextFields.put("Type Bpdy", typeBodyTextField);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -91,6 +92,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
         }
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         validateInputs();
         AtomicBoolean changed = new AtomicBoolean(false);
@@ -118,6 +120,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
         }
     }
 
+    @Override
     public void resetFormChanges() {
         resetSetting(viewTextField, DDLFileTypeId.VIEW);
         resetSetting(triggerTextField, DDLFileTypeId.TRIGGER);

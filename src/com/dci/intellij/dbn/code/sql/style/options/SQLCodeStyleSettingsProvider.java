@@ -11,10 +11,12 @@ import org.jetbrains.annotations.Nullable;
 
 public class SQLCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
 
+    @Override
     public CustomCodeStyleSettings createCustomSettings(CodeStyleSettings codeStyleSettings) {
         return new SQLCustomCodeStyleSettings(codeStyleSettings);
     }
 
+    @Override
     @NotNull
     public Configurable createSettingsPage(CodeStyleSettings settings, CodeStyleSettings settings1) {
         SQLCustomCodeStyleSettings settingsProvider = settings.getCustomSettings(SQLCustomCodeStyleSettings.class);
@@ -27,6 +29,7 @@ public class SQLCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
         return settingsProvider.getCodeStyleSettings();
     }
 
+    @Override
     public String getConfigurableDisplayName() {
         return "SQL (DBN)";
     }

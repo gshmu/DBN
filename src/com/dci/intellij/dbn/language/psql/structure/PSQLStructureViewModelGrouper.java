@@ -24,6 +24,7 @@ public class PSQLStructureViewModelGrouper implements Grouper {
 
     private static final Collection<Group> EMPTY_GROUPS = new ArrayList<Group>(0);
 
+    @Override
     @NotNull
     public Collection<Group> group(@NotNull AbstractTreeNode abstractTreeNode, @NotNull Collection<TreeElement> treeElements) {
         Map<DBObjectType, Group> groups = null;
@@ -67,11 +68,13 @@ public class PSQLStructureViewModelGrouper implements Grouper {
         return groups == null ? EMPTY_GROUPS : groups.values();
     }
 
+    @Override
     @NotNull
     public ActionPresentation getPresentation() {
         return actionPresentation;
     }
 
+    @Override
     @NotNull
     public String getName() {
         return "Object Type";

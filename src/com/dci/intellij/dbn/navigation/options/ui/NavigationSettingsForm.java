@@ -15,6 +15,7 @@ public class NavigationSettingsForm extends CompositeConfigurationEditorForm<Nav
         objectsLookupSettingsPanel.add(settings.getObjectsLookupSettings().createComponent(), BorderLayout.CENTER);
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }

@@ -14,10 +14,12 @@ public class OraclePLSQLLanguageDialect extends PSQLLanguageDialect {
         super(DBLanguageDialectIdentifier.ORACLE_PLSQL);
     }
 
+    @Override
     protected DBLanguageSyntaxHighlighter createSyntaxHighlighter() {
         return new OraclePLSQLHighlighter(this);
 }
 
+    @Override
     protected OraclePLSQLParserDefinition createParserDefinition() {
         OraclePLSQLParser parser = new OraclePLSQLParser(this);
         return new OraclePLSQLParserDefinition(parser);

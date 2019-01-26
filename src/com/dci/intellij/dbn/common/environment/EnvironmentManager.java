@@ -77,6 +77,7 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
     }
 
 
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {

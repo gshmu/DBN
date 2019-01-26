@@ -16,6 +16,7 @@ public class RootPsiElement extends NamedPsiElement implements ExecutableBundleP
         super(astNode, elementType);
     }
 
+    @Override
     public List<ExecutablePsiElement> getExecutablePsiElements() {
         List<ExecutablePsiElement> bucket = new ArrayList<ExecutablePsiElement>();
         collectExecutablePsiElements(bucket, this);
@@ -35,14 +36,17 @@ public class RootPsiElement extends NamedPsiElement implements ExecutableBundleP
         }
     }
 
+    @Override
     public NamedElementType getElementType() {
         return (NamedElementType) super.getElementType();
     }
 
+    @Override
     public boolean hasErrors() {
         return false;
     }
 
+    @Override
     public Object clone() {
         return super.clone();
     }
@@ -50,20 +54,24 @@ public class RootPsiElement extends NamedPsiElement implements ExecutableBundleP
     /*********************************************************
      *                    ItemPresentation                   *
      *********************************************************/
+    @Override
     public String getPresentableText() {
         return getElementType().getDescription();
     }
 
+    @Override
     @Nullable
     public String getLocationString() {
         return null;
     }
 
+    @Override
     @Nullable
     public Icon getIcon(boolean open) {
         return super.getIcon(open);
     }
 
+    @Override
     @Nullable
     public TextAttributesKey getTextAttributesKey() {
         return null;

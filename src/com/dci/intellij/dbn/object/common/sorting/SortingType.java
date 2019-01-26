@@ -15,6 +15,7 @@ public enum SortingType implements Presentable{
         this.name = name;
     }
 
+    @Override
     @NotNull
     public String getName() {
         return name;

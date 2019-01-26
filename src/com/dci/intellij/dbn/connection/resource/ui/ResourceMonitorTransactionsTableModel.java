@@ -33,29 +33,35 @@ public class ResourceMonitorTransactionsTableModel extends DisposableBase implem
         return connection;
     }
 
+    @Override
     public int getRowCount() {
         PendingTransactionBundle dataChanges = connection == null ? null : connection.getDataChanges();
         return dataChanges == null ? 0 : dataChanges.size();
     }
 
+    @Override
     public int getColumnCount() {
         return 2;
     }
 
+    @Override
     public String getColumnName(int columnIndex) {
         return
             columnIndex == 0 ? "Source" :
             columnIndex == 1 ? "Details" : null ;
     }
 
+    @Override
     public Class<?> getColumnClass(int columnIndex) {
         return PendingTransaction.class;
     }
 
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         PendingTransactionBundle dataChanges = connection == null ? null : connection.getDataChanges();
         if (dataChanges != null) {
@@ -64,13 +70,17 @@ public class ResourceMonitorTransactionsTableModel extends DisposableBase implem
         return null;
     }
 
+    @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
+    @Override
     public void addTableModelListener(TableModelListener l) {}
+    @Override
     public void removeTableModelListener(TableModelListener l) {}
 
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
+    @Override
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();

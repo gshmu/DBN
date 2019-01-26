@@ -15,6 +15,7 @@ import java.util.Date;
 
 
 public class XMLDataExportProcessor extends DataExportProcessor{
+    @Override
     public DataExportFormat getFormat() {
         return DataExportFormat.XML;
     }
@@ -32,14 +33,17 @@ public class XMLDataExportProcessor extends DataExportProcessor{
         return fileName;
     }
 
+    @Override
     public boolean canCreateHeader() {
         return false;
     }
 
+    @Override
     public boolean canExportToClipboard() {
         return true;
     }
 
+    @Override
     public boolean canQuoteValues() {
         return false;
     }
@@ -54,6 +58,7 @@ public class XMLDataExportProcessor extends DataExportProcessor{
         return ClipboardUtil.createXmlContent(content);
     }
 
+    @Override
     public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
         StringBuilder buffer = new StringBuilder();
         buffer.append("<table name=\"");

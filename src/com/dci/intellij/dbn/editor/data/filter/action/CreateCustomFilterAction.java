@@ -11,6 +11,7 @@ public class CreateCustomFilterAction extends AbstractFilterListAction {
         super(filterList,  "Custom filter", Icons.DATASET_FILTER_CUSTOM);
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         DatasetFilter filter = getFilterGroup().createCustomFilter(true);
         getFilterList().setSelectedValue(filter, true);

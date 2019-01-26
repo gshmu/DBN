@@ -18,6 +18,7 @@ public class DDFileSettingsForm extends CompositeConfigurationEditorForm<DDLFile
         generalSettingsPanel.add(settings.getGeneralSettings().createComponent(), BorderLayout.CENTER);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }

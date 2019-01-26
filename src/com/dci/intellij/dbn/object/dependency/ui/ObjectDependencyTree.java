@@ -63,6 +63,7 @@ public class ObjectDependencyTree extends DBNTree implements Disposable{
             public void mouseClicked(MouseEvent event) {
             }
 
+            @Override
             public void mouseReleased(final MouseEvent event) {
                 if (false && event.getButton() == MouseEvent.BUTTON3) {
                     final TreePath path = getPathForLocation(event.getX(), event.getY());
@@ -170,6 +171,7 @@ public class ObjectDependencyTree extends DBNTree implements Disposable{
             objectRef = DBObjectRef.from(object);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             DBSchemaObject schemaObject = DBObjectRef.get(objectRef);
             if (schemaObject != null) {
@@ -177,6 +179,7 @@ public class ObjectDependencyTree extends DBNTree implements Disposable{
             }
         }
 
+        @Override
         public void update(@NotNull AnActionEvent e) {
             Presentation presentation = e.getPresentation();
             presentation.setText("Select");

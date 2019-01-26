@@ -31,10 +31,12 @@ public class DBSequenceImpl extends DBSchemaObjectImpl implements DBSequence {
         properties.set(SCHEMA_OBJECT, true);
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return DBObjectType.SEQUENCE;
     }
 
+    @Override
     public void buildToolTip(HtmlToolTipBuilder ttb) {
         ttb.append(true, getObjectType().getName(), true);
         ttb.createEmptyRow();
@@ -45,10 +47,12 @@ public class DBSequenceImpl extends DBSchemaObjectImpl implements DBSequence {
      *                     TreeElement                       *
      *********************************************************/
 
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return EMPTY_TREE_NODE_LIST;

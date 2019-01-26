@@ -13,6 +13,7 @@ public class PendingTransactionsOpenAction extends AbstractConnectionAction {
 
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         Project project = connectionHandler.getProject();

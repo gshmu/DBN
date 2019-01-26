@@ -10,10 +10,12 @@ public class MysqlPSQLLanguageDialect extends PSQLLanguageDialect {
         super(DBLanguageDialectIdentifier.MYSQL_PSQL);
     }
 
+    @Override
     protected DBLanguageSyntaxHighlighter createSyntaxHighlighter() {
         return new OraclePLSQLHighlighter(this);
 }
 
+    @Override
     protected MysqlPSQLParserDefinition createParserDefinition() {
         MysqlPSQLParser parser = new MysqlPSQLParser(this);
         return new MysqlPSQLParserDefinition(parser);

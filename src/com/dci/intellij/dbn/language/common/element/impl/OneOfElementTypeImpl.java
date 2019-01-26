@@ -53,19 +53,23 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
         return new OneOfElementTypeParser(this);
     }
 
+    @Override
     public boolean isLeaf() {
         return false;
     }
 
+    @Override
     public String getDebugName() {
         return "one-of (" + getId() + ")";
     }
 
+    @Override
     public PsiElement createPsiElement(ASTNode astNode) {
         return new SequencePsiElement(astNode, this);
     }
 
     boolean sorted;
+    @Override
     public synchronized void sort() {
         if (sortable && ! sorted) {
             Arrays.sort(children, ONE_OF_COMPARATOR);
@@ -74,6 +78,7 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
     }
 
     private static final Comparator ONE_OF_COMPARATOR = new Comparator() {
+        @Override
         public int compare(Object o1, Object o2) {
             ElementTypeRef et1 = (ElementTypeRef) o1;
             ElementTypeRef et2 = (ElementTypeRef) o2;
@@ -84,6 +89,7 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
         }
     };
 
+    @Override
     public ElementTypeRef[] getChildren() {
         return children;
     }

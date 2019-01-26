@@ -63,16 +63,19 @@ public class PendingTransactionDialogForm extends DBNFormImpl<PendingTransaction
         return executionProcessor;
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         executionProcessor = null;
         EditorFactory.getInstance().releaseEditor(viewer);
     }
 
+    @Override
     public JComponent getPreferredFocusedComponent() {
         return null;
     }

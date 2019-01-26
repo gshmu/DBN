@@ -64,6 +64,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         return localContent.getOffsets();
     }
 
+    @Override
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         String parseRootId = getParseRootId();
@@ -244,16 +245,19 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         return DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(getObject());
     }
 
+    @Override
     @NotNull
     public OutputStream getOutputStream(Object o, long l, long l1) {
         return DevNullStreams.OUTPUT_STREAM;
     }
 
+    @Override
     @NotNull
     public byte[] contentsToByteArray() {
         return localContent.getText().toString().getBytes(getCharset());
     }
 
+    @Override
     public long getLength() {
         return localContent.length();
     }

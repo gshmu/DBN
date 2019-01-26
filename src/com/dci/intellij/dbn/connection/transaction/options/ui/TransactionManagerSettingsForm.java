@@ -55,10 +55,12 @@ public class TransactionManagerSettingsForm extends ConfigurationEditorForm<Tran
         registerComponent(mainPanel);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         TransactionManagerSettings settings = getConfiguration();
         settings.getCloseProject().set(           getSelection(uncommittedChangesOnProjectCloseComboBox));
@@ -68,6 +70,7 @@ public class TransactionManagerSettingsForm extends ConfigurationEditorForm<Tran
         settings.getRollbackMultipleChanges().set(getSelection(multipleChangesOnRollbackComboBox));
     }
 
+    @Override
     public void resetFormChanges() {
         TransactionManagerSettings settings = getConfiguration();
         setSelection(uncommittedChangesOnProjectCloseComboBox, settings.getCloseProject().get());

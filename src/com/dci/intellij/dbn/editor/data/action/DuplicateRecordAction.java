@@ -15,6 +15,7 @@ public class DuplicateRecordAction extends AbstractDataEditorAction {
         super("Duplicate record", Icons.DATA_EDITOR_DUPLICATE_RECORD);
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
         if (datasetEditor != null) {
@@ -22,6 +23,7 @@ public class DuplicateRecordAction extends AbstractDataEditorAction {
         }
     }
 
+    @Override
     public void update(AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Duplicate Record");

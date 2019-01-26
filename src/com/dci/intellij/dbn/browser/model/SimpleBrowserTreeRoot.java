@@ -31,6 +31,7 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
         }
     }
 
+    @Override
     @NotNull
     public Project getProject() {
         return projectRef.getnn();
@@ -45,25 +46,31 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
     /**************************************************
      *              BrowserTreeNode            *
      **************************************************/
+    @Override
     public boolean isTreeStructureLoaded() {
         return true;
     }
 
+    @Override
     public void initTreeElement() {}
 
+    @Override
     public boolean canExpand() {
         return true;
     }
 
+    @Override
     public int getTreeDepth() {
         return 0;
     }
 
+    @Override
     @Nullable
     public BrowserTreeNode getParent() {
         return null;
     }
 
+    @Override
     public List<ConnectionBundle> getChildren() {
         return FailsafeUtil.get(rootChildren);
     }
@@ -75,40 +82,49 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
         }
     }
 
+    @Override
     public void rebuildTreeChildren() {
         for (ConnectionBundle connectionBundle : getChildren()) {
             connectionBundle.rebuildTreeChildren();
         }
     }
 
+    @Override
     public BrowserTreeNode getChildAt(int index) {
         return getChildren().get(index);
     }
 
+    @Override
     public int getChildCount() {
         return getChildren().size();
     }
 
+    @Override
     public boolean isLeaf() {
         return false;
     }
 
+    @Override
     public int getIndex(BrowserTreeNode child) {
         return getChildren().indexOf(child);
     }
 
+    @Override
     public Icon getIcon(int flags) {
         return Icons.WINDOW_DATABASE_BROWSER;
     }
 
+    @Override
     public String getPresentableText() {
         return "Connection Managers";
     }
 
+    @Override
     public String getPresentableTextDetails() {
         return null;
     }
 
+    @Override
     public String getPresentableTextConditionalDetails() {
         return null;
     }
@@ -116,11 +132,13 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
     /**************************************************
      *              GenericDatabaseElement            *
      **************************************************/
+    @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return null;
     }
 
+    @Override
     public GenericDatabaseElement getUndisposedElement() {
         return this;
     }
@@ -128,6 +146,7 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
    /*********************************************************
     *                    ToolTipProvider                    *
     *********************************************************/
+    @Override
     public String getToolTip() {
         return null;
     }
@@ -135,20 +154,25 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
     /*********************************************************
      *                  NavigationItem                       *
      *********************************************************/
+    @Override
     public String getName() {
         return getPresentableText();
     }
     
+    @Override
     public void navigate(boolean b) {}
 
+    @Override
     public boolean canNavigate() {
         return false;
     }
 
+    @Override
     public boolean canNavigateToSource() {
         return false;
     }
 
+    @Override
     public ItemPresentation getPresentation() {
         return this;
     }
@@ -160,10 +184,12 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
     /*********************************************************
      *                 ItemPresentation                      *
      *********************************************************/
+    @Override
     public String getLocationString() {
         return null;
     }
 
+    @Override
     public Icon getIcon(boolean open) {
         return getIcon(0);
     }
@@ -175,6 +201,7 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
     /*********************************************************
      *                       Disposable                      *
      *********************************************************/
+    @Override
     public void dispose() {
         super.dispose();
         if (rootChildren != null) {

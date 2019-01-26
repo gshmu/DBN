@@ -88,6 +88,7 @@ public class CompileDebugDependenciesForm extends DBNFormImpl<CompileDebugDepend
         return selectedIndicesArray;
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -108,6 +109,7 @@ public class CompileDebugDependenciesForm extends DBNFormImpl<CompileDebugDepend
         objectList.clearSelection();
     }
 
+    @Override
     public void dispose() {
         super.dispose();
     }

@@ -16,8 +16,10 @@ public class TestAction extends AnAction {
         setDefaultIcon(true);
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         new Thread() {
+            @Override
             public void run() {
                 if (object instanceof DBTable) {
                     DBTable table = (DBTable) object;

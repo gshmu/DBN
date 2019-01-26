@@ -11,10 +11,12 @@ import org.jetbrains.annotations.Nullable;
 
 public class PSQLCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
 
+    @Override
     public CustomCodeStyleSettings createCustomSettings(CodeStyleSettings codeStyleSettings) {
         return new PSQLCustomCodeStyleSettings(codeStyleSettings);
     }
 
+    @Override
     @NotNull
     public Configurable createSettingsPage(CodeStyleSettings settings, CodeStyleSettings settings1) {
         PSQLCustomCodeStyleSettings settingsProvider = settings.getCustomSettings(PSQLCustomCodeStyleSettings.class);
@@ -27,6 +29,7 @@ public class PSQLCodeStyleSettingsProvider extends CodeStyleSettingsProvider {
         return settingsProvider.getCodeStyleSettings();
     }
 
+    @Override
     public String getConfigurableDisplayName() {
         return "PL/SQL (DBN)";
     }

@@ -97,6 +97,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         };
     }
 
+    @Override
     protected ActionListener createActionListener() {
         return e -> {
             getConfiguration().setModified(true);
@@ -174,10 +175,12 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         }
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         final RegionalSettings regionalSettings = getConfiguration();
         boolean modified = regionalSettings.isModified();
@@ -203,6 +206,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
             }});
     }
 
+    @Override
     public void resetFormChanges() {
         RegionalSettings regionalSettings = getConfiguration();
         setSelectedLocale(regionalSettings.getLocale());

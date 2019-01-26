@@ -29,6 +29,7 @@ public interface DataModel<T extends DataModelRow> extends DBNTableWithGutterMod
 
     DataModelHeader getHeader();
 
+    @Override
     int getColumnCount();
 
     ColumnInfo getColumnInfo(int columnIndex);

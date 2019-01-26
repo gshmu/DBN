@@ -23,6 +23,7 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
         super("", null, Icons.CODE_EDITOR_SAVE_TO_DATABASE);
     }
 
+    @Override
     public void actionPerformed(@NotNull final AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         SourceCodeEditor fileEditor = getFileEditor(e);
@@ -38,6 +39,7 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();

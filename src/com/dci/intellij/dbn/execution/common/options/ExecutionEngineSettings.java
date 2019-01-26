@@ -42,10 +42,12 @@ public class ExecutionEngineSettings extends CompositeProjectConfiguration<Execu
         return "DBNavigator.Project.ExecutionEngineSettings";
     }
 
+    @Override
     public String getDisplayName() {
         return "Execution Engine";
     }
 
+    @Override
     public String getHelpTopic() {
         return "executionEngine";
     }
@@ -79,6 +81,7 @@ public class ExecutionEngineSettings extends CompositeProjectConfiguration<Execu
     /*********************************************************
      *                    Configuration                      *
      *********************************************************/
+    @Override
     @NotNull
     public ExecutionEngineSettingsForm createConfigurationEditor() {
         return new ExecutionEngineSettingsForm(this);
@@ -89,6 +92,7 @@ public class ExecutionEngineSettings extends CompositeProjectConfiguration<Execu
         return "execution-engine-settings";
     }
 
+    @Override
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
                 statementExecutionSettings,

@@ -24,6 +24,7 @@ public class CreateConnectionAction extends ConnectionSettingsAction {
         return databaseType == null ? "Custom..." : databaseType.getDisplayName();
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         ConnectionBundleSettingsForm settingsEditor = getSettingsForm(e);
         if (settingsEditor != null) {

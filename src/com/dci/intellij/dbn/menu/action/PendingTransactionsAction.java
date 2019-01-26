@@ -10,12 +10,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class PendingTransactionsAction extends DumbAwareAction {
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         DatabaseTransactionManager executionManager = DatabaseTransactionManager.getInstance(project);
         executionManager.showPendingTransactionsOverviewDialog(null);
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Project project = ActionUtil.getProject(e);

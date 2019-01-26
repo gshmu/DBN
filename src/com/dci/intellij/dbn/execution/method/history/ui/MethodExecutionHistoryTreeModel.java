@@ -28,6 +28,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
         setRoot(new RootTreeNode());
     }
 
+    @Override
     public RootTreeNode getRoot() {
         return (RootTreeNode) super.getRoot();
     }

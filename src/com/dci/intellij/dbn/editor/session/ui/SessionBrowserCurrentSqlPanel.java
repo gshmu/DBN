@@ -176,10 +176,12 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
             super("Wrap/Unwrap", "", Icons.ACTION_WRAP_TEXT);
         }
 
+        @Override
         public boolean isSelected(@NotNull AnActionEvent e) {
             return viewer != null && viewer.getSettings().isUseSoftWraps();
         }
 
+        @Override
         public void setSelected(@NotNull AnActionEvent e, boolean state) {
             viewer.getSettings().setUseSoftWraps(state);
         }

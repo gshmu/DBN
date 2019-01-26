@@ -33,10 +33,12 @@ public class SessionBrowserSettings extends Configuration<SessionBrowserSettings
                     SessionInterruptionOption.IMMEDIATE,
                     SessionInterruptionOption.CANCEL);
 
+    @Override
     public String getDisplayName() {
         return "Session Browser Settings";
     }
 
+    @Override
     public String getHelpTopic() {
         return "sessionBrowser";
     }
@@ -65,6 +67,7 @@ public class SessionBrowserSettings extends Configuration<SessionBrowserSettings
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @Override
     @NotNull
     public SessionBrowserSettingsForm createConfigurationEditor() {
         return new SessionBrowserSettingsForm(this);
@@ -75,12 +78,14 @@ public class SessionBrowserSettings extends Configuration<SessionBrowserSettings
         return "session-browser";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         disconnectSession.readConfiguration(element);
         killSession.readConfiguration(element);
         reloadOnFilterChange = SettingsUtil.getBoolean(element, "reload-on-filter-change", reloadOnFilterChange);
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         disconnectSession.writeConfiguration(element);
         killSession.writeConfiguration(element);

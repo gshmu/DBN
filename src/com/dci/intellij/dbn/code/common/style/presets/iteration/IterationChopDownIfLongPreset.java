@@ -13,6 +13,7 @@ public class IterationChopDownIfLongPreset extends IterationAbstractPreset {
         super("chop_down_if_long", "Chop down if long");
     }
 
+    @Override
     @Nullable
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
@@ -23,6 +24,7 @@ public class IterationChopDownIfLongPreset extends IterationAbstractPreset {
         return getWrap(elementType, iterationElementType, shouldWrap);
     }
 
+    @Override
     @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);

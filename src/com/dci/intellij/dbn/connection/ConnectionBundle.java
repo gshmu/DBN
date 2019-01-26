@@ -31,6 +31,7 @@ import java.util.List;
 public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTreeNode, Disposable {
 
     private static final Filter<ConnectionHandler> ACTIVE_CONNECTIONS_FILTER = new Filter<ConnectionHandler>() {
+        @Override
         public boolean accepts(ConnectionHandler connectionHandler) {
             return connectionHandler != null && connectionHandler.isEnabled();
         }
@@ -136,11 +137,13 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
         return null;
     }
 
+    @Override
     public Icon getIcon(int flags) {
         return Icons.PROJECT;
     }
 
 
+    @Override
     @NotNull
     public Project getProject() {
         return projectRef.getnn();
@@ -152,6 +155,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
         return null;
     }
 
+    @Override
     public GenericDatabaseElement getUndisposedElement() {
         return this;
     }
@@ -184,6 +188,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
         return connectionHandlers.getFullList();
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         connectionHandlers.clear();
@@ -193,12 +198,15 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     /*********************************************************
     *                    NavigationItem                      *
     *********************************************************/
+    @Override
     public void navigate(boolean requestFocus) {}
 
+    @Override
     public boolean canNavigate() {
         return true;
     }
 
+    @Override
     public boolean canNavigateToSource() {
         return false;
     }
@@ -206,18 +214,22 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     /*********************************************************
     *                  ItemPresentation                      *
     *********************************************************/
+    @Override
     public String getName() {
         return getPresentableText();
     }
 
+    @Override
     public String getLocationString() {
         return null;
     }
 
+    @Override
     public ItemPresentation getPresentation() {
         return this;
     }
 
+    @Override
     public Icon getIcon(boolean open) {
         return getIcon(0);
     }
@@ -225,16 +237,20 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     /*********************************************************
     *                       TreeElement                     *
     *********************************************************/
+    @Override
     public boolean isTreeStructureLoaded() {
         return true;
     }
 
+    @Override
     public void initTreeElement() {}
 
+    @Override
     public boolean canExpand() {
         return true;
     }
 
+    @Override
     @Nullable
     public BrowserTreeNode getParent() {
         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(getProject());
@@ -242,52 +258,63 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
         return browserManager.isTabbedMode() ? null : activeBrowserTree == null ? null : activeBrowserTree.getModel().getRoot();
     }
 
+    @Override
     public List<? extends BrowserTreeNode> getChildren() {
         return null;  //should never be used
     }
 
+    @Override
     public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
         for (ConnectionHandler connectionHandler : connectionHandlers) {
             connectionHandler.getObjectBundle().refreshTreeChildren(objectTypes);
         }
     }
 
+    @Override
     public void rebuildTreeChildren() {
         for (ConnectionHandler connectionHandler : connectionHandlers) {
             connectionHandler.getObjectBundle().rebuildTreeChildren();
         }
     }
 
+    @Override
     public BrowserTreeNode getChildAt(int index) {
         return connectionHandlers.get(index).getObjectBundle();
     }
 
+    @Override
     public int getChildCount() {
         return connectionHandlers.size();
     }
 
+    @Override
     public boolean isLeaf() {
         return connectionHandlers.size() == 0;
     }
 
+    @Override
     public int getIndex(BrowserTreeNode child) {
         DBObjectBundle objectBundle = (DBObjectBundle) child;
         return connectionHandlers.indexOf(objectBundle.getConnectionHandler());
     }
 
+    @Override
     public int getTreeDepth() {
         return 1;
     }
 
+    @Override
     public String getPresentableText() {
         return "Database connections";
     }
 
+    @Override
     public String getPresentableTextDetails() {
         int size = connectionHandlers.size();
         return size == 0 ? "(no connections)" : "(" + size + ')';
     }
 
+    @Override
     public String getPresentableTextConditionalDetails() {
         return null;
     }
@@ -295,6 +322,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
    /*********************************************************
     *                    ToolTipProvider                    *
     *********************************************************/
+    @Override
     public String getToolTip() {
         return "";
     }

@@ -28,6 +28,7 @@ public class RecordViewerDialog extends DBNDialog<RecordViewerForm> {
         return new RecordViewerForm(this, record);
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{
@@ -47,6 +48,7 @@ public class RecordViewerDialog extends DBNDialog<RecordViewerForm> {
             super("Open In Editor", Icons.OBEJCT_EDIT_DATA);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(record.getDataset().getProject());
             datasetEditorManager.openDataEditor(record.getFilterInput());

@@ -36,6 +36,7 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
         return null;
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         ConnectionHandler connectionHandler = getConnectionHandler(e);

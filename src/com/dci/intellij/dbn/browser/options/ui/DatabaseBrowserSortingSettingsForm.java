@@ -53,6 +53,7 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
         sortingTypeTable.setModel(new SortingTypeTableModel(getConfiguration().getComparators()));
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
@@ -92,6 +93,7 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
             setDefaultEditor(SortingType.class, editor);
 
             getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+                @Override
                 public void valueChanged(ListSelectionEvent e) {
                     if (!e.getValueIsAdjusting()) {
                         //editCellAt(getSelectedRows()[0], getSelectedColumns()[0]);

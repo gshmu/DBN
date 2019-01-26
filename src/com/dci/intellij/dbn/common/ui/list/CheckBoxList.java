@@ -36,6 +36,7 @@ public class CheckBoxList<T extends Selectable> extends JList {
         setBackground(UIUtil.getTextFieldBackground());
 
         mouseAdapter = new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
                 if (isEnabled() && e.getButton() == MouseEvent.BUTTON1) {
                     int index = locationToIndex(e.getPoint());
@@ -96,6 +97,7 @@ public class CheckBoxList<T extends Selectable> extends JList {
     }
 
     private class CellRenderer implements ListCellRenderer {
+        @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             Entry entry = (Entry) value;
             Selectable presentable = entry.presentable;

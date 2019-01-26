@@ -22,6 +22,7 @@ public class SortableDataModelRow<T extends SortableDataModelCell> extends Basic
         return super.getCellAtIndex(index);
     }
 
+    @Override
     public int compareTo(@NotNull Object o) {
         SortableDataModelRow row = (SortableDataModelRow) o;
         SortableDataModel model = getModel();

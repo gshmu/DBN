@@ -25,6 +25,7 @@ public class ChameleonPsiElement extends ASTWrapperPsiElement implements Executa
         this.elementType = elementType;
     }
 
+    @Override
     public List<ExecutablePsiElement> getExecutablePsiElements() {
         List<ExecutablePsiElement> bucket = new ArrayList<ExecutablePsiElement>();
         collectExecutablePsiElements(bucket, this);

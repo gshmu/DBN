@@ -11,9 +11,11 @@ public class SqlitePSQLLanguageDialect extends PSQLLanguageDialect {
         super(DBLanguageDialectIdentifier.SQLITE_PSQL);
     }
 
+    @Override
     protected DBLanguageSyntaxHighlighter createSyntaxHighlighter() {
         return new SqlitePSQLHighlighter(this);
     }
+    @Override
     protected SqliteSQLParserDefinition createParserDefinition() {
         SqlitePSQLParser parser = new SqlitePSQLParser(this);
         return new SqliteSQLParserDefinition(parser);

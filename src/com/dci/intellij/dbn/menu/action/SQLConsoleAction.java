@@ -163,6 +163,7 @@ public class SQLConsoleAction extends DumbAwareAction {
         fileEditorManager.openFile(connectionHandler.getConsoleBundle().getDefaultConsole(), true);
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         Project project = ActionUtil.getProject(e);

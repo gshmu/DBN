@@ -29,10 +29,12 @@ public class CodeEditorConfirmationSettingsForm extends ConfigurationEditorForm<
         registerComponent(mainPanel);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
 
+    @Override
     public void applyFormChanges() throws ConfigurationException {
         CodeEditorConfirmationSettings settings = getConfiguration();
         settings.getSaveChanges().setConfirm(confirmSaveCheckBox.isSelected());
@@ -40,6 +42,7 @@ public class CodeEditorConfirmationSettingsForm extends ConfigurationEditorForm<
         settings.getExitOnChanges().set(getSelection(disconnectSessionComboBox));
     }
 
+    @Override
     public void resetFormChanges() {
         CodeEditorConfirmationSettings settings = getConfiguration();
         confirmSaveCheckBox.setSelected(settings.getSaveChanges().isConfirm());

@@ -17,20 +17,24 @@ public class ObjectLazyNavigationListAction extends ObjectListShowAction {
         this.parentObjectRef = DBObjectRef.from(parentObject);
     }
 
+    @Override
     public List<? extends DBObject> getObjectList() {
         List<DBObject> objects = navigationList.getObjects();
         if (objects == null) objects = navigationList.getObjectsProvider().getObjects();
         return objects;
     }
 
+    @Override
     public String getTitle() {
         return navigationList.getName();
     }
 
+    @Override
     public String getEmptyListMessage() {
         return "No " + navigationList.getName() + " found";
     }
 
+    @Override
     public String getListName() {
         return navigationList.getName();
     }
@@ -60,6 +64,7 @@ public class ObjectLazyNavigationListAction extends ObjectListShowAction {
         }.start();
     }*/
 
+    @Override
     protected AnAction createObjectAction(DBObject object) {
         DBObject sourceObject = DBObjectRef.getnn(parentObjectRef);
         return new NavigateToObjectAction(sourceObject, object);

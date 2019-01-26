@@ -29,6 +29,7 @@ public class SequencePsiElement extends BasePsiElement {
         return super.getFormattingAttributes();
     }
 
+    @Override
     public int approximateLength() {
         int length = 0;
         PsiElement child = getFirstChild();
@@ -46,6 +47,7 @@ public class SequencePsiElement extends BasePsiElement {
      *                   Lookup routines                     *
      *********************************************************/
 
+    @Override
     @Nullable
     public BasePsiElement findPsiElement(
             PsiLookupAdapter lookupAdapter,
@@ -69,6 +71,7 @@ public class SequencePsiElement extends BasePsiElement {
         return null;
     }
 
+    @Override
     @Nullable
     public Set<BasePsiElement> collectPsiElements(
             PsiLookupAdapter lookupAdapter,
@@ -98,6 +101,7 @@ public class SequencePsiElement extends BasePsiElement {
         return bucket;
     }
 
+    @Override
     public void collectExecVariablePsiElements(@NotNull Set<ExecVariablePsiElement> bucket) {
         PsiElement child = getFirstChild();
         while (child != null) {
@@ -109,6 +113,7 @@ public class SequencePsiElement extends BasePsiElement {
         }
     }
 
+    @Override
     public void collectSubjectPsiElements(@NotNull Set<IdentifierPsiElement> bucket) {
         PsiElement child = getFirstChild();
         while (child != null) {
@@ -120,6 +125,7 @@ public class SequencePsiElement extends BasePsiElement {
         }
     }
 
+    @Override
     public void collectVirtualObjectPsiElements(Set<BasePsiElement> bucket, DBObjectType objectType) {
         //if (getElementType().getLookupCache().containsVirtualObject(objectType)) {
             if (getElementType().isVirtualObject()) {
@@ -139,6 +145,7 @@ public class SequencePsiElement extends BasePsiElement {
         //}
     }
 
+    @Override
     public NamedPsiElement findNamedPsiElement(String id) {
         PsiElement child = getFirstChild();
         while (child != null) {
@@ -201,6 +208,7 @@ public class SequencePsiElement extends BasePsiElement {
         return null;
     }
 
+    @Override
     public BasePsiElement findFirstLeafPsiElement() {
         PsiElement firstChild = getFirstChild();
         while (firstChild != null) {
@@ -213,6 +221,7 @@ public class SequencePsiElement extends BasePsiElement {
         return null;
     }
 
+    @Override
     public BasePsiElement findPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {
         if (getElementType().is(attribute)) {
             BasePsiElement subjectPsiElement = findFirstPsiElement(ElementTypeAttribute.SUBJECT);
@@ -258,6 +267,7 @@ public class SequencePsiElement extends BasePsiElement {
         return null;
     }
 
+    @Override
     public boolean containsPsiElement(BasePsiElement childPsiElement) {
         if (this == childPsiElement) {
             return true;
@@ -280,6 +290,7 @@ public class SequencePsiElement extends BasePsiElement {
     /*********************************************************
      *                    Miscellaneous                      *
      *********************************************************/
+     @Override
      public boolean hasErrors() {
          PsiElement child = getFirstChild();
 

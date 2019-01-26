@@ -20,6 +20,7 @@ public abstract class ObjectFactoryInputForm<T extends ObjectFactoryInput> exten
         this.index = index;
     }
 
+    @Override
     public abstract JPanel getComponent();
 
     public ConnectionHandler getConnectionHandler() {

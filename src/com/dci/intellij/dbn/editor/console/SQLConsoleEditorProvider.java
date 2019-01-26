@@ -20,10 +20,12 @@ import java.awt.*;
 
 public class SQLConsoleEditorProvider extends BasicTextEditorProvider implements DumbAware{
 
+    @Override
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
         return virtualFile instanceof DBConsoleVirtualFile;
     }
 
+    @Override
     @NotNull
     public FileEditorState readState(@NotNull Element sourceElement, @NotNull Project project, @NotNull VirtualFile virtualFile) {
         SQLConsoleEditorState editorState = new SQLConsoleEditorState();
@@ -31,6 +33,7 @@ public class SQLConsoleEditorProvider extends BasicTextEditorProvider implements
         return editorState;
     }
 
+    @Override
     public void writeState(@NotNull FileEditorState state, @NotNull Project project, @NotNull Element targetElement) {
         if (state instanceof SQLConsoleEditorState) {
             SQLConsoleEditorState editorState = (SQLConsoleEditorState) state;
@@ -38,6 +41,7 @@ public class SQLConsoleEditorProvider extends BasicTextEditorProvider implements
         }
     }
 
+    @Override
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
         DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) file;
@@ -54,10 +58,12 @@ public class SQLConsoleEditorProvider extends BasicTextEditorProvider implements
         return editor;
     }
 
+    @Override
     public void disposeEditor(@NotNull FileEditor editor) {
         editor.dispose();
     }
 
+    @Override
     @NotNull
     public FileEditorPolicy getPolicy() {
         return FileEditorPolicy.HIDE_DEFAULT_EDITOR;
@@ -73,6 +79,7 @@ public class SQLConsoleEditorProvider extends BasicTextEditorProvider implements
      *                ApplicationComponent                   *
      *********************************************************/
 
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {

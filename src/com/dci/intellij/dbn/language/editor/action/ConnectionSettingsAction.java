@@ -11,12 +11,14 @@ import org.jetbrains.annotations.NotNull;
 
 public class ConnectionSettingsAction extends DumbAwareAction {
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
         settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         e.getPresentation().setText("Setup Connections...");
         e.getPresentation().setIcon(Icons.ACTION_EDIT);

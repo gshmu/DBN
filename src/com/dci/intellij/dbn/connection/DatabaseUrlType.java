@@ -20,6 +20,7 @@ public enum DatabaseUrlType implements Presentable{
         this.name = name;
     }
 
+    @Override
     @NotNull
     public String getName() {
         return name;

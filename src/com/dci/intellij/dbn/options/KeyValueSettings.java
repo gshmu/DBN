@@ -44,6 +44,7 @@ public class KeyValueSettings extends Configuration {
     /*********************************************************
      *                      Configuration                    *
      *********************************************************/
+    @Override
     public void readConfiguration(Element element) {
         Element optionsElement = element.getChild("general");
         if (optionsElement != null) {
@@ -54,6 +55,7 @@ public class KeyValueSettings extends Configuration {
         }
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         Element optionsElement = new Element("general");
         element.addContent(optionsElement);
@@ -68,6 +70,7 @@ public class KeyValueSettings extends Configuration {
         }
     }
 
+    @Override
     @NotNull
     public ConfigurationEditorForm createConfigurationEditor() {
         throw new UnsupportedOperationException();

@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor;
 public class BracketsInsertHandler extends BasicInsertHandler{
     public static final BracketsInsertHandler INSTANCE = new BracketsInsertHandler();
 
+    @Override
     public void handleInsert(InsertionContext insertionContext, CodeCompletionLookupItem lookupElement) {
         Editor editor = insertionContext.getEditor();
         Document document = editor.getDocument();

@@ -40,15 +40,18 @@ public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterialized
         childObjectRelations.createSubcontentObjectRelationList(INDEX_COLUMN, this, schema);
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return DBObjectType.MATERIALIZED_VIEW;
     }
 
+    @Override
     @Nullable
     public List<DBIndex> getIndexes() {
         return indexes.getObjects();
     }
 
+    @Override
     @Nullable
     public DBIndex getIndex(String name) {
         return indexes.getObject(name);
@@ -57,6 +60,7 @@ public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterialized
     /*********************************************************
      *                     TreeElement                       *
      *********************************************************/
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return DatabaseBrowserUtils.createList(
@@ -71,6 +75,7 @@ public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterialized
      *                  DBEditableCodeObject                 *
      ********************************************************/
 
+    @Override
     public String loadCodeFromDatabase(DBContentType contentType) throws SQLException {
         SourceCodeLoader loader = new SourceCodeLoader(this);
         return loader.load();
@@ -85,6 +90,7 @@ public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterialized
             super(object, false);
         }
 
+        @Override
         public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
             return getConnectionHandler().getInterfaceProvider().getMetadataInterface().loadMaterializedViewSourceCode(
                    getSchema().getName(), getName(), connection);

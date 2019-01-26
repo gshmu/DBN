@@ -11,10 +11,12 @@ public class DataEditorValueListPopupSettings extends Configuration<DatatEditorV
     private int elementCountThreshold = 1000;
     private int dataLengthThreshold = 250;
 
+    @Override
     public String getDisplayName() {
         return "Data editor filters settings";
     }
 
+    @Override
     public String getHelpTopic() {
         return "dataEditor";
     }
@@ -49,6 +51,7 @@ public class DataEditorValueListPopupSettings extends Configuration<DatatEditorV
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @Override
     @NotNull
     public DatatEditorValueListPopupSettingsForm createConfigurationEditor() {
         return new DatatEditorValueListPopupSettingsForm(this);
@@ -59,12 +62,14 @@ public class DataEditorValueListPopupSettings extends Configuration<DatatEditorV
         return "values-list-popup";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         showPopupButton = SettingsUtil.getBoolean(element, "show-popup-button", showPopupButton);
         elementCountThreshold = SettingsUtil.getInteger(element, "element-count-threshold", elementCountThreshold);
         dataLengthThreshold = SettingsUtil.getInteger(element, "data-length-threshold", dataLengthThreshold);
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         SettingsUtil.setBoolean(element, "show-popup-button", showPopupButton);
         SettingsUtil.setInteger(element, "element-count-threshold", elementCountThreshold);

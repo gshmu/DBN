@@ -27,6 +27,7 @@ public enum GenericDataType implements Presentable{
     private GenericDataType(String name) {
         this.name = name;
     }
+    @Override
     @NotNull
     public String getName() {
         return name;

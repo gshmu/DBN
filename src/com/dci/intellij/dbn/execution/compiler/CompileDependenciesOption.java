@@ -19,6 +19,7 @@ public enum CompileDependenciesOption implements InteractiveOption {
         this.persistable = persistable;
     }
 
+    @Override
     @NotNull
     public String getName() {
         return name;

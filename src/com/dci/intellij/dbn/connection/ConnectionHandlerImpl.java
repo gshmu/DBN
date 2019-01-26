@@ -170,11 +170,13 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         return getSettings().getDatabaseSettings().isDatabaseInitialized();
     }
 
+    @Override
     @NotNull
     public ConnectionBundle getConnectionBundle() {
         return FailsafeUtil.get(connectionBundle);
     }
 
+    @Override
     public ConnectionSettings getSettings() {
         return connectionSettings;
     }
@@ -185,6 +187,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         this.enabled = connectionSettings.isActive();
     }
 
+    @Override
     @NotNull
     public ConnectionHandlerStatusHolder getConnectionStatus() {
         return connectionStatus;
@@ -220,10 +223,12 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         return psiDirectory.get();
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
 
+    @Override
     public DatabaseType getDatabaseType() {
         return connectionSettings.getDatabaseSettings().getDatabaseType();
     }
@@ -233,6 +238,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         return connectionSettings.getDatabaseSettings().getDatabaseVersion();
     }
 
+    @Override
     public Filter<BrowserTreeNode> getObjectTypeFilter() {
         return connectionSettings.getFilterSettings().getObjectTypeFilterSettings().getElementFilter();
     }
@@ -243,11 +249,13 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         return connectionSettings.getDetailSettings().getEnvironmentType();
     }
 
+    @Override
     public void commit() throws SQLException {
         DBNConnection mainConnection = getConnectionPool().getMainConnection();
         ConnectionUtil.commit(mainConnection);
     }
 
+    @Override
     public void rollback() throws SQLException {
         DBNConnection mainConnection = getConnectionPool().getMainConnection();
         ConnectionUtil.rollback(mainConnection);
@@ -267,6 +275,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         return getPresentableText();
     }
 
+    @Override
     @NotNull
     public Project getProject() {
         return getConnectionBundle().getProject();
@@ -287,10 +296,12 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         return getSettings().getDatabaseSettings().getAuthenticationInfo();
     }
 
+    @Override
     public boolean isValid() {
         return connectionStatus.isValid();
     }
 
+    @Override
     public boolean isVirtual() {
         return false;
     }
@@ -310,6 +321,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         return getInterfaceProvider().getMetadataInterface().hasPendingTransactions(connection);
     }
 
+    @Override
     public void setLoggingEnabled(boolean loggingEnabled) {
         connectionSettings.getDetailSettings().setEnableDatabaseLogging(loggingEnabled);
     }
@@ -319,6 +331,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         connectionSettings.getPropertiesSettings().setEnableAutoCommit(autoCommit);
     }
 
+    @Override
     public void disconnect() {
         // explicit disconnect (reset auto-connect data)
         temporaryAuthenticationInfo = new AuthenticationInfo();
@@ -327,19 +340,23 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         getConnectionPool().closeConnections();
     }
 
+    @Override
     public ConnectionId getId() {
         return connectionSettings.getConnectionId();
     }
 
+    @Override
     public String getUserName() {
         return CommonUtil.nvl(connectionSettings.getDatabaseSettings().getAuthenticationInfo().getUser(), "");
     }
 
+    @Override
     @NotNull
     public DBObjectBundle getObjectBundle() {
         return objectBundle.get();
     }
 
+    @Override
     public DBSchema getUserSchema() {
         String userName = getUserName().toUpperCase();
         return getObjectBundle().getSchema(userName);
@@ -369,6 +386,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         return getConnectionPool().ensureTestConnection();
     }
 
+    @Override
     @NotNull
     public DBNConnection getMainConnection() throws SQLException {
         assertCanConnect();
@@ -390,24 +408,28 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         return getConnectionPool().ensureDebuggerConnection();
     }
 
+    @Override
     @NotNull
     public DBNConnection getPoolConnection(boolean readonly) throws SQLException {
         assertCanConnect();
         return getConnectionPool().allocateConnection(readonly);
     }
 
+    @Override
     @NotNull
     public DBNConnection getMainConnection(@Nullable DBSchema schema) throws SQLException {
         DBNConnection connection = getMainConnection();
         return setCurrentSchema(connection, schema);
     }
 
+    @Override
     @NotNull
     public DBNConnection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException {
         DBNConnection connection = getPoolConnection(readonly);
         return setCurrentSchema(connection, schema);
     }
 
+    @Override
     @NotNull
     public DBNConnection getConnection(@NotNull SessionId sessionId, @Nullable DBSchema schema) throws SQLException {
         DBNConnection connection =
@@ -441,17 +463,20 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         getConnectionPool().closeConnection(connection);
     }
 
+    @Override
     public void freePoolConnection(DBNConnection connection) {
         if (!isDisposed()) {
             getConnectionPool().releaseConnection(connection);
         }
     }
 
+    @Override
     @NotNull
     public ConnectionPool getConnectionPool() {
         return FailsafeUtil.get(connectionPool);
     }
 
+    @Override
     public DatabaseInterfaceProvider getInterfaceProvider() {
         Synchronized.run(this,
                 () -> !isValidInterfaceProvider(),
@@ -486,6 +511,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         return null;
     }
 
+    @Override
     public DBLanguageDialect getLanguageDialect(DBLanguage language) {
         return getInterfaceProvider().getLanguageDialect(language);
     }
@@ -501,23 +527,28 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     /*********************************************************
      *                       TreeElement                     *
      *********************************************************/
+    @Override
     public String getQualifiedName() {
         return getPresentableText();
     }
 
+    @Override
     @NotNull
     public String getName() {
         return connectionSettings.getDatabaseSettings().getName();
     }
 
+    @Override
     public String getDescription() {
         return connectionSettings.getDatabaseSettings().getDescription();
     }
 
+    @Override
     public String getPresentableText(){
         return connectionSettings.getDatabaseSettings().getName();
     }
 
+    @Override
     public Icon getIcon(){
         if (connectionStatus.isConnected()) {
             return
@@ -552,6 +583,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     /*********************************************************
     *                      Disposable                       *
     *********************************************************/
+    @Override
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();

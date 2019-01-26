@@ -32,18 +32,22 @@ public class DBGrantedPrivilegeImpl extends DBObjectImpl implements DBGrantedPri
         return name;
     }
 
+    @Override
     public DBObjectType getObjectType() {
         return DBObjectType.GRANTED_PRIVILEGE;
     }
 
+    @Override
     public DBPrivilegeGrantee getGrantee() {
         return (DBPrivilegeGrantee) getParentObject();
     }
 
+    @Override
     public DBPrivilege getPrivilege() {
         return DBObjectRef.get(privilegeRef);
     }
 
+    @Override
     public boolean isAdminOption() {
         return is(ADMIN_OPTION);
     }
@@ -57,11 +61,13 @@ public class DBGrantedPrivilegeImpl extends DBObjectImpl implements DBGrantedPri
     /*********************************************************
      *                     TreeElement                       *
      *********************************************************/
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
 
+    @Override
     @NotNull
     public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
         return EMPTY_TREE_NODE_LIST;

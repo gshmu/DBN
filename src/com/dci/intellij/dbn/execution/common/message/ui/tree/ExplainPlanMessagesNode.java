@@ -48,6 +48,7 @@ public class ExplainPlanMessagesNode extends BundleTreeNode {
     }
 
 
+    @Override
     public VirtualFile getVirtualFile() {
         return null;
     }

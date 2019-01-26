@@ -31,6 +31,7 @@ public abstract class DDLFileEditorProvider extends BasicTextEditorProvider impl
         return index;
     }
 
+    @Override
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
             DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
@@ -40,6 +41,7 @@ public abstract class DDLFileEditorProvider extends BasicTextEditorProvider impl
         return false;
     }
 
+    @Override
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
         DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
@@ -51,6 +53,7 @@ public abstract class DDLFileEditorProvider extends BasicTextEditorProvider impl
         return textEditor;
     }
 
+    @Override
     public void disposeEditor(@NotNull FileEditor editor) {
         DDLFileEditor sourceEditor = (DDLFileEditor) editor;
         Document document = sourceEditor.getEditor().getDocument();
@@ -58,6 +61,7 @@ public abstract class DDLFileEditorProvider extends BasicTextEditorProvider impl
         Disposer.dispose(sourceEditor);
     }
 
+    @Override
     @NotNull
     public FileEditorPolicy getPolicy() {
         return FileEditorPolicy.PLACE_AFTER_DEFAULT_EDITOR;
@@ -72,6 +76,7 @@ public abstract class DDLFileEditorProvider extends BasicTextEditorProvider impl
      *                ApplicationComponent                   *
      *********************************************************/
 
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {

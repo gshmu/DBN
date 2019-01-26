@@ -22,6 +22,7 @@ public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperE
         super(elementType);
     }
 
+    @Override
     public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
         logBegin(builder, optional, depth);

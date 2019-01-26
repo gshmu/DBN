@@ -9,10 +9,12 @@ import java.sql.Types;
 public class BasicOperationInfo implements CallableStatementOutput {
     protected String error;
 
+    @Override
     public void registerParameters(CallableStatement statement) throws SQLException {
         statement.registerOutParameter(1, Types.VARCHAR);
     }
 
+    @Override
     public void read(CallableStatement statement) throws SQLException {
         error = statement.getString(1);
     }

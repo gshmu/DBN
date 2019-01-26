@@ -39,10 +39,12 @@ public class DatabaseBrowserSettings extends CompositeProjectConfiguration<Datab
         return "DBNavigator.Project.DatabaseBrowserSettings";
     }
 
+    @Override
     public String getDisplayName() {
         return "Database Browser";
     }
 
+    @Override
     public String getHelpTopic() {
         return "browserSettings";
     }

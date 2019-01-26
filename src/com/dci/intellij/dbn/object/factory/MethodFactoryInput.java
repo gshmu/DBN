@@ -44,6 +44,7 @@ public class MethodFactoryInput extends ObjectFactoryInput{
         this.arguments = arguments;
     }
 
+    @Override
     public void validate(List<String> errors) {
         if (getObjectName().length() == 0) {
             String hint = getParent() == null ? "" : " at index " + getIndex();

@@ -47,12 +47,14 @@ public class ConnectionListModel extends DefaultListModel<ConnectionSettings> {
     }
 
     private Comparator<ConnectionSettings> ascComparator = new Comparator<ConnectionSettings>() {
+        @Override
         public int compare(ConnectionSettings connectionSettings1, ConnectionSettings connectionSettings2) {
             return connectionSettings1.getDatabaseSettings().getName().compareTo(connectionSettings2.getDatabaseSettings().getName());
         }
     };
 
     private Comparator<ConnectionSettings> descComparator = new Comparator<ConnectionSettings>() {
+        @Override
         public int compare(ConnectionSettings connectionSettings1, ConnectionSettings connectionSettings2) {
             return -connectionSettings1.getDatabaseSettings().getName().compareTo(connectionSettings2.getDatabaseSettings().getName());
         }

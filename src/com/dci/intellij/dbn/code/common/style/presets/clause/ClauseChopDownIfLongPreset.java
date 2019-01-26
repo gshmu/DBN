@@ -11,6 +11,7 @@ public class ClauseChopDownIfLongPreset extends ClauseAbstractPreset {
         super("chop_down_if_long", "Chop down if long");
     }
 
+    @Override
     @Nullable
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         boolean shouldWrap = psiElement.approximateLength() > settings.getRightMargin(psiElement.getLanguage());
@@ -18,6 +19,7 @@ public class ClauseChopDownIfLongPreset extends ClauseAbstractPreset {
 
     }
 
+    @Override
     @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         boolean shouldChopDown = psiElement.approximateLength() > settings.getRightMargin(psiElement.getLanguage());

@@ -18,11 +18,13 @@ import org.jetbrains.annotations.NotNull;
 public class SQLStructureViewModelFilter implements Filter {
     private ActionPresentation actionPresentation = new ActionPresentationData("Top Level Elements", "", Icons.TOP_LEVEL_FILTER);
 
+    @Override
     @NotNull
     public ActionPresentation getPresentation() {
         return actionPresentation;
     }
 
+    @Override
     @NotNull
     public String getName() {
         return "Top Level";

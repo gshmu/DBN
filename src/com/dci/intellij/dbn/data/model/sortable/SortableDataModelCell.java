@@ -10,6 +10,7 @@ public class SortableDataModelCell extends BasicDataModelCell implements Compara
         super(userValue, row, index);
     }
 
+    @Override
     public int compareTo(@NotNull Object o) {
         DataModelCell cell = (DataModelCell) o;
         Comparable local = (Comparable) getUserValue();
@@ -30,6 +31,7 @@ public class SortableDataModelCell extends BasicDataModelCell implements Compara
         }
     }
 
+    @Override
     @NotNull
     public SortableDataModel getModel() {
         return (SortableDataModel) getRow().getModel();

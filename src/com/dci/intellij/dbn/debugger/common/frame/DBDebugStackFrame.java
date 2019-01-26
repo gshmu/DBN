@@ -210,6 +210,7 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
         node.addChildren(children, true);
     }
 
+    @Override
     public void customizePresentation(@NotNull ColoredTextContainer component) {
         XSourcePosition sourcePosition = getSourcePosition();
         VirtualFile virtualFile = DBDebugUtil.getSourceCodeFile(sourcePosition);

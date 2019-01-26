@@ -33,6 +33,7 @@ public class DBStatementJdwpRunConfigEditorForm extends DBProgramRunConfiguratio
         }
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -41,6 +42,7 @@ public class DBStatementJdwpRunConfigEditorForm extends DBProgramRunConfiguratio
         return executionInput;
     }
 
+    @Override
     public void writeConfiguration(DBStatementJdwpRunConfig configuration) throws ConfigurationException {
         configuration.setCompileDependencies(compileDependenciesCheckBox.isSelected());
 
@@ -56,12 +58,14 @@ public class DBStatementJdwpRunConfigEditorForm extends DBProgramRunConfiguratio
         //selectMethodAction.setConfiguration(configuration);
     }
 
+    @Override
     public void readConfiguration(DBStatementJdwpRunConfig configuration) {
         compileDependenciesCheckBox.setSelected(configuration.isCompileDependencies());
         fromPortTextField.setText(String.valueOf(configuration.getTcpPortRange().getFrom()));
         toPortTextField.setText(String.valueOf(configuration.getTcpPortRange().getTo()));
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         executionInput = null;

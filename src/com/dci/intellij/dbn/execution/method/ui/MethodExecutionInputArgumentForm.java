@@ -171,6 +171,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
         return DBObjectRef.get(argumentRef);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }
@@ -225,6 +226,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
         }
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         typeAttributeForms = null;

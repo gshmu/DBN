@@ -14,6 +14,7 @@ public class SqliteSQLHighlighter extends SQLSyntaxHighlighter {
         super(languageDialect, "sqlite_sql_highlighter_tokens.xml");
     }
 
+    @Override
     @NotNull
     protected Lexer createLexer() {
         FlexLexer flexLexer = new SqliteSQLHighlighterFlexLexer(getTokenTypes());

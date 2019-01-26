@@ -176,6 +176,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
             this.value = value;
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             selectValue(value);
             DBNComboBox.this.requestFocus();
@@ -194,6 +195,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
             super(valueFactory.getActionName(), null, Icons.ACTION_ADD);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             valueFactory.create(inputValue -> {
                 if (inputValue != null) {
@@ -252,6 +254,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
         model.addElement(value);
     }
 
+    @Override
     public DBNComboBoxModel<T> getModel() {
         return (DBNComboBoxModel<T>) super.getModel();
     }

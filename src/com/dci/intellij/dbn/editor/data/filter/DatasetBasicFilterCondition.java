@@ -51,6 +51,7 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
         return filter;
     }
 
+    @Override
     public String getDisplayName() {
         return null;
     }
@@ -184,12 +185,14 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
     /****************************************************
     *                   Configuration                  *
     ****************************************************/
+    @Override
     @NotNull
     public DatasetBasicFilterConditionForm createConfigurationEditor() {
         DBDataset dataset = filter.lookupDataset();
         return new DatasetBasicFilterConditionForm(dataset, this);
     }
 
+    @Override
     public void readConfiguration(Element element) {
        columnName = element.getAttributeValue("column");
        operator = ConditionOperator.get(element.getAttributeValue("operator"));
@@ -197,6 +200,7 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
        active = Boolean.parseBoolean(element.getAttributeValue("active"));
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         element.setAttribute("column", columnName);
         element.setAttribute("operator", operator.getText());

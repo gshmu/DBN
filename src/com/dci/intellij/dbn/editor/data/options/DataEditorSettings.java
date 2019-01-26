@@ -31,10 +31,12 @@ public class DataEditorSettings extends CompositeProjectConfiguration<DataEditor
         return "DBNavigator.Project.DataEditorSettings";
     }
 
+    @Override
     public String getDisplayName() {
         return "Data Editor";
     }
 
+    @Override
     public String getHelpTopic() {
         return "dataEditor";
     }
@@ -81,6 +83,7 @@ public class DataEditorSettings extends CompositeProjectConfiguration<DataEditor
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
+    @Override
     @NotNull
     public DataEditorSettingsForm createConfigurationEditor() {
         return new DataEditorSettingsForm(this);
@@ -91,6 +94,7 @@ public class DataEditorSettings extends CompositeProjectConfiguration<DataEditor
         return "dataset-editor-settings";
     }
 
+    @Override
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
                 popupSettings,

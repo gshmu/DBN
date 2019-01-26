@@ -46,6 +46,7 @@ public class BasicTableTextAttributes extends CommonUtil implements DataGridText
         load();
     }
 
+    @Override
     public void load() {
         EditorColorsScheme globalScheme = EditorColorsManager.getInstance().getGlobalScheme();
         caretRowBgColor = globalScheme.getAttributes(DataGridTextAttributesKeys.CARET_ROW).getBackgroundColor();
@@ -122,6 +123,7 @@ public class BasicTableTextAttributes extends CommonUtil implements DataGridText
         searchResult = TextAttributesUtil.getSimpleTextAttributes(EditorColors.TEXT_SEARCH_RESULT_ATTRIBUTES);
     }
 
+    @Override
     public SimpleTextAttributes getPlainData(boolean modified, boolean atCaretRow) {
         return modified && atCaretRow ? plainDataAtCaretRowModified :
                 atCaretRow ? plainDataAtCaretRow :
@@ -147,6 +149,7 @@ public class BasicTableTextAttributes extends CommonUtil implements DataGridText
             modified ? readonlyDataModified : readonlyData;
     }
 
+    @Override
     public SimpleTextAttributes getLoadingData(boolean atCaretRow) {
         return atCaretRow ? loadingDataAtCaretRow : loadingData;
     }

@@ -8,6 +8,7 @@ import java.util.List;
 public class TableDependencyPath {
     private List<DBTable> tables = new ArrayList<DBTable>();
 
+    @Override
     public TableDependencyPath clone() {
         TableDependencyPath clone = new TableDependencyPath();
         clone.tables.addAll(tables);

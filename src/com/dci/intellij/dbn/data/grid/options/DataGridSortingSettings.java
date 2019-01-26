@@ -37,6 +37,7 @@ public class DataGridSortingSettings extends ProjectConfiguration<DataGridSortin
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @Override
     @NotNull
     public DataGridSortingSettingsForm createConfigurationEditor() {
         return new DataGridSortingSettingsForm(this);
@@ -47,11 +48,13 @@ public class DataGridSortingSettings extends ProjectConfiguration<DataGridSortin
         return "sorting";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         nullsFirst = SettingsUtil.getBoolean(element, "nulls-first", nullsFirst);
         maxSortingColumns = SettingsUtil.getInteger(element, "max-sorting-columns", maxSortingColumns);
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         SettingsUtil.setBoolean(element, "nulls-first", nullsFirst);
         SettingsUtil.setInteger(element, "max-sorting-columns", maxSortingColumns);

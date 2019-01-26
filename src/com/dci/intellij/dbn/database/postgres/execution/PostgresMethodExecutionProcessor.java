@@ -76,6 +76,7 @@ public class PostgresMethodExecutionProcessor extends MethodExecutionProcessorIm
         }
     }
 
+    @Override
     protected boolean isQuery() {
         if (isQuery == null) {
             DBMethod method = getMethod();

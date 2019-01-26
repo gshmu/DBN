@@ -227,6 +227,7 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
     /*************************************************
     *                      Settings                  *
     *************************************************/
+    @Override
     public String getDisplayName() {
         return null;
     }
@@ -234,6 +235,7 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @Override
     public void apply() throws ConfigurationException {
         if (isChanged) {
             filters.clear();
@@ -249,6 +251,7 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
         }
     }
 
+    @Override
     public void reset() {
         if (isChanged) {
             filtersTemp.clear();
@@ -259,6 +262,7 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
         }
     }
 
+    @Override
     public void disposeUIResources() {
         for (DatasetFilter filter :filters) {
             filter.disposeUIResources();
@@ -270,11 +274,13 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
         super.disposeUIResources();
     }
 
+   @Override
    @NotNull
    public DatasetFilterForm createConfigurationEditor() {
        return new DatasetFilterForm(this, lookupDataset());
    }
 
+    @Override
     public void readConfiguration(Element element) {
         connectionId = ConnectionId.get(element.getAttributeValue("connection-id"));
         datasetName = element.getAttributeValue("dataset");
@@ -295,6 +301,7 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
         activeFilter = getFilter(activeFilterId);
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         element.setAttribute("connection-id", connectionId.id());
         element.setAttribute("dataset", datasetName);
@@ -313,18 +320,22 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
         return isChanged ? filtersTemp : filters;
    }
 
+   @Override
    public int getSize() {
         return getFilters().size();
     }
 
+    @Override
     public Object getElementAt(int index) {
         return getFilters().get(index);
     }
 
+    @Override
     public void addListDataListener(ListDataListener listener) {
         listeners.add(listener);
     }
 
+    @Override
     public void removeListDataListener(ListDataListener listener) {
         listeners.remove(listener);
     }

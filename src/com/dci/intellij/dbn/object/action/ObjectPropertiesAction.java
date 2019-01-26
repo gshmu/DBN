@@ -16,6 +16,7 @@ public class ObjectPropertiesAction extends DumbAwareAction {
 
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         MessageUtil.showInfoDialog(project, "Not implemented!", "This feature is not implemented yet.");

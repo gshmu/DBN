@@ -17,6 +17,7 @@ public class RunMethodAction extends AnObjectAction<DBMethod> {
         super(method);
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         DBMethod method = getObject();
         if (method != null) {

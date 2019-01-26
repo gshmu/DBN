@@ -180,6 +180,7 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
         changeListeners.add(changeListener);
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         changeListeners.clear();

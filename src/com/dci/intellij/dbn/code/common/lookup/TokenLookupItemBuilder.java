@@ -27,10 +27,12 @@ public class TokenLookupItemBuilder extends LookupItemBuilder {
         this.tokenElementType = tokenElementType;
     }
 
+    @Override
     public Icon getIcon() {
         return null;
     }
 
+    @Override
     public boolean isBold() {
         return tokenElementType.getTokenType().isKeyword();
     }
@@ -74,6 +76,7 @@ public class TokenLookupItemBuilder extends LookupItemBuilder {
         return text;
     }
 
+    @Override
     public String getTextHint() {
         return getTokenTypeCategory().getName();
     }

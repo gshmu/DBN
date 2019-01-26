@@ -389,6 +389,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     /*********************************************************
      *                    ProjectComponent                   *
      *********************************************************/
+    @Override
     @NotNull
     @NonNls
     public String getComponentName() {

@@ -28,10 +28,12 @@ public class ProjectCodeStyleSettings extends CompositeProjectConfiguration<Code
         return "DBNavigator.Project.CodeStyleSettings";
     }
 
+    @Override
     public String getDisplayName() {
         return "Code Style";
     }
 
+    @Override
     @NotNull
     public CodeStyleSettingsForm createConfigurationEditor() {
         return new CodeStyleSettingsForm(this);
@@ -66,6 +68,7 @@ public class ProjectCodeStyleSettings extends CompositeProjectConfiguration<Code
     /*********************************************************
     *                     Configuration                      *
     *********************************************************/
+    @Override
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
                 getSQLCodeStyleSettings(),

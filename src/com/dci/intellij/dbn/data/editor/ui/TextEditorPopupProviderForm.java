@@ -62,6 +62,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
         rightActionPanel.add(rightActionToolbar.getComponent(), BorderLayout.EAST);
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }
@@ -72,6 +73,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
         return editorTextArea;
     }
 
+    @Override
     public JBPopup createPopup() {
         JTextField textField = getTextField();
         String text = "";
@@ -108,14 +110,19 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
         return popupBuilder.createPopup();
     }
 
+    @Override
     public void handleKeyPressedEvent(KeyEvent e) {}
+    @Override
     public void handleKeyReleasedEvent(KeyEvent e) {}
+    @Override
     public void handleFocusLostEvent(FocusEvent e) {}
 
+    @Override
     public String getKeyShortcutName() {
         return IdeActions.ACTION_SHOW_INTENTION_ACTIONS;
     }
 
+    @Override
     public String getDescription() {
         return "Text Editor";
     }
@@ -131,6 +138,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
         return Icons.DATA_EDITOR_BROWSE;
     }
 
+    @Override
     public void keyPressed(KeyEvent e) {
         super.keyPressed(e);
         if (!e.isConsumed()) {
@@ -141,6 +149,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     }
 
     private class DocumentListener extends DocumentAdapter {
+        @Override
         protected void textChanged(@NotNull DocumentEvent documentEvent) {
             changed = true;
         }
@@ -153,6 +162,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
             registerAction(this);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             String text = editorTextArea.getText().trim();
             UserValueHolder userValueHolder = getEditorComponent().getUserValueHolder();
@@ -180,6 +190,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
             //registerAction(this);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             hidePopup();
         }
@@ -197,6 +208,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
             //registerAction(this);
         }
 
+        @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             JTextField textField = getTextField();
             TextFieldWithPopup editorComponent = getEditorComponent();
@@ -207,6 +219,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
         }
     }
 
+    @Override
     public void dispose() {
         super.dispose();
     }

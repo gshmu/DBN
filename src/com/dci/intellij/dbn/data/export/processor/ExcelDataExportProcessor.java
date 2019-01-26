@@ -27,6 +27,7 @@ import java.util.Date;
 
 public class ExcelDataExportProcessor extends DataExportProcessor{
 
+    @Override
     public DataExportFormat getFormat() {
         return DataExportFormat.EXCEL;
     }
@@ -36,14 +37,17 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
         return "xls";
     }
 
+    @Override
     public boolean canCreateHeader() {
         return true;
     }
 
+    @Override
     public boolean canExportToClipboard() {
         return false;
     }
 
+    @Override
     public boolean canQuoteValues() {
         return false;
     }
@@ -61,6 +65,7 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
         return fileName;
     }
 
+    @Override
     public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
         Workbook workbook = createWorkbook();
         try {

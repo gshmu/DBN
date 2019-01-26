@@ -27,10 +27,12 @@ public class StatementExecutionMessageNode extends DisposableBase implements Mes
         return FailsafeUtil.get(executionMessage);
     }
 
+    @Override
     public VirtualFile getVirtualFile() {
         return parent.getVirtualFile();
     }
 
+    @Override
     public MessagesTreeModel getTreeModel() {
         return getParent().getTreeModel();
     }
@@ -38,30 +40,37 @@ public class StatementExecutionMessageNode extends DisposableBase implements Mes
     /*********************************************************
      *                        TreeNode                       *
      *********************************************************/
+    @Override
     public TreeNode getChildAt(int childIndex) {
         return null;
     }
 
+    @Override
     public int getChildCount() {
         return 0;
     }
 
+    @Override
     public StatementExecutionMessagesFileNode getParent() {
         return FailsafeUtil.get(parent);
     }
 
+    @Override
     public int getIndex(TreeNode node) {
         return -1;
     }
 
+    @Override
     public boolean getAllowsChildren() {
         return false;
     }
 
+    @Override
     public boolean isLeaf() {
         return true;
     }
 
+    @Override
     public Enumeration children() {
         return null;
     }
@@ -82,6 +91,7 @@ public class StatementExecutionMessageNode extends DisposableBase implements Mes
         return getExecutionMessage();
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         executionMessage = null;

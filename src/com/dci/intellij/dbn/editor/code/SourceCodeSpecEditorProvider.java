@@ -13,6 +13,7 @@ import javax.swing.*;
 
 public class SourceCodeSpecEditorProvider extends BasicSourceCodeEditorProvider {
 
+    @Override
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
         DBEditableObjectVirtualFile databaseFile = null;
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
@@ -34,6 +35,7 @@ public class SourceCodeSpecEditorProvider extends BasicSourceCodeEditorProvider 
         return DBContentType.CODE_SPEC;
     }
 
+    @Override
     @NotNull
     public FileEditorPolicy getPolicy() {
         return FileEditorPolicy.PLACE_BEFORE_DEFAULT_EDITOR;
@@ -45,10 +47,12 @@ public class SourceCodeSpecEditorProvider extends BasicSourceCodeEditorProvider 
         return EditorProviderId.CODE_SPEC;
     }
 
+    @Override
     public String getName() {
         return "Spec";
     }
 
+    @Override
     public Icon getIcon() {
         return null;//Icons.CODE_EDITOR_SPEC;
     }
@@ -57,6 +61,7 @@ public class SourceCodeSpecEditorProvider extends BasicSourceCodeEditorProvider 
      *                ApplicationComponent                   *
      *********************************************************/
 
+    @Override
     @NonNls
     @NotNull
     public String getComponentName() {

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.browser.ui;
 
 public abstract class HtmlToolTipBuilder implements ToolTipProvider {
     private StringBuilder buffer;
+    @Override
     public String getToolTip() {
         buffer = new StringBuilder();
         buffer.append("<html>");

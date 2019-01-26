@@ -91,6 +91,7 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
         return true;
     }
 
+    @Override
     @NotNull
     public Project getProject() {
         return FailsafeUtil.get(project);
@@ -101,10 +102,12 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
         Disposer.register(this, header);
     }
 
+    @Override
     public DataModelHeader<? extends ColumnInfo> getHeader() {
         return header;
     }
 
+    @Override
     @NotNull
     public DataModelState getState() {
         if (state == null) {
@@ -113,6 +116,7 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
         return state;
     }
 
+    @Override
     public void setState(DataModelState state) {
         this.state = state;
     }
@@ -185,6 +189,7 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
         Disposer.dispose(row);
     }
 
+    @Override
     public T getRowAtIndex(int index) {
         // model may be reloading when this is called, hence
         // IndexOutOfBoundsException is thrown if the range is not checked
@@ -196,10 +201,12 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
         return getRows().get(rowIndex).getCellAtIndex(columnIndex);
     }
 
+    @Override
     public ColumnInfo getColumnInfo(int columnIndex) {
         return getHeader().getColumnInfo(columnIndex);
     }
 
+    @Override
     public int indexOfRow(T row) {
         return getRows().indexOf(row);
     }
@@ -266,26 +273,32 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
     /*********************************************************
      *                     DataModel                        *
      *********************************************************/
+    @Override
     public int getRowCount() {
         return getRows().size();
     }
 
+    @Override
     public int getColumnCount() {
         return isDisposed() ? 0 : getHeader().getColumnCount();
     }
 
+    @Override
     public String getColumnName(int columnIndex) {
         return getHeader().getColumnName(columnIndex);
     }
 
+    @Override
     public Class<?> getColumnClass(int columnIndex) {
         return String.class;
     }
 
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
     }
 
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         // model may be reloading when this is called, hence
         // IndexOutOfBoundsException is thrown if the range is not checked
@@ -293,16 +306,20 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
         return rows.size() > rowIndex && columnIndex > -1 ? rows.get(rowIndex).getCellAtIndex(columnIndex) : null;
     }
 
+    @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {}
 
+    @Override
     public void addTableModelListener(TableModelListener listener) {
         tableModelListeners.add(listener);
     }
 
+    @Override
     public void removeTableModelListener(TableModelListener listener) {
         tableModelListeners.remove(listener);
     }
 
+    @Override
     public void addDataModelListener(DataModelListener listener) {
         dataModelListeners.add(listener);
     }
@@ -330,6 +347,7 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
+    @Override
     public void dispose() {
         if (!isDisposed()) {
             set(RecordStatus.DISPOSED, true);

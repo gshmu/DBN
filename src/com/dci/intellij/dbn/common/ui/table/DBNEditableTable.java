@@ -56,6 +56,7 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
         }
     };
 
+    @Override
     public void columnSelectionChanged(ListSelectionEvent e) {
         super.columnSelectionChanged(e);
         JTableHeader tableHeader = getTableHeader();
@@ -87,6 +88,7 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
         model.notifyListeners(0, model.getRowCount(), 0);
     }
 
+    @Override
     public Component prepareEditor(TableCellEditor editor, int rowIndex, int columnIndex) {
         final Component component = super.prepareEditor(editor, rowIndex, columnIndex);
         if (component instanceof JTextField) {

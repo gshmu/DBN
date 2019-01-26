@@ -244,6 +244,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         changedRows.clear();
     }
 
+    @Override
     public boolean isReadonly() {
         return !isEditable();
     }
@@ -468,10 +469,12 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     /*********************************************************
      *                      DataModel                       *
      *********************************************************/
+    @Override
     public DatasetEditorModelCell getCellAt(int rowIndex, int columnIndex) {
         return (DatasetEditorModelCell) super.getCellAt(rowIndex, columnIndex);
     }
 
+    @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
         DatasetEditorModelCell cell = getCellAt(rowIndex, columnIndex);
         cell.updateUserValue(value, false);
@@ -482,6 +485,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         cell.updateUserValue(value, errorMessage);
     }
 
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         DatasetEditorTable editorTable = getEditorTable();
         DatasetEditorState editorState = getState();
@@ -524,6 +528,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     /*********************************************************
      *                ListSelectionListener                  *
      *********************************************************/
+    @Override
     public void valueChanged(ListSelectionEvent event) {
         if (is(INSERTING) && !event.getValueIsAdjusting()) {
             DatasetEditorModelRow insertRow = getInsertRow();

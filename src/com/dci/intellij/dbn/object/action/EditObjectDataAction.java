@@ -21,6 +21,7 @@ public class EditObjectDataAction extends DumbAwareAction {
         return DBObjectRef.getnn(objectRef);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         DatabaseFileSystem fileSystem = DatabaseFileSystem.getInstance();
         DBSchemaObject object = getObject();

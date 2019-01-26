@@ -146,6 +146,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         return databaseFile;
     }
 
+    @Override
     @Nullable
     public DBSchema getDatabaseSchema() {
         return getDataset().getSchema();
@@ -155,27 +156,32 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         return project;
     }
 
+    @Override
     @NotNull
     public JComponent getComponent() {
         return getEditorForm().getComponent();
     }
 
+    @Override
     @Nullable
     public JComponent getPreferredFocusedComponent() {
         return getEditorTable().getTableGutter();
     }
 
+    @Override
     @NonNls
     @NotNull
     public String getName() {
         return "Data";
     }
 
+    @Override
     @NotNull
     public FileEditorState getState(@NotNull FileEditorStateLevel level) {
         return editorState.clone();
     }
 
+    @Override
     public void setState(@NotNull FileEditorState fileEditorState) {
         if (fileEditorState instanceof DatasetEditorState) {
             editorState = (DatasetEditorState) fileEditorState;
@@ -186,38 +192,47 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         return editorState;
     }
 
+    @Override
     public boolean isModified() {
         return getTableModel().is(MODIFIED);
     }
 
+    @Override
     public boolean isValid() {
         return !isDisposed();
     }
 
+    @Override
     public void selectNotify() {
 
     }
 
+    @Override
     public void deselectNotify() {
 
     }
 
+    @Override
     public void addPropertyChangeListener(@NotNull PropertyChangeListener listener) {
     }
 
+    @Override
     public void removePropertyChangeListener(@NotNull PropertyChangeListener listener) {
     }
 
+    @Override
     @Nullable
     public BackgroundEditorHighlighter getBackgroundHighlighter() {
         return null;
     }
 
+    @Override
     @Nullable
     public FileEditorLocation getCurrentLocation() {
         return null;
     }
 
+    @Override
     @Nullable
     public StructureViewBuilder getStructureViewBuilder() {
         return new TreeBasedStructureViewBuilder() {
@@ -495,6 +510,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
 
+    @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.getnn();
@@ -532,6 +548,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     };
 
     private TransactionListener transactionListener = new TransactionListener() {
+        @Override
         public void beforeAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action) {
             if (connectionHandler == getConnectionHandler()) {
                 DatasetEditorModel model = getTableModel();
@@ -563,6 +580,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             }
         }
 
+        @Override
         public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
             if (connectionHandler == getConnectionHandler()) {
                 DatasetEditorModel model = getTableModel();
@@ -596,6 +614,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         return null;
     };
 
+    @Override
     @Nullable
     public DataProvider getDataProvider() {
         return dataProvider;
@@ -626,6 +645,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         return disposed;
     }
 
+    @Override
     public void dispose() {
         if (!disposed) {
             disposed = true;

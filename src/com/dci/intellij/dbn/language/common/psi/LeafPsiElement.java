@@ -28,6 +28,7 @@ public abstract class LeafPsiElement extends BasePsiElement implements PsiRefere
         super(astNode, elementType);
     }
 
+    @Override
     public int approximateLength() {
         return getTextLength() + 1;
     }
@@ -50,41 +51,50 @@ public abstract class LeafPsiElement extends BasePsiElement implements PsiRefere
      *                       PsiReference                    *
      *********************************************************/
 
+    @Override
     public PsiElement getElement() {
         return this;
     }
 
+    @Override
     @Nullable
     public PsiElement resolve() {
         return null;
     }
 
+    @Override
     @NotNull
     public String getCanonicalText() {
         PsiElement reference = resolve();
         return reference == null ? getText() : reference.getText();
     }
 
+    @Override
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
         return null;
     }
 
+    @Override
     public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
         return null;
     }
 
+    @Override
     public boolean isReferenceTo(PsiElement element) {
         return false;
     }
 
-    public TextRange getRangeInElement() {                                        
+    @Override
+    public TextRange getRangeInElement() {
         return new TextRange(0, getTextLength());
     }
 
+    @Override
     public boolean isSoft() {
         return true;
     }
 
+    @Override
     @NotNull
     public Object[] getVariants() {
         return PsiElement.EMPTY_ARRAY;
@@ -153,6 +163,7 @@ public abstract class LeafPsiElement extends BasePsiElement implements PsiRefere
         return getElementType().is(attribute) ? this : null;
     }
 
+    @Override
     public BasePsiElement findFirstPsiElement(ElementTypeAttribute attribute) {
         if (this.getElementType().is(attribute)) {
             return this;
@@ -168,6 +179,7 @@ public abstract class LeafPsiElement extends BasePsiElement implements PsiRefere
         return null;
     }
 
+    @Override
     public BasePsiElement findFirstLeafPsiElement() {
         return this;
     }

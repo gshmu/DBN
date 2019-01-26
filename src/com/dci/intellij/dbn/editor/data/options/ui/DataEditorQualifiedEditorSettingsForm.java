@@ -41,6 +41,7 @@ public class DataEditorQualifiedEditorSettingsForm extends ConfigurationEditorFo
         textLengthThresholdTextField.setText(Integer.toString(settings.getTextLengthThreshold()));
     }
 
+    @Override
     public JComponent getComponent() {
         return mainPanel;
     }

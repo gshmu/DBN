@@ -18,9 +18,11 @@ public class Iso92SQLLanguageDialect extends SQLLanguageDialect {
         return null;
     }
 
+    @Override
     protected DBLanguageSyntaxHighlighter createSyntaxHighlighter() {
         return new Iso92SQLHighlighter(this);
 }
+    @Override
     protected Iso92SQLParserDefinition createParserDefinition() {
         Iso92SQLParser parser = new Iso92SQLParser(this);
         return new Iso92SQLParserDefinition(parser);

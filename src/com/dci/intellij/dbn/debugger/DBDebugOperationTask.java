@@ -37,6 +37,7 @@ public abstract class DBDebugOperationTask<T> extends AbstractTask<T> implements
 
     public abstract void execute() throws Exception;
 
+    @Override
     public final void start() {
         try {
             ExecutorService executorService = ThreadFactory.debugExecutor();

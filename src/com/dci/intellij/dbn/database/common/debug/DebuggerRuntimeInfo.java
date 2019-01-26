@@ -59,6 +59,7 @@ public class DebuggerRuntimeInfo extends BasicOperationInfo {
         this.frameIndex = frameIndex;
     }
 
+    @Override
     public void registerParameters(CallableStatement statement) throws SQLException {
         statement.registerOutParameter(1, Types.VARCHAR);
         statement.registerOutParameter(2, Types.VARCHAR);
@@ -70,6 +71,7 @@ public class DebuggerRuntimeInfo extends BasicOperationInfo {
         statement.registerOutParameter(8, Types.VARCHAR);
     }
 
+    @Override
     public void read(CallableStatement statement) throws SQLException {
         ownerName = statement.getString(1);
         programName = statement.getString(2);

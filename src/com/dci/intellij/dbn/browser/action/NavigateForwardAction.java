@@ -15,6 +15,7 @@ public class NavigateForwardAction extends DumbAwareAction {
         super("Forward", null, Icons.BROWSER_NEXT);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
@@ -24,6 +25,7 @@ public class NavigateForwardAction extends DumbAwareAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Forward");

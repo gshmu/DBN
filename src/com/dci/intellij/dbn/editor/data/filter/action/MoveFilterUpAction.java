@@ -11,6 +11,7 @@ public class MoveFilterUpAction extends AbstractFilterListAction {
         super(filterList, "Move selection up", Icons.ACTION_MOVE_UP);
     }
 
+    @Override
     public void actionPerformed(AnActionEvent e) {
         DatasetFilterList filterList = getFilterList();
         DatasetFilter filter = (DatasetFilter) filterList.getSelectedValue();

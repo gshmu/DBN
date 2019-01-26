@@ -21,6 +21,7 @@ public class OpenSettingsAction extends DumbAwareAction {
         this.configId = configId;
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
@@ -36,6 +37,7 @@ public class OpenSettingsAction extends DumbAwareAction {
         }
     }
 
+    @Override
     public void update(@NotNull AnActionEvent e) {
         Presentation presentation = e.getPresentation();
         //presentation.setIcon(Icons.ACTION_SETTINGS);

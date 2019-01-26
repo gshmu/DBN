@@ -94,6 +94,7 @@ public class CodeCompletionLookupConsumer implements LookupConsumer {
 
     }
 
+    @Override
     public void consume(@Nullable Collection objects) throws ConsumerStoppedException {
         if (objects != null) {
             check();

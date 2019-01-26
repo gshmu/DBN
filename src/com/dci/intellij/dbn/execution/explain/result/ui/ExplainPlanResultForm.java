@@ -50,6 +50,7 @@ public class ExplainPlanResultForm extends DBNFormImpl implements ExecutionResul
         return explainPlanTreeTable;
     }
 
+    @Override
     public void dispose() {
         super.dispose();
         explainPlanResult = null;
@@ -60,6 +61,7 @@ public class ExplainPlanResultForm extends DBNFormImpl implements ExecutionResul
         ExecutionManager.getInstance(project).selectResultTab(explainPlanResult);
     }
 
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }

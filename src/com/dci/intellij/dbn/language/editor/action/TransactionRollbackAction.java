@@ -15,6 +15,7 @@ public class TransactionRollbackAction extends TransactionEditorAction {
         super("Rollback", "Rollback changes", Icons.CONNECTION_ROLLBACK);
     }
 
+    @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         ConnectionHandler connectionHandler = getConnectionHandler(e);
         if (connectionHandler != null) {

@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class DBLFormattingModelBuilder implements FormattingModelBuilder {
 
+    @Override
     @NotNull
     public FormattingModel createModel(final PsiElement element, final CodeStyleSettings codeStyleSettings) {
         DBLanguage language = (DBLanguage) PsiUtil.getLanguage(element);
@@ -67,6 +68,7 @@ public class DBLFormattingModelBuilder implements FormattingModelBuilder {
         return null;
     }
 
+    @Override
     public TextRange getRangeAffectingIndent(PsiFile psiFile, int i, ASTNode astNode) {
         return astNode.getTextRange();
     }

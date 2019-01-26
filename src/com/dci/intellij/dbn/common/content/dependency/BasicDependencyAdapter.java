@@ -11,6 +11,7 @@ public class BasicDependencyAdapter implements ContentDependencyAdapter {
         return connectionHandler != null && connectionHandler.canConnect() && connectionHandler.isValid();
     }
 
+    @Override
     public boolean canLoad(ConnectionHandler connectionHandler) {
         //should reload if connection is valid
         return canConnect(connectionHandler);
@@ -21,26 +22,32 @@ public class BasicDependencyAdapter implements ContentDependencyAdapter {
 
     }
 
+    @Override
     public boolean isDirty() {
         return false;
     }
 
+    @Override
     public void beforeLoad() {
         // nothing to do before load
     }
 
+    @Override
     public void afterLoad() {
         // nothing to do after load
     }
 
+    @Override
     public void beforeReload(DynamicContent dynamicContent) {
 
     }
 
+    @Override
     public void afterReload(DynamicContent dynamicContent) {
 
     }
 
+    @Override
     public boolean canLoadFast() {
         return false;
     }
@@ -50,6 +57,7 @@ public class BasicDependencyAdapter implements ContentDependencyAdapter {
         return false;
     }
 
+    @Override
     public void dispose() {
     }
 }

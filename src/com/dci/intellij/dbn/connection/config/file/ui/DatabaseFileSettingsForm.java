@@ -76,6 +76,7 @@ public class DatabaseFileSettingsForm extends DBNFormImpl<ConnectionDatabaseSett
         table.getParent().setBackground(table.getBackground());
     }
     
+    @Override
     public JPanel getComponent() {
         return mainPanel;
     }

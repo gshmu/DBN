@@ -261,6 +261,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     };
 
     private ActionListener transactionActionListener = new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
             Object source = e.getSource();
             if (source == commitButton || source == rollbackButton) {

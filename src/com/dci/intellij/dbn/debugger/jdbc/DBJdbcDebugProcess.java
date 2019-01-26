@@ -108,10 +108,12 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         return debugConnection;
     }
 
+    @Override
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.getnn();
     }
 
+    @Override
     @NotNull
     public Project getProject() {
         return getSession().getProject();
@@ -588,6 +590,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     @Override public void resume() {resume(null);}
     @Override public void runToPosition(@NotNull XSourcePosition position) {runToPosition(position, null);}
 
+    @Override
     public DatabaseDebuggerInterface getDebuggerInterface() {
         return getConnectionHandler().getInterfaceProvider().getDebuggerInterface();
     }

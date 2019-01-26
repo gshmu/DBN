@@ -18,6 +18,7 @@ public class ParsePathNode extends BasicPathNode {
         this.depth = parent == null ? 0 : parent.depth + 1;
     }
 
+    @Override
     public ParsePathNode getParent() {
         return (ParsePathNode) super.getParent();
     }
@@ -42,6 +43,7 @@ public class ParsePathNode extends BasicPathNode {
         this.cursorPosition = cursorPosition;
     }
 
+    @Override
     public boolean isRecursive() {
         ParsePathNode parseNode = this.getParent();
         while (parseNode != null) {

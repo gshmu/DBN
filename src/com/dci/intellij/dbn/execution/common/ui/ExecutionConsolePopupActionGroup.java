@@ -39,12 +39,14 @@ public class ExecutionConsolePopupActionGroup extends DefaultActionGroup {
     };
 
     private AnAction closeAll = new AnAction("Close All") {
+        @Override
         public void actionPerformed(AnActionEvent e) {
             executionConsoleForm.removeAllTabs();
         }
     };
 
     private AnAction closeAllButThis = new AnAction("Close All But This") {
+        @Override
         public void actionPerformed(AnActionEvent e) {
             TabInfo tabInfo = getTabInfo(e);
             if (tabInfo != null) {

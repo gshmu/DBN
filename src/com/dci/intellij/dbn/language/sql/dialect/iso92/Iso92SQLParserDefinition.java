@@ -13,6 +13,7 @@ public class Iso92SQLParserDefinition extends SQLParserDefinition {
         super(parser);
     }
 
+    @Override
     @NotNull
     public Lexer createLexer(Project project) {
         return new FlexAdapter(new Iso92SQLParserFlexLexer(getTokenTypes()));

@@ -49,10 +49,12 @@ public class DataEditorQualifiedEditorSettings extends Configuration<DataEditorQ
     });
     private int textLengthThreshold = 300;
 
+    @Override
     public String getDisplayName() {
         return "Data editor text content type settings";
     }
 
+    @Override
     public String getHelpTopic() {
         return "dataEditor";
     }
@@ -91,6 +93,7 @@ public class DataEditorQualifiedEditorSettings extends Configuration<DataEditorQ
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @Override
     @NotNull
     public DataEditorQualifiedEditorSettingsForm createConfigurationEditor() {
         return new DataEditorQualifiedEditorSettingsForm(this);
@@ -101,6 +104,7 @@ public class DataEditorQualifiedEditorSettings extends Configuration<DataEditorQ
         return "qualified-text-editor";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         textLengthThreshold = SettingsUtil.getIntegerAttribute(element, "text-length-threshold", textLengthThreshold);
         Element contentTypes = element.getChild("content-types");
@@ -115,6 +119,7 @@ public class DataEditorQualifiedEditorSettings extends Configuration<DataEditorQ
         }
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         SettingsUtil.setIntegerAttribute(element, "text-length-threshold", textLengthThreshold);
         Element contentTypes = new Element("content-types");

@@ -15,10 +15,12 @@ public class DataEditorGeneralSettings extends Configuration<DataEditorGeneralSe
     private BooleanSetting selectContentOnCellEdit = new BooleanSetting("select-content-on-cell-edit", true);
     private BooleanSetting largeValuePreviewActive = new BooleanSetting("large-value-preview-active", true);
 
+    @Override
     public String getDisplayName() {
         return "Data editor general settings";
     }
 
+    @Override
     public String getHelpTopic() {
         return "dataEditor";
     }
@@ -54,6 +56,7 @@ public class DataEditorGeneralSettings extends Configuration<DataEditorGeneralSe
     /****************************************************
      *                   Configuration                  *
      ****************************************************/
+    @Override
     @NotNull
     public DataEditorGeneralSettingsForm createConfigurationEditor() {
         return new DataEditorGeneralSettingsForm(this);
@@ -64,6 +67,7 @@ public class DataEditorGeneralSettings extends Configuration<DataEditorGeneralSe
         return "general";
     }
 
+    @Override
     public void readConfiguration(Element element) {
         fetchBlockSize.readConfiguration(element);
         fetchTimeout.readConfiguration(element);
@@ -73,6 +77,7 @@ public class DataEditorGeneralSettings extends Configuration<DataEditorGeneralSe
         largeValuePreviewActive.readConfiguration(element);
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         fetchBlockSize.writeConfiguration(element);
         fetchTimeout.writeConfiguration(element);

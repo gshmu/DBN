@@ -17,21 +17,25 @@ public class StatementGutterRenderer extends GutterIconRenderer {
         this.action = new StatementGutterAction(executablePsiElement);
     }
 
+    @Override
     @NotNull
     public Icon getIcon() {
         return action.getIcon();
     }
 
+    @Override
     public boolean isNavigateAction() {
         return true;
     }
 
+    @Override
     @Nullable
     public AnAction getClickAction() {
         // TODO workaround for Idea 15 bug (showing gutter actions as intentions)
         return CommonUtil.isCalledThrough(ShowIntentionsPass.class) ? null : action;
     }
 
+    @Override
     @Nullable
     public String getTooltipText() {
         return action.getTooltipText();

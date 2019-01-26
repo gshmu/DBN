@@ -27,14 +27,17 @@ public class ObjectTypeFilterSetting implements Selectable<ObjectTypeFilterSetti
         return objectType;
     }
 
+    @Override
     public Icon getIcon() {
         return objectType.getIcon();
     }
 
+    @Override
     public String getName() {
         return objectType.getName().toUpperCase();
     }
 
+    @Override
     public String getError() {
         ObjectTypeFilterSettingsForm settingsEditor = parent.getSettingsEditor();
 
@@ -49,6 +52,7 @@ public class ObjectTypeFilterSetting implements Selectable<ObjectTypeFilterSetti
         return null;
     }
 
+    @Override
     public boolean isMasterSelected() {
         ObjectTypeFilterSettings masterSettings = parent.getMasterSettings();
         if (masterSettings != null) {
@@ -61,10 +65,12 @@ public class ObjectTypeFilterSetting implements Selectable<ObjectTypeFilterSetti
         return true;
     }
 
+    @Override
     public boolean isSelected() {
         return selected;
     }
 
+    @Override
     public void setSelected(boolean selected) {
         this.selected = selected;
     }

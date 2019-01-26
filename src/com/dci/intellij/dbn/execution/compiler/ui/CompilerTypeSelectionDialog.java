@@ -32,6 +32,7 @@ public class CompilerTypeSelectionDialog extends DBNDialog<CompilerTypeSelection
         return new CompilerTypeSelectionForm(this, object);
     }
 
+    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{
@@ -50,6 +51,7 @@ public class CompilerTypeSelectionDialog extends DBNDialog<CompilerTypeSelection
             putValue(DEFAULT_ACTION, Boolean.TRUE);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             selection = CompileType.KEEP;
             doOKAction();
@@ -62,6 +64,7 @@ public class CompilerTypeSelectionDialog extends DBNDialog<CompilerTypeSelection
             //putValue(DEFAULT_ACTION, Boolean.TRUE);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             selection = CompileType.NORMAL;
             doOKAction();
@@ -73,6 +76,7 @@ public class CompilerTypeSelectionDialog extends DBNDialog<CompilerTypeSelection
             super("Debug", Icons.OBEJCT_COMPILE_DEBUG);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             selection = CompileType.DEBUG;
             doOKAction();

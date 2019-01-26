@@ -53,6 +53,7 @@ public abstract class CompositeConfiguration<T extends CompositeConfigurationEdi
         super.disposeUIResources();
     }
 
+    @Override
     public void readConfiguration(Element element) {
         Configuration[] configurations = getConfigurations();
         for (Configuration configuration : configurations) {
@@ -60,6 +61,7 @@ public abstract class CompositeConfiguration<T extends CompositeConfigurationEdi
         }
     }
 
+    @Override
     public void writeConfiguration(Element element) {
         Configuration[] configurations = getConfigurations();
         for (Configuration configuration : configurations) {

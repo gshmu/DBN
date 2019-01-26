@@ -37,6 +37,7 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
         return objectList;
     }
 
+    @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         return objectList.getConnectionHandler();
@@ -61,6 +62,7 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
     /*********************************************************
      *                     VirtualFile                       *
      *********************************************************/
+    @Override
     @NotNull
     @NonNls
     public String getName() {
@@ -72,19 +74,23 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
         return name;
     }
 
+    @Override
     @NotNull
     public FileType getFileType() {
         return UnknownFileType.INSTANCE;
     }
 
+    @Override
     public boolean isWritable() {
         return false;
     }
 
+    @Override
     public boolean isDirectory() {
         return true;
     }
 
+    @Override
     @Nullable
     public VirtualFile getParent() {
         GenericDatabaseElement parent = objectList.getParentElement();
@@ -102,40 +108,49 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
         return null;
     }
 
+    @Override
     public Icon getIcon() {
         return null;
     }
 
+    @Override
     public VirtualFile[] getChildren() {
         return VirtualFile.EMPTY_ARRAY;
     }
 
+    @Override
     @NotNull
     public OutputStream getOutputStream(Object o, long l, long l1) throws IOException {
         return DevNullStreams.OUTPUT_STREAM;
     }
 
+    @Override
     @NotNull
     public byte[] contentsToByteArray() throws IOException {
         return EMPTY_BYTE_CONTENT;
     }
 
+    @Override
     public long getTimeStamp() {
         return 0;
     }
 
+    @Override
     public long getLength() {
         return 0;
     }
 
+    @Override
     public void refresh(boolean b, boolean b1, Runnable runnable) {
 
     }
 
+    @Override
     public InputStream getInputStream() throws IOException {
         return DevNullStreams.INPUT_STREAM;
     }
 
+    @Override
     public long getModificationStamp() {
         return 1;
     }

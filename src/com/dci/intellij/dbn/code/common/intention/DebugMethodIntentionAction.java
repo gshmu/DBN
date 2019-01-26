@@ -23,6 +23,7 @@ public class DebugMethodIntentionAction extends AbstractMethodExecutionIntention
         return Icons.METHOD_EXECUTION_DEBUG;
     }
 
+    @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile != null) {
             DBMethod method = resolveMethod(editor, psiFile);
@@ -31,6 +32,7 @@ public class DebugMethodIntentionAction extends AbstractMethodExecutionIntention
         return false;
     }
 
+    @Override
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         DBMethod method = resolveMethod(editor, psiFile);
         if (method != null) {
@@ -39,6 +41,7 @@ public class DebugMethodIntentionAction extends AbstractMethodExecutionIntention
         }
     }
 
+    @Override
     public boolean startInWriteAction() {
         return false;
     }
