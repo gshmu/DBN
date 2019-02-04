@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.common.dispose;
 
+import com.dci.intellij.dbn.common.thread.BasicCallable;
 import com.intellij.mock.MockProject;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
@@ -73,5 +75,14 @@ public class FailsafeUtil {
             }
         }
         return true;
+    }
+
+    public static <T> T lenient(BasicCallable<T, RuntimeException> loader) {
+        try {
+            return loader.call();
+        } catch (ProcessCanceledException e) {
+            return null;
+        }
+
     }
 }
