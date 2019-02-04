@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.vfs;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -45,9 +46,11 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
         if (language instanceof DBLanguage || language instanceof DBLanguageDialect) {
             VirtualFile virtualFile = getVirtualFile();
             if (virtualFile instanceof DBObjectVirtualFile) {
-                DBObjectVirtualFile objectFile = (DBObjectVirtualFile) virtualFile;
-                DBObject object = objectFile.getObject();
-                return DBObjectPsiFacade.getPsiFile(object);
+                return FailsafeUtil.lenient(() -> {
+                    DBObjectVirtualFile objectFile = (DBObjectVirtualFile) virtualFile;
+                    DBObject object = objectFile.getObject();
+                    return DBObjectPsiFacade.getPsiFile(object);
+                });
             }
 
             Language baseLanguage = getBaseLanguage();
