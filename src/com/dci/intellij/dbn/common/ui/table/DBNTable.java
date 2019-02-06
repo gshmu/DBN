@@ -215,9 +215,11 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
 
                 if (renderer != null) {
                     Object value = model.getValueAt(rowIndex, columnIndex);
-                    Component component = renderer.getTableCellRendererComponent(this, value, false, false, rowIndex, columnIndex);
-                    if (component.getPreferredSize().width > preferredWidth) {
-                        preferredWidth = component.getPreferredSize().width;
+                    if (value != null) {
+                        Component component = renderer.getTableCellRendererComponent(this, value, false, false, rowIndex, columnIndex);
+                        if (component.getPreferredSize().width > preferredWidth) {
+                            preferredWidth = component.getPreferredSize().width;
+                        }
                     }
                 }
             }
