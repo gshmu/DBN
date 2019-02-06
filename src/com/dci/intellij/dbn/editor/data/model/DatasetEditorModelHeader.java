@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.editor.data.model;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ResultSetUtil;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelHeader;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
@@ -7,38 +9,32 @@ import com.dci.intellij.dbn.editor.data.state.column.DatasetColumnState;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 
+import javax.annotation.Nullable;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
 
 public class DatasetEditorModelHeader extends ResultSetDataModelHeader<DatasetEditorColumnInfo> {
-    public DatasetEditorModelHeader(DatasetEditor datasetEditor, ResultSet resultSet) throws SQLException {
+    public DatasetEditorModelHeader(DatasetEditor datasetEditor, @Nullable ResultSet resultSet) throws SQLException {
         DBDataset dataset = datasetEditor.getDataset();
-        if (resultSet == null) {
-            List<DatasetColumnState> columnStates = datasetEditor.initColumnStates();
 
-            int index = 0;
-            for (DatasetColumnState columnState : columnStates) {
-                DBColumn column = dataset.getColumn(columnState.getName());
-                if (column != null) {
-                    DatasetEditorColumnInfo columnInfo = new DatasetEditorColumnInfo(column, index, column.getPosition());
+        List<DatasetColumnState> columnStates = datasetEditor.initColumnStates();
+        List<String> columnNames = resultSet == null ? null : ResultSetUtil.getColumnNames(resultSet);
+
+        int index = 0;
+        for (DatasetColumnState columnState : columnStates) {
+            DBColumn column = dataset.getColumn(columnState.getName());
+            if (column != null) {
+                String columnName = column.getName();
+                int resultSetIndex = (columnNames == null ? index : StringUtil.indexOfIgnoreCase(columnNames, columnName)) + 1;
+                if (resultSetIndex > 0) {
+                    DatasetEditorColumnInfo columnInfo = new DatasetEditorColumnInfo(column, index, resultSetIndex);
                     addColumnInfo(columnInfo);
                     index++;
                 }
             }
-        } else {
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int columnCount = metaData.getColumnCount();
-            for (int i = 0; i < columnCount; i++) {
-                String name = metaData.getColumnName(i+1);
-                DBColumn column = dataset.getColumn(name);
-                DatasetEditorColumnInfo columnInfo = new DatasetEditorColumnInfo(column, i, i+1);
-                addColumnInfo(columnInfo);
-            }
         }
-
     }
 
     public int indexOfColumn(DBColumn column) {

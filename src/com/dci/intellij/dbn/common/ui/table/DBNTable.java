@@ -18,6 +18,7 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -25,6 +26,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -292,6 +295,30 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     public void stopCellEditing() {
         if (isEditing()) {
             getCellEditor().stopCellEditing();
+        }
+    }
+
+    @Override
+    public void createDefaultColumnsFromModel() {
+        TableModel tableModel = getModel();
+        // Remove any current columns
+        TableColumnModel columnModel = getColumnModel();
+        Map<String, TableColumn> oldColumns = new HashMap<>();
+        while (columnModel.getColumnCount() > 0) {
+            TableColumn column = columnModel.getColumn(0);
+            oldColumns.put(column.getHeaderValue().toString(), column);
+            columnModel.removeColumn(column);
+        }
+
+        // Create new columns from the data model info
+        for (int i = 0; i < tableModel.getColumnCount(); i++) {
+            String columnName = tableModel.getColumnName(i);
+            TableColumn oldColumn = oldColumns.get(columnName);
+            TableColumn newColumn = new TableColumn(i);
+            if (oldColumn != null) {
+                newColumn.setPreferredWidth(oldColumn.getPreferredWidth());
+            }
+            addColumn(newColumn);
         }
     }
 

@@ -11,7 +11,8 @@ import java.sql.SQLException;
 public class ResultSetColumnInfo extends BasicColumnInfo {
     private int resultSetColumnIndex;
     public ResultSetColumnInfo(ConnectionHandler connectionHandler, ResultSet resultSet, int columnIndex) throws SQLException {
-        this(columnIndex);
+        super(null, null, columnIndex);
+        resultSetColumnIndex = columnIndex + 1;
         ResultSetMetaData metaData = resultSet.getMetaData();
         name = translateName(metaData.getColumnName(resultSetColumnIndex), connectionHandler);
 
@@ -20,11 +21,6 @@ public class ResultSetColumnInfo extends BasicColumnInfo {
         int scale = metaData.getScale(resultSetColumnIndex);
 
         dataType = DBDataType.get(connectionHandler, dataTypeName, precision, precision, scale, false);
-    }
-
-    public ResultSetColumnInfo(int columnIndex) {
-        super(null, null, columnIndex);
-        resultSetColumnIndex = columnIndex + 1;
     }
 
     public ResultSetColumnInfo(int columnIndex, int resultSetColumnIndex ) {

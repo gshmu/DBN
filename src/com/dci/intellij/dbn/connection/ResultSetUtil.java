@@ -80,7 +80,7 @@ public class ResultSetUtil extends DisposableBase{
     }
 
     public static List<String> getColumnNames(ResultSet resultSet) throws SQLException {
-        ArrayList<String> columnNames = new ArrayList<String>();
+        List<String> columnNames = new ArrayList<>();
         ResultSetMetaData metaData = resultSet.getMetaData();
         int columnCount = metaData.getColumnCount();
         for (int i=0; i<columnCount; i++) {

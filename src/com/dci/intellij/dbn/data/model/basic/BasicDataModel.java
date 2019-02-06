@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.common.list.FiltrableListImpl;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
@@ -98,8 +98,10 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
     }
 
     public void setHeader(@NotNull DataModelHeader<? extends ColumnInfo> header) {
+        DataModelHeader oldHeader = this.header;
         this.header = header;
         Disposer.register(this, header);
+        DisposerUtil.dispose(oldHeader);
     }
 
     @Override
@@ -254,18 +256,22 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
         notifyListeners(listDataEvent, tableModelEvent);
     }
 
-    private void notifyListeners(final ListDataEvent listDataEvent, final TableModelEvent event) {
-        ConditionalLaterInvocator.invoke(() -> {
-            if (listModel.loaded()) {
-                listModel.get().notifyListeners(listDataEvent);
+    protected void notifyListeners(@Nullable ListDataEvent listDataEvent, @Nullable TableModelEvent modelEvent) {
+        SimpleLaterInvocator.invoke(() -> {
+            if (listDataEvent != null) {
+                if (listModel.loaded()) {
+                    listModel.get().notifyListeners(listDataEvent);
+                }
             }
 
-            for (TableModelListener tableModelListener: tableModelListeners) {
-                tableModelListener.tableChanged(event);
-            }
+            if (modelEvent != null) {
+                for (TableModelListener tableModelListener: tableModelListeners) {
+                    tableModelListener.tableChanged(modelEvent);
+                }
 
-            for (DataModelListener tableModelListener: dataModelListeners) {
-                tableModelListener.modelChanged();
+                for (DataModelListener tableModelListener: dataModelListeners) {
+                    tableModelListener.modelChanged();
+                }
             }
         });
     }
