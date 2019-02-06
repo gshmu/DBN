@@ -35,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -87,6 +88,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                 if (newResultSet != null) {
                     checkDisposed();
                     setHeader(new DatasetEditorModelHeader(getDatasetEditor(), newResultSet));
+
                     setResultSet(newResultSet);
                     setResultSetExhausted(false);
                     if (keepChanges) snapshotChanges(); else clearChanges();
@@ -95,6 +97,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
 
                     fetchNextRecords(rowCount, true);
                     restoreChanges();
+                    notifyListeners(null, new TableModelEvent(DatasetEditorModel.this, TableModelEvent.HEADER_ROW));
                 }
                 loaderCall = null;
                 return null;

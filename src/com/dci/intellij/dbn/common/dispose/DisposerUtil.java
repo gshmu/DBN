@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
@@ -16,13 +17,13 @@ public class DisposerUtil {
     }
 
 
-    public static void dispose(Disposable disposable) {
+    public static void dispose(@Nullable Disposable disposable) {
         if (disposable != null) {
             Disposer.dispose(disposable);
         }
     }
 
-    public static void dispose(Disposable[] array) {
+    public static void dispose(@Nullable Disposable[] array) {
         if (array != null && array.length> 0) {
             for(Disposable disposable : array) {
                 dispose(disposable);

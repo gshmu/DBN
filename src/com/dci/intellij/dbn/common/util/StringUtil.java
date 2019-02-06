@@ -257,6 +257,19 @@ public class StringUtil extends com.intellij.openapi.util.text.StringUtil {
         return -1;
     }
 
+    public static int indexOfIgnoreCase(@NotNull List<String> where, @NotNull String what) {
+        int index = where.indexOf(what);
+        if (index == -1) {
+            for (int i=0; i < where.size(); i++ ) {
+                String string = where.get(i);
+                if (string.equalsIgnoreCase(what)) {
+                    return i;
+                }
+            }
+        }
+        return index;
+    }
+
     public static StringBuilder appendToUpperCase(StringBuilder builder, CharSequence s) {
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);

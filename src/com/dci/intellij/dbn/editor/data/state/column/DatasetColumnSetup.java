@@ -8,11 +8,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 public class DatasetColumnSetup implements PersistentStateElement<Element>{
-    private List<DatasetColumnState> columnStates = new ArrayList<DatasetColumnState>();
+    private List<DatasetColumnState> columnStates = new ArrayList<>();
 
     @NotNull
     public List<DatasetColumnState> getColumnStates() {
@@ -31,13 +30,7 @@ public class DatasetColumnSetup implements PersistentStateElement<Element>{
                 columnsState.init(column);
             }
         }
-        for (Iterator<DatasetColumnState> iterator = columnStates.iterator(); iterator.hasNext(); ) {
-            DatasetColumnState columnState = iterator.next();
-            if (dataset.getColumn(columnState.getName()) == null) {
-                iterator.remove();
-            }
-        }
-
+        columnStates.removeIf(columnState -> dataset.getColumn(columnState.getName()) == null);
         Collections.sort(columnStates);
     }
 
