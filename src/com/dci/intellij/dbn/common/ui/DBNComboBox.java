@@ -122,9 +122,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
                 () -> {
                     DisposerUtil.dispose(popup);
                     popup = null;
-                    requestFocus();
-                    revalidate();
-                    repaint();
+                    GUIUtil.repaintAndFocus(DBNComboBox.this);
                 },
                 10,
                 anAction -> {

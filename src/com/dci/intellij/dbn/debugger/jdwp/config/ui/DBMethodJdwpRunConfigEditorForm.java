@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -214,8 +215,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
         headerPanel.removeAll();
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        mainPanel.revalidate();
-        mainPanel.repaint();
+        GUIUtil.repaint(mainPanel);
     }
 
     @Override

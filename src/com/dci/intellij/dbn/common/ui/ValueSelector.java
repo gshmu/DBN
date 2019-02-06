@@ -128,8 +128,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                 innerPanel.setBorder(focusBorder);
                 innerPanel.setBackground(new JBColor(Gray._210, Gray._75));
 
-                revalidate();
-                repaint();
+                GUIUtil.repaint(ValueSelector.this);
             }
         }
 
@@ -139,8 +138,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                 innerPanel.setBorder(defaultBorder);
                 innerPanel.setBackground(UIUtil.getPanelBackground());
 
-                revalidate();
-                repaint();
+                GUIUtil.repaint(ValueSelector.this);
             }
         }
 
@@ -190,8 +188,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                     label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
                     innerPanel.requestFocus();
-                    revalidate();
-                    repaint();
+                    GUIUtil.repaint(ValueSelector.this);
                 },
                 10,
                 anAction -> {

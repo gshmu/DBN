@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection.transaction.ui;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -105,8 +106,7 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
             detailsPanel.add(pendingTransactionsForm.getComponent(), BorderLayout.CENTER);
         }
 
-        detailsPanel.revalidate();
-        detailsPanel.repaint();
+        GUIUtil.repaint(detailsPanel);
     }
 
     private static class ListCellRenderer extends ColoredListCellRenderer {

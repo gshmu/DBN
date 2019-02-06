@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
@@ -146,9 +147,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
 
     public void highlightLoading(boolean loading) {
         resultTable.setLoading(loading);
-
-        resultTable.revalidate();
-        resultTable.repaint();
+        GUIUtil.repaint(resultTable);
     }
 
     /*********************************************************
@@ -177,10 +176,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     public void hideSearchHeader() {
         getSearchComponent().resetFindModel();
         searchPanel.setVisible(false);
-
-        resultTable.revalidate();
-        resultTable.repaint();
-        resultTable.requestFocus();
+        GUIUtil.repaintAndFocus(resultTable);
     }
 
     @Override

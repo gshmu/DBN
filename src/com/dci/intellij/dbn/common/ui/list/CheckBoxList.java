@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.ui.list;
 
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -92,8 +93,7 @@ public class CheckBoxList<T extends Selectable> extends JList {
             entry.checkBox.setSelected(true);
         }
 
-        revalidate();
-        repaint();
+        GUIUtil.repaint(this);
     }
 
     private class CellRenderer implements ListCellRenderer {
@@ -229,8 +229,7 @@ public class CheckBoxList<T extends Selectable> extends JList {
             //if (checkBox.isEnabled()){
                 checkBox.setSelected(!checkBox.isSelected());
 
-                CheckBoxList.this.revalidate();
-                CheckBoxList.this.repaint();
+                GUIUtil.repaint(CheckBoxList.this);
                 for (ActionListener actionListener : checkBox.getActionListeners()) {
                     actionListener.actionPerformed(new ActionEvent(checkBox, 0, "selectionChanged"));
                 }

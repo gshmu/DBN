@@ -25,7 +25,7 @@ public class DatasetEditorModelHeader extends ResultSetDataModelHeader<DatasetEd
         int index = 0;
         for (DatasetColumnState columnState : columnStates) {
             DBColumn column = dataset.getColumn(columnState.getName());
-            if (column != null) {
+            if (column != null && columnState.isVisible()) {
                 String columnName = column.getName();
                 int resultSetIndex = (columnNames == null ? index : StringUtil.indexOfIgnoreCase(columnNames, columnName)) + 1;
                 if (resultSetIndex > 0) {

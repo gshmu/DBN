@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.latent.DisposableLatent;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -193,9 +194,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
         getSearchComponent().resetFindModel();
         searchPanel.setVisible(false);
         SessionBrowserTable editorTable = getEditorTable();
-        editorTable.revalidate();
-        editorTable.repaint();
-        editorTable.requestFocus();
+        GUIUtil.repaintAndFocus(editorTable);
     }
 
     @Override

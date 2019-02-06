@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
@@ -95,8 +96,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     public void updateTableGutter() {
         ConditionalLaterInvocator.invoke(() -> {
             DBNTableGutter tableGutter = getTableGutter();
-            tableGutter.revalidate();
-            tableGutter.repaint();
+            GUIUtil.repaint(tableGutter);
         });
     }
 

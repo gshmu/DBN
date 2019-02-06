@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection.resource.ui;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -56,10 +57,7 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
 
         Project project = getProject();
         EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
-        EventUtil.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, (connectionId) -> {
-            connectionsList.revalidate();
-            connectionsList.repaint();
-        });
+        EventUtil.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, (connectionId) -> GUIUtil.repaint(connectionsList));
     }
 
     private void updateListModel() {
@@ -106,8 +104,7 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
             detailsPanel.add(detailForm.getComponent(), BorderLayout.CENTER);
         }
 
-        detailsPanel.revalidate();
-        detailsPanel.repaint();
+        GUIUtil.repaint(detailsPanel);
     }
 
     private static class ConnectionListCellRenderer extends ColoredListCellRenderer<ConnectionHandler> {
