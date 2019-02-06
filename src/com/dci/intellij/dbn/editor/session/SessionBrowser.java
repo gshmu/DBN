@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -139,8 +140,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     public void refreshTable() {
         SessionBrowserTable editorTable = getEditorTable();
-        editorTable.revalidate();
-        editorTable.repaint();
+        GUIUtil.repaint(editorTable);
         editorTable.accommodateColumnsSize();
         editorTable.restoreSelection();
     }
@@ -303,8 +303,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
                 SessionBrowserTable editorTable = getEditorTable();
                 editorTable.setLoading(SessionBrowser.this.loading);
-                editorTable.revalidate();
-                editorTable.repaint();
+                GUIUtil.repaint(editorTable);
             });
         }
 

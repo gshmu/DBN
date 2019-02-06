@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.latent.DisposableLatent;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -139,8 +140,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
                 if (executionMessagesPanel.loaded()) {
                     JComponent messagePanelComponent = getMessagesPanel().getComponent();
-                    messagePanelComponent.revalidate();
-                    messagePanelComponent.repaint();
+                    GUIUtil.repaint(messagePanelComponent);
                 }
             }
         }

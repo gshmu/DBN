@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.editor.data.state.sorting.ui;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
@@ -118,8 +120,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl<DatasetEditorSortingDi
             sortingInstructionForms.add(sortingInstructionForm);
             sortingInstructionsPanel.add(sortingInstructionForm.getComponent());
             updateIndexes();
-            sortingInstructionsPanel.revalidate();
-            sortingInstructionsPanel.repaint();
+            GUIUtil.repaint(sortingInstructionsPanel);
         }
     }
 
@@ -134,9 +135,9 @@ public class DatasetEditorSortingForm extends DBNFormImpl<DatasetEditorSortingDi
         sortingInstructionsPanel.remove(sortingInstructionForm.getComponent());
         sortingInstructionForms.remove(sortingInstructionForm);
         updateIndexes();
-        sortingInstructionForm.dispose();
-        sortingInstructionsPanel.revalidate();
-        sortingInstructionsPanel.repaint();
+        DisposerUtil.dispose(sortingInstructionForm);
+
+        GUIUtil.repaint(sortingInstructionsPanel);
     }
 
     public void applyChanges() {

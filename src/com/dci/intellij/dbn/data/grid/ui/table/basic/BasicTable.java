@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.data.grid.ui.table.basic;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableWithGutter;
 import com.dci.intellij.dbn.common.ui.table.TableSelectionRestorer;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -106,8 +107,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     };
 
     protected void regionalSettingsChanged() {
-        revalidate();
-        repaint();
+        resizeAndRepaint();
     }
 
     @NotNull
@@ -159,8 +159,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
                         attributes.getPlainData(false, false).getBgColor();
                 viewport.setBackground(background);
 
-                viewport.revalidate();
-                viewport.repaint();
+                GUIUtil.repaint(viewport);
             });
         }
     }
@@ -232,8 +231,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     public void globalSchemeChange(EditorColorsScheme scheme) {
         cellRenderer.getAttributes().load();
         updateBackground(isLoading);
-        revalidate();
-        repaint();
+        resizeAndRepaint();
 /*        JBScrollPane scrollPane = UIUtil.getParentOfType(JBScrollPane.class, this);
         if (scrollPane != null) {
             scrollPane.revalidate();

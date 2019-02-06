@@ -71,8 +71,7 @@ public class BrowserToolWindowForm extends DBNFormImpl {
 
 
         browserPanel.add(browserForm.getComponent(), BorderLayout.CENTER);
-        browserPanel.revalidate();
-        browserPanel.repaint();
+        GUIUtil.repaint(browserPanel);
         Disposer.register(this, browserForm);
     }
 

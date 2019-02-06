@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.data.find;
 
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.find.action.CloseOnESCAction;
 import com.dci.intellij.dbn.data.find.action.NextOccurrenceAction;
@@ -339,14 +340,12 @@ public class DataSearchComponent extends DBNFormImpl implements Disposable, Sele
         searchField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(final FocusEvent e) {
-                searchField.revalidate();
-                searchField.repaint();
+                GUIUtil.repaint(searchField);
             }
 
             @Override
             public void focusLost(final FocusEvent e) {
-                searchField.revalidate();
-                searchField.repaint();
+                GUIUtil.repaint(searchField);
             }
         });
         new CloseOnESCAction(this, searchField);
@@ -428,8 +427,7 @@ public class DataSearchComponent extends DBNFormImpl implements Disposable, Sele
             searchableComponent.cancelEditActions();
             BasicTable table = searchableComponent.getTable();
             table.clearSelection();
-            table.revalidate();
-            table.repaint();
+            GUIUtil.repaint(table);
         } else {
 
             if (findModel.isRegularExpressions()) {

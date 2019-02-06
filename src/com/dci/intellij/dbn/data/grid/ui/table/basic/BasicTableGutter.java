@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 
 import javax.swing.*;
@@ -93,12 +94,8 @@ public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
         }
     };
 
-    private ListSelectionListener tableSelectionListener = new ListSelectionListener() {
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            revalidate();
-            repaint();
-        }
+    private ListSelectionListener tableSelectionListener = e -> {
+        GUIUtil.repaint(BasicTableGutter.this);
     };
 
     @Override

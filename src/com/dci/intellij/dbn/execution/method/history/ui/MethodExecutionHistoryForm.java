@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.method.history.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -99,8 +100,8 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
             }
             argumentsPanel.add(methodExecutionInputForm.getComponent(), BorderLayout.CENTER);
         }
-        argumentsPanel.revalidate();
-        argumentsPanel.repaint();
+
+        GUIUtil.repaint(actionsPanel);
     }
 
     private ChangeListener getChangeListener() {

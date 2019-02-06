@@ -13,6 +13,7 @@ import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.event.TableModelEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,10 +113,12 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
         }
 
         int newRowCount = getRowCount();
+        if (reset) notifyListeners(null, new TableModelEvent(ResultSetDataModel.this, TableModelEvent.HEADER_ROW));
         if (newRowCount > originalRowCount) notifyRowsInserted(originalRowCount, newRowCount);
         if (newRowCount < originalRowCount) notifyRowsDeleted(newRowCount, originalRowCount);
         int updateIndex = Math.min(originalRowCount, newRowCount);
         if (updateIndex > 0) notifyRowsUpdated(0, updateIndex);
+
 
         return newRowCount;
     }

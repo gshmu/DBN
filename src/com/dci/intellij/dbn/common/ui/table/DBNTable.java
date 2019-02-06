@@ -188,53 +188,54 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
         return super.convertColumnIndexToModel(viewColumnIndex);
     }
 
-    public void accommodateColumnSize(int colIndex, int span) {
-        TableColumn column = getColumnModel().getColumn(colIndex);
-        int columnIndex = column.getModelIndex();
-        int preferredWidth = 0;
+    public void accommodateColumnSize(int columnIndex, int span) {
+        TableColumnModel columnModel = getColumnModel();
+        if (columnIndex < columnModel.getColumnCount()) {
+            TableColumn column = columnModel.getColumn(columnIndex);
+            int preferredWidth = 0;
 
-        // header
-        JTableHeader tableHeader = getTableHeader();
-        if (tableHeader != null) {
-            Object headerValue = column.getHeaderValue();
-            TableCellRenderer headerCellRenderer = column.getHeaderRenderer();
-            if (headerCellRenderer == null) headerCellRenderer = tableHeader.getDefaultRenderer();
-            Component headerComponent = headerCellRenderer.getTableCellRendererComponent(this, headerValue, false, false, 0, columnIndex);
-            if (headerComponent.getPreferredSize().width > preferredWidth)
-                preferredWidth = headerComponent.getPreferredSize().width;
-        }
-
-        // rows
-        T model = getModel();
-        for (int rowIndex =0; rowIndex < model.getRowCount(); rowIndex++) {
-            if (preferredWidth > MAX_COLUMN_WIDTH) {
-                break;
+            // header
+            JTableHeader tableHeader = getTableHeader();
+            if (tableHeader != null) {
+                Object headerValue = column.getHeaderValue();
+                TableCellRenderer headerCellRenderer = column.getHeaderRenderer();
+                if (headerCellRenderer == null) headerCellRenderer = tableHeader.getDefaultRenderer();
+                Component headerComponent = headerCellRenderer.getTableCellRendererComponent(this, headerValue, false, false, 0, columnIndex);
+                if (headerComponent.getPreferredSize().width > preferredWidth)
+                    preferredWidth = headerComponent.getPreferredSize().width;
             }
-            Object value = model.getValueAt(rowIndex, columnIndex);
-            TableCellRenderer renderer = getCellRenderer(rowIndex, columnIndex);
 
-            if (renderer != null) {
-                Component component = renderer.getTableCellRendererComponent(this, value, false, false, rowIndex, columnIndex);
-                if (component.getPreferredSize().width > preferredWidth) {
-                    preferredWidth = component.getPreferredSize().width;
+            // rows
+            T model = getModel();
+            for (int rowIndex =0; rowIndex < model.getRowCount(); rowIndex++) {
+                if (preferredWidth > MAX_COLUMN_WIDTH) {
+                    break;
+                }
+                TableCellRenderer renderer = getCellRenderer(rowIndex, columnIndex);
+
+                if (renderer != null) {
+                    Object value = model.getValueAt(rowIndex, columnIndex);
+                    Component component = renderer.getTableCellRendererComponent(this, value, false, false, rowIndex, columnIndex);
+                    if (component.getPreferredSize().width > preferredWidth) {
+                        preferredWidth = component.getPreferredSize().width;
+                    }
                 }
             }
+
+            if (preferredWidth > MAX_COLUMN_WIDTH) {
+                preferredWidth = MAX_COLUMN_WIDTH;
+            }
+
+            if (preferredWidth < MIN_COLUMN_WIDTH) {
+                preferredWidth = MIN_COLUMN_WIDTH;
+            }
+
+            preferredWidth = preferredWidth + span;
+
+            if (column.getPreferredWidth() != preferredWidth)  {
+                column.setPreferredWidth(preferredWidth);
+            }
         }
-
-        if (preferredWidth > MAX_COLUMN_WIDTH) {
-            preferredWidth = MAX_COLUMN_WIDTH;
-        }
-
-        if (preferredWidth < MIN_COLUMN_WIDTH) {
-            preferredWidth = MIN_COLUMN_WIDTH;
-        }
-
-        preferredWidth = preferredWidth + span;
-
-        if (column.getPreferredWidth() != preferredWidth)  {
-            column.setPreferredWidth(preferredWidth);
-        }
-
     }
 
     public void selectCell(int rowIndex, int columnIndex) {
@@ -304,22 +305,32 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
         // Remove any current columns
         TableColumnModel columnModel = getColumnModel();
         Map<String, TableColumn> oldColumns = new HashMap<>();
-        while (columnModel.getColumnCount() > 0) {
-            TableColumn column = columnModel.getColumn(0);
-            oldColumns.put(column.getHeaderValue().toString(), column);
-            columnModel.removeColumn(column);
+
+        for (int i = 0; i < columnModel.getColumnCount(); i++) {
+            TableColumn column = columnModel.getColumn(i);
+            Object headerValue = column.getHeaderValue();
+            if (headerValue instanceof String) {
+                oldColumns.put(headerValue.toString(), column);
+            }
         }
+        boolean columnSelectionAllowed = columnModel.getColumnSelectionAllowed();
+
+        columnModel = new DefaultTableColumnModel();
+        columnModel.setColumnSelectionAllowed(columnSelectionAllowed);
 
         // Create new columns from the data model info
         for (int i = 0; i < tableModel.getColumnCount(); i++) {
             String columnName = tableModel.getColumnName(i);
             TableColumn oldColumn = oldColumns.get(columnName);
+
             TableColumn newColumn = new TableColumn(i);
+            newColumn.setHeaderValue(columnName);
             if (oldColumn != null) {
                 newColumn.setPreferredWidth(oldColumn.getPreferredWidth());
             }
-            addColumn(newColumn);
+            columnModel.addColumn(newColumn);
         }
+        setColumnModel(columnModel);
     }
 
     /********************************************************

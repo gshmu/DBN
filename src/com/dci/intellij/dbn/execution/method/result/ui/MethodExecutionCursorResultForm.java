@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.latent.DisposableLatent;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
@@ -121,10 +122,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
     public void hideSearchHeader() {
         getSearchComponent().resetFindModel();
         searchPanel.setVisible(false);
-
-        resultTable.revalidate();
-        resultTable.repaint();
-        resultTable.requestFocus();
+        GUIUtil.repaintAndFocus(resultTable);
     }
 
     @Override

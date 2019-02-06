@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -397,8 +398,9 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         if (status.set(LOADING, loading)) {
             DatasetEditorTable editorTable = getEditorTable();
             editorTable.setLoading(loading);
-            editorTable.revalidate();
-            editorTable.repaint();
+            SimpleLaterInvocator.invoke(() -> {
+                GUIUtil.repaint(editorTable);
+            });
         }
 
     }
@@ -539,8 +541,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                         loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
                     } else {
                         editorTable.cancelEditing();
-                        editorTable.revalidate();
-                        editorTable.repaint();
+                        GUIUtil.repaint(editorTable);
                     }
                 });
             }
@@ -592,8 +593,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                 if (action == TransactionAction.DISCONNECT) {
                     editorTable.stopCellEditing();
                     model.revertChanges();
-                    editorTable.revalidate();
-                    editorTable.repaint();
+                    GUIUtil.repaint(editorTable);
                 }
             }
         }

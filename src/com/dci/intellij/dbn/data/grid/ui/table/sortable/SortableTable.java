@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.grid.ui.table.sortable;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableSpeedSearch;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
@@ -34,8 +35,7 @@ public abstract class SortableTable<T extends SortableDataModel> extends BasicTa
     public void sort() {
         getModel().sort();
         JTableHeader tableHeader = getTableHeader();
-        tableHeader.revalidate();
-        tableHeader.repaint();
+        GUIUtil.repaint(tableHeader);
     }
 
     public boolean sort(int columnIndex, SortDirection sortDirection, boolean keepExisting) {
@@ -46,8 +46,7 @@ public abstract class SortableTable<T extends SortableDataModel> extends BasicTa
             boolean sorted = model.sort(modelColumnIndex, sortDirection, keepExisting);
             if (sorted) {
                 JTableHeader tableHeader = getTableHeader();
-                tableHeader.revalidate();
-                tableHeader.repaint();
+                GUIUtil.repaint(tableHeader);
             }
             return sorted;
         }

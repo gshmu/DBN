@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
@@ -153,8 +154,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
                 columnsPanel.add(columnForm.getComponent());
             }
 
-            columnsPanel.revalidate();
-            columnsPanel.repaint();
+            GUIUtil.repaint(columnsPanel);
         }
     }
 

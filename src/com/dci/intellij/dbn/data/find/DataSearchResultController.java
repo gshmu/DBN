@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.model.DataModel;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -111,8 +112,7 @@ public class DataSearchResultController implements Disposable {
                         searchableComponent.cancelEditActions();
 
                         table.clearSelection();
-                        table.revalidate();
-                        table.repaint();
+                        GUIUtil.repaint(table);
 
                         selectFirst(selectedRowIndex, selectedColumnIndex);
                         searchResult.notifyListeners();

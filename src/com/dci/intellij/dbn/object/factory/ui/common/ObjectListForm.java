@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.object.factory.ui.common;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -57,8 +58,7 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFo
         ObjectListItemForm listItemForm = new ObjectListItemForm(this, inputForm);
         listPanel.add(listItemForm.getComponent());
 
-        mainPanel.revalidate();
-        mainPanel.repaint();
+        GUIUtil.repaint(mainPanel);
         inputForm.focus();
     }
 
@@ -66,8 +66,7 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFo
         inputForms.remove(child.getObjectDetailsPanel());
         listPanel.remove(child.getComponent());
 
-        mainPanel.revalidate();
-        mainPanel.repaint();
+        GUIUtil.repaint(mainPanel);
         // rebuild indexes
         for (int i=0; i< inputForms.size(); i++) {
             inputForms.get(i).setIndex(i);
