@@ -231,9 +231,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
             conditionForms.add(conditionForm);
             conditionsPanel.add(conditionForm.getComponent());
 
-            conditionsPanel.revalidate();
-            conditionsPanel.repaint();
-
+            GUIUtil.repaint(conditionsPanel);
             conditionForm.focus();
         }
     }
@@ -251,8 +249,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
         conditionForm.setBasicFilterPanel(null);
         conditionForms.remove(conditionForm);
         conditionsPanel.remove(conditionForm.getComponent());
-        conditionsPanel.revalidate();
-        conditionsPanel.repaint();
+        GUIUtil.repaint(conditionsPanel);
         updateNameAndPreview();
     }
 

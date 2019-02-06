@@ -188,8 +188,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
                 ConnectionBundleSettingsForm bundleSettingsEditor = bundleSettings.getSettingsEditor();
                 if (bundleSettingsEditor != null) {
                     JList connectionList = bundleSettingsEditor.getList();
-                    connectionList.revalidate();
-                    connectionList.repaint();
+                    GUIUtil.repaint(connectionList);
                     ConnectionDatabaseSettingsForm settingsEditor = configuration.getDatabaseSettings().getSettingsEditor();
                     if (settingsEditor != null) {
                         settingsEditor.notifyPresentationChanges();

@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.common.ui.ComboBoxUtil;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -203,8 +204,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                     ConnectionBundleSettingsForm settingsEditor = connectionBundleSettings.getSettingsEditor();
                     if (settingsEditor != null) {
                         JList connectionList = settingsEditor.getList();
-                        connectionList.revalidate();
-                        connectionList.repaint();
+                        GUIUtil.repaint(connectionList);
                         notifyPresentationChanges();
                     }
                 }
@@ -225,8 +225,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
                 if (settingsEditor != null) {
                     JList connectionList = settingsEditor.getList();
-                    connectionList.revalidate();
-                    connectionList.repaint();
+                    GUIUtil.repaint(connectionList);
                     notifyPresentationChanges();
                 }
             }

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data.ui.table;
 import com.dci.intellij.dbn.common.thread.ModalTask;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.MouseUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -165,13 +166,15 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     public void editingStopped(ChangeEvent e) {
         DatasetTableCellEditor cellEditor = getCellEditor();
         if (cellEditor != null && cellEditor.isEditable()) {
+            int rowIndex = editingRow;
+            int columnIndex = editingColumn;
             performUpdate(() -> {
                 try {
                     Object value = cellEditor.getCellEditorValue();
-                    setValueAt(value, editingRow, editingColumn);
+                    setValueAt(value, rowIndex, columnIndex);
                 } catch (Throwable t) {
                     Object value = cellEditor.getCellEditorValueLenient();
-                    setValueAt(value, t.getMessage(), editingRow, editingColumn);
+                    setValueAt(value, t.getMessage(), rowIndex, columnIndex);
                 }
 
             });
@@ -189,10 +192,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                 model.set(UPDATING, false);
                 SimpleLaterInvocator.invoke(() -> {
                     DBNTableGutter tableGutter = getTableGutter();
-                    tableGutter.revalidate();
-                    tableGutter.repaint();
-                    revalidate();
-                    repaint();
+                    GUIUtil.repaint(tableGutter);
+                    GUIUtil.repaint(DatasetEditorTable.this);
                 });
             }
         });
@@ -232,8 +233,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     public void updateTableGutter() {
         SimpleLaterInvocator.invoke(() -> {
             DBNTableGutter tableGutter = getTableGutter();
-            tableGutter.revalidate();
-            tableGutter.repaint();
+            GUIUtil.repaint(tableGutter);
         });
     }
 
@@ -390,8 +390,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             if (!getModel().isResultSetExhausted()) {
                 datasetEditor.loadData(SORT_LOAD_INSTRUCTIONS);
             }
-            revalidate();
-            repaint();
+            resizeAndRepaint();
         }
     }
 

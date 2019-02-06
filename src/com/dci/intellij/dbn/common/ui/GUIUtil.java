@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.Colors;
-import com.intellij.ide.ui.laf.darcula.DarculaUIUtil;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.ui.Splitter;
@@ -25,18 +25,15 @@ public class GUIUtil{
     public static final String DARK_LAF_NAME = "Darcula";
 
     public static void updateSplitterProportion(final JComponent root, final float proportion) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                if (root instanceof Splitter) {
-                    Splitter splitter = (Splitter) root;
-                    splitter.setProportion(proportion);
-                } else {
-                    Component[] components = root.getComponents();
-                    for (Component component : components) {
-                        if (component instanceof JComponent) {
-                            updateSplitterProportion((JComponent) component, proportion);
-                        }
+        SwingUtilities.invokeLater(() -> {
+            if (root instanceof Splitter) {
+                Splitter splitter = (Splitter) root;
+                splitter.setProportion(proportion);
+            } else {
+                Component[] components = root.getComponents();
+                for (Component component : components) {
+                    if (component instanceof JComponent) {
+                        updateSplitterProportion((JComponent) component, proportion);
                     }
                 }
             }
@@ -209,15 +206,19 @@ public class GUIUtil{
         return new Font(scheme.getEditorFontName(), Font.PLAIN, UIUtil.getLabelFont().getSize());
     }
 
-    public static void paintFocusRing(Graphics g, Rectangle bounds) {
-        try {
-            Method paintFocusRing = DarculaUIUtil.class.getMethod("paintFocusRing", Graphics.class, Rectangle.class);
-            paintFocusRing.invoke(null, g, bounds);
-        } catch (Throwable e) {
-            try {
-                Method paintFocusRing = DarculaUIUtil.class.getMethod("paintFocusRing", Graphics.class, int.class, int.class, int.class, int.class);
-                paintFocusRing.invoke(null, g, (int) bounds.getX(), (int) bounds.getY(), (int) bounds.getWidth(), (int) bounds.getHeight());
-            } catch (Throwable ignore) {}
-        }
+    public static void repaint(JComponent component) {
+        ConditionalLaterInvocator.invoke(() -> {
+            component.revalidate();
+            component.repaint();
+        });
     }
+
+    public static void repaintAndFocus(JComponent component) {
+        ConditionalLaterInvocator.invoke(() -> {
+            component.revalidate();
+            component.repaint();
+            component.requestFocus();
+        });
+    }
+
 }

@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -26,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
+import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
@@ -46,11 +48,9 @@ public class ObjectDependencyTree extends DBNTree implements Disposable{
         this.project = project;
         selectionHistory.add(schemaObject);
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+
         setCellRenderer(new ObjectDependencyTreeCellRenderer());
-        addTreeSelectionListener(e -> {
-            revalidate();
-            repaint();
-        });
+        addTreeSelectionListener((TreeSelectionEvent e) -> GUIUtil.repaint(ObjectDependencyTree.this));
 
         speedSearch = new ObjectDependencyTreeSpeedSearch(this);
 

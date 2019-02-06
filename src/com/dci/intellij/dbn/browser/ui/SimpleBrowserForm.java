@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.browser.options.listener.ObjectDetailSettingsListener;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -79,8 +80,7 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
     private ObjectDetailSettingsListener objectDetailSettingsListener = new ObjectDetailSettingsListener() {
         @Override
         public void displayDetailsChanged() {
-            browserTree.revalidate();
-            browserTree.repaint();
+            GUIUtil.repaint(browserTree);
         }
     };
 }

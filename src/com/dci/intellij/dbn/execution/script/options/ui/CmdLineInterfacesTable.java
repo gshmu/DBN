@@ -143,10 +143,10 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
         CmdLineInterfacesTableModel model = getModel();
         rowIndex = model.getRowCount() == 0 ? 0 : rowIndex + 1;
         model.insertRow(rowIndex);
-        getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
 
-        revalidate();
-        repaint();
+        resizeAndRepaint();
+
+        getSelectionModel().setSelectionInterval(rowIndex, rowIndex);
     }
 
 
@@ -156,8 +156,7 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
         CmdLineInterfacesTableModel model = getModel();
         model.removeRow(selectedRow);
 
-        revalidate();
-        repaint();
+        resizeAndRepaint();
 
         if (model.getRowCount() == selectedRow && selectedRow > 0) {
             getSelectionModel().setSelectionInterval(selectedRow -1, selectedRow -1);
@@ -182,8 +181,7 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
 
     void addInterface(CmdLineInterface value) {
         getModel().addInterface(value);
-        revalidate();
-        repaint();
+        resizeAndRepaint();
     }
 
     public Set<String> getNames() {

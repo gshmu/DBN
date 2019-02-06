@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -168,8 +169,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
             }
         }
 
-        outputTabs.revalidate();
-        outputTabs.repaint();
+        GUIUtil.repaint(outputTabs);
     }
 
     void selectArgumentOutputTab(DBArgument argument) {

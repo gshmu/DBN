@@ -28,15 +28,13 @@ public class ComboBoxSelectionKeyListener extends KeyAdapter {
                 if (e.getKeyCode() == 38) {//UP
                     if (operatorSelectionIndex > 0) {
                         comboBox.setSelectedIndex(operatorSelectionIndex - 1);
-                        comboBox.revalidate();
-                        comboBox.repaint();
+                        GUIUtil.repaint(comboBox);
                     }
                     e.consume();
                 } else if (e.getKeyCode() == 40) { // DOWN
                     if (operatorSelectionIndex < comboBox.getItemCount() - 1) {
                         comboBox.setSelectedIndex(operatorSelectionIndex + 1);
-                        comboBox.revalidate();
-                        comboBox.repaint();
+                        GUIUtil.repaint(comboBox);
                     }
                     e.consume();
                 }

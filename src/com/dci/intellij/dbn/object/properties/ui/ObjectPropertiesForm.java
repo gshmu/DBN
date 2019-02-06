@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
@@ -90,8 +91,7 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
                             objectPropertiesTable.setModel(tableModel);
                             ((DBNTable) objectPropertiesTable).accommodateColumnsSize();
 
-                            mainPanel.revalidate();
-                            mainPanel.repaint();
+                            GUIUtil.repaint(mainPanel);
                             Disposer.dispose(oldTableModel);
                         });
                     });
