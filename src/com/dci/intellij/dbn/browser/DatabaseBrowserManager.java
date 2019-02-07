@@ -23,6 +23,7 @@ import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -90,7 +91,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
             }
 
             BrowserTreeNode browserTreeNode = activeBrowserTree.getSelectedNode();
-            if (browserTreeNode != null) {
+            if (browserTreeNode != null && !(browserTreeNode instanceof ConnectionBundle)) {
                 return browserTreeNode.getConnectionHandler();
             }
         }

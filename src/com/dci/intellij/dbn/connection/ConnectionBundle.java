@@ -160,6 +160,12 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
         return this;
     }
 
+    @NotNull
+    @Override
+    public ConnectionHandler getConnectionHandler() {
+        throw new UnsupportedOperationException();
+    }
+
     public void addConnection(ConnectionHandler connectionHandler) {
         connectionHandlers.add(connectionHandler);
         Disposer.register(this, connectionHandler);
