@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.browser.ui.ToolTipProvider;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
-import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
@@ -34,7 +33,6 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.QuotePair;
-import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBUser;
@@ -54,7 +52,6 @@ import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
@@ -78,18 +75,12 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
 
     protected DBObjectRef objectRef;
     protected DBObjectRef parentObjectRef;
-    protected DBObjectPsiFacade psiFacade;
 
     protected DBObjectProperties properties = new DBObjectProperties();
     private DBObjectListContainer childObjects;
     private DBObjectRelationListContainer childObjectRelations;
 
-
-    private LookupItemBuilder sqlLookupItemBuilder;
-    private LookupItemBuilder psqlLookupItemBuilder;
     private ConnectionHandlerRef connectionHandlerRef;
-
-    protected DBObjectVirtualFile virtualFile;
 
     private static final DBOperationExecutor NULL_OPERATION_EXECUTOR = operationType -> {
         throw new DBOperationNotSupportedException(operationType);
@@ -158,21 +149,6 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     @Override
     public DBObjectRef getRef() {
         return objectRef;
-    }
-
-
-
-    @Override
-    public DBObjectPsiFacade getPsiFacade() {
-        if (psiFacade == null) {
-            synchronized (this) {
-                if (psiFacade == null) {
-                    FailsafeUtil.ensure(this);
-                    psiFacade = new DBObjectPsiFacade(objectRef);
-                }
-            }
-        }
-        return psiFacade;
     }
 
     @Override
@@ -496,20 +472,24 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     }
 
     @Override
+    @NotNull
     public LookupItemBuilder getLookupItemBuilder(DBLanguage language) {
-        if (language == SQLLanguage.INSTANCE) {
-            if (sqlLookupItemBuilder == null) {
-                sqlLookupItemBuilder = new ObjectLookupItemBuilder(this, language);
-            }
-            return sqlLookupItemBuilder;
-        }
-        if (language == PSQLLanguage.INSTANCE) {
-            if (psqlLookupItemBuilder == null) {
-                psqlLookupItemBuilder = new ObjectLookupItemBuilder(this, language);
-            }
-            return psqlLookupItemBuilder;
-        }
-        return null;
+        DBObjectBundle objectBundle = FailsafeUtil.get(getObjectBundle());
+        return objectBundle.getLookupItemBuilder(objectRef, language);
+    }
+
+    @Override
+    @NotNull
+    public DBObjectPsiFacade getPsiFacade() {
+        DBObjectBundle objectBundle = FailsafeUtil.get(getObjectBundle());
+        return objectBundle.getObjectPsiFacade(getRef());
+    }
+
+    @Override
+    @NotNull
+    public DBObjectVirtualFile getVirtualFile() {
+        DBObjectBundle objectBundle = FailsafeUtil.get(getObjectBundle());
+        return objectBundle.getObjectVirtualFile(getRef());
     }
 
     @Override
@@ -573,20 +553,6 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         if (childObjects != null) {
             childObjects.refresh();
         }
-    }
-
-    @Override
-    @NotNull
-    public DBObjectVirtualFile getVirtualFile() {
-        if (virtualFile == null) {
-            synchronized (this) {
-                if (virtualFile == null) {
-                    virtualFile = new DBObjectVirtualFile(getProject(), getRef());
-                    Disposer.register(this, virtualFile);
-                }
-            }
-        }
-        return virtualFile;
     }
 
     /*********************************************************
@@ -868,7 +834,6 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();
-            psiFacade = null;
             DisposerUtil.dispose(childObjects);
             DisposerUtil.dispose(childObjectRelations);
             CollectionUtil.clear(visibleTreeChildren);

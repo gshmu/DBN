@@ -24,8 +24,8 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
     private DBLanguage language;
     private DBObjectRef objectRef;
 
-    public ObjectLookupItemBuilder(DBObject object, DBLanguage language) {
-        this.objectRef = object.getRef();
+    public ObjectLookupItemBuilder(DBObjectRef objectRef, DBLanguage language) {
+        this.objectRef = objectRef;
         this.language = language;
     }
 
