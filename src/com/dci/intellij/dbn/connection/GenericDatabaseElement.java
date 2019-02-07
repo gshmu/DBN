@@ -24,7 +24,5 @@ public interface GenericDatabaseElement extends ConnectionProvider, Disposable {
 
     @NotNull
     @Override
-    default ConnectionHandler getConnectionHandler() {
-        throw new UnsupportedOperationException();
-    }
+    ConnectionHandler getConnectionHandler();
 }
