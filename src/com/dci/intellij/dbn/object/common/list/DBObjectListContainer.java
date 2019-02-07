@@ -202,6 +202,10 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
 
     }
 
+
+    /*************************************************************
+     *             DBObjectList factory utilities                *
+     *************************************************************/
     @Nullable
     public <T extends DBObject> DBObjectList<T>  createObjectList(
             @NotNull DBObjectType objectType,
