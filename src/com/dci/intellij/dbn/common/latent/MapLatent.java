@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.common.latent;
 
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import gnu.trove.THashMap;
 
 import java.util.Map;
 
-public class MapLatent<K, V> {
+public class MapLatent<K, V> extends DisposableBase {
     private MapLoader<K, V> loader;
     private Map<K, V> map = new THashMap<>();
 
@@ -30,7 +31,11 @@ public class MapLatent<K, V> {
         return value;
     }
 
-    public void clear() {
-        map.clear();
+    @Override
+    public void dispose() {
+        if (!isDisposed()) {
+            super.dispose();
+            map.clear();
+        }
     }
 }

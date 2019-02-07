@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
@@ -115,20 +116,20 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     private DBObjectRelationListContainer objectRelationLists;
     private int connectionConfigHash;
 
-    private DBObjectMetaInfoCache<LookupItemBuilder> sqlLookupItemBuilders =
-            DBObjectMetaInfoCache.create((objectRef) ->
+    private MapLatent<DBObjectRef, LookupItemBuilder> sqlLookupItemBuilders =
+            MapLatent.create((objectRef) ->
                     new ObjectLookupItemBuilder(objectRef, SQLLanguage.INSTANCE));
 
-    private DBObjectMetaInfoCache<LookupItemBuilder> psqlLookupItemBuilders =
-            DBObjectMetaInfoCache.create((objectRef) ->
+    private MapLatent<DBObjectRef, LookupItemBuilder> psqlLookupItemBuilders =
+            MapLatent.create((objectRef) ->
                     new ObjectLookupItemBuilder(objectRef, PSQLLanguage.INSTANCE));
 
-    private DBObjectMetaInfoCache<DBObjectPsiFacade> objectPsiFacades =
-            DBObjectMetaInfoCache.create((objectRef) ->
+    private MapLatent<DBObjectRef, DBObjectPsiFacade> objectPsiFacades =
+            MapLatent.create((objectRef) ->
                     new DBObjectPsiFacade(objectRef));
 
-    private DBObjectMetaInfoCache<DBObjectVirtualFile> virtualFiles =
-            DBObjectMetaInfoCache.create((objectRef) ->
+    private MapLatent<DBObjectRef, DBObjectVirtualFile> virtualFiles =
+            MapLatent.create((objectRef) ->
                     new DBObjectVirtualFile(getProject(), objectRef));
 
 
