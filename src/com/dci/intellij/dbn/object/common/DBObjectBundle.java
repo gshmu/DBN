@@ -1,12 +1,14 @@
 package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
+import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.object.DBCharset;
 import com.dci.intellij.dbn.object.DBPrivilege;
 import com.dci.intellij.dbn.object.DBRole;
@@ -14,6 +16,8 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSystemPrivilege;
 import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -82,6 +86,13 @@ public interface DBObjectBundle extends BrowserTreeNode, Disposable {
     void refreshObjectsStatus(DBSchemaObject requester);
 
     DBObjectListContainer getObjectListContainer();
+
+    LookupItemBuilder getLookupItemBuilder(DBObjectRef objectRef, DBLanguage language);
+
+    DBObjectPsiFacade getObjectPsiFacade(DBObjectRef objectRef);
+
+    DBObjectVirtualFile getObjectVirtualFile(DBObjectRef objectRef);
+
     boolean isValid();
 
     @NotNull

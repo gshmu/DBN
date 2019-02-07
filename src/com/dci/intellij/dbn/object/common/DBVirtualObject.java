@@ -1,13 +1,17 @@
 package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
+import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.property.BasicProperty;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
@@ -70,6 +74,8 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     private DBObjectType objectType;
     private BasePsiElement relevantPsiElement;
     private boolean loadingChildren;
+    private DBObjectPsiFacade psiFacade;
+    private MapLatent<DBLanguage, ObjectLookupItemBuilder> lookupItemBuilder = MapLatent.create(key -> new ObjectLookupItemBuilder(getRef(), key));
 
     private BasicProperty<Boolean> valid = new BasicProperty<Boolean>(true) {
         @Override
@@ -150,9 +156,14 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
     @Override
     public DBObjectPsiFacade getPsiFacade() {
-        return super.getPsiFacade();
+        return psiFacade;
+    }
+
+    public LookupItemBuilder getLookupItemBuilder(DBLanguage language) {
+        return lookupItemBuilder.get(language);
     }
 
     @Override
