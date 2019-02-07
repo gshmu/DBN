@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn;
 
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.init.DatabaseNavigatorInitializer;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.application.ApplicationManager;
@@ -48,7 +49,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
         //FileTypeManager.getInstance().registerFileType(SQLFileType.INSTANCE, "sql");
         //FileTypeManager.getInstance().registerFileType(PSQLFileType.INSTANCE, "psql");
         //resolvePluginConflict();
-        System.out.println();
+        DatabaseNavigatorInitializer.componentsInitialized();
     }
 
     private static boolean sqlPluginActive() {
