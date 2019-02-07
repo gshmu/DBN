@@ -25,6 +25,8 @@ import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.dci.intellij.dbn.options.ui.ProjectSettingsDialog;
+import com.intellij.ide.fileTemplates.FileTemplate;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -180,6 +182,11 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
 
     @Override
     public void projectOpened() {
+        FileTemplateManager templateManager = FileTemplateManager.getDefaultInstance();
+        FileTemplate sqlTemplate = templateManager.getTemplate("SQL Script");
+        if (sqlTemplate == null) {
+            templateManager.addTemplate("SQL Script", "sql");
+        }
     }
 
     @Override
