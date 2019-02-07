@@ -166,7 +166,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     @Override
     @Nullable
     public JComponent getPreferredFocusedComponent() {
-        return getEditorTable().getTableGutter();
+        return editorForm.getComponent();
     }
 
     @Override
