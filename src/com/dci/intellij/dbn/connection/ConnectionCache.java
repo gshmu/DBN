@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ConnectionCache implements ApplicationComponent{
-    private static Map<ConnectionId, ConnectionHandler> CACHE = new THashMap<ConnectionId, ConnectionHandler>();
+    private static Map<ConnectionId, ConnectionHandler> CACHE = new THashMap<>();
 
     @Nullable
     public static ConnectionHandler findConnectionHandler(ConnectionId connectionId) {
@@ -60,23 +60,27 @@ public class ConnectionCache implements ApplicationComponent{
 
         @Override
         public void projectComponentsInitialized(@NotNull Project project) {
-            List<ConnectionHandler> connectionHandlers = ConnectionManager.getInstance(project).getConnectionHandlers();
-            for (ConnectionHandler connectionHandler : connectionHandlers) {
-                CACHE.put(connectionHandler.getId(), connectionHandler);
+            if (!project.isDefault()) {
+                ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+                List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionHandlers();
+                for (ConnectionHandler connectionHandler : connectionHandlers) {
+                    CACHE.put(connectionHandler.getId(), connectionHandler);
+                }
             }
         }
 
         @Override
         public void afterProjectClosed(@NotNull Project project) {
-            Iterator<ConnectionId> connectionIds = CACHE.keySet().iterator();
-            while (connectionIds.hasNext()) {
-                ConnectionId connectionId = connectionIds.next();
-                ConnectionHandler connectionHandler = CACHE.get(connectionId);
-                if (connectionHandler.isDisposed() || connectionHandler.getProject() == project) {
-                    connectionIds.remove();
+            if (!project.isDefault()) {
+                Iterator<ConnectionId> connectionIds = CACHE.keySet().iterator();
+                while (connectionIds.hasNext()) {
+                    ConnectionId connectionId = connectionIds.next();
+                    ConnectionHandler connectionHandler = CACHE.get(connectionId);
+                    if (connectionHandler.isDisposed() || connectionHandler.getProject() == project) {
+                        connectionIds.remove();
+                    }
                 }
             }
-
         }
     };
 }

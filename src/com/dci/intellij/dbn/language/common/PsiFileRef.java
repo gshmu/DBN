@@ -23,9 +23,9 @@ public class PsiFileRef<T extends PsiFile>{
             Project project = psiFile.getProject();
             VirtualFile virtualFile = psiFile.getVirtualFile();
 
-            psiFile = (T) PsiUtil.getPsiFile(project, virtualFile);
-            if (psiFile != null && psiFile.isValid()) {
-                psiFileRef = WeakRef.from(psiFile);
+            PsiFile newPsiFile = PsiUtil.getPsiFile(project, virtualFile);
+            if (newPsiFile != null && newPsiFile.isValid() && newPsiFile.getClass() == psiFile.getClass()) {
+                psiFileRef = WeakRef.from((T) newPsiFile);
             } else {
                 psiFile = null;
             }
