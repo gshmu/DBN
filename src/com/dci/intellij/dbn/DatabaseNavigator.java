@@ -1,29 +1,17 @@
 package com.dci.intellij.dbn;
 
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.dci.intellij.dbn.execution.ExecutionManager;
-import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
-import com.intellij.ide.plugins.RepositoryHelper;
-import com.intellij.notification.NotificationDisplayType;
-import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.extensions.PluginId;
-import com.intellij.util.proxy.CommonProxy;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.net.ProxySelector;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 @State(
     name = DatabaseNavigator.COMPONENT_NAME,
@@ -60,16 +48,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
         //FileTypeManager.getInstance().registerFileType(SQLFileType.INSTANCE, "sql");
         //FileTypeManager.getInstance().registerFileType(PSQLFileType.INSTANCE, "psql");
         //resolvePluginConflict();
-
-        FileTemplateManager templateManager = FileTemplateManager.getDefaultInstance();
-        if (templateManager.getTemplate("SQL Script") == null) {
-            templateManager.addTemplate("SQL Script", "sql");
-        }
-
-        NotificationGroup notificationGroup = new NotificationGroup("Database Navigator", NotificationDisplayType.TOOL_WINDOW, true, ExecutionManager.TOOL_WINDOW_ID);
-
-        Timer updateChecker = new Timer("DBN - Plugin Update (check timer)");
-        updateChecker.schedule(new PluginUpdateChecker(), TimeUtil.ONE_SECOND, TimeUtil.ONE_HOUR);
+        System.out.println();
     }
 
     private static boolean sqlPluginActive() {
@@ -127,33 +106,8 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
         return repositoryPluginVersion;
     }
 
-    private class PluginUpdateChecker extends TimerTask {
-        @Override
-        public void run() {
-            ProxySelector initialProxySelector = ProxySelector.getDefault();
-            CommonProxy defaultProxy = CommonProxy.getInstance();
-            boolean changeProxy = defaultProxy != initialProxySelector;
-            try {
-                if (changeProxy) {
-                    ProxySelector.setDefault(defaultProxy);
-                }
-
-                List<IdeaPluginDescriptor> descriptors = RepositoryHelper.loadCachedPlugins();
-                if (descriptors != null) {
-                    for (IdeaPluginDescriptor descriptor : descriptors) {
-                        if (descriptor.getPluginId().toString().equals(DatabaseNavigator.DBN_PLUGIN_ID)) {
-                            repositoryPluginVersion = descriptor.getVersion();
-                            break;
-                        }
-                    }
-                }
-            } catch (Exception e) {
-            } finally {
-                if (changeProxy) {
-                    ProxySelector.setDefault(initialProxySelector);
-                }
-            }
-        }
+    public void setRepositoryPluginVersion(String repositoryPluginVersion) {
+        this.repositoryPluginVersion = repositoryPluginVersion;
     }
 
     /*********************************************
