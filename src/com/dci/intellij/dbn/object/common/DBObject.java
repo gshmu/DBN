@@ -114,6 +114,7 @@ public interface DBObject extends PropertyHolder<DBObjectProperty>, BrowserTreeN
     @Override
     BrowserTreeNode getParent();
 
+    @NotNull
     DBObjectPsiFacade getPsiFacade();
 
     @Override

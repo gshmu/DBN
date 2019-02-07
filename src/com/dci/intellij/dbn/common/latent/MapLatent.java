@@ -30,4 +30,7 @@ public class MapLatent<K, V> {
         return value;
     }
 
+    public void clear() {
+        map.clear();
+    }
 }
