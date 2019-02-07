@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.latent.DisposableLatent;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
@@ -137,7 +138,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     }
 
     private void navigateToElement(@Nullable final BrowserTreeNode treeNode, final boolean scroll) {
-        SimpleLaterInvocator.invoke(() -> {
+        ConditionalLaterInvocator.invoke(() -> {
             if (treeNode != null) {
                 DatabaseBrowserForm browserForm = getToolWindowForm().getBrowserForm();
                 browserForm.selectElement(treeNode, false, scroll);
