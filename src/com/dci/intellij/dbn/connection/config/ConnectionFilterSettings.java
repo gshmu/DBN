@@ -20,12 +20,7 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
     private boolean hideEmptySchemas = false;
     private ConnectionSettings connectionSettings;
 
-    private static final Filter<DBSchema> EMPTY_SCHEMAS_FILTER = new Filter<DBSchema>() {
-        @Override
-        public boolean accepts(DBSchema schema) {
-            return !schema.isEmptySchema();
-        }
-    };
+    private static final Filter<DBSchema> EMPTY_SCHEMAS_FILTER = schema -> !schema.isEmptySchema();
 
     private transient Filter<DBSchema> cachedSchemaFilter;
 
