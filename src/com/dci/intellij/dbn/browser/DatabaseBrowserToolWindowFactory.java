@@ -16,7 +16,7 @@ public class DatabaseBrowserToolWindowFactory implements ToolWindowFactory, Dumb
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         BrowserToolWindowForm toolWindowForm = DatabaseBrowserManager.getInstance(project).getToolWindowForm();
         ContentFactory contentFactory = new ContentFactoryImpl();
-        Content content = contentFactory.createContent(toolWindowForm.getComponent(), null, false);
+        Content content = contentFactory.createContent(toolWindowForm.getComponent(), null, true);
         toolWindow.getContentManager().addContent(content);
         toolWindow.setIcon(Icons.WINDOW_DATABASE_BROWSER);
     }
