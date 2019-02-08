@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 
-public class SessionBrowserFilterState extends Filter<SessionBrowserModelRow>{
+public class SessionBrowserFilterState implements Filter<SessionBrowserModelRow>{
     private String user;
     private String host;
     private String status;

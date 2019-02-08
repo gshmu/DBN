@@ -25,7 +25,7 @@ import java.util.Set;
 
 public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFilterSettingsForm> implements TreeModel {
     private List<ObjectNameFilter> filters = new ArrayList<ObjectNameFilter>();
-    private Map<DBObjectType, Filter<DBObject>> objectFilterMap = new EnumMap<DBObjectType, Filter<DBObject>>(DBObjectType.class);
+    private Map<DBObjectType, Filter<DBObject>> objectFilterMap = new EnumMap<>(DBObjectType.class);
     private ConnectionRef connectionRef;
     public ObjectNameFilterSettings(Project project, ConnectionRef connectionRef) {
         super(project);
@@ -130,7 +130,7 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
     /*********************************************************
      *                       TreeModel                       *
      *********************************************************/
-    private Set<TreeModelListener> listeners = new HashSet<TreeModelListener>();
+    private Set<TreeModelListener> listeners = new HashSet<>();
 
     @Override
     public Object getRoot() {

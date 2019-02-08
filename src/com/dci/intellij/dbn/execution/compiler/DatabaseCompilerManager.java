@@ -36,7 +36,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseCompilerManager extends AbstractProjectComponent {
@@ -166,7 +165,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
             objectStatus.set(contentType, DBObjectStatus.COMPILING, true);
             DBNConnection connection = null;
             ConnectionHandler connectionHandler = object.getConnectionHandler();
-            boolean verbose = compilerAction.getSource() != CompilerActionSource.BULK_COMPILE;
+            boolean verbose = true ||compilerAction.getSource() != CompilerActionSource.BULK_COMPILE;
             try {
                 connection = connectionHandler.getPoolConnection(true);
                 DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
@@ -236,6 +235,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                                         doCompileInvalidObjects(schema.getDatabaseTriggers(), "database triggers", progress, data);
                                         EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, null);
 
+/*
                                         if (!progress.isCanceled()) {
                                             List<CompilerResult> compilerErrors = new ArrayList<>();
                                             buildCompilationErrors(schema.getPackages(), compilerErrors);
@@ -248,6 +248,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                                                 executionManager.addExecutionResults(compilerErrors);
                                             }
                                         }
+*/
                                     }));
                 },
                 null,
