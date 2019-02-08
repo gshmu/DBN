@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.code.common.lookup.VariableLookupItemBuilder;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
+import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -29,8 +30,11 @@ public class CodeCompletionSortingSettings extends Configuration<CodeCompletionS
         }
         if (lookupItemBuilder instanceof ObjectLookupItemBuilder) {
             ObjectLookupItemBuilder objectLookupItemBuilder = (ObjectLookupItemBuilder) lookupItemBuilder;
-            DBObjectType objectType = objectLookupItemBuilder.getObject().getObjectType();
-            return getSortingIndexFor(objectType);
+            DBObject object = objectLookupItemBuilder.getObject();
+            if (object != null && !object.isDisposed()) {
+                DBObjectType objectType = object.getObjectType();
+                return getSortingIndexFor(objectType);
+            }
         }
 
         if (lookupItemBuilder instanceof TokenLookupItemBuilder) {

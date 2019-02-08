@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -51,6 +52,7 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
         }
     }
 
+    @Nullable
     public DBObject getObject() {
         return DBObjectRef.get(objectRef);
     }
