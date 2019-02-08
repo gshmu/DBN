@@ -228,6 +228,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                             BackgroundTask.create(project,
                                     TaskInstructions.create(taskTitle, TaskInstruction.CANCELLABLE),
                                     (data, progress) -> {
+                                        progress.setIndeterminate(true);
                                         doCompileInvalidObjects(schema.getPackages(), "packages", progress, data);
                                         doCompileInvalidObjects(schema.getFunctions(), "functions", progress, data);
                                         doCompileInvalidObjects(schema.getProcedures(), "procedures", progress, data);
