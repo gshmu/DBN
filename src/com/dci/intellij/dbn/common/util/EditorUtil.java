@@ -82,7 +82,7 @@ public class EditorUtil {
                 }
             }
 
-            if (editableObjectFile != null) {
+            if (editableObjectFile != null && editableObjectFile.isValid()) {
                 FileEditor[] fileEditors = instruction.isOpen() ?
                         fileEditorManager.openFile(editableObjectFile, instruction.isFocus()) :
                         fileEditorManager.getEditors(editableObjectFile);
