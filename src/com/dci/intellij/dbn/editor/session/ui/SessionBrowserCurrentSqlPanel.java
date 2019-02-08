@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
@@ -214,7 +215,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();
-            EditorFactory.getInstance().releaseEditor(viewer);
+            EditorUtil.releaseEditor(viewer);
             viewer = null;
             virtualFile = null;
             document = null;

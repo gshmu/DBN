@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
@@ -106,7 +107,7 @@ public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
 
         if (oldEditor!= null) {
             editorPanel.remove(oldEditor.getComponent());
-            EditorFactory.getInstance().releaseEditor(oldEditor);
+            EditorUtil.releaseEditor(oldEditor);
 
         }
         editorPanel.add(editor.getComponent(), BorderLayout.CENTER);
@@ -155,7 +156,7 @@ public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
     @Override
     public void dispose() {
         super.dispose();
-        EditorFactory.getInstance().releaseEditor(editor);
+        EditorUtil.releaseEditor(editor);
         editor = null;
         documentListener = null;
         //editor = null;

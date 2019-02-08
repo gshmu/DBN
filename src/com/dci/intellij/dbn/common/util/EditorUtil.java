@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
@@ -401,5 +402,13 @@ public class EditorUtil {
         int width = (charWidth + 1) * maxLength; // mono spaced fonts here
         int height = (editor.getLineHeight()) * document.getLineCount();
         return new Dimension(width, height);
+    }
+
+    public static void releaseEditor(@Nullable Editor editor) {
+        if (editor != null) {
+            ConditionalLaterInvocator.invoke(() ->
+                    EditorFactory.getInstance().releaseEditor(editor));
+        }
+
     }
 }
