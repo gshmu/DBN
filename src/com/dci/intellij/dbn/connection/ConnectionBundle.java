@@ -30,12 +30,8 @@ import java.util.List;
 
 public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTreeNode, Disposable {
 
-    private static final Filter<ConnectionHandler> ACTIVE_CONNECTIONS_FILTER = new Filter<ConnectionHandler>() {
-        @Override
-        public boolean accepts(ConnectionHandler connectionHandler) {
-            return connectionHandler != null && connectionHandler.isEnabled();
-        }
-    };
+    private static final Filter<ConnectionHandler> ACTIVE_CONNECTIONS_FILTER =
+            connectionHandler -> connectionHandler != null && connectionHandler.isEnabled();
 
 
     private ProjectRef projectRef;

@@ -194,7 +194,7 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
         });
     }
 
-    private class DynamicFilter extends Filter<String> {
+    private class DynamicFilter implements Filter<String> {
         @Override
         public boolean accepts(String string) {
             if (getEditorComponent().isSelected()) return true;
@@ -254,7 +254,7 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
         List<String> elements;
 
         ListModel(Filter<String> filter, Collection<String> elements) {
-            this.elements = new FiltrableListImpl<String>(filter);
+            this.elements = new FiltrableListImpl<>(filter);
             this.elements.addAll(elements);
         }
 
@@ -263,7 +263,7 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
         }
 
         ListModel(Collection<String> elements) {
-            this.elements = new ArrayList<String>(elements);
+            this.elements = new ArrayList<>(elements);
         }
 
         public boolean isFiltrable() {

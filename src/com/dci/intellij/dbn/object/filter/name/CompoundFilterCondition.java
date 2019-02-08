@@ -11,7 +11,7 @@ import org.jdom.Element;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompoundFilterCondition extends Filter<DBObject> implements FilterCondition {
+public class CompoundFilterCondition implements Filter<DBObject>, FilterCondition {
     private List<FilterCondition> conditions = new ArrayList<FilterCondition>();
     private CompoundFilterCondition parent;
     private ConditionJoinType joinType = ConditionJoinType.AND;

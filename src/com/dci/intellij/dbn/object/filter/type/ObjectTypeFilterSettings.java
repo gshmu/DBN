@@ -94,34 +94,26 @@ public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFil
         return typeFilter;
     }
 
-    private Filter<BrowserTreeNode> elementFilter = new Filter<BrowserTreeNode>() {
-        @Override
-        public boolean accepts(BrowserTreeNode treeNode) {
-            if (treeNode == null) {
-                return false;
-            }
-
-            if (treeNode instanceof DBObject) {
-                DBObject object = (DBObject) treeNode;
-                DBObjectType objectType = object.getObjectType();
-                return isVisible(objectType);
-            }
-
-            if (treeNode instanceof DBObjectList) {
-                DBObjectList objectList = (DBObjectList) treeNode;
-                return isVisible(objectList.getObjectType());
-            }
-
-            return true;
+    private Filter<BrowserTreeNode> elementFilter = treeNode -> {
+        if (treeNode == null) {
+            return false;
         }
+
+        if (treeNode instanceof DBObject) {
+            DBObject object = (DBObject) treeNode;
+            DBObjectType objectType = object.getObjectType();
+            return isVisible(objectType);
+        }
+
+        if (treeNode instanceof DBObjectList) {
+            DBObjectList objectList = (DBObjectList) treeNode;
+            return isVisible(objectList.getObjectType());
+        }
+
+        return true;
     };
 
-    private Filter<DBObjectType> typeFilter = new Filter<DBObjectType>() {
-        @Override
-        public boolean accepts(DBObjectType objectType) {
-            return objectType != null && isVisible(objectType);
-        }
-    };
+    private Filter<DBObjectType> typeFilter = objectType -> objectType != null && isVisible(objectType);
 
     private boolean isVisible(DBObjectType objectType) {
         return isProjectLevel() ?

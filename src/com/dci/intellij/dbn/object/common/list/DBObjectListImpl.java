@@ -126,7 +126,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     }
 
-    private class InternalFilter extends Filter<T> {
+    private class InternalFilter implements Filter<T> {
         private ObjectQuickFilter quickFilter;
 
         InternalFilter(ObjectQuickFilter quickFilter) {
