@@ -25,6 +25,14 @@ public class DatabaseBrowserAction extends DumbAwareAction {
         Presentation presentation = e.getPresentation();
         Project project = ActionUtil.getProject(e);
         presentation.setEnabled(project != null);
+        presentation.setVisible(project != null);
+
+        if (project != null && !project.isDefault()) {
+            ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+            ToolWindow toolWindow = toolWindowManager.getToolWindow(DatabaseBrowserManager.TOOL_WINDOW_ID);
+            presentation.setVisible(!toolWindow.isVisible());
+        }
+
     }
 
 }
