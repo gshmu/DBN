@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -206,9 +207,11 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     @Override
     @NotNull
     public FileType getFileType() {
-        DBSchemaObject object = getObject();
-        DDLFileManager ddlFileManager = DDLFileManager.getInstance(object.getProject());
-        DDLFileType type = ddlFileManager.getDDLFileType(object.getObjectType(), getMainContentType());
+        DDLFileType type = FailsafeUtil.lenient(() -> {
+            DBSchemaObject object = getObject();
+            DDLFileManager ddlFileManager = DDLFileManager.getInstance(object.getProject());
+            return ddlFileManager.getDDLFileType(object.getObjectType(), getMainContentType());
+        });
         return type == null ? SQLFileType.INSTANCE : type.getLanguageFileType();
     }
 

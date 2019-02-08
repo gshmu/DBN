@@ -34,8 +34,10 @@ public abstract class DDLFileEditorProvider extends BasicTextEditorProvider impl
     @Override
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
-            DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
-            List<VirtualFile> ddlFiles = databaseFile.getAttachedDDLFiles();
+            List<VirtualFile> ddlFiles = FailsafeUtil.lenient(() -> {
+                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
+                return databaseFile.getAttachedDDLFiles();
+            });
             return ddlFiles != null && ddlFiles.size() > index;
         }
         return false;

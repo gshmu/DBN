@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.code;
 
+import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
@@ -15,19 +16,22 @@ public class SourceCodeBodyEditorProvider extends BasicSourceCodeEditorProvider{
 
     @Override
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-        DBEditableObjectVirtualFile databaseFile = null;
-        if (virtualFile instanceof DBEditableObjectVirtualFile) {
-            databaseFile = (DBEditableObjectVirtualFile) virtualFile;
-        }
+        DBContentType contentType = FailsafeUtil.lenient(() -> {
+            DBEditableObjectVirtualFile databaseFile = null;
+            if (virtualFile instanceof DBEditableObjectVirtualFile) {
+                databaseFile = (DBEditableObjectVirtualFile) virtualFile;
+            }
 
 /*
-        else if (virtualFile instanceof SourceCodeFile) {
-            SourceCodeFile sourceCodeFile = (SourceCodeFile) virtualFile;
-            databaseFile = sourceCodeFile.getDatabaseFile();
-        }
+            else if (virtualFile instanceof SourceCodeFile) {
+                SourceCodeFile sourceCodeFile = (SourceCodeFile) virtualFile;
+                databaseFile = sourceCodeFile.getDatabaseFile();
+            }
 */
+            return databaseFile == null ? null : databaseFile.getObject().getContentType();
+        });
 
-        return databaseFile != null && databaseFile.getObject().getContentType() == DBContentType.CODE_SPEC_AND_BODY;
+        return contentType == DBContentType.CODE_SPEC_AND_BODY;
     }
 
     @Override
