@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.method.result.ui;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
@@ -157,6 +158,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecu
     @Override
     public void dispose() {
         super.dispose();
-        EditorFactory.getInstance().releaseEditor(editor);
+        EditorUtil.releaseEditor(editor);
+        editor = null;
     }
 }

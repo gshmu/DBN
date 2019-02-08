@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.ValueSelector;
 import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.data.filter.ConditionJoinType;
 import com.dci.intellij.dbn.editor.data.filter.ConditionOperator;
 import com.dci.intellij.dbn.editor.data.filter.DatasetBasicFilter;
@@ -285,7 +286,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();
-            EditorFactory.getInstance().releaseEditor(viewer);
+            EditorUtil.releaseEditor(viewer);
             viewer = null;
             previewDocument = null;
             for (DatasetBasicFilterConditionForm conditionForm : conditionForms) {
