@@ -214,11 +214,11 @@
         </group>
         <group id="DBNavigator.Actions.MainMenu" text="_DB Navigator">
             <action class="com.dci.intellij.dbn.menu.action.DatabaseBrowserAction" text="Database Browser" id="DBNavigator.Actions.MainMenu.DatabaseBrowser"/>
-            <action class="com.dci.intellij.dbn.menu.action.ResourceMonitorAction" text="Resource monitor" id="DBNavigator.Actions.MainMenu.ResourceMonitor"/>
             <separator/>
             <action class="com.dci.intellij.dbn.menu.action.SQLConsoleAction" text="Open SQL Console..." id="DBNavigator.Actions.MainMenu.OpenSQLConsole" icon="/img/file/SQLConsole.png"/>
             <action class="com.dci.intellij.dbn.menu.action.SessionBrowserAction" text="Open Session Browser..." id="DBNavigator.Actions.MainMenu.OpenSessionBrowser" icon="/img/file/SessionBrowser.png"/>
             <action class="com.dci.intellij.dbn.menu.action.MethodExecutionHistoryAction" text="Method Execution History" id="DBNavigator.Actions.MainMenu.MethodExecutionHistory"/>
+            <action class="com.dci.intellij.dbn.menu.action.ResourceMonitorAction" text="Resource monitor" id="DBNavigator.Actions.MainMenu.ResourceMonitor"/>
             <action class="com.dci.intellij.dbn.menu.action.PendingTransactionsAction" text="Uncommitted Changes" id="DBNavigator.Actions.MainMenu.PendingTransactions"/>
             <separator/>
             <group id="DBNavigator.ActionGroup.Development" text="Development" popup="true">
