@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -144,7 +145,8 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
         super.dispose();
         variableValueForms.clear();
         executionProcessor = null;
-        EditorFactory.getInstance().releaseEditor(viewer);
+        EditorUtil.releaseEditor(viewer);
+        viewer = null;
     }
 
     @Override

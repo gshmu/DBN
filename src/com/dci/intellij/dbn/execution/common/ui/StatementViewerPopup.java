@@ -98,7 +98,7 @@ public class StatementViewerPopup implements Disposable {
     @Override
     public void dispose() {
         if (viewer != null) {
-            EditorFactory.getInstance().releaseEditor(viewer);
+            EditorUtil.releaseEditor(viewer);
             viewer = null;
         }
     }

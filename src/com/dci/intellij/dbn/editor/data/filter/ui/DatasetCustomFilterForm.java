@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.data.filter.DatasetCustomFilter;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
@@ -132,7 +133,7 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
     public void dispose() {
         if (!isDisposed()) {
             super.dispose();
-            EditorFactory.getInstance().releaseEditor(editor);
+            EditorUtil.releaseEditor(editor);
             editor = null;
             document = null;
         }
