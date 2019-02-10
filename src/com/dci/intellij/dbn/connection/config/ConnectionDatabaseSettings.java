@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.connection.DatabaseUrlPattern;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
+import com.dci.intellij.dbn.credentials.DatabaseCredentialManager;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
@@ -44,7 +45,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     private String driver;
 
     private ConnectionConfigType configType = ConnectionConfigType.BASIC;
-    private AuthenticationInfo authenticationInfo = new AuthenticationInfo();
+    private AuthenticationInfo authenticationInfo;
 
     private ConnectionSettings parent;
 
@@ -52,6 +53,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         this.parent = parent;
         this.databaseType = databaseType;
         this.configType = configType;
+        authenticationInfo = new AuthenticationInfo(parent.getConnectionId());
         if (databaseType != DatabaseType.UNKNOWN) {
             urlPattern = databaseType.getDefaultUrlPattern();
             databaseInfo = urlPattern.getDefaultInfo();
@@ -337,8 +339,18 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
         driverLibrary = FileUtil.convertToAbsolutePath(getProject(), getString(element, "driver-library", driverLibrary));
         driver        = getString(element, "driver", driver);
 
-        authenticationInfo.setUser(getString(element, "user", authenticationInfo.getUser()));
-        authenticationInfo.setPassword(PasswordUtil.decodePassword(getString(element, "password", authenticationInfo.getPassword())));
+        String userName = getString(element, "user", authenticationInfo.getUser());
+        String userPassword = PasswordUtil.decodePassword(getString(element, "password", authenticationInfo.getPassword()));
+
+        DatabaseCredentialManager credentialManager = DatabaseCredentialManager.getInstance();
+        if (StringUtil.isEmpty(userPassword)) {
+            userPassword = credentialManager.getPassword(getConnectionId(), userName);
+        } else {
+            credentialManager.setPassword(getConnectionId(), userName, userPassword, IS_TRANSITORY.get());
+        }
+
+        authenticationInfo.setUser(userName);
+        authenticationInfo.setPassword(userPassword);
         authenticationInfo.setEmptyPassword(getBoolean(element, "empty-password", authenticationInfo.isEmptyPassword()));
         authenticationInfo.setOsAuthentication(getBoolean(element, "os-authentication", authenticationInfo.isOsAuthentication()));
         authenticationInfo.setSupported(databaseType.isAuthenticationSupported());
@@ -390,10 +402,16 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
             setString(element, "url", nvl(databaseInfo.getUrl()));
         }
 
+        String userName = nvl(authenticationInfo.getUser());
+        String userPassword = PasswordUtil.encodePassword(authenticationInfo.getPassword());
+
         setBoolean(element, "os-authentication", authenticationInfo.isOsAuthentication());
         setBoolean(element, "empty-password", authenticationInfo.isEmptyPassword());
-        setString(element, "user", nvl(authenticationInfo.getUser()));
-        setString(element, "password", PasswordUtil.encodePassword(authenticationInfo.getPassword()));
+        setString(element, "user", userName);
+        setString(element, "password", userPassword);
+
+        DatabaseCredentialManager credentialManager = DatabaseCredentialManager.getInstance();
+        credentialManager.setPassword(getConnectionId(), userName, authenticationInfo.getPassword(), true);
     }
 
     public Project getProject() {
