@@ -3,14 +3,24 @@ package com.dci.intellij.dbn.common.database;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.connection.ConnectionId;
 
 public class AuthenticationInfo implements com.dci.intellij.dbn.common.util.Cloneable<AuthenticationInfo>{
+    private ConnectionId connectionId;
     private long timestamp = System.currentTimeMillis();
     private boolean osAuthentication;
     private boolean emptyPassword;
     private boolean supported = true;
     private String user;
     private String password;
+
+    public AuthenticationInfo(ConnectionId connectionId) {
+        this.connectionId = connectionId;
+    }
+
+    public ConnectionId getConnectionId() {
+        return connectionId;
+    }
 
     public String getUser() {
         return user;
@@ -69,7 +79,7 @@ public class AuthenticationInfo implements com.dci.intellij.dbn.common.util.Clon
 
     @Override
     public AuthenticationInfo clone() {
-        AuthenticationInfo authenticationInfo = new AuthenticationInfo();
+        AuthenticationInfo authenticationInfo = new AuthenticationInfo(connectionId);
         authenticationInfo.user = user;
         authenticationInfo.password = password;
         authenticationInfo.osAuthentication = osAuthentication;

@@ -224,7 +224,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @NotNull
     @Override
     public AuthenticationInfo getTemporaryAuthenticationInfo() {
-        return new AuthenticationInfo();
+        return new AuthenticationInfo(getId());
     }
 
     @Override
