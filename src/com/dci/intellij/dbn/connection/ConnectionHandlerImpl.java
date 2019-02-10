@@ -66,7 +66,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     private boolean enabled;
     private ConnectionHandlerRef ref;
-    private AuthenticationInfo temporaryAuthenticationInfo = new AuthenticationInfo();
+    private AuthenticationInfo temporaryAuthenticationInfo;
     private ConnectionInfo connectionInfo;
     private Cache metaDataCache = new Cache(TimeUtil.ONE_MINUTE);
 
@@ -89,6 +89,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         connectionPool = new ConnectionPool(this);
         consoleBundle = new DatabaseConsoleBundle(this);
         sessionBundle = new DatabaseSessionBundle(this);
+        temporaryAuthenticationInfo = new AuthenticationInfo(getId());
     }
 
     @NotNull
@@ -136,7 +137,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
             int passwordExpiryTime = getSettings().getDetailSettings().getPasswordExpiryTime() * 60000;
             long lastAccessTimestamp = getConnectionPool().getLastAccessTimestamp();
             if (lastAccessTimestamp > 0 && temporaryAuthenticationInfo.isOlderThan(passwordExpiryTime) && TimeUtil.isOlderThan(lastAccessTimestamp, passwordExpiryTime)) {
-                temporaryAuthenticationInfo = new AuthenticationInfo();
+                temporaryAuthenticationInfo = new AuthenticationInfo(getId());
             }
         }
         return temporaryAuthenticationInfo;
@@ -334,7 +335,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @Override
     public void disconnect() {
         // explicit disconnect (reset auto-connect data)
-        temporaryAuthenticationInfo = new AuthenticationInfo();
+        temporaryAuthenticationInfo = new AuthenticationInfo(getId());
         instructions.setAllowAutoConnect(false);
         connectionStatus.setConnected(false);
         getConnectionPool().closeConnections();
