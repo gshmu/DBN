@@ -46,7 +46,7 @@ public abstract class ExecutionInput extends DisposableBase implements Disposabl
     private final TimeoutSettingsListener timeoutSettingsListener = new TimeoutSettingsListener() {
         @Override
         public void settingsChanged(ExecutionTarget executionTarget) {
-            if (executionTarget == ExecutionInput.this.executionTarget) {
+            if (executionTarget == getExecutionTarget()) {
                 ExecutionTimeoutSettings timeoutSettings = getExecutionTimeoutSettings();
                 executionTimeout.updateSettingsValue(timeoutSettings.getExecutionTimeout());
                 debugExecutionTimeout.updateSettingsValue(timeoutSettings.getDebugExecutionTimeout());

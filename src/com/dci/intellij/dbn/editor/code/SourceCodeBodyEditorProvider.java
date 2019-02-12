@@ -16,22 +16,17 @@ public class SourceCodeBodyEditorProvider extends BasicSourceCodeEditorProvider{
 
     @Override
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-        DBContentType contentType = FailsafeUtil.lenient(() -> {
+        return FailsafeUtil.lenient(false, () -> {
             DBEditableObjectVirtualFile databaseFile = null;
             if (virtualFile instanceof DBEditableObjectVirtualFile) {
                 databaseFile = (DBEditableObjectVirtualFile) virtualFile;
             }
 
-/*
-            else if (virtualFile instanceof SourceCodeFile) {
-                SourceCodeFile sourceCodeFile = (SourceCodeFile) virtualFile;
-                databaseFile = sourceCodeFile.getDatabaseFile();
-            }
-*/
-            return databaseFile == null ? null : databaseFile.getObject().getContentType();
+            DBContentType contentType = databaseFile == null ? null : databaseFile.getObject().getContentType();
+            return contentType == DBContentType.CODE_SPEC_AND_BODY;
         });
 
-        return contentType == DBContentType.CODE_SPEC_AND_BODY;
+
     }
 
     @Override

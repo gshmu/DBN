@@ -143,17 +143,19 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
 
     @Override
     public void reset() {
-        ConditionalLaterInvocator.invoke(configurationEditorForm, () -> {
-            try {
-                if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) {
-                    IS_RESETTING.set(true);
-                    configurationEditorForm.resetFormChanges();
+        if (configurationEditorForm != null) {
+            ConditionalLaterInvocator.invoke(configurationEditorForm, () -> {
+                try {
+                    if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) {
+                        IS_RESETTING.set(true);
+                        configurationEditorForm.resetFormChanges();
+                    }
+                } finally {
+                    modified = false;
+                    IS_RESETTING.set(false);
                 }
-            } finally {
-                modified = false;
-                IS_RESETTING.set(false);
-            }
-        });
+            });
+        }
     }
 
     @Override
