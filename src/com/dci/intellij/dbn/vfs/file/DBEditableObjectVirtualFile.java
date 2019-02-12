@@ -207,12 +207,12 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     @Override
     @NotNull
     public FileType getFileType() {
-        DDLFileType type = FailsafeUtil.lenient(() -> {
+        return FailsafeUtil.lenient(SQLFileType.INSTANCE, () -> {
             DBSchemaObject object = getObject();
             DDLFileManager ddlFileManager = DDLFileManager.getInstance(object.getProject());
-            return ddlFileManager.getDDLFileType(object.getObjectType(), getMainContentType());
+            DDLFileType type =  ddlFileManager.getDDLFileType(object.getObjectType(), getMainContentType());
+            return type == null ? SQLFileType.INSTANCE : type.getLanguageFileType();
         });
-        return type == null ? SQLFileType.INSTANCE : type.getLanguageFileType();
     }
 
     @Override

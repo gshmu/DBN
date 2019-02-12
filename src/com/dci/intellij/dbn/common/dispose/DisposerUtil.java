@@ -19,7 +19,7 @@ public class DisposerUtil {
 
     public static void dispose(@Nullable Disposable disposable) {
         if (disposable != null) {
-            Disposer.dispose(disposable);
+            FailsafeUtil.lenient(() -> Disposer.dispose(disposable));
         }
     }
 

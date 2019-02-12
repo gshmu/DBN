@@ -30,14 +30,16 @@ public class DatasetEditorProvider implements FileEditorProvider, ApplicationCom
 
     @Override
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-        if (virtualFile instanceof DBEditableObjectVirtualFile) {
-            DBContentType contentType = FailsafeUtil.lenient(() -> {
+
+        return FailsafeUtil.lenient(false, () -> {
+            if (virtualFile instanceof DBEditableObjectVirtualFile) {
                 DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
-                return databaseFile.getObject().getContentType();
-            });
-            return contentType == DBContentType.DATA || contentType == DBContentType.CODE_AND_DATA;
-        }
-        return false;
+                DBContentType contentType = databaseFile.getObject().getContentType();
+                return contentType == DBContentType.DATA || contentType == DBContentType.CODE_AND_DATA;
+
+            }
+            return false;
+        });
     }
 
     @Override

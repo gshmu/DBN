@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.options;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
@@ -19,18 +20,20 @@ import org.jetbrains.annotations.Nullable;
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class DefaultProjectSettingsManager implements ApplicationComponent, PersistentStateComponent<Element> {
-    private ProjectSettings defaultProjectSettings;
+    private Latent<ProjectSettings> defaultProjectSettings = Latent.create(() -> {
+        ProjectManager projectManager = ProjectManager.getInstance();
+        Project defaultProject = projectManager.getDefaultProject();
+        return new ProjectSettings(defaultProject);
+    });
 
-    private DefaultProjectSettingsManager() {
-        defaultProjectSettings = new ProjectSettings(ProjectManager.getInstance().getDefaultProject());
-    }
+    private DefaultProjectSettingsManager() {}
 
     public static DefaultProjectSettingsManager getInstance() {
         return ApplicationManager.getApplication().getComponent(DefaultProjectSettingsManager.class);
     }
 
     public ProjectSettings getDefaultProjectSettings() {
-        return defaultProjectSettings;
+        return defaultProjectSettings.get();
     }
 
         @Override
@@ -55,13 +58,13 @@ public class DefaultProjectSettingsManager implements ApplicationComponent, Pers
     @Override
     public Element getState() {
         Element element = new Element("state");
-        defaultProjectSettings.writeConfiguration(element);
+        getDefaultProjectSettings().writeConfiguration(element);
         return element;
     }
 
     @Override
     public void loadState(Element element) {
-        defaultProjectSettings.readConfiguration(element);
+        getDefaultProjectSettings().readConfiguration(element);
     }
 
     /*********************************************************

@@ -78,19 +78,18 @@ public class FailsafeUtil {
         return true;
     }
 
-    public static <T> T lenient(BasicCallable<T, RuntimeException> callable) {
+    public static <T> T lenient(T defaultValue, BasicCallable<T, RuntimeException> callable) {
         try {
             return callable.call();
         } catch (ProcessCanceledException e) {
-            return null;
+            return defaultValue;
         }
-
     }
 
     public static void lenient(BasicRunnable<RuntimeException> runnable) {
         try {
             runnable.run();
-        } catch (ProcessCanceledException ignor) {}
+        } catch (ProcessCanceledException ignore) {}
 
     }
 
