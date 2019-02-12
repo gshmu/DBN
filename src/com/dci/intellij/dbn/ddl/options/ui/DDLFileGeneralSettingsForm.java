@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
 import com.dci.intellij.dbn.ddl.options.listener.DDLFileSettingsChangeListener;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
 import java.awt.*;
@@ -63,16 +64,17 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        final DDLFileGeneralSettings settings = getConfiguration();
-        settings.getLookupDDLFilesEnabled().to(lookupDDLFilesCheckBox);
-        settings.getCreateDDLFilesEnabled().to(createDDLFileCheckBox);
-        final boolean settingChanged = settings.getSynchronizeDDLFilesEnabled().to(synchronizeDDLFilesCheckBox);
-        settings.getUseQualifiedObjectNames().to(useQualifiedObjectNamesCheckBox);
-        settings.getMakeScriptsRerunnable().to(makeScriptsRerunnableCheckBox);
+        DDLFileGeneralSettings configuration = getConfiguration();
+        configuration.getLookupDDLFilesEnabled().to(lookupDDLFilesCheckBox);
+        configuration.getCreateDDLFilesEnabled().to(createDDLFileCheckBox);
+        final boolean settingChanged = configuration.getSynchronizeDDLFilesEnabled().to(synchronizeDDLFilesCheckBox);
+        configuration.getUseQualifiedObjectNames().to(useQualifiedObjectNamesCheckBox);
+        configuration.getMakeScriptsRerunnable().to(makeScriptsRerunnableCheckBox);
 
+        Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (settingChanged) {
-                DDLFileSettingsChangeListener listener = EventUtil.notify(settings.getProject(), DDLFileSettingsChangeListener.TOPIC);
+                DDLFileSettingsChangeListener listener = EventUtil.notify(project, DDLFileSettingsChangeListener.TOPIC);
                 listener.settingsChanged();
 
             }

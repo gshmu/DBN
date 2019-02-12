@@ -69,15 +69,15 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        ObjectTypeFilterSettings objectFilterSettings = getConfiguration();
-        boolean notifyFilterListeners = objectFilterSettings.isModified();
+        ObjectTypeFilterSettings configuration = getConfiguration();
+        boolean notifyFilterListeners = configuration.isModified();
         visibleObjectsList.applyChanges();
-        objectFilterSettings.getUseMasterSettings().to(useMasterSettingsCheckBox);
+        configuration.getUseMasterSettings().to(useMasterSettingsCheckBox);
 
-         SettingsChangeNotifier.register(() -> {
+        Project project = configuration.getProject();
+        SettingsChangeNotifier.register(() -> {
              if (notifyFilterListeners) {
-                 Project project = objectFilterSettings.getProject();
-                 ConnectionId connectionId = objectFilterSettings.getConnectionId();
+                 ConnectionId connectionId = configuration.getConnectionId();
                  ObjectFilterChangeListener listener = EventUtil.notify(project, ObjectFilterChangeListener.TOPIC);
                  listener.typeFiltersChanged(connectionId);
              }

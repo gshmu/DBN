@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
 
@@ -35,18 +36,20 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        StatementExecutionSettings settings = getConfiguration();
-        settings.setResultSetFetchBlockSize(ConfigurationEditorUtil.validateIntegerInputValue(fetchBlockSizeTextField, "Fetch block size", true, 1, 10000, null));
+        StatementExecutionSettings configuration = getConfiguration();
+        configuration.setResultSetFetchBlockSize(ConfigurationEditorUtil.validateIntegerInputValue(fetchBlockSizeTextField, "Fetch block size", true, 1, 10000, null));
         int executionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", true, 0, 6000, "\nUse value 0 for no timeout");
         int debugExecutionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(debugExecutionTimeoutTextField, "Debug execution timeout", true, 0, 6000, "\nUse value 0 for no timeout");
 
-        settings.setFocusResult(focusResultCheckBox.isSelected());
-        settings.setPromptExecution(promptExecutionCheckBox.isSelected());
+        configuration.setFocusResult(focusResultCheckBox.isSelected());
+        configuration.setPromptExecution(promptExecutionCheckBox.isSelected());
 
-        boolean timeoutSettingsChanged = settings.setExecutionTimeout(executionTimeout);
-        timeoutSettingsChanged = settings.setDebugExecutionTimeout(debugExecutionTimeout) || timeoutSettingsChanged;
+        boolean timeoutSettingsChanged = configuration.setExecutionTimeout(executionTimeout);
+        timeoutSettingsChanged = configuration.setDebugExecutionTimeout(debugExecutionTimeout) || timeoutSettingsChanged;
         if (timeoutSettingsChanged) {
-            SettingsChangeNotifier.register(() -> EventUtil.notify(getProject(), TimeoutSettingsListener.TOPIC).settingsChanged(ExecutionTarget.STATEMENT));
+            Project project = configuration.getProject();
+            SettingsChangeNotifier.register(() ->
+                    EventUtil.notify(project, TimeoutSettingsListener.TOPIC).settingsChanged(ExecutionTarget.STATEMENT));
         }
     }
 

@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettingsChangeListener;
 import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,17 +54,18 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        final DataGridTrackingColumnSettings settings = getConfiguration();
-        final boolean trackingColumnsVisible = visibleCheckBox.isSelected();
-        final boolean visibilityChanged = settings.isShowColumns() != trackingColumnsVisible;
-        settings.setShowColumns(trackingColumnsVisible);
-        settings.setAllowEditing(editableCheckBox.isSelected());
+        DataGridTrackingColumnSettings configuration = getConfiguration();
+        boolean trackingColumnsVisible = visibleCheckBox.isSelected();
+        boolean visibilityChanged = configuration.isShowColumns() != trackingColumnsVisible;
+        configuration.setShowColumns(trackingColumnsVisible);
+        configuration.setAllowEditing(editableCheckBox.isSelected());
 
-        settings.setColumnNames(editableStringListForm.getStringValues());
+        configuration.setColumnNames(editableStringListForm.getStringValues());
 
+        Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (visibilityChanged) {
-                DataGridSettingsChangeListener listener = EventUtil.notify(settings.getProject(), DataGridSettingsChangeListener.TOPIC);
+                DataGridSettingsChangeListener listener = EventUtil.notify(project, DataGridSettingsChangeListener.TOPIC);
                 listener.trackingColumnsVisibilityChanged(trackingColumnsVisible);
             }
         });

@@ -24,7 +24,7 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
     protected static ThreadLocalFlag IS_TRANSITORY = new ThreadLocalFlag(false);
 
     private static ThreadLocalFlag IS_RESETTING = new ThreadLocalFlag(false);
-    private static ThreadLocal<List<SettingsChangeNotifier>> SETTINGS_CHANGE_NOTIFIERS = new ThreadLocal<List<SettingsChangeNotifier>>();
+    private static ThreadLocal<List<SettingsChangeNotifier>> SETTINGS_CHANGE_NOTIFIERS = new ThreadLocal<>();
     private T configurationEditorForm;
 
     private boolean modified = false;
@@ -84,7 +84,7 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
     public static void registerChangeNotifier(SettingsChangeNotifier notifier) {
         List<SettingsChangeNotifier> notifiers = SETTINGS_CHANGE_NOTIFIERS.get();
         if (notifiers == null) {
-            notifiers = new ArrayList<SettingsChangeNotifier>();
+            notifiers = new ArrayList<>();
             SETTINGS_CHANGE_NOTIFIERS.set(notifiers);
         }
         notifiers.add(notifier);

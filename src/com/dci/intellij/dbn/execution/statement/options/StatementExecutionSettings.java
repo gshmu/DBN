@@ -4,15 +4,17 @@ import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.ProjectSupplier;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.dci.intellij.dbn.execution.statement.options.ui.StatementExecutionSettingsForm;
+import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class StatementExecutionSettings extends Configuration implements ExecutionTimeoutSettings {
+public class StatementExecutionSettings extends Configuration implements ExecutionTimeoutSettings, ProjectSupplier {
     private static final String REMEMBER_OPTION_HINT = ""/*"\n\n(you can remember your option and change it at any time in Settings > Execution Engine > Statement Execution)"*/;
 
     private ExecutionEngineSettings parent;
@@ -34,6 +36,12 @@ public class StatementExecutionSettings extends Configuration implements Executi
     @Override
     public String getHelpTopic() {
         return "executionEngine";
+    }
+
+    @NotNull
+    @Override
+    public Project getProject() {
+        return parent.getProject();
     }
 
     /*********************************************************

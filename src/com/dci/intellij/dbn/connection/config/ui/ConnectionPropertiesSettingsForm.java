@@ -41,15 +41,15 @@ public class ConnectionPropertiesSettingsForm extends ConfigurationEditorForm<Co
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        final ConnectionPropertiesSettings configuration = getConfiguration();
+        ConnectionPropertiesSettings configuration = getConfiguration();
         boolean newAutoCommit = autoCommitCheckBox.isSelected();
-        final boolean settingsChanged = configuration.isEnableAutoCommit() != newAutoCommit;
+        boolean settingsChanged = configuration.isEnableAutoCommit() != newAutoCommit;
 
         applyFormChanges(configuration);
 
+        Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (settingsChanged) {
-                Project project = configuration.getProject();
                 ConnectionHandlerStatusListener listener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
                 listener.statusChanged(configuration.getConnectionId());
             }

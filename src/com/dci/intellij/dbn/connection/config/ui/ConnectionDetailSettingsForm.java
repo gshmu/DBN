@@ -125,17 +125,16 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
 
         Charset charset = configuration.getCharset();
         Charset newCharset = getSelection(encodingComboBox).getCharset();
-        final boolean settingsChanged = !charset.equals(newCharset);
+        boolean settingsChanged = !charset.equals(newCharset);
 
         EnvironmentTypeId environmentTypeId = configuration.getEnvironmentType().getId();
-        final boolean environmentChanged = environmentTypeId != newEnvironmentTypeId;
+        boolean environmentChanged = environmentTypeId != newEnvironmentTypeId;
 
 
         applyFormChanges(configuration);
 
-
+        Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
-            Project project = configuration.getProject();
             if (environmentChanged) {
                 EnvironmentManagerListener listener = EventUtil.notify(project, EnvironmentManagerListener.TOPIC);
                 listener.configurationChanged();

@@ -10,8 +10,8 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class CodeEditorSettings extends CompositeProjectConfiguration<CodeEditorSettingsForm> implements TopLevelConfig {
-    private CodeEditorGeneralSettings generalSettings = new CodeEditorGeneralSettings();
-    private CodeEditorConfirmationSettings confirmationSettings = new CodeEditorConfirmationSettings();
+    private CodeEditorGeneralSettings generalSettings = new CodeEditorGeneralSettings(this);
+    private CodeEditorConfirmationSettings confirmationSettings = new CodeEditorConfirmationSettings(this);
 
     public CodeEditorSettings(Project project) {
         super(project);

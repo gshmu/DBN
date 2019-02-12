@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,9 +37,11 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
         ConnectionFilterSettings configuration = getConfiguration();
         boolean notifyFilterListeners = configuration.isHideEmptySchemas() != hideEmptySchemasCheckBox.isSelected();
         applyFormChanges(configuration);
+
+        Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (notifyFilterListeners) {
-                ObjectFilterChangeListener listener = EventUtil.notify(getConfiguration().getProject(), ObjectFilterChangeListener.TOPIC);
+                ObjectFilterChangeListener listener = EventUtil.notify(project, ObjectFilterChangeListener.TOPIC);
                 listener.nameFiltersChanged(configuration.getConnectionId(), DBObjectType.SCHEMA);
             }
         });

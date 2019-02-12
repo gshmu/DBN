@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorGeneralSettings;
 import com.dci.intellij.dbn.language.common.SpellcheckingSettingsListener;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
 
@@ -32,21 +33,22 @@ public class CodeEditorGeneralSettingsForm extends ConfigurationEditorForm<CodeE
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        CodeEditorGeneralSettings settings = getConfiguration();
-        settings.setShowObjectsNavigationGutter(showObjectNavigationGutterCheckBox.isSelected());
-        settings.setShowSpecDeclarationNavigationGutter(specDeclarationGutterCheckBox.isSelected());
+        CodeEditorGeneralSettings configuration = getConfiguration();
+        configuration.setShowObjectsNavigationGutter(showObjectNavigationGutterCheckBox.isSelected());
+        configuration.setShowSpecDeclarationNavigationGutter(specDeclarationGutterCheckBox.isSelected());
 
         boolean enableSpellchecking = this.enableSpellchecking.isSelected();
         boolean enableReferenceSpellchecking = this.enableReferenceSpellchecking.isSelected();
         boolean spellcheckingSettingsChanged =
-                settings.isEnableSpellchecking() != enableSpellchecking ||
-                settings.isEnableReferenceSpellchecking() != enableReferenceSpellchecking;
+                configuration.isEnableSpellchecking() != enableSpellchecking ||
+                configuration.isEnableReferenceSpellchecking() != enableReferenceSpellchecking;
 
-        settings.setEnableSpellchecking(enableSpellchecking);
-        settings.setEnableReferenceSpellchecking(enableReferenceSpellchecking);
+        configuration.setEnableSpellchecking(enableSpellchecking);
+        configuration.setEnableReferenceSpellchecking(enableReferenceSpellchecking);
 
+        Project project = configuration.getProject();
         if (spellcheckingSettingsChanged) {
-            SettingsChangeNotifier.register(() -> EventUtil.notify(getProject(), SpellcheckingSettingsListener.TOPIC).settingsChanged());
+            SettingsChangeNotifier.register(() -> EventUtil.notify(project, SpellcheckingSettingsListener.TOPIC).settingsChanged());
         }
     }
 
