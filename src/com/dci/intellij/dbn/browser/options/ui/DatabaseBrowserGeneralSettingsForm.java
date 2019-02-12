@@ -55,8 +55,7 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
         configuration.getNavigationHistorySize().to(navigationHistorySizeTextField);
         configuration.getShowObjectDetails().to(showObjectDetailsCheckBox);
 
-        final Project project = configuration.getProject();
-
+        Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (displayModeChanged) {
                 DisplayModeSettingsListener listener = EventUtil.notify(project, DisplayModeSettingsListener.TOPIC);

@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.ToolbarDecorator;
 import org.jetbrains.annotations.NotNull;
@@ -76,13 +77,13 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
     
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        EnvironmentSettings settings = getConfiguration();
+        EnvironmentSettings configuration = getConfiguration();
         EnvironmentTypesTableModel model = environmentTypesTable.getModel();
         model.validate();
-        final EnvironmentTypeBundle environmentTypeBundle = model.getEnvironmentTypes();
-        final boolean settingsChanged = settings.setEnvironmentTypes(environmentTypeBundle);
+        EnvironmentTypeBundle environmentTypeBundle = model.getEnvironmentTypes();
+        boolean settingsChanged = configuration.setEnvironmentTypes(environmentTypeBundle);
 
-        EnvironmentVisibilitySettings visibilitySettings = settings.getVisibilitySettings();
+        EnvironmentVisibilitySettings visibilitySettings = configuration.getVisibilitySettings();
         final boolean visibilityChanged =
             visibilitySettings.getConnectionTabs().to(connectionTabsCheckBox) ||
             visibilitySettings.getObjectEditorTabs().to(objectEditorTabsCheckBox) ||
@@ -90,9 +91,10 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
             visibilitySettings.getDialogHeaders().to(dialogHeadersCheckBox)||
             visibilitySettings.getExecutionResultTabs().to(executionResultTabsCheckBox);
 
+        Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (settingsChanged || visibilityChanged) {
-                EnvironmentManagerListener listener = EventUtil.notify(getConfiguration().getProject(), EnvironmentManagerListener.TOPIC);
+                EnvironmentManagerListener listener = EventUtil.notify(project, EnvironmentManagerListener.TOPIC);
                 listener.configurationChanged();
             }
         });
