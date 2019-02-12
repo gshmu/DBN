@@ -2,15 +2,17 @@ package com.dci.intellij.dbn.execution.script.options;
 
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.util.ProjectSupplier;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
 import com.dci.intellij.dbn.execution.script.options.ui.ScriptExecutionSettingsForm;
+import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class ScriptExecutionSettings extends Configuration<ScriptExecutionSettingsForm> implements ExecutionTimeoutSettings{
+public class ScriptExecutionSettings extends Configuration<ScriptExecutionSettingsForm> implements ExecutionTimeoutSettings, ProjectSupplier {
     private ExecutionEngineSettings parent;
     private CmdLineInterfaceBundle commandLineInterfaces = new CmdLineInterfaceBundle();
     private int executionTimeout = 300;
@@ -21,6 +23,12 @@ public class ScriptExecutionSettings extends Configuration<ScriptExecutionSettin
 
     public ExecutionEngineSettings getParent() {
         return parent;
+    }
+
+    @NotNull
+    @Override
+    public Project getProject() {
+        return parent.getProject();
     }
 
     @NotNull

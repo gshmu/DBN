@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -182,27 +183,28 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        final RegionalSettings regionalSettings = getConfiguration();
-        boolean modified = regionalSettings.isModified();
+        RegionalSettings configuration = getConfiguration();
+        boolean modified = configuration.isModified();
 
         Locale locale = getSelectedLocale();
-        regionalSettings.setLocale(locale);
+        configuration.setLocale(locale);
 
         DBDateFormat dateFormat = dateFormatComboBox.getSelectedValue();
-        regionalSettings.setDateFormatOption(dateFormat);
+        configuration.setDateFormatOption(dateFormat);
 
         DBNumberFormat numberFormat = numberFormatComboBox.getSelectedValue();
-        regionalSettings.setNumberFormatOption(numberFormat);
+        configuration.setNumberFormatOption(numberFormat);
         
-        regionalSettings.getUseCustomFormats().to(customPatternsRadioButton);
-        regionalSettings.getCustomDateFormat().to(customDateFormatTextField);
-        regionalSettings.getCustomTimeFormat().to(customTimeFormatTextField);
-        regionalSettings.getCustomNumberFormat().to(customNumberFormatTextField);
+        configuration.getUseCustomFormats().to(customPatternsRadioButton);
+        configuration.getCustomDateFormat().to(customDateFormatTextField);
+        configuration.getCustomTimeFormat().to(customTimeFormatTextField);
+        configuration.getCustomNumberFormat().to(customNumberFormatTextField);
 
 
+        Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (modified) {
-                EventUtil.notify(regionalSettings.getProject(), RegionalSettingsListener.TOPIC).settingsChanged();
+                EventUtil.notify(project, RegionalSettingsListener.TOPIC).settingsChanged();
             }});
     }
 

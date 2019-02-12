@@ -275,7 +275,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
     @Override
     public void applyFormChanges() throws ConfigurationException {
         ConfigurationEditorUtil.validateStringInputValue(nameTextField, "Name", true);
-        final ConnectionDatabaseSettings configuration = getConfiguration();
+        ConnectionDatabaseSettings configuration = getConfiguration();
 
         TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();
         JComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
@@ -303,19 +303,18 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
         applyFormChanges(configuration);
 
-         SettingsChangeNotifier.register(() -> {
-             if (nameChanged) {
-                 Project project = configuration.getProject();
-                 ConnectionSettingsListener listener = EventUtil.notify(project, ConnectionSettingsListener.TOPIC);
-                 listener.connectionNameChanged(configuration.getConnectionId());
-             }
+        Project project = configuration.getProject();
+        SettingsChangeNotifier.register(() -> {
+            if (nameChanged) {
+                ConnectionSettingsListener listener = EventUtil.notify(project, ConnectionSettingsListener.TOPIC);
+                listener.connectionNameChanged(configuration.getConnectionId());
+            }
 
-             if (settingsChanged) {
-                 Project project = configuration.getProject();
-                 ConnectionSettingsListener listener = EventUtil.notify(project, ConnectionSettingsListener.TOPIC);
-                 listener.connectionChanged(configuration.getConnectionId());
-             }
-         });
+            if (settingsChanged) {
+                ConnectionSettingsListener listener = EventUtil.notify(project, ConnectionSettingsListener.TOPIC);
+                listener.connectionChanged(configuration.getConnectionId());
+            }
+        });
     }
 
 

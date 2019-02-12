@@ -34,6 +34,12 @@ public class CodeEditorConfirmationSettings extends Configuration<CodeEditorConf
                     CodeEditorChangesOption.CANCEL);
 
 
+    private CodeEditorSettings parent;
+
+    public CodeEditorConfirmationSettings(CodeEditorSettings parent) {
+        this.parent = parent;
+    }
+
     @Override
     public String getDisplayName() {
         return "Code Editor Confirmation Settings";

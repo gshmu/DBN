@@ -3,13 +3,15 @@ package com.dci.intellij.dbn.execution.method.options;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.util.ProjectSupplier;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.method.options.ui.MethodExecutionSettingsForm;
+import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class MethodExecutionSettings extends Configuration implements ExecutionTimeoutSettings {
+public class MethodExecutionSettings extends Configuration implements ExecutionTimeoutSettings, ProjectSupplier {
     private ExecutionEngineSettings parent;
     private int executionTimeout = 30;
     private int debugExecutionTimeout = 600;
@@ -27,6 +29,12 @@ public class MethodExecutionSettings extends Configuration implements ExecutionT
     @Override
     public String getHelpTopic() {
         return "executionEngine";
+    }
+
+    @NotNull
+    @Override
+    public Project getProject() {
+        return parent.getProject();
     }
 
     /*********************************************************

@@ -89,10 +89,10 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
         return null;
     }
 
-    public void applySettings(ConnectionBundleSettings settings) {
+    public void applySettings(ConnectionBundleSettings configuration) {
         AbstractFiltrableList<ConnectionHandler> newConnectionHandlers = new FiltrableListImpl<>(ACTIVE_CONNECTIONS_FILTER);
         List<ConnectionHandler> oldConnectionHandlers = new ArrayList<>(this.connectionHandlers.getFullList());
-        List<ConnectionSettings> connectionSettings = settings.getConnections();
+        List<ConnectionSettings> connectionSettings = configuration.getConnections();
         boolean listChanged = false;
         for (ConnectionSettings connectionSetting : connectionSettings) {
             ConnectionId connectionId = connectionSetting.getConnectionId();
@@ -113,9 +113,9 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
 
 
 
-        final Project project = getProject();
         listChanged = listChanged || oldConnectionHandlers.size() > 0;
         if (listChanged) {
+            Project project = configuration.getProject();
             SettingsChangeNotifier.register(() -> {
                 EventUtil.notify(project, ConnectionSettingsListener.TOPIC).connectionsChanged();
                 ConnectionManager connectionManager = ConnectionManager.getInstance(project);

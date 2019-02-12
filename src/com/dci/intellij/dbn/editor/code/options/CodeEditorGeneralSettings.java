@@ -2,15 +2,23 @@ package com.dci.intellij.dbn.editor.code.options;
 
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.util.ProjectSupplier;
 import com.dci.intellij.dbn.editor.code.options.ui.CodeEditorGeneralSettingsForm;
+import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class CodeEditorGeneralSettings extends Configuration<CodeEditorGeneralSettingsForm> {
+public class CodeEditorGeneralSettings extends Configuration<CodeEditorGeneralSettingsForm> implements ProjectSupplier {
     private boolean showObjectsNavigationGutter = false;
     private boolean showSpecDeclarationNavigationGutter = true;
     private boolean enableSpellchecking = true;
     private boolean enableReferenceSpellchecking = false;
+
+    private CodeEditorSettings parent;
+
+    public CodeEditorGeneralSettings(CodeEditorSettings parent) {
+        this.parent = parent;
+    }
 
     @Override
     public String getDisplayName() {
@@ -56,6 +64,11 @@ public class CodeEditorGeneralSettings extends Configuration<CodeEditorGeneralSe
 
     public void setEnableReferenceSpellchecking(boolean enableReferenceSpellchecking) {
         this.enableReferenceSpellchecking = enableReferenceSpellchecking;
+    }
+
+    @NotNull
+    public Project getProject() {
+        return parent.getProject();
     }
 
     /****************************************************

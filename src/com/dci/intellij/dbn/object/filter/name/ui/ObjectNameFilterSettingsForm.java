@@ -131,25 +131,25 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
     @Override
     public void applyFormChanges() throws ConfigurationException {
         Set<DBObjectType> filterObjectTypes = new HashSet<>();
-        ObjectNameFilterSettings filterSettings = getConfiguration();
-        boolean notifyFilterListeners = filterSettings.isModified();
+        ObjectNameFilterSettings configuration = getConfiguration();
+        boolean notifyFilterListeners = configuration.isModified();
 
         // collect before after applying the changes
-        filterObjectTypes.addAll(filterSettings.getFilteredObjectTypes());
+        filterObjectTypes.addAll(configuration.getFilteredObjectTypes());
 
         Element element = new Element("Temp");
         ObjectNameFilterSettings tempSettings = (ObjectNameFilterSettings) filtersTree.getModel();
         tempSettings.writeConfiguration(element);
-        filterSettings.readConfiguration(element);
+        configuration.readConfiguration(element);
         // after applying the changes
-        filterObjectTypes.addAll(filterSettings.getFilteredObjectTypes());
+        filterObjectTypes.addAll(configuration.getFilteredObjectTypes());
 
+        Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (notifyFilterListeners) {
-                Project project = filterSettings.getProject();
                 ObjectFilterChangeListener listener = EventUtil.notify(project, ObjectFilterChangeListener.TOPIC);
                 DBObjectType[] refreshObjectTypes = filterObjectTypes.toArray(new DBObjectType[0]);
-                listener.nameFiltersChanged(filterSettings.getConnectionId(), refreshObjectTypes);
+                listener.nameFiltersChanged(configuration.getConnectionId(), refreshObjectTypes);
             }
         });
     }

@@ -102,16 +102,19 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
     
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        ScriptExecutionSettings settings = getConfiguration();
+        ScriptExecutionSettings configuration = getConfiguration();
         int executionTimeout = ConfigurationEditorUtil.validateIntegerInputValue(executionTimeoutTextField, "Execution timeout", true, 0, 6000, "\nUse value 0 for no timeout");
         CmdLineInterfacesTableModel model = cmdLineInterfacesTable.getModel();
         model.validate();
         CmdLineInterfaceBundle executorBundle = model.getBundle();
-        settings.setCommandLineInterfaces(executorBundle);
+        configuration.setCommandLineInterfaces(executorBundle);
 
-        boolean timeoutSettingsChanged = settings.setExecutionTimeout(executionTimeout);
+        boolean timeoutSettingsChanged = configuration.setExecutionTimeout(executionTimeout);
         if (timeoutSettingsChanged) {
-            SettingsChangeNotifier.register(() -> EventUtil.notify(getProject(), TimeoutSettingsListener.TOPIC).settingsChanged(ExecutionTarget.SCRIPT));
+            Project project = configuration.getProject();
+            SettingsChangeNotifier.register(() -> {
+                EventUtil.notify(project, TimeoutSettingsListener.TOPIC).settingsChanged(ExecutionTarget.SCRIPT);
+            });
         }
     }
 
