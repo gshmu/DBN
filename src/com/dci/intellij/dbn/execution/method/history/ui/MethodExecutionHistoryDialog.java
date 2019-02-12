@@ -30,7 +30,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
         this.editable = editable;
         this.debug = debug;
         this.executionHistory = executionHistory;
-        setModal(false);
+        setModal(true);
         setResizable(true);
         if (selectedExecutionInput == null) {
             selectedExecutionInput = executionHistory.getLastSelection();
