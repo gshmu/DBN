@@ -19,6 +19,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
     public static final Key<DatabaseFileViewProvider> CACHED_VIEW_PROVIDER = new Key<DatabaseFileViewProvider>("CACHED_VIEW_PROVIDER");
@@ -42,11 +43,12 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
     }
 
     @Override
+    @Nullable
     protected PsiFile getPsiInner(@NotNull Language language) {
         if (language instanceof DBLanguage || language instanceof DBLanguageDialect) {
             VirtualFile virtualFile = getVirtualFile();
             if (virtualFile instanceof DBObjectVirtualFile) {
-                return FailsafeUtil.lenient(() -> {
+                return FailsafeUtil.lenient(null, () -> {
                     DBObjectVirtualFile objectFile = (DBObjectVirtualFile) virtualFile;
                     DBObject object = objectFile.getObject();
                     return DBObjectPsiFacade.getPsiFile(object);
