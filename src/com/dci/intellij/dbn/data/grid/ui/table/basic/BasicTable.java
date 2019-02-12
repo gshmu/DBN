@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableWithGutter;
 import com.dci.intellij.dbn.common.ui.table.TableSelectionRestorer;
@@ -152,7 +152,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     public void updateBackground(final boolean readonly) {
         final JBViewport viewport = UIUtil.getParentOfType(JBViewport.class, this);
         if (viewport != null) {
-            ConditionalLaterInvocator.invoke(() -> {
+            SimpleLaterInvocator.invoke(this, () -> {
                 DataGridTextAttributes attributes = cellRenderer.getAttributes();
                 Color background = readonly ?
                         attributes.getLoadingData(false).getBgColor() :

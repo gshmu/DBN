@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionLoadListener;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -25,7 +26,7 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
         super(project);
         EventUtil.subscribe(project, this,
                 ConnectionLoadListener.TOPIC,
-                connectionHandler -> SimpleLaterInvocator.invoke(() -> {
+                connectionHandler -> SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
                     FailsafeUtil.ensure(project);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                     FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);

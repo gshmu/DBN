@@ -128,7 +128,7 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
         final JTextField textField = (JTextField) super.prepareEditor(editor, rowIndex, columnIndex);
         textField.setBorder(JBUI.Borders.emptyLeft(3));
 
-        SimpleLaterInvocator.invoke(() -> {
+        SimpleLaterInvocator.invoke(this, () -> {
             textField.selectAll();
             textField.grabFocus();
         });

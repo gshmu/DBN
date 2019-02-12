@@ -102,9 +102,8 @@ public class DataSearchResultController implements Disposable {
                     }
 
                     searchResult.stopUpdating();
-
-                    SimpleLaterInvocator.invoke(() -> {
-                        BasicTable table = searchableComponent.getTable();
+                    BasicTable table = searchableComponent.getTable();
+                    SimpleLaterInvocator.invoke(table, () -> {
                         int selectedRowIndex = table.getSelectedRow();
                         int selectedColumnIndex = table.getSelectedRow();
                         if (selectedRowIndex < 0) selectedRowIndex = 0;

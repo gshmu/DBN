@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.method.result.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
@@ -87,7 +87,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
     }
 
     public void rebuild() {
-        ConditionalLaterInvocator.invoke(() -> {
+        SimpleLaterInvocator.invoke(this, () -> {
             updateArgumentValueTree();
             updateOutputTabs();
             updateStatusBarLabels();

@@ -291,7 +291,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     };
 
     private void refreshSessionData(DatabaseSession session) {
-        SimpleLaterInvocator.invoke(() -> {
+        SimpleLaterInvocator.invoke(this, () -> {
             checkDisposed();
             ConnectionHandler connectionHandler = getConnectionHandler();
 
@@ -303,7 +303,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     }
 
     private void refreshTransactionsData(final DBNConnection connection) {
-        SimpleLaterInvocator.invoke(() -> {
+        SimpleLaterInvocator.invoke(this, () -> {
             checkDisposed();
             ConnectionHandler connectionHandler = getConnectionHandler();
 

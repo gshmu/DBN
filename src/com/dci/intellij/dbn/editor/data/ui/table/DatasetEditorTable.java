@@ -190,7 +190,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                 runnable.run();
             } finally {
                 model.set(UPDATING, false);
-                SimpleLaterInvocator.invoke(() -> {
+                SimpleLaterInvocator.invoke(this, () -> {
                     DBNTableGutter tableGutter = getTableGutter();
                     GUIUtil.repaint(tableGutter);
                     GUIUtil.repaint(DatasetEditorTable.this);
@@ -200,7 +200,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     }
 
     public void showErrorPopup(DatasetEditorModelCell cell) {
-        SimpleLaterInvocator.invoke(() -> {
+        SimpleLaterInvocator.invoke(this, () -> {
             checkDisposed();
 
             if (!isShowing()) {
@@ -222,16 +222,16 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     @Override
     public void clearSelection() {
-        SimpleLaterInvocator.invoke(() -> DatasetEditorTable.super.clearSelection());
+        SimpleLaterInvocator.invoke(this, () -> DatasetEditorTable.super.clearSelection());
     }
 
     @Override
     public void removeEditor() {
-        SimpleLaterInvocator.invoke(() -> DatasetEditorTable.super.removeEditor());
+        SimpleLaterInvocator.invoke(this, () -> DatasetEditorTable.super.removeEditor());
     }
 
     public void updateTableGutter() {
-        SimpleLaterInvocator.invoke(() -> {
+        SimpleLaterInvocator.invoke(this, () -> {
             DBNTableGutter tableGutter = getTableGutter();
             GUIUtil.repaint(tableGutter);
         });
@@ -364,7 +364,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     public void fireEditingCancel() {
         if (isEditing()) {
-            SimpleLaterInvocator.invoke(this::cancelEditing);
+            SimpleLaterInvocator.invoke(this, () -> cancelEditing());
         }
     }
 
@@ -518,7 +518,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             if (!progress.isCanceled()) {
                 ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
                 JPopupMenu popupMenu = actionPopupMenu.getComponent();
-                SimpleLaterInvocator.invoke(() -> {
+                SimpleLaterInvocator.invoke(this, () -> {
                     Component component = (Component) event.getSource();
                     if (component.isShowing()) {
                         int x = event.getX();

@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.connection.session.SessionManagerListener;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -67,7 +68,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
 
 
     private void showCreateRenameConsoleDialog(final ConnectionHandler connectionHandler, final DBConsoleVirtualFile consoleVirtualFile, final DBConsoleType consoleType) {
-        ConditionalLaterInvocator.invoke(() -> {
+        ConditionalLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
             CreateRenameConsoleDialog createConsoleDialog = consoleVirtualFile == null ?
                     new CreateRenameConsoleDialog(connectionHandler, consoleType) :
                     new CreateRenameConsoleDialog(connectionHandler, consoleVirtualFile);

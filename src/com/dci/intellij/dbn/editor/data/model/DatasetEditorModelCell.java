@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.data.model;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -264,9 +265,12 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     }
 
     private void scrollToVisible() {
-        ConditionalLaterInvocator.invoke(() -> {
-            DatasetEditorTable table = getEditorTable();
-            table.scrollRectToVisible(table.getCellRect(getRow().getIndex(), getIndex(), true));
+        DatasetEditorTable table = getEditorTable();
+        SimpleLaterInvocator.invoke(table, () -> {
+            int rowIndex = getRow().getIndex();
+            int colIndex = getIndex();
+            Rectangle cellRect = table.getCellRect(rowIndex, colIndex, true);
+            table.scrollRectToVisible(cellRect);
         });
     }
 

@@ -44,6 +44,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.State;
@@ -474,8 +475,8 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     }
 
 
-    public void selectConnectionAndSchema(@NotNull final DBLanguagePsiFile file, @NotNull final ConnectionAction callback) {
-        SimpleLaterInvocator.invoke(() -> {
+    public void selectConnectionAndSchema(@NotNull DBLanguagePsiFile file, @NotNull ConnectionAction callback) {
+        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
             Project project = getProject();
             ConnectionHandler activeConnection = file.getConnectionHandler();
             if (activeConnection == null || activeConnection.isVirtual()) {

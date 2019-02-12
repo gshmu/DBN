@@ -101,7 +101,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
             argumentsPanel.add(methodExecutionInputForm.getComponent(), BorderLayout.CENTER);
         }
 
-        GUIUtil.repaint(actionsPanel);
+        GUIUtil.repaint(argumentsPanel);
     }
 
     private ChangeListener getChangeListener() {
