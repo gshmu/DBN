@@ -13,7 +13,8 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
-import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.psi.IdentifierDefPsiElement;
+import com.dci.intellij.dbn.language.common.psi.IdentifierRefPsiElement;
 import com.dci.intellij.dbn.language.common.resolve.UnderlyingObjectResolver;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.ASTNode;
@@ -87,7 +88,9 @@ public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements Id
 
     @Override
     public PsiElement createPsiElement(ASTNode astNode) {
-        return new IdentifierPsiElement(astNode, this);
+        return isDefinition() ?
+                new IdentifierDefPsiElement(astNode, this) :
+                new IdentifierRefPsiElement(astNode, this);
     }
 
     @Override
