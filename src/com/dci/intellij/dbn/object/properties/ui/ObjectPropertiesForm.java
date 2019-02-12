@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 
@@ -81,7 +82,7 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
                         ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
                         Disposer.register(ObjectPropertiesForm.this, tableModel);
 
-                        SimpleLaterInvocator.invoke(() -> {
+                        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
                             objectLabel.setText(object.getName());
                             objectLabel.setIcon(object.getIcon());
                             objectTypeLabel.setText(NamingUtil.capitalize(object.getTypeName()) + ":");

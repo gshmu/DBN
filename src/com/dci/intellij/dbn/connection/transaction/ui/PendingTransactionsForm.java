@@ -138,6 +138,6 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
     };
 
     private void refreshForm() {
-        SimpleLaterInvocator.invoke(this::updateListModel);
+        SimpleLaterInvocator.invoke(this, () -> updateListModel());
     }
 }

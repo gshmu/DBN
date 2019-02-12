@@ -90,7 +90,7 @@ public class DatabaseBrowserTree extends DBNTree {
     }
 
     public void expandConnectionManagers() {
-        SimpleLaterInvocator.invoke(() -> {
+        SimpleLaterInvocator.invoke(this, () -> {
             ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
             ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
             TreePath treePath = DatabaseBrowserUtils.createTreePath(connectionBundle);
@@ -153,7 +153,7 @@ public class DatabaseBrowserTree extends DBNTree {
     }
 
     private void selectPath(final TreePath treePath) {
-        SimpleLaterInvocator.invoke(() -> TreeUtil.selectPath(DatabaseBrowserTree.this, treePath, true));
+        SimpleLaterInvocator.invoke(this, () -> TreeUtil.selectPath(DatabaseBrowserTree.this, treePath, true));
     }
 
 
@@ -252,7 +252,7 @@ public class DatabaseBrowserTree extends DBNTree {
                             (data, progress) -> {
                                 DBObject navigationObject = object.getDefaultNavigationObject();
                                 if (navigationObject != null) {
-                                    SimpleLaterInvocator.invoke(() -> navigationObject.navigate(true));
+                                    SimpleLaterInvocator.invoke(this, () -> navigationObject.navigate(true));
                                 }
                             });
 
@@ -348,9 +348,10 @@ public class DatabaseBrowserTree extends DBNTree {
                         if (actionGroup != null && !progress.isCanceled()) {
                             ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
                             popupMenu = actionPopupMenu.getComponent();
-                            SimpleLaterInvocator.invoke(() -> {
+                            DatabaseBrowserTree browserTree = DatabaseBrowserTree.this;
+                            SimpleLaterInvocator.invoke(browserTree, () -> {
                                 if (isShowing()) {
-                                    popupMenu.show(DatabaseBrowserTree.this, event.getX(), event.getY());
+                                    popupMenu.show(browserTree, event.getX(), event.getY());
                                 }
                             });
                         } else {

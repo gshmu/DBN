@@ -17,6 +17,7 @@ import com.intellij.diff.DiffManager;
 import com.intellij.diff.DiffRequestFactory;
 import com.intellij.diff.InvalidDiffRequestException;
 import com.intellij.diff.merge.MergeRequest;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -48,8 +49,8 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
 
 
     @Deprecated
-    public void openCodeMergeDialogOld(final String databaseContent, final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor fileEditor, final MergeAction action) {
-        SimpleLaterInvocator.invoke(() -> {
+    public void openCodeMergeDialogOld(String databaseContent, DBSourceCodeVirtualFile sourceCodeFile, SourceCodeEditor fileEditor, MergeAction action) {
+        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
             com.intellij.openapi.diff.DiffRequestFactory diffRequestFactory = new com.intellij.openapi.diff.impl.mergeTool.DiffRequestFactoryImpl();
             Project project = sourceCodeFile.getProject();
             if (project != null) {
@@ -96,7 +97,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
     }
 
     public void openCodeMergeDialog(final String databaseContent, final DBSourceCodeVirtualFile sourceCodeFile, final SourceCodeEditor fileEditor, final MergeAction action) {
-        SimpleLaterInvocator.invoke(() -> {
+        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
             final Project project = getProject();
             SourceCodeDiffContent leftContent = new SourceCodeDiffContent("Database version", databaseContent);
             SourceCodeDiffContent targetContent = new SourceCodeDiffContent("Merge result", sourceCodeFile.getOriginalContent());
@@ -149,7 +150,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
 
     public void openDiffWindow(@NotNull final DBSourceCodeVirtualFile sourceCodeFile,  final String referenceText, final String referenceTitle, final String windowTitle) {
         final Project project = sourceCodeFile.getProject();
-        SimpleLaterInvocator.invoke(() -> {
+        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
             SimpleContent originalContent = new SimpleContent(referenceText, sourceCodeFile.getFileType());
             SourceCodeFileContent changedContent = new SourceCodeFileContent(project, sourceCodeFile);
 

@@ -111,8 +111,8 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
                 TaskInstructions.create("Loading executable components"),
                 (data, progress) -> {
                     MethodBrowserSettings settings = getSettings();
-                    final ObjectTreeModel model = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), null);
-                    SimpleLaterInvocator.invoke(() -> {
+                    ObjectTreeModel model = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), null);
+                    SimpleLaterInvocator.invoke(this, () -> {
                         methodsTree.setModel(model);
                         GUIUtil.repaint(methodsTree);
                     });

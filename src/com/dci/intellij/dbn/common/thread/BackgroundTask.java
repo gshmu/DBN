@@ -102,7 +102,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
     }
 
     public static void initProgressIndicator(ProgressIndicator progressIndicator, boolean indeterminate, @Nullable String text) {
-        SimpleLaterInvocator.invoke(() -> {
+        SimpleLaterInvocator.invoke(progressIndicator.getModalityState(), () -> {
             if (progressIndicator.isRunning()) {
                 progressIndicator.setIndeterminate(indeterminate);
                 if (text != null) progressIndicator.setText(text);

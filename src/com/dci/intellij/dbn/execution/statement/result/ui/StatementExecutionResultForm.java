@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.latent.DisposableLatent;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -97,7 +96,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     }
 
     public void reloadTableModel() {
-        SimpleLaterInvocator.invoke(() -> {
+        SimpleLaterInvocator.invoke(this, () -> {
             StatementExecutionCursorResult executionResult = getExecutionResult();
             JScrollBar horizontalScrollBar = resultScrollPane.getHorizontalScrollBar();
             int horizontalScrolling = horizontalScrollBar.getValue();
@@ -114,7 +113,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     }
 
     public void updateVisibleComponents() {
-        ConditionalLaterInvocator.invoke(() -> {
+        SimpleLaterInvocator.invoke(this, () -> {
             StatementExecutionCursorResult executionResult = getExecutionResult();
             ResultSetDataModel dataModel = executionResult.getTableModel();
             String connectionName = executionResult.getConnectionHandler().getPresentableText();

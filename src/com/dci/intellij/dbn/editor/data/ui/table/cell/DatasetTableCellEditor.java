@@ -103,7 +103,7 @@
 
         if (textField.isEditable()) {
             String originalText = textField.getText();
-            SimpleLaterInvocator.invoke(() -> {
+            SimpleLaterInvocator.invoke(textField, () -> {
                 checkDisposed();
                 // select all only if the text didn't change
                 if (settings.getGeneralSettings().getSelectContentOnCellEdit().value()) {
@@ -194,9 +194,9 @@
 
                 SimpleBackgroundTask.invoke(() -> {
                     DBColumn column = cell.getColumnInfo().getColumn();
-                    final DBColumn foreignKeyColumn = column.getForeignKeyColumn();
+                    DBColumn foreignKeyColumn = column.getForeignKeyColumn();
                     if (foreignKeyColumn != null && !e.isConsumed()) {
-                        SimpleLaterInvocator.invoke(() -> {
+                        SimpleLaterInvocator.invoke(textField, () -> {
                             textField.setToolTipText("<html>Show referenced <b>" + foreignKeyColumn.getDataset().getQualifiedName() + "</b> record<html>");
                             textField.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                         });

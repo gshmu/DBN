@@ -328,9 +328,9 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
     }
 
-    private void handleLoadError(final SQLException e, final DatasetLoadInstructions instr) {
-        SimpleLaterInvocator.invoke(() -> {
-            final DBDataset dataset = getDataset();
+    private void handleLoadError(SQLException e, DatasetLoadInstructions instr) {
+        SimpleLaterInvocator.invoke(getComponent(), () -> {
+            DBDataset dataset = getDataset();
             if (!isDisposed()) {
                 focusEditor();
                 ConnectionHandler connectionHandler = getConnectionHandler();
@@ -398,9 +398,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         if (status.set(LOADING, loading)) {
             DatasetEditorTable editorTable = getEditorTable();
             editorTable.setLoading(loading);
-            SimpleLaterInvocator.invoke(() -> {
-                GUIUtil.repaint(editorTable);
-            });
+            GUIUtil.repaint(editorTable);
         }
 
     }
@@ -534,16 +532,18 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             boolean statusChanged = getStatus().set(CONNECTED, connected);
 
             if (statusChanged) {
-                SimpleLaterInvocator.invoke(() -> {
-                    DatasetEditorTable editorTable = getEditorTable();
-                    editorTable.updateBackground(!connected);
-                    if (connected) {
-                        loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
-                    } else {
-                        editorTable.cancelEditing();
-                        GUIUtil.repaint(editorTable);
-                    }
-                });
+                SimpleLaterInvocator.invoke(
+                        getComponent(),
+                        () -> {
+                            DatasetEditorTable editorTable = getEditorTable();
+                            editorTable.updateBackground(!connected);
+                            if (connected) {
+                                loadData(CON_STATUS_CHANGE_LOAD_INSTRUCTIONS);
+                            } else {
+                                editorTable.cancelEditing();
+                                GUIUtil.repaint(editorTable);
+                            }
+                        });
             }
         }
     };

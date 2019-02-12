@@ -26,6 +26,7 @@ import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionInputDialog;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -114,7 +115,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                         } else {
                             // load the arguments in background
                             executionInput.getMethod().getArguments();
-                            SimpleLaterInvocator.invoke(() -> {
+                            SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
                                 MethodExecutionInputDialog executionDialog = new MethodExecutionInputDialog(executionInput, debuggerType);
                                 executionDialog.show();
                                 if (executionDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
@@ -144,7 +145,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                 (data, progress) -> {
                     initMethodExecutionHistory();
 
-                    SimpleLaterInvocator.invoke(() -> {
+                    SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
                         MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(project, executionHistory, selected, editable, debug);
                         executionHistoryDialog.show();
                         MethodExecutionInput newlySelected = executionHistoryDialog.getSelectedExecutionInput();

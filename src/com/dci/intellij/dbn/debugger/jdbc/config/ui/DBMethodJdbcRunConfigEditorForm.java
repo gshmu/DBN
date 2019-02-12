@@ -106,18 +106,20 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
 
                         ObjectTreeModel objectTreeModel = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), settings.getMethod());
 
-                        SimpleLaterInvocator.invoke(() -> {
-                            FailsafeUtil.ensure(project);
-                            MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
-                            browserDialog.show();
-                            if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                                DBMethod method = browserDialog.getSelectedMethod();
-                                MethodExecutionInput methodExecutionInput = executionManager.getExecutionInput(method);
-                                if (methodExecutionInput != null) {
-                                    setExecutionInput(methodExecutionInput, true);
-                                }
-                            }
-                        });
+                        SimpleLaterInvocator.invoke(
+                                DBMethodJdbcRunConfigEditorForm.this,
+                                () -> {
+                                    FailsafeUtil.ensure(project);
+                                    MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
+                                    browserDialog.show();
+                                    if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                                        DBMethod method = browserDialog.getSelectedMethod();
+                                        MethodExecutionInput methodExecutionInput = executionManager.getExecutionInput(method);
+                                        if (methodExecutionInput != null) {
+                                            setExecutionInput(methodExecutionInput, true);
+                                        }
+                                    }
+                                });
 
                     });
         }

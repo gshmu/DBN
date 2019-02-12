@@ -40,6 +40,7 @@ import com.dci.intellij.dbn.connection.ui.ConnectionAuthenticationDialog;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -304,7 +305,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     }
 
     public static void showConnectionInfoDialog(final ConnectionHandler connectionHandler) {
-        ConditionalLaterInvocator.invoke(() -> {
+        ConditionalLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
             ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(connectionHandler);
             infoDialog.setModal(true);
             infoDialog.show();
@@ -312,7 +313,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     }
 
     private static void showConnectionInfoDialog(final ConnectionInfo connectionInfo, final String connectionName, final EnvironmentType environmentType) {
-        SimpleLaterInvocator.invoke(() -> {
+        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
             ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(null, connectionInfo, connectionName, environmentType);
             infoDialog.setModal(true);
             infoDialog.show();
@@ -427,7 +428,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                     if (idleMinutes > idleMinutesToDisconnect) {
                         if (connection.hasDataChanges()) {
                             connection.set(ResourceStatus.RESOLVING_TRANSACTION, true);
-                            SimpleLaterInvocator.invoke(() -> {
+                            SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
                                 IdleConnectionDialog idleConnectionDialog = new IdleConnectionDialog(connectionHandler, connection);
                                 idleConnectionDialog.show();
                             });
@@ -443,7 +444,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     void disposeConnections(@NotNull List<ConnectionHandler> connectionHandlers) {
         if (connectionHandlers.size() > 0) {
-            final Project project = getProject();
+            Project project = getProject();
             ConditionalLaterInvocator.invoke(() -> {
                 List<ConnectionId> connectionIds = new ArrayList<>();
                 for (ConnectionHandler connectionHandler : connectionHandlers) {

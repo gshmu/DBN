@@ -64,15 +64,16 @@ public class BrowserToolWindowForm extends DBNFormImpl {
     public void rebuild() {
         displayMode = DatabaseBrowserSettings.getInstance(getProject()).getGeneralSettings().getDisplayMode();
         browserPanel.removeAll();
-        DisposerUtil.dispose(browserForm);
-        browserForm =
+        DatabaseBrowserForm oldBrowserForm = this.browserForm;
+        this.browserForm =
                 displayMode == BrowserDisplayMode.TABBED ? new TabbedBrowserForm(this) :
                 displayMode == BrowserDisplayMode.SIMPLE ? new SimpleBrowserForm(this) : null;
 
 
-        browserPanel.add(browserForm.getComponent(), BorderLayout.CENTER);
+        browserPanel.add(this.browserForm.getComponent(), BorderLayout.CENTER);
         GUIUtil.repaint(browserPanel);
-        Disposer.register(this, browserForm);
+        Disposer.register(this, this.browserForm);
+        DisposerUtil.disposeInBackground(oldBrowserForm);
     }
 
     public DatabaseBrowserTree getBrowserTree(ConnectionHandler connectionHandler) {

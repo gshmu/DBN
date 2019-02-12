@@ -114,18 +114,20 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
                                 new ObjectTreeModel(schema, settings.getVisibleObjectTypes(), settings.getMethod()) :
                                 new ObjectTreeModel(null, settings.getVisibleObjectTypes(), null);
 
-                        SimpleLaterInvocator.invoke(() -> {
-                            final MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
-                            browserDialog.show();
-                            if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                                DBMethod method = browserDialog.getSelectedMethod();
-                                MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
-                                MethodExecutionInput methodExecutionInput = methodExecutionManager.getExecutionInput(method);
-                                if (methodExecutionInput != null) {
-                                    setExecutionInput(methodExecutionInput, true);
-                                }
-                            }
-                        });
+                        SimpleLaterInvocator.invoke(
+                                DBMethodJdwpRunConfigEditorForm.this,
+                                () -> {
+                                    MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
+                                    browserDialog.show();
+                                    if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                                        DBMethod method = browserDialog.getSelectedMethod();
+                                        MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
+                                        MethodExecutionInput methodExecutionInput = methodExecutionManager.getExecutionInput(method);
+                                        if (methodExecutionInput != null) {
+                                            setExecutionInput(methodExecutionInput, true);
+                                        }
+                                    }
+                                });
 
                     });
         }
