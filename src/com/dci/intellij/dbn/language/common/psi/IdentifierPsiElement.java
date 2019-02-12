@@ -33,10 +33,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiNamedElement;
-import com.intellij.util.IncorrectOperationException;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,7 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElement {
+public abstract class IdentifierPsiElement extends LeafPsiElement {
     public IdentifierPsiElement(ASTNode astNode, IdentifierElementType elementType) {
         super(astNode, elementType);
 /*        ref = astNode.getUserData(PsiResolveResult.DATA_KEY);
@@ -599,11 +596,6 @@ public class IdentifierPsiElement extends LeafPsiElement implements PsiNamedElem
 
     public boolean isResolving() {
         return ref != null && ref.isResolving();
-    }
-
-    @Override
-    public PsiElement setName(@NotNull @NonNls String name) throws IncorrectOperationException {
-        return null;
     }
 
     public int getResolveTrialsCount() {
