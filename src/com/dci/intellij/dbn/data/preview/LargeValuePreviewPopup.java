@@ -140,7 +140,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
                 loadContentCaption = "Reload content";
             }
         } else {
-            text = userValue.toString();
+            text = userValue == null ? "" : userValue.toString();
             contentInfoText = getNumberOfLines(text) + " lines, " + text.length() + " characters";
             loadContentVisible = false;
         }

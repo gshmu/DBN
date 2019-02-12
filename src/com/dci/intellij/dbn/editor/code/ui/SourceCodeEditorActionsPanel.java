@@ -45,7 +45,9 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
         public void sourceCodeLoading(DBSourceCodeVirtualFile sourceCodeFile) {
             DBSourceCodeVirtualFile virtualFile = getSourceCodeEditor().getVirtualFile();
             if (virtualFile.equals(sourceCodeFile)) {
-                SimpleLaterInvocator.invoke(() -> loadingDataPanel.setVisible(true));
+                SimpleLaterInvocator.invoke(
+                        SourceCodeEditorActionsPanel.this,
+                        () -> loadingDataPanel.setVisible(true));
             }
         }
 
@@ -53,7 +55,9 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
         public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
             DBSourceCodeVirtualFile virtualFile = getSourceCodeEditor().getVirtualFile();
             if (virtualFile.equals(sourceCodeFile)) {
-                SimpleLaterInvocator.invoke(() -> loadingDataPanel.setVisible(false));
+                SimpleLaterInvocator.invoke(
+                        SourceCodeEditorActionsPanel.this,
+                        () -> loadingDataPanel.setVisible(false));
             }
         }
     };

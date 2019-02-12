@@ -36,6 +36,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.history.LocalHistory;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.xdebugger.XDebugSession;
@@ -165,12 +166,12 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             Callback callback,
             List<DBSchemaObject> dependencies) {
 
-        SimpleLaterInvocator.invoke(() -> {
+        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
             Project project = connectionHandler.getProject();
             DBRunConfig runConfiguration = (DBRunConfig) environment.getRunProfile();
             CompileDebugDependenciesDialog dependenciesDialog = new CompileDebugDependenciesDialog(runConfiguration, dependencies);
             dependenciesDialog.show();
-            final List<DBSchemaObject> selectedDependencies =  dependenciesDialog.getSelection();
+            List<DBSchemaObject> selectedDependencies =  dependenciesDialog.getSelection();
 
             if (dependenciesDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE){
                 if (selectedDependencies.size() > 0) {
@@ -207,10 +208,10 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
     }
 
     private void performExecution(
-            final T executionInput,
-            final ExecutionEnvironment environment,
-            final Callback callback) {
-        SimpleLaterInvocator.invoke(() -> {
+            T executionInput,
+            ExecutionEnvironment environment,
+            Callback callback) {
+        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
             ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
             Project project = environment.getProject();
 

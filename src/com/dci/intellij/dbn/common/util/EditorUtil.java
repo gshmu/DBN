@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBDatasetVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -212,17 +213,18 @@ public class EditorUtil {
 
     }
     public static void setEditorReadonly(SourceCodeEditor sourceCodeEditor, final boolean readonly) {
-        final EditorImpl editor = (EditorImpl) sourceCodeEditor.getEditor();
+        EditorImpl editor = (EditorImpl) sourceCodeEditor.getEditor();
         editor.setViewer(readonly);
-        final EditorColorsScheme scheme = editor.getColorsScheme();
-        final Color defaultBackground = scheme.getDefaultBackground();
-        ConditionalLaterInvocator.invoke(() -> {
-            editor.setBackgroundColor(readonly ? GUIUtil.adjustColor(defaultBackground, -0.03) : defaultBackground);
-            scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
-                    GUIUtil.adjustColor(defaultBackground, -0.03) :
-                    EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR));
-        });
-
+        EditorColorsScheme scheme = editor.getColorsScheme();
+        Color defaultBackground = scheme.getDefaultBackground();
+        SimpleLaterInvocator.invoke(
+                editor.getComponent(),
+                () -> {
+                    editor.setBackgroundColor(readonly ? GUIUtil.adjustColor(defaultBackground, -0.03) : defaultBackground);
+                    scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
+                            GUIUtil.adjustColor(defaultBackground, -0.03) :
+                            EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR));
+                });
     }
 
     public static void setEditorsReadonly(DBContentVirtualFile contentFile, final boolean readonly) {
@@ -233,7 +235,7 @@ public class EditorUtil {
             ReadActionRunner.invoke(false, () -> {
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                 FileEditor[] allEditors = fileEditorManager.getAllEditors();
-                SimpleLaterInvocator.invoke(() -> {
+                SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
                     for (FileEditor fileEditor : allEditors) {
                         if (fileEditor instanceof SourceCodeEditor) {
                             SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
@@ -349,7 +351,7 @@ public class EditorUtil {
         }
     }
     public static void focusEditor(@Nullable final Editor editor) {
-        SimpleLaterInvocator.invoke(() -> {
+        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
             if (editor != null) {
                 Project project = editor.getProject();
                 IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true);
@@ -406,8 +408,9 @@ public class EditorUtil {
 
     public static void releaseEditor(@Nullable Editor editor) {
         if (editor != null) {
-            ConditionalLaterInvocator.invoke(() ->
-                    EditorFactory.getInstance().releaseEditor(editor));
+            ConditionalLaterInvocator.invoke(
+                    editor.getComponent(),
+                    () -> EditorFactory.getInstance().releaseEditor(editor));
         }
 
     }

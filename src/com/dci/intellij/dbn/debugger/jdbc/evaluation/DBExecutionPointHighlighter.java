@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.debugger.jdbc.evaluation;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -30,11 +31,11 @@ public class DBExecutionPointHighlighter {
     }
 
     public void show(final @NotNull XSourcePosition position, final boolean useSelection) {
-        ConditionalLaterInvocator.invoke(() -> doShow(position, useSelection));
+        ConditionalLaterInvocator.invoke(ModalityState.NON_MODAL, () -> doShow(position, useSelection));
     }
 
     public void hide() {
-        ConditionalLaterInvocator.invoke(() -> doHide());
+        ConditionalLaterInvocator.invoke(ModalityState.NON_MODAL, () -> doHide());
     }
 
     public void navigateTo() {

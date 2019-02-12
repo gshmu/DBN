@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -137,7 +137,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
                                 method.getArguments();
                             }
 
-                            SimpleLaterInvocator.invoke(() -> {
+                            ConditionalLaterInvocator.invoke(MethodExecutionHistoryTree.this, () -> {
                                 FailsafeUtil.ensure(dialog);
                                 dialog.showMethodExecutionPanel(executionInput);
                                 dialog.setSelectedExecutionInput(executionInput);

@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.ui.CreateRenameSessionDialog;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -48,8 +49,8 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
     }
 
 
-    private void showCreateRenameSessionDialog(final ConnectionHandler connectionHandler, final DatabaseSession session, @Nullable final RunnableTask<DatabaseSession> callback) {
-        ConditionalLaterInvocator.invoke(() -> {
+    private void showCreateRenameSessionDialog(ConnectionHandler connectionHandler, DatabaseSession session, @Nullable RunnableTask<DatabaseSession> callback) {
+        ConditionalLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
             CreateRenameSessionDialog dialog = session == null ?
                     new CreateRenameSessionDialog(connectionHandler) :
                     new CreateRenameSessionDialog(connectionHandler, session);

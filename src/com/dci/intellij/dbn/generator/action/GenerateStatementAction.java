@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.generator.StatementGeneratorResult;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -42,8 +43,8 @@ public abstract class GenerateStatementAction extends DumbAwareAction implements
                 });
     }
 
-    private void pasteStatement(final StatementGeneratorResult result, final Project project) {
-        SimpleLaterInvocator.invoke(() -> {
+    private void pasteStatement(StatementGeneratorResult result, Project project) {
+        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
             Editor editor = EditorUtil.getSelectedEditor(project, SQLFileType.INSTANCE);
             if (editor != null)
                 pasteToEditor(editor, result); else

@@ -104,7 +104,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     }
 
     public void showLoadingHint() {
-        ConditionalLaterInvocator.invoke(() -> {
+        ConditionalLaterInvocator.invoke(this, () -> {
             loadingLabel.setVisible(true);
             loadingIconPanel.setVisible(true);
             loadTimestampLabel.setVisible(false);
@@ -113,7 +113,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     }
 
     public void hideLoadingHint() {
-        ConditionalLaterInvocator.invoke(() -> {
+        ConditionalLaterInvocator.invoke(this, () -> {
             loadingLabel.setVisible(false);
             loadingIconPanel.setVisible(false);
             refreshLoadTimestamp();

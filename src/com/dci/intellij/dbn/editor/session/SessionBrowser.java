@@ -115,9 +115,9 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         return !loading && !isPreventLoading(force);
     }
 
-    private void replaceModel(final SessionBrowserModel newModel) {
+    private void replaceModel(SessionBrowserModel newModel) {
         if (newModel != null) {
-            SimpleLaterInvocator.invoke(() -> {
+            SimpleLaterInvocator.invoke(getComponent(), () -> {
                 SessionBrowserTable editorTable = getEditorTable();
                 SessionBrowserModel oldModel = editorTable.getModel();
                 SessionBrowserState state = oldModel.getState();
@@ -294,7 +294,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         if (this.loading != loading) {
             this.loading = loading;
 
-            SimpleLaterInvocator.invoke(() -> {
+            SimpleLaterInvocator.invoke(getComponent(), () -> {
                 if (editorForm != null) {
                     if (SessionBrowser.this.loading)
                         editorForm.showLoadingHint(); else

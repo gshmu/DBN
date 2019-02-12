@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.common.latent.DisposableLatent;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
@@ -127,24 +126,26 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     }
 
     public void navigateToElement(@Nullable final BrowserTreeNode treeNode, final boolean focus, final boolean scroll) {
-        SimpleLaterInvocator.invoke(() -> {
+        DatabaseBrowserForm browserForm = getBrowserForm();
+        SimpleLaterInvocator.invoke(browserForm, () -> {
             ToolWindow toolWindow = getBrowserToolWindow();
 
             toolWindow.show(null);
             if (treeNode != null) {
-                DatabaseBrowserForm browserForm = getToolWindowForm().getBrowserForm();
                 browserForm.selectElement(treeNode, focus, scroll);
             }
         });
     }
 
-    private void navigateToElement(@Nullable final BrowserTreeNode treeNode, final boolean scroll) {
-        ConditionalLaterInvocator.invoke(() -> {
-            if (treeNode != null) {
-                DatabaseBrowserForm browserForm = getToolWindowForm().getBrowserForm();
-                browserForm.selectElement(treeNode, false, scroll);
-            }
-        });
+    public DatabaseBrowserForm getBrowserForm() {
+        return getToolWindowForm().getBrowserForm();
+    }
+
+    private void navigateToElement(@Nullable BrowserTreeNode treeNode, boolean scroll) {
+        if (treeNode != null) {
+            DatabaseBrowserForm browserForm = getBrowserForm();
+            SimpleLaterInvocator.invoke(browserForm, () -> browserForm.selectElement(treeNode, false, scroll));
+        }
     }
 
     public boolean isVisible() {
@@ -184,9 +185,9 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         if (connectionHandler != null && !connectionHandler.isDisposed()) {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(connectionHandler.getProject());
             BrowserToolWindowForm toolWindowForm = browserManager.getToolWindowForm();
-            final DatabaseBrowserTree browserTree = toolWindowForm.getBrowserTree(connectionHandler);
+            DatabaseBrowserTree browserTree = toolWindowForm.getBrowserTree(connectionHandler);
             if (browserTree != null && browserTree.getTargetSelection() != null) {
-                SimpleLaterInvocator.invoke(browserTree::scrollToSelectedElement);
+                SimpleLaterInvocator.invoke(browserTree, () -> browserTree.scrollToSelectedElement());
             }
         }
     }
@@ -205,7 +206,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
             if (toolWindowForm.loaded()) {
                 ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
                 if (connectionHandler == null) {
-                    getToolWindowForm().getBrowserForm().rebuildTree();
+                    getBrowserForm().rebuildTree();
                 } else {
                     connectionHandler.getObjectBundle().rebuildTreeChildren();
                 }

@@ -110,11 +110,13 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
         public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(connectionHandler.getProject());
             if (!connectionManager.hasUncommittedChanges()) {
-                ConditionalLaterInvocator.invoke(() -> {
-                    getCancelAction().putValue(Action.NAME, "Close");
-                    commitAllAction.setEnabled(false);
-                    rollbackAllAction.setEnabled(false);
-                });
+                ConditionalLaterInvocator.invoke(
+                        getComponent(),
+                        () -> {
+                            getCancelAction().putValue(Action.NAME, "Close");
+                            commitAllAction.setEnabled(false);
+                            rollbackAllAction.setEnabled(false);
+                        });
             }
         }
     };
