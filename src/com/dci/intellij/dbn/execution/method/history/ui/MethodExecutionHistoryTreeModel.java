@@ -73,7 +73,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
 
         public ConnectionId getConnectionHandlerId() {
             ConnectionHandler connectionHandler = getConnectionHandler();
-            return connectionHandler == null ? UNKNOWN_CONNECTION : connectionHandler.getId();
+            return connectionHandler == null ? UNKNOWN_CONNECTION : connectionHandler.getConnectionId();
         }
 
         @Override

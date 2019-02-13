@@ -50,7 +50,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
             parent = parentObj.getRef();
         } else if (!(object instanceof DBVirtualObject)){
             ConnectionHandler connectionHandler = object.getConnectionHandler();
-            connectionId = connectionHandler.getId();
+            connectionId = connectionHandler.getConnectionId();
         }
     }
 

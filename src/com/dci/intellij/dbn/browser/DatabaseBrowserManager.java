@@ -360,7 +360,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                     }
 
                     if (addConnectionElement) {
-                        connectionElement.setAttribute("connection-id", connectionHandler.getId().id());
+                        connectionElement.setAttribute("connection-id", connectionHandler.getConnectionId().id());
                         nodesElement.addContent(connectionElement);
                     }
                 }

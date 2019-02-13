@@ -20,7 +20,7 @@ public class DBJdbcBreakpointProperties extends XBreakpointProperties<DBJdbcBrea
     public DBJdbcBreakpointProperties(ConnectionHandler connectionHandler) {
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
         if (connectionHandler != null) {
-            connectionId = connectionHandler.getId();
+            connectionId = connectionHandler.getConnectionId();
         }
     }
 

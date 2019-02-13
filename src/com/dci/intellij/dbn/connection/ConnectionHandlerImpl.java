@@ -66,9 +66,9 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     private boolean enabled;
     private ConnectionHandlerRef ref;
-    private AuthenticationInfo temporaryAuthenticationInfo;
     private ConnectionInfo connectionInfo;
     private Cache metaDataCache = new Cache(TimeUtil.ONE_MINUTE);
+    private Latent<AuthenticationInfo> temporaryAuthenticationInfo = Latent.create(() -> new AuthenticationInfo(this, true));
 
     private MapLatent<SessionId, StatementExecutionQueue> executionQueues =
             MapLatent.create(key -> new StatementExecutionQueue(ConnectionHandlerImpl.this));
@@ -89,7 +89,6 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         connectionPool = new ConnectionPool(this);
         consoleBundle = new DatabaseConsoleBundle(this);
         sessionBundle = new DatabaseSessionBundle(this);
-        temporaryAuthenticationInfo = new AuthenticationInfo(getId());
     }
 
     @NotNull
@@ -105,7 +104,8 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     @Override
     public void setTemporaryAuthenticationInfo(AuthenticationInfo temporaryAuthenticationInfo) {
-        this.temporaryAuthenticationInfo = temporaryAuthenticationInfo;
+        temporaryAuthenticationInfo.setTemporary(true);
+        this.temporaryAuthenticationInfo.set(temporaryAuthenticationInfo);;
     }
 
     @Override
@@ -133,14 +133,15 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @Override
     @NotNull
     public AuthenticationInfo getTemporaryAuthenticationInfo() {
-        if (temporaryAuthenticationInfo.isProvided()) {
+        AuthenticationInfo authenticationInfo = temporaryAuthenticationInfo.get();
+        if (authenticationInfo.isProvided()) {
             int passwordExpiryTime = getSettings().getDetailSettings().getPasswordExpiryTime() * 60000;
             long lastAccessTimestamp = getConnectionPool().getLastAccessTimestamp();
-            if (lastAccessTimestamp > 0 && temporaryAuthenticationInfo.isOlderThan(passwordExpiryTime) && TimeUtil.isOlderThan(lastAccessTimestamp, passwordExpiryTime)) {
-                temporaryAuthenticationInfo = new AuthenticationInfo(getId());
+            if (lastAccessTimestamp > 0 && authenticationInfo.isOlderThan(passwordExpiryTime) && TimeUtil.isOlderThan(lastAccessTimestamp, passwordExpiryTime)) {
+                temporaryAuthenticationInfo.reset();
             }
         }
-        return temporaryAuthenticationInfo;
+        return temporaryAuthenticationInfo.get();
     }
 
     @Override
@@ -335,14 +336,14 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @Override
     public void disconnect() {
         // explicit disconnect (reset auto-connect data)
-        temporaryAuthenticationInfo = new AuthenticationInfo(getId());
+        temporaryAuthenticationInfo.reset();
         instructions.setAllowAutoConnect(false);
         connectionStatus.setConnected(false);
         getConnectionPool().closeConnections();
     }
 
     @Override
-    public ConnectionId getId() {
+    public ConnectionId getConnectionId() {
         return connectionSettings.getConnectionId();
     }
 

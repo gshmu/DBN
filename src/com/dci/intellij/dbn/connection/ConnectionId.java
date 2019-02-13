@@ -31,4 +31,5 @@ public final class ConnectionId extends PseudoConstant<ConnectionId> {
             super(ConnectionId.class);
         }
     }
+
 }

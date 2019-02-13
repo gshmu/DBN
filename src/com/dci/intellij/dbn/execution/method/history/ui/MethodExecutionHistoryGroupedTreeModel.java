@@ -106,7 +106,7 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
         for (MethodExecutionInput executionInput : executionInputs) {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
             ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-            if (connectionHandler != null && connectionHandler.getId().equals(connectionNode.getConnectionHandlerId()) &&
+            if (connectionHandler != null && connectionHandler.getConnectionId().equals(connectionNode.getConnectionHandlerId()) &&
                 methodRef.getSchemaName().equalsIgnoreCase(schemaNode.getName()) &&
                 methodRef.getObjectName().equalsIgnoreCase(methodNode.getName()) &&
                 methodRef.getOverload() == methodNode.getOverload() ) {

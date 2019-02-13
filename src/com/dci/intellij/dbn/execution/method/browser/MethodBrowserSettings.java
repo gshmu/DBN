@@ -32,7 +32,7 @@ public class MethodBrowserSettings implements PersistentConfiguration {
     }
 
     public void setConnectionHandler(ConnectionHandler connectionHandler) {
-        this.connectionId = connectionHandler == null ? null : connectionHandler.getId();
+        this.connectionId = connectionHandler == null ? null : connectionHandler.getConnectionId();
     }
 
     public DBSchema getSchema() {
@@ -89,7 +89,7 @@ public class MethodBrowserSettings implements PersistentConfiguration {
     @Override
     public void writeConfiguration(Element element) {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        if (connectionHandler != null) element.setAttribute("connection-id", connectionHandler.getId().id());
+        if (connectionHandler != null) element.setAttribute("connection-id", connectionHandler.getConnectionId().id());
         if (schemaName != null) element.setAttribute("schema", schemaName);
         if(method != null) {
             Element methodElement = new Element("selected-method");

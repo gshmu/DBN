@@ -11,7 +11,7 @@ public class ConnectionHandlerRef{
 
     public ConnectionHandlerRef(ConnectionHandler connectionHandler) {
         reference = WeakRef.from(connectionHandler);
-        connectionId = connectionHandler == null ? null : connectionHandler.getId();
+        connectionId = connectionHandler == null ? null : connectionHandler.getConnectionId();
     }
 
     public ConnectionHandlerRef(ConnectionId connectionId) {
