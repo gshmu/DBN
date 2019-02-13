@@ -111,7 +111,8 @@ public class VirtualConnectionHandler implements ConnectionHandler {
         return true;
     }
 
-    @Override public ConnectionId getId() {return id;}
+    @Override public ConnectionId getConnectionId() {return id;}
+
     @NotNull
     @Override public String getName() {return name;}
     @Override public String getPresentableText() {
@@ -224,7 +225,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @NotNull
     @Override
     public AuthenticationInfo getTemporaryAuthenticationInfo() {
-        return new AuthenticationInfo(getId());
+        return new AuthenticationInfo(this, true);
     }
 
     @Override

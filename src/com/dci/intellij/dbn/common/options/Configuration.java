@@ -21,7 +21,7 @@ import java.util.List;
 
 public abstract class Configuration<T extends ConfigurationEditorForm> extends ConfigurationUtil implements SearchableConfigurable, PersistentConfiguration {
     private static final Logger LOGGER = LoggerFactory.createLogger();
-    protected static ThreadLocalFlag IS_TRANSITORY = new ThreadLocalFlag(false);
+    public static ThreadLocalFlag IS_TRANSITORY = new ThreadLocalFlag(false);
 
     private static ThreadLocalFlag IS_RESETTING = new ThreadLocalFlag(false);
     private static ThreadLocal<List<SettingsChangeNotifier>> SETTINGS_CHANGE_NOTIFIERS = new ThreadLocal<>();

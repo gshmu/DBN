@@ -156,7 +156,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
         for (ConnectionHandler connectionHandler : connectionHandlers) {
             Element connectionElement = new Element("connection");
             element.addContent(connectionElement);
-            connectionElement.setAttribute("id", connectionHandler.getId().id());
+            connectionElement.setAttribute("id", connectionHandler.getConnectionId().id());
 
             List<DBConsoleVirtualFile> consoles = connectionHandler.getConsoleBundle().getConsoles();
             for (DBConsoleVirtualFile console : consoles) {

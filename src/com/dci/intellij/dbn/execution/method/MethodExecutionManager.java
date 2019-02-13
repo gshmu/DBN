@@ -222,7 +222,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         if (connectionHandler != null) {
             Set<MethodExecutionArgumentValue> argumentValues = executionInput.getArgumentValues();
             for (MethodExecutionArgumentValue argumentValue : argumentValues) {
-                argumentValuesCache.cacheVariable(connectionHandler.getId(), argumentValue.getName(), argumentValue.getValue());
+                argumentValuesCache.cacheVariable(connectionHandler.getConnectionId(), argumentValue.getName(), argumentValue.getValue());
             }
         }
     }

@@ -82,7 +82,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
 
     public ConnectionHandler getVirtualConnection(ConnectionId id) {
         for (ConnectionHandler virtualConnection : virtualConnections) {
-            if (virtualConnection.getId() == id) {
+            if (virtualConnection.getConnectionId() == id) {
                 return virtualConnection;
             }
         }
@@ -126,7 +126,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
 
     ConnectionHandler getConnectionHandler(List<ConnectionHandler> list, ConnectionId connectionId) {
         for (ConnectionHandler connectionHandler : list) {
-            if (connectionHandler.getId() == connectionId) {
+            if (connectionHandler.getConnectionId() == connectionId) {
                 return connectionHandler;
             }
         }
@@ -177,7 +177,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
 
     public ConnectionHandler getConnection(ConnectionId id) {
         for (ConnectionHandler connectionHandler : connectionHandlers.getFullList()){
-            if (connectionHandler.getId() == id) return connectionHandler;
+            if (connectionHandler.getConnectionId() == id) return connectionHandler;
         }
         return null;
     }

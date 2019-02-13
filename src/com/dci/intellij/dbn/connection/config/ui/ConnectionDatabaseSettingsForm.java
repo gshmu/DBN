@@ -27,6 +27,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -189,7 +190,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
     protected DocumentListener createDocumentListener() {
         return new DocumentAdapter() {
             @Override
-            protected void textChanged(DocumentEvent e) {
+            protected void textChanged(@NotNull DocumentEvent e) {
                 ConnectionDatabaseSettings configuration = getConfiguration();
                 configuration.setModified(true);
 

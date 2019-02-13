@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
+import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -72,7 +73,7 @@ public class ConnectionAuthenticationSettingsForm extends DBNFormImpl<Connection
         authenticationInfo.setOsAuthentication(osAuthenticationCheckBox.isSelected());
         authenticationInfo.setEmptyPassword(emptyPasswordCheckBox.isSelected());
 
-        if (!CommonUtil.safeEqual(oldUserName, newUserName) || !CommonUtil.safeEqual(oldPassword, newPassword)) {
+        if (!Configuration.IS_TRANSITORY.get() && !CommonUtil.safeEqual(oldUserName, newUserName) || !CommonUtil.safeEqual(oldPassword, newPassword)) {
             DatabaseCredentialManager credentialManager = DatabaseCredentialManager.getInstance();
             ConnectionId connectionId = authenticationInfo.getConnectionId();
             credentialManager.removePassword(connectionId, oldUserName);

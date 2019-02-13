@@ -118,7 +118,7 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl<MethodExe
                     ConnectionHandler connectionHandler = argument.getConnectionHandler();
                     if (connectionHandler != null) {
                         MethodExecutionManager executionManager = MethodExecutionManager.getInstance(argument.getProject());
-                        MethodExecutionArgumentValue argumentValue = executionManager.getArgumentValuesCache().getArgumentValue(connectionHandler.getId(), getAttributeQualifiedName(), false);
+                        MethodExecutionArgumentValue argumentValue = executionManager.getArgumentValuesCache().getArgumentValue(connectionHandler.getConnectionId(), getAttributeQualifiedName(), false);
                         if (argumentValue != null) {
                             List<String> cachedValues = new ArrayList<String>(argumentValue.getValueHistory());
                             cachedValues.removeAll(getValues());

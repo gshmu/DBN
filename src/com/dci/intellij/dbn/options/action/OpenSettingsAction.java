@@ -29,7 +29,7 @@ public class OpenSettingsAction extends DumbAwareAction {
         if (configId == ConfigId.CONNECTIONS) {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
             ConnectionHandler activeConnection = browserManager.getActiveConnection();
-            ConnectionId connectionId = activeConnection == null ? null : activeConnection.getId();
+            ConnectionId connectionId = activeConnection == null ? null : activeConnection.getConnectionId();
             settingsManager.openConnectionSettings(connectionId);
         }
          else {
