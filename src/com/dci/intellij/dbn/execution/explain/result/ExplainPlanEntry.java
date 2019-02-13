@@ -73,7 +73,7 @@ public class ExplainPlanEntry implements Disposable {
             }
 
 
-            DBObjectRef schemaRef = new DBObjectRef(connectionHandler.getId(), DBObjectType.SCHEMA, objectOwner);
+            DBObjectRef schemaRef = new DBObjectRef(connectionHandler.getConnectionId(), DBObjectType.SCHEMA, objectOwner);
             objectRef = new DBObjectRef(schemaRef, objectType, objectName);
         }
     }

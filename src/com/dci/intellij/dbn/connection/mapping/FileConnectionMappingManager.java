@@ -115,7 +115,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         if (VirtualFileUtil.isLocalFileSystem(virtualFile)) {
             virtualFile.putUserData(CONNECTION_HANDLER, connectionHandlerRef);
 
-            ConnectionId connectionId = connectionHandler == null ? null : connectionHandler.getId();
+            ConnectionId connectionId = connectionHandler == null ? null : connectionHandler.getConnectionId();
             String currentSchema = connectionHandler == null ? null  : connectionHandler.getUserName().toUpperCase();
 
             FileConnectionMapping mapping = lookupMapping(virtualFile);
@@ -402,7 +402,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
         for (FileConnectionMapping mapping : mappings) {
             ConnectionId connectionId = mapping.getConnectionId();
-            if (connectionHandler.getId() == connectionId) {
+            if (connectionHandler.getConnectionId() == connectionId) {
                 VirtualFile file = localFileSystem.findFileByPath(mapping.getFileUrl());
                 if (file != null) {
                     list.add(file);
@@ -602,7 +602,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             DBLanguagePsiFile file = fileRef.get();
             if (file != null) {
                 ConnectionHandler connectionHandler = file.getConnectionHandler();
-                return connectionHandler != null && connectionHandler.getId().equals(getConnectionHandler().getId());
+                return connectionHandler != null && connectionHandler.getConnectionId().equals(getConnectionHandler().getConnectionId());
             }
             return false;
 

@@ -64,7 +64,7 @@ public class ConnectionCache implements ApplicationComponent{
                 ConnectionManager connectionManager = ConnectionManager.getInstance(project);
                 List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionHandlers();
                 for (ConnectionHandler connectionHandler : connectionHandlers) {
-                    CACHE.put(connectionHandler.getId(), connectionHandler);
+                    CACHE.put(connectionHandler.getConnectionId(), connectionHandler);
                 }
             }
         }

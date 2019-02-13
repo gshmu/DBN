@@ -18,6 +18,6 @@ public class OpenConnectionSettingsAction extends AbstractConnectionAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ActionUtil.ensureProject(e);
         ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-        settingsManager.openConnectionSettings(getConnectionHandler().getId());
+        settingsManager.openConnectionSettings(getConnectionHandler().getConnectionId());
     }
 }

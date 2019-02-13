@@ -92,7 +92,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
                                 public boolean value(AnAction action) {
                                     if (action instanceof SelectConnectionAction) {
                                         SelectConnectionAction selectConnectionAction = (SelectConnectionAction) action;
-                                        return latestConnectionId == selectConnectionAction.getConnectionHandler().getId();
+                                        return latestConnectionId == selectConnectionAction.getConnectionHandler().getConnectionId();
                                     } else if (action instanceof SelectSchemaAction) {
                                         SelectSchemaAction selectSchemaAction = (SelectSchemaAction) action;
                                         return latestSchemaName.equals(selectSchemaAction.getSchema().getName());
@@ -161,7 +161,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
             ConnectionHandler connectionHandler = getConnectionHandler();
             Project project = connectionHandler.getProject();
             showLookupPopup(e, project, connectionHandler, null);
-            latestConnectionId = connectionHandler.getId();
+            latestConnectionId = connectionHandler.getConnectionId();
         }
 
         @NotNull

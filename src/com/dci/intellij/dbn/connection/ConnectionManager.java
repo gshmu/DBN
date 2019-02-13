@@ -334,7 +334,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                     storedAuthenticationInfo.setOsAuthentication(newAuthenticationInfo.isOsAuthentication());
                     storedAuthenticationInfo.setEmptyPassword(newAuthenticationInfo.isEmptyPassword());
                 } else {
-                    connectionHandler.setTemporaryAuthenticationInfo(newAuthenticationInfo.clone());
+                    AuthenticationInfo temporaryAuthenticationInfo = newAuthenticationInfo.clone();
+                    temporaryAuthenticationInfo.setTemporary(true);
+                    connectionHandler.setTemporaryAuthenticationInfo(temporaryAuthenticationInfo);
                 }
                 connectionHandler.getInstructions().setAllowAutoConnect(true);
             }
@@ -349,7 +351,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     @Nullable
     public ConnectionHandler getConnectionHandler(ConnectionId connectionId) {
          for (ConnectionHandler connectionHandler : getConnectionBundle().getConnectionHandlers().getFullList()) {
-            if (connectionHandler.getId() == connectionId) {
+            if (connectionHandler.getConnectionId() == connectionId) {
                 return connectionHandler;
             }
          }
@@ -448,7 +450,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             ConditionalLaterInvocator.invoke(() -> {
                 List<ConnectionId> connectionIds = new ArrayList<>();
                 for (ConnectionHandler connectionHandler : connectionHandlers) {
-                    connectionIds.add(connectionHandler.getId());
+                    connectionIds.add(connectionHandler.getConnectionId());
                 }
 
                 ExecutionManager executionManager = ExecutionManager.getInstance(project);

@@ -255,7 +255,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     }
 
     private static String createPath(ConnectionHandler connectionHandler) {
-        return connectionHandler.getId().id();
+        return connectionHandler.getConnectionId().id();
     }
 
     /********************************************************

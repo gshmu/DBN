@@ -191,7 +191,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         for (TabInfo tabInfo : connectionTabs.getTabs()) {
             SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
             ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
-            if (connectionHandler.getId() == connectionId) {
+            if (connectionHandler.getConnectionId() == connectionId) {
                 tabInfo.setText(connectionHandler.getName());
                 break;
             }

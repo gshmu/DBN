@@ -61,7 +61,7 @@ public abstract class LocalExecutionInput extends ExecutionInput{
     @Override
     public ConnectionId getConnectionHandlerId() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler == null ? null : connectionHandler.getId();
+        return connectionHandler == null ? null : connectionHandler.getConnectionId();
     }
 
     /*********************************************************

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
+import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -112,39 +113,46 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
     }
 
     public ConnectionSettings getTemporaryConfig() throws ConfigurationException {
-        GUIUtil.stopTableCellEditing(mainPanel);
-        ConnectionSettings configuration = getConfiguration();
-        ConnectionSettings clone = configuration.clone();
-        ConnectionDatabaseSettingsForm databaseSettingsEditor = configuration.getDatabaseSettings().getSettingsEditor();
-        if(databaseSettingsEditor != null) {
-            databaseSettingsEditor.applyFormChanges(clone.getDatabaseSettings());
-        }
-        ConnectionPropertiesSettingsForm propertiesSettingsEditor = configuration.getPropertiesSettings().getSettingsEditor();
-        if (propertiesSettingsEditor != null) {
-            propertiesSettingsEditor.applyFormChanges(clone.getPropertiesSettings());
-        }
+        try {
+            Configuration.IS_TRANSITORY.set(true);
 
-        ConnectionSshTunnelSettingsForm sshTunnelSettingsForm = configuration.getSshTunnelSettings().getSettingsEditor();
-        if (sshTunnelSettingsForm != null) {
-            sshTunnelSettingsForm.applyFormChanges(clone.getSshTunnelSettings());
-        }
+            GUIUtil.stopTableCellEditing(mainPanel);
+            ConnectionSettings configuration = getConfiguration();
+            ConnectionSettings clone = configuration.clone();
+            clone.getDatabaseSettings().getAuthenticationInfo().setTemporary(true);
+            ConnectionDatabaseSettingsForm databaseSettingsEditor = configuration.getDatabaseSettings().getSettingsEditor();
+            if(databaseSettingsEditor != null) {
+                databaseSettingsEditor.applyFormChanges(clone.getDatabaseSettings());
+            }
+            ConnectionPropertiesSettingsForm propertiesSettingsEditor = configuration.getPropertiesSettings().getSettingsEditor();
+            if (propertiesSettingsEditor != null) {
+                propertiesSettingsEditor.applyFormChanges(clone.getPropertiesSettings());
+            }
 
-        ConnectionSslSettingsForm sslSettingsForm = configuration.getSslSettings().getSettingsEditor();
-        if (sslSettingsForm != null) {
-            sslSettingsForm.applyFormChanges(clone.getSslSettings());
-        }
+            ConnectionSshTunnelSettingsForm sshTunnelSettingsForm = configuration.getSshTunnelSettings().getSettingsEditor();
+            if (sshTunnelSettingsForm != null) {
+                sshTunnelSettingsForm.applyFormChanges(clone.getSshTunnelSettings());
+            }
 
-        ConnectionDetailSettingsForm detailSettingsForm = configuration.getDetailSettings().getSettingsEditor();
-        if (detailSettingsForm != null) {
-            detailSettingsForm.applyFormChanges(clone.getDetailSettings());
-        }
+            ConnectionSslSettingsForm sslSettingsForm = configuration.getSslSettings().getSettingsEditor();
+            if (sslSettingsForm != null) {
+                sslSettingsForm.applyFormChanges(clone.getSslSettings());
+            }
 
-        ConnectionFilterSettingsForm filterSettingsForm = configuration.getFilterSettings().getSettingsEditor();
-        if (filterSettingsForm != null) {
-            filterSettingsForm.applyFormChanges(clone.getFilterSettings());
-        }
+            ConnectionDetailSettingsForm detailSettingsForm = configuration.getDetailSettings().getSettingsEditor();
+            if (detailSettingsForm != null) {
+                detailSettingsForm.applyFormChanges(clone.getDetailSettings());
+            }
 
-        return clone;
+            ConnectionFilterSettingsForm filterSettingsForm = configuration.getFilterSettings().getSettingsEditor();
+            if (filterSettingsForm != null) {
+                filterSettingsForm.applyFormChanges(clone.getFilterSettings());
+            }
+
+            return clone;
+        } finally {
+            Configuration.IS_TRANSITORY.set(false);
+        }
     }
 
     @Override

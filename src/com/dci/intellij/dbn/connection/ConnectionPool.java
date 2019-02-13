@@ -147,7 +147,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
                                 connectionHandler.getConnectionName(connection));
                     } finally {
                         ConnectionStatusListener changeListener = EventUtil.notify(getProject(), ConnectionStatusListener.TOPIC);
-                        changeListener.statusChanged(connectionHandler.getId(), sessionId);
+                        changeListener.statusChanged(connectionHandler.getConnectionId(), sessionId);
                     }
                 }
             }

@@ -39,7 +39,7 @@ public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHead
             @Override
             public DBNForm createContentForm() {
                 ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(getProject());
-                ConnectionSettings connectionSettings = settingsManager.getConnectionSettings().getConnectionSettings(connectionHandler.getId());
+                ConnectionSettings connectionSettings = settingsManager.getConnectionSettings().getConnectionSettings(connectionHandler.getConnectionId());
                 configurationEditor = connectionSettings.getFilterSettings().createConfigurationEditor();
                 return configurationEditor;
             }

@@ -144,7 +144,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
                 if (argument != null) {
                     ConnectionHandler connectionHandler = argument.getConnectionHandler();
                     MethodExecutionManager executionManager = MethodExecutionManager.getInstance(argument.getProject());
-                    MethodExecutionArgumentValue argumentValue = executionManager.getArgumentValuesCache().getArgumentValue(connectionHandler.getId(), argument.getName(), false);
+                    MethodExecutionArgumentValue argumentValue = executionManager.getArgumentValuesCache().getArgumentValue(connectionHandler.getConnectionId(), argument.getName(), false);
                     if (argumentValue != null) {
                         List<String> cachedValues = new ArrayList<String>(argumentValue.getValueHistory());
                         cachedValues.removeAll(getValues());

@@ -126,7 +126,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         if (StringUtil.isEmpty(currentSchemaName)) {
             this.databaseSchemaRef = null;
         } else {
-            this.databaseSchemaRef = new DBObjectRef<DBSchema>(getConnectionHandler().getId(), DBObjectType.SCHEMA, currentSchemaName);
+            this.databaseSchemaRef = new DBObjectRef<DBSchema>(getConnectionHandler().getConnectionId(), DBObjectType.SCHEMA, currentSchemaName);
         }
     }
 
