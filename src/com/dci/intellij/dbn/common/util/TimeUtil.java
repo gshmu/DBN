@@ -11,6 +11,7 @@ public class TimeUtil {
     public static int ONE_HOUR = 60 * ONE_MINUTE;
     public static int THREE_MINUTES = 3 * ONE_MINUTE;
     public static int FIVE_MINUTES = 5 * ONE_MINUTE;
+    public static int TEN_MINUTES = 10 * ONE_MINUTE;
 
     public static int getMinutes(int seconds) {
         return seconds / 60;
