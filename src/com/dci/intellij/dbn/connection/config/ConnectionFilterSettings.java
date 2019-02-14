@@ -15,7 +15,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ConnectionFilterSettings extends CompositeProjectConfiguration<ConnectionFilterSettingsForm> implements ConnectionIdProvider {
+public class ConnectionFilterSettings extends CompositeProjectConfiguration<ConnectionSettings, ConnectionFilterSettingsForm> implements ConnectionIdProvider {
     private ObjectTypeFilterSettings objectTypeFilterSettings;
     private ObjectNameFilterSettings objectNameFilterSettings;
     private boolean hideEmptySchemas = false;
@@ -25,11 +25,11 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
 
     private transient Filter<DBSchema> cachedSchemaFilter;
 
-    public ConnectionFilterSettings(ConnectionSettings connectionSettings) {
+    ConnectionFilterSettings(ConnectionSettings connectionSettings) {
         super(connectionSettings.getProject());
         this.connectionSettings = connectionSettings;
-        objectTypeFilterSettings = new ObjectTypeFilterSettings(connectionSettings.getProject(), connectionSettings);
-        objectNameFilterSettings = new ObjectNameFilterSettings(connectionSettings.getProject(), connectionSettings);
+        objectTypeFilterSettings = new ObjectTypeFilterSettings(this, connectionSettings);
+        objectNameFilterSettings = new ObjectNameFilterSettings(this, connectionSettings);
     }
 
     public boolean isHideEmptySchemas() {

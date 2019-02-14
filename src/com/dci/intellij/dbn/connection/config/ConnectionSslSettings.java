@@ -1,22 +1,19 @@
 package com.dci.intellij.dbn.connection.config;
 
-import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSslSettingsForm;
-import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class ConnectionSslSettings extends Configuration<ConnectionSslSettingsForm> {
-    private ConnectionSettings parent;
-
+public class ConnectionSslSettings extends BasicProjectConfiguration<ConnectionSettings, ConnectionSslSettingsForm> {
     private boolean active = false;
     private String certificateAuthorityFile;
     private String clientCertificateFile;
     private String clientKeyFile;
 
-    public ConnectionSslSettings(ConnectionSettings parent) {
-        this.parent = parent;
+    ConnectionSslSettings(ConnectionSettings parent) {
+        super(parent);
     }
 
     @Override
@@ -95,11 +92,7 @@ public class ConnectionSslSettings extends Configuration<ConnectionSslSettingsFo
         setString(element, "client-key-file", clientKeyFile);
     }
 
-    public Project getProject() {
-        return parent.getProject();
-    }
-
     public ConnectionId getConnectionId() {
-        return parent.getConnectionId();
+        return getParent().getConnectionId();
     }
 }

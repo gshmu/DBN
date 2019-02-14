@@ -2,12 +2,12 @@ package com.dci.intellij.dbn.editor.code.options;
 
 import com.dci.intellij.dbn.common.option.ConfirmationOptionHandler;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
-import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.editor.code.options.ui.CodeEditorConfirmationSettingsForm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class CodeEditorConfirmationSettings extends Configuration<CodeEditorConfirmationSettingsForm> {
+public class CodeEditorConfirmationSettings extends BasicConfiguration<CodeEditorSettings, CodeEditorConfirmationSettingsForm> {
     public static final String REMEMBER_OPTION_HINT = ""; //"\n\n(you can remember your option and change it at any time in Settings > Operations > Session Manager)";
 
     private ConfirmationOptionHandler saveChanges =
@@ -34,10 +34,8 @@ public class CodeEditorConfirmationSettings extends Configuration<CodeEditorConf
                     CodeEditorChangesOption.CANCEL);
 
 
-    private CodeEditorSettings parent;
-
     public CodeEditorConfirmationSettings(CodeEditorSettings parent) {
-        this.parent = parent;
+        super(parent);
     }
 
     @Override

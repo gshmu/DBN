@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.init.DatabaseNavigatorInitializer;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
     name = DatabaseNavigator.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class DatabaseNavigator implements ApplicationComponent, PersistentStateComponent<Element> {
+public class DatabaseNavigator extends SettingsSupport implements ApplicationComponent, PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Application.Settings";
     public static final String STORAGE_FILE = "dbnavigator.xml";
 
@@ -36,9 +36,10 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
         return COMPONENT_NAME;
     }
 
-    private boolean debugModeEnabled;
-    private boolean developerModeEnabled;
-    private boolean slowDatabaseModeEnabled;
+    public static boolean debugModeEnabled = false;
+    public static boolean developerModeEnabled = false;
+    public static boolean slowDatabaseModeEnabled = false;
+
     private boolean showPluginConflictDialog;
     private String repositoryPluginVersion;
 
@@ -63,23 +64,6 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
 
     public static DatabaseNavigator getInstance() {
         return ApplicationManager.getApplication().getComponent(DatabaseNavigator.class);
-    }
-
-    public boolean isDebugModeEnabled() {
-        return debugModeEnabled;
-    }
-
-    public void setDebugModeEnabled(boolean debugModeEnabled) {
-        this.debugModeEnabled = debugModeEnabled;
-        SettingsUtil.isDebugEnabled = debugModeEnabled;
-    }
-
-    public boolean isDeveloperModeEnabled() {
-        return developerModeEnabled;
-    }
-
-    public void setDeveloperModeEnabled(boolean developerModeEnabled) {
-        this.developerModeEnabled = developerModeEnabled;
     }
 
     public boolean isSlowDatabaseModeEnabled() {
@@ -118,18 +102,17 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
     @Override
     public Element getState() {
         Element element = new Element("state");
-        SettingsUtil.setBoolean(element, "enable-debug-mode", debugModeEnabled);
-        SettingsUtil.setBoolean(element, "enable-developer-mode", developerModeEnabled);
-        SettingsUtil.setBoolean(element, "show-plugin-conflict-dialog", showPluginConflictDialog);
+        setBoolean(element, "enable-debug-mode", debugModeEnabled);
+        setBoolean(element, "enable-developer-mode", developerModeEnabled);
+        setBoolean(element, "show-plugin-conflict-dialog", showPluginConflictDialog);
         return element;
     }
 
     @Override
-    public void loadState(Element element) {
-        debugModeEnabled = SettingsUtil.getBoolean(element, "enable-debug-mode", false);
-        developerModeEnabled = SettingsUtil.getBoolean(element, "enable-developer-mode", false);
-        showPluginConflictDialog = SettingsUtil.getBoolean(element, "show-plugin-conflict-dialog", true);
-        SettingsUtil.isDebugEnabled = debugModeEnabled;
+    public void loadState(@NotNull Element element) {
+        debugModeEnabled = getBoolean(element, "enable-debug-mode", false);
+        developerModeEnabled = getBoolean(element, "enable-developer-mode", false);
+        showPluginConflictDialog = getBoolean(element, "show-plugin-conflict-dialog", true);
     }
 }
 

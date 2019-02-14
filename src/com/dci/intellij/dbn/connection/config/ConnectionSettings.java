@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.config;
 
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionIdProvider;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -9,36 +10,26 @@ import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionSettingsForm> implements ConnectionRef, ConnectionIdProvider {
-    private ConnectionBundleSettings parent;
+public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionBundleSettings, ConnectionSettingsForm>
+        implements ConnectionRef, ConnectionIdProvider, Cloneable {
 
     private ConnectionId connectionId;
     private boolean isActive = true;
     private boolean isNew;
 
     private ConnectionDatabaseSettings databaseSettings;
-    private ConnectionPropertiesSettings propertiesSettings;
-    private ConnectionSshTunnelSettings sshTunnelSettings;
-    private ConnectionSslSettings sslSettings;
-    private ConnectionDetailSettings detailSettings;
-    private ConnectionFilterSettings filterSettings;
+    private ConnectionPropertiesSettings propertiesSettings = new ConnectionPropertiesSettings(this);
+    private ConnectionSshTunnelSettings sshTunnelSettings   = new ConnectionSshTunnelSettings(this);
+    private ConnectionSslSettings sslSettings               = new ConnectionSslSettings(this);
+    private ConnectionDetailSettings detailSettings         = new ConnectionDetailSettings(this);
+    private ConnectionFilterSettings filterSettings         = new ConnectionFilterSettings(this);
 
     public ConnectionSettings(ConnectionBundleSettings parent) {
         this(parent, DatabaseType.UNKNOWN, ConnectionConfigType.BASIC);
     }
     public ConnectionSettings(ConnectionBundleSettings parent, DatabaseType databaseType, ConnectionConfigType configType) {
-        super(parent.getProject());
-        this.parent = parent;
+        super(parent);
         databaseSettings = new ConnectionDatabaseSettings(this, databaseType, configType);
-        propertiesSettings = new ConnectionPropertiesSettings(this);
-        sshTunnelSettings = new ConnectionSshTunnelSettings(this);
-        sslSettings = new ConnectionSslSettings(this);
-        detailSettings = new ConnectionDetailSettings(this);
-        filterSettings = new ConnectionFilterSettings(this);
-    }
-
-    public ConnectionBundleSettings getParent() {
-        return parent;
     }
 
     public ConnectionDatabaseSettings getDatabaseSettings() {
@@ -86,7 +77,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
 
     @NotNull
     @Override
-    protected ConnectionSettingsForm createConfigurationEditor() {
+    public ConnectionSettingsForm createConfigurationEditor() {
         return new ConnectionSettingsForm(this);
     }
 
@@ -133,7 +124,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     public ConnectionSettings clone() {
         Element connectionElement = new Element("Connection");
         writeConfiguration(connectionElement);
-        ConnectionSettings clone = new ConnectionSettings(parent, databaseSettings.getDatabaseType(), databaseSettings.getConfigType());
+        ConnectionSettings clone = new ConnectionSettings(getParent() /*TODO config*/, databaseSettings.getDatabaseType(), databaseSettings.getConfigType());
         clone.readConfiguration(connectionElement);
         clone.databaseSettings.setConnectivityStatus(databaseSettings.getConnectivityStatus());
         clone.generateNewId();

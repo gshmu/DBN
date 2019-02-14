@@ -1,19 +1,19 @@
 package com.dci.intellij.dbn.code.common.style.options;
 
 import com.dci.intellij.dbn.code.common.style.options.ui.CodeStyleCaseSettingsForm;
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class CodeStyleCaseSettings extends Configuration<CodeStyleCaseSettingsForm> {
+public abstract class CodeStyleCaseSettings extends BasicConfiguration<CodeStyleCustomSettings, CodeStyleCaseSettingsForm> {
     private List<CodeStyleCaseOption> options = new ArrayList<CodeStyleCaseOption>();
     private boolean enabled = false;
 
-    public CodeStyleCaseSettings() {
+    public CodeStyleCaseSettings(CodeStyleCustomSettings parent) {
+        super(parent);
         options.add(new CodeStyleCaseOption("KEYWORD_CASE", CodeStyleCase.LOWER, false));
         options.add(new CodeStyleCaseOption("FUNCTION_CASE", CodeStyleCase.LOWER, false));
         options.add(new CodeStyleCaseOption("PARAMETER_CASE", CodeStyleCase.LOWER, false));
@@ -79,7 +79,7 @@ public abstract class CodeStyleCaseSettings extends Configuration<CodeStyleCaseS
 
     @Override
     public void readConfiguration(Element element) {
-        enabled = SettingsUtil.getBooleanAttribute(element, "enabled", enabled);
+        enabled = getBooleanAttribute(element, "enabled", enabled);
         for (Object object : element.getChildren()) {
             Element optionElement = (Element) object;
             String name = optionElement.getAttributeValue("name");
@@ -90,7 +90,7 @@ public abstract class CodeStyleCaseSettings extends Configuration<CodeStyleCaseS
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsUtil.setBooleanAttribute(element, "enabled", enabled);
+        setBooleanAttribute(element, "enabled", enabled);
         for (CodeStyleCaseOption option : options) {
             Element optionElement = new Element("option");
             option.writeConfiguration(optionElement);

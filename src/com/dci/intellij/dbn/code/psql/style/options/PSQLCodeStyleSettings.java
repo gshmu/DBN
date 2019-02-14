@@ -12,7 +12,11 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class PSQLCodeStyleSettings extends CodeStyleCustomSettings<PSQLCodeStyleSettingsEditorForm>{
+public class PSQLCodeStyleSettings extends CodeStyleCustomSettings<CodeStyleCustomSettings, PSQLCodeStyleSettingsEditorForm>{
+
+    PSQLCodeStyleSettings(CodeStyleCustomSettings parent) {
+        super(parent);
+    }
 
     public static PSQLCodeStyleSettings getInstance(@NotNull Project project) {
         return ProjectCodeStyleSettings.getInstance(project).getPSQLCodeStyleSettings();    
@@ -30,13 +34,13 @@ public class PSQLCodeStyleSettings extends CodeStyleCustomSettings<PSQLCodeStyle
     }
 
     @Override
-    protected CodeStyleCaseSettings createCaseSettings() {
-        return new PSQLCodeStyleCaseSettings();
+    protected CodeStyleCaseSettings createCaseSettings(CodeStyleCustomSettings parent) {
+        return new PSQLCodeStyleCaseSettings(parent);
     }
 
     @Override
-    protected CodeStyleFormattingSettings createAttributeSettings() {
-        return new PSQLCodeStyleFormattingSettings();
+    protected CodeStyleFormattingSettings createAttributeSettings(CodeStyleCustomSettings parent) {
+        return new PSQLCodeStyleFormattingSettings(parent);
     }
 
     @Override

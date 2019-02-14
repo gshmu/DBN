@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.config;
 
-import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -17,12 +17,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBundleSettingsForm> implements TopLevelConfig {
+public class ConnectionBundleSettings extends BasicProjectConfiguration<ProjectConfiguration, ConnectionBundleSettingsForm> implements TopLevelConfig {
     public static ThreadLocalFlag IS_IMPORT_EXPORT_ACTION = new ThreadLocalFlag(false);
-    public List<ConnectionSettings> connections = new ArrayList<ConnectionSettings>();
+    public List<ConnectionSettings> connections = new ArrayList<>();
 
-    public ConnectionBundleSettings(Project project) {
-        super(project);
+    public ConnectionBundleSettings(ProjectConfiguration parent) {
+        super(parent);
     }
 
     public static ConnectionBundleSettings getInstance(@NotNull Project project) {
@@ -89,7 +89,7 @@ public class ConnectionBundleSettings extends ProjectConfiguration<ConnectionBun
 
     @NotNull
     @Override
-    public Configuration<ConnectionBundleSettingsForm> getOriginalSettings() {
+    public ConnectionBundleSettings getOriginalSettings() {
         return getInstance(getProject());
     }
 

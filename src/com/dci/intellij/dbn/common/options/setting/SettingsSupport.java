@@ -6,9 +6,7 @@ import org.jdom.Element;
 import org.jdom.Text;
 import org.jetbrains.annotations.NotNull;
 
-public class SettingsUtil {
-    public static boolean isDebugEnabled;
-
+public class SettingsSupport {
     public static int getInteger(Element parent, String childName, int originalValue) {
         Element element = parent.getChild(childName);
         String stringValue = getStringValue(element);

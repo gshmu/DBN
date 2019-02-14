@@ -8,18 +8,19 @@ import com.dci.intellij.dbn.execution.method.options.MethodExecutionSettings;
 import com.dci.intellij.dbn.execution.script.options.ScriptExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.options.ConfigId;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class ExecutionEngineSettings extends CompositeProjectConfiguration<ExecutionEngineSettingsForm> implements TopLevelConfig {
+public class ExecutionEngineSettings extends CompositeProjectConfiguration<ProjectSettings, ExecutionEngineSettingsForm> implements TopLevelConfig {
     private StatementExecutionSettings statementExecutionSettings = new StatementExecutionSettings(this);
-    private ScriptExecutionSettings scriptExecutionSettings = new ScriptExecutionSettings(this);
-    private MethodExecutionSettings methodExecutionSettings = new MethodExecutionSettings(this);
+    private ScriptExecutionSettings scriptExecutionSettings       = new ScriptExecutionSettings(this);
+    private MethodExecutionSettings methodExecutionSettings       = new MethodExecutionSettings(this);
 
-    public ExecutionEngineSettings(Project project) {
-        super(project);
+    public ExecutionEngineSettings(ProjectSettings parent) {
+        super(parent);
     }
 
     public static ExecutionEngineSettings getInstance(@NotNull Project project) {
@@ -59,7 +60,7 @@ public class ExecutionEngineSettings extends CompositeProjectConfiguration<Execu
 
     @NotNull
     @Override
-    public Configuration<ExecutionEngineSettingsForm> getOriginalSettings() {
+    public ExecutionEngineSettings getOriginalSettings() {
         return getInstance(getProject());
     }
 

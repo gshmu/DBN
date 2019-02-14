@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.navigation.options;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.options.ProjectConfiguration;
+import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.ui.list.Selectable;
 import com.dci.intellij.dbn.navigation.options.ui.ObjectsLookupSettingsForm;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +16,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-public class ObjectsLookupSettings extends ProjectConfiguration<ObjectsLookupSettingsForm> {
+public class ObjectsLookupSettings extends BasicProjectConfiguration<NavigationSettings, ObjectsLookupSettingsForm> {
     private Latent<List<ObjectTypeEntry>> lookupObjectTypes = Latent.create(() -> createLookupObjectTypes());
 
     private Set<DBObjectType> fastLookupObjectTypes;
@@ -25,8 +24,8 @@ public class ObjectsLookupSettings extends ProjectConfiguration<ObjectsLookupSet
     private BooleanSetting promptConnectionSelection = new BooleanSetting("prompt-connection-selection", true);
     private BooleanSetting promptSchemaSelection = new BooleanSetting("prompt-schema-selection", true);
 
-    public ObjectsLookupSettings(Project project) {
-        super(project);
+    public ObjectsLookupSettings(NavigationSettings parent) {
+        super(parent);
     }
 
     @NotNull

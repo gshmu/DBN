@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -75,7 +75,7 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
         this.lastUsedOperator = lastUsedOperator;
     }
 
-    private class CacheKey implements PersistentStateElement<Element>{
+    private class CacheKey implements PersistentStateElement {
         private ConnectionId connectionId;
         private String schemaName;
         private DBObjectType objectType;
@@ -163,7 +163,7 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
     @Override
     public Element getState() {
         Element element = new Element("state");
-        SettingsUtil.setEnum(element, "last-used-operator", lastUsedOperator);
+        SettingsSupport.setEnum(element, "last-used-operator", lastUsedOperator);
         Element filtersElement = new Element("filters");
         element.addContent(filtersElement);
 
@@ -186,7 +186,7 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
     @Override
     public void loadState(Element element) {
         Element filtersElement = element.getChild("filters");
-        lastUsedOperator = SettingsUtil.getEnum(element, "last-used-operator", lastUsedOperator);
+        lastUsedOperator = SettingsSupport.getEnum(element, "last-used-operator", lastUsedOperator);
         if (filtersElement != null) {
             for (Element filterElement : filtersElement.getChildren()) {
                 CacheKey cacheKey = new CacheKey();

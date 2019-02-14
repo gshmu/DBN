@@ -4,23 +4,23 @@ import com.dci.intellij.dbn.browser.options.ui.DatabaseBrowserSettingsForm;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.options.ConfigId;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class DatabaseBrowserSettings extends CompositeProjectConfiguration<DatabaseBrowserSettingsForm> implements TopLevelConfig {
-    private DatabaseBrowserGeneralSettings generalSettings;
-    private DatabaseBrowserFilterSettings filterSettings;
-    private DatabaseBrowserSortingSettings sortingSettings;
-    private DatabaseBrowserEditorSettings editorSettings;
+public class DatabaseBrowserSettings
+        extends CompositeProjectConfiguration<ProjectSettings, DatabaseBrowserSettingsForm>
+        implements TopLevelConfig {
 
-    public DatabaseBrowserSettings(Project project) {
-        super(project);
-        filterSettings = new DatabaseBrowserFilterSettings(project);
-        generalSettings = new DatabaseBrowserGeneralSettings(project);
-        sortingSettings = new DatabaseBrowserSortingSettings(project);
-        editorSettings = new DatabaseBrowserEditorSettings(project);
+    private DatabaseBrowserGeneralSettings generalSettings = new DatabaseBrowserGeneralSettings(this);
+    private DatabaseBrowserFilterSettings filterSettings   = new DatabaseBrowserFilterSettings(this);
+    private DatabaseBrowserSortingSettings sortingSettings = new DatabaseBrowserSortingSettings(this);
+    private DatabaseBrowserEditorSettings editorSettings   = new DatabaseBrowserEditorSettings(this);
+
+    public DatabaseBrowserSettings(ProjectSettings parent) {
+        super(parent);
     }
 
     @NotNull
@@ -56,7 +56,7 @@ public class DatabaseBrowserSettings extends CompositeProjectConfiguration<Datab
 
     @NotNull
     @Override
-    public Configuration<DatabaseBrowserSettingsForm> getOriginalSettings() {
+    public DatabaseBrowserSettings getOriginalSettings() {
         return getInstance(getProject());
     }
 

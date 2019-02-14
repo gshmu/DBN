@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.common.property;
 
-public abstract class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>, Cloneable{
+import com.dci.intellij.dbn.common.util.Cloneable;
+
+public abstract class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>, Cloneable<PropertyHolder<T>> {
     //private static PrimeNumberIndex INDEX = new PrimeNumberIndex(100);
 
     private int computed = 0;

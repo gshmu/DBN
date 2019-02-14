@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection.config;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabaseSettingsForm> {
+public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSettings, ConnectionDatabaseSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
 
     private transient ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
@@ -46,10 +46,8 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     private ConnectionConfigType configType = ConnectionConfigType.BASIC;
     private AuthenticationInfo authenticationInfo;
 
-    private ConnectionSettings parent;
-
     public ConnectionDatabaseSettings(ConnectionSettings parent, DatabaseType databaseType, ConnectionConfigType configType) {
-        this.parent = parent;
+        super(parent);
         this.databaseType = databaseType;
         this.configType = configType;
         authenticationInfo = new AuthenticationInfo(parent, IS_TRANSITORY.get());
@@ -65,10 +63,6 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     @NotNull
     public ConnectionDatabaseSettingsForm createConfigurationEditor() {
         return new ConnectionDatabaseSettingsForm(this);
-    }
-
-    public ConnectionSettings getParent() {
-        return parent;
     }
 
     public ConnectivityStatus getConnectivityStatus() {
@@ -274,7 +268,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
 
     @NotNull
     public ConnectionId getConnectionId() {
-        return parent.getConnectionId();
+        return getParent().getConnectionId();
     }
 
     /*********************************************************
@@ -284,7 +278,7 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     public void readConfiguration(Element element) {
         ConnectionId connectionId = ConnectionId.get(getString(element, "id", null));
         if (connectionId != null) {
-            parent.setConnectionId(connectionId);
+            getParent().setConnectionId(connectionId);
         }
 
         name             = getString(element, "name", name);
@@ -406,6 +400,6 @@ public class ConnectionDatabaseSettings extends Configuration<ConnectionDatabase
     }
 
     public Project getProject() {
-        return parent.getProject();
+        return getParent().getProject();
     }
 }

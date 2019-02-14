@@ -2,7 +2,8 @@ package com.dci.intellij.dbn.editor.data.filter;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
+import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.ui.ListUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -21,28 +22,26 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class DatasetFilterGroup extends Configuration<DatasetFilterForm> implements ListModel {
-    private Project project;
+public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfiguration, DatasetFilterForm> implements ListModel {
     private ConnectionId connectionId;
     private String datasetName;
     private DatasetFilter activeFilter;
-    private List<DatasetFilter> filters = new ArrayList<DatasetFilter>();
-    private List<DatasetFilter> filtersTemp = new ArrayList<DatasetFilter>();
+    private List<DatasetFilter> filters = new ArrayList<>();
+    private List<DatasetFilter> filtersTemp = new ArrayList<>();
 
     private boolean isChanged;
-    private Set<ListDataListener> listeners = new HashSet<ListDataListener>();
+    private Set<ListDataListener> listeners = new HashSet<>();
 
 
     public DatasetFilterGroup(Project project) {
-        this.project = project;
+        super(project);
     }
 
     public DatasetFilterGroup(Project project, ConnectionId connectionId, String datasetName) {
-        this.project = project;
+        super(project);
         this.connectionId = connectionId;
         this.datasetName = datasetName;
     }
@@ -80,10 +79,6 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
         return filter;
     }
 
-
-    public Project getProject() {
-        return project;
-    }
 
     public String createFilterName(String baseName) {
         while (lookupFilter(baseName) != null) {
@@ -151,13 +146,7 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
     }
 
     private void clearTemporaryFilters() {
-        Iterator<DatasetFilter> iterator = getFilters().iterator();
-        while(iterator.hasNext()) {
-            DatasetFilter datasetFilter = iterator.next();
-            if (datasetFilter.isTemporary()) {
-                iterator.remove();
-            }
-        }
+        getFilters().removeIf(DatasetFilter::isTemporary);
     }
 
     public void moveFilterUp(DatasetFilter filter) {
@@ -192,6 +181,7 @@ public class DatasetFilterGroup extends Configuration<DatasetFilterForm> impleme
 
     @NotNull
     public DBDataset lookupDataset() {
+        Project project = getProject();
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
         if (connectionHandler != null) {

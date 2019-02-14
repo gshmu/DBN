@@ -4,7 +4,7 @@ package com.dci.intellij.dbn.common.option;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import org.jdom.Element;
@@ -75,11 +75,11 @@ public class ConfirmationOptionHandler implements DialogWrapper.DoNotAskOption, 
      *******************************************************/
     @Override
     public void readConfiguration(Element element) {
-        confirm = SettingsUtil.getBoolean(element, configName, confirm);
+        confirm = SettingsSupport.getBoolean(element, configName, confirm);
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsUtil.setBoolean(element, configName, confirm);
+        SettingsSupport.setBoolean(element, configName, confirm);
     }
 }

@@ -9,9 +9,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class PSQLCustomCodeStyleSettings extends CustomCodeStyleSettings {
     private PSQLCodeStyleSettings codeStyleSettings;
-    protected PSQLCustomCodeStyleSettings(CodeStyleSettings container) {
+
+    PSQLCustomCodeStyleSettings(CodeStyleSettings container) {
         super("PSQLCodeStyleSettings", container);
-        codeStyleSettings = new PSQLCodeStyleSettings();
+        codeStyleSettings = new PSQLCodeStyleSettings(null);
     }
 
     public PSQLCodeStyleSettings getCodeStyleSettings() {

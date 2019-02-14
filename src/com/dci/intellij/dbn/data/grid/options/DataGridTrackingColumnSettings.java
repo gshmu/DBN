@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.data.grid.options;
 
-import com.dci.intellij.dbn.common.options.ProjectConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.data.grid.options.ui.DataGridTrackingColumnSettingsForm;
-import com.intellij.openapi.project.Project;
 import gnu.trove.THashSet;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -15,14 +14,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-public class DataGridTrackingColumnSettings extends ProjectConfiguration<DataGridTrackingColumnSettingsForm> {
-    private List<String> columnNames = new ArrayList<String>();
-    private Set<String> lookupCache = new THashSet<String>();
+public class DataGridTrackingColumnSettings extends BasicProjectConfiguration<DataGridSettings, DataGridTrackingColumnSettingsForm> {
+    private List<String> columnNames = new ArrayList<>();
+    private Set<String> lookupCache = new THashSet<>();
     private boolean showColumns = true;
     private boolean allowEditing = false;
 
-    public DataGridTrackingColumnSettings(Project project) {
-        super(project);
+    DataGridTrackingColumnSettings(DataGridSettings parent) {
+        super(parent);
     }
 
     /****************************************************
@@ -40,7 +39,7 @@ public class DataGridTrackingColumnSettings extends ProjectConfiguration<DataGri
     }
 
     private void updateLookupCache(Collection<String> columnNames) {
-        lookupCache = new HashSet<String>();
+        lookupCache = new HashSet<>();
         for (String columnName : columnNames) {
             lookupCache.add(columnName.toUpperCase());
         }
@@ -87,15 +86,15 @@ public class DataGridTrackingColumnSettings extends ProjectConfiguration<DataGri
     @Override
     public void readConfiguration(Element element) {
         this.columnNames.clear();
-        StringTokenizer columnNames = new StringTokenizer(SettingsUtil.getString(element, "columnNames", ""), ",");
+        StringTokenizer columnNames = new StringTokenizer(SettingsSupport.getString(element, "columnNames", ""), ",");
         while (columnNames.hasMoreTokens()) {
             String columnName = columnNames.nextToken().trim().toUpperCase();
             this.columnNames.add(columnName);
         }
         updateLookupCache(this.columnNames);
 
-        showColumns = SettingsUtil.getBoolean(element, "visible", showColumns);
-        allowEditing = SettingsUtil.getBoolean(element, "editable", allowEditing);
+        showColumns = SettingsSupport.getBoolean(element, "visible", showColumns);
+        allowEditing = SettingsSupport.getBoolean(element, "editable", allowEditing);
     }
 
     @Override
@@ -107,9 +106,9 @@ public class DataGridTrackingColumnSettings extends ProjectConfiguration<DataGri
             }
             buffer.append(columnName);
         }
-        SettingsUtil.setString(element, "columnNames", buffer.toString());
-        SettingsUtil.setBoolean(element, "visible", showColumns);
-        SettingsUtil.setBoolean(element, "editable", allowEditing);
+        SettingsSupport.setString(element, "columnNames", buffer.toString());
+        SettingsSupport.setBoolean(element, "visible", showColumns);
+        SettingsSupport.setBoolean(element, "editable", allowEditing);
 
     }
 

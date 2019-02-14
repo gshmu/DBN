@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
-import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.options.ConfigurationException;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public abstract class DatasetFilterImpl extends Configuration implements DatasetFilter {
+public abstract class DatasetFilterImpl extends BasicConfiguration<DatasetFilterGroup, ConfigurationEditorForm> implements DatasetFilter {
     private DatasetFilterGroup filterGroup;
     private String id;
     private String name;
@@ -21,14 +22,15 @@ public abstract class DatasetFilterImpl extends Configuration implements Dataset
     private boolean isTemporary;
     private DatasetFilterType filterType;
 
-    protected DatasetFilterImpl(DatasetFilterGroup filterGroup, String name, String id, DatasetFilterType filterType) {
+    private DatasetFilterImpl(DatasetFilterGroup filterGroup, String name, String id, DatasetFilterType filterType) {
+        super(filterGroup);
         this.filterGroup = filterGroup;
         this.name = name;
         this.id = id;
         this.filterType = filterType;
     }
 
-    protected DatasetFilterImpl(DatasetFilterGroup filterGroup, String name, DatasetFilterType filterType) {
+    DatasetFilterImpl(DatasetFilterGroup filterGroup, String name, DatasetFilterType filterType) {
         this(filterGroup, name, UUID.randomUUID().toString(), filterType);
     }
 

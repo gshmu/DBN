@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.environment;
 
-import com.dci.intellij.dbn.common.options.ConfigurationUtil;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-public class EnvironmentType extends CommonUtil implements Cloneable, PersistentConfiguration, Presentable {
+public class EnvironmentType extends SettingsSupport implements Cloneable<EnvironmentType>, PersistentConfiguration, Presentable {
 
     public static final Color DEFAULT_REGULAR_COLOR = Color.LIGHT_GRAY;
     public static final Color DEFAULT_DARK_COLOR = Color.DARK_GRAY;
@@ -112,10 +112,10 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
 
         if (color == null) {
             if (isDarkScheme && darkColor != null) {
-                Color regularColor = nvl(this.regularColor, DEFAULT_REGULAR_COLOR);
+                Color regularColor = CommonUtil.nvl(this.regularColor, DEFAULT_REGULAR_COLOR);
                 color = new JBColor(regularColor, darkColor);
             } else if (!isDarkScheme && regularColor != null) {
-                Color darkColor = nvl(this.darkColor, DEFAULT_DARK_COLOR);
+                Color darkColor = CommonUtil.nvl(this.darkColor, DEFAULT_DARK_COLOR);
                 this.color = new JBColor(regularColor, darkColor);
             }
         }
@@ -179,8 +179,8 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
             id = defaultEnvironmentType.id;
         }
         if (id == null) id = EnvironmentTypeId.get(name.toLowerCase());
-        readonlyCode = ConfigurationUtil.getBooleanAttribute(element, "readonly-code", readonlyCode);
-        readonlyData = ConfigurationUtil.getBooleanAttribute(element, "readonly-data", readonlyData);
+        readonlyCode = getBooleanAttribute(element, "readonly-code", readonlyCode);
+        readonlyData = getBooleanAttribute(element, "readonly-data", readonlyData);
 
     }
 
@@ -192,7 +192,7 @@ public class EnvironmentType extends CommonUtil implements Cloneable, Persistent
         element.setAttribute("color",
                 (regularColor != null ? regularColor.getRGB() : "") + "/" +
                 (darkColor != null ? darkColor.getRGB() : ""));
-        ConfigurationUtil.setBooleanAttribute(element, "readonly-code", readonlyCode);
-        ConfigurationUtil.setBooleanAttribute(element, "readonly-data", readonlyData);
+        setBooleanAttribute(element, "readonly-code", readonlyCode);
+        setBooleanAttribute(element, "readonly-data", readonlyData);
     }
 }

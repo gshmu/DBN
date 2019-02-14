@@ -8,10 +8,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.StringTokenizer;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsUtil.getEnumAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsUtil.setEnumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getEnumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setEnumAttribute;
 
-public abstract class NameFilterCondition implements PersistentStateElement<Element> {
+public abstract class NameFilterCondition implements PersistentStateElement {
     private ConditionOperator operator = ConditionOperator.EQUAL;
     private String pattern;
 

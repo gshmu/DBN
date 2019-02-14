@@ -1,18 +1,17 @@
 package com.dci.intellij.dbn.data.grid.options;
 
-import com.dci.intellij.dbn.common.options.ProjectConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.data.grid.options.ui.DataGridSortingSettingsForm;
-import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class DataGridSortingSettings extends ProjectConfiguration<DataGridSortingSettingsForm> {
+public class DataGridSortingSettings extends BasicProjectConfiguration<DataGridSettings, DataGridSortingSettingsForm> {
     private boolean nullsFirst = true;
     private int maxSortingColumns = 4;
 
-    public DataGridSortingSettings(Project project) {
-        super(project);
+    DataGridSortingSettings(DataGridSettings parent) {
+        super(parent);
     }
 
     /****************************************************
@@ -50,14 +49,14 @@ public class DataGridSortingSettings extends ProjectConfiguration<DataGridSortin
 
     @Override
     public void readConfiguration(Element element) {
-        nullsFirst = SettingsUtil.getBoolean(element, "nulls-first", nullsFirst);
-        maxSortingColumns = SettingsUtil.getInteger(element, "max-sorting-columns", maxSortingColumns);
+        nullsFirst = SettingsSupport.getBoolean(element, "nulls-first", nullsFirst);
+        maxSortingColumns = SettingsSupport.getInteger(element, "max-sorting-columns", maxSortingColumns);
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsUtil.setBoolean(element, "nulls-first", nullsFirst);
-        SettingsUtil.setInteger(element, "max-sorting-columns", maxSortingColumns);
+        SettingsSupport.setBoolean(element, "nulls-first", nullsFirst);
+        SettingsSupport.setInteger(element, "max-sorting-columns", maxSortingColumns);
     }
 
 }

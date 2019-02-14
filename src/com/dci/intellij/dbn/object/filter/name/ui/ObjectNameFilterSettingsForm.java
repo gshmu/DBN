@@ -67,7 +67,8 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
         actionsPanel.add(actionToolbar.getComponent());
 
         filtersTree.setCellRenderer(new FilterSettingsTreeCellRenderer());
-        ObjectNameFilterSettings tableModel = configuration.clone();
+        ObjectNameFilterSettings tableModel = configuration;
+
         filtersTree.setModel(tableModel);
         filtersTree.setShowsRootHandles(true);
         filtersTree.setRootVisible(false);

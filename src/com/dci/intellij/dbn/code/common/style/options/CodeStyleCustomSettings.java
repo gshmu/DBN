@@ -5,17 +5,18 @@ import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import org.jdom.Element;
 
-public abstract class CodeStyleCustomSettings<T extends CompositeConfigurationEditorForm> extends CompositeConfiguration<T>{
-    protected CodeStyleCaseSettings caseSettings;
-    protected CodeStyleFormattingSettings formattingSettings;
+public abstract class CodeStyleCustomSettings<P extends CodeStyleCustomSettings, T extends CompositeConfigurationEditorForm>
+        extends CompositeConfiguration<P, T>{
 
-    protected CodeStyleCustomSettings() {
-        caseSettings = createCaseSettings();
-        formattingSettings = createAttributeSettings();
+    private CodeStyleCaseSettings caseSettings = createCaseSettings(this);
+    private CodeStyleFormattingSettings formattingSettings = createAttributeSettings(this);
+
+    protected CodeStyleCustomSettings(P parent) {
+        super(parent);
     }
 
-    protected abstract CodeStyleCaseSettings createCaseSettings();
-    protected abstract CodeStyleFormattingSettings createAttributeSettings();
+    protected abstract CodeStyleCaseSettings createCaseSettings(CodeStyleCustomSettings parent);
+    protected abstract CodeStyleFormattingSettings createAttributeSettings(CodeStyleCustomSettings parent);
 
     public CodeStyleCaseSettings getCaseSettings() {
         return caseSettings;

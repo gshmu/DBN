@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.database.common.statement;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -112,7 +112,7 @@ public class StatementExecutionProcessor {
                     String statementText = null;
                     boolean executionSuccessful = true;
                     try {
-                        if (SettingsUtil.isDebugEnabled) {
+                        if (DatabaseNavigator.debugModeEnabled) {
                             statementText = statementDefinition.prepareStatementText(arguments);
                             LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
                         }
@@ -144,7 +144,7 @@ public class StatementExecutionProcessor {
                     } catch (SQLException exception) {
                         executionSuccessful = false;
                         ConnectionUtil.close(statement);
-                        if (SettingsUtil.isDebugEnabled) LOGGER.info("[DBN-ERROR] Error executing statement: " + statementText + "\nCause: " + exception.getMessage());
+                        if (DatabaseNavigator.debugModeEnabled) LOGGER.info("[DBN-ERROR] Error executing statement: " + statementText + "\nCause: " + exception.getMessage());
                         if (interfaceProvider.getMessageParserInterface().isModelException(exception)) {
                             statementDefinition.setDisabled(true);
                             lastException = new SQLException("Model exception received while executing query '" + id +"'. " + exception.getMessage());
@@ -199,7 +199,7 @@ public class StatementExecutionProcessor {
             @Override
             public T execute() throws Exception {
                 String statementText = statementDefinition.prepareStatementText(arguments);
-                if (SettingsUtil.isDebugEnabled) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
+                if (DatabaseNavigator.debugModeEnabled) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
 
                 statement = connection.prepareCall(statementText);
                 try {
@@ -209,7 +209,7 @@ public class StatementExecutionProcessor {
                     if (outputReader != null) outputReader.read(statement);
                     return outputReader;
                 } catch (SQLException exception) {
-                    if (SettingsUtil.isDebugEnabled)
+                    if (DatabaseNavigator.debugModeEnabled)
                         LOGGER.info(
                                 "[DBN-ERROR] Error executing statement: " + statementText +
                                         "\nCause: " + exception.getMessage());
@@ -250,14 +250,14 @@ public class StatementExecutionProcessor {
             @Override
             public Object execute() throws Exception {
                 String statementText = statementDefinition.prepareStatementText(arguments);
-                if (SettingsUtil.isDebugEnabled) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
+                if (DatabaseNavigator.debugModeEnabled) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
 
                 statement = connection.createStatement();
                 try {
                     statement.setQueryTimeout(timeout);
                     statement.executeUpdate(statementText);
                 } catch (SQLException exception) {
-                    if (SettingsUtil.isDebugEnabled)
+                    if (DatabaseNavigator.debugModeEnabled)
                         LOGGER.info(
                                 "[DBN-ERROR] Error executing statement: " + statementText +
                                         "\nCause: " + exception.getMessage());
@@ -298,14 +298,14 @@ public class StatementExecutionProcessor {
             @Override
             public Boolean execute() throws Exception {
                 String statementText = statementDefinition.prepareStatementText(arguments);
-                if (SettingsUtil.isDebugEnabled) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
+                if (DatabaseNavigator.debugModeEnabled) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
 
                 statement = connection.createStatement();
                 try {
                     statement.setQueryTimeout(timeout);
                     return statement.execute(statementText);
                 } catch (SQLException exception) {
-                    if (SettingsUtil.isDebugEnabled)
+                    if (DatabaseNavigator.debugModeEnabled)
                         LOGGER.info(
                                 "[DBN-ERROR] Error executing statement: " + statementText +
                                         "\nCause: " + exception.getMessage());

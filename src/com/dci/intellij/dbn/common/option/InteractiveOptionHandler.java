@@ -4,7 +4,7 @@ package com.dci.intellij.dbn.common.option;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
@@ -119,12 +119,12 @@ public class InteractiveOptionHandler<T extends InteractiveOption> implements Di
      *******************************************************/
     @Override
     public void readConfiguration(Element element) {
-        T option = (T) SettingsUtil.getEnum(element, configName, (Enum)defaultOption);
+        T option = (T) SettingsSupport.getEnum(element, configName, (Enum)defaultOption);
         set(option);
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsUtil.setEnum(element, configName, (Enum) get());
+        SettingsSupport.setEnum(element, configName, (Enum) get());
     }
 }

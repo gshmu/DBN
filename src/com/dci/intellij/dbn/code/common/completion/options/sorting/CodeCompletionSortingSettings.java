@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.code.common.completion.options.sorting;
 
+import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.completion.options.sorting.ui.CodeCompletionSortingSettingsForm;
 import com.dci.intellij.dbn.code.common.lookup.AliasLookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.TokenLookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.VariableLookupItemBuilder;
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -17,9 +17,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CodeCompletionSortingSettings extends Configuration<CodeCompletionSortingSettingsForm> {
+public class CodeCompletionSortingSettings extends BasicConfiguration<CodeCompletionSettings, CodeCompletionSortingSettingsForm> {
     private boolean enabled = true;
     private List<CodeCompletionSortingItem> sortingItems = new ArrayList<CodeCompletionSortingItem>();
+
+    public CodeCompletionSortingSettings(CodeCompletionSettings parent) {
+        super(parent);
+    }
 
     public int getSortingIndexFor(LookupItemBuilder lookupItemBuilder) {
         if (lookupItemBuilder instanceof VariableLookupItemBuilder) {
@@ -97,21 +101,19 @@ public class CodeCompletionSortingSettings extends Configuration<CodeCompletionS
 
     @Override
     public void readConfiguration(Element element) {
-        enabled = SettingsUtil.getBooleanAttribute(element, "enabled", enabled);
+        enabled = getBooleanAttribute(element, "enabled", enabled);
         for (Object child : element.getChildren()) {
             Element childElement = (Element) child;
-            CodeCompletionSortingItem sortingItem = new CodeCompletionSortingItem();
+            CodeCompletionSortingItem sortingItem = new CodeCompletionSortingItem(this);
             sortingItem.readConfiguration(childElement);
-            if (sortingItems.contains(sortingItem)) {
-                sortingItems.remove(sortingItem);
-            }
+            sortingItems.remove(sortingItem);
             sortingItems.add(sortingItem);
         }
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsUtil.setBooleanAttribute(element, "enabled", enabled);
+        setBooleanAttribute(element, "enabled", enabled);
         for (CodeCompletionSortingItem sortingItem : sortingItems) {
             writeConfiguration(element, sortingItem);
         }

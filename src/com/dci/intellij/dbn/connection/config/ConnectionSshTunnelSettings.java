@@ -1,17 +1,14 @@
 package com.dci.intellij.dbn.connection.config;
 
-import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSshTunnelSettingsForm;
 import com.dci.intellij.dbn.connection.ssh.SshAuthType;
-import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class ConnectionSshTunnelSettings extends Configuration<ConnectionSshTunnelSettingsForm> {
-    private ConnectionSettings parent;
-
+public class ConnectionSshTunnelSettings extends BasicProjectConfiguration<ConnectionSettings, ConnectionSshTunnelSettingsForm> {
     private boolean active = false;
     private String host;
     private String user;
@@ -21,8 +18,8 @@ public class ConnectionSshTunnelSettings extends Configuration<ConnectionSshTunn
     private String keyFile;
     private String keyPassphrase;
 
-    public ConnectionSshTunnelSettings(ConnectionSettings parent) {
-        this.parent = parent;
+    ConnectionSshTunnelSettings(ConnectionSettings parent) {
+        super(parent);
     }
 
     @Override
@@ -150,11 +147,7 @@ public class ConnectionSshTunnelSettings extends Configuration<ConnectionSshTunn
         setString(element, "key-passphrase", PasswordUtil.encodePassword(keyPassphrase));
     }
 
-    public Project getProject() {
-        return parent.getProject();
-    }
-
     public ConnectionId getConnectionId() {
-        return parent.getConnectionId();
+        return getParent().getConnectionId();
     }
 }

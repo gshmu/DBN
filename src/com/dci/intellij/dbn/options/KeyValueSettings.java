@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.options;
 
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import org.jdom.Element;
@@ -11,11 +12,15 @@ import java.util.Map;
 /**
  * @deprecated
  */
-public class KeyValueSettings extends Configuration {
+public class KeyValueSettings extends BasicConfiguration<Configuration, ConfigurationEditorForm> {
     private Map<String,String> settings = new HashMap<String, String>();
 
     private static final String YES = "YES";
     private static final String NO = "NO";
+
+    public KeyValueSettings(Configuration parent) {
+        super(parent);
+    }
 
     public String getSetting(String key) {
         return settings.get(key);

@@ -29,7 +29,7 @@ import java.util.List;
 import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
-public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<ConnectionDetailSettings>{
+public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<ConnectionDetailSettings> {
     private JPanel mainPanel;
     private JComboBox<CharsetOption> encodingComboBox;
     private JComboBox<EnvironmentType> environmentTypesComboBox;

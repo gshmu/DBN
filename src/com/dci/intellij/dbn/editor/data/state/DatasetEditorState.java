@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.editor.data.state;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
 import com.dci.intellij.dbn.editor.data.state.column.DatasetColumnSetup;
 import com.intellij.openapi.fileEditor.FileEditorState;
@@ -10,7 +11,7 @@ import gnu.trove.THashMap;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class DatasetEditorState extends SortableDataModelState implements FileEditorState, PersistentStateElement<Element> {
+public class DatasetEditorState extends SortableDataModelState implements FileEditorState, PersistentStateElement, Cloneable<DatasetEditorState> {
     public static final DatasetEditorState VOID = new DatasetEditorState();
     private DatasetColumnSetup columnSetup = new DatasetColumnSetup();
 
@@ -25,8 +26,8 @@ public class DatasetEditorState extends SortableDataModelState implements FileEd
 
     @Override
     public void readState(@NotNull Element element) {
-        setRowCount(SettingsUtil.getIntegerAttribute(element, "row-count", 100));
-        setReadonly(SettingsUtil.getBooleanAttribute(element, "readonly", false));
+        setRowCount(SettingsSupport.getIntegerAttribute(element, "row-count", 100));
+        setReadonly(SettingsSupport.getBooleanAttribute(element, "readonly", false));
 
         Element columnsElement = element.getChild("columns");
         columnSetup.readState(columnsElement);

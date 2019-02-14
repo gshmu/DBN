@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -200,9 +200,9 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                             sessionBundle.getSession(session);
 
 
-                    DBConsoleType consoleType = SettingsUtil.getEnumAttribute(consoleElement, "type", DBConsoleType.class);
+                    DBConsoleType consoleType = SettingsSupport.getEnumAttribute(consoleElement, "type", DBConsoleType.class);
 
-                    String consoleText = SettingsUtil.readCdata(consoleElement);
+                    String consoleText = SettingsSupport.readCdata(consoleElement);
 
                     DBConsoleVirtualFile consoleVirtualFile = consoleBundle.getConsole(consoleName, consoleType, true);
                     consoleVirtualFile.putUserData(DBNDataKeys.CONSOLE_TEXT, consoleText);
