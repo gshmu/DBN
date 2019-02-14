@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.latent;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.intellij.openapi.Disposable;
 
 public abstract class DisposableLatent<T extends Disposable, P extends Disposable> extends Latent<T> {
@@ -9,7 +9,7 @@ public abstract class DisposableLatent<T extends Disposable, P extends Disposabl
 
     private DisposableLatent(P parent) {
         super();
-        this.parent = FailsafeUtil.ensure(parent);
+        this.parent = Failsafe.ensure(parent);
     }
 
     public static <T extends Disposable, P extends Disposable> DisposableLatent<T, P> create(P parent, Loader<T> loader) {
@@ -23,7 +23,7 @@ public abstract class DisposableLatent<T extends Disposable, P extends Disposabl
 
     @Override
     protected boolean shouldLoad() {
-        FailsafeUtil.ensure(parent);
+        Failsafe.ensure(parent);
         return super.shouldLoad();
     }
 

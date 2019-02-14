@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.find;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.list.ReversedList;
 import com.dci.intellij.dbn.common.ui.ListUtil;
@@ -62,9 +63,9 @@ public class DataSearchResult implements Disposable {
         }
     }
 
-    public void checkTimestamp(Long updateTimestamp) throws InterruptedException {
+    public void checkTimestamp(Long updateTimestamp) {
         if (this.updateTimestamp != updateTimestamp) {
-            throw new InterruptedException("Search result newer than given timestamp");
+            throw AlreadyDisposedException.INSTANCE;
         }
     }
 

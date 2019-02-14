@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.debugger;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -52,7 +52,7 @@ public class DBDebugUtil {
     public static void openEditor(VirtualFile virtualFile) {
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
             DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
-            Project project = FailsafeUtil.get(databaseFile.getProject());
+            Project project = Failsafe.get(databaseFile.getProject());
             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
             sourceCodeManager.ensureSourcesLoaded(databaseFile.getObject());
 

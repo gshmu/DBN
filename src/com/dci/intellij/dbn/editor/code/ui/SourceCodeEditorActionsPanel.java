@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.code.ui;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -63,7 +63,7 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
     };
 
     public SourceCodeEditor getSourceCodeEditor() {
-        return FailsafeUtil.get(sourceCodeEditor);
+        return Failsafe.get(sourceCodeEditor);
     }
 
     @Override

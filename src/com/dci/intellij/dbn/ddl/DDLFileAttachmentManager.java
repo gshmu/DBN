@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.ddl;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.ui.ListUtil;
@@ -394,7 +394,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
      *            ProjectComponent         *
      ***************************************/
     public static DDLFileAttachmentManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, DDLFileAttachmentManager.class);
+        return Failsafe.getComponent(project, DDLFileAttachmentManager.class);
     }
 
     @Override

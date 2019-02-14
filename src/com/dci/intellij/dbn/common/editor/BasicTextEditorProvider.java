@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.editor;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.EditorProviderId;
@@ -41,7 +41,7 @@ public abstract class BasicTextEditorProvider implements FileEditorProvider, App
 
     protected void updateTabIcon(final DBEditableObjectVirtualFile databaseFile, final BasicTextEditor textEditor, final Icon icon) {
         SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
-            Project project = FailsafeUtil.get(databaseFile.getProject());
+            Project project = Failsafe.get(databaseFile.getProject());
             EditorUtil.setEditorIcon(project, databaseFile, textEditor, icon);
         });
     }

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.data.sorting.SortingState;
@@ -71,7 +71,7 @@ public class DatasetCustomFilter extends DatasetFilterImpl {
     @Override
     @NotNull
     public ConfigurationEditorForm createConfigurationEditor() {
-        DBDataset dataset = FailsafeUtil.get(lookupDataset());
+        DBDataset dataset = Failsafe.get(lookupDataset());
         return new DatasetCustomFilterForm(dataset, this);
     }
 

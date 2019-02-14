@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.common.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
@@ -90,7 +90,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
             Disposer.register(this, resultTabs);
             return resultTabs;
         }
-        return FailsafeUtil.get(resultTabs);
+        return Failsafe.get(resultTabs);
     }
 
     public int getTabCount() {

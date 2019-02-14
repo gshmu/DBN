@@ -53,8 +53,6 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
 
     public void setPassword(String password) {
         this.password = password;
-        //DatabaseCredentialManager credentialManager = DatabaseCredentialManager.getInstance();
-        //credentialManager.setPassword(getConnectionId(), user, password, temporary);
     }
 
     public boolean isOsAuthentication() {
@@ -99,11 +97,20 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
     @Override
     public void readConfiguration(Element element) {
         user = getString(element, "user", user);
-        password = PasswordUtil.decodePassword(getString(element, "password", password));
+        this.password = PasswordUtil.decodePassword(getString(element, "password", null));
+
+        DatabaseCredentialManager credentialManager = DatabaseCredentialManager.getInstance();
+        if (StringUtil.isEmpty(this.password)) {
+            credentialManager.getPassword(getConnectionId(), user);
+        } else {
+            credentialManager.setPassword(getConnectionId(), user, password, temporary || isTransitory());
+        }
 
         emptyPassword = getBoolean(element, "empty-password", emptyPassword);
         osAuthentication = getBoolean(element, "os-authentication", osAuthentication);
         supported = getParent().getDatabaseType().isAuthenticationSupported();
+
+
     }
 
     @Override
@@ -111,7 +118,9 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
         setBoolean(element, "os-authentication", osAuthentication);
         setBoolean(element, "empty-password", emptyPassword);
         setString(element, "user", nvl(user));
-        setString(element, "password", PasswordUtil.encodePassword(password));
+        setString(element, "deprecated-pwd", PasswordUtil.encodePassword(password));
+
+        DatabaseCredentialManager.getInstance().setPassword(getConnectionId(), user, password, temporary || isTransitory());
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.session.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
@@ -80,7 +80,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
 
     @NotNull
     public DBSessionStatementVirtualFile getVirtualFile() {
-        return FailsafeUtil.get(virtualFile);
+        return Failsafe.get(virtualFile);
     }
 
     void loadCurrentStatement() {
@@ -128,7 +128,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
 
     @NotNull
     private ConnectionHandler getConnectionHandler() {
-        return FailsafeUtil.get(sessionBrowser.getConnectionHandler());
+        return Failsafe.get(sessionBrowser.getConnectionHandler());
     }
 
     public DBLanguagePsiFile getPsiFile() {

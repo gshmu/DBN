@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.language.common.psi;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiElement;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.Synchronized;
@@ -181,7 +181,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         while (parent != null && !(parent instanceof DBLanguagePsiFile)) {
             parent = parent.getParent();
         }
-        return FailsafeUtil.get((DBLanguagePsiFile) parent);
+        return Failsafe.get((DBLanguagePsiFile) parent);
     }
 
     @Nullable

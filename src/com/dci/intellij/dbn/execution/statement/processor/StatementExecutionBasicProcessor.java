@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.statement.processor;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
@@ -165,7 +165,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Override
     @NotNull
     public DBLanguagePsiFile getPsiFile() {
-        return FailsafeUtil.get(psiFileRef.get());
+        return Failsafe.get(psiFileRef.get());
     }
 
     @Override
@@ -339,7 +339,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             DBNConnection connection = context.getConnection();
             if (connection != null && connection.isPoolConnection()) {
                 ConnectionUtil.cancel(context.getStatement());
-                ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
+                ConnectionHandler connectionHandler = Failsafe.get(getConnectionHandler());
                 connectionHandler.freePoolConnection(connection);
             }
             context.reset();
@@ -633,7 +633,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Override
     @NotNull
     public ConnectionHandler getTargetConnection() {
-        return FailsafeUtil.get(getConnectionHandler());
+        return Failsafe.get(getConnectionHandler());
     }
 
     @Override

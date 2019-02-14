@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.method.result;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -121,7 +121,7 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
 
     @NotNull
     public MethodExecutionInput getExecutionInput() {
-        return FailsafeUtil.get(executionInput);
+        return Failsafe.get(executionInput);
     }
 
     public ExecutionContext getExecutionContext() {
@@ -130,7 +130,7 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
 
     @NotNull
     public DBMethod getMethod() {
-        return FailsafeUtil.get(getExecutionInput().getMethod());
+        return Failsafe.get(getExecutionInput().getMethod());
     }
 
 

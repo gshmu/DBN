@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapt
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoadException;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableList;
@@ -72,13 +72,13 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     @Override
     @NotNull
     public GenericDatabaseElement getParentElement() {
-        return FailsafeUtil.get(parent);
+        return Failsafe.get(parent);
     }
 
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return FailsafeUtil.get(getParentElement().getConnectionHandler());
+        return Failsafe.get(getParentElement().getConnectionHandler());
     }
 
     @Override

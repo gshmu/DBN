@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.debugger.jdbc;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
@@ -501,7 +501,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         if (StringUtil.isNotEmpty(ownerName) && StringUtil.isNotEmpty(programName)) {
             ConnectionHandler connectionHandler = getConnectionHandler();
             DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
-            DBSchema schema = FailsafeUtil.get(objectBundle.getSchema(ownerName));
+            DBSchema schema = Failsafe.get(objectBundle.getSchema(ownerName));
             DBSchemaObject schemaObject = schema.getProgram(programName);
             if (schemaObject == null) schemaObject = schema.getMethod(programName, 0); // overload 0 is assuming debug is only supported in oracle (no schema method overloading)
             return schemaObject;

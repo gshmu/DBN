@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.language.common.WeakRef;
 
 import java.io.InputStream;
@@ -41,11 +41,11 @@ public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, C
 
     @Override
     public DBNStatement getStatement() {
-        return FailsafeUtil.get(statement.get());
+        return Failsafe.get(statement.get());
     }
 
     public DBNConnection getConnection() {
-        return FailsafeUtil.get(connection == null ? getStatement().getConnection() : connection.get());
+        return Failsafe.get(connection == null ? getStatement().getConnection() : connection.get());
     }
 
     @Override

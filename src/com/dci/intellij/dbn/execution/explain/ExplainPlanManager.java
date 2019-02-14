@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.explain;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
@@ -34,7 +34,7 @@ public class ExplainPlanManager extends AbstractProjectComponent {
     }
 
     public static ExplainPlanManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, ExplainPlanManager.class);
+        return Failsafe.getComponent(project, ExplainPlanManager.class);
     }
 
     @Override

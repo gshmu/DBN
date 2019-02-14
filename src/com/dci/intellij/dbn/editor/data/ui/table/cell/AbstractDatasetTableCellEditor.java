@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -73,7 +73,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
 
     @NotNull
     public DataEditorComponent getEditorComponent() {
-        return FailsafeUtil.get(editorComponent);
+        return Failsafe.get(editorComponent);
     }
 
     public void setCell(DatasetEditorModelCell cell) {

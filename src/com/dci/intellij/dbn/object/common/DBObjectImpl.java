@@ -14,7 +14,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
@@ -434,7 +434,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
                     CollectionUtil.forEach(
                             childObjects.getObjectLists(),
                             objectList -> {
-                                if (!objectList.isInternal() && FailsafeUtil.check(objectList)) {
+                                if (!objectList.isInternal() && Failsafe.check(objectList)) {
                                     objects.addAll(objectList.getObjects());
                                 }
                             });
@@ -474,21 +474,21 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     @Override
     @NotNull
     public LookupItemBuilder getLookupItemBuilder(DBLanguage language) {
-        DBObjectBundle objectBundle = FailsafeUtil.get(getObjectBundle());
+        DBObjectBundle objectBundle = Failsafe.get(getObjectBundle());
         return objectBundle.getLookupItemBuilder(objectRef, language);
     }
 
     @Override
     @NotNull
     public DBObjectPsiFacade getPsiFacade() {
-        DBObjectBundle objectBundle = FailsafeUtil.get(getObjectBundle());
+        DBObjectBundle objectBundle = Failsafe.get(getObjectBundle());
         return objectBundle.getObjectPsiFacade(getRef());
     }
 
     @Override
     @NotNull
     public DBObjectVirtualFile getVirtualFile() {
-        DBObjectBundle objectBundle = FailsafeUtil.get(getObjectBundle());
+        DBObjectBundle objectBundle = Failsafe.get(getObjectBundle());
         return objectBundle.getObjectVirtualFile(getRef());
     }
 
@@ -498,7 +498,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         DBNCallableStatement statement = null;
         DBNConnection connection = null;
 
-        ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.get(getConnectionHandler());
         try {
             connection = connectionHandler.getPoolConnection(true);
             statement = connection.prepareCall("{? = call DBMS_METADATA.GET_DDL(?, ?, ?)}");
@@ -627,14 +627,14 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
                 DBObjectListContainer childObjects = object.getChildObjects();
                 if (childObjects != null) {
                     DBObjectList parentObjectList = childObjects.getObjectList(objectType);
-                    return FailsafeUtil.get(parentObjectList);
+                    return Failsafe.get(parentObjectList);
                 }
             }
         } else {
             DBObjectBundle objectBundle = getObjectBundle();
             DBObjectListContainer objectListContainer = objectBundle.getObjectListContainer();
             DBObjectList parentObjectList = objectListContainer.getObjectList(objectType);
-            return FailsafeUtil.get(parentObjectList);
+            return Failsafe.get(parentObjectList);
         }
         throw AlreadyDisposedException.INSTANCE;
     }
@@ -679,8 +679,8 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     }
 
     private void buildTreeChildren() {
-        FailsafeUtil.ensure(this);
-        ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
+        Failsafe.ensure(this);
+        ConnectionHandler connectionHandler = Failsafe.get(getConnectionHandler());
 
         Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
         List<BrowserTreeNode> allPossibleTreeChildren = getAllPossibleTreeChildren();
@@ -700,7 +700,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
             for (BrowserTreeNode treeNode : newTreeChildren) {
                 DBObjectList objectList = (DBObjectList) treeNode;
                 objectList.initTreeElement();
-                FailsafeUtil.ensure(this);
+                Failsafe.ensure(this);
             }
 
             if (visibleTreeChildren.size() == 1 && visibleTreeChildren.get(0) instanceof LoadInProgressTreeNode) {
@@ -712,7 +712,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         set(DBObjectProperty.TREE_LOADED, true);
 
 
-        Project project = FailsafeUtil.get(getProject());
+        Project project = Failsafe.get(getProject());
         EventUtil.notify(project, BrowserTreeEventListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
         DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
     }
@@ -792,7 +792,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     @Override
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
-        ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.get(getConnectionHandler());
         return connectionHandler.getProject();
     }
 

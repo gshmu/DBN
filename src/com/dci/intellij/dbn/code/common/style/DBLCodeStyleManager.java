@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -42,7 +42,7 @@ public class DBLCodeStyleManager extends AbstractProjectComponent implements Per
     }
 
     public static DBLCodeStyleManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, DBLCodeStyleManager.class);
+        return Failsafe.getComponent(project, DBLCodeStyleManager.class);
     }
 
     public void formatCase(@NotNull PsiFile file) {

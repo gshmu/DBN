@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
@@ -79,7 +79,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     }
 
     public static DatabaseFileManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, DatabaseFileManager.class);
+        return Failsafe.getComponent(project, DatabaseFileManager.class);
     }
 
     public boolean isProjectInitialized() {

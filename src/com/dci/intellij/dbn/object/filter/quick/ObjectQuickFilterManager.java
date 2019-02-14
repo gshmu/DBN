@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
@@ -146,7 +146,7 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
      *            ProjectComponent         *
      ***************************************/
     public static ObjectQuickFilterManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, ObjectQuickFilterManager.class);
+        return Failsafe.getComponent(project, ObjectQuickFilterManager.class);
     }
 
     @Override

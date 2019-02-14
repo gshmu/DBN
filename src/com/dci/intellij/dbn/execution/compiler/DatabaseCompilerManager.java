@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.compiler;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
@@ -45,7 +45,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     }
 
     public static DatabaseCompilerManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, DatabaseCompilerManager.class);
+        return Failsafe.getComponent(project, DatabaseCompilerManager.class);
     }
 
     private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {

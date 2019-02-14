@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.method;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -55,7 +55,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         this.targetSchemaRef = method.getSchema().getRef();
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {
-            ConnectionHandler connectionHandler = FailsafeUtil.get(method.getConnectionHandler());
+            ConnectionHandler connectionHandler = Failsafe.get(method.getConnectionHandler());
             getOptions().set(ExecutionOption.ENABLE_LOGGING, connectionHandler.isLoggingEnabled());
         }
     }

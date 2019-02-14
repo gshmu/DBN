@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.menu.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -151,7 +151,7 @@ public class SQLConsoleAction extends DumbAwareAction {
                 DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(connectionHandler.getProject());
                 databaseConsoleManager.showCreateConsoleDialog(connectionHandler, consoleType);
             } else {
-                ConnectionHandler connectionHandler = FailsafeUtil.get(consoleVirtualFile.getConnectionHandler());
+                ConnectionHandler connectionHandler = Failsafe.get(consoleVirtualFile.getConnectionHandler());
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
                 fileEditorManager.openFile(consoleVirtualFile, true);
             }

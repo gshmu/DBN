@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.browser.model;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project;
 
 public class SimpleBrowserTreeModel extends BrowserTreeModel {
     public SimpleBrowserTreeModel() {
-        this(FailsafeUtil.DUMMY_PROJECT, null);
+        this(Failsafe.DUMMY_PROJECT, null);
     }
 
     public SimpleBrowserTreeModel(Project project, ConnectionBundle connectionBundle) {

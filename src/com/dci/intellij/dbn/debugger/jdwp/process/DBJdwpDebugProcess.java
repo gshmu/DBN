@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.debugger.jdwp.process;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
@@ -153,7 +153,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
 
     @NotNull
     public DBNConnection getTargetConnection() {
-        return FailsafeUtil.get(targetConnection);
+        return Failsafe.get(targetConnection);
     }
 
     @NotNull

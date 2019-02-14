@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common;
 
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +30,7 @@ public class WeakRef<T> extends WeakReference<T>{
 
     @NotNull
     public T getnn() {
-        return FailsafeUtil.get(get());
+        return Failsafe.get(get());
     }
 
     @Override

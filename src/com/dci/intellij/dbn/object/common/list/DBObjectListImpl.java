@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoaderImpl;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -28,7 +28,6 @@ import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
@@ -220,7 +219,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @NotNull
     public Project getProject() {
         GenericDatabaseElement parent = getParentElement();
-        return FailsafeUtil.get(parent.getProject());
+        return Failsafe.get(parent.getProject());
     }
 
     @Override
@@ -233,7 +232,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         if (psiDirectory == null) {
             synchronized (this) {
                 if (psiDirectory == null) {
-                    FailsafeUtil.ensure(this);
+                    Failsafe.ensure(this);
                     psiDirectory = new DBObjectListPsiDirectory(this);
                 }
             }
@@ -243,17 +242,14 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Override
     public void notifyChangeListeners() {
-        try {
+        Failsafe.lenient(() -> {
             Project project = getProject();
             BrowserTreeNode treeParent = getParent();
-            if (isNot(INTERNAL) && isTouched() && FailsafeUtil.check(project) && treeParent.isTreeStructureLoaded()) {
+            if (isNot(INTERNAL) && isTouched() && Failsafe.check(project) && treeParent.isTreeStructureLoaded()) {
                 BrowserTreeEventListener treeEventListener = EventUtil.notify(project, BrowserTreeEventListener.TOPIC);
                 treeEventListener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
             }
-        } catch (ProcessCanceledException ignore) {
-        } catch (Exception e) {
-            LOGGER.error("Failed to notify tree change listeners", e);
-        }
+        });
     }
 
     /*********************************************************
@@ -328,7 +324,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         if (isLoading() || isDisposed()) {
             return elements;
         } else {
-            try {
+            return Failsafe.lenient(Collections.emptyList(), () -> {
                 boolean scroll = !isTouched();
                 if (!isLoaded()) {
                     loadInBackground(false);
@@ -342,10 +338,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
                 if (scroll) {
                     DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
                 }
-            } catch (ProcessCanceledException e) {
-                return Collections.emptyList();
-            }
-            return elements;
+                return elements;
+            });
         }
     }
 

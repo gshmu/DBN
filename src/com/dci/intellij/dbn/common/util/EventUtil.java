@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
@@ -26,7 +26,7 @@ public class EventUtil {
                 messageBus.connect(parentDisposable);    }
     
     public static <T> void subscribe(Project project, @Nullable Disposable parentDisposable, Topic<T> topic, final T handler) {
-        if (project != null && project != FailsafeUtil.DUMMY_PROJECT) {
+        if (project != null && project != Failsafe.DUMMY_PROJECT) {
             final MessageBusConnection messageBusConnection = connect(project, parentDisposable);
             messageBusConnection.subscribe(topic, handler);
         }
@@ -39,7 +39,7 @@ public class EventUtil {
 
     @NotNull
     public static <T> T notify(@Nullable Project project, Topic<T> topic) {
-        if (project == null || project.isDisposed() || project == FailsafeUtil.DUMMY_PROJECT) {
+        if (project == null || project.isDisposed() || project == Failsafe.DUMMY_PROJECT) {
             throw AlreadyDisposedException.INSTANCE;
         }
         MessageBus messageBus = project.getMessageBus();

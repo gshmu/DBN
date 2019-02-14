@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
@@ -39,7 +39,7 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
         super(sessionBrowser.getProject());
         this.sessionBrowser = sessionBrowser;
         this.content = content;
-        ConnectionHandler connectionHandler = FailsafeUtil.get(sessionBrowser.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.get(sessionBrowser.getConnectionHandler());
         name = connectionHandler.getName();
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
         //putUserData(PARSE_ROOT_ID_KEY, "subquery");
@@ -47,7 +47,7 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
 
     @Override
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
-        ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.get(getConnectionHandler());
         DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
         return languageDialect == null ? null : fileViewProvider.initializePsiFile(languageDialect);
     }
@@ -65,7 +65,7 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         ConnectionHandler connectionHandler = sessionBrowser == null ? null : sessionBrowser.getConnectionHandler();
-        return FailsafeUtil.get(connectionHandler);
+        return Failsafe.get(connectionHandler);
     }
 
     @Nullable

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.session.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -66,7 +66,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
 
     @NotNull
     private ConnectionHandler getConnectionHandler() {
-        return FailsafeUtil.get(sessionBrowser.getConnectionHandler());
+        return Failsafe.get(sessionBrowser.getConnectionHandler());
     }
 
     private class ReloadSessionsAction extends DumbAwareAction {

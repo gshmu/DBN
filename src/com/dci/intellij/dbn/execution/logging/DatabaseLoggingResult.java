@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.logging;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -42,7 +42,7 @@ public class DatabaseLoggingResult extends DisposableBase implements ExecutionRe
 
     @NotNull
     public LogOutputContext getContext() {
-        return FailsafeUtil.get(context);
+        return Failsafe.get(context);
     }
 
     @Override

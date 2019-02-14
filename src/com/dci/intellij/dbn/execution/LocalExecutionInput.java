@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -24,7 +24,7 @@ public abstract class LocalExecutionInput extends ExecutionInput{
         ConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler != null) {
             if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
-                connectionHandler = FailsafeUtil.get(connectionHandler);
+                connectionHandler = Failsafe.get(connectionHandler);
                 options.set(ENABLE_LOGGING, connectionHandler.isLoggingEnabled());
             }
         }

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.result.ui;
 
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -83,7 +83,7 @@ public class PendingTransactionDialogForm extends DBNFormImpl<PendingTransaction
     }
 
     private void updatePreview() {
-        ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.get(executionProcessor.getConnectionHandler());
         DBSchema currentSchema = executionProcessor.getTargetSchema();
         Project project = connectionHandler.getProject();
         String previewText = executionProcessor.getExecutionInput().getExecutableStatementText();

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.thread;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
@@ -26,28 +26,26 @@ public abstract class ModalTask<T> extends Task.Modal implements RunnableTask<T>
 
     @Override
     public final void run() {
-        try {
+        Failsafe.lenient(() -> {
             ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
             run(progressIndicator);
-        } catch (ProcessCanceledException e) {
-            // do nothing
-        }
+        });
     }
 
     @Override
     public final void run(@NotNull ProgressIndicator progressIndicator) {
         try {
-            progressIndicator.pushState();
-            progressIndicator.setIndeterminate(true);
-            execute(progressIndicator);
-        } catch (InterruptedException ignore){
-        } catch (ProcessCanceledException ignore){
+            Failsafe.lenient(() -> {
+                progressIndicator.pushState();
+                progressIndicator.setIndeterminate(true);
+                execute(progressIndicator);
+            });
         } finally {
             progressIndicator.popState();
         }
     }
 
-    protected abstract void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException;
+    protected abstract void execute(@NotNull ProgressIndicator progressIndicator);
 
     @Override
     public void start() {
@@ -66,7 +64,7 @@ public abstract class ModalTask<T> extends Task.Modal implements RunnableTask<T>
     public static <T> ModalTask<T> create(@NotNull Project project, String title, boolean cancellable, BackgroundRunnable<T> runnable) {
         return new ModalTask<T>(project, title, cancellable) {
             @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+            protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 runnable.run(getData(), progressIndicator);
             }
         };

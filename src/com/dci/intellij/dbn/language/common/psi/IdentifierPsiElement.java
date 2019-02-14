@@ -292,7 +292,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement {
     }
 
     private static DBObject resolveActualObject(@Nullable DBObject object) {
-        while (object != null && object instanceof DBSynonym) {
+        while (object instanceof DBSynonym) {
             DBSynonym synonym = (DBSynonym) object;
             object = synonym.getUnderlyingObject();
             if (object == null) return synonym;

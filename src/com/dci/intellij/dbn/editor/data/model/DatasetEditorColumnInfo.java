@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.model;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.RefreshableValue;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
@@ -43,7 +43,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
 
     @NotNull
     public DBColumn getColumn() {
-        return FailsafeUtil.get(DBObjectRef.get(columnRef));
+        return Failsafe.get(DBObjectRef.get(columnRef));
     }
 
     @Override

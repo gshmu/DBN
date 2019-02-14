@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.generator;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.project.Project;
@@ -16,7 +16,7 @@ public class StatementGenerationManager extends AbstractProjectComponent {
     }
 
     public static StatementGenerationManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, StatementGenerationManager.class);
+        return Failsafe.getComponent(project, StatementGenerationManager.class);
     }
 
     public StatementGeneratorResult generateSelectStatement(List<DBObject> objects, boolean enforceAliasUsage) {

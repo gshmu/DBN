@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.DisposableLatent;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -51,7 +51,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public static ExecutionManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, ExecutionManager.class);
+        return Failsafe.getComponent(project, ExecutionManager.class);
     }
 
     private void showExecutionConsole() {

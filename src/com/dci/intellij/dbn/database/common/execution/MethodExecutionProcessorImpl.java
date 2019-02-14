@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.database.common.execution;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -164,7 +164,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
     @NotNull
     private ConnectionHandler getConnectionHandler() {
-        return FailsafeUtil.get(getMethod().getConnectionHandler());
+        return Failsafe.get(getMethod().getConnectionHandler());
     }
 
     protected boolean isQuery() {

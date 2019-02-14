@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionCache;
@@ -283,7 +283,7 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
     protected void notifyStatusChange() {
-        FailsafeUtil.lenient(() -> {
+        Failsafe.lenient(() -> {
             ConnectionStatusListener statusListener = EventUtil.notify(getProject(), ConnectionStatusListener.TOPIC);
             statusListener.statusChanged(id, sessionId);
         });

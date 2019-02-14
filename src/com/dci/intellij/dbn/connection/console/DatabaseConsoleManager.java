@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection.console;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -54,7 +54,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
     }
 
     public static DatabaseConsoleManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, DatabaseConsoleManager.class);
+        return Failsafe.getComponent(project, DatabaseConsoleManager.class);
     }
 
     public void showCreateConsoleDialog(ConnectionHandler connectionHandler, DBConsoleType consoleType) {

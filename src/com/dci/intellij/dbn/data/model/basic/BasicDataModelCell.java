@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.model.basic;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
@@ -62,7 +62,7 @@ public class BasicDataModelCell extends PropertyHolderImpl<RecordStatus> impleme
     @Override
     @NotNull
     public BasicDataModelRow getRow() {
-        return FailsafeUtil.get(row);
+        return Failsafe.get(row);
     }
 
     @Override

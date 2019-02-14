@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.method.action;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.action.AnObjectAction;
@@ -17,7 +17,7 @@ public class SetExecutionSchemaAction extends AnObjectAction<DBSchema> {
 
     @NotNull
     public DBSchema getSchema() {
-        return FailsafeUtil.get(getObject());
+        return Failsafe.get(getObject());
     }
 
     @Override

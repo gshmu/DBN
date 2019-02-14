@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.environment;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -40,7 +40,7 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
     }
 
     public static EnvironmentManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, EnvironmentManager.class);
+        return Failsafe.getComponent(project, EnvironmentManager.class);
     }
 
     public boolean isReadonly(@NotNull DBContentVirtualFile contentFile) {

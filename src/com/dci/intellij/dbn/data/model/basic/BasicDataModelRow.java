@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.model.basic;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
@@ -34,13 +34,13 @@ public class BasicDataModelRow<T extends DataModelCell> extends PropertyHolderIm
     @Override
     @NotNull
     public BasicDataModel getModel() {
-        return FailsafeUtil.get(model);
+        return Failsafe.get(model);
     }
 
     @Override
     public List<T> getCells() {
-        FailsafeUtil.ensure(this);
-        return FailsafeUtil.get(cells);
+        Failsafe.ensure(this);
+        return Failsafe.get(cells);
     }
 
 

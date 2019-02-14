@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection.transaction;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -39,7 +39,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
     }
 
     public static DatabaseTransactionManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, DatabaseTransactionManager.class);
+        return Failsafe.getComponent(project, DatabaseTransactionManager.class);
     }
 
     public void execute(ConnectionHandler connectionHandler, DBNConnection connection, boolean background, @NotNull TransactionAction... actions) {
