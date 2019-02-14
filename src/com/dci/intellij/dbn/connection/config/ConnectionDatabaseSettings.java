@@ -44,13 +44,12 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
     private String driver;
 
     private ConnectionConfigType configType = ConnectionConfigType.BASIC;
-    private AuthenticationInfo authenticationInfo;
+    private AuthenticationInfo authenticationInfo = new AuthenticationInfo(this, false);
 
     public ConnectionDatabaseSettings(ConnectionSettings parent, DatabaseType databaseType, ConnectionConfigType configType) {
         super(parent);
         this.databaseType = databaseType;
         this.configType = configType;
-        authenticationInfo = new AuthenticationInfo(this, false);
         if (databaseType != DatabaseType.UNKNOWN) {
             urlPattern = databaseType.getDefaultUrlPattern();
             databaseInfo = urlPattern.getDefaultInfo();
