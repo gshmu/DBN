@@ -70,9 +70,4 @@ public class DBStatementJdwpRunConfigEditorForm extends DBProgramRunConfiguratio
         super.dispose();
         executionInput = null;
     }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
 }

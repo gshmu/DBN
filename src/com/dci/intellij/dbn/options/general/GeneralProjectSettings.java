@@ -5,20 +5,19 @@ import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.options.ConfigId;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.dci.intellij.dbn.options.general.ui.GeneralProjectSettingsForm;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class GeneralProjectSettings extends CompositeProjectConfiguration<GeneralProjectSettingsForm> implements TopLevelConfig {
-    private RegionalSettings regionalSettings;
-    private EnvironmentSettings environmentSettings;
+public class GeneralProjectSettings extends CompositeProjectConfiguration<ProjectSettings, GeneralProjectSettingsForm> implements TopLevelConfig {
+    private RegionalSettings regionalSettings       = new RegionalSettings(this);
+    private EnvironmentSettings environmentSettings = new EnvironmentSettings(this);
 
-    public GeneralProjectSettings(Project project) {
-        super(project);
-        regionalSettings = new RegionalSettings(project);
-        environmentSettings = new EnvironmentSettings(project);
+    public GeneralProjectSettings(ProjectSettings parent) {
+        super(parent);
     }
 
     public static GeneralProjectSettings getInstance(@NotNull Project project) {
@@ -43,7 +42,7 @@ public class GeneralProjectSettings extends CompositeProjectConfiguration<Genera
 
     @NotNull
     @Override
-    public Configuration<GeneralProjectSettingsForm> getOriginalSettings() {
+    public GeneralProjectSettings getOriginalSettings() {
         return getInstance(getProject());
     }
 

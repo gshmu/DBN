@@ -8,20 +8,21 @@ import com.dci.intellij.dbn.debugger.options.DebuggerSettings;
 import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
 import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
 import com.dci.intellij.dbn.options.ConfigId;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class OperationSettings extends CompositeProjectConfiguration<OperationsSettingsForm> implements TopLevelConfig {
-    private TransactionManagerSettings transactionManagerSettings = new TransactionManagerSettings();
-    private SessionBrowserSettings sessionBrowserSettings = new SessionBrowserSettings();
-    private CompilerSettings compilerSettings = new CompilerSettings();
-    private DebuggerSettings debuggerSettings = new DebuggerSettings();
+public class OperationSettings extends CompositeProjectConfiguration<ProjectSettings, OperationsSettingsForm> implements TopLevelConfig {
+    private TransactionManagerSettings transactionManagerSettings = new TransactionManagerSettings(this);
+    private SessionBrowserSettings sessionBrowserSettings         = new SessionBrowserSettings(this);
+    private CompilerSettings compilerSettings                     = new CompilerSettings(this);
+    private DebuggerSettings debuggerSettings                     = new DebuggerSettings(this);
 
 
-    public OperationSettings(Project project) {
-        super(project);
+    public OperationSettings(ProjectSettings parent) {
+        super(parent);
     }
 
     public static OperationSettings getInstance(@NotNull Project project) {
@@ -51,7 +52,7 @@ public class OperationSettings extends CompositeProjectConfiguration<OperationsS
 
     @NotNull
     @Override
-    public Configuration<OperationsSettingsForm> getOriginalSettings() {
+    public OperationSettings getOriginalSettings() {
         return getInstance(getProject());
     }
 

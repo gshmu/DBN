@@ -4,21 +4,19 @@ import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.data.grid.options.ui.DataGridSettingsForm;
 import com.dci.intellij.dbn.options.ConfigId;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class DataGridSettings extends CompositeProjectConfiguration<DataGridSettingsForm> implements TopLevelConfig {
-    private DataGridGeneralSettings generalSettings;
-    private DataGridSortingSettings sortingSettings;
-    private DataGridTrackingColumnSettings trackingColumnSettings;
+public class DataGridSettings extends CompositeProjectConfiguration<ProjectSettings, DataGridSettingsForm> implements TopLevelConfig {
+    private DataGridGeneralSettings generalSettings               = new DataGridGeneralSettings(this);
+    private DataGridSortingSettings sortingSettings               = new DataGridSortingSettings(this);
+    private DataGridTrackingColumnSettings trackingColumnSettings = new DataGridTrackingColumnSettings(this);
 
-    public DataGridSettings(Project project) {
-        super(project);
-        generalSettings = new DataGridGeneralSettings(project);
-        sortingSettings = new DataGridSortingSettings(project);
-        trackingColumnSettings = new DataGridTrackingColumnSettings(project);
+    public DataGridSettings(ProjectSettings parent) {
+        super(parent);
     }
 
     public static DataGridSettings getInstance(@NotNull Project project) {
@@ -48,7 +46,7 @@ public class DataGridSettings extends CompositeProjectConfiguration<DataGridSett
 
     @NotNull
     @Override
-    public Configuration<DataGridSettingsForm> getOriginalSettings() {
+    public DataGridSettings getOriginalSettings() {
         return getInstance(getProject());
     }
 

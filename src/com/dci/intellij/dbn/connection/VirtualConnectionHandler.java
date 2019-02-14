@@ -304,8 +304,6 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     }
 
     @Override
-    public ConnectionHandler clone() {return null;}
-    @Override
     public boolean hasUncommittedChanges() {return false;}
 
     @NotNull

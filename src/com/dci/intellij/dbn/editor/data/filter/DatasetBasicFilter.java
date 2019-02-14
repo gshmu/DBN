@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.data.filter;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetBasicFilterForm;
@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatasetBasicFilter extends DatasetFilterImpl {
-    private List<DatasetBasicFilterCondition> conditions = new ArrayList<DatasetBasicFilterCondition>();
+    private List<DatasetBasicFilterCondition> conditions = new ArrayList<>();
     private ConditionJoinType joinType = ConditionJoinType.AND;
 
 
-    public DatasetBasicFilter(DatasetFilterGroup parent, String name) {
+    DatasetBasicFilter(DatasetFilterGroup parent, String name) {
         super(parent, name, DatasetFilterType.BASIC);
     }
 
@@ -46,7 +46,7 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
         }
     }
 
-    public void addCondition(String columnName, Object value, ConditionOperator operator) {
+    void addCondition(String columnName, Object value, ConditionOperator operator) {
         DatasetBasicFilterCondition condition = new DatasetBasicFilterCondition(this, columnName, value, operator, true);
         addCondition(condition);
     }
@@ -140,7 +140,7 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
    @Override
    public void readConfiguration(Element element) {
        super.readConfiguration(element);
-       joinType = SettingsUtil.getEnumAttribute(element, "join-type", ConditionJoinType.class);
+       joinType = SettingsSupport.getEnumAttribute(element, "join-type", ConditionJoinType.class);
        for (Object object : element.getChildren()) {
            DatasetBasicFilterCondition condition = new DatasetBasicFilterCondition(this);
            Element conditionElement = (Element) object;

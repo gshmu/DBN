@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.data.filter;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetCustomFilterForm;
@@ -79,7 +79,7 @@ public class DatasetCustomFilter extends DatasetFilterImpl {
     public void readConfiguration(Element element) {
         super.readConfiguration(element);
         Element conditionElement = element.getChild("condition");
-        condition = SettingsUtil.readCdata(conditionElement);
+        condition = SettingsSupport.readCdata(conditionElement);
         condition = StringUtil.replace(condition, "<br>", "\n");
         condition = StringUtil.replace(condition, "<sp>", "  ");
     }

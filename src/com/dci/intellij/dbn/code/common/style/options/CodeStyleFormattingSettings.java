@@ -1,17 +1,20 @@
 package com.dci.intellij.dbn.code.common.style.options;
 
 import com.dci.intellij.dbn.code.common.style.options.ui.CodeStyleFormattingSettingsForm;
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class CodeStyleFormattingSettings extends Configuration<CodeStyleFormattingSettingsForm> {
+public abstract class CodeStyleFormattingSettings extends BasicConfiguration<CodeStyleCustomSettings, CodeStyleFormattingSettingsForm> {
     private List<CodeStyleFormattingOption> options = new ArrayList<CodeStyleFormattingOption>();
     private boolean enabled = false;
+
+    public CodeStyleFormattingSettings(CodeStyleCustomSettings parent) {
+        super(parent);
+    }
 
     @Override
     public String getDisplayName() {
@@ -57,7 +60,7 @@ public abstract class CodeStyleFormattingSettings extends Configuration<CodeStyl
 
     @Override
     public void readConfiguration(Element element) {
-        enabled = SettingsUtil.getBooleanAttribute(element, "enabled", enabled);
+        enabled = getBooleanAttribute(element, "enabled", enabled);
         for (Object object : element.getChildren()) {
             Element optionElement = (Element) object;
             String name = optionElement.getAttributeValue("name");
@@ -70,7 +73,7 @@ public abstract class CodeStyleFormattingSettings extends Configuration<CodeStyl
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsUtil.setBooleanAttribute(element, "enabled", enabled);
+        setBooleanAttribute(element, "enabled", enabled);
         for (CodeStyleFormattingOption option : options) {
             Element optionElement = new Element("option");
             option.writeConfiguration(optionElement);

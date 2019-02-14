@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.object.filter.name;
 
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.options.ProjectConfiguration;
+import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionRef;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
-import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,12 +23,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFilterSettingsForm> implements TreeModel {
+public class ObjectNameFilterSettings
+        extends BasicProjectConfiguration<ConnectionFilterSettings, ObjectNameFilterSettingsForm>
+        implements TreeModel {
+
     private List<ObjectNameFilter> filters = new ArrayList<ObjectNameFilter>();
     private Map<DBObjectType, Filter<DBObject>> objectFilterMap = new EnumMap<>(DBObjectType.class);
     private ConnectionRef connectionRef;
-    public ObjectNameFilterSettings(Project project, ConnectionRef connectionRef) {
-        super(project);
+
+    public ObjectNameFilterSettings(ConnectionFilterSettings parent, ConnectionRef connectionRef) {
+        super(parent);
         this.connectionRef = connectionRef;
     }
 
@@ -78,25 +82,12 @@ public class ObjectNameFilterSettings extends ProjectConfiguration<ObjectNameFil
         return filter;
     }
 
-    @Override
-    public ObjectNameFilterSettings clone() {
-        try {
-            ObjectNameFilterSettings clone = new ObjectNameFilterSettings(getProject(), connectionRef);
-            Element element = new Element("Temp");
-            writeConfiguration(element);
-            clone.readConfiguration(element);
-            return clone;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
     @NotNull
     @Override
-    protected ObjectNameFilterSettingsForm createConfigurationEditor() {
+    public ObjectNameFilterSettingsForm createConfigurationEditor() {
         return new ObjectNameFilterSettingsForm(this);
     }
 

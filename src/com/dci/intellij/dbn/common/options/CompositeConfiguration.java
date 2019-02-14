@@ -6,8 +6,14 @@ import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jdom.Element;
 
-public abstract class CompositeConfiguration<T extends CompositeConfigurationEditorForm> extends Configuration<T> {
+public abstract class CompositeConfiguration<P extends Configuration, E extends CompositeConfigurationEditorForm>
+        extends BasicConfiguration<P, E> {
+
     private Configuration[] configurations;
+
+    public CompositeConfiguration(P parent) {
+        super(parent);
+    }
 
     public final Configuration[] getConfigurations() {
         if (configurations == null) configurations = createConfigurations();
@@ -26,7 +32,7 @@ public abstract class CompositeConfiguration<T extends CompositeConfigurationEdi
 
     @Override
     public void apply() throws ConfigurationException {
-        T settingsEditor = getSettingsEditor();
+        E settingsEditor = getSettingsEditor();
         if (this instanceof TopLevelConfig && settingsEditor != null) {
             GUIUtil.stopTableCellEditing(settingsEditor.getComponent());
         }
@@ -46,7 +52,7 @@ public abstract class CompositeConfiguration<T extends CompositeConfigurationEdi
     }
 
     @Override
-    public void disposeUIResources() {
+    public final void disposeUIResources() {
         for (Configuration configuration : getConfigurations()) {
             configuration.disposeUIResources();
         }

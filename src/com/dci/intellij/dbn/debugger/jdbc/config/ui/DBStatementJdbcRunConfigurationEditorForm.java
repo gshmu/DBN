@@ -48,9 +48,4 @@ public class DBStatementJdbcRunConfigurationEditorForm extends DBProgramRunConfi
     public void dispose() {
         super.dispose();
     }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
 }

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.parser;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContributor;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.SimpleTokenType;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -42,13 +42,13 @@ public abstract class AbstractElementTypeParser<T extends ElementType> implement
     }
 
     public void logBegin(ParserBuilder builder, boolean optional, int depth) {
-        if (SettingsUtil.isDebugEnabled) {
+        if (DatabaseNavigator.debugModeEnabled) {
             getLogger().logBegin(builder, optional, depth);
         }
     }
 
     public void logEnd(ParseResultType resultType, int depth) {
-        if (SettingsUtil.isDebugEnabled) {
+        if (DatabaseNavigator.debugModeEnabled) {
             getLogger().logEnd(resultType, depth);
         }
     }

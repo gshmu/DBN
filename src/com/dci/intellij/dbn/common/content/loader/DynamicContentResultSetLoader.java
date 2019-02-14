@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -51,7 +50,7 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
     }
 
     private DebugInfo preLoadContent(DynamicContent dynamicContent) {
-        if (SettingsUtil.isDebugEnabled) {
+        if (DatabaseNavigator.debugModeEnabled) {
             DebugInfo debugInfo = new DebugInfo();
             LOGGER.info(
                     "[DBN-INFO] Loading " + dynamicContent.getContentDescription() +

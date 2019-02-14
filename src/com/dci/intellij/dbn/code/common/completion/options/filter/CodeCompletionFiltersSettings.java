@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.code.common.completion.options.filter;
 
+import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeCompletionFiltersSettingsForm;
 import com.dci.intellij.dbn.common.options.CompositeConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
@@ -7,14 +8,12 @@ import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 
-public class CodeCompletionFiltersSettings extends CompositeConfiguration<CodeCompletionFiltersSettingsForm> {
-    private CodeCompletionFilterSettings basicFilterSettings;
-    private CodeCompletionFilterSettings extendedFilterSettings;
+public class CodeCompletionFiltersSettings extends CompositeConfiguration<CodeCompletionSettings, CodeCompletionFiltersSettingsForm> {
+    private CodeCompletionFilterSettings basicFilterSettings = new CodeCompletionFilterSettings(this, false);
+    private CodeCompletionFilterSettings extendedFilterSettings = new CodeCompletionFilterSettings(this, true);;
 
-    public CodeCompletionFiltersSettings() {
-        basicFilterSettings = new CodeCompletionFilterSettings(false);
-        extendedFilterSettings = new CodeCompletionFilterSettings(true);
-
+    public CodeCompletionFiltersSettings(CodeCompletionSettings parent) {
+        super(parent);
     }
 
     @Override
@@ -62,7 +61,7 @@ public class CodeCompletionFiltersSettings extends CompositeConfiguration<CodeCo
     *********************************************************/
     @Override
     @NotNull
-    protected CodeCompletionFiltersSettingsForm createConfigurationEditor() {
+    public CodeCompletionFiltersSettingsForm createConfigurationEditor() {
         return new CodeCompletionFiltersSettingsForm(this);
     }
 

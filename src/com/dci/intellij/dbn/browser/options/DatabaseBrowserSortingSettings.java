@@ -1,22 +1,23 @@
 package com.dci.intellij.dbn.browser.options;
 
 import com.dci.intellij.dbn.browser.options.ui.DatabaseBrowserSortingSettingsForm;
-import com.dci.intellij.dbn.common.options.ProjectConfiguration;
+import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
 import com.dci.intellij.dbn.object.common.sorting.SortingType;
-import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseBrowserSortingSettings extends ProjectConfiguration<DatabaseBrowserSortingSettingsForm> {
+public class DatabaseBrowserSortingSettings
+        extends BasicProjectConfiguration<DatabaseBrowserSettings, DatabaseBrowserSortingSettingsForm> {
+
     private List<DBObjectComparator> comparators = new ArrayList<DBObjectComparator>();
 
-    public DatabaseBrowserSortingSettings(Project project) {
-        super(project);
+    public DatabaseBrowserSortingSettings(DatabaseBrowserSettings parent) {
+        super(parent);
         comparators.add(DBObjectComparator.get(DBObjectType.COLUMN, SortingType.NAME));
         comparators.add(DBObjectComparator.get(DBObjectType.FUNCTION, SortingType.NAME));
         comparators.add(DBObjectComparator.get(DBObjectType.PROCEDURE, SortingType.NAME));

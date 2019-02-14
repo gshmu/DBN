@@ -13,7 +13,11 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class SQLCodeStyleSettings extends CodeStyleCustomSettings<SQLCodeStyleSettingsEditorForm> {
+public class SQLCodeStyleSettings extends CodeStyleCustomSettings<CodeStyleCustomSettings, SQLCodeStyleSettingsEditorForm> {
+
+    SQLCodeStyleSettings(CodeStyleCustomSettings parent) {
+        super(parent);
+    }
 
     public static SQLCodeStyleSettings getInstance(@NotNull Project project) {
         return ProjectCodeStyleSettings.getInstance(project).getSQLCodeStyleSettings();
@@ -32,13 +36,13 @@ public class SQLCodeStyleSettings extends CodeStyleCustomSettings<SQLCodeStyleSe
     }
 
     @Override
-    protected CodeStyleCaseSettings createCaseSettings() {
-        return new SQLCodeStyleCaseSettings();
+    protected CodeStyleCaseSettings createCaseSettings(CodeStyleCustomSettings parent) {
+        return new SQLCodeStyleCaseSettings(parent);
     }
 
     @Override
-    protected CodeStyleFormattingSettings createAttributeSettings() {
-        return new SQLCodeStyleFormattingSettings();
+    protected CodeStyleFormattingSettings createAttributeSettings(CodeStyleCustomSettings parent) {
+        return new SQLCodeStyleFormattingSettings(parent);
     }
 
     @Override

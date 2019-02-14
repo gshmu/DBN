@@ -1,21 +1,21 @@
 package com.dci.intellij.dbn.common.options;
 
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class CompositeProjectConfiguration<P extends ProjectConfiguration, E extends CompositeConfigurationEditorForm>
-        extends CompositeConfiguration<P, E>
+public abstract class BasicProjectConfiguration<P extends ProjectConfiguration, E extends ConfigurationEditorForm>
+        extends BasicConfiguration<P, E>
         implements ProjectConfiguration<P, E> {
 
     private ProjectRef projectRef;
 
-    public CompositeProjectConfiguration(P parent) {
+    public BasicProjectConfiguration(P parent) {
         super(parent);
     }
 
-    public CompositeProjectConfiguration(@NotNull Project project) {
+    public BasicProjectConfiguration(Project project) {
         super(null);
         this.projectRef = ProjectRef.from(project);
     }
@@ -26,5 +26,4 @@ public abstract class CompositeProjectConfiguration<P extends ProjectConfigurati
         P parent = getParent();
         return parent == null ? projectRef.getnn() : parent.getProject();
     }
-
 }

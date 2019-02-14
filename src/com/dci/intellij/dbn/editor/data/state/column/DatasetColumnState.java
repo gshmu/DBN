@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.editor.data.state.column;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.object.DBColumn;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class DatasetColumnState implements Comparable<DatasetColumnState>, PersistentStateElement<Element>{
+public class DatasetColumnState implements Comparable<DatasetColumnState>, PersistentStateElement {
     private String name;
     private int position = -1;
     private boolean visible = true;
@@ -37,15 +37,15 @@ public class DatasetColumnState implements Comparable<DatasetColumnState>, Persi
     @Override
     public void readState(Element element) {
         name = element.getAttributeValue("name");
-        position = SettingsUtil.getIntegerAttribute(element, "position", -1);
-        visible = SettingsUtil.getBooleanAttribute(element, "visible", true);
+        position = SettingsSupport.getIntegerAttribute(element, "position", -1);
+        visible = SettingsSupport.getBooleanAttribute(element, "visible", true);
     }
 
     @Override
     public void writeState(Element element) {
         element.setAttribute("name", name);
-        SettingsUtil.setIntegerAttribute(element, "position", position);
-        SettingsUtil.setBooleanAttribute(element, "visible", visible);
+        SettingsSupport.setIntegerAttribute(element, "position", position);
+        SettingsSupport.setBooleanAttribute(element, "visible", visible);
     }
 
     public boolean isVisible() {

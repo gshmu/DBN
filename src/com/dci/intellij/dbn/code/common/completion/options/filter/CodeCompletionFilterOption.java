@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.code.common.completion.options.filter;
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CheckedTreeNodeProvider;
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeCompletionFilterTreeNode;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.ui.CheckedTreeNode;
@@ -11,13 +11,13 @@ import org.jdom.Element;
 
 import javax.swing.*;
 
-public class CodeCompletionFilterOption implements CheckedTreeNodeProvider, PersistentConfiguration{
+public class CodeCompletionFilterOption extends SettingsSupport implements CheckedTreeNodeProvider, PersistentConfiguration{
     private CodeCompletionFilterSettings filterSettings;
     private DBObjectType objectType;
     private TokenTypeCategory tokenTypeCategory = TokenTypeCategory.UNKNOWN;
     private boolean selected;
 
-    public CodeCompletionFilterOption(CodeCompletionFilterSettings filterSettings) {
+    CodeCompletionFilterOption(CodeCompletionFilterSettings filterSettings) {
         this.filterSettings = filterSettings;
     }
 
@@ -62,7 +62,7 @@ public class CodeCompletionFilterOption implements CheckedTreeNodeProvider, Pers
                 String tokenTypeName = element.getAttributeValue("id");
                 tokenTypeCategory = TokenTypeCategory.getCategory(tokenTypeName);
             }
-            selected = SettingsUtil.getBooleanAttribute(element, "selected", selected);
+            selected = getBooleanAttribute(element, "selected", selected);
         }
 
     }
@@ -78,7 +78,7 @@ public class CodeCompletionFilterOption implements CheckedTreeNodeProvider, Pers
             element.setAttribute("id", tokenTypeCategory.getName());
         }
 
-        SettingsUtil.setBooleanAttribute(element, "selected", selected);
+        setBooleanAttribute(element, "selected", selected);
     }
 
     @Override

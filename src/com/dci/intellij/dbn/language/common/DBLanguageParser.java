@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.NamedElementType;
@@ -47,7 +47,7 @@ public abstract class DBLanguageParser implements PsiParser {
         ParserContext context = new ParserContext(psiBuilder, languageDialect, databaseVersion);
         ParserBuilder builder = context.getBuilder();
         if (parseRootId == null ) parseRootId = defaultParseRootId;
-        builder.setDebugMode(SettingsUtil.isDebugEnabled);
+        builder.setDebugMode(DatabaseNavigator.debugModeEnabled);
         PsiBuilder.Marker marker = builder.mark(null);
         NamedElementType root =  elementTypes.getNamedElementType(parseRootId);
         if (root == null) {

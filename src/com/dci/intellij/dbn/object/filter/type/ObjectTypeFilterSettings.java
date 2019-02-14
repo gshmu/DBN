@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -12,7 +13,6 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.filter.type.ui.ObjectTypeFilterSettingsForm;
-import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFilterSettingsForm> {
+public class ObjectTypeFilterSettings extends BasicProjectConfiguration<ProjectConfiguration, ObjectTypeFilterSettingsForm> {
     private Latent<List<ObjectTypeFilterSetting>> objectTypeFilterSettings = Latent.create(() -> {
         List<ObjectTypeFilterSetting> objectTypeFilterSettings = new ArrayList<>();
         objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.SCHEMA));
@@ -54,8 +54,8 @@ public class ObjectTypeFilterSettings extends ProjectConfiguration<ObjectTypeFil
     private BooleanSetting useMasterSettings = new BooleanSetting("use-master-settings", true);
     private ConnectionRef connectionRef;
 
-    public ObjectTypeFilterSettings(Project project, @Nullable ConnectionRef connectionRef) {
-        super(project);
+    public ObjectTypeFilterSettings(ProjectConfiguration parent, @Nullable ConnectionRef connectionRef) {
+        super(parent);
         this.connectionRef = connectionRef;
     }
 

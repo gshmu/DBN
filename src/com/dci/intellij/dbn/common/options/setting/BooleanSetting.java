@@ -12,20 +12,20 @@ public class BooleanSetting extends Setting<Boolean, JToggleButton> implements P
     
     @Override
     public void readConfiguration(Element parent) {
-        setValue(SettingsUtil.getBoolean(parent, getName(), this.value()));
+        setValue(SettingsSupport.getBoolean(parent, getName(), this.value()));
     }
 
     public void readConfigurationAttribute(Element parent) {
-        setValue(SettingsUtil.getBooleanAttribute(parent, getName(), this.value()));
+        setValue(SettingsSupport.getBooleanAttribute(parent, getName(), this.value()));
     }
 
     @Override
     public void writeConfiguration(Element parent) {
-        SettingsUtil.setBoolean(parent, getName(), this.value());
+        SettingsSupport.setBoolean(parent, getName(), this.value());
     }
 
     public void writeConfigurationAttribute(Element parent) {
-        SettingsUtil.setBooleanAttribute(parent, getName(), this.value());
+        SettingsSupport.setBooleanAttribute(parent, getName(), this.value());
     }
 
 

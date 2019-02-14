@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.state.column;
 
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import org.jdom.Element;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DatasetColumnSetup implements PersistentStateElement<Element>{
+public class DatasetColumnSetup implements PersistentStateElement, Cloneable<DatasetColumnSetup> {
     private List<DatasetColumnState> columnStates = new ArrayList<>();
 
     @NotNull

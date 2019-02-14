@@ -4,22 +4,23 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeId;
 import com.dci.intellij.dbn.common.environment.options.ui.EnvironmentSettingsForm;
-import com.dci.intellij.dbn.common.options.ProjectConfiguration;
+import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.intellij.openapi.project.Project;
+import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class EnvironmentSettings extends ProjectConfiguration {
+public class EnvironmentSettings extends BasicProjectConfiguration<GeneralProjectSettings, ConfigurationEditorForm> {
     private EnvironmentTypeBundle environmentTypes = new EnvironmentTypeBundle(EnvironmentTypeBundle.DEFAULT);
     private EnvironmentVisibilitySettings visibilitySettings = new EnvironmentVisibilitySettings();
-    public EnvironmentSettings(Project project) {
-        super(project);
+
+    public EnvironmentSettings(GeneralProjectSettings parent) {
+        super(parent);
     }
 
     @NotNull
     @Override
-    protected ConfigurationEditorForm createConfigurationEditor() {
+    public ConfigurationEditorForm createConfigurationEditor() {
         return new EnvironmentSettingsForm(this);
     }
 

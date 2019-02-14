@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class StatementExecutionVariablesCache implements PersistentStateElement<Element> {
+public class StatementExecutionVariablesCache implements PersistentStateElement {
     private ProjectRef projectRef;
     private Map<String, Set<StatementExecutionVariable>> fileVariablesMap = new THashMap<String, Set<StatementExecutionVariable>>();
 

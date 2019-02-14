@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.code.common.completion.options.sorting;
 
-import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -8,9 +8,13 @@ import org.jdom.Element;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-public class CodeCompletionSortingItem extends Configuration {
+public class CodeCompletionSortingItem extends BasicConfiguration<CodeCompletionSortingSettings, ConfigurationEditorForm> {
     private DBObjectType objectType;
     private TokenTypeCategory tokenTypeCategory = TokenTypeCategory.UNKNOWN;
+
+    CodeCompletionSortingItem(CodeCompletionSortingSettings parent) {
+        super(parent);
+    }
 
     public DBObjectType getObjectType() {
         return objectType;
@@ -25,10 +29,13 @@ public class CodeCompletionSortingItem extends Configuration {
     }
 
     public boolean equals(Object obj) {
-        CodeCompletionSortingItem remote = (CodeCompletionSortingItem) obj;
-        return
-            remote.objectType == objectType &&
-            remote.tokenTypeCategory == tokenTypeCategory;
+        if (obj instanceof CodeCompletionSortingItem) {
+            CodeCompletionSortingItem remote = (CodeCompletionSortingItem) obj;
+            return
+                remote.objectType == objectType &&
+                remote.tokenTypeCategory == tokenTypeCategory;
+        }
+        return false;
     }
 
     public String toString() {
@@ -46,8 +53,8 @@ public class CodeCompletionSortingItem extends Configuration {
      *********************************************************/
     @Override
     @NotNull
-    protected ConfigurationEditorForm createConfigurationEditor() {
-        return null;
+    public ConfigurationEditorForm createConfigurationEditor() {
+        throw new UnsupportedOperationException();
     }
 
     @Override

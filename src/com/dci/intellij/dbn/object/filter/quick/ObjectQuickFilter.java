@@ -12,7 +12,7 @@ import org.jdom.Element;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ObjectQuickFilter implements Filter<DBObject>, Cloneable<ObjectQuickFilter>, PersistentStateElement<Element> {
+public class ObjectQuickFilter implements Filter<DBObject>, Cloneable<ObjectQuickFilter>, PersistentStateElement {
     private DBObjectType objectType;
     private ConditionJoinType joinType = ConditionJoinType.AND;
     private List<ObjectQuickFilterCondition> conditions = new ArrayList<ObjectQuickFilterCondition>();

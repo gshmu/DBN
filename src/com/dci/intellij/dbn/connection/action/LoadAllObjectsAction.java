@@ -33,8 +33,6 @@ public class LoadAllObjectsAction extends AbstractConnectionAction {
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-        DatabaseNavigator databaseNavigator = DatabaseNavigator.getInstance();
-        e.getPresentation().setVisible(databaseNavigator.isDeveloperModeEnabled());
-        super.update(e);
+        e.getPresentation().setVisible(DatabaseNavigator.developerModeEnabled);
     }
 }

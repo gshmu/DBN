@@ -225,9 +225,4 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
         super.dispose();
         methodExecutionInputForm = null;
     }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
 }

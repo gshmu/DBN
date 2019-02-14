@@ -3,18 +3,17 @@ package com.dci.intellij.dbn.connection.config;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeId;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
-import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDetailSettingsForm;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
-import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.Charset;
 
-public class ConnectionDetailSettings extends Configuration<ConnectionDetailSettingsForm> {
+public class ConnectionDetailSettings extends BasicProjectConfiguration<ConnectionSettings, ConnectionDetailSettingsForm> {
     private Charset charset = Charset.forName("UTF-8");
     private EnvironmentTypeId environmentTypeId = EnvironmentTypeId.DEFAULT;
     private boolean enableSessionManagement = true;
@@ -28,10 +27,9 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
     private int passwordExpiryTime = 10;
     private int maxConnectionPoolSize = 7;
     private String alternativeStatementDelimiter;
-    private ConnectionSettings parent;
 
     public ConnectionDetailSettings(ConnectionSettings parent) {
-        this.parent = parent;
+        super(parent);
     }
 
     @Override
@@ -209,11 +207,7 @@ public class ConnectionDetailSettings extends Configuration<ConnectionDetailSett
         setString(element, "alternative-statement-delimiter", CommonUtil.nvl(alternativeStatementDelimiter, ""));
     }
 
-    public Project getProject() {
-        return parent.getProject();
-    }
-
     public ConnectionId getConnectionId() {
-        return parent.getConnectionId();
+        return getParent().getConnectionId();
     }
 }

@@ -15,7 +15,7 @@ import java.awt.event.ActionListener;
 import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
-public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<ConnectionSshTunnelSettings>{
+public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<ConnectionSshTunnelSettings> {
     private JPanel mainPanel;
     private JPanel sshGroupPanel;
     private JTextField hostTextField;

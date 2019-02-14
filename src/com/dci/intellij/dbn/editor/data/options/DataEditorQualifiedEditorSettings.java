@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.editor.data.options;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorQualifiedEditorSettingsForm;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataEditorQualifiedEditorSettings extends Configuration<DataEditorQualifiedEditorSettingsForm> {
+public class DataEditorQualifiedEditorSettings extends BasicConfiguration<DataEditorSettings, DataEditorQualifiedEditorSettingsForm> {
     private Latent<List<TextContentType>> contentTypes = Latent.create(() -> {
         List<TextContentType> contentTypes = new ArrayList<>();
         createContentType("Text", "PLAIN_TEXT", contentTypes);
@@ -47,7 +47,12 @@ public class DataEditorQualifiedEditorSettings extends Configuration<DataEditorQ
         createContentType("Manifest", "Manifest", contentTypes);
         return contentTypes;
     });
+
     private int textLengthThreshold = 300;
+
+    DataEditorQualifiedEditorSettings(DataEditorSettings parent) {
+        super(parent);
+    }
 
     @Override
     public String getDisplayName() {
@@ -106,7 +111,7 @@ public class DataEditorQualifiedEditorSettings extends Configuration<DataEditorQ
 
     @Override
     public void readConfiguration(Element element) {
-        textLengthThreshold = SettingsUtil.getIntegerAttribute(element, "text-length-threshold", textLengthThreshold);
+        textLengthThreshold = SettingsSupport.getIntegerAttribute(element, "text-length-threshold", textLengthThreshold);
         Element contentTypes = element.getChild("content-types");
         for (Object o : contentTypes.getChildren()) {
             Element child = (Element) o;
@@ -121,7 +126,7 @@ public class DataEditorQualifiedEditorSettings extends Configuration<DataEditorQ
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsUtil.setIntegerAttribute(element, "text-length-threshold", textLengthThreshold);
+        SettingsSupport.setIntegerAttribute(element, "text-length-threshold", textLengthThreshold);
         Element contentTypes = new Element("content-types");
         element.addContent(contentTypes);
         for (TextContentType contentType : getContentTypes()) {

@@ -13,12 +13,12 @@ public class EnumSetting extends Setting<String, JTextComponent> implements Pers
     
     @Override
     public void readConfiguration(Element parent) {
-        setValue(SettingsUtil.getString(parent, getName(), this.value()));
+        setValue(SettingsSupport.getString(parent, getName(), this.value()));
     }
 
     @Override
     public void writeConfiguration(Element parent) {
-        SettingsUtil.setString(parent, getName(), this.value());
+        SettingsSupport.setString(parent, getName(), this.value());
     }
 
     @Override

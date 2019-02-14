@@ -4,9 +4,9 @@ import com.dci.intellij.dbn.common.locale.DBDateFormat;
 import com.dci.intellij.dbn.common.locale.DBNumberFormat;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.ui.RegionalSettingsEditorForm;
-import com.dci.intellij.dbn.common.options.ProjectConfiguration;
+import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.options.setting.StringSetting;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.openapi.options.ConfigurationException;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
-public class RegionalSettings extends ProjectConfiguration<RegionalSettingsEditorForm> {
+public class RegionalSettings extends BasicProjectConfiguration<GeneralProjectSettings, RegionalSettingsEditorForm> {
     private Locale locale = Locale.getDefault();
     private DBDateFormat dateFormatOption = DBDateFormat.MEDIUM;
     private DBNumberFormat numberFormatOption = DBNumberFormat.UNGROUPED;
@@ -28,8 +28,8 @@ public class RegionalSettings extends ProjectConfiguration<RegionalSettingsEdito
 
     private ThreadLocal<Formatter> formatter = new ThreadLocal<Formatter>();
 
-    public RegionalSettings(Project project) {
-        super(project);
+    public RegionalSettings(GeneralProjectSettings parent) {
+        super(parent);
     }
 
     public static RegionalSettings getInstance(@NotNull Project project) {
@@ -112,7 +112,7 @@ public class RegionalSettings extends ProjectConfiguration<RegionalSettingsEdito
     @Override
     public void readConfiguration(Element element) {
         formatter.set(null);
-        String localeString = SettingsUtil.getString(element, "locale", Locale.getDefault().toString());
+        String localeString = SettingsSupport.getString(element, "locale", Locale.getDefault().toString());
         boolean useSystemLocale = localeString.equals("SYSTEM_DEFAULT");
         if (useSystemLocale) {
              this.locale = Locale.getDefault();
@@ -125,8 +125,8 @@ public class RegionalSettings extends ProjectConfiguration<RegionalSettingsEdito
             }
         }
 
-        dateFormatOption = SettingsUtil.getEnum(element, "date-format", DBDateFormat.MEDIUM);
-        numberFormatOption = SettingsUtil.getEnum(element, "number-format", DBNumberFormat.UNGROUPED);
+        dateFormatOption = SettingsSupport.getEnum(element, "date-format", DBDateFormat.MEDIUM);
+        numberFormatOption = SettingsSupport.getEnum(element, "number-format", DBNumberFormat.UNGROUPED);
         useCustomFormats.readConfiguration(element);
 
         if (useCustomFormats.value()) {
@@ -138,11 +138,11 @@ public class RegionalSettings extends ProjectConfiguration<RegionalSettingsEdito
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsUtil.setEnum(element, "date-format", dateFormatOption);
-        SettingsUtil.setEnum(element, "number-format", numberFormatOption);
+        SettingsSupport.setEnum(element, "date-format", dateFormatOption);
+        SettingsSupport.setEnum(element, "number-format", numberFormatOption);
 
         String localeString = this.locale.equals(Locale.getDefault()) ? "SYSTEM_DEFAULT" : locale.toString();
-        SettingsUtil.setString(element, "locale", localeString);
+        SettingsSupport.setString(element, "locale", localeString);
 
         useCustomFormats.writeConfiguration(element);
         if (useCustomFormats.value()) {

@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.data.sorting;
 
+import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 
-public class SortingInstruction {
+public class SortingInstruction implements Cloneable<SortingInstruction> {
     private int index;
     private String columnName;
     private SortDirection direction;

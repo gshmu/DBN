@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.connection.config.file;
 
-public class DatabaseFile implements com.dci.intellij.dbn.common.util.Cloneable<DatabaseFile>{
+import com.dci.intellij.dbn.common.util.Cloneable;
+
+public class DatabaseFile implements Cloneable<DatabaseFile> {
     private String path;
     private String schema;
 

@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.options.ConfigId;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
@@ -15,16 +16,13 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCompletionSettingsForm> implements TopLevelConfig {
-    private CodeCompletionFiltersSettings filterSettings;
-    private CodeCompletionSortingSettings sortingSettings;
-    private CodeCompletionFormatSettings formatSettings;
+public class CodeCompletionSettings extends CompositeProjectConfiguration<ProjectSettings, CodeCompletionSettingsForm> implements TopLevelConfig {
+    private CodeCompletionFiltersSettings filterSettings  = new CodeCompletionFiltersSettings(this);
+    private CodeCompletionSortingSettings sortingSettings = new CodeCompletionSortingSettings(this);
+    private CodeCompletionFormatSettings formatSettings   = new CodeCompletionFormatSettings(this);
 
-    public CodeCompletionSettings(Project project) {
-        super(project);
-        filterSettings = new CodeCompletionFiltersSettings();
-        sortingSettings = new CodeCompletionSortingSettings();
-        formatSettings = new CodeCompletionFormatSettings();
+    public CodeCompletionSettings(ProjectSettings parent) {
+        super(parent);
         loadDefaults();
     }
 
@@ -85,13 +83,13 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<CodeCo
 
     @Override
     @NotNull
-    protected CodeCompletionSettingsForm createConfigurationEditor() {
+    public CodeCompletionSettingsForm createConfigurationEditor() {
         return new CodeCompletionSettingsForm(this);
     }
 
     @NotNull
     @Override
-    public Configuration<CodeCompletionSettingsForm> getOriginalSettings() {
+    public CodeCompletionSettings getOriginalSettings() {
         return CodeCompletionSettings.getInstance(getProject());
     }
 

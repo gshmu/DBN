@@ -1,16 +1,20 @@
 package com.dci.intellij.dbn.editor.data.options;
 
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorPopupSettingsForm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class DataEditorPopupSettings extends Configuration<DataEditorPopupSettingsForm>{
+public class DataEditorPopupSettings extends BasicConfiguration<DataEditorSettings, DataEditorPopupSettingsForm> {
     private boolean active = false;
     private boolean activeIfEmpty = false;
     private int dataLengthThreshold = 100;
     private int delay = 1000;
+
+    public DataEditorPopupSettings(DataEditorSettings parent) {
+        super(parent);
+    }
 
     public boolean isActive() {
         return active;
@@ -65,18 +69,18 @@ public class DataEditorPopupSettings extends Configuration<DataEditorPopupSettin
 
     @Override
     public void readConfiguration(Element element) {
-        active = SettingsUtil.getBoolean(element, "active", active);
-        activeIfEmpty = SettingsUtil.getBoolean(element, "active-if-empty", activeIfEmpty);
-        dataLengthThreshold = SettingsUtil.getInteger(element, "data-length-threshold", dataLengthThreshold);
-        delay = SettingsUtil.getInteger(element, "popup-delay", delay);
+        active = SettingsSupport.getBoolean(element, "active", active);
+        activeIfEmpty = SettingsSupport.getBoolean(element, "active-if-empty", activeIfEmpty);
+        dataLengthThreshold = SettingsSupport.getInteger(element, "data-length-threshold", dataLengthThreshold);
+        delay = SettingsSupport.getInteger(element, "popup-delay", delay);
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsUtil.setBoolean(element, "active", active);
-        SettingsUtil.setBoolean(element, "active-if-empty", activeIfEmpty);
-        SettingsUtil.setInteger(element, "data-length-threshold", dataLengthThreshold);
-        SettingsUtil.setInteger(element, "popup-delay", delay);
+        SettingsSupport.setBoolean(element, "active", active);
+        SettingsSupport.setBoolean(element, "active-if-empty", activeIfEmpty);
+        SettingsSupport.setInteger(element, "data-length-threshold", dataLengthThreshold);
+        SettingsSupport.setInteger(element, "popup-delay", delay);
     }
 
 }

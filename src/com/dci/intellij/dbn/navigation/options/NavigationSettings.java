@@ -4,17 +4,17 @@ import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.navigation.options.ui.NavigationSettingsForm;
 import com.dci.intellij.dbn.options.ConfigId;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class NavigationSettings extends CompositeProjectConfiguration<NavigationSettingsForm> implements TopLevelConfig {
-    private ObjectsLookupSettings objectsLookupSettings;
+public class NavigationSettings extends CompositeProjectConfiguration<ProjectSettings, NavigationSettingsForm> implements TopLevelConfig {
+    private ObjectsLookupSettings objectsLookupSettings = new ObjectsLookupSettings(this);
 
-    public NavigationSettings(Project project) {
-        super(project);
-        objectsLookupSettings = new ObjectsLookupSettings(project);
+    public NavigationSettings(ProjectSettings parent) {
+        super(parent);
     }
 
     public static NavigationSettings getInstance(@NotNull Project project) {
@@ -44,7 +44,7 @@ public class NavigationSettings extends CompositeProjectConfiguration<Navigation
 
     @NotNull
     @Override
-    public Configuration<NavigationSettingsForm> getOriginalSettings() {
+    public NavigationSettings getOriginalSettings() {
         return getInstance(getProject());
     }
 

@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.editor.data.filter.global;
 
+import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.object.DBColumn;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataDependencyPath {
+public class DataDependencyPath implements Cloneable<DataDependencyPath> {
     private List<DBColumn> pathElements = new ArrayList<DBColumn>();
 
     private DataDependencyPath() {}
@@ -32,7 +33,7 @@ public class DataDependencyPath {
     }
 
     @Override
-    protected Object clone() {
+    public DataDependencyPath clone() {
         DataDependencyPath clone = new DataDependencyPath();
         clone.pathElements.addAll(pathElements);
         return clone; 

@@ -1,14 +1,15 @@
 package com.dci.intellij.dbn.debugger.options;
 
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.options.ui.DebuggerSettingsForm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class DebuggerSettings extends Configuration<DebuggerSettingsForm>{
+public class DebuggerSettings extends BasicConfiguration<OperationSettings, DebuggerSettingsForm> {
     private boolean useGenericRunners = true;
     private InteractiveOptionHandler<DebuggerTypeOption> debuggerType =
             new InteractiveOptionHandler<DebuggerTypeOption>(
@@ -19,6 +20,10 @@ public class DebuggerSettings extends Configuration<DebuggerSettingsForm>{
                     DebuggerTypeOption.JDWP,
                     DebuggerTypeOption.JDBC,
                     DebuggerTypeOption.CANCEL);
+
+    public DebuggerSettings(OperationSettings parent) {
+        super(parent);
+    }
 
     @Override
     public String getDisplayName() {
@@ -65,12 +70,12 @@ public class DebuggerSettings extends Configuration<DebuggerSettingsForm>{
     @Override
     public void readConfiguration(Element element) {
         debuggerType.readConfiguration(element);
-        useGenericRunners = SettingsUtil.getBoolean(element, "use-generic-runners", useGenericRunners);
+        useGenericRunners = SettingsSupport.getBoolean(element, "use-generic-runners", useGenericRunners);
     }
 
     @Override
     public void writeConfiguration(Element element) {
         debuggerType.writeConfiguration(element);
-        SettingsUtil.setBoolean(element, "use-generic-runners", useGenericRunners);
+        SettingsSupport.setBoolean(element, "use-generic-runners", useGenericRunners);
     }
 }

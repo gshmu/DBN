@@ -1,13 +1,17 @@
 package com.dci.intellij.dbn.code.common.completion.options.general;
 
+import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.completion.options.general.ui.CodeCompletionFormatSettingsForm;
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class CodeCompletionFormatSettings extends Configuration<CodeCompletionFormatSettingsForm>{
+public class CodeCompletionFormatSettings extends BasicConfiguration<CodeCompletionSettings, CodeCompletionFormatSettingsForm> {
     private boolean enforceCodeStyleCase = true;
+
+    public CodeCompletionFormatSettings(CodeCompletionSettings parent) {
+        super(parent);
+    }
 
     public boolean isEnforceCodeStyleCase() {
         return enforceCodeStyleCase;
@@ -33,12 +37,12 @@ public class CodeCompletionFormatSettings extends Configuration<CodeCompletionFo
 
     @Override
     public void readConfiguration(Element element) {
-        enforceCodeStyleCase = SettingsUtil.getBoolean(element, "enforce-code-style-case", enforceCodeStyleCase);
+        enforceCodeStyleCase = getBoolean(element, "enforce-code-style-case", enforceCodeStyleCase);
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsUtil.setBoolean(element, "enforce-code-style-case", enforceCodeStyleCase);
+        setBoolean(element, "enforce-code-style-case", enforceCodeStyleCase);
     }
 
 }

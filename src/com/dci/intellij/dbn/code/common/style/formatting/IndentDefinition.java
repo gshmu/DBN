@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.code.common.style.formatting;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.intellij.formatting.Indent;
 import org.jdom.Element;
 
@@ -35,6 +35,6 @@ public enum IndentDefinition implements FormattingAttribute<Indent> {
     }
 
     public static IndentDefinition get(Element element) {
-        return SettingsUtil.getEnumAttribute(element, "formatting-indent", IndentDefinition.class);
+        return SettingsSupport.getEnumAttribute(element, "formatting-indent", IndentDefinition.class);
     }
 }

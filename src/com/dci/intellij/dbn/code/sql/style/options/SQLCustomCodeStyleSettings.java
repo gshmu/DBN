@@ -9,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class SQLCustomCodeStyleSettings extends CustomCodeStyleSettings {
     private SQLCodeStyleSettings codeStyleSettings;
-    protected SQLCustomCodeStyleSettings(CodeStyleSettings container) {
+    SQLCustomCodeStyleSettings(CodeStyleSettings container) {
         super("SQLCodeStyleSettings", container);
-        codeStyleSettings = new SQLCodeStyleSettings();
+        codeStyleSettings = new SQLCodeStyleSettings(null);
     }
 
     public SQLCodeStyleSettings getCodeStyleSettings() {

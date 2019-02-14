@@ -1,18 +1,17 @@
 package com.dci.intellij.dbn.data.grid.options;
 
-import com.dci.intellij.dbn.common.options.ProjectConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.data.grid.options.ui.DataGridGeneralSettingsForm;
-import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class DataGridGeneralSettings extends ProjectConfiguration<DataGridGeneralSettingsForm> {
+public class DataGridGeneralSettings extends BasicProjectConfiguration<DataGridSettings, DataGridGeneralSettingsForm> {
     private boolean columnTooltipEnabled = true;
     private boolean zoomingEnabled = true;
 
-    public DataGridGeneralSettings(Project project) {
-        super(project);
+    public DataGridGeneralSettings(DataGridSettings parent) {
+        super(parent);
     }
 
     /****************************************************
@@ -51,14 +50,14 @@ public class DataGridGeneralSettings extends ProjectConfiguration<DataGridGenera
 
     @Override
     public void readConfiguration(Element element) {
-        zoomingEnabled = SettingsUtil.getBoolean(element, "enable-zooming", zoomingEnabled);
-        columnTooltipEnabled = SettingsUtil.getBoolean(element, "enable-column-tooltip", columnTooltipEnabled);
+        zoomingEnabled = SettingsSupport.getBoolean(element, "enable-zooming", zoomingEnabled);
+        columnTooltipEnabled = SettingsSupport.getBoolean(element, "enable-column-tooltip", columnTooltipEnabled);
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsUtil.setBoolean(element, "enable-zooming", zoomingEnabled);
-        SettingsUtil.setBoolean(element, "enable-column-tooltip", columnTooltipEnabled);
+        SettingsSupport.setBoolean(element, "enable-zooming", zoomingEnabled);
+        SettingsSupport.setBoolean(element, "enable-column-tooltip", columnTooltipEnabled);
     }
 
 }

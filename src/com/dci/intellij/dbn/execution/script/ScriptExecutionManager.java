@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
@@ -359,7 +359,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     @Override
     public Element getState() {
         Element element = new Element("state");
-        SettingsUtil.setBooleanAttribute(element, "clear-outputs", clearOutputOption);
+        SettingsSupport.setBooleanAttribute(element, "clear-outputs", clearOutputOption);
         Element interfacesElement = new Element("recently-used-interfaces");
         element.addContent(interfacesElement);
         for (DatabaseType databaseType : recentlyUsedInterfaces.keySet()) {
@@ -374,7 +374,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     @Override
     public void loadState(@NotNull final Element element) {
         recentlyUsedInterfaces.clear();
-        clearOutputOption = SettingsUtil.getBooleanAttribute(element, "clear-outputs", clearOutputOption);
+        clearOutputOption = SettingsSupport.getBooleanAttribute(element, "clear-outputs", clearOutputOption);
         Element interfacesElement = element.getChild("recently-used-interfaces");
         if (interfacesElement != null) {
             for (Element interfaceElement : interfacesElement.getChildren()) {

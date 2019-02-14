@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.database;
 
+import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -8,7 +9,7 @@ import com.dci.intellij.dbn.connection.ConnectionIdProvider;
 import com.dci.intellij.dbn.credentials.DatabaseCredentialManager;
 import com.dci.intellij.dbn.language.common.WeakRef;
 
-public class AuthenticationInfo implements com.dci.intellij.dbn.common.util.Cloneable<AuthenticationInfo>{
+public class AuthenticationInfo implements Cloneable<AuthenticationInfo>{
     private WeakRef<ConnectionIdProvider> parent;
     private long timestamp = System.currentTimeMillis();
     private boolean osAuthentication;
