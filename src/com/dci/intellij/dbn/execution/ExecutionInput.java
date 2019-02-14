@@ -6,14 +6,12 @@ import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
-import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
@@ -43,24 +41,11 @@ public abstract class ExecutionInput extends DisposableBase implements Disposabl
 
     protected abstract ExecutionContext createExecutionContext();
 
-    private final TimeoutSettingsListener timeoutSettingsListener = new TimeoutSettingsListener() {
-        @Override
-        public void settingsChanged(ExecutionTarget executionTarget) {
-            if (executionTarget == getExecutionTarget()) {
-                ExecutionTimeoutSettings timeoutSettings = getExecutionTimeoutSettings();
-                executionTimeout.updateSettingsValue(timeoutSettings.getExecutionTimeout());
-                debugExecutionTimeout.updateSettingsValue(timeoutSettings.getDebugExecutionTimeout());
-            }
-        }
-    };
-
     public ExecutionInput(Project project, ExecutionTarget executionTarget) {
         projectRef = ProjectRef.from(project);
         this.executionTarget = executionTarget;
-        ExecutionTimeoutSettings timeoutSettings = getExecutionTimeoutSettings();
-        executionTimeout = new ExecutionTimeout(timeoutSettings.getExecutionTimeout());
-        debugExecutionTimeout = new ExecutionTimeout(timeoutSettings.getDebugExecutionTimeout());
-        EventUtil.subscribe(getProject(), this, TimeoutSettingsListener.TOPIC, timeoutSettingsListener);
+        executionTimeout = new ExecutionTimeout(project, executionTarget, false);
+        debugExecutionTimeout = new ExecutionTimeout(project, executionTarget, true);
     }
 
     @NotNull

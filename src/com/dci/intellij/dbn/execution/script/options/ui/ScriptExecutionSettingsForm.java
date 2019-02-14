@@ -1,12 +1,8 @@
 package com.dci.intellij.dbn.execution.script.options.ui;
 
-import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.execution.ExecutionTarget;
-import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.execution.script.options.ScriptExecutionSettings;
@@ -108,14 +104,7 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
         model.validate();
         CmdLineInterfaceBundle executorBundle = model.getBundle();
         configuration.setCommandLineInterfaces(executorBundle);
-
-        boolean timeoutSettingsChanged = configuration.setExecutionTimeout(executionTimeout);
-        if (timeoutSettingsChanged) {
-            Project project = configuration.getProject();
-            SettingsChangeNotifier.register(() -> {
-                EventUtil.notify(project, TimeoutSettingsListener.TOPIC).settingsChanged(ExecutionTarget.SCRIPT);
-            });
-        }
+        configuration.setExecutionTimeout(executionTimeout);
     }
 
     @Override

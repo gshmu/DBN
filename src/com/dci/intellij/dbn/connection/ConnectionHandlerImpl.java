@@ -68,7 +68,10 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private ConnectionHandlerRef ref;
     private ConnectionInfo connectionInfo;
     private Cache metaDataCache = new Cache(TimeUtil.ONE_MINUTE);
-    private Latent<AuthenticationInfo> temporaryAuthenticationInfo = Latent.create(() -> new AuthenticationInfo(this, true));
+    private Latent<AuthenticationInfo> temporaryAuthenticationInfo = Latent.create(() -> {
+        ConnectionDatabaseSettings databaseSettings = getSettings().getDatabaseSettings();
+        return new AuthenticationInfo(databaseSettings, true);
+    });
 
     private MapLatent<SessionId, StatementExecutionQueue> executionQueues =
             MapLatent.create(key -> new StatementExecutionQueue(ConnectionHandlerImpl.this));
@@ -249,18 +252,6 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @Override
     public EnvironmentType getEnvironmentType() {
         return connectionSettings.getDetailSettings().getEnvironmentType();
-    }
-
-    @Override
-    public void commit() throws SQLException {
-        DBNConnection mainConnection = getConnectionPool().getMainConnection();
-        ConnectionUtil.commit(mainConnection);
-    }
-
-    @Override
-    public void rollback() throws SQLException {
-        DBNConnection mainConnection = getConnectionPool().getMainConnection();
-        ConnectionUtil.rollback(mainConnection);
     }
 
     @Override

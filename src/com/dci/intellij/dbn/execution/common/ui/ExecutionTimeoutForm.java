@@ -4,17 +4,16 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
-import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -32,7 +31,7 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
     private ExecutionInput executionInput;
     private DBDebuggerType debuggerType;
 
-    public ExecutionTimeoutForm(final ExecutionInput executionInput, final DBDebuggerType debuggerType) {
+    protected ExecutionTimeoutForm(final ExecutionInput executionInput, final DBDebuggerType debuggerType) {
         this.executionInput = executionInput;
         this.debuggerType = debuggerType;
 
@@ -45,7 +44,7 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
 
         executionTimeoutTextField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
-            protected void textChanged(DocumentEvent e) {
+            protected void textChanged(@NotNull DocumentEvent e) {
                 String text = executionTimeoutTextField.getText();
                 try {
                     timeout = Integer.parseInt(text);
@@ -90,7 +89,7 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
                 timeoutSettings.getExecutionTimeout();
     }
 
-    protected void handleChange(boolean hasError){};
+    protected void handleChange(boolean hasError){}
 
     @Override
     public JComponent getComponent() {
@@ -102,7 +101,7 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
     }
 
     public class SettingsAction extends GroupPopupAction {
-        public SettingsAction() {
+        SettingsAction() {
             super("Settings", null, Icons.ACTION_OPTIONS);
         }
         @Override
@@ -121,23 +120,19 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
     }
 
     class SaveToSettingsAction extends AnAction {
-        public SaveToSettingsAction() {
+        SaveToSettingsAction() {
             super("Save to Settings");
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             ExecutionTimeoutSettings timeoutSettings = executionInput.getExecutionTimeoutSettings();
             String text = executionTimeoutTextField.getText();
             int timeout = Integer.parseInt(text);
 
-            boolean settingsChanged = debuggerType.isDebug() ?
-                        timeoutSettings.setDebugExecutionTimeout(timeout) :
-                        timeoutSettings.setExecutionTimeout(timeout);
-
-            if (settingsChanged) {
-                EventUtil.notify(getProject(), TimeoutSettingsListener.TOPIC).settingsChanged(executionInput.getExecutionTarget());
-            }
+            if (debuggerType.isDebug())
+                timeoutSettings.setDebugExecutionTimeout(timeout); else
+                timeoutSettings.setExecutionTimeout(timeout);
         }
 
         @Override
@@ -149,12 +144,12 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
 
     class ReloadDefaultAction extends AnAction {
 
-        public ReloadDefaultAction() {
+        ReloadDefaultAction() {
             super("Reload from Settings");
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             int timeout = getSettingsTimeout();
             executionTimeoutTextField.setText(String.valueOf(timeout));
         }

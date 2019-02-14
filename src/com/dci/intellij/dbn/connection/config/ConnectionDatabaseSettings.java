@@ -50,7 +50,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         super(parent);
         this.databaseType = databaseType;
         this.configType = configType;
-        authenticationInfo = new AuthenticationInfo(parent, IS_TRANSITORY.get());
+        authenticationInfo = new AuthenticationInfo(this, IS_TRANSITORY.get());
         if (databaseType != DatabaseType.UNKNOWN) {
             urlPattern = databaseType.getDefaultUrlPattern();
             databaseInfo = urlPattern.getDefaultInfo();
@@ -118,6 +118,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         this.description = description;
     }
 
+    @NotNull
     public DatabaseType getDatabaseType() {
         return CommonUtil.nvl(databaseType, DatabaseType.UNKNOWN);
     }
@@ -332,17 +333,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         driverLibrary = FileUtil.convertToAbsolutePath(getProject(), getString(element, "driver-library", driverLibrary));
         driver        = getString(element, "driver", driver);
 
-        String userName = getString(element, "user", authenticationInfo.getUser());
-        String userPassword = PasswordUtil.decodePassword(getString(element, "password", null));
-
-        authenticationInfo.setUser(userName);
-        authenticationInfo.setEmptyPassword(getBoolean(element, "empty-password", authenticationInfo.isEmptyPassword()));
-        authenticationInfo.setOsAuthentication(getBoolean(element, "os-authentication", authenticationInfo.isOsAuthentication()));
-        authenticationInfo.setSupported(databaseType.isAuthenticationSupported());
-
-        if (StringUtil.isNotEmpty(userPassword)) {
-            authenticationInfo.setPassword(userPassword);
-        }
+        authenticationInfo.readConfiguration(element);
 
         // TODO backward compatibility (to remove)
         Element propertiesElement = element.getChild("properties");
@@ -390,13 +381,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
             setString(element, "url", nvl(databaseInfo.getUrl()));
         }
 
-        String userName = nvl(authenticationInfo.getUser());
-        String userPassword = PasswordUtil.encodePassword(authenticationInfo.getPassword());
-
-        setBoolean(element, "os-authentication", authenticationInfo.isOsAuthentication());
-        setBoolean(element, "empty-password", authenticationInfo.isEmptyPassword());
-        setString(element, "user", userName);
-        setString(element, "password", userPassword);
+        authenticationInfo.writeConfiguration(element);
     }
 
     public Project getProject() {

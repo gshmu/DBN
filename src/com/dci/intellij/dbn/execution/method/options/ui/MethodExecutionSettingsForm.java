@@ -1,14 +1,9 @@
 package com.dci.intellij.dbn.execution.method.options.ui;
 
-import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.execution.ExecutionTarget;
-import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.dci.intellij.dbn.execution.method.options.MethodExecutionSettings;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
 
@@ -41,14 +36,8 @@ public class MethodExecutionSettingsForm extends ConfigurationEditorForm<MethodE
         int parameterHistorySize = ConfigurationEditorUtil.validateIntegerInputValue(parameterHistorySizeTextField, "Parameter history size", true, 0, 3000, null);
         configuration.setParameterHistorySize(parameterHistorySize);
 
-        boolean timeoutSettingsChanged = configuration.setExecutionTimeout(executionTimeout);
-        timeoutSettingsChanged = configuration.setDebugExecutionTimeout(debugExecutionTimeout) || timeoutSettingsChanged;
-        if (timeoutSettingsChanged) {
-            Project project = configuration.getProject();
-            SettingsChangeNotifier.register(() -> {
-                EventUtil.notify(project, TimeoutSettingsListener.TOPIC).settingsChanged(ExecutionTarget.METHOD);
-            });
-        }
+        configuration.setExecutionTimeout(executionTimeout);
+        configuration.setDebugExecutionTimeout(debugExecutionTimeout);
     }
 
     @Override

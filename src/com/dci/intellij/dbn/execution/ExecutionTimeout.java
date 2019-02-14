@@ -1,27 +1,48 @@
 package com.dci.intellij.dbn.execution;
 
+import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
+import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
 public class ExecutionTimeout {
-    private int value;
+    private ProjectRef projectRef;
+    private ExecutionTarget executionTarget;
+    private boolean debug;
+    private int customValue;
     private int settingsValue;
 
-    public ExecutionTimeout(int value) {
-        this.value = value;
-        this.settingsValue = value;
+    ExecutionTimeout(@NotNull Project project, ExecutionTarget executionTarget, boolean debug) {
+        this.projectRef = ProjectRef.from(project);
+        this.executionTarget = executionTarget;
+        this.debug = debug;
+        this.settingsValue = getSettingsExecutionTimeout();
+        this.customValue = getSettingsExecutionTimeout();
     }
 
     public int get() {
-        return value;
+        int timeout = getSettingsExecutionTimeout();
+        if (customValue != settingsValue) {
+            this.settingsValue = timeout;
+        } else {
+            this.settingsValue = timeout;
+            this.customValue = timeout;
+        }
+        return customValue;
     }
 
     public void set(int value) {
-        this.value = value;
+        this.customValue = value;
     }
 
-    public void updateSettingsValue(int settingsValue) {
-        if (this.value == this.settingsValue) {
-            // is using settings value
-            this.value = settingsValue;
-        }
-        this.settingsValue = settingsValue;
+    private int getSettingsExecutionTimeout() {
+        Project project = projectRef.getnn();
+        ExecutionEngineSettings executionEngineSettings = ExecutionEngineSettings.getInstance(project);
+        ExecutionTimeoutSettings timeoutSettings = executionEngineSettings.getExecutionTimeoutSettings(executionTarget);
+        return debug ?
+                timeoutSettings.getDebugExecutionTimeout() :
+                timeoutSettings.getExecutionTimeout();
     }
+
 }

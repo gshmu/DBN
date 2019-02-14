@@ -1,16 +1,18 @@
 package com.dci.intellij.dbn.common.database;
 
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
+import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionIdProvider;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
+import com.dci.intellij.dbn.connection.config.PasswordUtil;
 import com.dci.intellij.dbn.credentials.DatabaseCredentialManager;
-import com.dci.intellij.dbn.language.common.WeakRef;
+import org.jdom.Element;
 
-public class AuthenticationInfo implements Cloneable<AuthenticationInfo>{
-    private WeakRef<ConnectionIdProvider> parent;
+public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSettings, ConfigurationEditorForm> implements Cloneable<AuthenticationInfo>{
     private long timestamp = System.currentTimeMillis();
     private boolean osAuthentication;
     private boolean emptyPassword;
@@ -19,13 +21,13 @@ public class AuthenticationInfo implements Cloneable<AuthenticationInfo>{
     private String password;
     private boolean temporary;
 
-    public AuthenticationInfo(ConnectionIdProvider parent, boolean temporary) {
-        this.parent = WeakRef.from(parent);
+    public AuthenticationInfo(ConnectionDatabaseSettings parent, boolean temporary) {
+        super(parent);
         this.temporary = temporary;
     }
 
     public ConnectionId getConnectionId() {
-        return parent.getnn().getConnectionId();
+        return getParent().getConnectionId();
     }
 
     public String getUser() {
@@ -95,8 +97,26 @@ public class AuthenticationInfo implements Cloneable<AuthenticationInfo>{
     }
 
     @Override
+    public void readConfiguration(Element element) {
+        user = getString(element, "user", user);
+        password = PasswordUtil.decodePassword(getString(element, "password", password));
+
+        emptyPassword = getBoolean(element, "empty-password", emptyPassword);
+        osAuthentication = getBoolean(element, "os-authentication", osAuthentication);
+        supported = getParent().getDatabaseType().isAuthenticationSupported();
+    }
+
+    @Override
+    public void writeConfiguration(Element element) {
+        setBoolean(element, "os-authentication", osAuthentication);
+        setBoolean(element, "empty-password", emptyPassword);
+        setString(element, "user", nvl(user));
+        setString(element, "password", PasswordUtil.encodePassword(password));
+    }
+
+    @Override
     public AuthenticationInfo clone() {
-        AuthenticationInfo authenticationInfo = new AuthenticationInfo(parent.getnn(), temporary);
+        AuthenticationInfo authenticationInfo = new AuthenticationInfo(getParent(), temporary);
         authenticationInfo.user = user;
         authenticationInfo.password = password;
         authenticationInfo.osAuthentication = osAuthentication;

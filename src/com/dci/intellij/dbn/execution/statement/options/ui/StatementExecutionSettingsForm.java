@@ -1,14 +1,9 @@
 package com.dci.intellij.dbn.execution.statement.options.ui;
 
-import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.execution.ExecutionTarget;
-import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
 
 import javax.swing.*;
 
@@ -44,13 +39,8 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
         configuration.setFocusResult(focusResultCheckBox.isSelected());
         configuration.setPromptExecution(promptExecutionCheckBox.isSelected());
 
-        boolean timeoutSettingsChanged = configuration.setExecutionTimeout(executionTimeout);
-        timeoutSettingsChanged = configuration.setDebugExecutionTimeout(debugExecutionTimeout) || timeoutSettingsChanged;
-        if (timeoutSettingsChanged) {
-            Project project = configuration.getProject();
-            SettingsChangeNotifier.register(() ->
-                    EventUtil.notify(project, TimeoutSettingsListener.TOPIC).settingsChanged(ExecutionTarget.STATEMENT));
-        }
+        configuration.setExecutionTimeout(executionTimeout);
+        configuration.setDebugExecutionTimeout(debugExecutionTimeout);
     }
 
     @Override

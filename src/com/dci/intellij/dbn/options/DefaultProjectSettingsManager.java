@@ -36,7 +36,7 @@ public class DefaultProjectSettingsManager implements ApplicationComponent, Pers
         return defaultProjectSettings.get();
     }
 
-        @Override
+    @Override
     public void initComponent() {
         EventUtil.subscribe(null, ProjectLifecycleListener.TOPIC, projectLifecycleListener);
     }
