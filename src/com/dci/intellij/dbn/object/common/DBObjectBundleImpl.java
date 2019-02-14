@@ -14,7 +14,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MapLatent;
@@ -433,7 +433,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     private void buildTreeChildren() {
-        FailsafeUtil.ensure(this);
+        Failsafe.ensure(this);
         List<BrowserTreeNode> newTreeChildren = allPossibleTreeChildren;
         Filter<BrowserTreeNode> filter = getConnectionHandler().getObjectTypeFilter();
         if (!filter.acceptsAll(allPossibleTreeChildren)) {
@@ -449,7 +449,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         for (BrowserTreeNode treeNode : newTreeChildren) {
             DBObjectList objectList = (DBObjectList) treeNode;
             objectList.initTreeElement();
-            FailsafeUtil.ensure(this);
+            Failsafe.ensure(this);
         }
 
         if (visibleTreeChildren.size() == 1 && visibleTreeChildren.get(0) instanceof LoadInProgressTreeNode) {
@@ -459,7 +459,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         visibleTreeChildren = newTreeChildren;
         treeChildrenLoaded = true;
 
-        Project project = FailsafeUtil.get(getProject());
+        Project project = Failsafe.get(getProject());
         EventUtil.notify(project, BrowserTreeEventListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
         DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
     }

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.method;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
@@ -61,7 +61,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     }
 
     public static MethodExecutionManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, MethodExecutionManager.class);
+        return Failsafe.getComponent(project, MethodExecutionManager.class);
     }
 
     public MethodBrowserSettings getBrowserSettings() {
@@ -185,7 +185,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             MessageUtil.showErrorDialog(getProject(), "Could not resolve " + methodRef.getQualifiedNameWithType() + "\".");
         } else {
             final Project project = method.getProject();
-            ConnectionHandler connectionHandler = FailsafeUtil.get(method.getConnectionHandler());
+            ConnectionHandler connectionHandler = Failsafe.get(method.getConnectionHandler());
             DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
             final MethodExecutionProcessor executionProcessor = executionInterface.createExecutionProcessor(method);
 

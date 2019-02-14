@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.filter.name;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterConditionDialog;
@@ -206,7 +206,7 @@ public class ObjectNameFilterManager extends AbstractProjectComponent implements
      *            ProjectComponent         *
      ***************************************/
     public static ObjectNameFilterManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, ObjectNameFilterManager.class);
+        return Failsafe.getComponent(project, ObjectNameFilterManager.class);
     }
 
     @Override

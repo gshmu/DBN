@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.code.diff;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -44,7 +44,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
         super(project);
     }
     public static SourceCodeDiffManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, SourceCodeDiffManager.class);
+        return Failsafe.getComponent(project, SourceCodeDiffManager.class);
     }
 
 

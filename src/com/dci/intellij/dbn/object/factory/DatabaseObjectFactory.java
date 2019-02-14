@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.factory;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -39,7 +39,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
     }
 
     public static DatabaseObjectFactory getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, DatabaseObjectFactory.class);
+        return Failsafe.getComponent(project, DatabaseObjectFactory.class);
     }
 
     private void notifyFactoryEvent(ObjectFactoryEvent event) {
@@ -88,10 +88,10 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
                 DBNConnection connection = connectionHandler.getMainConnection(schema);
                 connectionHandler.getInterfaceProvider().getDDLInterface().createMethod(methodFactoryInput, connection);
                 DBObjectType objectType = methodFactoryInput.isFunction() ? DBObjectType.FUNCTION : DBObjectType.PROCEDURE;
-                FailsafeUtil.get(schema.getChildObjectList(objectType)).reload();
+                Failsafe.get(schema.getChildObjectList(objectType)).reload();
 
                 DBMethod method = (DBMethod) schema.getChildObject(objectType, factoryInput.getObjectName(), false);
-                FailsafeUtil.get(method.getChildObjectList(DBObjectType.ARGUMENT)).reload();
+                Failsafe.get(method.getChildObjectList(DBObjectType.ARGUMENT)).reload();
                 DatabaseFileSystem.getInstance().openEditor(method, true);
                 notifyFactoryEvent(new ObjectFactoryEvent(method, ObjectFactoryEvent.EVENT_TYPE_CREATE));
             } catch (SQLException e) {

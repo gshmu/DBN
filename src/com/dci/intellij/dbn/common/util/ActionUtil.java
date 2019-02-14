@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.util;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
@@ -79,12 +79,12 @@ public class ActionUtil {
 
     @NotNull
     public static Project ensureProject(AnActionEvent e) {
-        return FailsafeUtil.get(e.getData(PlatformDataKeys.PROJECT));
+        return Failsafe.get(e.getData(PlatformDataKeys.PROJECT));
     }
 
     public static <T extends ProjectComponent> T getComponent(AnActionEvent e, Class<T> componentClass) {
         Project project = ensureProject(e);
-        return FailsafeUtil.getComponent(project, componentClass);
+        return Failsafe.getComponent(project, componentClass);
     }
 
     /**

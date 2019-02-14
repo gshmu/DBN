@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.dependency;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -29,7 +29,7 @@ public class ObjectDependencyManager extends AbstractProjectComponent implements
     }
 
     public static ObjectDependencyManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, ObjectDependencyManager.class);
+        return Failsafe.getComponent(project, ObjectDependencyManager.class);
     }
 
     public ObjectDependencyType getLastUserDependencyType() {

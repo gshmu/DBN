@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.code;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
@@ -87,7 +87,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     private DBLanguageFileEditorListener fileEditorListener;
 
     public static SourceCodeManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, SourceCodeManager.class);
+        return Failsafe.getComponent(project, SourceCodeManager.class);
     }
 
     private SourceCodeManager(Project project) {
@@ -218,7 +218,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             sourceCodeFile.set(SAVING, true);
             final Project project = getProject();
             try {
-                Document document = FailsafeUtil.get(DocumentUtil.getDocument(sourceCodeFile));
+                Document document = Failsafe.get(DocumentUtil.getDocument(sourceCodeFile));
                 DocumentUtil.saveDocument(document);
 
                 DBLanguagePsiFile psiFile = sourceCodeFile.getPsiFile();

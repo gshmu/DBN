@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.BasicCallable;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.language.common.WeakRef;
@@ -30,7 +30,7 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
 
     @Override
     public DBNConnection getConnection() {
-        return FailsafeUtil.get(connection.get());
+        return Failsafe.get(connection.get());
     }
 
 

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.ui.ListUtil;
@@ -191,7 +191,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
             if (schema != null) {
                 String name = datasetName.substring(index + 1);
                 DBDataset dataset = schema.getDataset(name);
-                return FailsafeUtil.get(dataset);
+                return Failsafe.get(dataset);
             }
         }
         throw AlreadyDisposedException.INSTANCE;

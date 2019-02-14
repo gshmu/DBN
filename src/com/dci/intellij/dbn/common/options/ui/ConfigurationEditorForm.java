@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.options.ui;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -41,7 +41,7 @@ public abstract class ConfigurationEditorForm<E extends BasicConfiguration> exte
     }
 
     public final E getConfiguration() {
-        return FailsafeUtil.get(configuration);
+        return Failsafe.get(configuration);
     }
 
     public abstract void applyFormChanges() throws ConfigurationException;

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.script;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -78,7 +78,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     }
 
     public static ScriptExecutionManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, ScriptExecutionManager.class);
+        return Failsafe.getComponent(project, ScriptExecutionManager.class);
     }
 
     public List<CmdLineInterface> getAvailableInterfaces(DatabaseType databaseType) {
@@ -138,7 +138,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     private void doExecuteScript(final ScriptExecutionInput input) throws Exception {
         ExecutionContext context = input.getExecutionContext();
         context.set(EXECUTING, true);
-        ConnectionHandler connectionHandler = FailsafeUtil.get(input.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.get(input.getConnectionHandler());
         final VirtualFile sourceFile = input.getSourceFile();
         activeProcesses.put(sourceFile, null);
 
@@ -153,7 +153,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
             new CancellableDatabaseCall<Object>(connectionHandler, null, timeout, TimeUnit.SECONDS) {
                 @Override
                 public Object execute() throws Exception {
-                    ConnectionHandler connectionHandler = FailsafeUtil.get(input.getConnectionHandler());
+                    ConnectionHandler connectionHandler = Failsafe.get(input.getConnectionHandler());
                     DBSchema schema = input.getSchema();
 
                     String content = new String(sourceFile.contentsToByteArray());

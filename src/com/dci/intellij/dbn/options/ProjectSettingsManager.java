@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSetting
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -54,7 +54,7 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
     }
 
     public static ProjectSettingsManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, ProjectSettingsManager.class);
+        return Failsafe.getComponent(project, ProjectSettingsManager.class);
     }
 
     public static ProjectSettings getSettings(Project project) {

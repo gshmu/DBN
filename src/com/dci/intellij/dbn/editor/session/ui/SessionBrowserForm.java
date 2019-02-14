@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.session.ui;
 
 import com.dci.intellij.dbn.common.Colors;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.DisposableLatent;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -139,7 +139,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
 
     @NotNull
     public SessionBrowserTable getEditorTable() {
-        return FailsafeUtil.get(editorTable);
+        return Failsafe.get(editorTable);
     }
 
     @Override
@@ -153,7 +153,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
 
     @NotNull
     public SessionBrowser getSessionBrowser() {
-        return FailsafeUtil.get(sessionBrowser);
+        return Failsafe.get(sessionBrowser);
     }
 
     @NotNull

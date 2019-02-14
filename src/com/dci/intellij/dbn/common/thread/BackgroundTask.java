@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.PerformInBackgroundOption;
@@ -34,7 +34,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
 
     private BackgroundTask(@Nullable Project project, TaskInstructions instructions) {
         super(
-            FailsafeUtil.get(project),
+            Failsafe.get(project),
             Constants.DBN_TITLE_PREFIX + instructions.getTitle(),
             instructions.is(TaskInstruction.CANCELLABLE),
             instructions.is(TaskInstruction.BACKGROUNDED) ?
@@ -70,7 +70,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
             initProgressIndicator(progressIndicator, true);
 
             execute(progressIndicator);
-        } catch (ProcessCanceledException | InterruptedException e) {
+        } catch (ProcessCanceledException e) {
             // no action
         } catch (Exception e) {
             LOGGER.error("Error executing background operation.", e);
@@ -84,7 +84,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
         }
     }
 
-    protected abstract void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException;
+    protected abstract void execute(@NotNull ProgressIndicator progressIndicator);
 
     @Override
     public final void start() {
@@ -113,7 +113,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
     public static <T> BackgroundTask<T> create(@Nullable Project project, TaskInstructions instructions, BackgroundRunnable<T> runnable) {
         return new BackgroundTask<T>(project, instructions) {
             @Override
-            protected void execute(@NotNull ProgressIndicator progressIndicator) throws InterruptedException {
+            protected void execute(@NotNull ProgressIndicator progressIndicator) {
                 runnable.run(getData(), progressIndicator);
             }
         };

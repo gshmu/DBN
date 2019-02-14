@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.navigation;
 
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
@@ -16,7 +16,6 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListVisitor;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.ide.util.gotoByName.ChooseByNameModel;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ColoredListCellRenderer;
@@ -101,15 +100,15 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
     @Override
     @NotNull
     public String[] getNames(boolean checkBoxState) {
-        try {
+        return Failsafe.lenient(EMPTY_STRING_ARRAY, () -> {
             boolean databaseLoadActive = objectsLookupSettings.getForceDatabaseLoad().value();
             boolean forceLoad = checkBoxState && databaseLoadActive;
 
             if (!forceLoad && selectedSchema != null) {
                 // touch the schema for next load
-                selectedSchema.get().getChildren();
+                selectedSchema.getnn().getChildren();
             }
-            FailsafeUtil.ensure(this);
+            Failsafe.ensure(this);
 
             ObjectNamesCollector collector = new ObjectNamesCollector(forceLoad);
             Disposer.register(this, collector);
@@ -119,9 +118,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
             return bucket == null ?
                     EMPTY_STRING_ARRAY :
                     bucket.toArray(new String[0]);
-        } catch (ProcessCanceledException e) {
-            return new String[0];
-        }
+        });
     }
 
     @NotNull
@@ -132,16 +129,14 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
     @Override
     @NotNull
     public Object[] getElementsByName(String name, boolean checkBoxState, String pattern) {
-        try {
+        return Failsafe.lenient(new Object[0], () -> {
             boolean forceLoad = checkBoxState && objectsLookupSettings.getForceDatabaseLoad().value();
-            FailsafeUtil.ensure(this);
+            Failsafe.ensure(this);
             ObjectCollector collector = new ObjectCollector(name, forceLoad);
-            Disposer.register(FailsafeUtil.get(this), collector);
+            Disposer.register(Failsafe.get(this), collector);
             scanObjectLists(collector);
             return collector.getBucket() == null ? EMPTY_ARRAY : collector.getBucket().toArray();
-        } catch (ProcessCanceledException e) {
-            return new Object[0];
-        }
+        });
     }
 
     private void scanObjectLists(DBObjectListVisitor visitor) {
@@ -149,7 +144,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
             ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
             List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionHandlers();
             for (ConnectionHandler connectionHandler : connectionHandlers) {
-                FailsafeUtil.ensure(this);
+                Failsafe.ensure(this);
                 DBObjectListContainer objectListContainer = connectionHandler.getObjectBundle().getObjectListContainer();
                 objectListContainer.visitLists(visitor, false);
             }
@@ -182,7 +177,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
                     boolean isLookupEnabled = objectsLookupSettings.isEnabled(objectType);
                     DBObject originalParentObject = parentObject;
                     for (DBObject object : objectList.getElements()) {
-                        FailsafeUtil.ensure(this);
+                        Failsafe.ensure(this);
                         if (isLookupEnabled) {
                             if (bucket == null) bucket = new THashSet<String>();
                             bucket.add(object.getName());
@@ -245,7 +240,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
                     boolean isLookupEnabled = objectsLookupSettings.isEnabled(objectType);
                     DBObject originalParentObject = parentObject;
                     for (DBObject object : objectList.getObjects()) {
-                        FailsafeUtil.ensure(this);
+                        Failsafe.ensure(this);
                         if (isLookupEnabled && object.getName().equals(objectName)) {
                             if (bucket == null) bucket = new ArrayList<DBObject>();
                             bucket.add(object);
@@ -307,7 +302,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
                 DBObject object = (DBObject) value;
                 setIcon(object.getIcon());
                 append(object.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-                ConnectionHandler connectionHandler = FailsafeUtil.get(object.getConnectionHandler());
+                ConnectionHandler connectionHandler = Failsafe.get(object.getConnectionHandler());
                 append(" [" + connectionHandler.getName() + "]", SimpleTextAttributes.GRAY_ATTRIBUTES);
                 if (object.getParentObject() != null) {
                     append(" - " + object.getParentObject().getQualifiedName(), SimpleTextAttributes.GRAY_ATTRIBUTES);

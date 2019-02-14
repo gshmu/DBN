@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.debugger.jdbc.config.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
@@ -109,7 +109,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
                         SimpleLaterInvocator.invoke(
                                 DBMethodJdbcRunConfigEditorForm.this,
                                 () -> {
-                                    FailsafeUtil.ensure(project);
+                                    Failsafe.ensure(project);
                                     MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
                                     browserDialog.show();
                                     if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {

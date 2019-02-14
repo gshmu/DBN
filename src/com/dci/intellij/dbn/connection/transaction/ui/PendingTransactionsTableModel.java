@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -34,7 +34,7 @@ public class PendingTransactionsTableModel extends DisposableBase implements DBN
 
     @NotNull
     public List<DBNConnection> getConnections() {
-        return FailsafeUtil.get(connections);
+        return Failsafe.get(connections);
     }
 
     @Override

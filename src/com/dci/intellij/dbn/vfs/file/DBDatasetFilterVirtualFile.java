@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -38,14 +38,14 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBP
         this.datasetRef = DBObjectRef.from(dataset);
         this.content = content;
         name = dataset.getName();
-        ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.get(getConnectionHandler());
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
         putUserData(PARSE_ROOT_ID_KEY, "subquery");
     }
 
     @Override
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
-        ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.get(getConnectionHandler());
         DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
         return languageDialect == null ? null : fileViewProvider.initializePsiFile(languageDialect);
     }
@@ -62,7 +62,7 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBP
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return FailsafeUtil.get(datasetRef.lookupConnectionHandler());
+        return Failsafe.get(datasetRef.lookupConnectionHandler());
     }
 
     @Nullable

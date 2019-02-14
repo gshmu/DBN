@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.navigation.psi;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
@@ -48,7 +48,7 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
     @NotNull
     public DBObject getObject() {
         DBObject object = objectRef.get();
-        return FailsafeUtil.get(object);
+        return Failsafe.get(object);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
         DBObjectListContainer childObjects = object.getChildObjects();
         if (childObjects != null) {
             CollectionUtil.forEach(childObjects.getObjectLists(), objectList -> {
-                if (!objectList.isInternal() && FailsafeUtil.check(objectList)) {
+                if (!objectList.isInternal() && Failsafe.check(objectList)) {
                     children.add(objectList.getPsiDirectory());
                 }
             });

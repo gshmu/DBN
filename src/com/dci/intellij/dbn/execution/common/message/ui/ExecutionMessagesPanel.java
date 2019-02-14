@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.common.message.ui;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.execution.common.message.action.CloseMessagesWindowAction;
@@ -87,7 +87,7 @@ public class ExecutionMessagesPanel extends DBNFormImpl<ExecutionConsoleForm>{
 
     @NotNull
     public MessagesTree getMessagesTree() {
-        return FailsafeUtil.get(messagesTree);
+        return Failsafe.get(messagesTree);
     }
 
     @Override

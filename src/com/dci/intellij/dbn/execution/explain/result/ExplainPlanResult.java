@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -71,7 +71,7 @@ public class ExplainPlanResult extends DisposableBase implements ExecutionResult
 
     public ExplainPlanResult(ExecutablePsiElement executablePsiElement, String errorMessage) {
         DBLanguagePsiFile psiFile = executablePsiElement.getFile();
-        ConnectionHandler connectionHandler = FailsafeUtil.get(psiFile.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.get(psiFile.getConnectionHandler());
         connectionHandlerRef = connectionHandler.getRef();
         databaseSchemaRef = DBObjectRef.from(psiFile.getDatabaseSchema());
         virtualFile = psiFile.getVirtualFile();

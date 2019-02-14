@@ -50,7 +50,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         super(parent);
         this.databaseType = databaseType;
         this.configType = configType;
-        authenticationInfo = new AuthenticationInfo(this, IS_TRANSITORY.get());
+        authenticationInfo = new AuthenticationInfo(this, false);
         if (databaseType != DatabaseType.UNKNOWN) {
             urlPattern = databaseType.getDefaultUrlPattern();
             databaseInfo = urlPattern.getDefaultInfo();

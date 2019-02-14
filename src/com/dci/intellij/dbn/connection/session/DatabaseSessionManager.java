@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection.session;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
@@ -37,7 +37,7 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
     }
 
     public static DatabaseSessionManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, DatabaseSessionManager.class);
+        return Failsafe.getComponent(project, DatabaseSessionManager.class);
     }
 
     public void showCreateSessionDialog(ConnectionHandler connectionHandler, @Nullable RunnableTask<DatabaseSession> callback) {

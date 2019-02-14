@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.data.state;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.state.column.ui.DatasetColumnSetupDialog;
 import com.dci.intellij.dbn.editor.data.state.sorting.ui.DatasetEditorSortingDialog;
@@ -29,7 +29,7 @@ public class DatasetEditorStateManager extends AbstractProjectComponent implemen
 
 
     public static DatasetEditorStateManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, DatasetEditorStateManager.class);
+        return Failsafe.getComponent(project, DatasetEditorStateManager.class);
     }
 
     public void openSortingDialog(@NotNull DatasetEditor datasetEditor) {

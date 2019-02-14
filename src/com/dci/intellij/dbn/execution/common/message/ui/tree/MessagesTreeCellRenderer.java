@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
@@ -11,7 +12,6 @@ import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
@@ -30,7 +30,7 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
 
     @Override
     public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-        try {
+        Failsafe.lenient(() -> {
             if (value instanceof Disposable) {
                 Disposable disposable = (Disposable) value;
                 if (disposable.isDisposed()) return;;
@@ -165,8 +165,11 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
             }
 
             setIcon(icon);
-            setBackground(selected ? (isFocused() ? UIUtil.getTreeSelectionBackground() : UIUtil.getTreeUnfocusedSelectionBackground()) : CommonUtil.nvl(background, tree.getBackground()));
-        } catch (ProcessCanceledException ignore) {}
+            setBackground(selected ? (isFocused() ?
+                    UIUtil.getTreeSelectionBackground() :
+                    UIUtil.getTreeUnfocusedSelectionBackground()) :
+                    CommonUtil.nvl(background, tree.getBackground()));
+        });
     }
 
     private static SimpleTextAttributes getErrorAttributes(boolean highlight) {

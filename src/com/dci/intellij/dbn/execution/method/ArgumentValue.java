@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.method;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
@@ -40,7 +40,7 @@ public class ArgumentValue {
 
     @NotNull
     public DBArgument getArgument() {
-        return FailsafeUtil.get(argumentRef.get());
+        return Failsafe.get(argumentRef.get());
     }
 
     public DBTypeAttribute getAttribute() {

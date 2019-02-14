@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.code.common.lookup.BasicLookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.IdentifierLookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.VariableLookupItemBuilder;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.language.common.TokenType;
@@ -33,7 +33,7 @@ public class CodeCompletionLookupConsumer implements LookupConsumer {
     @Override
     public void consume(Object object) throws ConsumerStoppedException {
         check();
-        FailsafeUtil.lenient(() -> {
+        Failsafe.lenient(() -> {
             LookupItemBuilder lookupItemBuilder = null;
             if (object instanceof DBObject) {
                 DBObject dbObject = (DBObject) object;

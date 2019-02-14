@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -91,7 +91,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         }
 
         DBDataset dataset = table.getDataset();
-        DBColumn column = FailsafeUtil.get(dataset.getColumn(columnInfo.getName()));
+        DBColumn column = Failsafe.get(dataset.getColumn(columnInfo.getName()));
         if (columnValue != null) {
             if (column.isForeignKey()) {
                 DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);

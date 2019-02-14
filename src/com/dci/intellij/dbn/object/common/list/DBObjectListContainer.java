@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapte
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.Compactable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.dispose.FailsafeUtil.check;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.check;
 
 public class DBObjectListContainer extends DisposableBase implements Disposable, Compactable {
     private Map<DBObjectType, DBObjectList<DBObject>> objectLists;
@@ -49,7 +48,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
     }
 
     public void visitLists(DBObjectListVisitor visitor, boolean visitInternal) {
-        try {
+        Failsafe.lenient(() -> {
             if (objectLists != null) {
                 checkDisposed(visitor);
                 for (DBObjectList<DBObject> objectList : objectLists.values()) {
@@ -59,12 +58,12 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
                     }
                 }
             }
-        } catch (ProcessCanceledException ignore) {}
+        });
     }
 
     private void checkDisposed(DBObjectListVisitor visitor) {
-        FailsafeUtil.ensure(this);
-        FailsafeUtil.ensure(visitor);
+        Failsafe.ensure(this);
+        Failsafe.ensure(visitor);
     }
 
     @NotNull

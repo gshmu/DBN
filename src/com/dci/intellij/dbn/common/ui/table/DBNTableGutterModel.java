@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -21,7 +21,7 @@ public class DBNTableGutterModel<T extends DBNTableWithGutterModel> extends Disp
 
     @NotNull
     public T getTableModel() {
-        return FailsafeUtil.get(tableModel);
+        return Failsafe.get(tableModel);
     }
 
     @Override

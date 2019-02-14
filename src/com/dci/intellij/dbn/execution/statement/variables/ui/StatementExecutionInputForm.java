@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.variables.ui;
 
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -165,7 +165,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
     }
 
     protected void updatePreview() {
-        ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.get(executionProcessor.getConnectionHandler());
         DBSchema currentSchema = executionProcessor.getTargetSchema();
         Project project = connectionHandler.getProject();
         String previewText = this.statementText;

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.ui.table.renderer;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
@@ -36,7 +36,7 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
             boolean isCaretRow = !isInsertRow && table.getCellSelectionEnabled() && table.getSelectedRow() == rowIndex && table.getSelectedRowCount() == 1;
             boolean isModified = cell.is(MODIFIED);
             boolean isTrackingColumn = columnInfo.isTrackingColumn();
-            boolean isConnected = FailsafeUtil.get(datasetEditorTable.getDatasetEditor().getConnectionHandler()).isConnected();
+            boolean isConnected = Failsafe.get(datasetEditorTable.getDatasetEditor().getConnectionHandler()).isConnected();
 
             BasicTableTextAttributes attributes = (BasicTableTextAttributes) getAttributes();
             SimpleTextAttributes textAttributes = attributes.getPlainData(isModified, isCaretRow);

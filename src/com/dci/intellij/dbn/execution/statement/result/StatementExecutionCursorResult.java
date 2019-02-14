@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.statement.result;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
@@ -100,7 +100,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     }
 
     public void loadResultSet(DBNResultSet resultSet) throws SQLException {
-        StatementExecutionResultForm resultPanel = FailsafeUtil.get(this.resultPanel);
+        StatementExecutionResultForm resultPanel = Failsafe.get(this.resultPanel);
         int rowCount = Math.max(dataModel == null ? 0 : dataModel.getRowCount() + 1, 100);
         dataModel = new ResultSetDataModel(resultSet, getConnectionHandler(), rowCount);
         resultPanel.reloadTableModel();

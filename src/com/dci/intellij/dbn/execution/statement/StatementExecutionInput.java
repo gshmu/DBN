@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.statement;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -53,7 +53,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
         this.executableStatementText = executableStatementText;
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
-            connectionHandler = FailsafeUtil.get(connectionHandler);
+            connectionHandler = Failsafe.get(connectionHandler);
             getOptions().set(ExecutionOption.ENABLE_LOGGING, connectionHandler.isLoggingEnabled());
         }
     }

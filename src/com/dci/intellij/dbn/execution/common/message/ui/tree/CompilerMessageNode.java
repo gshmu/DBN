@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
@@ -23,7 +23,7 @@ public class CompilerMessageNode extends DisposableBase implements MessageTreeNo
     }
 
     public CompilerMessage getCompilerMessage() {
-        return FailsafeUtil.get(compilerMessage);
+        return Failsafe.get(compilerMessage);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class CompilerMessageNode extends DisposableBase implements MessageTreeNo
 
     @Override
     public CompilerMessagesObjectNode getParent() {
-        return FailsafeUtil.get(parent);
+        return Failsafe.get(parent);
     }
 
     @Override

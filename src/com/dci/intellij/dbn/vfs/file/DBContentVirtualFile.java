@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.ddl.DDLFileManager;
@@ -68,7 +68,7 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
 
     @NotNull
     public DBEditableObjectVirtualFile getMainDatabaseFile() {
-        return FailsafeUtil.get(mainDatabaseFile);
+        return Failsafe.get(mainDatabaseFile);
     }
 
     public DBContentType getContentType() {

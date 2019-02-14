@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
@@ -19,7 +19,7 @@ public class InsertRecordAction extends AbstractDataEditorAction {
     public void actionPerformed(AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
         if (datasetEditor != null) {
-            FailsafeUtil.get(datasetEditor).insertRecord();
+            Failsafe.get(datasetEditor).insertRecord();
         }
     }
 

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.code;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
@@ -36,7 +36,7 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
             databaseFile = (DBEditableObjectVirtualFile) file;
         }
 
-        DBSourceCodeVirtualFile sourceCodeFile = FailsafeUtil.get(getSourceCodeFile(databaseFile));
+        DBSourceCodeVirtualFile sourceCodeFile = Failsafe.get(getSourceCodeFile(databaseFile));
         boolean isMainEditor = sourceCodeFile.getContentType() == databaseFile.getMainContentType();
 
         String editorName = getName();

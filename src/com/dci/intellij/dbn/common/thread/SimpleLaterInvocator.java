@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.thread;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.application.ApplicationManager;
@@ -32,8 +32,8 @@ public abstract class SimpleLaterInvocator extends SimpleTask{
     }
 
     public static void invoke(@NotNull DBNForm parentForm, Runnable runnable) {
-        FailsafeUtil.lenient(() -> {
-            FailsafeUtil.ensure(parentForm);
+        Failsafe.lenient(() -> {
+            Failsafe.ensure(parentForm);
             invoke(parentForm.getComponent(), runnable);
         });
     }

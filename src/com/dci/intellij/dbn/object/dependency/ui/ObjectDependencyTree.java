@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -212,7 +212,7 @@ public class ObjectDependencyTree extends DBNTree implements Disposable{
 
     void setDependencyType(ObjectDependencyType dependencyType) {
         ObjectDependencyTreeModel oldModel = getModel();
-        Project project = FailsafeUtil.get(oldModel.getProject());
+        Project project = Failsafe.get(oldModel.getProject());
         ObjectDependencyManager dependencyManager = ObjectDependencyManager.getInstance(project);
         dependencyManager.setLastUserDependencyType(dependencyType);
 

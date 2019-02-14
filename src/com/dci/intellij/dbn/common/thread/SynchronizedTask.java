@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.thread;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Loader;
-import com.intellij.openapi.progress.ProcessCanceledException;
 
 public abstract class SynchronizedTask<T> extends SimpleTask<T> {
     private static final SyncObjectProvider SYNC_OBJECT_PROVIDER = new SyncObjectProvider();
@@ -14,7 +14,7 @@ public abstract class SynchronizedTask<T> extends SimpleTask<T> {
     @Override
     public final void run() {
         trace(this);
-        try {
+        Failsafe.lenient(() -> {
             if (canExecute()) {
                 String syncKey = getSyncKey();
                 try {
@@ -35,8 +35,7 @@ public abstract class SynchronizedTask<T> extends SimpleTask<T> {
             } else {
                 cancel();
             }
-        } catch (ProcessCanceledException ignore) {
-        }
+        });
     }
 
     protected abstract String getSyncKey();

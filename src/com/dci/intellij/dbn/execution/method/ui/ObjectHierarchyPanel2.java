@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObject;
 
@@ -18,7 +18,7 @@ public class ObjectHierarchyPanel2 extends JPanel {
         this.setLayout(new BorderLayout());
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        ConnectionHandler connectionHandler = FailsafeUtil.get(object.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.get(object.getConnectionHandler());
         JLabel connectionLabel = new JLabel(
                 connectionHandler.getName(),
                 connectionHandler.getIcon(),

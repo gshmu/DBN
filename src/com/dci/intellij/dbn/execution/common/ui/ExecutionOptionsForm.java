@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.common.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNForm;
@@ -53,7 +53,7 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
         super(parent);
         this.executionInput = executionInput;
 
-        ConnectionHandler connectionHandler = FailsafeUtil.get(executionInput.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.get(executionInput.getConnectionHandler());
 
         if (executionInput.isSchemaSelectionAllowed()) {
             //ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, new SetExecutionSchemaComboBoxAction(executionInput));
@@ -160,12 +160,12 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
     }
 
     public LocalExecutionInput getExecutionInput() {
-        return FailsafeUtil.get(executionInput);
+        return Failsafe.get(executionInput);
     }
 
     public ConnectionHandler getConnectionHandler() {
         ConnectionHandler connectionHandler = getExecutionInput().getConnectionHandler();
-        return FailsafeUtil.get(connectionHandler);
+        return Failsafe.get(connectionHandler);
     }
 
     private ActionListener actionListener = e -> {
