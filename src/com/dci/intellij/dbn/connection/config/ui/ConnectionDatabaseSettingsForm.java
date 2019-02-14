@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
+import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
@@ -267,7 +268,10 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         databaseInfo.setFiles(databaseFileSettingsForm.getDatabaseFiles());
 
         AuthenticationInfo authenticationInfo = configuration.getAuthenticationInfo();
+        String oldUserName = authenticationInfo.getUser();
+        String oldPassword = authenticationInfo.getPassword();
         authenticationSettingsForm.applyFormChanges(authenticationInfo);
+        authenticationInfo.updateKeyChain(oldUserName, oldPassword, Configuration.IS_TRANSITORY.get());
 
         configuration.setDriverSource(getSelection(driverSourceComboBox));
         configuration.updateHashCode();
