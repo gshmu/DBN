@@ -1,12 +1,13 @@
 package com.dci.intellij.dbn.common.database;
 
 
+import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 
-public class DatabaseInfo implements Cloneable{
+public class DatabaseInfo implements Cloneable<DatabaseInfo> {
     public interface Default {
         DatabaseInfo ORACLE   = new DatabaseInfo("localhost", "1521", "XE",       DatabaseUrlType.SID);
         DatabaseInfo MYSQL    = new DatabaseInfo("localhost", "3306", "mysql",    DatabaseUrlType.DATABASE);

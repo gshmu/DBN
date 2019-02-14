@@ -1,14 +1,18 @@
 package com.dci.intellij.dbn.editor.data.options;
 
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.data.record.navigation.RecordNavigationTarget;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorRecordNavigationSettingsForm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class DataEditorRecordNavigationSettings extends Configuration<DataEditorRecordNavigationSettingsForm> {
+public class DataEditorRecordNavigationSettings extends BasicConfiguration<DataEditorSettings, DataEditorRecordNavigationSettingsForm> {
     private RecordNavigationTarget navigationTarget = RecordNavigationTarget.VIEWER;
+
+    public DataEditorRecordNavigationSettings(DataEditorSettings parent) {
+        super(parent);
+    }
 
     @NotNull
     @Override
@@ -31,7 +35,7 @@ public class DataEditorRecordNavigationSettings extends Configuration<DataEditor
 
     @Override
     public void readConfiguration(Element element) {
-        navigationTarget = SettingsUtil.getEnum(element, "navigation-target", RecordNavigationTarget.VIEWER);
+        navigationTarget = SettingsSupport.getEnum(element, "navigation-target", RecordNavigationTarget.VIEWER);
         if (navigationTarget == RecordNavigationTarget.PROMPT) {
             navigationTarget = RecordNavigationTarget.ASK;
         }
@@ -39,6 +43,6 @@ public class DataEditorRecordNavigationSettings extends Configuration<DataEditor
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsUtil.setEnum(element, "navigation-target", navigationTarget);
+        SettingsSupport.setEnum(element, "navigation-target", navigationTarget);
     }
 }

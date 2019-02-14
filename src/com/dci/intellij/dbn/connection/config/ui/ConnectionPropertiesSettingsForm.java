@@ -14,7 +14,7 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ConnectionPropertiesSettingsForm extends ConfigurationEditorForm<ConnectionPropertiesSettings>{
+public class ConnectionPropertiesSettingsForm extends ConfigurationEditorForm<ConnectionPropertiesSettings> {
     private JPanel mainPanel;
     private JCheckBox autoCommitCheckBox;
     private JPanel propertiesPanel;

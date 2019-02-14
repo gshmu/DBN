@@ -1,31 +1,25 @@
 package com.dci.intellij.dbn.connection.config;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionPropertiesSettingsForm;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ConnectionPropertiesSettings extends Configuration<ConnectionPropertiesSettingsForm> {
+public class ConnectionPropertiesSettings extends BasicProjectConfiguration<ConnectionSettings, ConnectionPropertiesSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
-    private ConnectionSettings parent;
 
     private Map<String, String> properties = new HashMap<String, String>();
     private boolean enableAutoCommit = false;
 
-    public ConnectionPropertiesSettings(ConnectionSettings parent) {
-        this.parent = parent;
-    }
-
-    public ConnectionSettings getParent() {
-        return parent;
+    ConnectionPropertiesSettings(ConnectionSettings parent) {
+        super(parent);
     }
 
     public Map<String, String> getProperties() {
@@ -46,7 +40,7 @@ public class ConnectionPropertiesSettings extends Configuration<ConnectionProper
 
     @NotNull
     @Override
-    protected ConnectionPropertiesSettingsForm createConfigurationEditor() {
+    public ConnectionPropertiesSettingsForm createConfigurationEditor() {
         return new ConnectionPropertiesSettingsForm(this);
     }
 
@@ -57,7 +51,7 @@ public class ConnectionPropertiesSettings extends Configuration<ConnectionProper
 
     @NotNull
     public ConnectionId getConnectionId() {
-        return parent.getConnectionId();
+        return getParent().getConnectionId();
     }
 
     /*********************************************************
@@ -92,9 +86,5 @@ public class ConnectionPropertiesSettings extends Configuration<ConnectionProper
             }
             element.addContent(propertiesElement);
         }
-    }
-
-    public Project getProject() {
-        return parent.getProject();
     }
 }

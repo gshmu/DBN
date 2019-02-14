@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.data.sorting;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import com.dci.intellij.dbn.common.util.Cloneable;
 import org.jdom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SortingState implements PersistentStateElement<Element>{
+public class SortingState implements PersistentStateElement, Cloneable<SortingState> {
     private List<SortingInstruction> sortingInstructions = new ArrayList<SortingInstruction>();
 
     public boolean applySorting(String columnName, SortDirection direction, boolean keepExisting, int maxColumns) {
@@ -128,7 +129,7 @@ public class SortingState implements PersistentStateElement<Element>{
                 String columnName = columnElement.getAttributeValue("name");
                 String sortDirection = columnElement.getAttributeValue("direction");
                 SortingInstruction sortingInstruction = addSortingInstruction(columnName, SortDirection.valueOf(sortDirection));
-                sortingInstruction.setIndex(SettingsUtil.getIntegerAttribute(element, "index", 1));
+                sortingInstruction.setIndex(SettingsSupport.getIntegerAttribute(element, "index", 1));
             }
             updateIndexes();
         }

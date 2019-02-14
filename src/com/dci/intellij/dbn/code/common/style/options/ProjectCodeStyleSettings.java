@@ -7,15 +7,16 @@ import com.dci.intellij.dbn.code.sql.style.options.SQLCodeStyleSettings;
 import com.dci.intellij.dbn.code.sql.style.options.SQLCustomCodeStyleSettings;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import org.jetbrains.annotations.NotNull;
 
-public class ProjectCodeStyleSettings extends CompositeProjectConfiguration<CodeStyleSettingsForm> {
-    public ProjectCodeStyleSettings(Project project){
-        super(project);
+public class ProjectCodeStyleSettings extends CompositeProjectConfiguration<ProjectSettings, CodeStyleSettingsForm> {
+    public ProjectCodeStyleSettings(ProjectSettings parent){
+        super(parent);
     }
 
     public static ProjectCodeStyleSettings getInstance(@NotNull Project project) {

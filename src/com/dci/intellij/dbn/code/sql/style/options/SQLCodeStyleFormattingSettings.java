@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.code.sql.style.options;
 
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingSettings;
 import com.dci.intellij.dbn.code.common.style.presets.clause.ClauseChopDownAlwaysPreset;
@@ -19,8 +20,10 @@ import com.dci.intellij.dbn.code.common.style.presets.statement.StatementLineBre
 import com.dci.intellij.dbn.code.common.style.presets.statement.StatementOneLineSpacingAtLeastPreset;
 import com.dci.intellij.dbn.code.common.style.presets.statement.StatementOneLineSpacingPreset;
 
-public class SQLCodeStyleFormattingSettings extends CodeStyleFormattingSettings {
-    public SQLCodeStyleFormattingSettings() {
+class SQLCodeStyleFormattingSettings extends CodeStyleFormattingSettings {
+    SQLCodeStyleFormattingSettings(CodeStyleCustomSettings parent) {
+        super(parent);
+
         CodeStyleFormattingOption statementSpacing =
                 new CodeStyleFormattingOption("STATEMENT_SPACING", "Statement spacing");
         statementSpacing.addPreset(new StatementLineBreakPreset());

@@ -1,15 +1,19 @@
 package com.dci.intellij.dbn.editor.data.options;
 
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.editor.data.options.ui.DatatEditorValueListPopupSettingsForm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class DataEditorValueListPopupSettings extends Configuration<DatatEditorValueListPopupSettingsForm> {
+public class DataEditorValueListPopupSettings extends BasicConfiguration<DataEditorSettings, DatatEditorValueListPopupSettingsForm> {
     private boolean showPopupButton = true;
     private int elementCountThreshold = 1000;
     private int dataLengthThreshold = 250;
+
+    DataEditorValueListPopupSettings(DataEditorSettings parent) {
+        super(parent);
+    }
 
     @Override
     public String getDisplayName() {
@@ -64,15 +68,15 @@ public class DataEditorValueListPopupSettings extends Configuration<DatatEditorV
 
     @Override
     public void readConfiguration(Element element) {
-        showPopupButton = SettingsUtil.getBoolean(element, "show-popup-button", showPopupButton);
-        elementCountThreshold = SettingsUtil.getInteger(element, "element-count-threshold", elementCountThreshold);
-        dataLengthThreshold = SettingsUtil.getInteger(element, "data-length-threshold", dataLengthThreshold);
+        showPopupButton = SettingsSupport.getBoolean(element, "show-popup-button", showPopupButton);
+        elementCountThreshold = SettingsSupport.getInteger(element, "element-count-threshold", elementCountThreshold);
+        dataLengthThreshold = SettingsSupport.getInteger(element, "data-length-threshold", dataLengthThreshold);
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsUtil.setBoolean(element, "show-popup-button", showPopupButton);
-        SettingsUtil.setInteger(element, "element-count-threshold", elementCountThreshold);
-        SettingsUtil.setInteger(element, "data-length-threshold", dataLengthThreshold);
+        SettingsSupport.setBoolean(element, "show-popup-button", showPopupButton);
+        SettingsSupport.setInteger(element, "element-count-threshold", elementCountThreshold);
+        SettingsSupport.setInteger(element, "data-length-threshold", dataLengthThreshold);
     }
 }

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.code.common.completion.options.filter;
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CheckedTreeNodeProvider;
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeCompletionFilterSettingsForm;
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeCompletionFilterTreeNode;
-import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -14,10 +14,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class CodeCompletionFilterSettings extends Configuration<CodeCompletionFilterSettingsForm> implements CheckedTreeNodeProvider, ObjectTypeFilter {
-    public static final int SCHEMA_TYPE_USER = 0;
-    public static final int SCHEMA_TYPE_PUBLIC = 1;
-    public static final int SCHEMA_TYPE_ANY = 2;
+public class CodeCompletionFilterSettings
+        extends BasicConfiguration<CodeCompletionFiltersSettings, CodeCompletionFilterSettingsForm>
+        implements CheckedTreeNodeProvider, ObjectTypeFilter {
+
+    private static final int SCHEMA_TYPE_USER = 0;
+    private static final int SCHEMA_TYPE_PUBLIC = 1;
+    private static final int SCHEMA_TYPE_ANY = 2;
 
     private boolean extended;
     private CodeCompletionFilterOptionBundle rootFilterOptions;
@@ -25,7 +28,8 @@ public class CodeCompletionFilterSettings extends Configuration<CodeCompletionFi
     private CodeCompletionFilterOptionBundle publicSchemaOptions;
     private CodeCompletionFilterOptionBundle anySchemaOptions;
 
-    public CodeCompletionFilterSettings(boolean extended) {
+    public CodeCompletionFilterSettings(CodeCompletionFiltersSettings parent, boolean extended) {
+        super(parent);
         this.extended = extended;
         rootFilterOptions = new CodeCompletionFilterOptionBundle("Root elements", this);
         userSchemaOptions = new CodeCompletionFilterOptionBundle("User schema", this);
@@ -138,7 +142,7 @@ public class CodeCompletionFilterSettings extends Configuration<CodeCompletionFi
      *********************************************************/
     @Override
     @NotNull
-    protected CodeCompletionFilterSettingsForm createConfigurationEditor() {
+    public CodeCompletionFilterSettingsForm createConfigurationEditor() {
         return new CodeCompletionFilterSettingsForm(this);
     }
 

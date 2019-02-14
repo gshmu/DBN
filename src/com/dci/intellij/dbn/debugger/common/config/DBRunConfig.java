@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.debugger.common.config;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -53,15 +53,15 @@ public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigura
     @Override
     public void writeExternal(Element element) throws WriteExternalException {
         super.writeExternal(element);
-        SettingsUtil.setEnum(element, "category", category);
-        SettingsUtil.setBoolean(element, "compile-dependencies", compileDependencies);
+        SettingsSupport.setEnum(element, "category", category);
+        SettingsSupport.setBoolean(element, "compile-dependencies", compileDependencies);
     }
 
     @Override
     public void readExternal(Element element) throws InvalidDataException {
         super.readExternal(element);
-        category = SettingsUtil.getEnum(element, "category", category);
-        compileDependencies = SettingsUtil.getBoolean(element, "compile-dependencies", compileDependencies);
+        category = SettingsSupport.getEnum(element, "category", category);
+        compileDependencies = SettingsSupport.getBoolean(element, "compile-dependencies", compileDependencies);
     }
 
     public DBRunConfigCategory getCategory() {

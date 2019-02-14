@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.data.filter;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -18,28 +18,27 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.StringTokenizer;
 
-public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilterConditionForm> {
+public class DatasetBasicFilterCondition extends BasicConfiguration<DatasetBasicFilter, DatasetBasicFilterConditionForm> {
 
-    private DatasetBasicFilter filter;
     private String columnName = "";
     private ConditionOperator operator;
     private String value = "";
     private boolean active = true;
 
-    public DatasetBasicFilterCondition(DatasetBasicFilter filter){
-        this.filter = filter;
+    public DatasetBasicFilterCondition(DatasetBasicFilter parent){
+        super(parent);
     }
 
-    public DatasetBasicFilterCondition(DatasetBasicFilter filter, String columnName, Object value, ConditionOperator operator, boolean active) {
-        this.filter = filter;
+    public DatasetBasicFilterCondition(DatasetBasicFilter parent, String columnName, Object value, ConditionOperator operator, boolean active) {
+        super(parent);
         this.columnName = columnName;
         this.operator = operator;
         this.value = value == null ? "" : value.toString();
         this.active = active;
     }
 
-    public DatasetBasicFilterCondition(DatasetBasicFilter filter, String columnName, Object value, ConditionOperator operator) {
-        this.filter = filter;
+    public DatasetBasicFilterCondition(DatasetBasicFilter parent, String columnName, Object value, ConditionOperator operator) {
+        super(parent);
         this.columnName = columnName;
         this.value = value == null ? "" : value.toString();
         this.operator = operator == null ? StringUtil.isEmpty(this.value) ? ConditionOperator.IS_NULL : ConditionOperator.EQUAL : operator;
@@ -48,7 +47,7 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
     }
 
     public DatasetBasicFilter getFilter() {
-        return filter;
+        return getParent();
     }
 
     @Override
@@ -188,7 +187,7 @@ public class DatasetBasicFilterCondition extends Configuration<DatasetBasicFilte
     @Override
     @NotNull
     public DatasetBasicFilterConditionForm createConfigurationEditor() {
-        DBDataset dataset = filter.lookupDataset();
+        DBDataset dataset = getFilter().lookupDataset();
         return new DatasetBasicFilterConditionForm(dataset, this);
     }
 

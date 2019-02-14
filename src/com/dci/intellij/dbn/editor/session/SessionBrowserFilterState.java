@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.editor.session;
 
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 
-public class SessionBrowserFilterState implements Filter<SessionBrowserModelRow>{
+public class SessionBrowserFilterState implements Filter<SessionBrowserModelRow>, Cloneable<SessionBrowserFilterState> {
     private String user;
     private String host;
     private String status;
@@ -57,7 +58,7 @@ public class SessionBrowserFilterState implements Filter<SessionBrowserModelRow>
     }
 
     @Override
-    protected SessionBrowserFilterState clone(){
+    public SessionBrowserFilterState clone(){
         return new SessionBrowserFilterState(user, host, status);
     }
 

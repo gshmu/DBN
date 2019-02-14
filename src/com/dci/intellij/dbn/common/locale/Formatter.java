@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.locale;
 
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
+import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.intellij.openapi.project.Project;
@@ -17,7 +18,7 @@ import java.util.Date;
 import java.util.Locale;
 
 
-public class Formatter implements Cloneable{
+public class Formatter implements Cloneable {
     private DateFormat dateFormat;
     private DateFormat timeFormat;
     private DateFormat dateTimeFormat;

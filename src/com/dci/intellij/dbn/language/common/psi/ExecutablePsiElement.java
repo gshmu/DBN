@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
+import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class ExecutablePsiElement extends NamedPsiElement{
+public class ExecutablePsiElement extends NamedPsiElement implements Cloneable<ExecutablePsiElement> {
     private WeakRef<StatementExecutionProcessor> executionProcessor;
 
     public String prepareStatementText(){
@@ -83,8 +84,8 @@ public class ExecutablePsiElement extends NamedPsiElement{
     }
 
     @Override
-    public Object clone() {
-        return super.clone();
+    public ExecutablePsiElement clone() {
+        return (ExecutablePsiElement) super.clone();
     }
 
 

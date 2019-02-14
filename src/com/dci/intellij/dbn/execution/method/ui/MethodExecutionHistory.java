@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.method.ui;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MethodExecutionHistory implements PersistentStateElement<Element>, Disposable{
+public class MethodExecutionHistory implements PersistentStateElement, Disposable{
     private List<MethodExecutionInput> executionInputs = CollectionUtil.createConcurrentList();
     private boolean groupEntries = true;
     private DBObjectRef<DBMethod> selection;
@@ -156,7 +156,7 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
     public void readState(Element element) {
         Element historyElement = element.getChild("execution-history");
         if (historyElement != null) {
-            groupEntries = SettingsUtil.getBoolean(historyElement, "group-entries", groupEntries);
+            groupEntries = SettingsSupport.getBoolean(historyElement, "group-entries", groupEntries);
 
             Element executionInputsElement = historyElement.getChild("execution-inputs");
             for (Object object : executionInputsElement.getChildren()) {
@@ -180,7 +180,7 @@ public class MethodExecutionHistory implements PersistentStateElement<Element>, 
         Element historyElement = new Element("execution-history");
         element.addContent(historyElement);
 
-        SettingsUtil.setBoolean(historyElement, "group-entries", groupEntries);
+        SettingsSupport.setBoolean(historyElement, "group-entries", groupEntries);
 
         Element configsElement = new Element("execution-inputs");
         historyElement.addContent(configsElement);

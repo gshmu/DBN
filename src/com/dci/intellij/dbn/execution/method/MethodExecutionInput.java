@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.method;
 
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -31,17 +32,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class MethodExecutionInput extends LocalExecutionInput implements Comparable<MethodExecutionInput> {
+public class MethodExecutionInput extends LocalExecutionInput implements Comparable<MethodExecutionInput>, Cloneable<MethodExecutionInput> {
     private DBObjectRef<DBMethod> methodRef;
-    private Set<MethodExecutionArgumentValue> argumentValues = new THashSet<MethodExecutionArgumentValue>();
+    private Set<MethodExecutionArgumentValue> argumentValues = new THashSet<>();
 
     private transient MethodExecutionResult executionResult;
-    private transient List<ArgumentValue> inputArgumentValues = new ArrayList<ArgumentValue>();
+    private transient List<ArgumentValue> inputArgumentValues = new ArrayList<>();
 
     public MethodExecutionInput(Project project) {
         super(project, ExecutionTarget.METHOD);
-        methodRef = new DBObjectRef<DBMethod>();
-        targetSchemaRef = new DBObjectRef<DBSchema>();
+        methodRef = new DBObjectRef<>();
+        targetSchemaRef = new DBObjectRef<>();
 
         ExecutionOptions options = getOptions();
         options.set(ExecutionOption.COMMIT_AFTER_EXECUTION, true);
@@ -293,7 +294,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         clone.methodRef = methodRef;
         clone.targetSchemaRef = targetSchemaRef;
         clone.setOptions(getOptions().clone());
-        clone.argumentValues = new THashSet<MethodExecutionArgumentValue>();
+        clone.argumentValues = new THashSet<>();
         for (MethodExecutionArgumentValue executionVariable : argumentValues) {
             clone.argumentValues.add(executionVariable.clone());
         }

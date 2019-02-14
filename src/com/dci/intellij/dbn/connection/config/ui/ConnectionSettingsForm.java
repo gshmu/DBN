@@ -102,8 +102,8 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         Project project = databaseSettings.getProject();
         EventUtil.subscribe(project, this, ConnectionPresentationChangeListener.TOPIC, connectionPresentationChangeListener);
 
-        databaseSettingsForm.notifyPresentationChanges();
-        detailSettingsForm.notifyPresentationChanges();
+        //databaseSettingsForm.notifyPresentationChanges();
+        //detailSettingsForm.notifyPresentationChanges();
 
         resetFormChanges();
 

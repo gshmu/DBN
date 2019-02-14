@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
-public class ConnectionSslSettingsForm extends ConfigurationEditorForm<ConnectionSslSettings>{
+public class ConnectionSslSettingsForm extends ConfigurationEditorForm<ConnectionSslSettings> {
     private JPanel mainPanel;
     private JPanel sshGroupPanel;
     private JCheckBox activeCheckBox;

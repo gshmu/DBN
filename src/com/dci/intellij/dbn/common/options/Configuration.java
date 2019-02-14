@@ -1,128 +1,46 @@
 package com.dci.intellij.dbn.common.options;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
-import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jdom.Element;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Configuration<T extends ConfigurationEditorForm> extends ConfigurationUtil implements SearchableConfigurable, PersistentConfiguration {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
-    public static ThreadLocalFlag IS_TRANSITORY = new ThreadLocalFlag(false);
+public interface Configuration<P extends Configuration, E extends ConfigurationEditorForm>
+        extends SearchableConfigurable, PersistentConfiguration {
 
-    private static ThreadLocalFlag IS_RESETTING = new ThreadLocalFlag(false);
-    private static ThreadLocal<List<SettingsChangeNotifier>> SETTINGS_CHANGE_NOTIFIERS = new ThreadLocal<>();
-    private T configurationEditorForm;
+    Logger LOGGER = LoggerFactory.createLogger();
 
-    private boolean modified = false;
-    private boolean transitory = IS_TRANSITORY.get();
+    ThreadLocalFlag IS_TRANSITORY = new ThreadLocalFlag(false);
+    ThreadLocalFlag IS_RESETTING = new ThreadLocalFlag(false);
 
-    @Override
-    public String getHelpTopic() {
-        return null;
-    }
+    ThreadLocal<List<SettingsChangeNotifier>> SETTINGS_CHANGE_NOTIFIERS = new ThreadLocal<>();
 
-    @Override
-    @Nls
-    public String getDisplayName() {
-        return null;
-    }
+    P getParent();
 
-    public Icon getIcon() {
-        return null;
-    }
-
-    @Override
-    @NotNull
-    public String getId() {
-        return getClass().getName();
-    }
-
-    @Override
-    public Runnable enableSearch(String option) {
-        return null;
-    }
-
-    @Nullable
-    public final T getSettingsEditor() {
-        return configurationEditorForm;
-    }
+    String getConfigElementName();
 
     @NotNull
-    protected abstract T createConfigurationEditor();
+    E createConfigurationEditor();
 
-    @Override
-    @NotNull
-    public JComponent createComponent() {
-        configurationEditorForm = createConfigurationEditor();
-        return configurationEditorForm.getComponent();
-    }
+    ConfigurationEditorForm getSettingsEditor();
 
-    public void setModified(boolean modified) {
-        if (!isResetting()) {
-            this.modified = modified;
-        }
-    }
-
-    private static Boolean isResetting() {
-        return IS_RESETTING.get();
-    }
-
-    public static void registerChangeNotifier(SettingsChangeNotifier notifier) {
+    static void registerChangeNotifier(SettingsChangeNotifier notifier) {
         List<SettingsChangeNotifier> notifiers = SETTINGS_CHANGE_NOTIFIERS.get();
         if (notifiers == null) {
             notifiers = new ArrayList<>();
             SETTINGS_CHANGE_NOTIFIERS.set(notifiers);
         }
         notifiers.add(notifier);
-
     }
 
-    @Override
-    public boolean isModified() {
-        return modified;
-    }
-
-    public final boolean isTransitory() {
-        return transitory;
-    }
-
-    @Override
-    public void apply() throws ConfigurationException {
-        if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) {
-            configurationEditorForm.applyFormChanges();
-        }
-        modified = false;
-
-        if (this instanceof TopLevelConfig) {
-            TopLevelConfig topLevelConfig = (TopLevelConfig) this;
-            Configuration originalSettings = topLevelConfig.getOriginalSettings();
-            if (originalSettings != this ) {
-                Element settingsElement = new Element("settings");
-                writeConfiguration(settingsElement);
-                originalSettings.readConfiguration(settingsElement);
-            }
-
-            // Notify only when all changes are set
-            notifyChanges();
-        }
-        onApply();
-    }
-
-    public void notifyChanges() {
+    static void notifyChanges() {
         List<SettingsChangeNotifier> changeNotifiers = SETTINGS_CHANGE_NOTIFIERS.get();
         if (changeNotifiers != null) {
             SETTINGS_CHANGE_NOTIFIERS.set(null);
@@ -138,40 +56,26 @@ public abstract class Configuration<T extends ConfigurationEditorForm> extends C
         }
     }
 
-    @Deprecated
-    protected void onApply() {}
-
-    @Override
-    public void reset() {
-        if (configurationEditorForm != null) {
-            ConditionalLaterInvocator.invoke(configurationEditorForm, () -> {
-                try {
-                    if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) {
-                        IS_RESETTING.set(true);
-                        configurationEditorForm.resetFormChanges();
-                    }
-                } finally {
-                    modified = false;
-                    IS_RESETTING.set(false);
-                }
-            });
+    /*****************************************************************
+     *                         DOM utilities                         *
+     ****************************************************************/
+    default void writeConfiguration(Element element, Configuration configuration) {
+        String elementName = configuration.getConfigElementName();
+        if (elementName != null) {
+            Element childElement = new Element(elementName);
+            element.addContent(childElement);
+            configuration.writeConfiguration(childElement);
         }
     }
 
-    @Override
-    public void disposeUIResources() {
-        DisposerUtil.dispose(configurationEditorForm);
-        configurationEditorForm = null;
+
+    default void readConfiguration(Element element, Configuration configuration) {
+        String elementName = configuration.getConfigElementName();
+        if (elementName != null) {
+            Element childElement = element.getChild(elementName);
+            if (childElement != null) {
+                configuration.readConfiguration(childElement);
+            }
+        }
     }
-
-    public String getConfigElementName() {
-        //throw new UnsupportedOperationException("Element name not defined for this configuration type.");
-        return null;
-    }
-
-    protected static String nvl(String value) {
-        return value == null ? "" : value;
-    }
-
-
 }

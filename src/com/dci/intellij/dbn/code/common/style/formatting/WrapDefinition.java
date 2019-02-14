@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.code.common.style.formatting;
 
 import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.intellij.formatting.Wrap;
 import org.jdom.Element;
 
@@ -36,6 +36,6 @@ public enum WrapDefinition implements FormattingAttribute<Wrap>{
     }
 
     public static WrapDefinition get(Element element) {
-        return SettingsUtil.getEnumAttribute(element, "formatting-wrap", WrapDefinition.class);
+        return SettingsSupport.getEnumAttribute(element, "formatting-wrap", WrapDefinition.class);
     }
 }

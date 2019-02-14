@@ -6,10 +6,10 @@ import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.NameFilterCondition;
 import org.jdom.Element;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsUtil.getBooleanAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsUtil.setBooleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBooleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
 
-public class ObjectQuickFilterCondition extends NameFilterCondition implements PersistentStateElement<Element>{
+public class ObjectQuickFilterCondition extends NameFilterCondition implements PersistentStateElement {
     private ObjectQuickFilter filter;
     private boolean active = true;
 

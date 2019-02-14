@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.editor.session.options;
 
 import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.editor.session.options.ui.SessionBrowserSettingsForm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class SessionBrowserSettings extends Configuration<SessionBrowserSettingsForm> {
+public class SessionBrowserSettings extends BasicConfiguration<OperationSettings, SessionBrowserSettingsForm> {
     public static final String REMEMBER_OPTION_HINT = ""; //"\n\n(you can remember your option and change it at any time in Settings > Operations > Session Manager)";
 
     private boolean reloadOnFilterChange = false;
@@ -32,6 +33,10 @@ public class SessionBrowserSettings extends Configuration<SessionBrowserSettings
                     SessionInterruptionOption.NORMAL,
                     SessionInterruptionOption.IMMEDIATE,
                     SessionInterruptionOption.CANCEL);
+
+    public SessionBrowserSettings(OperationSettings parent) {
+        super(parent);
+    }
 
     @Override
     public String getDisplayName() {
@@ -82,13 +87,13 @@ public class SessionBrowserSettings extends Configuration<SessionBrowserSettings
     public void readConfiguration(Element element) {
         disconnectSession.readConfiguration(element);
         killSession.readConfiguration(element);
-        reloadOnFilterChange = SettingsUtil.getBoolean(element, "reload-on-filter-change", reloadOnFilterChange);
+        reloadOnFilterChange = SettingsSupport.getBoolean(element, "reload-on-filter-change", reloadOnFilterChange);
     }
 
     @Override
     public void writeConfiguration(Element element) {
         disconnectSession.writeConfiguration(element);
         killSession.writeConfiguration(element);
-        SettingsUtil.setBoolean(element, "reload-on-filter-change", reloadOnFilterChange);
+        SettingsSupport.setBoolean(element, "reload-on-filter-change", reloadOnFilterChange);
     }
 }

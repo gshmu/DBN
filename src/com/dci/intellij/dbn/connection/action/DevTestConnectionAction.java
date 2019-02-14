@@ -11,13 +11,13 @@ public class DevTestConnectionAction extends AbstractConnectionAction{
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
 
     }
 
     @Override
     public void update(AnActionEvent e) {
-        e.getPresentation().setVisible(DatabaseNavigator.getInstance().isDeveloperModeEnabled());
+        e.getPresentation().setVisible(DatabaseNavigator.developerModeEnabled);
         super.update(e);
     }
 }

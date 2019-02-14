@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
+import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeWeakRef;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.ExceptionUtil;
@@ -144,7 +144,7 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
 
         SQLException exception = SimpleTimeoutCall.invoke(10, null, daemon, () -> {
             try {
-                if (SettingsUtil.isDebugEnabled) LOGGER.info("Started " + getLogIdentifier());
+                if (DatabaseNavigator.debugModeEnabled) LOGGER.info("Started " + getLogIdentifier());
                 changeInner(value);
                 set(ResourceStatusAdapter.this.value, value);
             } catch (Throwable e) {
@@ -153,7 +153,7 @@ public abstract class ResourceStatusAdapter<T extends Resource> {
                 return ExceptionUtil.toSqlException(e);
             } finally {
                 set(changing, false);
-                if (SettingsUtil.isDebugEnabled) LOGGER.info("Done " + getLogIdentifier());
+                if (DatabaseNavigator.debugModeEnabled) LOGGER.info("Done " + getLogIdentifier());
             }
             return null;
         });

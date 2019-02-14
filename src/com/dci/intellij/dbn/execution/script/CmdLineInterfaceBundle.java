@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.script;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
+import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class CmdLineInterfaceBundle implements com.dci.intellij.dbn.common.util.Cloneable<CmdLineInterfaceBundle>, PersistentConfiguration {
+public class CmdLineInterfaceBundle implements Cloneable<CmdLineInterfaceBundle>, PersistentConfiguration {
     private List<CmdLineInterface> elements = new ArrayList<CmdLineInterface>();
 
     public void clear() {

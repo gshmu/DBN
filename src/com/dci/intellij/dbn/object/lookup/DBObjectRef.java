@@ -26,7 +26,7 @@ import java.util.StringTokenizer;
 
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.PS;
 
-public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>, PersistentStateElement<Element>, ConnectionProvider {
+public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>, PersistentStateElement, ConnectionProvider {
     protected DBObjectRef parent;
     protected DBObjectType objectType;
     protected String objectName;

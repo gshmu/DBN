@@ -7,6 +7,8 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.ProjectConfiguration;
+import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
@@ -30,38 +32,26 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class ProjectSettings
-        extends CompositeProjectConfiguration<ProjectSettingsEditorForm>
-        implements SearchableConfigurable.Parent, com.dci.intellij.dbn.common.util.Cloneable<ProjectSettings> {
+        extends CompositeProjectConfiguration<ProjectConfiguration, ProjectSettingsEditorForm>
+        implements SearchableConfigurable.Parent, Cloneable<ProjectSettings> {
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private GeneralProjectSettings generalSettings;
-    private DatabaseBrowserSettings browserSettings;
-    private NavigationSettings navigationSettings;
-    private DataGridSettings dataGridSettings;
-    private DataEditorSettings dataEditorSettings;
-    private CodeEditorSettings codeEditorSettings;
-    private CodeCompletionSettings codeCompletionSettings;
-    private ProjectCodeStyleSettings codeStyleSettings;
-    private ExecutionEngineSettings executionEngineSettings;
-    private OperationSettings operationSettings;
-    private DDLFileSettings ddlFileSettings;
-    private ConnectionBundleSettings connectionSettings;
+    private GeneralProjectSettings generalSettings           = new GeneralProjectSettings(this);
+    private DatabaseBrowserSettings browserSettings          = new DatabaseBrowserSettings(this);
+    private NavigationSettings navigationSettings            = new NavigationSettings(this);
+    private DataGridSettings dataGridSettings                = new DataGridSettings(this);
+    private DataEditorSettings dataEditorSettings            = new DataEditorSettings(this);
+    private CodeEditorSettings codeEditorSettings            = new CodeEditorSettings(this);
+    private CodeCompletionSettings codeCompletionSettings    = new CodeCompletionSettings(this);
+    private ProjectCodeStyleSettings codeStyleSettings       = new ProjectCodeStyleSettings(this);
+    private ExecutionEngineSettings executionEngineSettings  = new ExecutionEngineSettings(this);
+    private OperationSettings operationSettings              = new OperationSettings(this);
+    private DDLFileSettings ddlFileSettings                  = new DDLFileSettings(this);
+    private ConnectionBundleSettings connectionSettings      = new ConnectionBundleSettings(this);
 
     public ProjectSettings(Project project) {
         super(project);
-        generalSettings = new GeneralProjectSettings(project);
-        browserSettings = new DatabaseBrowserSettings(project);
-        navigationSettings = new NavigationSettings(project);
-        codeStyleSettings = new ProjectCodeStyleSettings(project);
-        codeEditorSettings = new CodeEditorSettings(project);
-        dataGridSettings = new DataGridSettings(project);
-        dataEditorSettings = new DataEditorSettings(project);
-        codeCompletionSettings = new CodeCompletionSettings(project);
-        executionEngineSettings = new ExecutionEngineSettings(project);
-        operationSettings = new OperationSettings(project);
-        ddlFileSettings = new DDLFileSettings(project);
-        connectionSettings = new ConnectionBundleSettings(project);
     }
 
     @Override
@@ -155,6 +145,7 @@ public class ProjectSettings
         return Icons.DATABASE_NAVIGATOR;
     }
 
+    @NotNull
     @Override
     public Configurable[] getConfigurables() {
         return getConfigurations();

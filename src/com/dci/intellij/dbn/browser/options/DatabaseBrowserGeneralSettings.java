@@ -1,21 +1,21 @@
 package com.dci.intellij.dbn.browser.options;
 
 import com.dci.intellij.dbn.browser.options.ui.DatabaseBrowserGeneralSettingsForm;
-import com.dci.intellij.dbn.common.options.ProjectConfiguration;
+import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.options.setting.IntegerSetting;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
-import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class DatabaseBrowserGeneralSettings extends ProjectConfiguration<DatabaseBrowserGeneralSettingsForm> {
+public class DatabaseBrowserGeneralSettings
+        extends BasicProjectConfiguration<DatabaseBrowserSettings, DatabaseBrowserGeneralSettingsForm> {
+
     private BrowserDisplayMode displayMode = BrowserDisplayMode.TABBED;
     private IntegerSetting navigationHistorySize = new IntegerSetting("navigation-history-size", 100);
     private BooleanSetting showObjectDetails = new BooleanSetting("show-object-details", false);
 
-    public DatabaseBrowserGeneralSettings(Project project) {
-        super(project);
+    DatabaseBrowserGeneralSettings(DatabaseBrowserSettings parent) {
+        super(parent);
     }
 
     @NotNull
@@ -47,7 +47,7 @@ public class DatabaseBrowserGeneralSettings extends ProjectConfiguration<Databas
 
     @Override
     public void readConfiguration(Element element) {
-        displayMode = SettingsUtil.getEnum(element, "display-mode", BrowserDisplayMode.TABBED);
+        displayMode = getEnum(element, "display-mode", BrowserDisplayMode.TABBED);
         if (displayMode == BrowserDisplayMode.SINGLE) displayMode = BrowserDisplayMode.SIMPLE;
         navigationHistorySize.readConfiguration(element);
         showObjectDetails.readConfiguration(element);
@@ -55,7 +55,7 @@ public class DatabaseBrowserGeneralSettings extends ProjectConfiguration<Databas
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsUtil.setEnum(element, "display-mode", displayMode);
+        setEnum(element, "display-mode", displayMode);
         navigationHistorySize.writeConfiguration(element);
         showObjectDetails.writeConfiguration(element);
     }

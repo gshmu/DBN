@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class MethodExecutionArgumentValuesCache implements PersistentStateElement<Element> {
+public class MethodExecutionArgumentValuesCache implements PersistentStateElement {
     private Map<ConnectionId, Set<MethodExecutionArgumentValue>> variablesMap = new THashMap<ConnectionId, Set<MethodExecutionArgumentValue>>();
 
     public MethodExecutionArgumentValue getArgumentValue(ConnectionId connectionId, String name, boolean create) {

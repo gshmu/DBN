@@ -1,7 +1,16 @@
 package com.dci.intellij.dbn.common.state;
 
 
-public interface PersistentStateElement<T>{
-    void readState(T element);
-    void writeState(T element);
+import org.jdom.Element;
+
+public interface PersistentStateElement<T extends PersistentStateElement> {
+    void readState(Element element);
+    void writeState(Element element);
+
+    static <T extends PersistentStateElement> T cloneElement(T source, T target) {
+        Element element = new Element("Element");
+        source.readState(element);
+        target.writeState(element);
+        return target;
+    }
 }

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.object.dependency;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
-import com.dci.intellij.dbn.common.options.ConfigurationUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ui.ObjectDependencyTreeDialog;
@@ -57,13 +57,13 @@ public class ObjectDependencyManager extends AbstractProjectComponent implements
     @Override
     public Element getState() {
         Element element = new Element("state");
-        ConfigurationUtil.setEnum(element, "last-used-dependency-type", lastUserDependencyType);
+        SettingsSupport.setEnum(element, "last-used-dependency-type", lastUserDependencyType);
         return element;
     }
 
     @Override
     public void loadState(final Element element) {
-        lastUserDependencyType = ConfigurationUtil.getEnum(element, "last-used-dependency-type", lastUserDependencyType);
+        lastUserDependencyType = SettingsSupport.getEnum(element, "last-used-dependency-type", lastUserDependencyType);
     }
 
 }

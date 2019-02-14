@@ -1,24 +1,22 @@
 package com.dci.intellij.dbn.execution.method.options;
 
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.ProjectSupplier;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.method.options.ui.MethodExecutionSettingsForm;
-import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class MethodExecutionSettings extends Configuration implements ExecutionTimeoutSettings, ProjectSupplier {
-    private ExecutionEngineSettings parent;
+public class MethodExecutionSettings extends BasicProjectConfiguration<ExecutionEngineSettings, ConfigurationEditorForm> implements ExecutionTimeoutSettings, ProjectSupplier {
     private int executionTimeout = 30;
     private int debugExecutionTimeout = 600;
     private int parameterHistorySize = 10;
 
     public MethodExecutionSettings(ExecutionEngineSettings parent) {
-        this.parent = parent;
+        super(parent);
     }
 
     @Override
@@ -29,12 +27,6 @@ public class MethodExecutionSettings extends Configuration implements ExecutionT
     @Override
     public String getHelpTopic() {
         return "executionEngine";
-    }
-
-    @NotNull
-    @Override
-    public Project getProject() {
-        return parent.getProject();
     }
 
     /*********************************************************
@@ -93,16 +85,16 @@ public class MethodExecutionSettings extends Configuration implements ExecutionT
 
     @Override
     public void readConfiguration(Element element) {
-        executionTimeout = SettingsUtil.getInteger(element, "execution-timeout", executionTimeout);
-        debugExecutionTimeout = SettingsUtil.getInteger(element, "debug-execution-timeout", debugExecutionTimeout);
-        parameterHistorySize = SettingsUtil.getInteger(element, "parameter-history-size", parameterHistorySize);
+        executionTimeout = SettingsSupport.getInteger(element, "execution-timeout", executionTimeout);
+        debugExecutionTimeout = SettingsSupport.getInteger(element, "debug-execution-timeout", debugExecutionTimeout);
+        parameterHistorySize = SettingsSupport.getInteger(element, "parameter-history-size", parameterHistorySize);
 
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsUtil.setInteger(element, "execution-timeout", executionTimeout);
-        SettingsUtil.setInteger(element, "debug-execution-timeout", debugExecutionTimeout);
-        SettingsUtil.setInteger(element, "parameter-history-size", parameterHistorySize);
+        SettingsSupport.setInteger(element, "execution-timeout", executionTimeout);
+        SettingsSupport.setInteger(element, "debug-execution-timeout", debugExecutionTimeout);
+        SettingsSupport.setInteger(element, "parameter-history-size", parameterHistorySize);
     }
 }

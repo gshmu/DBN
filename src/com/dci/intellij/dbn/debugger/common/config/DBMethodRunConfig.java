@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.debugger.common.config;
 
+import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -7,7 +8,6 @@ import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -23,8 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput> {
-    private Set<MethodExecutionInput> methodSelectionHistory = new THashSet<MethodExecutionInput>();
+public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput> implements Cloneable<DBMethodRunConfig> {
+    private Set<MethodExecutionInput> methodSelectionHistory = new THashSet<>();
 
     public DBMethodRunConfig(Project project, DBMethodRunConfigFactory factory, String name,DBRunConfigCategory category) {
         super(project, factory, name, category);
@@ -87,7 +87,7 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
 
     @Override
     public List<DBMethod> getMethods() {
-        ArrayList<DBMethod> methods = new ArrayList<DBMethod>();
+        ArrayList<DBMethod> methods = new ArrayList<>();
         DBMethod method = getMethod();
         if (method != null) {
             methods.add(method);
@@ -121,7 +121,7 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
         if (getCategory() == DBRunConfigCategory.CUSTOM) {
             Element methodIdentifierElement = element.getChild("method-identifier");
             if (methodIdentifierElement != null) {
-                DBObjectRef<DBMethod> methodRef = new DBObjectRef<DBMethod>();
+                DBObjectRef<DBMethod> methodRef = new DBObjectRef<>();
                 methodRef.readState(methodIdentifierElement);
 
                 MethodExecutionInput executionInput = executionManager.getExecutionInput(methodRef);
@@ -132,7 +132,7 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
             if (methodIdentifierHistoryElement != null) {
                 for (Object o : methodIdentifierHistoryElement.getChildren()) {
                     methodIdentifierElement = (Element) o;
-                    DBObjectRef<DBMethod> methodRef = new DBObjectRef<DBMethod>();
+                    DBObjectRef<DBMethod> methodRef = new DBObjectRef<>();
                     methodRef.readState(methodIdentifierElement);
 
                     MethodExecutionInput executionInput = executionManager.getExecutionInput(methodRef);
@@ -143,11 +143,11 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
     }
 
     @Override
-    public RunConfiguration clone() {
+    public DBMethodRunConfig clone() {
         DBMethodRunConfig runConfiguration = (DBMethodRunConfig) super.clone();
         MethodExecutionInput executionInput = getExecutionInput();
         runConfiguration.setExecutionInput(executionInput == null ? null : executionInput.clone());
-        runConfiguration.methodSelectionHistory = new HashSet<MethodExecutionInput>(getMethodSelectionHistory());
+        runConfiguration.methodSelectionHistory = new HashSet<>(getMethodSelectionHistory());
         return runConfiguration;
     }
 

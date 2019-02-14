@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.editor.session;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
@@ -9,7 +10,7 @@ import gnu.trove.THashMap;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class SessionBrowserState extends SortableDataModelState implements FileEditorState, PersistentStateElement<Element> {
+public class SessionBrowserState extends SortableDataModelState implements FileEditorState, PersistentStateElement, Cloneable<SessionBrowserState> {
     public static final SessionBrowserState VOID = new SessionBrowserState();
     private SessionBrowserFilterState filterState = new SessionBrowserFilterState();
     private int refreshInterval = 0;
@@ -21,22 +22,22 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
 
     @Override
     public void readState(@NotNull Element element) {
-        refreshInterval = SettingsUtil.getInteger(element, "refresh-interval", refreshInterval);
+        refreshInterval = SettingsSupport.getInteger(element, "refresh-interval", refreshInterval);
 
         Element sortingElement = element.getChild("sorting");
         sortingState.readState(sortingElement);
 
         Element filterElement = element.getChild("filter");
         if (filterElement != null) {
-            filterState.setFilterValue(SessionBrowserFilterType.USER, SettingsUtil.getString(filterElement, "user", null));
-            filterState.setFilterValue(SessionBrowserFilterType.HOST, SettingsUtil.getString(filterElement, "host", null));
-            filterState.setFilterValue(SessionBrowserFilterType.STATUS, SettingsUtil.getString(filterElement, "status", null));
+            filterState.setFilterValue(SessionBrowserFilterType.USER, SettingsSupport.getString(filterElement, "user", null));
+            filterState.setFilterValue(SessionBrowserFilterType.HOST, SettingsSupport.getString(filterElement, "host", null));
+            filterState.setFilterValue(SessionBrowserFilterType.STATUS, SettingsSupport.getString(filterElement, "status", null));
         }
     }
 
     @Override
     public void writeState(Element element) {
-        SettingsUtil.setInteger(element, "refresh-interval", refreshInterval);
+        SettingsSupport.setInteger(element, "refresh-interval", refreshInterval);
 
         Element sortingElement = new Element("sorting");
         element.addContent(sortingElement);
@@ -44,9 +45,9 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
 
         Element filterElement = new Element("filter");
         element.addContent(filterElement);
-        SettingsUtil.setString(filterElement, "user", filterState.getFilterValue(SessionBrowserFilterType.USER));
-        SettingsUtil.setString(filterElement, "host", filterState.getFilterValue(SessionBrowserFilterType.HOST));
-        SettingsUtil.setString(filterElement, "status", filterState.getFilterValue(SessionBrowserFilterType.STATUS));
+        SettingsSupport.setString(filterElement, "user", filterState.getFilterValue(SessionBrowserFilterType.USER));
+        SettingsSupport.setString(filterElement, "host", filterState.getFilterValue(SessionBrowserFilterType.HOST));
+        SettingsSupport.setString(filterElement, "status", filterState.getFilterValue(SessionBrowserFilterType.STATUS));
     }
 
     public int getRefreshInterval() {

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.ddl.options;
 
-import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.ddl.DDLFileTypeId;
@@ -8,20 +8,18 @@ import com.dci.intellij.dbn.ddl.options.ui.DDLFileExtensionSettingsForm;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.psql.PSQLFileType;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
-import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DDLFileExtensionSettings extends Configuration<DDLFileExtensionSettingsForm> {
+public class DDLFileExtensionSettings extends BasicProjectConfiguration<DDLFileSettings, DDLFileExtensionSettingsForm> {
 
     private List<DDLFileType> fileTypes = new ArrayList<DDLFileType>();
 
-    private DDLFileSettings parent;
-    public DDLFileExtensionSettings(DDLFileSettings parent) {
-        this.parent = parent;
+    DDLFileExtensionSettings(DDLFileSettings parent) {
+        super(parent);
         fileTypes.add(new DDLFileType(DDLFileTypeId.VIEW, "DDL File - View", "vw", SQLFileType.INSTANCE, DBContentType.CODE));
         fileTypes.add(new DDLFileType(DDLFileTypeId.TRIGGER, "DDL File - Trigger", "trg", PSQLFileType.INSTANCE, DBContentType.CODE));
         fileTypes.add(new DDLFileType(DDLFileTypeId.PROCEDURE, "DDL File - Procedure", "prc", PSQLFileType.INSTANCE, DBContentType.CODE));
@@ -59,10 +57,6 @@ public class DDLFileExtensionSettings extends Configuration<DDLFileExtensionSett
 
     public List<DDLFileType> getDDLFileTypes() {
         return fileTypes;
-    }
-
-    public Project getProject() {
-        return parent.getProject();
     }
 
     /*********************************************************

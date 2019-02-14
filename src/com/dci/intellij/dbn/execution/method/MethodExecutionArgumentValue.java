@@ -1,8 +1,9 @@
 package com.dci.intellij.dbn.execution.method;
 
 import com.dci.intellij.dbn.common.list.MostRecentStack;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import org.jdom.CDATA;
@@ -11,7 +12,7 @@ import org.jdom.Element;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MethodExecutionArgumentValue implements PersistentStateElement<Element>, Cloneable, ArgumentValueHolder<String> {
+public class MethodExecutionArgumentValue implements PersistentStateElement, Cloneable<MethodExecutionArgumentValue>, ArgumentValueHolder<String> {
     private String name;
     private MostRecentStack<String> valueHistory = new MostRecentStack<String>();
 
@@ -61,7 +62,7 @@ public class MethodExecutionArgumentValue implements PersistentStateElement<Elem
 
         List<Element> valueElements = element.getChildren();
         for (Element valueElement : valueElements) {
-            value = SettingsUtil.readCdata(valueElement);
+            value = SettingsSupport.readCdata(valueElement);
             if (StringUtil.isNotEmpty(value)) {
                 values.add(value);
             }
@@ -82,7 +83,7 @@ public class MethodExecutionArgumentValue implements PersistentStateElement<Elem
     }
 
     @Override
-    protected MethodExecutionArgumentValue clone() {
+    public MethodExecutionArgumentValue clone() {
         return new MethodExecutionArgumentValue(this);
     }
 }

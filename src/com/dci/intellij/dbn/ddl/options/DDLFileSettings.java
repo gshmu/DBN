@@ -4,19 +4,18 @@ import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.ddl.options.ui.DDFileSettingsForm;
 import com.dci.intellij.dbn.options.ConfigId;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class DDLFileSettings extends CompositeProjectConfiguration<DDFileSettingsForm> implements TopLevelConfig {
-    private DDLFileExtensionSettings extensionSettings;
-    private DDLFileGeneralSettings generalSettings;
+public class DDLFileSettings extends CompositeProjectConfiguration<ProjectSettings, DDFileSettingsForm> implements TopLevelConfig {
+    private DDLFileExtensionSettings extensionSettings = new DDLFileExtensionSettings(this);
+    private DDLFileGeneralSettings generalSettings     = new DDLFileGeneralSettings(this);
 
-    public DDLFileSettings(Project project) {
-        super(project);
-        extensionSettings = new DDLFileExtensionSettings(this);
-        generalSettings = new DDLFileGeneralSettings(this);
+    public DDLFileSettings(ProjectSettings parent) {
+        super(parent);
     }
 
     public static DDLFileSettings getInstance(@NotNull Project project) {
@@ -54,7 +53,7 @@ public class DDLFileSettings extends CompositeProjectConfiguration<DDFileSetting
 
     @NotNull
     @Override
-    public Configuration<DDFileSettingsForm> getOriginalSettings() {
+    public DDLFileSettings getOriginalSettings() {
         return getInstance(getProject());
     }
 

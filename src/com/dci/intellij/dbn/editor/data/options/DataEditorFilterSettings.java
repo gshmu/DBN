@@ -1,15 +1,19 @@
 package com.dci.intellij.dbn.editor.data.options;
 
-import com.dci.intellij.dbn.common.options.Configuration;
-import com.dci.intellij.dbn.common.options.setting.SettingsUtil;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterType;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorFilterSettingsForm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class DataEditorFilterSettings extends Configuration<DataEditorFilterSettingsForm> {
+public class DataEditorFilterSettings extends BasicConfiguration<DataEditorSettings, DataEditorFilterSettingsForm> {
     private boolean promptFilterDialog = true;
     private DatasetFilterType defaultFilterType = DatasetFilterType.BASIC;
+
+    DataEditorFilterSettings(DataEditorSettings parent) {
+        super(parent);
+    }
 
     @Override
     public String getDisplayName() {
@@ -57,13 +61,13 @@ public class DataEditorFilterSettings extends Configuration<DataEditorFilterSett
 
     @Override
     public void readConfiguration(Element element) {
-        promptFilterDialog = SettingsUtil.getBoolean(element, "prompt-filter-dialog", promptFilterDialog);
-        defaultFilterType = DatasetFilterType.get(SettingsUtil.getString(element, "default-filter-type", defaultFilterType.name()));
+        promptFilterDialog = SettingsSupport.getBoolean(element, "prompt-filter-dialog", promptFilterDialog);
+        defaultFilterType = DatasetFilterType.get(SettingsSupport.getString(element, "default-filter-type", defaultFilterType.name()));
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsUtil.setBoolean(element, "prompt-filter-dialog", promptFilterDialog);
-        SettingsUtil.setString(element, "default-filter-type", defaultFilterType.name());
+        SettingsSupport.setBoolean(element, "prompt-filter-dialog", promptFilterDialog);
+        SettingsSupport.setString(element, "default-filter-type", defaultFilterType.name());
     }
 }

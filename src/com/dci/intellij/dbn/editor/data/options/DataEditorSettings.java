@@ -4,21 +4,22 @@ import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorSettingsForm;
 import com.dci.intellij.dbn.options.ConfigId;
+import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class DataEditorSettings extends CompositeProjectConfiguration<DataEditorSettingsForm> implements TopLevelConfig {
-    private DataEditorPopupSettings popupSettings = new DataEditorPopupSettings();
-    private DataEditorValueListPopupSettings valueListPopupSettings = new DataEditorValueListPopupSettings();
-    private DataEditorFilterSettings filterSettings = new DataEditorFilterSettings();
-    private DataEditorGeneralSettings generalSettings = new DataEditorGeneralSettings();
-    private DataEditorQualifiedEditorSettings qualifiedEditorSettings = new DataEditorQualifiedEditorSettings();
-    private DataEditorRecordNavigationSettings recordNavigationSettings = new DataEditorRecordNavigationSettings();
+public class DataEditorSettings extends CompositeProjectConfiguration<ProjectSettings, DataEditorSettingsForm> implements TopLevelConfig {
+    private DataEditorPopupSettings popupSettings                       = new DataEditorPopupSettings(this);
+    private DataEditorValueListPopupSettings valueListPopupSettings     = new DataEditorValueListPopupSettings(this);
+    private DataEditorFilterSettings filterSettings                     = new DataEditorFilterSettings(this);
+    private DataEditorGeneralSettings generalSettings                   = new DataEditorGeneralSettings(this);
+    private DataEditorQualifiedEditorSettings qualifiedEditorSettings   = new DataEditorQualifiedEditorSettings(this);
+    private DataEditorRecordNavigationSettings recordNavigationSettings = new DataEditorRecordNavigationSettings(this);
 
-    public DataEditorSettings(Project project) {
-        super(project);
+    public DataEditorSettings(ProjectSettings parent) {
+        super(parent);
     }
 
     public static DataEditorSettings getInstance(@NotNull Project project) {
@@ -48,7 +49,7 @@ public class DataEditorSettings extends CompositeProjectConfiguration<DataEditor
 
     @NotNull
     @Override
-    public Configuration<DataEditorSettingsForm> getOriginalSettings() {
+    public DataEditorSettings getOriginalSettings() {
         return getInstance(getProject());
     }
 

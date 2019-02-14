@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.environment;
 
+import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -8,8 +9,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public class EnvironmentTypeBundle implements Iterable<EnvironmentType>, Cloneable{
-    private List<EnvironmentType> environmentTypes = new ArrayList<EnvironmentType>();
+public class EnvironmentTypeBundle implements Iterable<EnvironmentType>, Cloneable {
+    private List<EnvironmentType> environmentTypes = new ArrayList<>();
     public static EnvironmentTypeBundle DEFAULT = new EnvironmentTypeBundle();
 
     public EnvironmentTypeBundle() {

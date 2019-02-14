@@ -121,13 +121,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
     }
 
     public DataExportInstructions getExportInstructions() {
-        try {
-            return exportInstructions.clone();
-        } catch (CloneNotSupportedException e) {
-            //should not happen
-            e.printStackTrace();
-            return null;
-        }
+        return exportInstructions.clone();
     }
 
     public void setExportInstructions(DataExportInstructions exportInstructions) {

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -10,7 +11,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RootPsiElement extends NamedPsiElement implements ExecutableBundlePsiElement{
+public class RootPsiElement extends NamedPsiElement implements ExecutableBundlePsiElement, Cloneable<RootPsiElement> {
 
     public RootPsiElement(ASTNode astNode, NamedElementType elementType) {
         super(astNode, elementType);
@@ -47,8 +48,8 @@ public class RootPsiElement extends NamedPsiElement implements ExecutableBundleP
     }
 
     @Override
-    public Object clone() {
-        return super.clone();
+    public RootPsiElement clone() {
+        return (RootPsiElement) super.clone();
     }
 
     /*********************************************************

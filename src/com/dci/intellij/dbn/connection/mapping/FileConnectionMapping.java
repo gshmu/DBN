@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SessionId;
 import org.jdom.Element;
 
-public class FileConnectionMapping implements PersistentStateElement<Element> {
+public class FileConnectionMapping implements PersistentStateElement {
     private String fileUrl = "";
     private ConnectionId connectionId;
     private SessionId sessionId = SessionId.MAIN;
