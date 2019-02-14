@@ -119,12 +119,6 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     String getPresentableText();
     String getQualifiedName();
 
-    @Deprecated
-    void commit() throws SQLException;
-
-    @Deprecated
-    void rollback() throws SQLException;
-
     @Nullable
     DBLanguageDialect resolveLanguageDialect(Language language);
     DBLanguageDialect getLanguageDialect(DBLanguage language);

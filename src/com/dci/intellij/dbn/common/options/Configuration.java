@@ -27,7 +27,9 @@ public interface Configuration<P extends Configuration, E extends ConfigurationE
     String getConfigElementName();
 
     @NotNull
-    E createConfigurationEditor();
+    default E createConfigurationEditor() {
+        throw new UnsupportedOperationException();
+    };
 
     ConfigurationEditorForm getSettingsEditor();
 
