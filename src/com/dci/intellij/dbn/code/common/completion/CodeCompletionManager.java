@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.code.common.completion;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -27,7 +27,7 @@ public class CodeCompletionManager extends AbstractProjectComponent implements P
     }
 
     public static CodeCompletionManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, CodeCompletionManager.class);
+        return Failsafe.getComponent(project, CodeCompletionManager.class);
     }
 
     /***************************************

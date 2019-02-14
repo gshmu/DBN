@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -14,7 +14,7 @@ import java.util.List;
 public class DatasetEditorUtils {
     public static List<String> loadDistinctColumnValues(@NotNull DBColumn column) {
         List<String> list = new ArrayList<String>();
-        ConnectionHandler connectionHandler = FailsafeUtil.get(column.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.get(column.getConnectionHandler());
         DBNConnection connection = null;
         ResultSet resultSet = null;
         try {

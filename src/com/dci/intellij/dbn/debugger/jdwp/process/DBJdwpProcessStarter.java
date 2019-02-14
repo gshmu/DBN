@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.debugger.jdwp.process;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStarter;
@@ -68,7 +68,7 @@ public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
         Range<Integer> portRange = jdwpRunConfig.getTcpPortRange();
         int freePort = findFreePort(portRange.getFrom(), portRange.getTo());
         RemoteConnection remoteConnection = new RemoteConnection(true, "localhost", Integer.toString(freePort), true);
-        RunProfileState state = FailsafeUtil.get(runProfile.getState(executor, environment));
+        RunProfileState state = Failsafe.get(runProfile.getState(executor, environment));
 
         DebugEnvironment debugEnvironment = new DefaultDebugEnvironment(environment, state, remoteConnection, true);
         DebuggerManagerEx debuggerManagerEx = DebuggerManagerEx.getInstanceEx(session.getProject());

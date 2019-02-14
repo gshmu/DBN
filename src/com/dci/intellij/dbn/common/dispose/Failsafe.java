@@ -11,7 +11,7 @@ import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class FailsafeUtil {
+public class Failsafe {
     private static final VirtualFile DUMMY_VIRTUAL_FILE = new LightVirtualFile();
     public static final Project DUMMY_PROJECT = new MockProject(ApplicationManager.getApplication().getPicoContainer(), ApplicationManager.getApplication());
 
@@ -90,7 +90,14 @@ public class FailsafeUtil {
         try {
             runnable.run();
         } catch (ProcessCanceledException ignore) {}
+    }
 
+    public static void lenient(BasicRunnable<RuntimeException> runnable, BasicRunnable<RuntimeException> cancel) {
+        try {
+            runnable.run();
+        } catch (ProcessCanceledException ignore) {
+            cancel.run();
+        }
     }
 
 }

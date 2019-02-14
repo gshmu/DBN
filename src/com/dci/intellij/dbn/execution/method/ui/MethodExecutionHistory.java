@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.method.ui;
 
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -89,7 +89,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
     @NotNull
     public MethodExecutionInput getExecutionInput(DBMethod method) {
         MethodExecutionInput executionInput = getExecutionInput(method, true);
-        return FailsafeUtil.get(executionInput);
+        return Failsafe.get(executionInput);
     }
 
     @Nullable

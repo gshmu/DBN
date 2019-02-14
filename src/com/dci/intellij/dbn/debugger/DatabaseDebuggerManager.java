@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.debugger;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -191,7 +191,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
     @NotNull
     private RunnerAndConfigurationSettings getDefaultConfig(DBRunConfigType configurationType, DBDebuggerType debuggerType){
-        return FailsafeUtil.get(getDefaultConfig(configurationType, debuggerType, true));
+        return Failsafe.get(getDefaultConfig(configurationType, debuggerType, true));
     }
 
     @Nullable
@@ -480,7 +480,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
      *            ProjectComponent         *
      ***************************************/
     public static DatabaseDebuggerManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, DatabaseDebuggerManager.class);
+        return Failsafe.getComponent(project, DatabaseDebuggerManager.class);
     }
 
     @Override

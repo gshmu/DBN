@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -115,7 +115,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
     @NotNull
     public DBDataset getDataset() {
-        return FailsafeUtil.get(datasetRef.get(project));
+        return Failsafe.get(datasetRef.get(project));
     }
 
     public DataEditorSettings getSettings() {
@@ -129,7 +129,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
     @NotNull
     public DatasetEditorForm getEditorForm() {
-        return FailsafeUtil.get(editorForm);
+        return Failsafe.get(editorForm);
     }
 
     public void showSearchHeader() {

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.intellij.openapi.util.Disposer;
@@ -23,7 +23,7 @@ public class ExplainPlanMessageNode extends DisposableBase implements MessageTre
     }
 
     public ExplainPlanMessage getExplainPlanMessage() {
-        return FailsafeUtil.get(explainPlanMessage);
+        return Failsafe.get(explainPlanMessage);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ExplainPlanMessageNode extends DisposableBase implements MessageTre
 
     @Override
     public ExplainPlanMessagesFileNode getParent() {
-        return FailsafeUtil.get(parent);
+        return Failsafe.get(parent);
     }
 
     @Override

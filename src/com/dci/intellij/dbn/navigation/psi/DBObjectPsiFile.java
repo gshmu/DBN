@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.navigation.psi;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -50,7 +50,7 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
 
     @NotNull
     public DBObject getObject() {
-        return FailsafeUtil.get(objectRef.get());
+        return Failsafe.get(objectRef.get());
     }
 
     @Override

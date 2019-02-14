@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.intellij.openapi.project.Project;
@@ -112,7 +112,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     @Override
     @NotNull
     public T getModel() {
-        return FailsafeUtil.get((T) super.getModel());
+        return Failsafe.get((T) super.getModel());
     }
 
     private void calculateScrollDistance() {

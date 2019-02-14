@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.result.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.DisposableLatent;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -92,7 +92,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     @Override
     @NotNull
     public StatementExecutionCursorResult getExecutionResult() {
-        return FailsafeUtil.get(executionResult);
+        return Failsafe.get(executionResult);
     }
 
     public void reloadTableModel() {

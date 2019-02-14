@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.browser.model;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -72,7 +72,7 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
 
     @Override
     public List<ConnectionBundle> getChildren() {
-        return FailsafeUtil.get(rootChildren);
+        return Failsafe.get(rootChildren);
     }
 
     @Override

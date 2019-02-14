@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.navigation.psi;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
@@ -55,7 +55,7 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
     @Override
     @NotNull
     public DBObjectListVirtualFile getVirtualFile() {
-        return FailsafeUtil.get(virtualFile);
+        return Failsafe.get(virtualFile);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
         DBObjectList objectList = getObjectList();
-        return FailsafeUtil.get(objectList.getProject());
+        return Failsafe.get(objectList.getProject());
     }
 
     @Override

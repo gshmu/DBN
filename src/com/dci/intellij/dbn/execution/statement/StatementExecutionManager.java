@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.statement;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
@@ -101,12 +101,12 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     public StatementExecutionQueue getExecutionQueue(ConnectionId connectionId, SessionId sessionId) {
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
-        connectionHandler = FailsafeUtil.get(connectionHandler);
+        connectionHandler = Failsafe.get(connectionHandler);
         return connectionHandler.getExecutionQueue(sessionId);
     }
 
     public static StatementExecutionManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, StatementExecutionManager.class);
+        return Failsafe.getComponent(project, StatementExecutionManager.class);
     }
 
     public void cacheVariable(VirtualFile virtualFile, StatementExecutionVariable variable) {
@@ -279,7 +279,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
             try {
                 StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
                 DBSchema schema = executionInput.getTargetSchema();
-                ConnectionHandler connectionHandler = FailsafeUtil.get(executionProcessor.getConnectionHandler());
+                ConnectionHandler connectionHandler = Failsafe.get(executionProcessor.getConnectionHandler());
                 connection = connectionHandler.getConnection(executionInput.getTargetSessionId(), schema);
             } catch (SQLException e) {
                 sendErrorNotification("Error executing " + executionProcessor.getStatementName() + ". Failed to ensure connectivity.", e.getMessage());

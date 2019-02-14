@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
@@ -25,7 +25,7 @@ public class SchemaSelectAction extends AnObjectAction<DBSchema> {
 
     @NotNull
     public DBSchema getSchema() {
-        return FailsafeUtil.get(getObject());
+        return Failsafe.get(getObject());
     }
 
 

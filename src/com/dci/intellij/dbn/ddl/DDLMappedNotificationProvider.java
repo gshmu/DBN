@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.ddl;
 
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
@@ -113,7 +113,7 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
                     DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
                     DBSchemaObject editableObject = editableObjectFile.getObject();
                     DDLFileEditor ddlFileEditor = (DDLFileEditor) fileEditor;
-                    VirtualFile ddlVirtualFile = FailsafeUtil.get(ddlFileEditor.getVirtualFile());
+                    VirtualFile ddlVirtualFile = Failsafe.get(ddlFileEditor.getVirtualFile());
                     return createPanel(ddlVirtualFile, editableObject);
                 }
                 return null;

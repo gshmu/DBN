@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.sql;
 
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -15,7 +16,6 @@ import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ public class SQLLanguageAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
-        try {
+        Failsafe.lenient(() -> {
             if (psiElement instanceof ExecutablePsiElement)  {
                 annotateExecutable((ExecutablePsiElement) psiElement, holder);
 
@@ -50,8 +50,7 @@ public class SQLLanguageAnnotator implements Annotator {
                     holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.getElementType().getDescription());
                 }
             }
-        } catch (ProcessCanceledException ignore){
-        }
+        });
     }
 
     private static void annotateToken(TokenPsiElement tokenPsiElement, AnnotationHolder holder) {

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.editor;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
@@ -43,7 +43,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
     @Override
     @NotNull
     public T getVirtualFile() {
-        return FailsafeUtil.get(virtualFile);
+        return Failsafe.get(virtualFile);
     }
 
     @Override

@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ide.IdeMonitor;
 import com.dci.intellij.dbn.common.message.MessageCallback;
@@ -77,7 +77,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     }
 
     private static ConnectionManager getComponent(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, ConnectionManager.class);
+        return Failsafe.getComponent(project, ConnectionManager.class);
     }
 
     private ConnectionManager(final Project project) {
@@ -418,7 +418,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
 
         private void resolveIdleStatus(final ConnectionHandler connectionHandler) {
-            FailsafeUtil.ensure(connectionHandler);
+            Failsafe.ensure(connectionHandler);
             DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
             List<DBNConnection> activeConnections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
 

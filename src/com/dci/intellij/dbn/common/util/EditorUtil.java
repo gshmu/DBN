@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.util;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
@@ -228,7 +228,7 @@ public class EditorUtil {
     }
 
     public static void setEditorsReadonly(DBContentVirtualFile contentFile, final boolean readonly) {
-        final Project project = FailsafeUtil.get(contentFile.getProject());
+        final Project project = Failsafe.get(contentFile.getProject());
 
         if (contentFile instanceof DBSourceCodeVirtualFile) {
             DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -32,7 +32,7 @@ public class ResourceMonitorSessionsTableModel extends DisposableBase implements
 
     @NotNull
     public List<DatabaseSession> getSessions() {
-        return FailsafeUtil.get(sessions);
+        return Failsafe.get(sessions);
     }
 
     @Override

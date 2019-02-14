@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.browser.model;
 
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.LoadInProgressIcon;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -50,7 +50,7 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
     @Override
     @NotNull
     public BrowserTreeNode getParent() {
-        return FailsafeUtil.get(parent);
+        return Failsafe.get(parent);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return FailsafeUtil.get(getParent().getConnectionHandler());
+        return Failsafe.get(getParent().getConnectionHandler());
     }
 
     @Override

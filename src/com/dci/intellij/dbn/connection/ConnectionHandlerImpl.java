@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.DisposableLatent;
@@ -178,7 +178,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @Override
     @NotNull
     public ConnectionBundle getConnectionBundle() {
-        return FailsafeUtil.get(connectionBundle);
+        return Failsafe.get(connectionBundle);
     }
 
     @Override
@@ -466,7 +466,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @Override
     @NotNull
     public ConnectionPool getConnectionPool() {
-        return FailsafeUtil.get(connectionPool);
+        return Failsafe.get(connectionPool);
     }
 
     @Override

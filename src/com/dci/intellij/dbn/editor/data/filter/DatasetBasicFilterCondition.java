@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -124,7 +124,7 @@ public class DatasetBasicFilterCondition extends BasicConfiguration<DatasetBasic
                 value = "(" + value + ")";
             }
             else if (StringUtil.isNotEmptyOrSpaces(value)) {
-                ConnectionHandler connectionHandler = FailsafeUtil.get(dataset.getConnectionHandler());
+                ConnectionHandler connectionHandler = Failsafe.get(dataset.getConnectionHandler());
                 if (genericDataType == GenericDataType.LITERAL || genericDataType == GenericDataType.CLOB) {
                     value = quoteValue(value);
                 } else if (genericDataType == GenericDataType.DATE_TIME) {

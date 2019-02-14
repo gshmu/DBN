@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.ui;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
@@ -53,7 +53,7 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
 
         DataContext dataContext = DataManager.getInstance().getDataContext(getComponent());
         Project project = PlatformDataKeys.PROJECT.getData(dataContext);
-        return FailsafeUtil.get(project);
+        return Failsafe.get(project);
     }
 
     @Override

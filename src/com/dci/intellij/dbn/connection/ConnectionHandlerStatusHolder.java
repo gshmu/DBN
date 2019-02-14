@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -99,7 +99,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
                 @Override
                 protected void statusChanged() {
                     if (true || getResource().isNot(ConnectionHandlerStatus.LOADING)) {
-                        ConnectionHandler connectionHandler = FailsafeUtil.get(getConnectionHandler());
+                        ConnectionHandler connectionHandler = Failsafe.get(getConnectionHandler());
                         Project project = connectionHandler.getProject();
                         EventUtil.notify(project, ConnectionLoadListener.TOPIC).contentsLoaded(connectionHandler);
                     }

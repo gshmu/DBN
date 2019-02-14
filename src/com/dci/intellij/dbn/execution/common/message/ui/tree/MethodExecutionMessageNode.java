@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
 import com.dci.intellij.dbn.execution.method.MethodExecutionMessage;
 import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
@@ -23,7 +23,7 @@ public class MethodExecutionMessageNode extends DisposableBase implements Messag
     }
 
     public MethodExecutionMessage getExecutionMessage() {
-        return FailsafeUtil.get(methodExecutionMessage);
+        return Failsafe.get(methodExecutionMessage);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class MethodExecutionMessageNode extends DisposableBase implements Messag
 
     @Override
     public MethodExecutionMessagesObjectNode getParent() {
-        return FailsafeUtil.get(parent);
+        return Failsafe.get(parent);
     }
 
     @Override

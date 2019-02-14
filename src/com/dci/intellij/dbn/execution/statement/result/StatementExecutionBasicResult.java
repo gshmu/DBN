@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.statement.result;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -46,7 +46,7 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
         this.resultName = resultName;
         this.executionProcessor = executionProcessor;
         this.updateCount = updateCount;
-        this.connectionHandlerRef = FailsafeUtil.get(executionProcessor.getConnectionHandler()).getRef();
+        this.connectionHandlerRef = Failsafe.get(executionProcessor.getConnectionHandler()).getRef();
         this.databaseSchemaRef = DBObjectRef.from(executionProcessor.getTargetSchema());
     }
 
@@ -69,7 +69,7 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
     @Override
     @NotNull
     public StatementExecutionProcessor getExecutionProcessor() {
-        return FailsafeUtil.get(executionProcessor);
+        return Failsafe.get(executionProcessor);
     }
 
     @Override

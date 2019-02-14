@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.logging;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -26,7 +26,7 @@ public class DatabaseLoggingManager extends AbstractProjectComponent {
     }
 
     public static DatabaseLoggingManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, DatabaseLoggingManager.class);
+        return Failsafe.getComponent(project, DatabaseLoggingManager.class);
     }
 
     /*********************************************************

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +36,7 @@ public abstract class DialogWithTimeout extends DBNDialog<DialogWithTimeoutForm>
     private class TimeoutTask extends TimerTask {
         @Override
         public void run() {
-            try {
+            Failsafe.lenient(() -> {
                 if (secondsLeft > 0) {
                     secondsLeft = secondsLeft -1;
                     getComponent().updateTimeLeft(secondsLeft);
@@ -45,7 +45,7 @@ public abstract class DialogWithTimeout extends DBNDialog<DialogWithTimeoutForm>
 
                     }
                 }
-            } catch (ProcessCanceledException ignore) {}
+            });
         }
     }
 

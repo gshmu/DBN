@@ -11,6 +11,6 @@ public class FailsafeWeakRef<T> extends WeakRef<T> {
     @NotNull
     @Override
     public T get() {
-        return FailsafeUtil.get(super.get());
+        return Failsafe.get(super.get());
     }
 }

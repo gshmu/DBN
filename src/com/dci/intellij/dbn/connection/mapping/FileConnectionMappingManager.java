@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection.mapping;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
@@ -52,7 +52,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -94,7 +93,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
     @NotNull
     public static FileConnectionMappingManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, FileConnectionMappingManager.class);
+        return Failsafe.getComponent(project, FileConnectionMappingManager.class);
     }
 
     @Override
@@ -205,7 +204,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
     @Nullable
     public ConnectionHandler getConnectionHandler(@NotNull VirtualFile virtualFile) {
-        try {
+        return Failsafe.lenient(null, () -> {
             Project project = getProject();
             if (virtualFile instanceof LightVirtualFile) {
                 ConnectionHandlerRef connectionHandlerRef = virtualFile.getUserData(CONNECTION_HANDLER);
@@ -257,10 +256,8 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                 }
                 return ConnectionHandlerRef.get(connectionHandlerRef);
             }
-        } catch (ProcessCanceledException e) {
             return null;
-        }
-        return null;
+        });
     }
 
     @Nullable

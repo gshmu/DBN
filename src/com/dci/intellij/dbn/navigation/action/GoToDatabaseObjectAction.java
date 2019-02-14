@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.navigation.action;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.ClipboardUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -183,7 +183,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
 
         @NotNull
         public DBSchema getSchema() {
-            return FailsafeUtil.get(getObject());
+            return Failsafe.get(getObject());
         }
 
 

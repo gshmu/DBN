@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
@@ -36,7 +36,7 @@ public class SessionBrowserTableCellRenderer extends BasicTableCellRenderer {
             boolean isLoading = sessionBrowserTable.isLoading();
 
             boolean isCaretRow = table.getCellSelectionEnabled() && table.getSelectedRow() == rowIndex && table.getSelectedRowCount() == 1;
-            boolean isConnected = FailsafeUtil.get(sessionBrowserTable.getSessionBrowser().getConnectionHandler()).isConnected();
+            boolean isConnected = Failsafe.get(sessionBrowserTable.getSessionBrowser().getConnectionHandler()).isConnected();
 
             SessionBrowserTextAttributes attributes = getAttributes();
             SimpleTextAttributes textAttributes = attributes.getActiveSession(isCaretRow);

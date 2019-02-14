@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.BackgroundMonitor;
@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -81,7 +80,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     @Override
     public final void run() {
         trace(this);
-        try {
+        Failsafe.lenient(() -> {
             if (canExecute()) {
                 ConnectionHandler connectionHandler = getConnectionHandler();
                 if (connectionHandler.isVirtual() || connectionHandler.canConnect()) {
@@ -106,10 +105,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             } else {
                 cancel();
             }
-        } catch (ProcessCanceledException e) {
-            // do nothing
-        }
-
+        });
     }
 
     private void promptDatabaseInitDialog() {
@@ -180,7 +176,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         ConnectionHandler connectionHandler = connectionProvider.getConnectionHandler();
-        return FailsafeUtil.get(connectionHandler);
+        return Failsafe.get(connectionHandler);
     }
 
     @Override

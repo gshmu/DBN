@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.lookup;
 
 import com.dci.intellij.dbn.common.Reference;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -284,7 +284,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     @NotNull
     public static <T extends DBObject> T getnn(DBObjectRef<T> objectRef) {
         T object = get(objectRef);
-        return FailsafeUtil.get(object);
+        return Failsafe.get(object);
     }
 
     public static List<DBObject> get(List<DBObjectRef> objectRefs) {
@@ -332,7 +332,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     public T getnn(){
-        return FailsafeUtil.get(get());
+        return Failsafe.get(get());
     }
 
     @Nullable

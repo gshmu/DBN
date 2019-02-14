@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserEditorSettings;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
@@ -55,7 +55,7 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
     }
 
     public static EditorStateManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, EditorStateManager.class);
+        return Failsafe.getComponent(project, EditorStateManager.class);
     }
 
     private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {

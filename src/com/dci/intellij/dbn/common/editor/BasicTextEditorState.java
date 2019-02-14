@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.editor;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.WriteActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -14,7 +15,6 @@ import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.impl.text.CodeFoldingState;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -142,20 +142,12 @@ public class BasicTextEditorState implements FileEditorState {
         editor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE);
 
         if (foldingState != null) {
-            WriteActionRunner.invoke(() -> {
-                Project project = editor.getProject();
-                if (project != null) {
-                    try {
+            WriteActionRunner.invoke(() ->
+                    Failsafe.lenient(() -> {
+                        Project project = Failsafe.get(editor.getProject());
                         PsiDocumentManager.getInstance(project).commitDocument(document);
-                    } catch (ProcessCanceledException ignore) {
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                    CodeFoldingManager.getInstance(project).
-                            restoreFoldingState(editor, getFoldingState());
-                }
-            });
+                        CodeFoldingManager.getInstance(project).restoreFoldingState(editor, getFoldingState());
+                    }));
             //editor.getFoldingModel().runBatchFoldingOperation(runnable);
         }
     }

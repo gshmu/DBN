@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.data.filter;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -139,7 +139,7 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
     }
 
     public DatasetFilterGroup getFilterGroup(DBDataset dataset) {
-        ConnectionHandler connectionHandler = FailsafeUtil.get(dataset.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.get(dataset.getConnectionHandler());
         ConnectionId connectionId = connectionHandler.getConnectionId();
         String datasetName = dataset.getQualifiedName();
         return getFilterGroup(connectionId, datasetName);
@@ -158,7 +158,7 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
     }
 
     public static DatasetFilterManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, DatasetFilterManager.class);
+        return Failsafe.getComponent(project, DatasetFilterManager.class);
     }
 
     /***************************************

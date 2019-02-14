@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.model.resultSet;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
@@ -43,7 +43,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
 
     @NotNull
     protected DBNResultSet getResultSet() {
-        return FailsafeUtil.get(resultSet);
+        return Failsafe.get(resultSet);
     }
 
     @NotNull
@@ -150,7 +150,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return FailsafeUtil.get(connectionHandler);
+        return Failsafe.get(connectionHandler);
     }
 
     @Override

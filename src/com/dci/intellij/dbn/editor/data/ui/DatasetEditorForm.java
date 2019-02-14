@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.data.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.DisposableLatent;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -155,7 +155,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
     @NotNull
     public DatasetEditor getDatasetEditor() {
-        return FailsafeUtil.get(datasetEditor);
+        return Failsafe.get(datasetEditor);
     }
 
     public void showLoadingHint() {
@@ -168,7 +168,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
     @NotNull
     public DatasetEditorTable getEditorTable() {
-        return FailsafeUtil.get(datasetEditorTable);
+        return Failsafe.get(datasetEditorTable);
     }
 
     @Override

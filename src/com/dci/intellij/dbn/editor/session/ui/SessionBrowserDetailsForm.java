@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.session.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -78,7 +78,7 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
 
     @NotNull
     private ConnectionHandler getConnectionHandler() {
-        return FailsafeUtil.get(sessionBrowser.getConnectionHandler());
+        return Failsafe.get(sessionBrowser.getConnectionHandler());
     }
 
     public void update(@Nullable final SessionBrowserModelRow selectedRow) {

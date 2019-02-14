@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.action;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -22,7 +22,7 @@ public class ShowDatabaseInformationAction extends AbstractConnectionAction {
         ConnectionAction.invoke("showing database information", connectionHandler,
                 TaskInstructions.create("Loading database information for " + connectionHandler.getName(), TaskInstruction.MANAGED),
                 action -> {
-                    FailsafeUtil.ensure(connectionHandler);
+                    Failsafe.ensure(connectionHandler);
                     ConnectionManager.showConnectionInfoDialog(connectionHandler);
                 });
     }

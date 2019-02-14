@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -127,7 +127,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
 
     @NotNull
     ResultSetAdapter getResultSetAdapter() {
-        return FailsafeUtil.get(resultSetAdapter);
+        return Failsafe.get(resultSetAdapter);
     }
 
     private int computeRowCount() {
@@ -142,7 +142,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     }
 
     public DataEditorSettings getSettings() {
-        return FailsafeUtil.get(settings);
+        return Failsafe.get(settings);
     }
 
     private DBNResultSet loadResultSet(boolean useCurrentFilter, AtomicReference<DBNStatement> statementRef) throws SQLException {
@@ -266,12 +266,12 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
 
     @NotNull
     public DBDataset getDataset() {
-        return FailsafeUtil.get(DBObjectRef.get(datasetRef));
+        return Failsafe.get(DBObjectRef.get(datasetRef));
     }
 
     @NotNull
     public DatasetEditor getDatasetEditor() {
-        return FailsafeUtil.get(datasetEditor);
+        return Failsafe.get(datasetEditor);
     }
 
     @NotNull

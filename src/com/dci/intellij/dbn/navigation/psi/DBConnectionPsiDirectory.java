@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.navigation.psi;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
@@ -47,7 +47,7 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
     @Override
     @NotNull
     public DBConnectionVirtualFile getVirtualFile() {
-        return FailsafeUtil.get(virtualFile);
+        return Failsafe.get(virtualFile);
     }
 
     @NotNull
@@ -100,7 +100,7 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
     @Override
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
-        return FailsafeUtil.get(getVirtualFile().getProject());
+        return Failsafe.get(getVirtualFile().getProject());
     }
 
     @Override
@@ -121,7 +121,7 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
         CollectionUtil.forEach(
                 virtualFile.getConnectionHandler().getObjectBundle().getObjectListContainer().getObjectLists(),
                 objectList -> {
-                    if (!objectList.isInternal() && FailsafeUtil.check(objectList)) {
+                    if (!objectList.isInternal() && Failsafe.check(objectList)) {
                         PsiDirectory psiDirectory = objectList.getPsiDirectory();
                         children.add(psiDirectory);
                     }

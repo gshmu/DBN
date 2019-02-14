@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +21,7 @@ public class ProjectRef extends WeakRef<Project> {
     @Override
     @NotNull
     public Project getnn() {
-        return FailsafeUtil.get(get());
+        return Failsafe.get(get());
     }
 
 

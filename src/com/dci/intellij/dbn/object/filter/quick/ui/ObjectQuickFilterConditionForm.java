@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.filter.quick.ui;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -100,7 +100,7 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
 
     @NotNull
     protected ObjectQuickFilterCondition getCondition() {
-        return FailsafeUtil.get(condition);
+        return Failsafe.get(condition);
     }
 
     public void remove() {

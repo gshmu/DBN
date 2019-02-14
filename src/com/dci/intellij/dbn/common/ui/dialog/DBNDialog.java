@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.ui.dialog;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -28,7 +28,7 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
         if (component == null && !isDisposed()) {
             component = createComponent();
         }
-        return FailsafeUtil.get(component);
+        return Failsafe.get(component);
     }
 
     @Override
@@ -61,7 +61,7 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
     @Override
     @NotNull
     public Project getProject() {
-        return FailsafeUtil.get(project);
+        return Failsafe.get(project);
     }
 
     public boolean isRememberSelection() {

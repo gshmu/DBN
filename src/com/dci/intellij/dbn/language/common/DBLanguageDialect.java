@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
@@ -55,7 +55,7 @@ public abstract class DBLanguageDialect extends Language implements DBFileElemen
     @Override
     @NotNull
     public DBLanguage getBaseLanguage() {
-        return FailsafeUtil.get((DBLanguage) super.getBaseLanguage());
+        return Failsafe.get((DBLanguage) super.getBaseLanguage());
     }
 
     public SharedTokenTypeBundle getSharedTokenTypes() {

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.psql;
 
 import com.dci.intellij.dbn.code.psql.color.PSQLTextAttributesKeys;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -31,7 +32,6 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +40,7 @@ public class PSQLLanguageAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
-        try {
+        Failsafe.lenient(() -> {
             if (psiElement instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) psiElement;
 
@@ -77,7 +77,7 @@ public class PSQLLanguageAnnotator implements Annotator {
                 Annotation annotation = holder.createInfoAnnotation(psiElement, null);
                 annotation.setTextAttributes(SQLTextAttributesKeys.CHAMELEON);
             }
-        } catch (ProcessCanceledException ignore){}
+        });
     }
 
     private static void annotateToken(TokenPsiElement tokenPsiElement, AnnotationHolder holder) {

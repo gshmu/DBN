@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.data.export;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
-import com.dci.intellij.dbn.common.dispose.FailsafeUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -44,7 +44,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
     }
 
     public static DataExportManager getInstance(@NotNull Project project) {
-        return FailsafeUtil.getComponent(project, DataExportManager.class);
+        return Failsafe.getComponent(project, DataExportManager.class);
     }
 
     private static DataExportProcessor[] PROCESSORS =  new DataExportProcessor[] {
