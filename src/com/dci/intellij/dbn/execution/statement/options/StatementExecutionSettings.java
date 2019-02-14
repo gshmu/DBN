@@ -3,12 +3,9 @@ package com.dci.intellij.dbn.execution.statement.options;
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.ProjectSupplier;
-import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
-import com.dci.intellij.dbn.execution.common.options.TimeoutSettingsListener;
 import com.dci.intellij.dbn.execution.statement.options.ui.StatementExecutionSettingsForm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -74,10 +71,6 @@ public class StatementExecutionSettings extends BasicProjectConfiguration<Execut
             return true;
         }
         return false;
-    }
-
-    void notifyTimeoutChanges() {
-        EventUtil.notify(getProject(), TimeoutSettingsListener.TOPIC).settingsChanged(ExecutionTarget.STATEMENT);
     }
 
     public void setFocusResult(boolean focusResult) {
