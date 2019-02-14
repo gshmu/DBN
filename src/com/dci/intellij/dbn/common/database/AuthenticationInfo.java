@@ -48,7 +48,7 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
 
     public String getPassword() {
         DatabaseCredentialManager credentialManager = DatabaseCredentialManager.getInstance();
-        return StringUtil.isEmpty(password) ? credentialManager.getPassword(getConnectionId(), user) : password;
+        return StringUtil.isEmpty(password) ? credentialManager.getPassword(getConnectionId(), user, temporary) : password;
     }
 
     public void setPassword(String password) {
@@ -97,20 +97,19 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
     @Override
     public void readConfiguration(Element element) {
         user = getString(element, "user", user);
-        this.password = PasswordUtil.decodePassword(getString(element, "password", null));
+        password = PasswordUtil.decodePassword(getString(element, "password", null));
 
+        // old storage fallback
         DatabaseCredentialManager credentialManager = DatabaseCredentialManager.getInstance();
-        if (StringUtil.isEmpty(this.password)) {
-            credentialManager.getPassword(getConnectionId(), user);
-        } else {
-            credentialManager.setPassword(getConnectionId(), user, password, temporary || isTransitory());
+        if (StringUtil.isEmpty(password)) {
+            password = credentialManager.getPassword(getConnectionId(), user, false);
+        } else if (!temporary && !isTransitory()){
+            credentialManager.setPassword(getConnectionId(), user, password, true);
         }
 
         emptyPassword = getBoolean(element, "empty-password", emptyPassword);
         osAuthentication = getBoolean(element, "os-authentication", osAuthentication);
         supported = getParent().getDatabaseType().isAuthenticationSupported();
-
-
     }
 
     @Override
