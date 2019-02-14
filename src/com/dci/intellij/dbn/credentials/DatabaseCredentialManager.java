@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.credentials;
 
-import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.intellij.credentialStore.CredentialAttributes;
 import com.intellij.ide.passwordSafe.PasswordSafe;
@@ -26,19 +25,14 @@ public class DatabaseCredentialManager implements BaseComponent {
     }
 
     @Nullable
-    public String getPassword(ConnectionId connectionId, String userName) {
-        return getPassword(connectionId, userName, true);
-    }
-
-    @Nullable
-    private String getPassword(ConnectionId connectionId, String userName, boolean temporary) {
+    public String getPassword(ConnectionId connectionId, String userName, boolean temporary) {
         String serviceName = getConnectionServiceName(connectionId);
         PasswordSafe passwordSafe = PasswordSafe.getInstance();
-        String password = passwordSafe.getPassword(new CredentialAttributes(serviceName, userName, null, temporary));
-        if (StringUtil.isEmpty(password) && temporary) {
-            password = getPassword(connectionId, userName, false);
-        }
-        return password;
+        return passwordSafe.getPassword(new CredentialAttributes(serviceName, userName, null, temporary));
+    }
+
+    private boolean isMemoryStorage() {
+        return PasswordSafe.getInstance().isMemoryOnly();
     }
 
     @NotNull
