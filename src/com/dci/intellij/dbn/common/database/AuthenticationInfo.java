@@ -47,12 +47,11 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
     }
 
     public String getPassword() {
-        DatabaseCredentialManager credentialManager = DatabaseCredentialManager.getInstance();
-        return StringUtil.isEmpty(password) ? credentialManager.getPassword(getConnectionId(), user, temporary) : password;
+        return password;
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.password = StringUtil.isEmpty(password) ? null : password;
     }
 
     public boolean isOsAuthentication() {
@@ -80,7 +79,7 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
     }
 
     public boolean isProvided() {
-        return !supported || osAuthentication || (StringUtil.isNotEmpty(user) && (StringUtil.isNotEmpty(getPassword()) || emptyPassword));
+        return !supported || osAuthentication || (StringUtil.isNotEmpty(user) && (StringUtil.isNotEmpty(password) || emptyPassword));
     }
 
     public boolean isOlderThan(long millis) {
@@ -118,8 +117,6 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
         setBoolean(element, "empty-password", emptyPassword);
         setString(element, "user", nvl(user));
         setString(element, "deprecated-pwd", PasswordUtil.encodePassword(password));
-
-        DatabaseCredentialManager.getInstance().setPassword(getConnectionId(), user, password, temporary || isTransitory());
     }
 
     @Override
@@ -131,5 +128,24 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
         authenticationInfo.emptyPassword = emptyPassword;
         authenticationInfo.supported = supported;
         return authenticationInfo;
+    }
+
+    public void updateKeyChain(String oldUserName, String oldPassword, boolean temporary) {
+        if (supported) {
+            oldUserName = nvl(oldUserName);
+            oldPassword = nvl(oldPassword);
+
+            String newUserName = nvl(user);
+            String newPassword = nvl(password);
+
+            if (!CommonUtil.safeEqual(oldUserName, newUserName) || !CommonUtil.safeEqual(oldPassword, newPassword)) {
+                DatabaseCredentialManager credentialManager = DatabaseCredentialManager.getInstance();
+                ConnectionId connectionId = getConnectionId();
+                credentialManager.removePassword(connectionId, oldUserName);
+                if (StringUtil.isNotEmpty(newUserName) && StringUtil.isNotEmpty(newPassword)) {
+                    credentialManager.setPassword(connectionId, newUserName, newPassword, temporary);
+                }
+            }
+        }
     }
 }

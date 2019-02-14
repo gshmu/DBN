@@ -1,12 +1,8 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
-import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.credentials.DatabaseCredentialManager;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,22 +60,10 @@ public class ConnectionAuthenticationSettingsForm extends DBNFormImpl<Connection
     }
 
     public void applyFormChanges(AuthenticationInfo authenticationInfo){
-        String oldUserName = authenticationInfo.getUser();
-        String oldPassword = authenticationInfo.getPassword();
-        String newUserName = userTextField.getText();
-        String newPassword = new String(passwordField.getPassword());
-        authenticationInfo.setUser(newUserName);
-        authenticationInfo.setPassword(newPassword);
+        authenticationInfo.setUser(userTextField.getText());
+        authenticationInfo.setPassword(new String(passwordField.getPassword()));
         authenticationInfo.setOsAuthentication(osAuthenticationCheckBox.isSelected());
         authenticationInfo.setEmptyPassword(emptyPasswordCheckBox.isSelected());
-
-        if (!Configuration.IS_TRANSITORY.get() && !CommonUtil.safeEqual(oldUserName, newUserName) || !CommonUtil.safeEqual(oldPassword, newPassword)) {
-            DatabaseCredentialManager credentialManager = DatabaseCredentialManager.getInstance();
-            ConnectionId connectionId = authenticationInfo.getConnectionId();
-            credentialManager.removePassword(connectionId, oldUserName);
-            credentialManager.setPassword(connectionId, newUserName, newPassword, false);
-        }
-
     }
 
     public void resetFormChanges(AuthenticationInfo authenticationInfo) {
