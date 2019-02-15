@@ -197,6 +197,8 @@
                       [PREFIX]_CONSTRAINTS con,
                       [PREFIX]_CONS_COLUMNS cc
                  where
+                      cc.OWNER = {0} and
+                      cc.TABLE_NAME = {1} and
                       con.OWNER = cc.OWNER and
                       con.TABLE_NAME = cc.TABLE_NAME and
                       con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
@@ -210,7 +212,8 @@
                       [PREFIX]_CONSTRAINTS con,
                       [PREFIX]_CONS_COLUMNS cc
                  where
-                      con.OWNER = cc.OWNER and
+                      cc.OWNER = {0} and
+                      cc.TABLE_NAME = {1} and
                       con.TABLE_NAME = cc.TABLE_NAME and
                       con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
                       con.CONSTRAINT_TYPE = 'R') fk,
@@ -223,6 +226,8 @@
                       [PREFIX]_CONSTRAINTS con,
                       [PREFIX]_CONS_COLUMNS cc
                  where
+                      cc.OWNER = {0} and
+                      cc.TABLE_NAME = {1} and
                       con.OWNER = cc.OWNER and
                       con.TABLE_NAME = cc.TABLE_NAME and
                       con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
@@ -267,6 +272,8 @@
                       [PREFIX]_CONSTRAINTS con,
                       [PREFIX]_CONS_COLUMNS cc
                  where
+                      cc.OWNER = {0} and
+                      cc.TABLE_NAME = {1} and
                       con.OWNER = cc.OWNER and
                       con.TABLE_NAME = cc.TABLE_NAME and
                       con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
@@ -280,6 +287,8 @@
                       [PREFIX]_CONSTRAINTS con,
                       [PREFIX]_CONS_COLUMNS cc
                  where
+                      cc.OWNER = {0} and
+                      cc.TABLE_NAME = {1} and
                       con.OWNER = cc.OWNER and
                       con.TABLE_NAME = cc.TABLE_NAME and
                       con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
@@ -293,6 +302,8 @@
                       [PREFIX]_CONSTRAINTS con,
                       [PREFIX]_CONS_COLUMNS cc
                  where
+                      cc.OWNER = {0} and
+                      cc.TABLE_NAME = {1} and
                       con.OWNER = cc.OWNER and
                       con.TABLE_NAME = cc.TABLE_NAME and
                       con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
@@ -341,6 +352,7 @@
                       [PREFIX]_CONSTRAINTS con,
                       [PREFIX]_CONS_COLUMNS cc
                  where
+                      cc.OWNER = {0} and
                       con.OWNER = cc.OWNER and
                       con.TABLE_NAME = cc.TABLE_NAME and
                       con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
@@ -354,6 +366,7 @@
                       [PREFIX]_CONSTRAINTS con,
                       [PREFIX]_CONS_COLUMNS cc
                  where
+                      cc.OWNER = {0} and
                       con.OWNER = cc.OWNER and
                       con.TABLE_NAME = cc.TABLE_NAME and
                       con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
@@ -367,6 +380,7 @@
                       [PREFIX]_CONSTRAINTS con,
                       [PREFIX]_CONS_COLUMNS cc
                  where
+                      cc.OWNER = {0} and
                       con.OWNER = cc.OWNER and
                       con.TABLE_NAME = cc.TABLE_NAME and
                       con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
@@ -411,6 +425,7 @@
                       [PREFIX]_CONSTRAINTS con,
                       [PREFIX]_CONS_COLUMNS cc
                  where
+                      cc.OWNER = {0} and
                       con.OWNER = cc.OWNER and
                       con.TABLE_NAME = cc.TABLE_NAME and
                       con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
@@ -424,6 +439,7 @@
                       [PREFIX]_CONSTRAINTS con,
                       [PREFIX]_CONS_COLUMNS cc
                  where
+                      cc.OWNER = {0} and
                       con.OWNER = cc.OWNER and
                       con.TABLE_NAME = cc.TABLE_NAME and
                       con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
@@ -437,6 +453,7 @@
                       [PREFIX]_CONSTRAINTS con,
                       [PREFIX]_CONS_COLUMNS cc
                  where
+                      cc.OWNER = {0} and
                       con.OWNER = cc.OWNER and
                       con.TABLE_NAME = cc.TABLE_NAME and
                       con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
