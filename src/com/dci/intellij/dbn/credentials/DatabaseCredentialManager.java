@@ -16,19 +16,19 @@ public class DatabaseCredentialManager implements BaseComponent {
 
 
     public void removePassword(ConnectionId connectionId, String userName) {
-        setPassword(connectionId, userName, null, false);
+        setPassword(connectionId, userName, null);
     }
 
-    public void setPassword(ConnectionId connectionId, String userName, @Nullable String password, boolean temporary) {
+    public void setPassword(ConnectionId connectionId, String userName, @Nullable String password) {
         String serviceName = getConnectionServiceName(connectionId);
-        PasswordSafe.getInstance().setPassword(new CredentialAttributes(serviceName, userName, null, temporary), password);
+        PasswordSafe.getInstance().setPassword(new CredentialAttributes(serviceName, userName, null, false), password);
     }
 
     @Nullable
-    public String getPassword(ConnectionId connectionId, String userName, boolean temporary) {
+    public String getPassword(ConnectionId connectionId, String userName) {
         String serviceName = getConnectionServiceName(connectionId);
         PasswordSafe passwordSafe = PasswordSafe.getInstance();
-        return passwordSafe.getPassword(new CredentialAttributes(serviceName, userName, null, temporary));
+        return passwordSafe.getPassword(new CredentialAttributes(serviceName, userName, null, false));
     }
 
     private boolean isMemoryStorage() {

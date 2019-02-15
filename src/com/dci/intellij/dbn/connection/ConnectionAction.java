@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
+import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageCallback;
@@ -131,9 +132,11 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
 
     private void promptAuthenticationDialog() {
         ConnectionHandler connectionHandler = getConnectionHandler();
+        AuthenticationInfo temporaryAuthenticationInfo = connectionHandler.getAuthenticationInfo().clone();
+        temporaryAuthenticationInfo.setTemporary(true);
         ConnectionManager.promptAuthenticationDialog(
                 connectionHandler,
-                connectionHandler.getAuthenticationInfo().clone(),
+                temporaryAuthenticationInfo,
                 SimpleTask.create(authenticationInfo -> {
                     if (authenticationInfo != null) {
                         executeAction();

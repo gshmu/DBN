@@ -271,7 +271,9 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         String oldUserName = authenticationInfo.getUser();
         String oldPassword = authenticationInfo.getPassword();
         authenticationSettingsForm.applyFormChanges(authenticationInfo);
-        authenticationInfo.updateKeyChain(oldUserName, oldPassword, Configuration.IS_TRANSITORY.get());
+        if (!Configuration.IS_TRANSITORY.get()) {
+            authenticationInfo.updateKeyChain(oldUserName, oldPassword);
+        }
 
         configuration.setDriverSource(getSelection(driverSourceComboBox));
         configuration.updateHashCode();
@@ -292,10 +294,10 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
             throw new ConfigurationException("The provided driver library is not a valid " + selectedDatabaseType.getDisplayName() + " driver library.");
         }
 
-        final boolean nameChanged = !nameTextField.getText().equals(configuration.getName());
+        boolean nameChanged = !nameTextField.getText().equals(configuration.getName());
 
         DatabaseInfo databaseInfo = configuration.getDatabaseInfo();
-        final boolean settingsChanged =
+        boolean settingsChanged =
                 //!connectionConfig.getProperties().equals(propertiesEditorForm.getProperties()) ||
                 !CommonUtil.safeEqual(configuration.getDriverLibrary(), driverLibraryTextField.getText()) ||
                 !CommonUtil.safeEqual(databaseInfo.getHost(), hostTextField.getText()) ||
