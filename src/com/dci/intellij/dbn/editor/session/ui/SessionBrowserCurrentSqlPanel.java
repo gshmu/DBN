@@ -96,7 +96,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
                 Project project = sessionBrowser.getProject();
 
                 BackgroundTask.invoke(project,
-                        TaskInstructions.create("Loading session current SQL", TaskInstruction.BACKGROUNDED),
+                        TaskInstructions.create("Loading session current SQL", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
                         (data, progress) -> {
                             ConnectionHandler connectionHandler = getConnectionHandler();
                             DBSchema schema = null;
