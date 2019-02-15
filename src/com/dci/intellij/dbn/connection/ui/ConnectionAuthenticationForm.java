@@ -30,7 +30,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
     public ConnectionAuthenticationForm(@NotNull final ConnectionAuthenticationDialog parentComponent, final @Nullable ConnectionHandler connectionHandler) {
         super(parentComponent);
 
-        final AuthenticationInfo authenticationInfo = parentComponent.getAuthenticationInfo();
+        AuthenticationInfo authenticationInfo = parentComponent.getAuthenticationInfo();
 
         String user = authenticationInfo.getUser();
         if (StringUtil.isNotEmpty(user)) {

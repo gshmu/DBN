@@ -96,14 +96,15 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
     @Override
     public void readConfiguration(Element element) {
         user = getString(element, "user", user);
-        password = PasswordUtil.decodePassword(getString(element, "password", null));
-
-        // old storage fallback
         DatabaseCredentialManager credentialManager = DatabaseCredentialManager.getInstance();
+        password = credentialManager.getPassword(getConnectionId(), user);
+
+        // old storage fallback - TODO cleanup
         if (StringUtil.isEmpty(password)) {
-            password = credentialManager.getPassword(getConnectionId(), user, false);
-        } else if (!temporary && !isTransitory()){
-            credentialManager.setPassword(getConnectionId(), user, password, true);
+            password = PasswordUtil.decodePassword(getString(element, "password", null));
+            if (StringUtil.isNotEmpty(password)) {
+                credentialManager.setPassword(getConnectionId(), user, password);
+            }
         }
 
         emptyPassword = getBoolean(element, "empty-password", emptyPassword);
@@ -130,8 +131,8 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
         return authenticationInfo;
     }
 
-    public void updateKeyChain(String oldUserName, String oldPassword, boolean temporary) {
-        if (supported) {
+    public void updateKeyChain(String oldUserName, String oldPassword) {
+        if (supported && !temporary) {
             oldUserName = nvl(oldUserName);
             oldPassword = nvl(oldPassword);
 
@@ -143,7 +144,7 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
                 ConnectionId connectionId = getConnectionId();
                 credentialManager.removePassword(connectionId, oldUserName);
                 if (StringUtil.isNotEmpty(newUserName) && StringUtil.isNotEmpty(newPassword)) {
-                    credentialManager.setPassword(connectionId, newUserName, newPassword, temporary);
+                    credentialManager.setPassword(connectionId, newUserName, newPassword);
                 }
             }
         }
