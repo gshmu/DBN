@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.latent;
 
-public abstract class RecursiveLatent<T> extends Latent<T>{
+abstract class RecursiveLatent<T> extends BasicLatent<T> {
     private RecursiveLatent() {
         super();
     }

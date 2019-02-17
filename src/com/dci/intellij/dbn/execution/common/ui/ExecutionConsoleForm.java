@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
-import com.dci.intellij.dbn.common.latent.DisposableLatent;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -65,7 +64,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     private JPanel mainPanel;
     //private Map<Component, ExecutionResult> executionResultsMap = new HashMap<Component, ExecutionResult>();
     private TabbedPane resultTabs;
-    private Latent<ExecutionMessagesPanel> executionMessagesPanel = DisposableLatent.create(this, () -> new ExecutionMessagesPanel(ExecutionConsoleForm.this));
+    private Latent<ExecutionMessagesPanel> executionMessagesPanel = Latent.disposable(this, () -> new ExecutionMessagesPanel(ExecutionConsoleForm.this));
 
     private boolean canScrollToSource;
 

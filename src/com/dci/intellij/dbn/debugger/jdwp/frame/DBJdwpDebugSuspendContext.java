@@ -8,7 +8,7 @@ public class DBJdwpDebugSuspendContext extends XSuspendContext{
     private DBJdwpDebugProcess debugProcess;
     private XSuspendContext underlyingContext;
 
-    private Latent<DBJdwpDebugExecutionStack> executionStack = Latent.create(() -> new DBJdwpDebugExecutionStack(DBJdwpDebugSuspendContext.this));
+    private Latent<DBJdwpDebugExecutionStack> executionStack = Latent.basic(() -> new DBJdwpDebugExecutionStack(DBJdwpDebugSuspendContext.this));
 
     public DBJdwpDebugSuspendContext(DBJdwpDebugProcess debugProcess, XSuspendContext underlyingContext) {
         this.debugProcess = debugProcess;

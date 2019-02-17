@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 public abstract class ElementTypeLookupCacheBase<T extends ElementType> implements ElementTypeLookupCache<T> {
-    private Latent<Set<TokenType>> nextPossibleTokens = Latent.create(() -> computeNextPossibleTokens());
+    private Latent<Set<TokenType>> nextPossibleTokens = Latent.basic(() -> computeNextPossibleTokens());
     protected T elementType;
 
     ElementTypeLookupCacheBase(T elementType) {

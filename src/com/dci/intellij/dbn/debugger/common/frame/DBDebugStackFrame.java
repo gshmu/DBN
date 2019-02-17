@@ -53,10 +53,10 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
     private int frameIndex;
     private Map<String, V> valuesMap;
 
-    private Latent<VirtualFile> virtualFile = Latent.create(this::resolveVirtualFile);
-    private Latent<XSourcePosition> sourcePosition = Latent.create(this::resolveSourcePosition);
+    private Latent<VirtualFile> virtualFile = Latent.basic(this::resolveVirtualFile);
+    private Latent<XSourcePosition> sourcePosition = Latent.basic(this::resolveSourcePosition);
 
-    private Latent<IdentifierPsiElement> subject = Latent.create(() -> {
+    private Latent<IdentifierPsiElement> subject = Latent.basic(() -> {
         Project project = getDebugProcess().getProject();
         XSourcePosition sourcePosition = getSourcePosition();
         VirtualFile virtualFile = getVirtualFile();

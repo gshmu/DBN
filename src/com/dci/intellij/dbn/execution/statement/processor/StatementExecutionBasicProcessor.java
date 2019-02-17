@@ -88,7 +88,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     private StatementExecutionResult executionResult;
     protected int index;
 
-    private Latent<String> resultName = Latent.create(() -> {
+    private Latent<String> resultName = Latent.basic(() -> {
         String resultName = null;
         ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
         if (executablePsiElement!= null) {

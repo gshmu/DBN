@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiElement;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -19,7 +20,6 @@ import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.QuoteDefinition;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
@@ -68,7 +68,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     private DBVirtualObject underlyingObject;
     private FormattingAttributes formattingAttributes;
 
-    private WeakRef<BasePsiElement> enclosingScopePsiElement;
+    private Latent<BasePsiElement> enclosingScopePsiElement = Latent.weak(() -> findEnclosingScopePsiElement());
 
     public enum MatchType {
         STRONG,
@@ -571,11 +571,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
     @Nullable
     public BasePsiElement getEnclosingScopePsiElement() {
-        if (this.enclosingScopePsiElement == null) {
-            BasePsiElement enclosingScopePsiElement = findEnclosingScopePsiElement();
-            this.enclosingScopePsiElement = WeakRef.from(enclosingScopePsiElement);
-        }
-        return enclosingScopePsiElement == null ? null : enclosingScopePsiElement.get();
+        return enclosingScopePsiElement.get();
     }
 
     @Nullable

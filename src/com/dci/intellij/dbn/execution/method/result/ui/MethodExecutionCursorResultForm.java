@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.common.latent.DisposableLatent;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -38,7 +37,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
     private ResultSetTable resultTable;
     private MethodExecutionResult executionResult;
 
-    private Latent<DataSearchComponent> dataSearchComponent = DisposableLatent.create(this, () -> {
+    private Latent<DataSearchComponent> dataSearchComponent = Latent.disposable(this, () -> {
         DataSearchComponent dataSearchComponent = new DataSearchComponent(MethodExecutionCursorResultForm.this);
         searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
         ActionUtil.registerDataProvider(dataSearchComponent.getSearchField(), executionResult);

@@ -46,7 +46,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     private ConnectionHandlerRef ref;
     private DBObjectBundle objectBundle;
     private ConnectionInstructions instructions = new ConnectionInstructions();
-    private Latent<ConnectionSettings> connectionSettings = Latent.create(() -> {
+    private Latent<ConnectionSettings> connectionSettings = Latent.basic(() -> {
         ConnectionBundleSettings connectionBundleSettings = ConnectionBundleSettings.getInstance(project);
         return new ConnectionSettings(connectionBundleSettings);
     });

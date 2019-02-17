@@ -3,9 +3,7 @@ package com.dci.intellij.dbn.data.model.basic;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.latent.DisposableLatent;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.ThreadLocalLatent;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableListImpl;
 import com.dci.intellij.dbn.common.locale.Formatter;
@@ -44,22 +42,22 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
     private List<T> rows = new ArrayList<>();
     private Project project;
     private Filter<T> filter;
-    private ThreadLocalLatent<Formatter> formatter;
+    private Latent<Formatter> formatter;
     private boolean isEnvironmentReadonly;
 
     private RegionalSettingsListener regionalSettingsListener = new RegionalSettingsListener() {
         @Override
         public void settingsChanged() {
-            formatter = ThreadLocalLatent.create(() -> Formatter.getInstance(project).clone());
+            formatter = Latent.thread(() -> Formatter.getInstance(project).clone());
         }
     };
 
-    private Latent<BasicDataGutterModel> listModel = DisposableLatent.create(this, () -> new BasicDataGutterModel(BasicDataModel.this));
-    private Latent<DataSearchResult> searchResult = DisposableLatent.create(this, DataSearchResult::new);
+    private Latent<BasicDataGutterModel> listModel = Latent.disposable(this, () -> new BasicDataGutterModel(BasicDataModel.this));
+    private Latent<DataSearchResult> searchResult = Latent.disposable(this, DataSearchResult::new);
 
     public BasicDataModel(Project project) {
         this.project = project;
-        formatter = ThreadLocalLatent.create(() -> Formatter.getInstance(project).clone());
+        formatter = Latent.thread(() -> Formatter.getInstance(project).clone());
         EventUtil.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
     }
 

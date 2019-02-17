@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class DefaultProjectSettingsManager implements ApplicationComponent, PersistentStateComponent<Element> {
-    private Latent<ProjectSettings> defaultProjectSettings = Latent.create(() -> {
+    private Latent<ProjectSettings> defaultProjectSettings = Latent.basic(() -> {
         ProjectManager projectManager = ProjectManager.getInstance();
         Project defaultProject = projectManager.getDefaultProject();
         return new ProjectSettings(defaultProject);

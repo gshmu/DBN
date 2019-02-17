@@ -26,7 +26,7 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
     private TokenElementType[] separatorTokens;
     private int[] elementsCountVariants;
     private int minIterations;
-    private Latent<Boolean> followedBySeparator = Latent.create(() -> {
+    private Latent<Boolean> followedBySeparator = Latent.basic(() -> {
         TokenElementType[] separatorTokens = getSeparatorTokens();
         if (separatorTokens != null) {
             Set<TokenType> nextPossibleTokens = getLookupCache().getNextPossibleTokens();

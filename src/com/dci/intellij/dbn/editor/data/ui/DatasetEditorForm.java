@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.editor.data.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.latent.DisposableLatent;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
@@ -55,7 +54,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     private DatasetEditorTable datasetEditorTable;
     private DatasetEditor datasetEditor;
 
-    private Latent<DataSearchComponent> dataSearchComponent = DisposableLatent.create(this, () -> {
+    private Latent<DataSearchComponent> dataSearchComponent = Latent.disposable(this, () -> {
         DataSearchComponent dataSearchComponent = new DataSearchComponent(DatasetEditorForm.this);
         searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
         ActionUtil.registerDataProvider(dataSearchComponent.getSearchField(), getDatasetEditor());
