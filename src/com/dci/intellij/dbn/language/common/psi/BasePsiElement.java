@@ -68,7 +68,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     private DBVirtualObject underlyingObject;
     private FormattingAttributes formattingAttributes;
 
-    private Latent<BasePsiElement> enclosingScopePsiElement = Latent.weak(() -> findEnclosingScopePsiElement());
+    private Latent<BasePsiElement> enclosingScopePsiElement = Latent.basic(() -> findEnclosingScopePsiElement());
 
     public enum MatchType {
         STRONG,
