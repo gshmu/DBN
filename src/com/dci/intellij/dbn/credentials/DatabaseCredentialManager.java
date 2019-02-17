@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DatabaseCredentialManager implements BaseComponent {
+    public static boolean USE = false;
 
     public static DatabaseCredentialManager getInstance() {
         return ApplicationManager.getApplication().getComponent(DatabaseCredentialManager.class);
