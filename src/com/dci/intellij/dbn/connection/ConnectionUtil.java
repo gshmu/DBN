@@ -165,7 +165,7 @@ public class ConnectionUtil {
             trace(this);
             ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
             try {
-                final Properties properties = new Properties();
+                Properties properties = new Properties();
 
                 // AUTHENTICATION
                 AuthenticationInfo authenticationInfo = databaseSettings.getAuthenticationInfo();
