@@ -3,15 +3,18 @@ package com.dci.intellij.dbn.object.common;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.language.common.PsiElementRef;
 import com.dci.intellij.dbn.navigation.psi.DBObjectPsiDirectory;
 import com.dci.intellij.dbn.navigation.psi.DBObjectPsiFile;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 
 public final class DBObjectPsiFacade extends DisposableBase {
     private DBObjectRef objectRef;
+    private PsiElementRef<PsiElement> psiElementRef;
 
     private Latent<PsiFile> psiFile = Latent.basic(() -> new DBObjectPsiFile(objectRef));
     private Latent<PsiElement> psiElement = Latent.basic(() -> new DBObjectPsiElement(objectRef));
@@ -20,8 +23,8 @@ public final class DBObjectPsiFacade extends DisposableBase {
     public DBObjectPsiFacade() {
     }
 
-    public DBObjectPsiFacade(PsiElement psiElement) {
-        this.psiElement.set(psiElement);
+    public DBObjectPsiFacade(@NotNull PsiElement psiElement) {
+        psiElementRef = PsiElementRef.from(psiElement);
     }
 
     public DBObjectPsiFacade(DBObjectRef objectRef) {
@@ -33,7 +36,7 @@ public final class DBObjectPsiFacade extends DisposableBase {
     }
 
     public PsiElement getPsiElement() {
-        return psiElement.get();
+        return psiElementRef == null ? psiElement.get() : PsiElementRef.get(psiElementRef);
     }
 
     public PsiDirectory getPsiDirectory() {
