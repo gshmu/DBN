@@ -1,14 +1,15 @@
 package com.dci.intellij.dbn.common.latent;
 
-public abstract class Latent<T> {
-    private T value;
-    private boolean loaded;
-    protected boolean loading;
+import com.intellij.openapi.Disposable;
 
-    Latent() {}
+public interface Latent<T> {
+    T get();
+    void set(T value);
+    void reset();
+    boolean loaded();
 
-    public static <T> Latent<T> create(Loader<T> loader) {
-        return new Latent<T>() {
+    static <T> BasicLatent<T> basic(Loader<T> loader) {
+        return new BasicLatent<T>() {
             @Override
             public Loader<T> getLoader() {
                 return loader;
@@ -16,52 +17,40 @@ public abstract class Latent<T> {
         };
     }
 
-    public final T get() {
-        if (shouldLoad()) {
-            synchronized (this) {
-                if (shouldLoad()) {
-                    try {
-                        loading = true;
-                        loading();
-                        T newValue = getLoader().load();
-                        if (value != newValue) {
-                            value = newValue;
-                        }
-                        loaded(newValue);
-                    } finally {
-                        loading = false;
-                    }
-                }
+    static <T extends Disposable, P extends Disposable> DisposableLatent<T, P> disposable(P parent, Loader<T> loader) {
+        return new DisposableLatent<T, P>(parent) {
+            @Override
+            public Loader<T> getLoader() {
+                return loader;
             }
-        }
-        return value;
+        };
     }
 
-    public abstract Loader<T> getLoader();
+    static <T, M> MutableLatent<T, M> mutable(Loader<M> mutableLoader, Loader<T> loader) {
+        return new MutableLatent<T, M>() {
+            @Override
+            public Loader<T> getLoader() {
+                return loader;
+            }
 
-    protected void loading(){};
-
-    protected boolean shouldLoad() {
-        return !loaded;
+            @Override
+            protected Loader<M> getMutableLoader() {
+                return mutableLoader;
+            }
+        };
     }
 
-    public final void set(T value) {
-        this.value = value;
-        loaded = true;
+    static <T> WeakRefLatent<T> weak(Loader<T> loader) {
+        return new WeakRefLatent<T>() {
+            @Override
+            public Loader<T> getLoader() {
+                return loader;
+            }
+        };
     }
 
-    public final boolean loaded() {
-        return loaded;
+    public static <T> ThreadLocalLatent<T> thread(Loader<T> loader) {
+        return new ThreadLocalLatent<T>(loader){};
     }
-
-    public void loaded(T value) {
-        loaded = true;
-    }
-
-    public void reset() {
-        value = null;
-        loaded = false;
-    }
-
 
 }

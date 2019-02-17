@@ -109,7 +109,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     private DBObjectList<DBObjectPrivilege> objectPrivileges;
     private DBObjectList<DBCharset> charsets;
 
-    private Latent<List<DBNativeDataType>> nativeDataTypes = Latent.create(() -> computeNativeDataTypes());
+    private Latent<List<DBNativeDataType>> nativeDataTypes = Latent.basic(() -> computeNativeDataTypes());
     private List<DBDataType> cachedDataTypes = CollectionUtil.createConcurrentList();
 
     private DBObjectListContainer objectLists;

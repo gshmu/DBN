@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataEditorQualifiedEditorSettings extends BasicConfiguration<DataEditorSettings, DataEditorQualifiedEditorSettingsForm> {
-    private Latent<List<TextContentType>> contentTypes = Latent.create(() -> {
+    private Latent<List<TextContentType>> contentTypes = Latent.basic(() -> {
         List<TextContentType> contentTypes = new ArrayList<>();
         createContentType("Text", "PLAIN_TEXT", contentTypes);
         createContentType("Properties", "Properties", contentTypes);

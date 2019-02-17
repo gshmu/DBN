@@ -28,7 +28,7 @@ public abstract class ExecutionInput extends DisposableBase implements Disposabl
     protected ConnectionHandlerRef targetConnectionRef;
     protected DBObjectRef<DBSchema> targetSchemaRef;
 
-    private Latent<ExecutionContext> executionContext = Latent.create(this::createExecutionContext);
+    private Latent<ExecutionContext> executionContext = Latent.basic(() -> createExecutionContext());
 
     @NotNull
     public final ExecutionContext getExecutionContext() {

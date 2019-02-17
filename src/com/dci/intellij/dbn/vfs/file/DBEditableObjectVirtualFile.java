@@ -48,7 +48,7 @@ import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
 public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObject> {
     private static final List<DBContentVirtualFile> EMPTY_CONTENT_FILES = Collections.emptyList();
-    private Latent<List<DBContentVirtualFile>> contentFiles = Latent.create(() -> computeContentFiles());
+    private Latent<List<DBContentVirtualFile>> contentFiles = Latent.basic(() -> computeContentFiles());
     private transient EditorProviderId selectedEditorProviderId;
     private SessionId databaseSessionId;
 

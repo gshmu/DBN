@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.latent.DisposableLatent;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -44,7 +43,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     public static final String COMPONENT_NAME = "DBNavigator.Project.ExecutionManager";
 
     public static final String TOOL_WINDOW_ID = "DB Execution Console";
-    private Latent<ExecutionConsoleForm> executionConsoleForm = DisposableLatent.create(this, () -> new ExecutionConsoleForm(getProject()));
+    private Latent<ExecutionConsoleForm> executionConsoleForm = Latent.disposable(this, () -> new ExecutionConsoleForm(getProject()));
 
     private ExecutionManager(Project project) {
         super(project);

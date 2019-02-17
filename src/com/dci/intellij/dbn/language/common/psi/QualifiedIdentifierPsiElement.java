@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.MutableLatent;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
@@ -17,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class QualifiedIdentifierPsiElement extends SequencePsiElement {
-    private Latent<List<QualifiedIdentifierVariant>> parseVariants = MutableLatent.create(
+    private Latent<List<QualifiedIdentifierVariant>> parseVariants = Latent.mutable(
             () -> this.getElementsCount(),
             () -> this.buildParseVariants());
 

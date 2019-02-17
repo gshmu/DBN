@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.latent.DisposableLatent;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.thread.Synchronized;
@@ -60,7 +59,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private DatabaseConsoleBundle consoleBundle;
     private DatabaseSessionBundle sessionBundle;
     private Latent<DBSessionBrowserVirtualFile> sessionBrowserFile =
-            DisposableLatent.create(this, () -> new DBSessionBrowserVirtualFile(this));
+            Latent.disposable(this, () -> new DBSessionBrowserVirtualFile(this));
 
     private ConnectionInstructions instructions = new ConnectionInstructions();
 
@@ -68,7 +67,8 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private ConnectionHandlerRef ref;
     private ConnectionInfo connectionInfo;
     private Cache metaDataCache = new Cache(TimeUtil.ONE_MINUTE);
-    private Latent<AuthenticationInfo> temporaryAuthenticationInfo = Latent.create(() -> {
+
+    private Latent<AuthenticationInfo> temporaryAuthenticationInfo = Latent.basic(() -> {
         ConnectionDatabaseSettings databaseSettings = getSettings().getDatabaseSettings();
         return new AuthenticationInfo(databaseSettings, true);
     });
@@ -76,10 +76,10 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private MapLatent<SessionId, StatementExecutionQueue> executionQueues =
             MapLatent.create(key -> new StatementExecutionQueue(ConnectionHandlerImpl.this));
 
-    private Latent<DBConnectionPsiDirectory> psiDirectory = Latent.create(() -> new DBConnectionPsiDirectory(this));
+    private Latent<DBConnectionPsiDirectory> psiDirectory = Latent.basic(() -> new DBConnectionPsiDirectory(this));
 
     private Latent<DBObjectBundle> objectBundle =
-            DisposableLatent.create(this, () -> new DBObjectBundleImpl(this, connectionBundle));
+            Latent.disposable(this, () -> new DBObjectBundleImpl(this, connectionBundle));
 
 
     ConnectionHandlerImpl(ConnectionBundle connectionBundle, ConnectionSettings connectionSettings) {

@@ -25,9 +25,9 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
     private long childrenComputed = 0;
     private JavaStackFrame underlyingFrame;
 
-    private Latent<DBJdwpDebuggerEvaluator> evaluator = Latent.create(() -> new DBJdwpDebuggerEvaluator(DBJdwpDebugStackFrame.this));
+    private Latent<DBJdwpDebuggerEvaluator> evaluator = Latent.basic(() -> new DBJdwpDebuggerEvaluator(DBJdwpDebugStackFrame.this));
 
-    private Latent<Location> location = Latent.create(() -> underlyingFrame == null ? null : underlyingFrame.getDescriptor().getLocation());
+    private Latent<Location> location = Latent.basic(() -> underlyingFrame == null ? null : underlyingFrame.getDescriptor().getLocation());
 
     DBJdwpDebugStackFrame(DBJdwpDebugProcess debugProcess, JavaStackFrame underlyingFrame, int index) {
         super(debugProcess, index);

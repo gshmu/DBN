@@ -15,9 +15,9 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class DBLanguage<D extends DBLanguageDialect> extends Language implements DBFileElementTypeProvider {
 
-    private Latent<D[]> languageDialects = Latent.create(() -> createLanguageDialects());
     private SharedTokenTypeBundle sharedTokenTypes;
-    private Latent<IFileElementType> fileElementType = Latent.create(() -> createFileElementType(DBLanguage.this));
+    private Latent<D[]> languageDialects = Latent.basic(() -> createLanguageDialects());
+    private Latent<IFileElementType> fileElementType = Latent.basic(() -> createFileElementType(DBLanguage.this));
 
     protected DBLanguage(final @NonNls String id, final @NonNls String... mimeTypes){
         super(id, mimeTypes);
