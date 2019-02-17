@@ -139,10 +139,15 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
             String newUserName = nvl(user);
             String newPassword = nvl(password);
 
-            if (!CommonUtil.safeEqual(oldUserName, newUserName) || !CommonUtil.safeEqual(oldPassword, newPassword)) {
+            boolean userNameChanged = !CommonUtil.safeEqual(oldUserName, newUserName);
+            boolean passwordChanged = !CommonUtil.safeEqual(oldPassword, newPassword);
+            if (userNameChanged || passwordChanged) {
                 DatabaseCredentialManager credentialManager = DatabaseCredentialManager.getInstance();
                 ConnectionId connectionId = getConnectionId();
-                credentialManager.removePassword(connectionId, oldUserName);
+
+                if (userNameChanged) {
+                    credentialManager.removePassword(connectionId, oldUserName);
+                }
                 if (StringUtil.isNotEmpty(newUserName) && StringUtil.isNotEmpty(newPassword)) {
                     credentialManager.setPassword(connectionId, newUserName, newPassword);
                 }
