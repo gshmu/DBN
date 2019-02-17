@@ -13,9 +13,9 @@ import com.intellij.psi.PsiFile;
 public final class DBObjectPsiFacade extends DisposableBase {
     private DBObjectRef objectRef;
 
-    private Latent<PsiFile> psiFile = Latent.weak(() -> new DBObjectPsiFile(objectRef));
-    private Latent<PsiElement> psiElement = Latent.weak(() -> new DBObjectPsiElement(objectRef));
-    private Latent<PsiDirectory> psiDirectory = Latent.weak(() -> new DBObjectPsiDirectory(objectRef));
+    private Latent<PsiFile> psiFile = Latent.basic(() -> new DBObjectPsiFile(objectRef));
+    private Latent<PsiElement> psiElement = Latent.basic(() -> new DBObjectPsiElement(objectRef));
+    private Latent<PsiDirectory> psiDirectory = Latent.basic(() -> new DBObjectPsiDirectory(objectRef));
 
     public DBObjectPsiFacade() {
     }
