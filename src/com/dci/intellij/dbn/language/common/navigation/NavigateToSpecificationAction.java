@@ -4,9 +4,10 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import org.jetbrains.annotations.NotNull;
 
 public class NavigateToSpecificationAction extends NavigationAction{
-    public NavigateToSpecificationAction(DBObject parentObject, BasePsiElement navigationElement, DBObjectType objectType) {
+    public NavigateToSpecificationAction(DBObject parentObject, @NotNull BasePsiElement navigationElement, @NotNull DBObjectType objectType) {
         super("Go to " + objectType.getName() + " Specification", Icons.NAVIGATION_GO_TO_SPEC, parentObject, navigationElement);
     }
 }

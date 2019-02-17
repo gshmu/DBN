@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.property.BasicProperty;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -13,6 +14,8 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.PsiElementRef;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -72,8 +75,8 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     private static final ObjectReferenceLookupAdapter DATASET_LOOKUP_ADAPTER = new ObjectReferenceLookupAdapter(null, DBObjectType.DATASET, null);
 
     private DBObjectType objectType;
-    private BasePsiElement relevantPsiElement;
     private boolean loadingChildren;
+    private WeakRef<BasePsiElement> relevantPsiElement;
     private DBObjectPsiFacade psiFacade;
     private MapLatent<DBLanguage, ObjectLookupItemBuilder> lookupItemBuilder = MapLatent.create(key -> new ObjectLookupItemBuilder(getRef(), key));
 
@@ -84,6 +87,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                 if (objectType == DBObjectType.DATASET) {
                     return true;
                 }
+                BasePsiElement relevantPsiElement = getRelevantPsiElement();
                 if (getName().equalsIgnoreCase(relevantPsiElement.getText())) {
                     if (relevantPsiElement instanceof IdentifierPsiElement) {
                         IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) relevantPsiElement;
@@ -100,7 +104,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         super(psiElement.getConnectionHandler(), psiElement.getText());
 
         psiFacade = new DBObjectPsiFacade(psiElement);
-        relevantPsiElement = psiElement;
+        relevantPsiElement = PsiElementRef.from(psiElement);
         this.objectType = objectType;
         String name = "";
 
@@ -114,13 +118,13 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
             }
 
             if (relevantPsiElement != null) {
-                this.relevantPsiElement = relevantPsiElement;
+                this.relevantPsiElement = PsiElementRef.from(relevantPsiElement);
                 name = relevantPsiElement.getText();
             }
         } else if (objectType == DBObjectType.TYPE || objectType == DBObjectType.TYPE_ATTRIBUTE || objectType == DBObjectType.CURSOR) {
             BasePsiElement relevantPsiElement = psiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
             if (relevantPsiElement != null) {
-                this.relevantPsiElement = relevantPsiElement;
+                this.relevantPsiElement = PsiElementRef.from(relevantPsiElement);
                 name = relevantPsiElement.getText();
             }
         } else if (objectType == DBObjectType.DATASET) {
@@ -162,6 +166,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         return psiFacade;
     }
 
+    @NotNull
     public LookupItemBuilder getLookupItemBuilder(DBLanguage language) {
         return lookupItemBuilder.get(language);
     }
@@ -327,6 +332,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         PsiFile containingFile = getContainingFile();
         if (containingFile != null) {
             VirtualFile virtualFile = containingFile.getVirtualFile();
+            BasePsiElement relevantPsiElement = getRelevantPsiElement();
             if(virtualFile instanceof DBContentVirtualFile) {
                 Document document = DocumentUtil.getDocument(containingFile);
                 Editor[] editors =  EditorFactory.getInstance().getEditors(document);
@@ -341,17 +347,20 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     
     @Override
     public PsiFile getContainingFile() throws PsiInvalidElementAccessException {
+        BasePsiElement relevantPsiElement = getRelevantPsiElement();
         return relevantPsiElement.isValid() ? relevantPsiElement.getContainingFile() : null;
     }
 
     /*********************************************************
      *                       PsiReference                    *
      *********************************************************/
+    @NotNull
     @Override
     public PsiElement getElement() {
-        return null;
+        return getRelevantPsiElement();
     }
 
+    @NotNull
     @Override
     public TextRange getRangeInElement() {
         return new TextRange(0, getName().length());
@@ -366,8 +375,10 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         return (BasePsiElement) getPsiFacade().getPsiElement();
     }
 
-    public BasePsiElement getRelevantPsiElement() {
-        return relevantPsiElement;
+    @NotNull
+    private BasePsiElement getRelevantPsiElement() {
+        BasePsiElement basePsiElement = PsiElementRef.get(relevantPsiElement);
+        return Failsafe.get(basePsiElement);
     }
 
     @Override
@@ -377,7 +388,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     }
 
     @Override
-    public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+    public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
         return null;
     }
 
@@ -387,7 +398,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     }
 
     @Override
-    public boolean isReferenceTo(PsiElement element) {
+    public boolean isReferenceTo(@NotNull PsiElement element) {
         return getUnderlyingPsiElement() == element;
     }
 

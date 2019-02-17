@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.database.common;
 
 import com.dci.intellij.dbn.common.cache.Cache;
-import com.dci.intellij.dbn.common.latent.ThreadLocalLatent;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 
 public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImpl implements DatabaseMetadataInterface {
-    protected static final ThreadLocalLatent<SimpleDateFormat> META_DATE_FORMAT = ThreadLocalLatent.create(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+    protected static final Latent<SimpleDateFormat> META_DATE_FORMAT = Latent.thread(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 
     public DatabaseMetadataInterfaceImpl(String fileName, DatabaseInterfaceProvider provider) {
         super(fileName, provider);

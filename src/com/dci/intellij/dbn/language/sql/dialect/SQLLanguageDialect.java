@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class SQLLanguageDialect extends DBLanguageDialect {
-    private Latent<ChameleonElementType> psqlChameleonElementType = Latent.create(() -> {
+    private Latent<ChameleonElementType> psqlChameleonElementType = Latent.basic(() -> {
 
         DBLanguageDialectIdentifier chameleonDialectIdentifier = getChameleonDialectIdentifier();
         if (chameleonDialectIdentifier != null) {

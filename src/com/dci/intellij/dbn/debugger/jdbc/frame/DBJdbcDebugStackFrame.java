@@ -19,7 +19,7 @@ import java.util.Set;
 
 public class DBJdbcDebugStackFrame extends DBDebugStackFrame<DBJdbcDebugProcess, DBJdbcDebugValue> {
     private DebuggerRuntimeInfo runtimeInfo;
-    private Latent<DBJdbcDebuggerEvaluator> evaluator = Latent.create(() -> new DBJdbcDebuggerEvaluator(DBJdbcDebugStackFrame.this));
+    private Latent<DBJdbcDebuggerEvaluator> evaluator = Latent.basic(() -> new DBJdbcDebuggerEvaluator(DBJdbcDebugStackFrame.this));
 
     DBJdbcDebugStackFrame(DBJdbcDebugProcess debugProcess, DebuggerRuntimeInfo runtimeInfo, int index) {
         super(debugProcess, index);

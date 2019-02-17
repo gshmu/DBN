@@ -21,7 +21,7 @@ public class DBJdwpDebugExecutionStack extends XExecutionStack {
     private DBJdwpDebugSuspendContext suspendContext;
     private List<DBJdwpDebugStackFrame> stackFrames = CollectionUtil.createConcurrentList();
 
-    private Latent<DBJdwpDebugStackFrame> topStackFrame = Latent.create(() -> {
+    private Latent<DBJdwpDebugStackFrame> topStackFrame = Latent.basic(() -> {
         XExecutionStack underlyingStack = getUnderlyingStack();
         XStackFrame topFrame = underlyingStack == null ? null : underlyingStack.getTopFrame();
         return getFrame((JavaStackFrame) topFrame);

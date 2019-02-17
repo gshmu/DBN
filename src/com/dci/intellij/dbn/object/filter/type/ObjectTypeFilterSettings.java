@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ObjectTypeFilterSettings extends BasicProjectConfiguration<ProjectConfiguration, ObjectTypeFilterSettingsForm> {
-    private Latent<List<ObjectTypeFilterSetting>> objectTypeFilterSettings = Latent.create(() -> {
+    private Latent<List<ObjectTypeFilterSetting>> objectTypeFilterSettings = Latent.basic(() -> {
         List<ObjectTypeFilterSetting> objectTypeFilterSettings = new ArrayList<>();
         objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.SCHEMA));
         objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.USER));

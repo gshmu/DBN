@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 public class ObjectsLookupSettings extends BasicProjectConfiguration<NavigationSettings, ObjectsLookupSettingsForm> {
-    private Latent<List<ObjectTypeEntry>> lookupObjectTypes = Latent.create(() -> createLookupObjectTypes());
+    private Latent<List<ObjectTypeEntry>> lookupObjectTypes = Latent.basic(() -> createLookupObjectTypes());
 
     private Set<DBObjectType> fastLookupObjectTypes;
     private BooleanSetting forceDatabaseLoad = new BooleanSetting("force-database-load", false);
