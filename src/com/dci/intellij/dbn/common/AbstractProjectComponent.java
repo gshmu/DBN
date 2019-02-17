@@ -40,6 +40,35 @@ public abstract class AbstractProjectComponent extends SettingsSupport implement
     }
 
     /***********************************************
+     *            ApplicationListener              *
+     ***********************************************/
+
+    @Override
+    public boolean canExitApplication() {
+        return true;
+    }
+
+    @Override
+    public void applicationExiting() {
+    }
+
+    @Override
+    public void beforeWriteActionStart(@NotNull Object action) {
+    }
+
+    @Override
+    public void writeActionStarted(@NotNull Object action) {
+    }
+
+    @Override
+    public void writeActionFinished(@NotNull Object action) {
+    }
+
+    @Override
+    public void afterWriteActionFinished(@NotNull Object action) {
+    }
+
+    /***********************************************
      *            ProjectManagerListener           *
      ***********************************************/
     @Override
