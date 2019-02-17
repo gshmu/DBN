@@ -301,6 +301,20 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
         }
     }
 
+    public TableColumn getColumnByName(String columnName) {
+        TableColumnModel columnModel = getColumnModel();
+        int columnCount = columnModel.getColumnCount();
+        for (int i=0; i < columnCount; i++) {
+            TableColumn column = columnModel.getColumn(i);
+            Object modelColumnIdentifier = column.getIdentifier();
+            String modelColumnName = modelColumnIdentifier == null ? null : modelColumnIdentifier.toString();
+            if (columnName.equalsIgnoreCase(modelColumnName)) {
+                return column;
+            }
+        }
+        return null;
+    }
+
     @Override
     public void createDefaultColumnsFromModel() {
         TableModel tableModel = getModel();
