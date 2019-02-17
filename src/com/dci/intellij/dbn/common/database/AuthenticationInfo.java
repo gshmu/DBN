@@ -139,7 +139,7 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
     }
 
     public void updateKeyChain(String oldUserName, String oldPassword) {
-        if (supported && !temporary) {
+        if (supported && !temporary && DatabaseCredentialManager.USE) {
             oldUserName = nvl(oldUserName);
             oldPassword = nvl(oldPassword);
 
