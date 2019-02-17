@@ -118,9 +118,11 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         for (DatasetColumnState columnState : datasetEditor.getColumnSetup().getColumnStates()) {
 
             if (!columnState.isVisible() || !trackingColumnSettings.isColumnVisible(columnState.getName())) {
-                int columnIndex = columnState.getPosition();
-                TableColumn tableColumn = datasetEditorTable.getColumnModel().getColumn(columnIndex);
-                hiddenColumns.add(tableColumn);
+                String columnName = columnState.getName();
+                TableColumn tableColumn = datasetEditorTable.getColumnByName(columnName);
+                if (tableColumn != null) {
+                    hiddenColumns.add(tableColumn);
+                }
             }
         }
         for (TableColumn hiddenColumn : hiddenColumns) {
