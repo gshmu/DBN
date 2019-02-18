@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.language.editor.action;
 
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -56,10 +58,10 @@ public class SchemaSelectComboBoxAction extends DBNComboBoxAction implements Dum
             ConnectionHandler activeConnection = mappingManager.getConnectionHandler(virtualFile);
             visible = activeConnection != null && !activeConnection.isVirtual();
             if (visible) {
-                DBSchema schema = mappingManager.getDatabaseSchema(virtualFile);
+                SchemaId schema = mappingManager.getDatabaseSchema(virtualFile);
                 if (schema != null) {
                     text = schema.getName();
-                    icon = schema.getIcon();
+                    icon = Icons.DBO_SCHEMA;
                     enabled = true;
                 }
 

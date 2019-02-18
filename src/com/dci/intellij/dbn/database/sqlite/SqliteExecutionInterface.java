@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.database.sqlite;
 
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.database.CmdLineExecutionInput;
 import com.dci.intellij.dbn.database.common.DatabaseExecutionInterfaceImpl;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
@@ -25,7 +26,14 @@ public class SqliteExecutionInterface extends DatabaseExecutionInterfaceImpl {
     }
 
     @Override
-    public CmdLineExecutionInput createScriptExecutionInput(@NotNull CmdLineInterface cmdLineInterface, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo) {
+    public CmdLineExecutionInput createScriptExecutionInput(
+            @NotNull CmdLineInterface cmdLineInterface,
+            @NotNull String filePath,
+            String content,
+            @Nullable SchemaId schemaId,
+            @NotNull DatabaseInfo databaseInfo,
+            @NotNull AuthenticationInfo authenticationInfo) {
+
         CmdLineExecutionInput executionInput = new CmdLineExecutionInput(content);
 
         List<String> command = executionInput.getCommand();

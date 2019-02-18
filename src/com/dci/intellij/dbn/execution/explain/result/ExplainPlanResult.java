@@ -11,14 +11,13 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ResultSetUtil;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.explain.result.ui.ExplainPlanResultForm;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -40,7 +39,7 @@ public class ExplainPlanResult extends DisposableBase implements ExecutionResult
     private Date timestamp;
     private ExplainPlanEntry root;
     private ConnectionHandlerRef connectionHandlerRef;
-    private DBObjectRef<DBSchema> databaseSchemaRef;
+    private SchemaId currentSchema;
     private String statementText;
     private String resultName;
     private String errorMessage;
@@ -73,7 +72,7 @@ public class ExplainPlanResult extends DisposableBase implements ExecutionResult
         DBLanguagePsiFile psiFile = executablePsiElement.getFile();
         ConnectionHandler connectionHandler = Failsafe.get(psiFile.getConnectionHandler());
         connectionHandlerRef = connectionHandler.getRef();
-        databaseSchemaRef = DBObjectRef.from(psiFile.getDatabaseSchema());
+        currentSchema = psiFile.getSchemaId();
         virtualFile = psiFile.getVirtualFile();
         this.resultName = CommonUtil.nvl(executablePsiElement.createSubjectList(), "Explain Plan");
         this.errorMessage = errorMessage;
@@ -99,16 +98,22 @@ public class ExplainPlanResult extends DisposableBase implements ExecutionResult
         return ConnectionHandlerRef.getnn(connectionHandlerRef);
     }
 
-    public DBSchema getDatabaseSchema() {
-        return DBObjectRef.get(databaseSchemaRef);
+    public SchemaId getCurrentSchema() {
+        return currentSchema;
     }
 
     @Override
     public PsiFile createPreviewFile() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        DBSchema currentSchema = getDatabaseSchema();
+        SchemaId currentSchema = getCurrentSchema();
         DBLanguageDialect languageDialect = connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE);
-        return DBLanguagePsiFile.createFromText(getProject(), "preview", languageDialect, statementText, connectionHandler, currentSchema);
+        return DBLanguagePsiFile.createFromText(
+                getProject(),
+                "preview",
+                languageDialect,
+                statementText,
+                connectionHandler,
+                currentSchema);
     }
 
     @NotNull

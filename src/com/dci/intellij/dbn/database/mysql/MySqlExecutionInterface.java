@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.database.mysql;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.database.CmdLineExecutionInput;
 import com.dci.intellij.dbn.database.common.DatabaseExecutionInterfaceImpl;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
@@ -26,7 +27,14 @@ public class MySqlExecutionInterface extends DatabaseExecutionInterfaceImpl {
     }
 
     @Override
-    public CmdLineExecutionInput createScriptExecutionInput(@NotNull CmdLineInterface cmdLineInterface, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo) {
+    public CmdLineExecutionInput createScriptExecutionInput(
+            @NotNull CmdLineInterface cmdLineInterface,
+            @NotNull String filePath,
+            String content,
+            @Nullable SchemaId schemaId,
+            @NotNull DatabaseInfo databaseInfo,
+            @NotNull AuthenticationInfo authenticationInfo) {
+
         CmdLineExecutionInput executionInput = new CmdLineExecutionInput(content);
 
         List<String> command = executionInput.getCommand();
@@ -55,8 +63,8 @@ public class MySqlExecutionInterface extends DatabaseExecutionInterfaceImpl {
         //command.add("< " + filePath);
 
         StringBuilder contentBuilder = executionInput.getContent();
-        if (StringUtil.isNotEmpty(schema)) {
-            contentBuilder.insert(0, "use " + schema + ";\n");
+        if (schemaId != null) {
+            contentBuilder.insert(0, "use " + schemaId + ";\n");
         }
         //contentBuilder.append("\nexit;\n");
         return executionInput;

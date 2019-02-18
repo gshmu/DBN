@@ -26,6 +26,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -171,6 +172,10 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
             object = object.getParentObject();
         }
         return null;
+    }
+
+    public SchemaId getSchemaIdentifier() {
+        return SchemaId.from(getSchema());
     }
 
     @Override

@@ -152,7 +152,7 @@ public abstract class LeafPsiElement extends BasePsiElement implements PsiRefere
 
     private static Set<DBObject> addObjectToSet(Set<DBObject> objects, DBObject object) {
         if (object != null && !object.isDisposed()) {
-            if (objects == null) objects = new THashSet<DBObject>();
+            if (objects == null) objects = new THashSet<>();
             objects.add(object);
         }
         return objects;

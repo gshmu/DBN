@@ -41,4 +41,8 @@ public class QuotePair {
     public String replaceQuotes(String string, char character) {
         return string.replace(beginChar, character).replace(endChar, character);
     }
+
+    public String quote(String identifier) {
+        return beginChar + identifier + endChar;
+    }
 }

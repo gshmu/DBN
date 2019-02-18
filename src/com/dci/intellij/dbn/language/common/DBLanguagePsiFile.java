@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -246,7 +247,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
 
     @Override
     @Nullable
-    public DBSchema getDatabaseSchema() {
+    public SchemaId getSchemaId() {
         VirtualFile file = getVirtualFile();
         if (file != null) {
             FileConnectionMappingManager connectionMappingManager = getConnectionMappingManager();
@@ -255,7 +256,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         return null;
     }
 
-    public void setDatabaseSchema(DBSchema schema) {
+    public void setDatabaseSchema(SchemaId schema) {
         VirtualFile file = getVirtualFile();
         if (file != null) {
             FileConnectionMappingManager connectionMappingManager = getConnectionMappingManager();
@@ -365,7 +366,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         return connectionHandler == null ? ElementLookupContext.MAX_DB_VERSION : connectionHandler.getDatabaseVersion();
     }
 
-    public static DBLanguagePsiFile createFromText(Project project, String fileName, DBLanguageDialect languageDialect, String text, ConnectionHandler activeConnection, DBSchema currentSchema) {
+    public static DBLanguagePsiFile createFromText(Project project, String fileName, DBLanguageDialect languageDialect, String text, ConnectionHandler activeConnection, SchemaId currentSchema) {
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(project);
         DBLanguagePsiFile psiFile = (DBLanguagePsiFile) psiFileFactory.createFileFromText(fileName, languageDialect, text);
         psiFile.setConnectionHandler(activeConnection);

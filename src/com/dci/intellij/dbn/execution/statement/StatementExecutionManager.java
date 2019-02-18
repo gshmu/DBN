@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -43,7 +44,6 @@ import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -278,7 +278,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
             DBNConnection connection = null;
             try {
                 StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-                DBSchema schema = executionInput.getTargetSchema();
+                SchemaId schema = executionInput.getTargetSchemaId();
                 ConnectionHandler connectionHandler = Failsafe.get(executionProcessor.getConnectionHandler());
                 connection = connectionHandler.getConnection(executionInput.getTargetSessionId(), schema);
             } catch (SQLException e) {

@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.execution.ExecutionContext;
@@ -21,8 +22,6 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.ExecutableBundlePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -43,11 +42,11 @@ public class StatementExecutionInput extends LocalExecutionInput {
         super(executionProcessor.getProject(), ExecutionTarget.STATEMENT);
         this.executionProcessor = executionProcessor;
         ConnectionHandler connectionHandler = executionProcessor.getConnectionHandler();
-        DBSchema currentSchema = executionProcessor.getTargetSchema();
+        SchemaId currentSchema = executionProcessor.getTargetSchema();
         DatabaseSession targetSession = executionProcessor.getTargetSession();
 
         this.targetConnectionRef = ConnectionHandlerRef.from(connectionHandler);
-        this.targetSchemaRef = DBObjectRef.from(currentSchema);
+        this.targetSchemaId = currentSchema;
         this.setTargetSession(targetSession);
         this.originalStatementText = originalStatementText;
         this.executableStatementText = executableStatementText;
@@ -76,8 +75,8 @@ public class StatementExecutionInput extends LocalExecutionInput {
 
             @Nullable
             @Override
-            public DBSchema getTargetSchema() {
-                return StatementExecutionInput.this.getTargetSchema();
+            public SchemaId getTargetSchema() {
+                return StatementExecutionInput.this.getTargetSchemaId();
             }
         };
     }
@@ -107,7 +106,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
     public ExecutablePsiElement getExecutablePsiElement() {
         if (executablePsiElement == null) {
             ConnectionHandler connectionHandler = getConnectionHandler();
-            DBSchema currentSchema = getTargetSchema();
+            SchemaId currentSchema = getTargetSchemaId();
             if (connectionHandler != null) {
                 executablePsiElement = ReadActionRunner.invoke(false, () -> {
                     DBLanguageDialect languageDialect = executionProcessor.getPsiFile().getLanguageDialect();
@@ -145,12 +144,18 @@ public class StatementExecutionInput extends LocalExecutionInput {
 
     public PsiFile createPreviewFile() {
         ConnectionHandler activeConnection = getConnectionHandler();
-        DBSchema currentSchema = getTargetSchema();
+        SchemaId currentSchema = getTargetSchemaId();
         DBLanguageDialect languageDialect = activeConnection == null ?
                 SQLLanguage.INSTANCE.getMainLanguageDialect() :
                 activeConnection.getLanguageDialect(SQLLanguage.INSTANCE);
 
-        return DBLanguagePsiFile.createFromText(getProject(), "preview", languageDialect, executableStatementText, activeConnection, currentSchema);
+        return DBLanguagePsiFile.createFromText(
+                getProject(),
+                "preview",
+                languageDialect,
+                executableStatementText,
+                activeConnection,
+                currentSchema);
     }
 
     public StatementExecutionProcessor getExecutionProcessor() {

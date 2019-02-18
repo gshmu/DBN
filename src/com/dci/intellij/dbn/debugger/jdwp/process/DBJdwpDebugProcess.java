@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.debugger.DBDebugConsoleLogger;
@@ -243,8 +244,8 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                 T executionInput = getExecutionInput();
                 if (executionInput != null) {
                     ConnectionHandler connectionHandler = getConnectionHandler();
-                    DBSchema schema = executionInput.getExecutionContext().getTargetSchema();
-                    targetConnection = connectionHandler.getDebugConnection(schema);
+                    SchemaId schemaId = executionInput.getExecutionContext().getTargetSchema();
+                    targetConnection = connectionHandler.getDebugConnection(schemaId);
                     targetConnection.setAutoCommit(false);
                     DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                     debuggerInterface.initializeJdwpSession(targetConnection, Inet4Address.getLocalHost().getHostAddress(), String.valueOf(localTcpPort));

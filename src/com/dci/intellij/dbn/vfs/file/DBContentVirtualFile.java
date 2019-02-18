@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.ddl.DDLFileManager;
 import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -62,8 +63,9 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
 
     @Override
     @Nullable
-    public DBSchema getDatabaseSchema() {
-        return getObject().getSchema();
+    public SchemaId getSchemaId() {
+        DBSchema schema = getObject().getSchema();
+        return SchemaId.from(schema);
     }
 
     @NotNull

@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -87,19 +86,6 @@ public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettin
         @Override
         public String getName() {
             return name;
-        }
-
-        @Nullable
-        @Override
-        public String getDescription() {
-            return null;
-        }
-
-
-        @Nullable
-        @Override
-        public Icon getIcon() {
-            return null;
         }
 
         public boolean getValue() {
