@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.credentials;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.intellij.credentialStore.CredentialAttributes;
+import com.intellij.credentialStore.Credentials;
 import com.intellij.ide.passwordSafe.PasswordSafe;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.BaseComponent;
@@ -16,31 +18,35 @@ public class DatabaseCredentialManager implements BaseComponent {
     }
 
 
-    public void removePassword(ConnectionId connectionId, String userName) {
+    public void removePassword(@NotNull ConnectionId connectionId, @NotNull String userName) {
         setPassword(connectionId, userName, null);
     }
 
-    public void setPassword(ConnectionId connectionId, String userName, @Nullable String password) {
-        String serviceName = getConnectionServiceName(connectionId);
-        CredentialAttributes credentialAttributes = new CredentialAttributes(serviceName, userName, this.getClass(), false);
-        PasswordSafe.getInstance().setPassword(credentialAttributes, password);
+    public void setPassword(@NotNull ConnectionId connectionId, @NotNull String userName, @Nullable String password) {
+        CredentialAttributes credentialAttributes = createCredentialAttributes(connectionId, userName);
+        Credentials credentials = StringUtil.isEmpty(password) ? null : new Credentials(userName, password);
+
+        PasswordSafe passwordSafe = PasswordSafe.getInstance();
+        passwordSafe.set(credentialAttributes, credentials, false);
     }
 
     @Nullable
-    public String getPassword(ConnectionId connectionId, String userName) {
-        String serviceName = getConnectionServiceName(connectionId);
+    public String getPassword(@NotNull ConnectionId connectionId, @NotNull String userName) {
+        CredentialAttributes credentialAttributes = createCredentialAttributes(connectionId, userName);
+
         PasswordSafe passwordSafe = PasswordSafe.getInstance();
-        CredentialAttributes credentialAttributes = new CredentialAttributes(serviceName, userName, this.getClass(), false);
-        return passwordSafe.getPassword(credentialAttributes);
+        Credentials credentials = passwordSafe.get(credentialAttributes);
+        return credentials == null ? null : credentials.getPasswordAsString() ;
+    }
+
+    @NotNull
+    private CredentialAttributes createCredentialAttributes(ConnectionId connectionId, String userName) {
+        String serviceName = "DBNavigator.Connection." + connectionId;
+        return new CredentialAttributes(serviceName, userName, this.getClass(), false);
     }
 
     private boolean isMemoryStorage() {
         return PasswordSafe.getInstance().isMemoryOnly();
-    }
-
-    @NotNull
-    protected String getConnectionServiceName(ConnectionId connectionId) {
-        return "DBNavigator.Connection." + connectionId;
     }
 
     @Override
