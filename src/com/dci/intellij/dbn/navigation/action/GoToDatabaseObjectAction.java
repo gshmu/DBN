@@ -188,7 +188,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
 
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             DBSchema schema = getSchema();
             Project project = schema.getProject();
             showLookupPopup(e, project, schema.getConnectionHandler(), schema);

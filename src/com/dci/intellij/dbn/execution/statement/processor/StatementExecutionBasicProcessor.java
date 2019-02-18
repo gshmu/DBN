@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
@@ -132,7 +133,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Override
     public boolean isDirty(){
         if (getConnectionHandler() != executionInput.getConnectionHandler() || // connection changed since execution
-            getTargetSchema() != executionInput.getTargetSchema()) { // current schema changed since execution)
+            getTargetSchema() != executionInput.getTargetSchemaId()) { // current schema changed since execution)
             return true;
 
         } else {
@@ -254,7 +255,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             executionInput.setOriginalStatementText(cachedExecutable.getText());
             executionInput.setExecutableStatementText(cachedExecutable.prepareStatementText());
             executionInput.setConnectionHandler(getConnectionHandler());
-            executionInput.setTargetSchema(getTargetSchema());
+            executionInput.setTargetSchemaId(getTargetSchema());
             executionInput.setTargetSession(getTargetSession());
             executionInput.setBulkExecution(bulkExecution);
         }
@@ -372,7 +373,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     private void initConnection(ExecutionContext context, DBNConnection connection) throws SQLException {
         ConnectionHandler connectionHandler = getTargetConnection();
         if (connection == null) {
-            DBSchema schema = getTargetSchema();
+            SchemaId schema = getTargetSchema();
             connection = connectionHandler.getMainConnection(schema);
         }
         context.setConnection(connection);
@@ -638,8 +639,8 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     @Override
     @Nullable
-    public DBSchema getTargetSchema() {
-        return getPsiFile().getDatabaseSchema();
+    public SchemaId getTargetSchema() {
+        return getPsiFile().getSchemaId();
     }
 
     @Override
@@ -709,13 +710,17 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         if (isDataDefinitionStatement()) {
             IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
             if (subjectPsiElement != null) {
-                DBSchema currentSchema = getTargetSchema();
-                if (currentSchema != null) {
-                    DBObjectListContainer childObjects = currentSchema.getChildObjects();
-                    if (childObjects != null) {
-                        DBObjectList objectList = childObjects.getObjectList(subjectPsiElement.getObjectType());
-                        if (objectList != null) {
-                            return (DBSchemaObject) objectList.getObject(subjectPsiElement.getText());
+                SchemaId targetSchema = getTargetSchema();
+                ConnectionHandler connectionHandler = getConnectionHandler();
+                if (targetSchema != null && connectionHandler != null) {
+                    DBObject schemaObject = connectionHandler.getSchema(targetSchema);
+                    if (schemaObject != null) {
+                        DBObjectListContainer childObjects = schemaObject.getChildObjects();
+                        if (childObjects != null) {
+                            DBObjectList objectList = childObjects.getObjectList(subjectPsiElement.getObjectType());
+                            if (objectList != null) {
+                                return (DBSchemaObject) objectList.getObject(subjectPsiElement.getText());
+                            }
                         }
                     }
                 }
@@ -739,8 +744,10 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                 }
             }
         }
-        return getTargetSchema();
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        return connectionHandler == null ? null : connectionHandler.getSchema(getTargetSchema());
     }
+
 
     @Nullable
     private IdentifierPsiElement getSubjectPsiElement() {

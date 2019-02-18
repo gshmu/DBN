@@ -31,6 +31,7 @@ import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
+import com.dci.intellij.dbn.language.common.QuotePair;
 import com.dci.intellij.dbn.navigation.psi.DBConnectionPsiDirectory;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
@@ -45,6 +46,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -350,27 +352,45 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     @Override
-    public DBSchema getUserSchema() {
+    public SchemaId getUserSchema() {
         String userName = getUserName().toUpperCase();
-        return getObjectBundle().getSchema(userName);
+        DBSchema schema = getObjectBundle().getSchema(userName);
+        return SchemaId.from(schema);
     }
 
     @Override
-    public DBSchema getDefaultSchema() {
-        DBSchema schema = getUserSchema();
-        if (schema == null) {
+    public SchemaId getDefaultSchema() {
+        SchemaId schemaId = getUserSchema();
+        if (schemaId == null) {
             String databaseName = getSettings().getDatabaseSettings().getDatabaseInfo().getDatabase();
             if (StringUtil.isNotEmpty(databaseName)) {
-                schema = getObjectBundle().getSchema(databaseName);
+                DBSchema schema = getObjectBundle().getSchema(databaseName);
+                schemaId = SchemaId.from(schema);
             }
-            if (schema == null) {
+            if (schemaId == null) {
                 List<DBSchema> schemas = getObjectBundle().getSchemas();
                 if (schemas.size() > 0) {
-                    schema = schemas.get(0);
+                    schemaId = SchemaId.from(schemas.get(0));
                 }
             }
         }
-        return schema;
+        return schemaId;
+    }
+
+    @NotNull
+    @Override
+    public List<SchemaId> getSchemaIds() {
+        List<DBSchema> schemaObjects = getObjectBundle().getSchemas();
+        List<SchemaId> schemas = new ArrayList<>();
+        for (DBSchema schemaObject : schemaObjects) {
+            schemas.add(SchemaId.get(schemaObject.getName()));
+        }
+        return schemas;
+    }
+
+    @Override
+    public DBSchema getSchema(SchemaId schema) {
+        return getObjectBundle().getSchema(schema.id());
     }
 
     @Override
@@ -388,10 +408,10 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     @Override
     @NotNull
-    public DBNConnection getDebugConnection(@Nullable DBSchema schema) throws SQLException {
+    public DBNConnection getDebugConnection(@Nullable SchemaId schemaId) throws SQLException {
         assertCanConnect();
         DBNConnection connection = getConnectionPool().ensureDebugConnection();
-        return setCurrentSchema(connection, schema);
+        return setCurrentSchema(connection, schemaId);
     }
 
     @Override
@@ -410,36 +430,35 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     @Override
     @NotNull
-    public DBNConnection getMainConnection(@Nullable DBSchema schema) throws SQLException {
+    public DBNConnection getMainConnection(@Nullable SchemaId schemaId) throws SQLException {
         DBNConnection connection = getMainConnection();
-        return setCurrentSchema(connection, schema);
+        return setCurrentSchema(connection, schemaId);
     }
 
     @Override
     @NotNull
-    public DBNConnection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException {
+    public DBNConnection getPoolConnection(@Nullable SchemaId schemaId, boolean readonly) throws SQLException {
         DBNConnection connection = getPoolConnection(readonly);
-        return setCurrentSchema(connection, schema);
+        return setCurrentSchema(connection, schemaId);
     }
 
     @Override
     @NotNull
-    public DBNConnection getConnection(@NotNull SessionId sessionId, @Nullable DBSchema schema) throws SQLException {
+    public DBNConnection getConnection(@NotNull SessionId sessionId, @Nullable SchemaId schemaId) throws SQLException {
         DBNConnection connection =
                 sessionId == SessionId.MAIN ? getMainConnection() :
                 sessionId == SessionId.POOL ? getPoolConnection(false) :
                 getConnectionPool().ensureSessionConnection(sessionId);
-        return setCurrentSchema(connection, schema);
+        return setCurrentSchema(connection, schemaId);
     }
 
-    private DBNConnection setCurrentSchema(DBNConnection connection, @Nullable DBSchema schema) throws SQLException {
-        if (schema != null && /*!schema.isPublicSchema() && */DatabaseFeature.CURRENT_SCHEMA.isSupported(this)) {
+    private DBNConnection setCurrentSchema(DBNConnection connection, @Nullable SchemaId schema) throws SQLException {
+        if (schema != null && /*!schema.isPublicSchema() && */DatabaseFeature.CURRENT_SCHEMA.isSupported(this) && !schema.equals(connection.getCurrentSchema())) {
             String schemaName = schema.getName();
-            if (!schemaName.equals(connection.getCurrentSchema())) {
-                DatabaseMetadataInterface metadataInterface = getInterfaceProvider().getMetadataInterface();
-                metadataInterface.setCurrentSchema(schema.getQuotedName(false), connection);
-                connection.setCurrentSchema(schemaName);
-            }
+            DatabaseMetadataInterface metadataInterface = getInterfaceProvider().getMetadataInterface();
+            QuotePair quotePair = getInterfaceProvider().getCompatibilityInterface().getDefaultIdentifierQuotes();
+            metadataInterface.setCurrentSchema(quotePair.quote(schemaName), connection);
+            connection.setCurrentSchema(schema);
         }
         return connection;
     }

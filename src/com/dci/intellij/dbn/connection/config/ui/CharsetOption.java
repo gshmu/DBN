@@ -2,9 +2,7 @@ package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.ui.Presentable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,17 +26,6 @@ public class CharsetOption implements Presentable {
         return charset.name();
     }
 
-    @Nullable
-    @Override
-    public String getDescription() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public Icon getIcon() {
-        return null;
-    }
 
     public static CharsetOption get(Charset charset) {
         for (CharsetOption charsetOption : ALL) {

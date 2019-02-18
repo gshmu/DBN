@@ -2,9 +2,7 @@ package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.ui.Presentable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.sql.Driver;
 import java.util.List;
 
@@ -23,18 +21,6 @@ public class DriverOption implements Presentable {
     @Override
     public String getName() {
         return driver.getClass().getName();
-    }
-
-    @Nullable
-    @Override
-    public String getDescription() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public Icon getIcon() {
-        return null;
     }
 
     public static DriverOption get(List<DriverOption> driverOptions, String name) {

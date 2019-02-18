@@ -6,9 +6,11 @@ import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.BackgroundMonitor;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -65,17 +67,9 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
 
     @Override
     public final void start() {
-        super.start();
-/*
-        Application application = ApplicationManager.getApplication();
-        if (application.isDispatchThread()) {
-            run();
-        } else {
-            application.invokeLater(this*/
-/*, ModalityState.NON_MODAL*//*
-);
-        }
-*/
+        ConditionalLaterInvocator.invoke(
+                ModalityState.NON_MODAL,
+                () -> ConnectionAction.super.start());
     }
 
     @Override

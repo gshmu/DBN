@@ -6,8 +6,8 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -56,9 +56,10 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
         return Failsafe.get(objectRef.getConnectionHandler());
     }
 
+    @Nullable
     @Override
-    public DBSchema getDatabaseSchema() {
-        return getObject().getSchema();
+    public SchemaId getSchemaId() {
+        return SchemaId.from(getObject().getSchema());
     }
 
     @Override

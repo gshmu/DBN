@@ -24,7 +24,7 @@ public abstract class AnObjectAction<T extends DBObject> extends DumbAwareAction
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         if (!custom) {
             T object = getObject();
             if (object != null) {

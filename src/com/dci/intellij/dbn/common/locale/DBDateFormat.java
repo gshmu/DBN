@@ -2,9 +2,7 @@ package com.dci.intellij.dbn.common.locale;
 
 import com.dci.intellij.dbn.common.ui.Presentable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.text.DateFormat;
 
 public enum DBDateFormat implements Presentable {
@@ -30,18 +28,5 @@ public enum DBDateFormat implements Presentable {
     @Override
     public String getName() {
         return name;
-    }
-
-    @Nullable
-    @Override
-    public String getDescription() {
-        return null;
-    }
-
-
-    @Nullable
-    @Override
-    public Icon getIcon() {
-        return null;
     }
 }

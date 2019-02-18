@@ -3,9 +3,9 @@ package com.dci.intellij.dbn.execution;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
-import com.dci.intellij.dbn.object.DBSchema;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,11 +23,14 @@ public abstract class ExecutionContext extends PropertyHolderImpl<ExecutionStatu
         return ExecutionStatus.values();
     }
 
-    public abstract @NotNull String getTargetName();
+    @NotNull
+    public abstract String getTargetName();
 
-    public abstract @Nullable ConnectionHandler getTargetConnection();
+    @Nullable
+    public abstract ConnectionHandler getTargetConnection();
 
-    public abstract @Nullable DBSchema getTargetSchema();
+    @Nullable
+    public abstract SchemaId getTargetSchema();
 
     public int getTimeout() {
         return timeout;

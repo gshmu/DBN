@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionOptionsForm;
@@ -18,7 +19,6 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
@@ -166,7 +166,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
 
     protected void updatePreview() {
         ConnectionHandler connectionHandler = Failsafe.get(executionProcessor.getConnectionHandler());
-        DBSchema currentSchema = executionProcessor.getTargetSchema();
+        SchemaId currentSchema = executionProcessor.getTargetSchema();
         Project project = connectionHandler.getProject();
         String previewText = this.statementText;
 
@@ -185,7 +185,14 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
 
         if (previewDocument == null) {
             DBLanguageDialect languageDialect = connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE);
-            DBLanguagePsiFile selectStatementFile = DBLanguagePsiFile.createFromText(project, "preview", languageDialect, previewText, connectionHandler, currentSchema);
+            DBLanguagePsiFile selectStatementFile = DBLanguagePsiFile.createFromText(
+                    project,
+                    "preview",
+                    languageDialect,
+                    previewText,
+                    connectionHandler,
+                    currentSchema);
+
             previewDocument = DocumentUtil.getDocument(selectStatementFile);
 
             viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, project);

@@ -2,9 +2,6 @@ package com.dci.intellij.dbn.editor.code.options;
 
 import com.dci.intellij.dbn.common.option.InteractiveOption;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 
 public enum CodeEditorChangesOption implements InteractiveOption {
     ASK("Ask"),
@@ -25,17 +22,6 @@ public enum CodeEditorChangesOption implements InteractiveOption {
         return name;
     }
 
-    @Nullable
-    @Override
-    public String getDescription() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public Icon getIcon() {
-        return null;
-    }
 
     @Override
     public boolean isCancel() {

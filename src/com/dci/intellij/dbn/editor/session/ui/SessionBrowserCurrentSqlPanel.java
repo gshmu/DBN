@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.SessionBrowserManager;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
@@ -74,8 +75,8 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
         DocumentUtil.setText(document, text);
     }
 
-    private void setDatabaseSchema(DBSchema currentSchema) {
-        getVirtualFile().setDatabaseSchema(currentSchema);
+    private void setSchemaId(SchemaId schemaId) {
+        getVirtualFile().setSchemaId(schemaId);
     }
 
     @NotNull
@@ -109,7 +110,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
                             String sql = sessionBrowserManager.loadSessionCurrentSql(connectionHandler, sessionId);
 
                             checkCancelled(sessionId);
-                            setDatabaseSchema(schema);
+                            setSchemaId(SchemaId.from(schema));
                             setPreviewText(sql.replace("\r\n", "\n"));
                         });
             } else {

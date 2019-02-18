@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.connection.mapping;
 
 import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
-import com.dci.intellij.dbn.object.DBSchema;
 import org.jetbrains.annotations.Nullable;
 
 public interface FileConnectionMappingProvider extends ConnectionProvider {
@@ -10,6 +10,6 @@ public interface FileConnectionMappingProvider extends ConnectionProvider {
     DatabaseSession getDatabaseSession();
 
     @Nullable
-    DBSchema getDatabaseSchema();
+    SchemaId getSchemaId();
 
 }

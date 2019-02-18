@@ -116,7 +116,7 @@ public class DBViewImpl extends DBDatasetImpl implements DBView {
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        DBNConnection connection = connectionHandler.getPoolConnection(getSchema(), false);
+        DBNConnection connection = connectionHandler.getPoolConnection(getSchemaIdentifier(), false);
         try {
             DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
             ddlInterface.updateView(getName(), newCode, connection);

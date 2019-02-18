@@ -11,12 +11,12 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionTimeoutForm;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionInput;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -31,7 +31,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
     private JPanel headerPanel;
     private JPanel mainPanel;
     private DBNComboBox<ConnectionHandler> connectionComboBox;
-    private DBNComboBox<DBSchema> schemaComboBox;
+    private DBNComboBox<SchemaId> schemaComboBox;
     private DBNComboBox<CmdLineInterface> cmdLineExecutableComboBox;
     private JCheckBox clearOutputCheckBox;
     private JPanel hintPanel;
@@ -120,12 +120,12 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
 
     private void updateControls(ScriptExecutionInput executionInput) {
         ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-        DBSchema schema = executionInput.getSchema();
+        SchemaId schema = executionInput.getSchema();
         CmdLineInterface cmdLineInterface;
         if (connectionHandler != null && !connectionHandler.isVirtual()) {
             schema = CommonUtil.nvln(schema, connectionHandler.getDefaultSchema());
             connectionComboBox.setSelectedValue(connectionHandler);
-            schemaComboBox.setValues(connectionHandler.getObjectBundle().getSchemas());
+            schemaComboBox.setValues(connectionHandler.getSchemaIds());
             schemaComboBox.setSelectedValue(schema);
             schemaComboBox.setEnabled(true);
             headerForm.setBackground(connectionHandler.getEnvironmentType().getColor());

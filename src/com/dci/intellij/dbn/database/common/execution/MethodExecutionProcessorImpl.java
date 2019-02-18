@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNPreparedStatement;
@@ -22,7 +23,6 @@ import com.dci.intellij.dbn.execution.method.options.MethodExecutionSettings;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -68,8 +68,8 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         executionInput.initExecution(debuggerType);
         ConnectionHandler connectionHandler = getConnectionHandler();
         SessionId targetSessionId = executionInput.getTargetSessionId();
-        DBSchema targetSchema = executionInput.getTargetSchema();
-        DBNConnection connection = connectionHandler.getConnection(targetSessionId, targetSchema);
+        SchemaId targetSchemaId = executionInput.getTargetSchemaId();
+        DBNConnection connection = connectionHandler.getConnection(targetSessionId, targetSchemaId);
 
         if (targetSessionId == SessionId.POOL) {
             ConnectionUtil.setAutoCommit(connection, false);

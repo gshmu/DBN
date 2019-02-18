@@ -111,6 +111,7 @@ public class ConnectionUtil {
             if (interfaceProvider != null) {
                 DatabaseMessageParserInterface messageParserInterface = interfaceProvider.getMessageParserInterface();
                 if (messageParserInterface.isAuthenticationException(e)){
+                    authenticationInfo.setPassword(null);
                     authenticationError = new AuthenticationError(authenticationInfo, e);
                     connectionStatus.setAuthenticationError(authenticationError);
                 }

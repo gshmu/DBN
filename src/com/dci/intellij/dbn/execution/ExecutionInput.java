@@ -10,10 +10,9 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +25,7 @@ public abstract class ExecutionInput extends DisposableBase implements Disposabl
 
     private ProjectRef projectRef;
     protected ConnectionHandlerRef targetConnectionRef;
-    protected DBObjectRef<DBSchema> targetSchemaRef;
+    protected SchemaId targetSchemaId;
 
     private Latent<ExecutionContext> executionContext = Latent.basic(() -> createExecutionContext());
 
@@ -61,12 +60,12 @@ public abstract class ExecutionInput extends DisposableBase implements Disposabl
     }
 
     @Nullable
-    public final DBSchema getTargetSchema() {
-        return DBObjectRef.get(targetSchemaRef);
+    public final SchemaId getTargetSchemaId() {
+        return targetSchemaId;
     }
 
-    public final void setTargetSchema(@Nullable DBSchema schema){
-        targetSchemaRef = DBObjectRef.from(schema);
+    public final void setTargetSchemaId(@Nullable SchemaId schema){
+        targetSchemaId = schema;
     }
 
     @Nullable

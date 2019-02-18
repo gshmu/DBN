@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectPsiFacade;
@@ -43,12 +43,13 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
         return objectList.getConnectionHandler();
     }
 
+    @Nullable
     @Override
-    public DBSchema getDatabaseSchema() {
+    public SchemaId getSchemaId() {
         GenericDatabaseElement parent = objectList.getParentElement();
         if (parent instanceof DBObject) {
             DBObject object = (DBObject) parent;
-            return object.getSchema();
+            return SchemaId.from(object.getSchema());
         }
         return null;
     }

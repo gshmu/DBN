@@ -3,9 +3,9 @@ package com.dci.intellij.dbn.vfs.file;
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -33,8 +33,9 @@ public class DBConnectionVirtualFile extends DBVirtualFileImpl {
         return connectionHandlerRef.getnn();
     }
 
+    @Nullable
     @Override
-    public DBSchema getDatabaseSchema() {
+    public SchemaId getSchemaId() {
         return null;
     }
 

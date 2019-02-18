@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
@@ -16,9 +17,6 @@ import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBObjectType;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
@@ -50,7 +48,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private SourceCodeContent content = new SourceCodeContent();
     private ConnectionHandlerRef connectionHandlerRef;
-    private DBObjectRef<DBSchema> databaseSchemaRef;
+    private SchemaId databaseSchema;
     private DatabaseSession databaseSession;
     private final DBConsoleType type;
 
@@ -118,20 +116,20 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         return connectionHandlerRef.getnn();
     }
 
-    public void setDatabaseSchema(DBSchema currentSchema) {
-        this.databaseSchemaRef = DBObjectRef.from(currentSchema);
+    public void setDatabaseSchema(SchemaId currentSchema) {
+        this.databaseSchema = currentSchema;
     }
 
     public void setDatabaseSchemaName(String currentSchemaName) {
         if (StringUtil.isEmpty(currentSchemaName)) {
-            this.databaseSchemaRef = null;
+            this.databaseSchema = null;
         } else {
-            this.databaseSchemaRef = new DBObjectRef<DBSchema>(getConnectionHandler().getConnectionId(), DBObjectType.SCHEMA, currentSchemaName);
+            this.databaseSchema = SchemaId.get(currentSchemaName);
         }
     }
 
     public String getDatabaseSchemaName() {
-        return this.databaseSchemaRef == null ? null : this.databaseSchemaRef.getObjectName();
+        return this.databaseSchema == null ? null : this.databaseSchema.id();
     }
 
     public void setDatabaseSessionId(SessionId sessionId) {
@@ -154,8 +152,8 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
 
     @Override
     @Nullable
-    public DBSchema getDatabaseSchema() {
-        return DBObjectRef.get(databaseSchemaRef);
+    public SchemaId getSchemaId() {
+        return databaseSchema;
     }
 
     @NotNull

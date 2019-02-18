@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.method.action;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.action.AnObjectAction;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class SetExecutionSchemaAction extends AnObjectAction<DBSchema> {
     private MethodExecutionInput executionInput;
 
-    public SetExecutionSchemaAction(MethodExecutionInput executionInput, DBSchema schema) {
+    SetExecutionSchemaAction(MethodExecutionInput executionInput, DBSchema schema) {
         super(schema);
         this.executionInput = executionInput;
     }
@@ -21,7 +22,7 @@ public class SetExecutionSchemaAction extends AnObjectAction<DBSchema> {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
-        executionInput.setTargetSchema(getSchema());
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        executionInput.setTargetSchemaId(SchemaId.from(getSchema()));
     }
 }

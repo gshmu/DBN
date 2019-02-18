@@ -26,12 +26,6 @@ public enum RecordNavigationTarget implements Presentable{
     public String getName() {
         return name;
     }
-    @Nullable
-    @Override
-    public String getDescription() {
-        return null;
-    }
-
 
     @Nullable
     @Override

@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
@@ -14,8 +15,6 @@ import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -37,7 +36,7 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
     private boolean loggingActive;
 
     private ConnectionHandlerRef connectionHandlerRef;
-    private DBObjectRef<DBSchema> databaseSchemaRef;
+    private SchemaId databaseSchema;
 
     public StatementExecutionBasicResult(
             @NotNull StatementExecutionProcessor executionProcessor,
@@ -47,7 +46,7 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
         this.executionProcessor = executionProcessor;
         this.updateCount = updateCount;
         this.connectionHandlerRef = Failsafe.get(executionProcessor.getConnectionHandler()).getRef();
-        this.databaseSchemaRef = DBObjectRef.from(executionProcessor.getTargetSchema());
+        this.databaseSchema = executionProcessor.getTargetSchema();
     }
 
     @Override
@@ -155,8 +154,8 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
     }
 
     @Nullable
-    public DBSchema getDatabaseSchema() {
-        return DBObjectRef.get(databaseSchemaRef);
+    public SchemaId getDatabaseSchema() {
+        return databaseSchema;
     }
 
     @Override

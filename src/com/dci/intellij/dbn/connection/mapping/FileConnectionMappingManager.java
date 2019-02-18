@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -21,6 +20,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -35,7 +35,6 @@ import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.action.AnObjectAction;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
@@ -115,7 +114,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             virtualFile.putUserData(CONNECTION_HANDLER, connectionHandlerRef);
 
             ConnectionId connectionId = connectionHandler == null ? null : connectionHandler.getConnectionId();
-            String currentSchema = connectionHandler == null ? null  : connectionHandler.getUserName().toUpperCase();
+            SchemaId currentSchema = connectionHandler == null ? null  : connectionHandler.getUserSchema();
 
             FileConnectionMapping mapping = lookupMapping(virtualFile);
             if (mapping == null) {
@@ -129,9 +128,8 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                     if (connectionHandler != null) {
                         // overwrite current schema only if the existing
                         // selection is not a valid schema for the given connection
-                        String currentSchemaName = mapping.getSchemaName();
-                        DBSchema schema = connectionHandler.isVirtual() || currentSchemaName == null ? null : connectionHandler.getObjectBundle().getSchema(currentSchemaName);
-                        setDatabaseSchema(virtualFile, schema);
+                        currentSchema = mapping.getSchemaId();
+                        setDatabaseSchema(virtualFile, currentSchema);
                     } else {
                         setDatabaseSchema(virtualFile, null);
                     }
@@ -142,28 +140,26 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         return false;
     }
 
-    public boolean setDatabaseSchema(VirtualFile virtualFile, DBSchema schema) {
-        DBObjectRef<DBSchema> schemaRef = DBObjectRef.from(schema);
-
+    public boolean setDatabaseSchema(VirtualFile virtualFile, SchemaId schemaId) {
         if (virtualFile instanceof LightVirtualFile) {
-            virtualFile.putUserData(DATABASE_SCHEMA, schemaRef);
+            virtualFile.putUserData(DATABASE_SCHEMA, schemaId);
             return true;
         }
 
         if (virtualFile instanceof DBConsoleVirtualFile) {
             DBConsoleVirtualFile sqlConsoleFile = (DBConsoleVirtualFile) virtualFile;
-            sqlConsoleFile.setDatabaseSchema(schema);
+            sqlConsoleFile.setDatabaseSchema(schemaId);
             return true;
         }
 
         if (VirtualFileUtil.isLocalFileSystem(virtualFile)) {
-            virtualFile.putUserData(DATABASE_SCHEMA, schemaRef);
+            virtualFile.putUserData(DATABASE_SCHEMA, schemaId);
             FileConnectionMapping mapping = lookupMapping(virtualFile);
             if (mapping != null) {
-                if (schema == null) {
-                    mapping.setSchemaName(null);
-                } else if (!schema.getName().equals(mapping.getSchemaName())){
-                    mapping.setSchemaName(schema.getName());
+                if (schemaId == null) {
+                    mapping.setSchemaId(null);
+                } else if (!schemaId.equals(mapping.getSchemaId())){
+                    mapping.setSchemaId(schemaId);
                 }
 
                 return true;
@@ -261,24 +257,24 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     }
 
     @Nullable
-    public DBSchema getDatabaseSchema(@NotNull VirtualFile virtualFile) {
+    public SchemaId getDatabaseSchema(@NotNull VirtualFile virtualFile) {
         if (virtualFile instanceof LightVirtualFile) {
-            DBObjectRef<DBSchema> schemaRef = virtualFile.getUserData(DATABASE_SCHEMA);
-            if (schemaRef == null) {
+            SchemaId schemaId = virtualFile.getUserData(DATABASE_SCHEMA);
+            if (schemaId == null) {
                 LightVirtualFile lightVirtualFile = (LightVirtualFile) virtualFile;
                 VirtualFile originalFile = lightVirtualFile.getOriginalFile();
                 if (originalFile != null && !originalFile.equals(virtualFile)) {
                     return getDatabaseSchema(originalFile);
                 }
             }
-            return DBObjectRef.get(schemaRef);
+            return schemaId;
         }
 
         // if the file is a database content file then get the schema from the underlying schema object
         if (VirtualFileUtil.isDatabaseFileSystem(virtualFile)) {
             if (virtualFile instanceof FileConnectionMappingProvider) {
                 FileConnectionMappingProvider connectionMappingProvider = (FileConnectionMappingProvider) virtualFile;
-                return connectionMappingProvider.getDatabaseSchema();
+                return connectionMappingProvider.getSchemaId();
             }
         }
 
@@ -286,33 +282,29 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             // if the file is an attached ddl file, then resolve the object which it is
             // linked to, and return its parent schema
             Project project = getProject();
-            DBSchemaObject schemaObject = DDLFileAttachmentManager.getInstance(project).getEditableObject(virtualFile);
+            DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
+            DBSchemaObject schemaObject = fileAttachmentManager.getEditableObject(virtualFile);
             if (schemaObject != null && DatabaseFileSystem.isFileOpened(schemaObject)) {
-                return schemaObject.getSchema();
+                return schemaObject.getSchemaIdentifier();
             }
 
             // lookup schema mappings
-            DBObjectRef<DBSchema> currentSchemaRef = virtualFile.getUserData(DATABASE_SCHEMA);
-            if (currentSchemaRef == null) {
+            SchemaId currentSchema = virtualFile.getUserData(DATABASE_SCHEMA);
+            if (currentSchema == null) {
                 ConnectionHandler connectionHandler = getConnectionHandler(virtualFile);
                 if (connectionHandler != null && !connectionHandler.isVirtual()) {
                     FileConnectionMapping mapping = lookupMapping(virtualFile);
                     if (mapping != null) {
-                        String schemaName = mapping.getSchemaName();
-                        if (StringUtil.isEmptyOrSpaces(schemaName)) {
-                            DBSchema defaultSchema = connectionHandler.getDefaultSchema();
-                            currentSchemaRef = defaultSchema == null ? null : defaultSchema.getRef();
-                            schemaName = currentSchemaRef == null ? null : currentSchemaRef.getObjectName();
-                        } else {
-                            DBSchema schema = connectionHandler.getObjectBundle().getSchema(schemaName);
-                            currentSchemaRef = schema == null ? null : schema.getRef();
+                        currentSchema = mapping.getSchemaId();
+                        if (currentSchema == null) {
+                            currentSchema = connectionHandler.getDefaultSchema();
                         }
-                        mapping.setSchemaName(schemaName);
-                        virtualFile.putUserData(DATABASE_SCHEMA, currentSchemaRef);
+                        mapping.setSchemaId(currentSchema);
+                        virtualFile.putUserData(DATABASE_SCHEMA, currentSchema);
                     }
                 }
             } else {
-                return currentSchemaRef.get();
+                return currentSchema;
             }
         }
         return null;
@@ -423,7 +415,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         }
     }
 
-    public void setDatabaseSchema(@NotNull Editor editor, DBSchema schema) {
+    public void setDatabaseSchema(@NotNull Editor editor, SchemaId schema) {
         Document document = editor.getDocument();
         VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
         if (isSchemaSelectable(virtualFile)) {
@@ -490,7 +482,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                         MessageCallback.create(0, option ->
                                 promptConnectionSelector(file, false, true, true, callback)));
 
-            } else if (file.getDatabaseSchema() == null) {
+            } else if (file.getSchemaId() == null) {
                 String message =
                         "You did not select any schema to run the statement against.\n" +
                                 "To continue with the statement execution please select a schema.";
@@ -583,8 +575,8 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                 if (promptSchemaSelection) {
                     promptSchemaSelector(file, callback);
                 } else {
-                    if (file.getDatabaseSchema() == null) {
-                        DBSchema defaultSchema = connectionHandler.getDefaultSchema();
+                    if (file.getSchemaId() == null) {
+                        SchemaId defaultSchema = connectionHandler.getDefaultSchema();
                         file.setDatabaseSchema(defaultSchema);
                     }
                     if (callback != null) {
@@ -671,18 +663,23 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         public void actionPerformed(@NotNull AnActionEvent e) {
             DBLanguagePsiFile file = fileRef.get();
             if (file != null) {
-                file.setDatabaseSchema(getObject());
+                file.setDatabaseSchema(getSchema());
                 if (callback != null) {
                     callback.start();
                 }
             }
         }
 
+        @Nullable
+        public SchemaId getSchema() {
+            return SchemaId.from(getObject());
+        }
+
         public boolean isSelected() {
             DBLanguagePsiFile file = fileRef.get();
             if (file != null) {
-                DBSchema fileSchema = file.getDatabaseSchema();
-                return fileSchema != null && fileSchema.equals(getObject());
+                SchemaId fileSchema = file.getSchemaId();
+                return fileSchema != null && fileSchema.equals(getSchema());
             }
             return false;
         }

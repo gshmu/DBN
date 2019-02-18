@@ -3,12 +3,11 @@ package com.dci.intellij.dbn.vfs.file;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
@@ -32,7 +31,7 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
     private SessionBrowser sessionBrowser;
-    private DBObjectRef<DBSchema> schemaRef;
+    private SchemaId schemaId;
 
 
     public DBSessionStatementVirtualFile(SessionBrowser sessionBrowser, String content) {
@@ -70,8 +69,8 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
 
     @Nullable
     @Override
-    public DBSchema getDatabaseSchema() {
-        return DBObjectRef.get(schemaRef);
+    public SchemaId getSchemaId() {
+        return schemaId;
     }
 
     @Nullable
@@ -80,8 +79,8 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
         return getConnectionHandler().getSessionBundle().getPoolSession();
     }
 
-    public void setDatabaseSchema(DBSchema schema) {
-        this.schemaRef = DBObjectRef.from(schema);
+    public void setSchemaId(SchemaId schemaId) {
+        this.schemaId = schemaId;
     }
 
     @NotNull

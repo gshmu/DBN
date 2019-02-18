@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.ui.ValueSelectorOption;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionType;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
@@ -20,7 +21,6 @@ import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionOption;
 import com.dci.intellij.dbn.execution.ExecutionOptions;
 import com.dci.intellij.dbn.execution.LocalExecutionInput;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +42,7 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
     private JCheckBox commitCheckBox;
     private JCheckBox reuseVariablesCheckBox;
     private JCheckBox enableLoggingCheckBox;
-    private DBNComboBox<DBSchema> targetSchemaComboBox;
+    private DBNComboBox<SchemaId> targetSchemaComboBox;
     private DBNComboBox<DatabaseSession> targetSessionComboBox;
     private AutoCommitLabel autoCommitLabel;
 
@@ -57,21 +57,23 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
 
         if (executionInput.isSchemaSelectionAllowed()) {
             //ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, new SetExecutionSchemaComboBoxAction(executionInput));
-            targetSchemaComboBox.setValues(connectionHandler.getObjectBundle().getSchemas());
-            targetSchemaComboBox.setSelectedValue(executionInput.getTargetSchema());
+
+
+            targetSchemaComboBox.setValues(connectionHandler.getSchemaIds());
+            targetSchemaComboBox.setSelectedValue(executionInput.getTargetSchemaId());
             targetSchemaComboBox.set(ValueSelectorOption.HIDE_DESCRIPTION, true);
             targetSchemaComboBox.addActionListener(actionListener);
             targetSchemaLabel.setVisible(false);
         } else {
             targetSchemaComboBox.setVisible(false);
             targetSchemaLabel.setVisible(true);
-            DBSchema targetSchema = executionInput.getTargetSchema();
+            SchemaId targetSchema = executionInput.getTargetSchemaId();
             if (targetSchema == null) {
                 targetSessionLabel.setText("No schema selected");
                 targetSessionLabel.setIcon(Icons.DBO_SCHEMA);
             } else {
-                targetSchemaLabel.setText(targetSchema.getName());
-                targetSchemaLabel.setIcon(targetSchema.getIcon());
+                targetSchemaLabel.setText(targetSchema.id());
+                targetSchemaLabel.setIcon(Icons.DBO_SCHEMA);
             }
         }
 
@@ -146,8 +148,8 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
         options.set(ExecutionOption.COMMIT_AFTER_EXECUTION, commitCheckBox.isSelected());
         options.set(ExecutionOption.ENABLE_LOGGING, enableLoggingCheckBox.isSelected());
 
-        DBSchema schema = targetSchemaComboBox.getSelectedValue();
-        executionInput.setTargetSchema(schema);
+        SchemaId schema = targetSchemaComboBox.getSelectedValue();
+        executionInput.setTargetSchemaId(schema);
 
         DatabaseSession targetSession = targetSessionComboBox.getSelectedValue();
         executionInput.setTargetSession(targetSession);

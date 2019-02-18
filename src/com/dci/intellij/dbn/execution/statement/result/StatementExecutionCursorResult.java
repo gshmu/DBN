@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
@@ -20,7 +21,6 @@ import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettin
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionResultForm;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NonNls;
@@ -79,7 +79,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
                         StatementExecutionInput executionInput = getExecutionInput();
                         try {
                             ConnectionHandler connectionHandler = getConnectionHandler();
-                            DBSchema currentSchema = getDatabaseSchema();
+                            SchemaId currentSchema = getDatabaseSchema();
                             DBNConnection connection = connectionHandler.getMainConnection(currentSchema);
                             DBNStatement statement = connection.createStatement();
                             statement.setQueryTimeout(executionInput.getExecutionTimeout());

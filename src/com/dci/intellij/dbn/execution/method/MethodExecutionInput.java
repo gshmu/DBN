@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionContext;
@@ -17,9 +17,7 @@ import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionResultForm;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import gnu.trove.THashSet;
@@ -42,7 +40,6 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     public MethodExecutionInput(Project project) {
         super(project, ExecutionTarget.METHOD);
         methodRef = new DBObjectRef<>();
-        targetSchemaRef = new DBObjectRef<>();
 
         ExecutionOptions options = getOptions();
         options.set(ExecutionOption.COMMIT_AFTER_EXECUTION, true);
@@ -52,7 +49,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     public MethodExecutionInput(Project project, DBMethod method) {
         super(project, ExecutionTarget.METHOD);
         this.methodRef = DBObjectRef.from(method);
-        this.targetSchemaRef = method.getSchema().getRef();
+        this.targetSchemaId = method.getSchemaIdentifier();
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {
             ConnectionHandler connectionHandler = Failsafe.get(method.getConnectionHandler());
@@ -83,8 +80,8 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
             @Nullable
             @Override
-            public DBSchema getTargetSchema() {
-                return MethodExecutionInput.this.getTargetSchema();
+            public SchemaId getTargetSchema() {
+                return MethodExecutionInput.this.getTargetSchemaId();
             }
         };
     }
@@ -238,9 +235,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     public void readConfiguration(Element element) {
         super.readConfiguration(element);
         methodRef.readState(element);
-        String schemaName = element.getAttributeValue("execution-schema");
-        SessionId sessionId = CommonUtil.nvl(SessionId.get(element.getAttributeValue("session-id")), SessionId.MAIN);
-        targetSchemaRef = new DBObjectRef<DBSchema>(methodRef.getConnectionId(), DBObjectType.SCHEMA, schemaName);
+        targetSchemaId = SchemaId.get(element.getAttributeValue("execution-schema"));;
         Element argumentsElement = element.getChild("argument-list");
         if (argumentsElement != null) {
             for (Object object : argumentsElement.getChildren()) {
@@ -255,7 +250,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     public void writeConfiguration(Element element) {
         super.writeConfiguration(element);
         methodRef.writeState(element);
-        element.setAttribute("execution-schema", CommonUtil.nvl(targetSchemaRef.getPath(), ""));
+        element.setAttribute("execution-schema", targetSchemaId == null ? "" : targetSchemaId.id());
 
         Element argumentsElement = new Element("argument-list");
         element.addContent(argumentsElement);
@@ -292,7 +287,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     public MethodExecutionInput clone() {
         MethodExecutionInput clone = new MethodExecutionInput(getProject());
         clone.methodRef = methodRef;
-        clone.targetSchemaRef = targetSchemaRef;
+        clone.targetSchemaId = targetSchemaId;
         clone.setOptions(getOptions().clone());
         clone.argumentValues = new THashSet<>();
         for (MethodExecutionArgumentValue executionVariable : argumentValues) {

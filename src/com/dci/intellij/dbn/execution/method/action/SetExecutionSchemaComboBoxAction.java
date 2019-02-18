@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.method.action;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -16,7 +17,7 @@ public class SetExecutionSchemaComboBoxAction extends ComboBoxAction {
 
     public SetExecutionSchemaComboBoxAction(MethodExecutionInput executionInput) {
         this.executionInput = executionInput;
-        DBSchema schema = executionInput.getTargetSchema();
+        SchemaId schema = executionInput.getTargetSchemaId();
         if (schema != null) {
             Presentation presentation = getTemplatePresentation();
             presentation.setText(schema.getName(), false);
@@ -40,7 +41,7 @@ public class SetExecutionSchemaComboBoxAction extends ComboBoxAction {
 
     @Override
     public void update(AnActionEvent e) {
-        DBSchema schema = executionInput.getTargetSchema();
+        SchemaId schema = executionInput.getTargetSchemaId();
         Presentation presentation = e.getPresentation();
         presentation.setText(schema.getName(), false);
         presentation.setIcon(schema.getIcon());

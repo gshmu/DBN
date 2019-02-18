@@ -2,9 +2,6 @@ package com.dci.intellij.dbn.debugger;
 
 import com.dci.intellij.dbn.common.ui.Presentable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 
 public enum DBDebuggerType implements Presentable {
     JDBC("Classic (over JDBC)"),
@@ -22,13 +19,6 @@ public enum DBDebuggerType implements Presentable {
     public String getName() {
         return name;
     }
-
-    @Nullable
-    @Override
-    public String getDescription() {
-        return null;
-    }
-
 
 
     public boolean isDebug() {
@@ -49,12 +39,6 @@ public enum DBDebuggerType implements Presentable {
             case NONE: return true;
         }
         return false;
-    }
-
-    @Nullable
-    @Override
-    public Icon getIcon() {
-        return null;
     }
 
     public static DBDebuggerType get(String name) {

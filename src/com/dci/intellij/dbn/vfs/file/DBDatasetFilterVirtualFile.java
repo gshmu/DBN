@@ -3,11 +3,11 @@ package com.dci.intellij.dbn.vfs.file;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.DBDataset;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
@@ -67,9 +67,9 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBP
 
     @Nullable
     @Override
-    public DBSchema getDatabaseSchema() {
+    public SchemaId getSchemaId() {
         DBDataset dataset = getDataset();
-        return dataset == null ? null : dataset.getSchema();
+        return dataset == null ? null : dataset.getSchemaIdentifier();
     }
 
     @Nullable

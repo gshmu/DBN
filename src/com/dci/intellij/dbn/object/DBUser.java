@@ -5,9 +5,6 @@ import java.util.List;
 public interface DBUser extends DBRoleGrantee, DBPrivilegeGrantee {
     boolean isExpired();
     boolean isLocked();
-    @Override
-    DBSchema getSchema();
-
     boolean isSessionUser();
 
     List<DBGrantedPrivilege> getPrivileges();

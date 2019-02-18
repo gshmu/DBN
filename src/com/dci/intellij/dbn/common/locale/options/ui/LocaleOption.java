@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.ui.Presentable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -43,18 +42,6 @@ public class LocaleOption implements Presentable{
         return locale.equals(Locale.getDefault()) ?
                 locale.getDisplayName() + " - System default" :
                 locale.getDisplayName();
-    }
-
-    @Nullable
-    @Override
-    public String getDescription() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public Icon getIcon() {
-        return null;
     }
 
     @Nullable

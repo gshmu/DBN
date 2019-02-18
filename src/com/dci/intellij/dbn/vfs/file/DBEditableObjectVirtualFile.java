@@ -22,7 +22,6 @@ import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.DBDataset;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
@@ -57,12 +56,6 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         if (objectRef.getObjectType() == DBObjectType.TABLE) {
             databaseSessionId = SessionId.MAIN;
         }
-    }
-
-    @Override
-    @Nullable
-    public DBSchema getDatabaseSchema() {
-        return getObject().getSchema();
     }
 
     @Override

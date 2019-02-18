@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -39,12 +38,6 @@ public enum DatabaseType implements Presentable {
     @NotNull
     public String getName() {
         return name;
-    }
-
-    @Nullable
-    @Override
-    public String getDescription() {
-        return null;
     }
 
     public String getDisplayName() {
