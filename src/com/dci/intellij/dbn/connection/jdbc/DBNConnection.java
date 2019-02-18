@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerStatusHolder;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionType;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
 import com.intellij.openapi.diagnostic.Logger;
@@ -40,7 +41,7 @@ public class DBNConnection extends DBNConnectionBase {
     private long lastAccess = System.currentTimeMillis();
     private Set<DBNStatement> statements = new HashSet<DBNStatement>();
     private PendingTransactionBundle dataChanges;
-    private String currentSchema;
+    private SchemaId currentSchema;
     private ProjectRef projectRef;
 
     private IncrementalResourceStatusAdapter<DBNConnection> active =
@@ -289,11 +290,11 @@ public class DBNConnection extends DBNConnectionBase {
         });
     }
 
-    public String getCurrentSchema() {
+    public SchemaId getCurrentSchema() {
         return currentSchema;
     }
 
-    public void setCurrentSchema(String currentSchema) {
+    public void setCurrentSchema(SchemaId currentSchema) {
         this.currentSchema = currentSchema;
     }
 

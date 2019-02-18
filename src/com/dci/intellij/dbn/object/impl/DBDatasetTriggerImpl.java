@@ -3,12 +3,14 @@ package com.dci.intellij.dbn.object.impl;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBDatasetTrigger;
+import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.loader.DBSourceCodeLoader;
@@ -105,10 +107,12 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        DBNConnection connection = connectionHandler.getPoolConnection(getSchema(), false);
+        DBSchema schema = getSchema();
+        DBNConnection connection = connectionHandler.getPoolConnection(SchemaId.from(schema), false);
         try {
             DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
-            ddlInterface.updateTrigger(getDataset().getSchema().getName(), getDataset().getName(), getName(), oldCode, newCode, connection);
+            DBDataset dataset = getDataset();
+            ddlInterface.updateTrigger(dataset.getSchema().getName(), dataset.getName(), getName(), oldCode, newCode, connection);
         } finally {
             connectionHandler.freePoolConnection(connection);
         }

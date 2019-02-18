@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
@@ -158,8 +159,8 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                         T executionInput = getExecutionInput();
                         console.system("Initializing debug environment...");
                         ConnectionHandler connectionHandler = getConnectionHandler();
-                        DBSchema schema = executionInput.getExecutionContext().getTargetSchema();
-                        targetConnection = connectionHandler.getDebugConnection(schema);
+                        SchemaId schemaId = executionInput.getExecutionContext().getTargetSchema();
+                        targetConnection = connectionHandler.getDebugConnection(schemaId);
                         targetConnection.setAutoCommit(false);
                         debugConnection = connectionHandler.getDebuggerConnection();
                         console.system("Debug connections allocated");

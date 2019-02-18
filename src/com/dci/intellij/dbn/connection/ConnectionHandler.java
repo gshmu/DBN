@@ -37,13 +37,13 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     DBNConnection getMainConnection() throws SQLException;
 
     @NotNull
-    DBNConnection getMainConnection(@Nullable DBSchema schema) throws SQLException;
+    DBNConnection getMainConnection(@Nullable SchemaId schemaId) throws SQLException;
 
     @NotNull
-    DBNConnection getConnection(SessionId sessionId, @Nullable DBSchema schema) throws SQLException;
+    DBNConnection getConnection(SessionId sessionId, @Nullable SchemaId schemaId) throws SQLException;
 
     @NotNull
-    DBNConnection getDebugConnection(@Nullable DBSchema schema) throws SQLException;
+    DBNConnection getDebugConnection(@Nullable SchemaId schemaId) throws SQLException;
 
     @NotNull
     DBNConnection getDebuggerConnection() throws SQLException;
@@ -52,7 +52,7 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     DBNConnection getPoolConnection(boolean readonly) throws SQLException;
 
     @NotNull
-    DBNConnection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException;
+    DBNConnection getPoolConnection(@Nullable SchemaId schemaId, boolean readonly) throws SQLException;
 
     void closeConnection(DBNConnection connection);
 
@@ -102,8 +102,14 @@ public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, 
     @NotNull ConnectionPool getConnectionPool();
     DatabaseInterfaceProvider getInterfaceProvider();
     @NotNull DBObjectBundle getObjectBundle();
-    @Nullable DBSchema getUserSchema();
-    @Nullable DBSchema getDefaultSchema();
+    @Nullable
+    SchemaId getUserSchema();
+    @Nullable
+    SchemaId getDefaultSchema();
+    @NotNull List<SchemaId> getSchemaIds();
+
+    @Nullable
+    DBSchema getSchema(SchemaId schema);
 
     boolean isValid();
     boolean isVirtual();

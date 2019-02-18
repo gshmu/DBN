@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.database.CmdLineExecutionInput;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
@@ -27,7 +28,6 @@ import com.dci.intellij.dbn.execution.logging.LogOutputContext;
 import com.dci.intellij.dbn.execution.script.options.ScriptExecutionSettings;
 import com.dci.intellij.dbn.execution.script.ui.CmdLineInterfaceInputDialog;
 import com.dci.intellij.dbn.execution.script.ui.ScriptExecutionInputDialog;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -101,9 +101,9 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
 
             ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(virtualFile);
-            DBSchema currentSchema = connectionMappingManager.getDatabaseSchema(virtualFile);
+            SchemaId currentSchema = connectionMappingManager.getDatabaseSchema(virtualFile);
 
-            final ScriptExecutionInput executionInput = new ScriptExecutionInput(getProject(), virtualFile, activeConnection, currentSchema, clearOutputOption);
+            ScriptExecutionInput executionInput = new ScriptExecutionInput(getProject(), virtualFile, activeConnection, currentSchema, clearOutputOption);
             ScriptExecutionSettings scriptExecutionSettings = ExecutionEngineSettings.getInstance(project).getScriptExecutionSettings();
             int timeout = scriptExecutionSettings.getExecutionTimeout();
             executionInput.setExecutionTimeout(timeout);
@@ -112,9 +112,9 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
             inputDialog.show();
             if (inputDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                final ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-                final DBSchema schema = executionInput.getSchema();
-                final CmdLineInterface cmdLineExecutable = executionInput.getCmdLineInterface();
+                ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+                SchemaId schema = executionInput.getSchema();
+                CmdLineInterface cmdLineExecutable = executionInput.getCmdLineInterface();
                 connectionMappingManager.setConnectionHandler(virtualFile, connectionHandler);
                 connectionMappingManager.setDatabaseSchema(virtualFile, schema);
                 if (connectionHandler != null) {
@@ -154,7 +154,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 @Override
                 public Object execute() throws Exception {
                     ConnectionHandler connectionHandler = Failsafe.get(input.getConnectionHandler());
-                    DBSchema schema = input.getSchema();
+                    SchemaId schema = input.getSchema();
 
                     String content = new String(sourceFile.contentsToByteArray());
                     File temporaryScriptFile = createTempScriptFile();
@@ -167,7 +167,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                     CmdLineExecutionInput executionInput = executionInterface.createScriptExecutionInput(cmdLineInterface,
                             temporaryScriptFile.getPath(),
                             content,
-                            schema == null ? null : schema.getName(),
+                            schema,
                             connectionHandler.getDatabaseInfo(),
                             connectionHandler.getAuthenticationInfo()
                     );

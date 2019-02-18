@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -41,7 +43,12 @@ public class PsiUtil {
             VirtualFile virtualFile = getVirtualFileForElement(psiElement);
             if (virtualFile != null) {
                 FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(psiElement.getProject());
-                currentSchema = mappingManager.getDatabaseSchema(virtualFile);
+                SchemaId schemaId = mappingManager.getDatabaseSchema(virtualFile);
+                ConnectionHandler connectionHandler = mappingManager.getConnectionHandler(virtualFile);
+                if (schemaId != null && connectionHandler != null) {
+                    currentSchema = connectionHandler.getSchema(schemaId);
+                }
+
             }
         }
         return currentSchema;

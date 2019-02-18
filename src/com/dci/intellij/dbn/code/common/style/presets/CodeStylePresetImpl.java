@@ -6,8 +6,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-
 public abstract class CodeStylePresetImpl implements CodeStylePreset {
     private String id;
     private String name;
@@ -34,12 +32,6 @@ public abstract class CodeStylePresetImpl implements CodeStylePreset {
     }
 
     @Nullable
-    @Override
-    public String getDescription() {
-        return null;
-    }
-
-    @Nullable
     protected static BasePsiElement getParentPsiElement(@NotNull PsiElement psiElement) {
         PsiElement parentPsiElement = psiElement.getParent();
         if (parentPsiElement instanceof BasePsiElement) {
@@ -53,12 +45,6 @@ public abstract class CodeStylePresetImpl implements CodeStylePreset {
         if (parentPsiElement != null) {
             return parentPsiElement.getElementType();
         }
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public Icon getIcon() {
         return null;
     }
 }

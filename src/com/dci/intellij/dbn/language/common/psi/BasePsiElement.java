@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
@@ -28,6 +29,7 @@ import com.dci.intellij.dbn.language.common.psi.lookup.ObjectReferenceLookupAdap
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
@@ -193,7 +195,14 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     @Nullable
     public DBSchema getDatabaseSchema() {
         DBLanguagePsiFile file = getFile();
-        return file.getDatabaseSchema();
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        SchemaId databaseSchema = file.getSchemaId();
+        if (connectionHandler != null && databaseSchema != null) {
+            DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+            return objectBundle.getSchema(databaseSchema.id());
+        }
+
+        return null;
     }
 
     public String toString() {

@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -17,7 +18,6 @@ import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +60,7 @@ public class ExplainPlanManager extends AbstractProjectComponent {
                         TaskInstructions.create("Extracting explain plan for " + elementDescription, TaskInstruction.CANCELLABLE),
                         action -> {
                             ConnectionHandler connectionHandler = action.getConnectionHandler();
-                            DBSchema currentSchema = executable.getFile().getDatabaseSchema();
+                            SchemaId currentSchema = executable.getFile().getSchemaId();
                             ExplainPlanResult explainPlanResult = null;
                             DBNConnection connection = null;
                             Statement statement = null;

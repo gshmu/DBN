@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.execution.script;
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.RemoteExecutionInput;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -16,11 +15,11 @@ public class ScriptExecutionInput extends RemoteExecutionInput {
     private VirtualFile sourceFile;
     private boolean clearOutput;
 
-    public ScriptExecutionInput(Project project, VirtualFile sourceFile, ConnectionHandler connectionHandler, DBSchema schema, boolean clearOutput) {
+    ScriptExecutionInput(Project project, VirtualFile sourceFile, ConnectionHandler connectionHandler, SchemaId targetSchema, boolean clearOutput) {
         super(project, ExecutionTarget.SCRIPT);
         this.sourceFile = sourceFile;
         setTargetConnection(connectionHandler);
-        setSchema(schema);
+        setSchema(targetSchema);
         this.clearOutput = clearOutput;
     }
 
@@ -41,7 +40,7 @@ public class ScriptExecutionInput extends RemoteExecutionInput {
 
             @Nullable
             @Override
-            public DBSchema getTargetSchema() {
+            public SchemaId getTargetSchema() {
                 return getSchema();
             }
         };
@@ -68,12 +67,12 @@ public class ScriptExecutionInput extends RemoteExecutionInput {
         return getTargetConnection();
     }
 
-    public DBSchema getSchema() {
-        return DBObjectRef.get(targetSchemaRef);
+    public SchemaId getSchema() {
+        return targetSchemaId;
     }
 
-    public void setSchema(DBSchema schema) {
-        this.targetSchemaRef = DBObjectRef.from(schema);
+    public void setSchema(SchemaId schema) {
+        this.targetSchemaId = schema;
     }
 
     public boolean isClearOutput() {

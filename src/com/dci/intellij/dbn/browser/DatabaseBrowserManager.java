@@ -25,6 +25,7 @@ import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -263,10 +264,12 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                         DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) newFile;
                         ConnectionHandler connectionHandler = databaseVirtualFile.getConnectionHandler();
                         FileEditor oldEditor = event.getOldEditor();
-                        DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
-                        DBSchema currentSchema = databaseVirtualFile.getDatabaseSchema();
+                        SchemaId schemaId = databaseVirtualFile.getSchemaId();
                         boolean scroll = oldEditor != null && oldEditor.isValid();
-                        BrowserTreeNode treeNode = currentSchema == null ? objectBundle : currentSchema;
+                        BrowserTreeNode treeNode = schemaId == null ?
+                                connectionHandler.getObjectBundle() :
+                                connectionHandler.getSchema(schemaId);
+
                         navigateToElement(treeNode, scroll);
                     }
                 }

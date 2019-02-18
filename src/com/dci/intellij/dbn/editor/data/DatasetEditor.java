@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingProvider;
@@ -39,7 +40,6 @@ import com.dci.intellij.dbn.editor.data.structure.DatasetEditorStructureViewMode
 import com.dci.intellij.dbn.editor.data.ui.DatasetEditorForm;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.object.DBDataset;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
@@ -149,8 +149,8 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
     @Override
     @Nullable
-    public DBSchema getDatabaseSchema() {
-        return getDataset().getSchema();
+    public SchemaId getSchemaId() {
+        return getDataset().getSchemaIdentifier();
     }
 
     public Project getProject() {

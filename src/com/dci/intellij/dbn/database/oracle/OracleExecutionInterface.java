@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.database.oracle;
 
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.database.CmdLineExecutionInput;
 import com.dci.intellij.dbn.database.DatabaseExecutionInterface;
 import com.dci.intellij.dbn.database.common.execution.MethodExecutionProcessor;
@@ -32,7 +32,14 @@ public class OracleExecutionInterface implements DatabaseExecutionInterface {
     }
 
     @Override
-    public CmdLineExecutionInput createScriptExecutionInput(@NotNull CmdLineInterface cmdLineInterface, @NotNull String filePath, String content, @Nullable String schema, @NotNull DatabaseInfo databaseInfo, @NotNull AuthenticationInfo authenticationInfo) {
+    public CmdLineExecutionInput createScriptExecutionInput(
+            @NotNull CmdLineInterface cmdLineInterface,
+            @NotNull String filePath,
+            String content,
+            @Nullable SchemaId schemaId,
+            @NotNull DatabaseInfo databaseInfo,
+            @NotNull AuthenticationInfo authenticationInfo) {
+
         CmdLineExecutionInput executionInput = new CmdLineExecutionInput(content);
         DatabaseUrlType urlType = databaseInfo.getUrlType();
         String connectPattern =
@@ -55,8 +62,8 @@ public class OracleExecutionInterface implements DatabaseExecutionInterface {
         command.add(fileArg);
 
         StringBuilder contentBuilder = executionInput.getContent();
-        if (StringUtil.isNotEmpty(schema)) {
-            contentBuilder.insert(0, "alter session set current_schema = " + schema + ";\n");
+        if (schemaId != null) {
+            contentBuilder.insert(0, "alter session set current_schema = " + schemaId + ";\n");
         }
 
         contentBuilder.insert(0, "set echo on;\n");

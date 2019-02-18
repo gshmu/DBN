@@ -171,14 +171,14 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @Override public DBNConnection getPoolConnection(boolean readonly) throws SQLException {throw new UnsupportedOperationException();}
 
     @NotNull
-    @Override public DBNConnection getPoolConnection(@Nullable DBSchema schema, boolean readonly) throws SQLException {throw new UnsupportedOperationException();}
+    @Override public DBNConnection getPoolConnection(@Nullable SchemaId schemaId, boolean readonly) throws SQLException {throw new UnsupportedOperationException();}
 
     @NotNull
     @Override public DBNConnection getMainConnection() throws SQLException {throw new UnsupportedOperationException();}
 
     @NotNull
     @Override
-    public DBNConnection getDebugConnection(DBSchema schema) throws SQLException {
+    public DBNConnection getDebugConnection(SchemaId schemaId) throws SQLException {
         throw new UnsupportedOperationException();
     }
 
@@ -190,10 +190,10 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @NotNull
     @Override
-    public DBNConnection getConnection(SessionId sessionId, @Nullable DBSchema schema) throws SQLException {throw new UnsupportedOperationException();}
+    public DBNConnection getConnection(SessionId sessionId, @Nullable SchemaId schemaId) throws SQLException {throw new UnsupportedOperationException();}
 
     @NotNull
-    @Override public DBNConnection getMainConnection(@Nullable DBSchema schema) throws SQLException {throw new UnsupportedOperationException();}
+    @Override public DBNConnection getMainConnection(@Nullable SchemaId schemaId) throws SQLException {throw new UnsupportedOperationException();}
 
     @Override public void closeConnection(DBNConnection connection) {}
     @Override public void freePoolConnection(DBNConnection connection) {}
@@ -259,10 +259,22 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     @NotNull
     public DBObjectBundle getObjectBundle() {return objectBundle;}
     @Override
-    public DBSchema getUserSchema() {return null;}
+    public SchemaId getUserSchema() {return null;}
 
     @Override
-    public DBSchema getDefaultSchema() {
+    public SchemaId getDefaultSchema() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public List<SchemaId> getSchemaIds() {
+        return Collections.emptyList();
+    }
+
+    @Nullable
+    @Override
+    public DBSchema getSchema(SchemaId schema) {
         return null;
     }
 

@@ -10,10 +10,10 @@ public interface Presentable {
     String getName();
 
     @Nullable
-    String getDescription();
+    default String getDescription() {return null;}
 
     @Nullable
-    Icon getIcon();
+    default Icon getIcon() {return null;}
 
     Presentable UNKNOWN = new Presentable() {
         @NotNull

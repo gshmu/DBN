@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -309,21 +310,22 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                 if (connectionHandler != null) {
                     ConnectionDetailSettings connectionDetailSettings = connectionHandler.getSettings().getDetailSettings();
                     if (connectionDetailSettings.isRestoreWorkspace()) {
-                        BackgroundTask.invoke(project,
-                                TaskInstructions.create("Opening database editors", TaskInstruction.CANCELLABLE),
-                                (data, progress) -> {
-                                    DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+                        ConnectionAction.invoke("opening database editors", connectionHandler, (Integer) null,
+                                action -> BackgroundTask.invoke(project,
+                                        TaskInstructions.create("Opening database editors", TaskInstruction.CANCELLABLE),
+                                        (data, progress) -> {
+                                            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
 
-                                    objectRefs.forEach(objectRef -> {
-                                        if (progress.isCanceled()) return;
-                                        if (connectionHandler.canConnect()) {
-                                            DBSchemaObject object = objectRef.get(project);
-                                            if (object != null) {
-                                                databaseFileSystem.openEditor(object, null, false);
-                                            }
-                                        }
-                                    });
-                                });
+                                            objectRefs.forEach(objectRef -> {
+                                                if (progress.isCanceled()) return;
+                                                if (connectionHandler.canConnect()) {
+                                                    DBSchemaObject object = objectRef.get(project);
+                                                    if (object != null) {
+                                                        databaseFileSystem.openEditor(object, null, false);
+                                                    }
+                                                }
+                                            });
+                                        }));
                     }
                 }
             });

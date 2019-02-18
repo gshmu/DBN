@@ -8,11 +8,11 @@ import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
@@ -84,12 +84,19 @@ public class PendingTransactionDialogForm extends DBNFormImpl<PendingTransaction
 
     private void updatePreview() {
         ConnectionHandler connectionHandler = Failsafe.get(executionProcessor.getConnectionHandler());
-        DBSchema currentSchema = executionProcessor.getTargetSchema();
+        SchemaId currentSchema = executionProcessor.getTargetSchema();
         Project project = connectionHandler.getProject();
         String previewText = executionProcessor.getExecutionInput().getExecutableStatementText();
 
         DBLanguageDialect languageDialect = connectionHandler.getLanguageDialect(SQLLanguage.INSTANCE);
-        DBLanguagePsiFile selectStatementFile = DBLanguagePsiFile.createFromText(project, "preview", languageDialect, previewText, connectionHandler, currentSchema);
+        DBLanguagePsiFile selectStatementFile = DBLanguagePsiFile.createFromText(
+                project,
+                "preview",
+                languageDialect,
+                previewText,
+                connectionHandler,
+                currentSchema);
+
         Document previewDocument = DocumentUtil.getDocument(selectStatementFile);
 
         viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, project);

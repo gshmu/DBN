@@ -22,7 +22,6 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
-import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -189,9 +188,8 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
             DBSchemaObject schemaObject = objectRef.get();
             if (schemaObject != null) {
                 ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
-                DBSchema schema = schemaObject.getSchema();
                 connectionMappingManager.setConnectionHandler(virtualFile, connectionHandler);
-                connectionMappingManager.setDatabaseSchema(virtualFile, schema);
+                connectionMappingManager.setDatabaseSchema(virtualFile, schemaObject.getSchemaIdentifier());
             }
         }
 

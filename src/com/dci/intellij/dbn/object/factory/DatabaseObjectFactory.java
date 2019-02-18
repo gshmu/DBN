@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -85,7 +86,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
             DBSchema schema = methodFactoryInput.getSchema();
             try {
                 ConnectionHandler connectionHandler = schema.getConnectionHandler();
-                DBNConnection connection = connectionHandler.getMainConnection(schema);
+                DBNConnection connection = connectionHandler.getMainConnection(SchemaId.from(schema));
                 connectionHandler.getInterfaceProvider().getDDLInterface().createMethod(methodFactoryInput, connection);
                 DBObjectType objectType = methodFactoryInput.isFunction() ? DBObjectType.FUNCTION : DBObjectType.PROCEDURE;
                 Failsafe.get(schema.getChildObjectList(objectType)).reload();

@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
@@ -488,6 +489,11 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
             EventUtil.notify(getProject(), BrowserTreeEventListener.TOPIC).nodeChanged(treeNode, TreeEventType.NODES_CHANGED);
         }
 
+    }
+
+    @Override
+    public SchemaId getIdentifier() {
+        return SchemaId.get(getName());
     }
 
     private Set<BrowserTreeNode> resetObjectsStatus() {
