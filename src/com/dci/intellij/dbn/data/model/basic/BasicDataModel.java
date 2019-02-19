@@ -103,8 +103,9 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
     }
 
     @Override
+    @NotNull
     public DataModelHeader<? extends ColumnInfo> getHeader() {
-        return header;
+        return Failsafe.get(header);
     }
 
     @Override
@@ -279,12 +280,12 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
      *********************************************************/
     @Override
     public int getRowCount() {
-        return getRows().size();
+        return Failsafe.lenient(0, () -> getRows().size());
     }
 
     @Override
     public int getColumnCount() {
-        return isDisposed() ? 0 : getHeader().getColumnCount();
+        return Failsafe.lenient(0, () -> getHeader().getColumnCount());
     }
 
     @Override
@@ -345,7 +346,7 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
 
     @Override
     public int getColumnIndex(String columnName) {
-        return header.getColumnIndex(columnName);
+        return getHeader().getColumnIndex(columnName);
     }
 
     /********************************************************
@@ -358,7 +359,6 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
             DisposerUtil.dispose(rows);
             tableModelListeners.clear();
             dataModelListeners.clear();
-            searchResult = null;
             header = null;
             rows = null;
             project = null;
