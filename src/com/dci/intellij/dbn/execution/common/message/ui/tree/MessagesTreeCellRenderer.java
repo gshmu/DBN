@@ -80,7 +80,7 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
                     append(objectRef.getPath(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
                     connectionHandler = objectRef.lookupConnectionHandler();
                 } else {
-                    icon = object.getOriginalIcon();
+                    icon = object.getIcon();
                     append(object.getQualifiedName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
                     connectionHandler = object.getConnectionHandler();
                 }
