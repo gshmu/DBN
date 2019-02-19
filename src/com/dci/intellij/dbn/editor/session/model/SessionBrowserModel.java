@@ -75,6 +75,7 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
         sort();
     }
 
+    @NotNull
     @Override
     public SessionBrowserModelHeader getHeader() {
         return (SessionBrowserModelHeader) super.getHeader();

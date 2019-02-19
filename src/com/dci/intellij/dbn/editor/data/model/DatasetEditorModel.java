@@ -254,6 +254,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         return getDataset().isEditable(DBContentType.DATA);
     }
 
+    @NotNull
     @Override
     public DatasetEditorModelHeader getHeader() {
         return (DatasetEditorModelHeader) super.getHeader();
