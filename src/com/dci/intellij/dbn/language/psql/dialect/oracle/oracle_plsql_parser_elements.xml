@@ -5020,11 +5020,11 @@
                     <token id="000002584" type-id="CHR_COMMA" />
                 </sequence>
                 <token id="000002585" original-name="XQuery_string" type-id="STRING" />
-                <element ref-id="xmltable_options" />
+                <element ref-id="xmltable_options" optional="true"/>
             </sequence>
         </wrapper>
     </element-def>
-    <element-def description="XMLNAMESPACES clause" id="xmltable_options">
+    <element-def description="XMLTABLE options clause" id="xmltable_options">
         <element optional="true" ref-id="xml_passing_clause" />
         <sequence id="000002586" optional="true">
             <token id="000002587" type-id="KW_COLUMNS" />
