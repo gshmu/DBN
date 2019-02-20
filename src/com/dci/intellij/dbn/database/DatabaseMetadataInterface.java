@@ -148,7 +148,7 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
     ResultSet loadColumns(String ownerName, String datasetName, DBNConnection connection) throws SQLException;
 
     /**
-     * Loads the linkage list between columns and constraints for given owner<br>
+     * Loads the linkage actions between columns and constraints for given owner<br>
      * Column names of the returned ResultSet
      *  <li> DATASET_NAME (char)
      *  <li> COLUMN_NAME (char)
@@ -160,7 +160,7 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
     ResultSet loadAllConstraintRelations(String ownerName, DBNConnection connection) throws SQLException;
 
     /**
-     * Loads the linkage list between columns and constraints for given dataset<br>
+     * Loads the linkage actions between columns and constraints for given dataset<br>
      * Column names of the returned ResultSet
      *  <li> COLUMN_NAME (char)
      *  <li> CONSTRAINT_NAME (char)
@@ -170,7 +170,7 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
 
 
     /**
-     * Loads the linkage list between columns and indexes for given schema<br>
+     * Loads the linkage actions between columns and indexes for given schema<br>
      * Column names of the returned ResultSet
      *  <li> TABLE_NAME (char)
      *  <li> COLUMN_NAME (char)
@@ -181,7 +181,7 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
     ResultSet loadAllIndexRelations(String ownerName, DBNConnection connection) throws SQLException;
 
     /**
-     * Loads the linkage list between columns and indexes for given table<br>
+     * Loads the linkage actions between columns and indexes for given table<br>
      * Column names of the returned ResultSet
      *  <li> COLUMN_NAME (char)
      *  <li> INDEX_NAME (char)
@@ -255,7 +255,7 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
     ResultSet loadIndexes(String ownerName, String tableName, DBNConnection connection) throws SQLException;    
 
     /**
-     * Loads the list of nested-tables owned by the given table<br>
+     * Loads the actions of nested-tables owned by the given table<br>
      * Column names of the returned ResultSet
      *  <li> NESTED_TABLE_NAME (char)
      *  <li> TABLE_COLUMN (char)
@@ -265,7 +265,7 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
     ResultSet loadNestedTables(String ownerName, String tableName, DBNConnection connection) throws SQLException;
 
     /**
-     * Loads the list of nested-tables for the given owner<br>
+     * Loads the actions of nested-tables for the given owner<br>
      * Column names of the returned ResultSet
      *  <li> NESTED_TABLE_NAME (char)
      *  <li> TABLE_NAME (char)
@@ -363,7 +363,7 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
     *                        PACKAGES                       *
     *********************************************************/
     /**
-     * Loads the package list of the given owner<br>
+     * Loads the package actions of the given owner<br>
      * Column names of the returned ResultSet
      *  <li> PACKAGE_NAME (char)
      *  <li> SPEC_STATUS ('VALID'/'INVALID')
@@ -602,7 +602,7 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
     ResultSet loadObjectSourceCode(String ownerName, String objectName, String objectType, int overload, DBNConnection connection) throws SQLException;
 
     /**
-     * Loads a list of invalid object names for the given owner.
+     * Loads a actions of invalid object names for the given owner.
      * This is used to update the status of the objects.
      *  <li> OBJECT_NAME (char)
      *  <li> OBJECT_TYPE (char)
@@ -610,7 +610,7 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
     ResultSet loadInvalidObjects(String ownerName, DBNConnection connection) throws SQLException;
 
     /**
-     * Loads a list of debug object names for the given owner.
+     * Loads a actions of debug object names for the given owner.
      * This is used to update the status of the objects.
      *  <li> OBJECT_NAME (char)
      *  <li> OBJECT_TYPE (char)

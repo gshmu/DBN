@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.connection.action;
 
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class ConnectAction extends AbstractConnectionAction {
     public ConnectAction(ConnectionHandler connectionHandler) {
@@ -19,9 +20,9 @@ public class ConnectAction extends AbstractConnectionAction {
         connectionHandler.getInstructions().setAllowAutoConnect(true);
 
         ConnectionAction.invoke(
+                instructions("Trying to connect to " + connectionHandler.getName(), TaskInstruction.MANAGED),
                 "connecting to database",
                 connectionHandler,
-                TaskInstructions.create("Trying to connect to " + connectionHandler.getName(), TaskInstruction.MANAGED),
                 action -> ConnectionManager.testConnection(connectionHandler, false, true));
     }
 }

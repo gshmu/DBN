@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.data.find;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.model.DataModel;
@@ -16,6 +15,8 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 
 import java.awt.*;
+
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class DataSearchResultController implements Disposable {
     private SearchableDataComponent searchableComponent;
@@ -65,13 +66,13 @@ public class DataSearchResultController implements Disposable {
         }
     }
 
-    void updateResult(final DataFindModel findModel) {
+    void updateResult(DataFindModel findModel) {
         Project project = searchableComponent.getTable().getProject();
         BackgroundTask.invoke(project,
-                TaskInstructions.create("Updating search results", TaskInstruction.BACKGROUNDED),
+                instructions("Updating search results", TaskInstruction.BACKGROUNDED),
                 (data, progress) -> {
                     DataModel dataModel = searchableComponent.getTable().getModel();
-                    final DataSearchResult searchResult = dataModel.getSearchResult();
+                    DataSearchResult searchResult = dataModel.getSearchResult();
 
                     long updateTimestamp = System.currentTimeMillis();
                     searchResult.startUpdating(updateTimestamp);

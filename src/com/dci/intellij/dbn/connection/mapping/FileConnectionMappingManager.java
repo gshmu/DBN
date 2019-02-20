@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -73,7 +72,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.action.DBNDataKeys.*;
+import static com.dci.intellij.dbn.common.action.DBNDataKeys.CONNECTION_HANDLER;
+import static com.dci.intellij.dbn.common.action.DBNDataKeys.DATABASE_SCHEMA;
+import static com.dci.intellij.dbn.common.action.DBNDataKeys.DATABASE_SESSION;
+import static com.dci.intellij.dbn.common.util.MessageUtil.options;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 
 @State(
     name = FileConnectionMappingManager.COMPONENT_NAME,
@@ -476,9 +479,9 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                                         "You can not execute statements against this connection. Please select a proper connection to continue.";
 
 
-                MessageUtil.showWarningDialog(project,
+                showWarningDialog(project,
                         "No valid connection", message,
-                        new String[]{"Select Connection", "Cancel"}, 0,
+                        options("Select Connection", "Cancel"), 0,
                         MessageCallback.create(0, option ->
                                 promptConnectionSelector(file, false, true, true, callback)));
 
@@ -486,9 +489,9 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                 String message =
                         "You did not select any schema to run the statement against.\n" +
                                 "To continue with the statement execution please select a schema.";
-                MessageUtil.showWarningDialog(project,
+                showWarningDialog(project,
                         "No schema selected", message,
-                        new String[]{"Use Current Schema", "Select Schema", "Cancel"}, 0,
+                        options("Use Current Schema", "Select Schema", "Cancel"), 0,
                         MessageCallback.create(null, option -> {
                             if (option == 0) {
                                 callback.start();

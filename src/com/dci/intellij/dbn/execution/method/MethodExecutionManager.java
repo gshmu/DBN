@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -42,6 +41,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
@@ -100,8 +100,9 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     }
 
     public void promptExecutionDialog(final MethodExecutionInput executionInput, final @NotNull DBDebuggerType debuggerType, final RunnableTask callback) {
-        ConnectionAction.invoke("the method execution", executionInput,
-                TaskInstructions.create("Loading method details"),
+        ConnectionAction.invoke(
+                instructions("Loading method details"),
+                "the method execution", executionInput,
                 action -> {
                     Project project = getProject();
                     ConnectionHandler connectionHandler = action.getConnectionHandler();
@@ -141,7 +142,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     public void showExecutionHistoryDialog(@Nullable MethodExecutionInput selected, boolean editable, boolean debug, @Nullable RunnableTask<MethodExecutionInput> callback) {
         Project project = getProject();
         BackgroundTask.invoke(project,
-                TaskInstructions.create("Loading method execution history", TaskInstruction.CANCELLABLE),
+                instructions("Loading method execution history", TaskInstruction.CANCELLABLE),
                 (data, progress) -> {
                     initMethodExecutionHistory();
 
@@ -190,7 +191,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             final MethodExecutionProcessor executionProcessor = executionInterface.createExecutionProcessor(method);
 
             BackgroundTask.invoke(project,
-                    TaskInstructions.create("Executing method", TaskInstruction.CANCELLABLE),
+                    instructions("Executing method", TaskInstruction.CANCELLABLE),
                     (data, progress) -> {
                         try {
                             BackgroundTask.initProgressIndicator(progress, true, "Executing " + method.getQualifiedNameWithType());

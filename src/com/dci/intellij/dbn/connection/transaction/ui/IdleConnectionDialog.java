@@ -15,6 +15,13 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.util.List;
+
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.COMMIT;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.DISCONNECT_IDLE;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.KEEP_ALIVE;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.ROLLBACK_IDLE;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
 
 public class IdleConnectionDialog extends DialogWithTimeout {
     private IdleConnectionDialogForm idleConnectionDialogForm;
@@ -104,8 +111,9 @@ public class IdleConnectionDialog extends DialogWithTimeout {
 
     private void commit() {
         try {
+            List<TransactionAction> actions = actions(COMMIT, DISCONNECT_IDLE);
             DatabaseTransactionManager transactionManager = getTransactionManager();
-            transactionManager.execute(getConnectionHandler(), connection, true, TransactionAction.COMMIT, TransactionAction.DISCONNECT_IDLE);
+            transactionManager.execute(getConnectionHandler(), connection, actions, true, null);
         } finally {
             doOKAction();
         }
@@ -114,8 +122,9 @@ public class IdleConnectionDialog extends DialogWithTimeout {
 
     private void rollback() {
         try {
+            List<TransactionAction> actions = actions(ROLLBACK_IDLE, DISCONNECT_IDLE);
             DatabaseTransactionManager transactionManager = getTransactionManager();
-            transactionManager.execute(getConnectionHandler(), connection, true, TransactionAction.ROLLBACK_IDLE, TransactionAction.DISCONNECT_IDLE);
+            transactionManager.execute(getConnectionHandler(), connection, actions, true, null);
         } finally {
             doOKAction();
         }
@@ -123,8 +132,9 @@ public class IdleConnectionDialog extends DialogWithTimeout {
 
     private void ping() {
         try {
+            List<TransactionAction> actions = actions(KEEP_ALIVE);
             DatabaseTransactionManager transactionManager = getTransactionManager();
-            transactionManager.execute(getConnectionHandler(), connection, true, TransactionAction.KEEP_ALIVE);
+            transactionManager.execute(getConnectionHandler(), connection, actions, true, null);
         } finally {
             doOKAction();
         }

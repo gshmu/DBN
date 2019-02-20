@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleCallback;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -59,6 +58,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
 @State(
@@ -123,7 +123,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 clearOutputOption = executionInput.isClearOutput();
 
                 BackgroundTask.invoke(project,
-                        TaskInstructions.create("Executing database script", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
+                        instructions("Executing database script", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
                         (data, progress) -> {
                             try {
                                 doExecuteScript(executionInput);
@@ -175,8 +175,8 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
                     FileUtil.writeToFile(temporaryScriptFile, executionInput.getTextContent());
                     if (!temporaryScriptFile.isFile() || !temporaryScriptFile.exists()) {
-                        executionManager.writeLogOutput(outputContext, LogOutput.createErrOutput("Failed to create temporary script file " + temporaryScriptFile + "."));
-                        throw new IllegalStateException("Failed to create temporary script file " + temporaryScriptFile + ". Check access rights at location.");
+                        executionManager.writeLogOutput(outputContext, LogOutput.createErrOutput("Failed to instructions temporary script file " + temporaryScriptFile + "."));
+                        throw new IllegalStateException("Failed to instructions temporary script file " + temporaryScriptFile + ". Check access rights at location.");
                     }
 
                     ProcessBuilder processBuilder = new ProcessBuilder(executionInput.getCommand());

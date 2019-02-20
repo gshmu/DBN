@@ -34,7 +34,7 @@ public class SettingsSupport {
     public static <T extends Enum> T getEnum(Element parent, String childName, T originalValue) {
         Element element = parent.getChild(childName);
         String stringValue = getStringValue(element);
-        return stringValue == null ? originalValue : (T) T.valueOf((Class<T>) originalValue.getClass(), stringValue);
+        return stringValue == null ? originalValue : (T) T.valueOf(originalValue.getClass(), stringValue);
     }
 
     public static String readCdata(Element parent) {
@@ -132,7 +132,7 @@ public class SettingsSupport {
 
     public static <T extends Enum<T>> T getEnumAttribute(Element element, String attributeName, @NotNull T defaultValue) {
         String attributeValue = element.getAttributeValue(attributeName);
-        return StringUtil.isEmpty(attributeValue) ? defaultValue : (T) defaultValue.valueOf((Class<T>) defaultValue.getClass(), attributeValue);
+        return StringUtil.isEmpty(attributeValue) ? defaultValue : T.valueOf((Class<T>) defaultValue.getClass(), attributeValue);
     }
 
     public static <T extends Enum<T>> void setEnumAttribute(Element element, String attributeName, T value) {

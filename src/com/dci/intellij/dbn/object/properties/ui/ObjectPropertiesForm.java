@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -20,8 +19,11 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
     private JPanel mainPanel;
@@ -71,13 +73,13 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
         return object;
     }
 
-    public void setObject(final DBObject object) {
+    public void setObject(@NotNull DBObject object) {
         if (!object.equals(this.object)) {
             this.object = object;
 
             Project project = object.getProject();
             BackgroundTask.invoke(project,
-                    TaskInstructions.create("Rendering object properties", TaskInstruction.BACKGROUNDED),
+                    instructions("Rendering object properties", TaskInstruction.BACKGROUNDED),
                     (task, progress) -> {
                         ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
                         Disposer.register(ObjectPropertiesForm.this, tableModel);

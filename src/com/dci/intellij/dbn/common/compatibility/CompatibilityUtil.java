@@ -25,7 +25,7 @@ public class CompatibilityUtil {
     }
 
     public static void showSearchCompletionPopup(boolean byClickingToolbarButton, JComponent toolbarComponent, JBList list, String title, JTextField textField) {
-        //Utils.showCompletionPopup(byClickingToolbarButton ? toolbarComponent : null, list, title, textField);
+        //Utils.showCompletionPopup(byClickingToolbarButton ? toolbarComponent : null, actions, title, textField);
         Utils.showCompletionPopup(byClickingToolbarButton ? toolbarComponent : null, list, title, textField, "");
     }
 

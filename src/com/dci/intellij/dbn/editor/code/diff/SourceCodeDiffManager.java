@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -30,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.common.thread.TaskInstruction.CANCELLABLE;
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
 @State(
@@ -169,8 +169,9 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
 
 
     public void opedDatabaseDiffWindow(final DBSourceCodeVirtualFile sourceCodeFile) {
-        ConnectionAction.invoke("comparing changes", sourceCodeFile,
-                TaskInstructions.create("Loading database source code", CANCELLABLE),
+        ConnectionAction.invoke(
+                instructions("Loading database source code", CANCELLABLE),
+                "comparing changes", sourceCodeFile,
                 (action) -> {
                     DBSchemaObject object = sourceCodeFile.getObject();
                     Project project = getProject();

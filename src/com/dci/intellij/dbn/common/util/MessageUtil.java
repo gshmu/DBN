@@ -16,8 +16,8 @@ import javax.swing.*;
 
 public class MessageUtil {
 
-    public static final String[] OPTIONS_OK = new String[]{"OK"};
-    public static final String[] OPTIONS_YES_NO = new String[]{"Yes", "No"};
+    public static final String[] OPTIONS_OK = options("OK");
+    public static final String[] OPTIONS_YES_NO = options("Yes", "No");
 
     public static void showErrorDialog(@Nullable Project project, String title, MessageBundle messages) {
         StringBuilder buffer = new StringBuilder();
@@ -109,5 +109,8 @@ public class MessageUtil {
         });
     }
 
+    public static String[] options(String ... options) {
+        return CommonUtil.list(options);
+    }
 
 }

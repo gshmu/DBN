@@ -15,12 +15,14 @@ public class OracleMessageParserInterface implements DatabaseMessageParserInterf
     @Nullable
     public DatabaseObjectIdentifier identifyObject(SQLException exception) {
         String message = exception.getMessage();
-        if (message.startsWith("ORA-01400")) return identifyColumn(message);
-        if (message.startsWith("ORA-12899")) return identifyColumn(message);
-        if (message.startsWith("ORA-00001")) return identifyConstraint(message);
-        if (message.startsWith("ORA-02291")) return identifyConstraint(message);
-        if (message.startsWith("ORA-02290")) return identifyConstraint(message);
-        if (message.startsWith("ORA-04098")) return identifyTrigger(message);
+        if (message != null) {
+            if (message.startsWith("ORA-01400")) return identifyColumn(message);
+            if (message.startsWith("ORA-12899")) return identifyColumn(message);
+            if (message.startsWith("ORA-00001")) return identifyConstraint(message);
+            if (message.startsWith("ORA-02291")) return identifyConstraint(message);
+            if (message.startsWith("ORA-02290")) return identifyConstraint(message);
+            if (message.startsWith("ORA-04098")) return identifyTrigger(message);
+        }
         return null;
     }
 

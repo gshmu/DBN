@@ -137,11 +137,11 @@ public class MySqlArgumentsResultSet extends ResultSetAdapter {
     }
 
     private static void throwParseException(String argumentsString, String token) throws SQLException {
-        throw new SQLException("Could not parse argument list \"" + argumentsString + "\". Unexpected token \"" + token + "\" found.");
+        throw new SQLException("Could not parse argument actions \"" + argumentsString + "\". Unexpected token \"" + token + "\" found.");
     }
 
     private static void throwParseException(String argumentsString, String token, String customMessage) throws SQLException {
-        throw new SQLException("Could not parse argument list \"" + argumentsString + "\". Unexpected token \"" + token + "\" found. " + customMessage);
+        throw new SQLException("Could not parse argument actions \"" + argumentsString + "\". Unexpected token \"" + token + "\" found. " + customMessage);
     }
 
     @Override

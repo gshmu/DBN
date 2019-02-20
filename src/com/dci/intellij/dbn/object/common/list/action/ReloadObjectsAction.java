@@ -1,12 +1,13 @@
 package com.dci.intellij.dbn.object.common.list.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class ReloadObjectsAction extends AnAction {
 
@@ -20,12 +21,11 @@ public class ReloadObjectsAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         String listName = objectList.getName();
-        final boolean loaded = objectList.isLoaded();
-        String actionDescription = loaded ? "reloading the " + listName : "loading the " + listName;
+        boolean loaded = objectList.isLoaded();
         ConnectionAction.invoke(
-                actionDescription,
+                instructions("Reloading " + objectList.getContentDescription() + "."),
+                loaded ? "reloading the " + listName : "loading the " + listName,
                 objectList,
-                TaskInstructions.create("Reloading " + objectList.getContentDescription() + "."),
                 action -> {
                     if (loaded)
                         objectList.reload(); else

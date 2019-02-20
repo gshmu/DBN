@@ -37,7 +37,7 @@ public class DatasetEditorKeyListener extends KeyAdapter {
                                 model.insertRecord(index + 1);
                             }
                         } catch (SQLException e1) {
-                            MessageUtil.showErrorDialog(table.getProject(), "Could not create row in " + table.getDataset().getQualifiedNameWithType() + ".", e1);
+                            MessageUtil.showErrorDialog(table.getProject(), "Could not instructions row in " + table.getDataset().getQualifiedNameWithType() + ".", e1);
                         }
                         e.consume();
                 }

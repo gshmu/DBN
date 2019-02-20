@@ -111,4 +111,8 @@ public abstract class AbstractProjectComponent extends SettingsSupport implement
     public void disposeComponent() {
         dispose();
     }
+
+    protected void closeProject() {
+        ProjectUtil.closeProject(getProject());
+    }
 }

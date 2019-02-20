@@ -207,7 +207,7 @@ public class DataSearchResult implements Disposable {
                     }
                 }
             }
-            //reached beginning of the matches list without resolving selection
+            //reached beginning of the matches actions without resolving selection
             // scroll to the end
             return ListUtil.getLast(matches);
         }

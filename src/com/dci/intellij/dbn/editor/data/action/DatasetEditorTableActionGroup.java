@@ -68,7 +68,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
             }
         }
 
-        // show the create additional condition action in case the filter is basic,
+        // show the instructions additional condition action in case the filter is basic,
         // the join is AND, and the column is not already present
         DatasetFilterManager filterManager = DatasetFilterManager.getInstance(table.getDataset().getProject());
         DatasetFilter activeFilter = filterManager.getActiveFilter(table.getDataset());

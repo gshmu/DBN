@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ModalTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -49,6 +48,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class DatabaseBrowserTree extends DBNTree {
     private BrowserTreeNode targetSelection;
@@ -248,7 +249,7 @@ public class DatabaseBrowserTree extends DBNTree {
                     event.consume();
                 } else if (deliberate) {
                     BackgroundTask.invoke(getProject(),
-                            TaskInstructions.create("Loading Object Reference"),
+                            instructions("Loading Object Reference"),
                             (data, progress) -> {
                                 DBObject navigationObject = object.getDefaultNavigationObject();
                                 if (navigationObject != null) {

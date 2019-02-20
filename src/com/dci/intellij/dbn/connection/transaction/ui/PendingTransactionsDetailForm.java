@@ -19,6 +19,9 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
+
+
 public class PendingTransactionsDetailForm extends DBNFormImpl {
     private JTable changesTable;
     private JPanel mainPanel;
@@ -31,7 +34,7 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
     private ConnectionHandlerRef connectionHandlerRef;
     private PendingTransactionsTableModel tableModel;
 
-    PendingTransactionsDetailForm(final ConnectionHandler connectionHandler, final TransactionAction additionalOperation, boolean showActions) {
+    PendingTransactionsDetailForm(ConnectionHandler connectionHandler, TransactionAction additionalOperation, boolean showActions) {
         this.connectionHandlerRef = connectionHandler.getRef();
         Project project = connectionHandler.getProject();
 
@@ -45,14 +48,16 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
 
         transactionActionsPanel.setVisible(showActions);
         if (showActions) {
-            final ActionListener actionListener = e -> {
+            ActionListener actionListener = e -> {
                 Project project1 = connectionHandler.getProject();
                 DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project1);
                 Object source = e.getSource();
                 if (source == commitButton) {
-                    transactionManager.execute(connectionHandler, null, false, TransactionAction.COMMIT, additionalOperation);
+                    List<TransactionAction> actions = actions(TransactionAction.COMMIT, additionalOperation);
+                    transactionManager.execute(connectionHandler, null, actions, false, null);
                 } else if (source == rollbackButton) {
-                    transactionManager.execute(connectionHandler, null, false, TransactionAction.ROLLBACK, additionalOperation);
+                    List<TransactionAction> actions = actions(TransactionAction.ROLLBACK, additionalOperation);
+                    transactionManager.execute(connectionHandler, null, actions, false, null);
                 }
             };
 
@@ -96,7 +101,7 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
         }
     };
 
-    private void refreshForm(final ConnectionHandler connectionHandler) {
+    private void refreshForm(ConnectionHandler connectionHandler) {
         SimpleLaterInvocator.invoke(this, () -> {
             checkDisposed();
             PendingTransactionsTableModel oldTableModel = tableModel;

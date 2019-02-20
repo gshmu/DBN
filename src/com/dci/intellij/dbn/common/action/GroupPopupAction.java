@@ -29,21 +29,24 @@ public abstract class GroupPopupAction extends DumbAwareAction {
         for (AnAction action : getActions(e)) {
             actionGroup.add(action);
         }
-        ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
-                groupTitle,
-                actionGroup,
-                e.getDataContext(),
-                JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                true, null, 10);
-
-        //Project project = (Project) e.getDataContext().getData(DataConstants.PROJECT);
-        DataProviderSupplier dataProvider = getDataProviderSupplier(e);
-        if (dataProvider != null) {
-            ActionUtil.registerDataProvider(popup.getContent(), dataProvider);
-        }
         InputEvent inputEvent = e.getInputEvent();
         if (inputEvent != null) {
-            showBelowComponent(popup, (Component) inputEvent.getSource());
+            Component component = (Component) inputEvent.getSource();
+            if (component.isShowing()) {
+                ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
+                        groupTitle,
+                        actionGroup,
+                        e.getDataContext(),
+                        JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+                        true, null, 10);
+
+                //Project project = (Project) e.getDataContext().getData(DataConstants.PROJECT);
+                DataProviderSupplier dataProvider = getDataProviderSupplier(e);
+                if (dataProvider != null) {
+                    ActionUtil.registerDataProvider(popup.getContent(), dataProvider);
+                }
+                showBelowComponent(popup, component);
+            }
         }
     }
 

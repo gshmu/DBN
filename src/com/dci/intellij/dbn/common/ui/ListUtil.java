@@ -23,7 +23,7 @@ public class ListUtil {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Error notifying list model listeners", e);
+            LOGGER.error("Error notifying actions model listeners", e);
         }
     }
 

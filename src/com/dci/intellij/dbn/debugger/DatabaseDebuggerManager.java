@@ -29,7 +29,6 @@ import com.dci.intellij.dbn.debugger.jdbc.process.DBStatementJdbcRunner;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBMethodJdwpRunner;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBStatementJdwpRunner;
 import com.dci.intellij.dbn.debugger.options.DebuggerSettings;
-import com.dci.intellij.dbn.debugger.options.DebuggerTypeOption;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
@@ -76,6 +75,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+
+import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 
 @State(
     name = DatabaseDebuggerManager.COMPONENT_NAME,
@@ -315,7 +316,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
                 String runnerId =
                         debuggerType == DBDebuggerType.JDBC ? DBStatementJdbcRunner.RUNNER_ID :
-                                debuggerType == DBDebuggerType.JDWP ? DBStatementJdwpRunner.RUNNER_ID : null;
+                        debuggerType == DBDebuggerType.JDWP ? DBStatementJdwpRunner.RUNNER_ID : null;
 
                 ProgramRunner programRunner = RunnerRegistry.getInstance().findRunnerById(runnerId);
                 if (programRunner != null) {
@@ -338,30 +339,30 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     }
 
 
-
-    private void startDebugger(final DebuggerStarter debuggerStarter) {
-        DebuggerTypeOption debuggerTypeOption = getDebuggerSettings().getDebuggerType().resolve();
-        DBDebuggerType debuggerType = debuggerTypeOption.getDebuggerType();
-        if (debuggerType != null) {
-            if (debuggerType.isSupported()) {
-                debuggerStarter.setDebuggerType(debuggerType);
-                debuggerStarter.start();
-            } else {
-                ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
-                MessageUtil.showErrorDialog(
-                        getProject(), "Unsupported debugger",
-                        debuggerType.name() + " debugging is not supported in \"" +
-                            applicationInfo.getVersionName() + " " +
-                                applicationInfo.getFullVersion() + "\".\n" +
-                                "Do you want to use classic debugger over JDBC instead?",
-                        new String[]{"Use " + DBDebuggerType.JDBC.getName(), "Cancel"}, 0,
-                        MessageCallback.create(0, option -> {
-                            debuggerStarter.setDebuggerType(DBDebuggerType.JDBC);
+    private void startDebugger(DebuggerStarter debuggerStarter) {
+        getDebuggerSettings().getDebuggerType().resolve(list(),
+                debuggerTypeOption -> {
+                    DBDebuggerType debuggerType = debuggerTypeOption.getDebuggerType();
+                    if (debuggerType != null) {
+                        if (debuggerType.isSupported()) {
+                            debuggerStarter.setDebuggerType(debuggerType);
                             debuggerStarter.start();
-                        }));
-            }
-
-        }
+                        } else {
+                            ApplicationInfo applicationInfo = ApplicationInfo.getInstance();
+                            MessageUtil.showErrorDialog(
+                                    getProject(), "Unsupported debugger",
+                                    debuggerType.name() + " debugging is not supported in \"" +
+                                            applicationInfo.getVersionName() + " " +
+                                            applicationInfo.getFullVersion() + "\".\n" +
+                                            "Do you want to use classic debugger over JDBC instead?",
+                                    new String[]{"Use " + DBDebuggerType.JDBC.getName(), "Cancel"}, 0,
+                                    MessageCallback.create(0, option -> {
+                                        debuggerStarter.setDebuggerType(DBDebuggerType.JDBC);
+                                        debuggerStarter.start();
+                                    }));
+                        }
+                    }
+                });
     }
 
     private abstract class DebuggerStarter extends ConditionalLaterInvocator<Integer> {

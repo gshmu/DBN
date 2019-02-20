@@ -112,7 +112,7 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
     private static class ListCellRenderer extends ColoredListCellRenderer {
 
         @Override
-        protected void customizeCellRenderer(JList list, Object value, int index, boolean selected, boolean hasFocus) {
+        protected void customizeCellRenderer(@NotNull JList list, Object value, int index, boolean selected, boolean hasFocus) {
             ConnectionHandler connectionHandler = (ConnectionHandler) value;
             setIcon(connectionHandler.getIcon());
             append(connectionHandler.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);

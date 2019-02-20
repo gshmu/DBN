@@ -201,9 +201,8 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     }
 
     public static void invoke(
-            String description,
+            TaskInstructions taskInstructions, String description,
             ConnectionProvider connectionProvider,
-            TaskInstructions taskInstructions,
             Runnable runnable) {
         create(description, connectionProvider, taskInstructions, runnable, null, null).start();
     }

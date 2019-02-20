@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -41,6 +40,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class SessionBrowser extends UserDataHolderBase implements FileEditor, Disposable, ConnectionProvider, DataProviderSupplier {
     private DBSessionBrowserVirtualFile sessionBrowserFile;
@@ -89,7 +90,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     public void loadSessions(final boolean force) {
         if (shouldLoad(force)) {
             ConnectionAction.invoke("loading the sessions", this,
-                    TaskInstructions.create("Loading sessions", TaskInstruction.BACKGROUNDED),
+                    instructions("Loading sessions", TaskInstruction.BACKGROUNDED),
                     action -> {
                         if (shouldLoad(force)) {
                             try {
