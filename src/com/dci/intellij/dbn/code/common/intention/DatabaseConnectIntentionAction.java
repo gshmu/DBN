@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.code.common.intention;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -14,6 +13,8 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class DatabaseConnectIntentionAction extends GenericIntentionAction implements LowPriorityAction{
     @Override
@@ -53,7 +54,7 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
             if (activeConnection != null && !activeConnection.isDisposed() && !activeConnection.isVirtual()) {
                 activeConnection.getInstructions().setAllowAutoConnect(true);
                 BackgroundTask.invoke(project,
-                        TaskInstructions.create("Trying to connect to " + activeConnection.getName()),
+                        instructions("Trying to connect to " + activeConnection.getName()),
                         (data, progress) -> ConnectionManager.testConnection(activeConnection, false, true));
             }
         }

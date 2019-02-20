@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.data.editor.text.ui;
 
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
@@ -13,6 +12,8 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class TextEditorDialog extends DBNDialog<TextEditorForm> {
     private final TextEditorAdapter textEditorAdapter;
@@ -59,11 +60,13 @@ public class TextEditorDialog extends DBNDialog<TextEditorForm> {
     @Override
     protected void doOKAction() {
         String text = getComponent().getText();
-        BackgroundTask.invoke(getProject(), TaskInstructions.create("Updating value"), (data, progress) -> {
-            UserValueHolder userValueHolder = textEditorAdapter.getUserValueHolder();
-            userValueHolder.updateUserValue(text, false);
-            textEditorAdapter.afterUpdate();
-        });
+        BackgroundTask.invoke(getProject(),
+                instructions("Updating value"),
+                (data, progress) -> {
+                    UserValueHolder userValueHolder = textEditorAdapter.getUserValueHolder();
+                    userValueHolder.updateUserValue(text, false);
+                    textEditorAdapter.afterUpdate();
+                });
         super.doOKAction();
     }
 

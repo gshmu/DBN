@@ -14,7 +14,6 @@ import com.dci.intellij.dbn.common.thread.BackgroundMonitor;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -28,7 +27,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.CHANGING;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DIRTY;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DISPOSED;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADED;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING_IN_BACKGROUND;
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> extends PropertyHolderImpl<DynamicContentStatus> implements DynamicContent<T> {
     protected static final List EMPTY_CONTENT = Collections.unmodifiableList(new ArrayList(0));
@@ -208,7 +214,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     String connectionString = " (" + connectionHandler.getName() + ')';
                     BackgroundTask.invoke(getProject(),
-                            TaskInstructions.create("Loading data dictionary" + connectionString, TaskInstruction.BACKGROUNDED),
+                            instructions("Loading data dictionary" + connectionString, TaskInstruction.BACKGROUNDED),
                             (data, progress) -> {
                                 try {
                                     load(force);

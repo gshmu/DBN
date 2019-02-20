@@ -7,9 +7,7 @@ import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -46,6 +44,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
+import static com.dci.intellij.dbn.common.util.MessageUtil.options;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
+
 public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericProgramRunner {
     @Override
     @Nullable
@@ -54,16 +56,16 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
     }
 
     private RunContentDescriptor doExecute(
-            final Project project,
-            final Executor executor,
+            Project project,
+            Executor executor,
             RunProfileState state,
             RunContentDescriptor contentToReuse,
-            final ExecutionEnvironment environment) throws ExecutionException {
+            ExecutionEnvironment environment) throws ExecutionException {
 
-        final DBRunConfig runProfile = (DBRunConfig) environment.getRunProfile();
+        DBRunConfig runProfile = (DBRunConfig) environment.getRunProfile();
         ConnectionAction.invoke("the debug execution",
                 runProfile.getConnectionHandler(),
-                TaskInstructions.create("Checking debug privileges", TaskInstruction.CANCELLABLE),
+                instructions("Checking debug privileges", TaskInstruction.CANCELLABLE),
                 action -> {
                     performPrivilegeCheck(
                             project,
@@ -92,7 +94,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
 
         } else {
             DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
-            final List<String> missingPrivileges = debuggerManager.getMissingDebugPrivileges(connectionHandler);
+            List<String> missingPrivileges = debuggerManager.getMissingDebugPrivileges(connectionHandler);
             if (missingPrivileges.size() > 0) {
                 StringBuilder buffer = new StringBuilder();
                 buffer.append("The current user (").append(connectionHandler.getUserName()).append(") does not have sufficient privileges to perform debug operations on this database.\n");
@@ -102,9 +104,9 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                     buffer.append(" - ").append(missingPrivilege).append("\n");
                 }
 
-                MessageUtil.showWarningDialog(
+                showWarningDialog(
                         project, "Insufficient privileges", buffer.toString(),
-                        new String[]{"Continue anyway", "Cancel"}, 0,
+                        options("Continue anyway", "Cancel"), 0,
                         MessageCallback.create(0, option -> {
                             performInitialize(
                                     connectionHandler,
@@ -123,16 +125,16 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
     }
 
     private void performInitialize(
-            @NotNull final ConnectionHandler connectionHandler,
-            @NotNull final T executionInput,
-            @NotNull final ExecutionEnvironment environment,
-            final Callback callback) {
-        final DBRunConfig runProfile = (DBRunConfig) environment.getRunProfile();
+            @NotNull ConnectionHandler connectionHandler,
+            @NotNull T executionInput,
+            @NotNull ExecutionEnvironment environment,
+            @Nullable Callback callback) {
+        DBRunConfig runProfile = (DBRunConfig) environment.getRunProfile();
         if (runProfile.isCompileDependencies()) {
-            final Project project = connectionHandler.getProject();
+            Project project = connectionHandler.getProject();
 
             BackgroundTask.invoke(project,
-                    TaskInstructions.create("Initializing debug environment", TaskInstruction.CANCELLABLE),
+                    instructions("Initializing debug environment", TaskInstruction.CANCELLABLE),
                     (data, progress) -> {
                         DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
                         BackgroundTask.initProgressIndicator(progress, true, "Loading method dependencies");
@@ -163,7 +165,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             @NotNull ConnectionHandler connectionHandler,
             @NotNull T executionInput,
             @NotNull ExecutionEnvironment environment,
-            Callback callback,
+            @Nullable Callback callback,
             List<DBSchemaObject> dependencies) {
 
         SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
@@ -177,7 +179,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                 if (selectedDependencies.size() > 0) {
 
                     BackgroundTask.invoke(project,
-                            TaskInstructions.create("Compiling dependencies", TaskInstruction.CANCELLABLE),
+                            instructions("Compiling dependencies", TaskInstruction.CANCELLABLE),
                             (data, progress) -> {
                                 DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
                                 for (DBSchemaObject schemaObject : selectedDependencies) {

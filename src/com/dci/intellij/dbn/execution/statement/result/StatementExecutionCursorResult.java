@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -29,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
 public class StatementExecutionCursorResult extends StatementExecutionBasicResult {
@@ -67,7 +67,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
 
     public void reload() {
         BackgroundTask.invoke(getProject(),
-                TaskInstructions.create("Reloading data", TaskInstruction.BACKGROUNDED),
+                instructions("Reloading data", TaskInstruction.BACKGROUNDED),
                 (data, progress) -> {
                     BackgroundTask.initProgressIndicator(progress, true, "Reloading results for " + getExecutionProcessor().getStatementName());
                     ExecutionContext context = getExecutionProcessor().initExecutionContext();
@@ -114,7 +114,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     public void fetchNextRecords() {
         Project project = getProject();
         BackgroundTask.invoke(project,
-                TaskInstructions.create("Loading data", TaskInstruction.BACKGROUNDED),
+                instructions("Loading data", TaskInstruction.BACKGROUNDED),
                 (data, progress) -> {
                     BackgroundTask.initProgressIndicator(progress, true, "Loading next records for " + getExecutionProcessor().getStatementName());
                     resultPanel.highlightLoading(true);

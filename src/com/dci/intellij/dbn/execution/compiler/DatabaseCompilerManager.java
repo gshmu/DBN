@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -37,6 +36,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class DatabaseCompilerManager extends AbstractProjectComponent {
     private DatabaseCompilerManager(Project project) {
@@ -111,7 +112,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     private void updateFilesContentState(final DBSchemaObject object, final DBContentType contentType) {
         Project project = getProject();
         BackgroundTask.invoke(project,
-                TaskInstructions.create("Refreshing local content state", TaskInstruction.BACKGROUNDED),
+                instructions("Refreshing local content state", TaskInstruction.BACKGROUNDED),
                 (data, progress) -> {
                     DBEditableObjectVirtualFile databaseFile = object.getCachedVirtualFile();
                     if (databaseFile != null && databaseFile.isContentLoaded()) {
@@ -140,7 +141,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                     String taskTitle = "Compiling " + object.getObjectType().getName();
                     promptCompileTypeSelection(compileType, object,
                             BackgroundTask.create(project,
-                                    TaskInstructions.create(taskTitle, TaskInstruction.BACKGROUNDED),
+                                    instructions(taskTitle, TaskInstruction.BACKGROUNDED),
                                     (data, progress) -> {
                                         doCompileObject(object, data, compilerAction);
                                         ConnectionHandler connectionHandler = object.getConnectionHandler();
@@ -226,7 +227,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
 
                     promptCompileTypeSelection(compileType, null,
                             BackgroundTask.create(project,
-                                    TaskInstructions.create(taskTitle, TaskInstruction.CANCELLABLE),
+                                    instructions(taskTitle, TaskInstruction.CANCELLABLE),
                                     (data, progress) -> {
                                         progress.setIndeterminate(true);
                                         doCompileInvalidObjects(schema.getPackages(), "packages", progress, data);

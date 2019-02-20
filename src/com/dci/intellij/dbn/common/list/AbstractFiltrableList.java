@@ -96,7 +96,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
                 }
                 @Override
                 public void remove(){
-                    throw new UnsupportedOperationException("Iterator remove not implemented in filtrable list");
+                    throw new UnsupportedOperationException("Iterator remove not implemented in filtrable actions");
                 }
             };
         } else {
@@ -262,15 +262,15 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
 
     @Override
     @NotNull
-    public ListIterator<T> listIterator()               {throw new UnsupportedOperationException("List iterator not implemented in filtrable list");}
+    public ListIterator<T> listIterator()               {throw new UnsupportedOperationException("List iterator not implemented in filtrable actions");}
 
     @Override
     @NotNull
-    public ListIterator<T> listIterator(int index)      {throw new UnsupportedOperationException("List iterator not implemented in filtrable list");}
+    public ListIterator<T> listIterator(int index)      {throw new UnsupportedOperationException("List iterator not implemented in filtrable actions");}
 
     @Override
     @NotNull
-    public List<T> subList(int fromIndex, int toIndex)  {throw new UnsupportedOperationException("Sublist not implemented in filtrable list");}
+    public List<T> subList(int fromIndex, int toIndex)  {throw new UnsupportedOperationException("Sublist not implemented in filtrable actions");}
 
     @Override
     public void trimToSize() {

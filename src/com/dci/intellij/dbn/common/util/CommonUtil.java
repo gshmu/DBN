@@ -150,4 +150,9 @@ public class CommonUtil {
         }
         return -1;
     }
+
+    @NotNull
+    public static <T> T[] list(T... values) {
+        return values;
+    }
 }

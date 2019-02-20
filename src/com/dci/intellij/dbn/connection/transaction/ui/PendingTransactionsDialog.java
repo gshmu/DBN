@@ -19,6 +19,10 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.COMMIT;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.ROLLBACK;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
+
 public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm> {
     private TransactionAction additionalOperation;
 
@@ -57,15 +61,8 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                DatabaseTransactionManager transactionManager = getTransactionManager();
-                List<ConnectionHandler> connectionHandlers = getComponent().getConnectionHandlers();
-                for (ConnectionHandler connectionHandler : connectionHandlers) {
-                    List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
-                    for (DBNConnection connection : connections) {
-                        transactionManager.execute(connectionHandler, connection, true, TransactionAction.COMMIT, additionalOperation);
-                    }
-
-                }
+                List<TransactionAction> actions = actions(COMMIT, additionalOperation);
+                executeActions(actions);
             } finally {
                 doOKAction();
             }
@@ -81,15 +78,8 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                DatabaseTransactionManager transactionManager = getTransactionManager();
-                List<ConnectionHandler> connectionHandlers = new ArrayList<>(getComponent().getConnectionHandlers());
-
-                for (ConnectionHandler connectionHandler : connectionHandlers) {
-                    List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
-                    for (DBNConnection connection : connections) {
-                        transactionManager.execute(connectionHandler, connection, true, TransactionAction.ROLLBACK, additionalOperation);
-                    }
-                }
+                List<TransactionAction> actions = actions(ROLLBACK, additionalOperation);
+                executeActions(actions);
             } finally {
                 doOKAction();
             }
@@ -100,6 +90,18 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
             return getComponent().hasUncommittedChanges();
         }
     };
+
+    protected void executeActions(List<TransactionAction> actions) {
+        DatabaseTransactionManager transactionManager = getTransactionManager();
+        List<ConnectionHandler> connectionHandlers = new ArrayList<>(getComponent().getConnectionHandlers());
+        for (ConnectionHandler connectionHandler : connectionHandlers) {
+            List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
+            for (DBNConnection connection : connections) {
+                transactionManager.execute(connectionHandler, connection, actions, true, null);
+            }
+
+        }
+    }
 
     private DatabaseTransactionManager getTransactionManager() {
         return DatabaseTransactionManager.getInstance(getProject());

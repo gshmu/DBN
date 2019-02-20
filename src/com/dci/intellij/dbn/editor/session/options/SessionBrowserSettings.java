@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.session.options;
 
-import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
+import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
@@ -12,8 +12,8 @@ public class SessionBrowserSettings extends BasicConfiguration<OperationSettings
     public static final String REMEMBER_OPTION_HINT = ""; //"\n\n(you can remember your option and change it at any time in Settings > Operations > Session Manager)";
 
     private boolean reloadOnFilterChange = false;
-    private InteractiveOptionHandler<SessionInterruptionOption> disconnectSession =
-            new InteractiveOptionHandler<SessionInterruptionOption>(
+    private InteractiveOptionBroker<SessionInterruptionOption> disconnectSession =
+            new InteractiveOptionBroker<SessionInterruptionOption>(
                     "disconnect-session",
                     "Disconnect Sessions",
                     "Are you sure you want to disconnect the {0} from connection {1}?\nPlease select your disconnect option." +
@@ -23,8 +23,8 @@ public class SessionBrowserSettings extends BasicConfiguration<OperationSettings
                     SessionInterruptionOption.POST_TRANSACTION,
                     SessionInterruptionOption.CANCEL);
 
-    private InteractiveOptionHandler<SessionInterruptionOption> killSession =
-            new InteractiveOptionHandler<SessionInterruptionOption>(
+    private InteractiveOptionBroker<SessionInterruptionOption> killSession =
+            new InteractiveOptionBroker<SessionInterruptionOption>(
                     "kill-session",
                     "Kill Sessions",
                     "Are you sure you want to kill the {0} from connection {1}?\nPlease select your kill option." +
@@ -53,11 +53,11 @@ public class SessionBrowserSettings extends BasicConfiguration<OperationSettings
      *                       Settings                        *
      *********************************************************/
 
-    public InteractiveOptionHandler<SessionInterruptionOption> getDisconnectSession() {
+    public InteractiveOptionBroker<SessionInterruptionOption> getDisconnectSession() {
         return disconnectSession;
     }
 
-    public InteractiveOptionHandler<SessionInterruptionOption> getKillSession() {
+    public InteractiveOptionBroker<SessionInterruptionOption> getKillSession() {
         return killSession;
     }
 

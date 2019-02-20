@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionCache;
@@ -55,7 +54,14 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.*;
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.CONSOLES;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.DATASET_FILTERS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.OBJECTS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.OBJECT_CONTENTS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.SESSION_BROWSERS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.SESSION_STATEMENTS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.values;
 
 public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysicalFileSystem, */ApplicationComponent {
     public static final String PS = "/";
@@ -421,9 +427,9 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
     public void openEditor(DBObject object, @Nullable EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {
         ConnectionAction.invoke(
+                instructions("Opening editor", TaskInstruction.CANCELLABLE, TaskInstruction.CONDITIONAL),
                 "opening the object editor",
                 object,
-                TaskInstructions.create("Opening editor", TaskInstruction.CANCELLABLE, TaskInstruction.CONDITIONAL),
                 action -> {
                     EditorProviderId providerId = editorProviderId;
                     if (editorProviderId == null) {

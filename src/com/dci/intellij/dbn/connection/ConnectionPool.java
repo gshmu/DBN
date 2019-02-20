@@ -234,7 +234,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
         String connectionName = connectionHandler.getName();
-        LOGGER.debug("[DBN-INFO] Attempt to create new pool connection for '" + connectionName + "'");
+        LOGGER.debug("[DBN-INFO] Attempt to instructions new pool connection for '" + connectionName + "'");
         DBNConnection connection = ConnectionUtil.connect(connectionHandler, SessionId.POOL);
 
         ConnectionUtil.setAutoCommit(connection, true);

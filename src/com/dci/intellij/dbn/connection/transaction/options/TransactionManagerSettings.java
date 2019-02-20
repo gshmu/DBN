@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.transaction.options;
 
-import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
+import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.connection.transaction.TransactionOption;
@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
 public class TransactionManagerSettings extends BasicConfiguration<OperationSettings, TransactionManagerSettingsForm> {
     public static final String REMEMBER_OPTION_HINT = ""/*"\n\n(you can remember your option and change it at any time in Settings > Operations > Transaction Manager)"*/;
 
-    private InteractiveOptionHandler<TransactionOption> closeProject =
-            new InteractiveOptionHandler<TransactionOption>(
+    private InteractiveOptionBroker<TransactionOption> closeProject =
+            new InteractiveOptionBroker<TransactionOption>(
                     "on-project-close",
                     "Uncommitted changes",
                     "You have uncommitted changes on one or more connections for project \"{0}\". \n" +
@@ -24,8 +24,8 @@ public class TransactionManagerSettings extends BasicConfiguration<OperationSett
                     TransactionOption.REVIEW_CHANGES,
                     TransactionOption.CANCEL);
 
-    private InteractiveOptionHandler<TransactionOption> toggleAutoCommit =
-            new InteractiveOptionHandler<TransactionOption>(
+    private InteractiveOptionBroker<TransactionOption> toggleAutoCommit =
+            new InteractiveOptionBroker<TransactionOption>(
                     "on-autocommit-toggle",
                     "Uncommitted changes",
                     "You have uncommitted changes on the connection \"{0}\". \n" +
@@ -37,8 +37,8 @@ public class TransactionManagerSettings extends BasicConfiguration<OperationSett
                     TransactionOption.REVIEW_CHANGES,
                     TransactionOption.CANCEL);
 
-    private InteractiveOptionHandler<TransactionOption> disconnect =
-            new InteractiveOptionHandler<TransactionOption>(
+    private InteractiveOptionBroker<TransactionOption> disconnect =
+            new InteractiveOptionBroker<TransactionOption>(
                     "on-disconnect",
                     "Uncommitted changes",
                     "You have uncommitted changes on the connection \"{0}\". \n" +
@@ -50,8 +50,8 @@ public class TransactionManagerSettings extends BasicConfiguration<OperationSett
                     TransactionOption.REVIEW_CHANGES,
                     TransactionOption.CANCEL);
 
-    private InteractiveOptionHandler<TransactionOption> commitMultipleChanges =
-            new InteractiveOptionHandler<TransactionOption>(
+    private InteractiveOptionBroker<TransactionOption> commitMultipleChanges =
+            new InteractiveOptionBroker<TransactionOption>(
                     "on-commit",
                     "Commit multiple changes",
                     "This commit action will affect several other changes on the connection \"{0}\", " +
@@ -62,8 +62,8 @@ public class TransactionManagerSettings extends BasicConfiguration<OperationSett
                     TransactionOption.REVIEW_CHANGES,
                     TransactionOption.CANCEL);
 
-    private InteractiveOptionHandler<TransactionOption> rollbackMultipleChanges =
-            new InteractiveOptionHandler<TransactionOption>(
+    private InteractiveOptionBroker<TransactionOption> rollbackMultipleChanges =
+            new InteractiveOptionBroker<TransactionOption>(
                     "on-rollback",
                     "Rollback multiple changes",
                     "This rollback action will affect several other changes on the connection \"{0}\", " +
@@ -93,23 +93,23 @@ public class TransactionManagerSettings extends BasicConfiguration<OperationSett
      *                       Settings                        *
      *********************************************************/
 
-    public InteractiveOptionHandler<TransactionOption> getCloseProject() {
+    public InteractiveOptionBroker<TransactionOption> getCloseProject() {
         return closeProject;
     }
 
-    public InteractiveOptionHandler<TransactionOption> getToggleAutoCommit() {
+    public InteractiveOptionBroker<TransactionOption> getToggleAutoCommit() {
         return toggleAutoCommit;
     }
 
-    public InteractiveOptionHandler<TransactionOption> getDisconnect() {
+    public InteractiveOptionBroker<TransactionOption> getDisconnect() {
         return disconnect;
     }
 
-    public InteractiveOptionHandler<TransactionOption> getCommitMultipleChanges() {
+    public InteractiveOptionBroker<TransactionOption> getCommitMultipleChanges() {
         return commitMultipleChanges;
     }
 
-    public InteractiveOptionHandler<TransactionOption> getRollbackMultipleChanges() {
+    public InteractiveOptionBroker<TransactionOption> getRollbackMultipleChanges() {
         return rollbackMultipleChanges;
     }
 

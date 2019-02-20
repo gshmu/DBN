@@ -63,7 +63,7 @@ public class DataEditorValueListPopupSettings extends BasicConfiguration<DataEdi
 
     @Override
     public String getConfigElementName() {
-        return "values-list-popup";
+        return "values-actions-popup";
     }
 
     @Override

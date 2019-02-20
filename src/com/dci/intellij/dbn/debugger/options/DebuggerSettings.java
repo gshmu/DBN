@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.debugger.options;
 
-import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
+import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
@@ -11,8 +11,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class DebuggerSettings extends BasicConfiguration<OperationSettings, DebuggerSettingsForm> {
     private boolean useGenericRunners = true;
-    private InteractiveOptionHandler<DebuggerTypeOption> debuggerType =
-            new InteractiveOptionHandler<DebuggerTypeOption>(
+    private InteractiveOptionBroker<DebuggerTypeOption> debuggerType =
+            new InteractiveOptionBroker<DebuggerTypeOption>(
                     "debugger-type",
                     "Debugger Type",
                     "Please select debugger type to use.",
@@ -35,7 +35,7 @@ public class DebuggerSettings extends BasicConfiguration<OperationSettings, Debu
         return "debugger";
     }
 
-    public InteractiveOptionHandler<DebuggerTypeOption> getDebuggerType() {
+    public InteractiveOptionBroker<DebuggerTypeOption> getDebuggerType() {
         return debuggerType;
     }
 

@@ -40,8 +40,8 @@ public class ConnectionConfigListCellRenderer extends DefaultListCellRenderer{
         label.setIcon(icon);
         label.setText(name);
 /*        if (!cellHasFocus && isSelected) {
-            label.setForeground(list.getForeground());
-            label.setBackground(list.hasFocus() ? list.getBackground() : UIUtil.getFocusedFillColor());
+            label.setForeground(actions.getForeground());
+            label.setBackground(actions.hasFocus() ? actions.getBackground() : UIUtil.getFocusedFillColor());
             label.setBorder(new DottedBorder(Color.BLACK));
         }*/
         return label;

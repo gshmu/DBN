@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.data.editor.ui;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
@@ -29,6 +28,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
+
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public abstract class TextFieldPopupProviderForm extends KeyAdapter implements DBNForm, TextFieldPopupProvider {
     protected TextFieldWithPopup editorComponent;
@@ -74,7 +75,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
 
     /**
      * Create the popup and return it.
-     * If the popup shouldn't show-up for some reason (e.g. empty completion list),
+     * If the popup shouldn't show-up for some reason (e.g. empty completion actions),
      * than this method should return null
      */
     @Nullable
@@ -155,7 +156,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
 
         isPreparingPopup = true;
         BackgroundTask.invoke(getProject(),
-                TaskInstructions.create("Loading " + getDescription(), TaskInstruction.CANCELLABLE),
+                instructions("Loading " + getDescription(), TaskInstruction.CANCELLABLE),
                 (data, progress) -> {
                     preparePopup();
                     if (progress.isCanceled()) {

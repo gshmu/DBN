@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.execution.method.history.ui;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -23,6 +22,8 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreeSelectionModel;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     private MethodExecutionHistoryDialog dialog;
@@ -128,8 +129,9 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
         public void valueChanged(TreeSelectionEvent e) {
             MethodExecutionInput executionInput = getSelectedExecutionInput();
             if (executionInput != null) {
-                ConnectionAction.invoke("loading the execution history", executionInput,
-                        TaskInstructions.create("Loading Method details"),
+                ConnectionAction.invoke(
+                        instructions("Loading method details"),
+                        "loading the execution history", executionInput,
                         action -> {
                             DBMethod method = executionInput.getMethod();
                             if (method != null) {

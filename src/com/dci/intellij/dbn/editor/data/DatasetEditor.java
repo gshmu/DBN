@@ -67,8 +67,13 @@ import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.*;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
+import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.CONNECTED;
+import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.LOADED;
+import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.LOADING;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.DELIBERATE_ACTION;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.PRESERVE_CHANGES;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.REBUILD;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.USE_CURRENT_FILTER;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
 
@@ -564,7 +569,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                         try {
                             model.postInsertRecord(true, false, true);
                         } catch (SQLException e1) {
-                            MessageUtil.showErrorDialog(project, "Could not create row in " + getDataset().getQualifiedNameWithType() + '.', e1);
+                            MessageUtil.showErrorDialog(project, "Could not instructions row in " + getDataset().getQualifiedNameWithType() + '.', e1);
                             model.cancelInsert(true);
                         }
                     }

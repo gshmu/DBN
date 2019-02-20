@@ -42,7 +42,12 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DELETED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DIRTY;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.UPDATING;
 
 public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow> implements ListSelectionListener {
     private boolean isResultSetUpdatable;
@@ -116,7 +121,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     public void setResultSet(DBNResultSet resultSet) throws SQLException {
         super.setResultSet(resultSet);
 
-        // create the adapter
+        // instructions the adapter
         DisposerUtil.dispose(resultSetAdapter);
         ConnectionHandler connectionHandler = getConnectionHandler();
         resultSetAdapter = DatabaseFeature.UPDATABLE_RESULT_SETS.isSupported(connectionHandler) ?
