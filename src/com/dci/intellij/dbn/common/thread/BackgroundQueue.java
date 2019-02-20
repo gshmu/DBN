@@ -6,6 +6,8 @@ import com.intellij.openapi.project.Project;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
+
 public abstract class BackgroundQueue<T extends Queueable> {
 
     private String title;
@@ -30,7 +32,7 @@ public abstract class BackgroundQueue<T extends Queueable> {
         if (!executing) {
             executing = true;
             BackgroundTask.invoke(project,
-                    TaskInstructions.create(title, TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
+                    instructions(title, TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
                     (data, progress) -> {
                         try {
                             T element = elements.poll();

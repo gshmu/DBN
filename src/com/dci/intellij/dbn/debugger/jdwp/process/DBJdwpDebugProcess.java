@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -66,7 +65,13 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.*;
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.BREAKPOINT_SETTING_ALLOWED;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.DEBUGGER_STOPPING;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.SESSION_INITIALIZATION_THREW_EXCEPTION;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.TARGET_EXECUTION_STARTED;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.TARGET_EXECUTION_TERMINATED;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.TARGET_EXECUTION_THREW_EXCEPTION;
 
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaDebugProcess implements DBDebugProcess {
     public static final Key<DBJdwpDebugProcess> KEY = new Key<DBJdwpDebugProcess>("DBNavigator.JdwpDebugProcess");
@@ -291,7 +296,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         ManagedThreadCommand.schedule(debugProcess, PrioritizedTask.Priority.LOW, () -> {
             Project project = getProject();
             BackgroundTask.invoke(project,
-                    TaskInstructions.create("Running debugger target program", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
+                    instructions("Running debugger target program", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
                     (task, progress) -> {
                         T executionInput = getExecutionInput();
                         progress.setText("Executing " + (executionInput == null ? " target program" : executionInput.getExecutionContext().getTargetName()));
@@ -330,7 +335,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
     private void stopDebugger() {
         Project project = getProject();
         BackgroundTask.invoke(project,
-                TaskInstructions.create("Stopping debugger", TaskInstruction.BACKGROUNDED),
+                instructions("Stopping debugger", TaskInstruction.BACKGROUNDED),
                 (task, progress) -> {
                     progress.setText("Stopping debug environment.");
                     T executionInput = getExecutionInput();

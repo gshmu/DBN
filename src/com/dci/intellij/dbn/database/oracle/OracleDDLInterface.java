@@ -38,14 +38,14 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
         }
 
         if (objectTypeId == DatabaseObjectTypeId.VIEW) {
-            return kco.format("create" + (makeRerunnable ? " or replace" : "") + " view ") + oco.format((useQualified ? schemaName + "." : "") + objectName) + kco.format(" as\n") + code + "\n/";
+            return kco.format("instructions" + (makeRerunnable ? " or replace" : "") + " view ") + oco.format((useQualified ? schemaName + "." : "") + objectName) + kco.format(" as\n") + code + "\n/";
         } else {
             String objectType = objectTypeId.toString().toLowerCase();
             if (contentType == DBContentType.CODE_BODY) {
                 objectType = objectType + " body";
             }
             code = updateNameQualification(code, useQualified, objectType, schemaName, objectName, styleCaseSettings);
-            return kco.format("create" + (makeRerunnable ? " or replace" : "") + " ") + code + "\n/";
+            return kco.format("instructions" + (makeRerunnable ? " or replace" : "") + " ") + code + "\n/";
         }
     }
 

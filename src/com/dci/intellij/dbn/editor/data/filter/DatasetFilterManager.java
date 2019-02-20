@@ -189,7 +189,7 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
                 Map<String, DatasetFilterGroup> filterLists = filters.get(connectionId);
                 for (String datasetName : filterLists.keySet()) {
                     DatasetFilterGroup filterGroup = filterLists.get(datasetName);
-                    Element filterListElement = new Element("filter-list");
+                    Element filterListElement = new Element("filter-actions");
                     filterGroup.writeConfiguration(filterListElement);
                     element.addContent(filterListElement);
                 }

@@ -25,7 +25,7 @@ public class TaskInstructions extends PropertyHolderImpl<TaskInstruction> {
         return title;
     }
 
-    public static TaskInstructions create(String title, TaskInstruction ... instructions) {
+    public static TaskInstructions instructions(String title, TaskInstruction ... instructions) {
         return new TaskInstructions(title, instructions);
     }
 }

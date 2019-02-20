@@ -41,10 +41,10 @@ public class SortConnectionsAction extends DumbAwareAction {
         String text;
         if (currentSortDirection != SortDirection.ASCENDING) {
             icon = Icons.ACTION_SORT_ASC;
-            text = "Sort list ascending";
+            text = "Sort actions ascending";
         } else {
             icon = Icons.ACTION_SORT_DESC;
-            text = "Sort list descending";
+            text = "Sort actions descending";
         }
         Presentation presentation = e.getPresentation();
         presentation.setIcon(icon);

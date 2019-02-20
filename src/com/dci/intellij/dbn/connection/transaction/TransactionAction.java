@@ -5,9 +5,13 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.intellij.notification.NotificationType;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public enum TransactionAction implements Serializable, Constant<TransactionAction> {
     COMMIT(
@@ -16,7 +20,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             NotificationType.INFORMATION, "Connection \"{0}\" committed",
             NotificationType.ERROR, "Error committing connection \"{0}\". Details: {1}",
             false,
-            (connectionHandler, connection) -> {ConnectionUtil.commit(connection);}),
+            (connectionHandler, connection) -> ConnectionUtil.commit(connection)),
 
     ROLLBACK(
             "Transaction",
@@ -24,7 +28,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             NotificationType.INFORMATION, "Connection \"{0}\" rolled back.",
             NotificationType.ERROR, "Error rolling back connection \"{0}\". Details: {1}",
             false,
-            (connectionHandler, connection) -> {ConnectionUtil.rollback(connection);}),
+            (connectionHandler, connection) -> ConnectionUtil.rollback(connection)),
 
     ROLLBACK_IDLE(
             "Transaction",
@@ -32,7 +36,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             NotificationType.INFORMATION, "Connection \"{0}\" rolled back.",
             NotificationType.ERROR, "Error rolling back connection \"{0}\". Details: {1}",
             false,
-            (connectionHandler, connection) -> {ConnectionUtil.rollback(connection);}),
+            (connectionHandler, connection) -> ConnectionUtil.rollback(connection)),
 
     DISCONNECT(
             "Session",
@@ -40,7 +44,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             NotificationType.INFORMATION, "Disconnected from \"{0}\"",
             NotificationType.WARNING, "Error disconnecting from \"{0}\". Details: {1}",
             true,
-            (connectionHandler, connection) -> {connectionHandler.closeConnection(connection);}),
+            (connectionHandler, connection) -> connectionHandler.closeConnection(connection)),
 
     DISCONNECT_IDLE(
             "Session",
@@ -48,7 +52,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             NotificationType.INFORMATION, "Disconnected from \"{0}\" because it has exceeded the configured idle timeout.",
             NotificationType.WARNING, "Error disconnecting from \"{0}\". Details: {1}",
             true,
-            (connectionHandler, connection) -> {connectionHandler.closeConnection(connection);}),
+            (connectionHandler, connection) -> connectionHandler.closeConnection(connection)),
 
     KEEP_ALIVE(
             "Ping",
@@ -56,7 +60,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             null, "",
             NotificationType.ERROR, "Error checking connectivity for \"{0}\". Details: {1}",
             false,
-            (connectionHandler, connection) -> {connection.updateLastAccess();}),
+            (connectionHandler, connection) -> connection.updateLastAccess()),
 
     TURN_AUTO_COMMIT_ON(
             "Transaction",
@@ -65,7 +69,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             "Auto-Commit switched ON for connection \"{0}\".",
             NotificationType.ERROR, "Error switching Auto-Commit ON for connection \"{0}\". Details: {1}",
             true,
-            (connectionHandler, connection) -> {connection.setAutoCommit(true);}),
+            (connectionHandler, connection) -> connection.setAutoCommit(true)),
 
     TURN_AUTO_COMMIT_OFF(
             "Transaction",
@@ -73,7 +77,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             NotificationType.INFORMATION, "Auto-Commit switched OFF for connection \"{0}\".",
             NotificationType.ERROR, "Error switching Auto-Commit OFF for connection\"{0}\". Details: {1}",
             true,
-            (connectionHandler, connection) -> {connection.setAutoCommit(false);});
+            (connectionHandler, connection) -> connection.setAutoCommit(false));
 
 
     private String group;
@@ -126,11 +130,15 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
 
     @FunctionalInterface
     private interface Executor {
-        void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException;
+        void execute(@NotNull ConnectionHandler connectionHandler, @NotNull DBNConnection connection) throws SQLException;
     }
 
-    public void execute(ConnectionHandler connectionHandler, DBNConnection connection) throws SQLException {
+    public void execute(@NotNull ConnectionHandler connectionHandler, @NotNull DBNConnection connection) throws SQLException {
         executor.execute(connectionHandler, connection);
+    }
+
+    public static List<TransactionAction> actions(TransactionAction ... actions) {
+        return Arrays.stream(actions).filter(action -> action != null).collect(Collectors.toList());
     }
 
 }

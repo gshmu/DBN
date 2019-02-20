@@ -236,7 +236,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         super.readConfiguration(element);
         methodRef.readState(element);
         targetSchemaId = SchemaId.get(element.getAttributeValue("execution-schema"));;
-        Element argumentsElement = element.getChild("argument-list");
+        Element argumentsElement = element.getChild("argument-actions");
         if (argumentsElement != null) {
             for (Object object : argumentsElement.getChildren()) {
                 Element argumentElement = (Element) object;
@@ -252,7 +252,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         methodRef.writeState(element);
         element.setAttribute("execution-schema", targetSchemaId == null ? "" : targetSchemaId.id());
 
-        Element argumentsElement = new Element("argument-list");
+        Element argumentsElement = new Element("argument-actions");
         element.addContent(argumentsElement);
 
         for (MethodExecutionArgumentValue executionVariable : argumentValues) {

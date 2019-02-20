@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -54,6 +53,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 @State(
     name = DatabaseBrowserManager.COMPONENT_NAME,
@@ -391,7 +392,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                             DBSchema schema = objectBundle.getSchema(schemaName);
                             if (schema != null) {
                                 BackgroundTask.invoke(project,
-                                        TaskInstructions.create("Loading data dictionary" + connectionString, TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
+                                        instructions("Loading data dictionary" + connectionString, TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
                                         (data, progress) -> {
                                             String objectTypesAttr = schemaElement.getAttributeValue("object-types");
                                             List<DBObjectType> objectTypes = DBObjectType.fromCsv(objectTypesAttr);

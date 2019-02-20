@@ -105,9 +105,9 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
                         ListPopupImpl listPopup = (ListPopupImpl) popupBuilder;
                         listPopup.getList().setCellRenderer(new DefaultListCellRenderer(){
                             @Override
-                            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                            public Component getListCellRendererComponent(JList<?> actions, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                                 PopupFactoryImpl.ActionItem actionItem  = (PopupFactoryImpl.ActionItem) value;
-                                Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                                Component component = super.getListCellRendererComponent(actions, value, index, isSelected, cellHasFocus);
                                 if (component instanceof JLabel) {
                                     JLabel label = (JLabel) component;
                                     label.setIcon(actionItem.getIcon());

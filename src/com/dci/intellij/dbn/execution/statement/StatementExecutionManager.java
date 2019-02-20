@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -74,7 +73,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
 
 @State(
     name = StatementExecutionManager.COMPONENT_NAME,
@@ -259,7 +261,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                             if (context.isNot(EXECUTING) && context.isNot(QUEUED)) {
                                                 if (sessionId == SessionId.POOL) {
                                                     BackgroundTask.invoke(project,
-                                                            TaskInstructions.create("Executing statement", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
+                                                            instructions("Executing statement", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
                                                             (data1, progress) -> process(executionProcessor));
                                                 } else {
                                                     StatementExecutionQueue executionQueue = getExecutionQueue(connectionId, sessionId);

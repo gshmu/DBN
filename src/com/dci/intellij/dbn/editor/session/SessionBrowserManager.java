@@ -3,12 +3,11 @@ package com.dci.intellij.dbn.editor.session;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
+import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ReadActionRunner;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -47,6 +46,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
+import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 
 @State(
     name = SessionBrowserManager.COMPONENT_NAME,
@@ -129,35 +131,38 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         return "";
     }
 
-    public void interruptSessions(@NotNull SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, SessionInterruptionType type) {
-        final ConnectionHandler connectionHandler = Failsafe.get(sessionBrowser.getConnectionHandler());
+    public void interruptSessions(@NotNull SessionBrowser sessionBrowser, Map<Object, Object> sessionIds, SessionInterruptionType type) {
+        ConnectionHandler connectionHandler = Failsafe.get(sessionBrowser.getConnectionHandler());
         if (DatabaseFeature.SESSION_INTERRUPTION_TIMING.isSupported(connectionHandler)) {
 
             SessionBrowserSettings sessionBrowserSettings = getSessionBrowserSettings();
-            InteractiveOptionHandler<SessionInterruptionOption> disconnect =
+            InteractiveOptionBroker<SessionInterruptionOption> disconnect =
                     type == SessionInterruptionType.KILL ? sessionBrowserSettings.getKillSession() :
                     type == SessionInterruptionType.DISCONNECT  ? sessionBrowserSettings.getDisconnectSession() : null;
 
             if (disconnect != null) {
                 String subject = sessionIds.size() > 1 ? "selected sessions" : "session with id \"" + sessionIds.keySet().iterator().next().toString() + "\"";
-                SessionInterruptionOption result = disconnect.resolve(subject, connectionHandler.getName());
-                if (result != SessionInterruptionOption.CANCEL && result != SessionInterruptionOption.ASK) {
-                    doInterruptSessions(sessionBrowser, sessionIds, type, result);
-                }
+                disconnect.resolve(
+                        list(subject, connectionHandler.getName()),
+                        option -> {
+                            if (option != SessionInterruptionOption.CANCEL && option != SessionInterruptionOption.ASK) {
+                                doInterruptSessions(sessionBrowser, sessionIds, type, option);
+                            }
+                        });
             }
         } else {
             doInterruptSessions(sessionBrowser, sessionIds, SessionInterruptionType.KILL, SessionInterruptionOption.NORMAL);
         }
     }
 
-    private void doInterruptSessions(@NotNull SessionBrowser sessionBrowser, final Map<Object, Object> sessionIds, final SessionInterruptionType type, final SessionInterruptionOption option) {
+    private void doInterruptSessions(@NotNull SessionBrowser sessionBrowser, Map<Object, Object> sessionIds, SessionInterruptionType type, SessionInterruptionOption option) {
         String killedAction = type == SessionInterruptionType.KILL ? "killed" : "disconnected";
         String killingAction = type == SessionInterruptionType.KILL? "killing" : "disconnecting";
         String taskAction = (type == SessionInterruptionType.KILL? "Killing" : "Disconnecting") + (sessionIds.size() == 1 ? " Session" : " Sessions");
 
         Project project = getProject();
         BackgroundTask.invoke(project,
-                TaskInstructions.create(taskAction, TaskInstruction.CANCELLABLE),
+                instructions(taskAction, TaskInstruction.CANCELLABLE),
                 (data, progress) -> {
                     ConnectionHandler connectionHandler = Failsafe.get(sessionBrowser.getConnectionHandler());
                     DBNConnection connection = null;
@@ -165,7 +170,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                         connection = connectionHandler.getPoolConnection(true);
                         Map<Object, SQLException> errors = new HashMap<>();
                         DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
-                        final DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
+                        DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
 
                         for (Object sessionId : sessionIds.keySet()) {
                             Object serialNumber = sessionIds.get(sessionId);
@@ -227,7 +232,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                         Failsafe.lenient(null, () -> {
                             Project project = getProject();
                             if (!project.isDisposed()) {
-                                final List<SessionBrowser> sessionBrowsers = new ArrayList<>();
+                                List<SessionBrowser> sessionBrowsers = new ArrayList<>();
                                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                                 FileEditor[] editors = fileEditorManager.getAllEditors();
                                 for (FileEditor editor : editors) {

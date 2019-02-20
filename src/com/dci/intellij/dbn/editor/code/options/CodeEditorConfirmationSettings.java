@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.code.options;
 
 import com.dci.intellij.dbn.common.option.ConfirmationOptionHandler;
-import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
+import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.editor.code.options.ui.CodeEditorConfirmationSettingsForm;
 import org.jdom.Element;
@@ -22,8 +22,8 @@ public class CodeEditorConfirmationSettings extends BasicConfiguration<CodeEdito
                     "Revert Changes",
                     "Revert the changes for {0}?" + REMEMBER_OPTION_HINT, true);
 
-    private InteractiveOptionHandler<CodeEditorChangesOption> exitOnChanges =
-            new InteractiveOptionHandler<CodeEditorChangesOption>(
+    private InteractiveOptionBroker<CodeEditorChangesOption> exitOnChanges =
+            new InteractiveOptionBroker<CodeEditorChangesOption>(
                     "exit-on-changes",
                     "Unsaved Changes",
                     "You are about to close the editor for {0} and you have unsaved changes.\nPlease choose whether to save or discard the changes." + REMEMBER_OPTION_HINT,
@@ -61,7 +61,7 @@ public class CodeEditorConfirmationSettings extends BasicConfiguration<CodeEdito
         return revertChanges;
     }
 
-    public InteractiveOptionHandler<CodeEditorChangesOption> getExitOnChanges() {
+    public InteractiveOptionBroker<CodeEditorChangesOption> getExitOnChanges() {
         return exitOnChanges;
     }
 

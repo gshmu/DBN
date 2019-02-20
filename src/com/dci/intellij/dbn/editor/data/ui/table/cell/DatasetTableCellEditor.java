@@ -100,7 +100,6 @@
     }
 
     void selectText(final JTextField textField) {
-
         if (textField.isEditable()) {
             String originalText = textField.getText();
             SimpleLaterInvocator.invoke(textField, () -> {
@@ -113,15 +112,16 @@
                     }
                 } else {
                     textField.requestFocus();
+                    if (textField.isShowing()) {
+                        Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+                        Point textFieldLocation = textField.getLocationOnScreen();
+                        int x = (int) Math.max(mouseLocation.getX() - textFieldLocation.getX(), 0);
+                        int y = (int) Math.min(Math.max(mouseLocation.getY() - textFieldLocation.getY(), 0), 10);
 
-                    Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
-                    Point textFieldLocation = textField.getLocationOnScreen();
-                    int x = (int) Math.max(mouseLocation.getX() - textFieldLocation.getX(), 0);
-                    int y = (int) Math.min(Math.max(mouseLocation.getY() - textFieldLocation.getY(), 0), 10);
-
-                    Point location = new Point(x, y);
-                    int position = textField.viewToModel(location);
-                    textField.setCaretPosition(position);
+                        Point location = new Point(x, y);
+                        int position = textField.viewToModel(location);
+                        textField.setCaretPosition(position);
+                    }
                 }
             });
         }

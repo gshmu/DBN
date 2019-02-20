@@ -5,6 +5,8 @@ import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.thread.OptionCallback;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
@@ -15,7 +17,7 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 
-public class InteractiveOptionHandler<T extends InteractiveOption> implements DialogWrapper.DoNotAskOption, PersistentConfiguration{
+public class InteractiveOptionBroker<T extends InteractiveOption> implements DialogWrapper.DoNotAskOption, PersistentConfiguration{
     private String configName;
     private String title;
     private String message;
@@ -24,7 +26,7 @@ public class InteractiveOptionHandler<T extends InteractiveOption> implements Di
     private T lastUsedOption;
     private List<T> options;
 
-    public InteractiveOptionHandler(String configName, String title, String message, @NotNull T defaultOption, T... options) {
+    public InteractiveOptionBroker(String configName, String title, String message, @NotNull T defaultOption, T... options) {
         this.configName = configName;
         this.title = title;
         this.message = message;
@@ -78,26 +80,31 @@ public class InteractiveOptionHandler<T extends InteractiveOption> implements Di
         return "Remember option";
     }
 
-    public T resolve(Object ... messageArgs) {
-        if (selectedOption != null && !selectedOption.isAsk()) {
-            return selectedOption;
-        } else {
-            int lastUsedOptionIndex = 0;
-            if (lastUsedOption != null) {
-                lastUsedOptionIndex = options.indexOf(lastUsedOption);
-            }
+    public void resolve(Object[] messageArgs, OptionCallback<T> callback) {
+        SimpleLaterInvocator.invoke(() -> {
+            T option;
+            if (selectedOption != null && !selectedOption.isAsk()) {
+                option = selectedOption;
+            } else {
+                int lastUsedOptionIndex = 0;
+                if (lastUsedOption != null) {
+                    lastUsedOptionIndex = options.indexOf(lastUsedOption);
+                }
 
-            int optionIndex = Messages.showDialog(
-                    MessageFormat.format(message, messageArgs),
-                    Constants.DBN_TITLE_PREFIX + title,
-                    toStringOptions(options), lastUsedOptionIndex, Icons.DIALOG_QUESTION, this);
+                int optionIndex = Messages.showDialog(
+                        MessageFormat.format(message, messageArgs),
+                        Constants.DBN_TITLE_PREFIX + title,
+                        toStringOptions(options), lastUsedOptionIndex, Icons.DIALOG_QUESTION, this);
 
-            T option = getOption(optionIndex);
-            if (!option.isCancel() && !option.isAsk()) {
-                lastUsedOption = option;
+                option = getOption(optionIndex);
+                if (!option.isCancel() && !option.isAsk()) {
+                    lastUsedOption = option;
+                }
             }
-            return option;
-        }
+            if (option != null) {
+                callback.start(option);
+            }
+        });
     }
 
     @NotNull

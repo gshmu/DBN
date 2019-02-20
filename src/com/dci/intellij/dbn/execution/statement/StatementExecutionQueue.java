@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -16,7 +15,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
 
 public final class StatementExecutionQueue extends DisposableBase{
 
@@ -52,7 +54,7 @@ public final class StatementExecutionQueue extends DisposableBase{
                     executing = true;
                     Project project = getProject();
                     BackgroundTask.invoke(project,
-                            TaskInstructions.create("Executing statements", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
+                            instructions("Executing statements", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
                             (data, progress) -> {
                                 try {
                                     StatementExecutionProcessor processor = processors.poll();

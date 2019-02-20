@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -39,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.intellij.openapi.diagnostic.SubmittedReportInfo.SubmissionStatus.FAILED;
 import static com.intellij.openapi.diagnostic.SubmittedReportInfo.SubmissionStatus.NEW_ISSUE;
 
@@ -158,7 +158,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
 
 
         BackgroundTask.invoke(project,
-                TaskInstructions.create("Submitting issue report"),
+                instructions("Submitting issue report"),
                 (data, progress) -> {
                     TicketResponse result;
                     try {

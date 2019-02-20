@@ -103,7 +103,7 @@ public class CheckBoxList<T extends Selectable> extends JList {
             Selectable presentable = entry.presentable;
             entry.checkBox.setEnabled(presentable.isMasterSelected());
 
-            //entry.errorLabel.setText(error != null && list.isEnabled() ? " - " + error : "");
+            //entry.errorLabel.setText(error != null && actions.isEnabled() ? " - " + error : "");
 
             if (mutable) {
                 Color foreground = isSelected ? UIUtil.getListSelectionForeground() : entry.isSelected() ? UIUtil.getListForeground() : UIUtil.getMenuItemDisabledForeground();

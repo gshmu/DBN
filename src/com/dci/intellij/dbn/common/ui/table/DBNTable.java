@@ -272,7 +272,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     }
 
     protected DBNTableGutter createTableGutter() {
-        return null; // do not create gutter by default
+        return null; // do not instructions gutter by default
     }
 
     public final DBNTableGutter getTableGutter() {

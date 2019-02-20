@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -26,6 +25,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public abstract class ObjectListShowAction extends DumbAwareAction {
     private DBObjectRef sourceObjectRef;
@@ -54,8 +55,11 @@ public abstract class ObjectListShowAction extends DumbAwareAction {
     @Override
     public final void actionPerformed(@NotNull AnActionEvent e) {
         DBObject sourceObject = getSourceObject();
-        ConnectionAction.invoke("loading " + getListName(), sourceObject,
-                TaskInstructions.create("Loading " + getListName(), TaskInstruction.CANCELLABLE),
+        String listName = getListName();
+        ConnectionAction.invoke(
+                instructions("Loading " + listName, TaskInstruction.CANCELLABLE),
+                "loading " + listName,
+                sourceObject,
                 action -> {
                     if (!action.isCancelled()) {
                         List<? extends DBObject> recentObjectList = getRecentObjectList();

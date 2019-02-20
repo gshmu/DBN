@@ -3,10 +3,8 @@ package com.dci.intellij.dbn.vfs;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.option.InteractiveOptionHandler;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -17,7 +15,6 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettingsAdapter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager;
-import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -47,6 +44,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
+import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
 @State(
@@ -172,29 +171,32 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                 DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
                 if (databaseFile.isModified()) {
                     DBSchemaObject object = databaseFile.getObject();
-
+                    String objectDescription = object.getQualifiedNameWithType();
                     Project project = getProject();
+
                     CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(project).getConfirmationSettings();
-                    InteractiveOptionHandler<CodeEditorChangesOption> optionHandler = confirmationSettings.getExitOnChanges();
-                    CodeEditorChangesOption option = optionHandler.resolve(object.getQualifiedNameWithType());
-                    SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                    confirmationSettings.getExitOnChanges().resolve(
+                            list(objectDescription),
+                            option -> {
+                                SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
 
-                    switch (option) {
-                        case SAVE: sourceCodeManager.saveSourceCodeChanges(databaseFile, null); break;
-                        case DISCARD: sourceCodeManager.revertSourceCodeChanges(databaseFile, null); break;
-                        case SHOW: {
-                            List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
-                            for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
-                                if (sourceCodeFile.is(MODIFIED)) {
-                                    SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
-                                    diffManager.opedDatabaseDiffWindow(sourceCodeFile);
+                                switch (option) {
+                                    case SAVE: sourceCodeManager.saveSourceCodeChanges(databaseFile, null); break;
+                                    case DISCARD: sourceCodeManager.revertSourceCodeChanges(databaseFile, null); break;
+                                    case CANCEL: throw new ProcessCanceledException();
+                                    case SHOW: {
+                                        List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
+                                        for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
+                                            if (sourceCodeFile.is(MODIFIED)) {
+                                                SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
+                                                diffManager.opedDatabaseDiffWindow(sourceCodeFile);
+                                            }
+                                        }
+                                        throw new ProcessCanceledException();
+
+                                    }
                                 }
-                            }
-                            throw new ProcessCanceledException();
-
-                        }
-                        case CANCEL: throw new ProcessCanceledException();
-                    }
+                            });
                 }
             }
 
@@ -312,7 +314,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                     if (connectionDetailSettings.isRestoreWorkspace()) {
                         ConnectionAction.invoke("opening database editors", connectionHandler, (Integer) null,
                                 action -> BackgroundTask.invoke(project,
-                                        TaskInstructions.create("Opening database editors", TaskInstruction.CANCELLABLE),
+                                        instructions("Opening database editors", TaskInstruction.CANCELLABLE),
                                         (data, progress) -> {
                                             DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
 

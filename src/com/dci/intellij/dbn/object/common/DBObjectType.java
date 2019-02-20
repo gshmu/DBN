@@ -496,7 +496,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
             return forListName(name, null);
         }
 
-        throw new IllegalArgumentException("No ObjectType found for list name '" + name + "'");
+        throw new IllegalArgumentException("No ObjectType found for actions name '" + name + "'");
     }
 
     /*************************************************************************

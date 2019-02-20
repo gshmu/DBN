@@ -100,4 +100,9 @@ public class Failsafe {
         }
     }
 
+    public static void run (@Nullable Runnable runnable) {
+        try {
+            if (runnable != null) runnable.run();
+        } catch (ProcessCanceledException ignore) {}
+    }
 }

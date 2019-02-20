@@ -24,7 +24,6 @@ import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -92,8 +91,18 @@ import java.util.List;
 import java.util.Set;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
-import static com.dci.intellij.dbn.object.common.DBObjectRelationType.*;
-import static com.dci.intellij.dbn.object.common.DBObjectType.*;
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
+import static com.dci.intellij.dbn.object.common.DBObjectRelationType.ROLE_PRIVILEGE;
+import static com.dci.intellij.dbn.object.common.DBObjectRelationType.ROLE_ROLE;
+import static com.dci.intellij.dbn.object.common.DBObjectRelationType.USER_PRIVILEGE;
+import static com.dci.intellij.dbn.object.common.DBObjectRelationType.USER_ROLE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.CHARSET;
+import static com.dci.intellij.dbn.object.common.DBObjectType.OBJECT_PRIVILEGE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.ROLE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.SCHEMA;
+import static com.dci.intellij.dbn.object.common.DBObjectType.SYNONYM;
+import static com.dci.intellij.dbn.object.common.DBObjectType.SYSTEM_PRIVILEGE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.USER;
 
 public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport {
     private ConnectionHandlerRef connectionHandlerRef;
@@ -221,7 +230,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         @Override
         public void sourceCodeSaved(final DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
             BackgroundTask.invoke(getProject(),
-                    TaskInstructions.create("Reloading database object", TaskInstruction.BACKGROUNDED),
+                    instructions("Reloading database object", TaskInstruction.BACKGROUNDED),
                     (task, progress) -> {
                         DBObject object = sourceCodeFile.getObject();
                         object.refresh();
@@ -710,7 +719,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(connectionHandler)) {
             Project project = getProject();
             BackgroundTask.invoke(project,
-                    TaskInstructions.create("Updating objects status", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
+                    instructions("Updating objects status", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
                     (task, progress) -> {
                         try {
                             List<DBSchema> schemas = requester == null ? getSchemas() : requester.getReferencingSchemas();

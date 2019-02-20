@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.object.factory;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -32,6 +31,8 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class DatabaseObjectFactory extends AbstractProjectComponent {
 
@@ -74,7 +75,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
         List<String> errors = new ArrayList<>();
         factoryInput.validate(errors);
         if (errors.size() > 0) {
-            StringBuilder buffer = new StringBuilder("Could not create " + factoryInput.getObjectType().getName() + ". Please correct following errors: \n");
+            StringBuilder buffer = new StringBuilder("Could not instructions " + factoryInput.getObjectType().getName() + ". Please correct following errors: \n");
             for (String error : errors) {
                 buffer.append(" - ").append(error).append("\n");
             }
@@ -96,7 +97,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
                 DatabaseFileSystem.getInstance().openEditor(method, true);
                 notifyFactoryEvent(new ObjectFactoryEvent(method, ObjectFactoryEvent.EVENT_TYPE_CREATE));
             } catch (SQLException e) {
-                MessageUtil.showErrorDialog(project, "Could not create " + factoryInput.getObjectType().getName() + ".", e);
+                MessageUtil.showErrorDialog(project, "Could not instructions " + factoryInput.getObjectType().getName() + ".", e);
                 return false;
             }
         }
@@ -104,7 +105,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
         return true;
     }
 
-    public void dropObject(final DBSchemaObject object) {
+    public void dropObject(DBSchemaObject object) {
         MessageUtil.showQuestionDialog(
                 getProject(),
                 "Drop object",
@@ -116,7 +117,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
                     databaseFileManager.closeFile(object);
 
                     BackgroundTask.invoke(project,
-                            TaskInstructions.create("Dropping " + object.getQualifiedNameWithType()),
+                            instructions("Dropping " + object.getQualifiedNameWithType()),
                             (task, progress) -> doDropObject(object));
                 }));
 

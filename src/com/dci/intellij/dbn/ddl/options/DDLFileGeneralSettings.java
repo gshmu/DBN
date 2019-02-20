@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class DDLFileGeneralSettings extends BasicProjectConfiguration<DDLFileSettings, DDLFileGeneralSettingsForm> {
     private BooleanSetting lookupDDLFilesEnabled = new BooleanSetting("lookup-ddl-files", true);
-    private BooleanSetting createDDLFilesEnabled = new BooleanSetting("create-ddl-files", false);
+    private BooleanSetting createDDLFilesEnabled = new BooleanSetting("instructions-ddl-files", false);
     private BooleanSetting synchronizeDDLFilesEnabled = new BooleanSetting("synchronize-ddl-files", true);
     private BooleanSetting useQualifiedObjectNames = new BooleanSetting("use-qualified-names", false);
     private BooleanSetting makeScriptsRerunnable = new BooleanSetting("make-scripts-rerunnable", true);

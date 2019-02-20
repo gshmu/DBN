@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -42,6 +41,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
     private JPanel actionsPanel;
@@ -97,7 +98,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
                 Project project = sessionBrowser.getProject();
 
                 BackgroundTask.invoke(project,
-                        TaskInstructions.create("Loading session current SQL", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
+                        instructions("Loading session current SQL", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
                         (data, progress) -> {
                             ConnectionHandler connectionHandler = getConnectionHandler();
                             DBSchema schema = null;

@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * This loader is to be used from building the elements of a dynamic content, based on a source content.
- * e.g. Constraints of a table are loaded from the complete list of constraints of a Schema.
+ * e.g. Constraints of a table are loaded from the complete actions of constraints of a Schema.
  */
 public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> extends DynamicContentLoaderImpl<T> implements DynamicContentLoader<T> {
     private DynamicContentLoader<T> alternativeLoader = createAlternativeLoader();
