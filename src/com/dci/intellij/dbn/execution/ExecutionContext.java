@@ -52,10 +52,6 @@ public abstract class ExecutionContext extends PropertyHolderImpl<ExecutionStatu
         return executionTimestamp;
     }
 
-    public void setExecutionTimestamp(long executionTimestamp) {
-        this.executionTimestamp = executionTimestamp;
-    }
-
     public DBNConnection getConnection() {
         return connection;
     }
@@ -81,7 +77,7 @@ public abstract class ExecutionContext extends PropertyHolderImpl<ExecutionStatu
         super.reset();
         timeout = 0;
         logging = false;
-        executionTimestamp = 0;
+        executionTimestamp = System.currentTimeMillis();
         connection = null;
         statement = null;
 

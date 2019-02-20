@@ -70,8 +70,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
                 TaskInstructions.create("Reloading data", TaskInstruction.BACKGROUNDED),
                 (data, progress) -> {
                     BackgroundTask.initProgressIndicator(progress, true, "Reloading results for " + getExecutionProcessor().getStatementName());
-                    ExecutionContext context = getExecutionProcessor().getExecutionContext(true);
-                    context.setExecutionTimestamp(System.currentTimeMillis());
+                    ExecutionContext context = getExecutionProcessor().initExecutionContext();
                     context.set(EXECUTING, true);
 
                     try {

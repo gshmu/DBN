@@ -97,5 +97,5 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
 
     ExecutionContext getExecutionContext();
 
-    ExecutionContext getExecutionContext(boolean reset);
+    ExecutionContext initExecutionContext();
 }
