@@ -78,9 +78,9 @@ public abstract class ExecutionInput extends DisposableBase implements Disposabl
     }
 
     @NotNull
-    public ExecutionContext getExecutionContext(boolean reset) {
+    public ExecutionContext initExecutionContext() {
         ExecutionContext executionContext = getExecutionContext();
-        if (reset) executionContext.reset();
+        executionContext.reset();
         return executionContext;
     }
 

@@ -235,8 +235,8 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     }
 
     @Override
-    public ExecutionContext getExecutionContext(boolean reset) {
-        return executionInput.getExecutionContext(reset);
+    public ExecutionContext initExecutionContext() {
+        return executionInput.initExecutionContext();
     }
 
     @Override
@@ -271,8 +271,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     public void execute(@Nullable DBNConnection connection, boolean debug) throws SQLException {
         ProgressMonitor.setTaskDescription("Executing " + getStatementName());
         try {
-            ExecutionContext context = getExecutionContext();
-            context.setExecutionTimestamp(System.currentTimeMillis());
+            ExecutionContext context = initExecutionContext();
             context.set(EXECUTING, true);
 
             resultName.reset();
