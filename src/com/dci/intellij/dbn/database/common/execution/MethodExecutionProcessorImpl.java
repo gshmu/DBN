@@ -65,7 +65,6 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
     @Override
     public void execute(MethodExecutionInput executionInput, DBDebuggerType debuggerType) throws SQLException {
-        executionInput.initExecution(debuggerType);
         ConnectionHandler connectionHandler = getConnectionHandler();
         SessionId targetSessionId = executionInput.getTargetSessionId();
         SchemaId targetSchemaId = executionInput.getTargetSchemaId();
@@ -80,16 +79,15 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
     @Override
     public void execute(final MethodExecutionInput executionInput, @NotNull DBNConnection connection, DBDebuggerType debuggerType) throws SQLException {
-        executionInput.initExecution(debuggerType);
+        ExecutionContext context = executionInput.initExecution(debuggerType);
         ExecutionOptions options = executionInput.getOptions();
-        final ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = getConnectionHandler();
         SessionId targetSessionId = executionInput.getTargetSessionId();
 
         boolean loggingEnabled = debuggerType != DBDebuggerType.JDBC && options.is(ExecutionOption.ENABLE_LOGGING);
         Project project = getProject();
-        final DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
+        DatabaseLoggingManager loggingManager = DatabaseLoggingManager.getInstance(project);
 
-        ExecutionContext context = executionInput.getExecutionContext(true);
         try {
             String command = buildExecutionCommand(executionInput);
             T method = getMethod();

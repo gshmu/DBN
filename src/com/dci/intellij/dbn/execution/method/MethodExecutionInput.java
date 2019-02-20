@@ -57,10 +57,10 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         }
     }
 
-    public void initExecution(DBDebuggerType debuggerType) {
+    public ExecutionContext initExecution(DBDebuggerType debuggerType) {
         MethodExecutionResultForm resultForm = executionResult == null ? null : executionResult.getForm(false);
         executionResult = new MethodExecutionResult(this, resultForm, debuggerType);
-        getExecutionContext().setExecutionTimestamp(System.currentTimeMillis());
+        return initExecutionContext();
     }
 
     @Override

@@ -176,8 +176,8 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     public void execute(final MethodExecutionInput executionInput) {
         cacheArgumentValues(executionInput);
         executionHistory.setSelection(executionInput.getMethodRef());
-        final DBMethod method = executionInput.getMethod();
-        final ExecutionContext context = executionInput.getExecutionContext();
+        DBMethod method = executionInput.getMethod();
+        ExecutionContext context = executionInput.getExecutionContext();
         context.set(EXECUTING, true);
 
         if (method == null) {
