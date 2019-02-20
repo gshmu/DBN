@@ -4,8 +4,10 @@ import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
+import com.dci.intellij.dbn.object.common.DBObjectType;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,20 +21,26 @@ public class DatasetColumnSetup implements PersistentStateElement, Cloneable<Dat
         return columnStates;
     }
 
-    public void init(@NotNull DBDataset dataset) {
+    public void init(@Nullable List<String> columnNames, @NotNull DBDataset dataset) {
+        if (columnNames == null) {
+            columnNames = dataset.getChildObjectNames(DBObjectType.COLUMN);
+        }
+        List<DatasetColumnState> columnStates = new ArrayList<>();
         for (DBColumn column : dataset.getColumns()) {
-            DatasetColumnState columnsState = getColumnState(column.getName());
-            if (columnsState == null) {
-                if (!column.isHidden()) {
+            String columnName = column.getName();
+            if (!column.isHidden() && columnNames.contains(columnName)) {
+                DatasetColumnState columnsState = getColumnState(columnName);
+                if (columnsState == null) {
                     columnsState = new DatasetColumnState(column);
-                    columnStates.add(columnsState);
+                } else {
+                    columnsState.init(column);
                 }
-            } else {
-                columnsState.init(column);
+                columnStates.add(columnsState);
             }
         }
-        columnStates.removeIf(columnState -> dataset.getColumn(columnState.getName()) == null);
+
         Collections.sort(columnStates);
+        this.columnStates = columnStates;
     }
 
 

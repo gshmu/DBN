@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +34,13 @@ public abstract class SimpleTimeoutTask implements Runnable{
         return new SimpleTimeoutTask(timeoutSeconds, daemon) {
             @Override
             public void run() {
-                runnable.run();
+                try {
+                    BackgroundMonitor.startTimeoutProcess();
+                    runnable.run();
+                } catch (ProcessCanceledException ignore){
+                } finally {
+                    BackgroundMonitor.endTimeoutProcess();
+                }
             }
         };
     }

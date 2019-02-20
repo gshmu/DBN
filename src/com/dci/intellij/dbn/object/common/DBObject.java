@@ -87,6 +87,8 @@ public interface DBObject extends PropertyHolder<DBObjectProperty>, BrowserTreeN
     @Nullable
     DBObject getChildObject(String name, int overload, boolean lookupHidden);
 
+    List<String> getChildObjectNames(DBObjectType objectType);
+
     List<DBObjectNavigationList> getNavigationLists();
 
     @Nullable

@@ -19,8 +19,8 @@ public class DatasetEditorModelHeader extends ResultSetDataModelHeader<DatasetEd
     public DatasetEditorModelHeader(DatasetEditor datasetEditor, @Nullable ResultSet resultSet) throws SQLException {
         DBDataset dataset = datasetEditor.getDataset();
 
-        List<DatasetColumnState> columnStates = datasetEditor.initColumnStates();
         List<String> columnNames = resultSet == null ? null : ResultSetUtil.getColumnNames(resultSet);
+        List<DatasetColumnState> columnStates = datasetEditor.refreshColumnStates(columnNames);
 
         int index = 0;
         for (DatasetColumnState columnState : columnStates) {

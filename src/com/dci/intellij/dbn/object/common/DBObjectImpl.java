@@ -382,6 +382,22 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     }
 
     @Override
+    public List<String> getChildObjectNames(DBObjectType objectType) {
+        if (childObjects != null) {
+            DBObjectList objectList = childObjects.getObjectList(objectType);
+            if (objectList != null) {
+                List<String> objectNames = new ArrayList<>();
+                List<DBObject> objects = objectList.getObjects();
+                for (DBObject object : objects) {
+                    objectNames.add(object.getName());
+                }
+                return objectNames;
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
     public DBObject getChildObject(DBObjectType objectType, String name, int overload, boolean lookupHidden) {
         if (childObjects == null) {
             return null;
