@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
 import com.dci.intellij.dbn.execution.logging.LogOutput;
@@ -194,9 +195,13 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
     }
 
     private void updateStatusBarLabels() {
+        SessionId sessionId = executionResult.getExecutionInput().getTargetSessionId();
+        String connectionType =
+                sessionId == SessionId.MAIN ? " (main)" :
+                sessionId == SessionId.POOL ? " (pool)" : " (session)";
         ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
         connectionLabel.setIcon(connectionHandler.getIcon());
-        connectionLabel.setText(connectionHandler.getName());
+        connectionLabel.setText(connectionHandler.getName() + connectionType);
 
         durationLabel.setText(": " + executionResult.getExecutionDuration() + " ms");
     }
