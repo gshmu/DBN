@@ -163,31 +163,31 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
                         return;
                     }
 
-            SimpleLaterInvocator.invoke(this, () -> {
-                try {
-                    if (!isShowingPopup()) {
-                        popup = createPopup();
-                        if (popup != null) {
-                            Disposer.register(TextFieldPopupProviderForm.this, popup);
+                    SimpleLaterInvocator.invoke(this, () -> {
+                        try {
+                            if (!isShowingPopup()) {
+                                popup = createPopup();
+                                if (popup != null) {
+                                    Disposer.register(TextFieldPopupProviderForm.this, popup);
 
-                            JPanel panel = (JPanel) popup.getContent();
-                            panel.setBorder(Borders.COMPONENT_LINE_BORDER);
+                                    JPanel panel = (JPanel) popup.getContent();
+                                    panel.setBorder(Borders.COMPONENT_LINE_BORDER);
 
-                            editorComponent.clearSelection();
+                                    editorComponent.clearSelection();
 
-                            if (editorComponent.isShowing()) {
-                                Point location = editorComponent.getLocationOnScreen();
-                                location.setLocation(location.getX() + 4, location.getY() + editorComponent.getHeight() + 4);
-                                popup.showInScreenCoordinates(editorComponent, location);
-                                //cellEditor.highlight(TextCellEditor.HIGHLIGHT_TYPE_POPUP);
+                                    if (editorComponent.isShowing()) {
+                                        Point location = editorComponent.getLocationOnScreen();
+                                        location.setLocation(location.getX() + 4, location.getY() + editorComponent.getHeight() + 4);
+                                        popup.showInScreenCoordinates(editorComponent, location);
+                                        //cellEditor.highlight(TextCellEditor.HIGHLIGHT_TYPE_POPUP);
+                                    }
+                                }
                             }
+                        } finally {
+                            isPreparingPopup = false;
                         }
-                    }
-                } finally {
-                    isPreparingPopup = false;
-                }
-            });
-        });
+                    });
+                });
     }
 
     @Override

@@ -39,7 +39,10 @@ public abstract class SimpleLaterInvocator extends SimpleTask{
     }
 
     public static void invoke(@NotNull Component parentComponent, Runnable runnable) {
-        ModalityState modalityState = ModalityState.stateForComponent(parentComponent);
+        ModalityState modalityState =
+                ApplicationManager.getApplication().isDispatchThread() ?
+                ModalityState.stateForComponent(parentComponent) :
+                ModalityState.defaultModalityState();
         invoke(modalityState, runnable);
     }
 

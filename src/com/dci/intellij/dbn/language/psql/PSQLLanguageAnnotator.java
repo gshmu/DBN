@@ -51,8 +51,7 @@ public class PSQLLanguageAnnotator implements Annotator {
 
                 if (basePsiElement instanceof TokenPsiElement) {
                     annotateToken((TokenPsiElement) basePsiElement, holder);
-                }
-                else if (basePsiElement instanceof IdentifierPsiElement) {
+                } else if (basePsiElement instanceof IdentifierPsiElement) {
                     if (!basePsiElement.isInjectedContext()) {
                         IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
                         ConnectionHandler connectionHandler = identifierPsiElement.getConnectionHandler();
@@ -60,8 +59,7 @@ public class PSQLLanguageAnnotator implements Annotator {
                             annotateIdentifier(identifierPsiElement, holder);
                         }
                     }
-                }
-                else if (basePsiElement instanceof NamedPsiElement) {
+                } else if (basePsiElement instanceof NamedPsiElement) {
                     NamedPsiElement namedPsiElement = (NamedPsiElement) basePsiElement;
                     if (namedPsiElement.hasErrors()) {
                         holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.getElementType().getDescription());
@@ -72,8 +70,7 @@ public class PSQLLanguageAnnotator implements Annotator {
                     ExecutablePsiElement executablePsiElement = (ExecutablePsiElement) basePsiElement;
                     annotateExecutable(executablePsiElement, holder);
                 }
-            }
-            else if (psiElement instanceof ChameleonPsiElement) {
+            } else if (psiElement instanceof ChameleonPsiElement) {
                 Annotation annotation = holder.createInfoAnnotation(psiElement, null);
                 annotation.setTextAttributes(SQLTextAttributesKeys.CHAMELEON);
             }
