@@ -304,7 +304,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
         if (!isLoaded() || shouldLoad(false)) {
             if (BackgroundMonitor.isBackgroundProcess() || BackgroundMonitor.isTimeoutProcess() || getDependencyAdapter().canLoadFast()) {
                 synchronized (this) {
-                    if (!isLoaded()) {
+                    if (!isLoaded() || shouldLoad(false)) {
                         load(false);
                     }
                 }

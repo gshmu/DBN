@@ -48,16 +48,17 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
 
     private LocalExecutionInput executionInput;
     private Set<ChangeListener> changeListeners = new HashSet<ChangeListener>();
+    private DBDebuggerType debuggerType;
 
     public ExecutionOptionsForm(DBNForm parent, LocalExecutionInput executionInput, @NotNull DBDebuggerType debuggerType) {
         super(parent);
         this.executionInput = executionInput;
+        this.debuggerType = debuggerType;
 
         ConnectionHandler connectionHandler = Failsafe.get(executionInput.getConnectionHandler());
 
-        if (executionInput.isSchemaSelectionAllowed()) {
+        if (isSchemaSelectionAllowed()) {
             //ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, new SetExecutionSchemaComboBoxAction(executionInput));
-
 
             targetSchemaComboBox.setValues(connectionHandler.getSchemaIds());
             targetSchemaComboBox.setSelectedValue(executionInput.getTargetSchemaId());
@@ -79,7 +80,7 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
 
         DatabaseSessionBundle sessionBundle = connectionHandler.getSessionBundle();
         SessionId targetSessionId = executionInput.getTargetSessionId();
-        if (executionInput.isSessionSelectionAllowed() && debuggerType == DBDebuggerType.NONE) {
+        if (isSessionSelectionAllowed()) {
             DatabaseSession targetSession = sessionBundle.getSession(targetSessionId);
             List<DatabaseSession> sessions = sessionBundle.getSessions(ConnectionType.MAIN, ConnectionType.POOL, ConnectionType.SESSION);
 
@@ -148,11 +149,23 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
         options.set(ExecutionOption.COMMIT_AFTER_EXECUTION, commitCheckBox.isSelected());
         options.set(ExecutionOption.ENABLE_LOGGING, enableLoggingCheckBox.isSelected());
 
-        SchemaId schema = targetSchemaComboBox.getSelectedValue();
-        executionInput.setTargetSchemaId(schema);
+        if (isSchemaSelectionAllowed()) {
+            SchemaId schema = targetSchemaComboBox.getSelectedValue();
+            executionInput.setTargetSchemaId(schema);
+        }
 
-        DatabaseSession targetSession = targetSessionComboBox.getSelectedValue();
-        executionInput.setTargetSession(targetSession);
+        if (isSessionSelectionAllowed()) {
+            DatabaseSession targetSession = targetSessionComboBox.getSelectedValue();
+            executionInput.setTargetSession(targetSession);
+        }
+    }
+
+    private boolean isSchemaSelectionAllowed() {
+        return getExecutionInput().isSchemaSelectionAllowed();
+    }
+
+    private boolean isSessionSelectionAllowed() {
+        return getExecutionInput().isSessionSelectionAllowed() && debuggerType == DBDebuggerType.NONE;
     }
 
     @Deprecated

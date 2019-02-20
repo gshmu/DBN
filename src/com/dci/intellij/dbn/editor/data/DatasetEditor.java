@@ -625,14 +625,10 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
 
-    public List<DatasetColumnState> initColumnStates() {
+    public List<DatasetColumnState> refreshColumnStates(@Nullable List<String> columnNames) {
         DatasetColumnSetup columnSetup = editorState.getColumnSetup();
-        List<DatasetColumnState> columnStates = columnSetup.getColumnStates();
-        DBDataset dataset = getDataset();
-        if (columnStates.size() != dataset.getColumns().size()) {
-            columnSetup.init(dataset);
-        }
-        return columnStates;
+        columnSetup.init(columnNames, getDataset());
+        return columnSetup.getColumnStates();
     }
 
     /********************************************************

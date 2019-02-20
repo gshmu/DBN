@@ -25,6 +25,7 @@ public class SQLLanguageAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
+        //SimpleTimeoutTask.invoke(1, true, () -> {
         Failsafe.lenient(() -> {
             if (psiElement instanceof ExecutablePsiElement)  {
                 annotateExecutable((ExecutablePsiElement) psiElement, holder);
@@ -104,13 +105,11 @@ public class SQLLanguageAnnotator implements Annotator {
     private static void annotateObject(IdentifierPsiElement objectReference, AnnotationHolder holder) {
         if (!objectReference.isResolving() && !objectReference.isDefinition()) {
             PsiElement reference = objectReference.resolve();
-            if (reference == null && checkConnection(objectReference)) {
-                if (objectReference.getResolveTrialsCount() > 3) {
-                    if (!objectReference.getLanguageDialect().getParserTokenTypes().isFunction(objectReference.getText())) {
-                        Annotation annotation = holder.createWarningAnnotation(objectReference.getNode(),
-                                "Unknown identifier");
-                        annotation.setTextAttributes(SQLTextAttributesKeys.UNKNOWN_IDENTIFIER);
-                    }
+            if (reference == null && objectReference.getResolveTrialsCount() > 3 && checkConnection(objectReference)) {
+                if (!objectReference.getLanguageDialect().getParserTokenTypes().isFunction(objectReference.getText())) {
+                    Annotation annotation = holder.createWarningAnnotation(objectReference.getNode(),
+                            "Unknown identifier");
+                    annotation.setTextAttributes(SQLTextAttributesKeys.UNKNOWN_IDENTIFIER);
                 }
             }
         }
