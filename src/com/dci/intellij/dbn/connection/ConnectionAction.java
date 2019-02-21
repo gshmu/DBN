@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.BackgroundMonitor;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
@@ -66,7 +67,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
 
     @Override
     public final void start() {
-        SimpleLaterInvocator.invokeNonModal(() -> ConnectionAction.super.start());
+        SimpleLaterInvocator.invoke(() -> ConnectionAction.super.start());
     }
 
     @Override
@@ -180,7 +181,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             String description,
             ConnectionProvider connectionProvider,
             Integer executeOption,
-            Runnable action) {
+            ParametricRunnable<ConnectionAction> action) {
         create(description, connectionProvider, executeOption, action).start();
     }
 
@@ -188,7 +189,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             String description,
             ConnectionProvider connectionProvider,
             Integer executeOption,
-            Runnable action) {
+            ParametricRunnable<ConnectionAction> action) {
         return new ConnectionAction(description, connectionProvider, executeOption) {
             @Override
             protected void execute() {
@@ -200,7 +201,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     public static void invoke(
             TaskInstructions taskInstructions, String description,
             ConnectionProvider connectionProvider,
-            Runnable runnable) {
+            ParametricRunnable<ConnectionAction> runnable) {
         create(description, connectionProvider, taskInstructions, runnable, null, null).start();
     }
 
@@ -208,7 +209,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             String description,
             ConnectionProvider connectionProvider,
             TaskInstructions taskInstructions,
-            Runnable action) {
+            ParametricRunnable<ConnectionAction> action) {
         return create(description, connectionProvider, taskInstructions, action, null, null);
     }
 
@@ -216,8 +217,8 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             String description,
             ConnectionProvider connectionProvider,
             TaskInstructions taskInstructions,
-            Runnable action,
-            Runnable cancel,
+            ParametricRunnable<ConnectionAction> action,
+            ParametricRunnable<ConnectionAction> cancel,
             Callable<Boolean> canExecute) {
 
         create(description, connectionProvider, taskInstructions, action, cancel, canExecute).start();
@@ -227,8 +228,8 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             String description,
             ConnectionProvider connectionProvider,
             TaskInstructions taskInstructions,
-            Runnable action,
-            Runnable cancel,
+            ParametricRunnable<ConnectionAction> action,
+            ParametricRunnable<ConnectionAction> cancel,
             Callable<Boolean> canExecute) {
 
         return new ConnectionAction(description, connectionProvider, taskInstructions) {

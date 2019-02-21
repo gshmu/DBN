@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MethodExecutionHistorySimpleTreeModel extends MethodExecutionHistoryTreeModel {
-    public MethodExecutionHistorySimpleTreeModel(List<MethodExecutionInput> executionInputs, boolean debug) {
+    MethodExecutionHistorySimpleTreeModel(List<MethodExecutionInput> executionInputs, boolean debug) {
         super(executionInputs);
         for (MethodExecutionInput executionInput : executionInputs) {
             if (!executionInput.isObsolete() &&

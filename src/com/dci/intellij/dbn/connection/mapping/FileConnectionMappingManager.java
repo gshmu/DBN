@@ -689,7 +689,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
      *             Select schema popup                 *
      ***************************************************/
     public void promptSessionSelector(final DBLanguagePsiFile psiFile, final RunnableTask callback) throws IncorrectOperationException {
-        ConnectionAction.invoke("selecting the current session", psiFile, (Integer) null, action -> {
+        ConnectionAction.invoke("selecting the current session", psiFile, null, action -> {
             DefaultActionGroup actionGroup = new DefaultActionGroup();
 
             ConnectionHandler connectionHandler = action.getConnectionHandler();

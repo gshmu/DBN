@@ -11,5 +11,5 @@ public interface DBNForm extends DisposableProjectComponent {
     JComponent getComponent();
 
     @Nullable
-    JComponent getPreferredFocusedComponent();
+    default JComponent getPreferredFocusedComponent() {return null;}
 }

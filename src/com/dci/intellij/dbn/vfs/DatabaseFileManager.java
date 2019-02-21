@@ -312,10 +312,12 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                 if (connectionHandler != null) {
                     ConnectionDetailSettings connectionDetailSettings = connectionHandler.getSettings().getDetailSettings();
                     if (connectionDetailSettings.isRestoreWorkspace()) {
-                        ConnectionAction.invoke("opening database editors", connectionHandler, (Integer) null,
+                        ConnectionAction.invoke("opening database editors", connectionHandler, null,
                                 action -> BackgroundTask.invoke(project,
                                         instructions("Opening database editors", TaskInstruction.CANCELLABLE),
                                         (data, progress) -> {
+                                            progress.setIndeterminate(true);
+                                            progress.setText2(connectionHandler.getQualifiedName());
                                             DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
 
                                             objectRefs.forEach(objectRef -> {
@@ -323,6 +325,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                                                 if (connectionHandler.canConnect()) {
                                                     DBSchemaObject object = objectRef.get(project);
                                                     if (object != null) {
+                                                        progress.setText2(connectionHandler.getQualifiedName() + " - " + objectRef.getQualifiedNameWithType());
                                                         databaseFileSystem.openEditor(object, null, false);
                                                     }
                                                 }

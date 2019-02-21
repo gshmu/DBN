@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHistoryTreeModel {
-    public MethodExecutionHistoryGroupedTreeModel(List<MethodExecutionInput> executionInputs, boolean debug) {
+    MethodExecutionHistoryGroupedTreeModel(List<MethodExecutionInput> executionInputs, boolean debug) {
         super(executionInputs);
         for (MethodExecutionInput executionInput : executionInputs) {
             if (!executionInput.isObsolete() &&

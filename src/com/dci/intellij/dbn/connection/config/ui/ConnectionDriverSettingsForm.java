@@ -71,7 +71,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
             if (fileExists) {
                 textField.setForeground(UIUtil.getTextFieldForeground());
                 DatabaseType libraryDatabaseType = DatabaseType.resolve(driverLibrary);
-                if (libraryDatabaseType != DatabaseType.UNKNOWN && libraryDatabaseType != getParentComponent().getSelectedDatabaseType()) {
+                if (libraryDatabaseType != DatabaseType.UNKNOWN && libraryDatabaseType != ensureParentComponent().getSelectedDatabaseType()) {
                     error = "The driver library does not match the selected database type";
                     initComboBox(driverComboBox);
                     setSelection(driverComboBox, null);

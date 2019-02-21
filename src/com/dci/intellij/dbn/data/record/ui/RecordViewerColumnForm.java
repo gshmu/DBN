@@ -109,11 +109,11 @@ public class RecordViewerColumnForm extends DBNFormImpl<RecordViewerForm> {
     /*********************************************************
      *                     Listeners                         *
      *********************************************************/
-    KeyListener keyAdapter = new KeyAdapter() {
+    private KeyListener keyAdapter = new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent e) {
             if (!e.isConsumed()) {
-                RecordViewerForm parentForm = getParentComponent();
+                RecordViewerForm parentForm = ensureParentComponent();
                 if (e.getKeyCode() == 38) {//UP
                     parentForm.focusPreviousColumnPanel(RecordViewerColumnForm.this);
                     e.consume();

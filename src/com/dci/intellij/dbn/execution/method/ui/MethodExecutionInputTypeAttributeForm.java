@@ -171,7 +171,7 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl<MethodExe
     }
 
     private MethodExecutionInput getExecutionInput() {
-        return  getParentComponent().getParentComponent().getExecutionInput();
+        return  ensureParentComponent().ensureParentComponent().getExecutionInput();
     }
 
     protected int[] getMetrics(int[] metrics) {

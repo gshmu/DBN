@@ -105,7 +105,7 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
     }
 
     public void remove() {
-        getParentComponent().removeConditionPanel(condition);
+        ensureParentComponent().removeConditionPanel(condition);
     }
 
     public boolean isActive() {
