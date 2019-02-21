@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
-import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,35 +22,26 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     private boolean editable;
     private boolean debug;
     private MethodExecutionInput selectedExecutionInput;
-    private MethodExecutionHistory executionHistory;
 
-    public MethodExecutionHistoryDialog(Project project, MethodExecutionHistory executionHistory, @Nullable MethodExecutionInput selectedExecutionInput, boolean editable, boolean debug) {
+    public MethodExecutionHistoryDialog(
+            @NotNull Project project,
+            @Nullable MethodExecutionInput selectedExecutionInput,
+            boolean editable,
+            boolean debug) {
+
         super(project, "Method execution history", true);
         this.editable = editable;
         this.debug = debug;
-        this.executionHistory = executionHistory;
+        this.selectedExecutionInput = selectedExecutionInput;
         setModal(true);
         setResizable(true);
-        if (selectedExecutionInput == null) {
-            selectedExecutionInput = executionHistory.getLastSelection();
-        }
-
-        if (selectedExecutionInput != null &&
-                !selectedExecutionInput.isObsolete() &&
-                !selectedExecutionInput.isInactive() &&
-                (!debug || DatabaseFeature.DEBUGGING.isSupported(selectedExecutionInput))) {
-            showMethodExecutionPanel(selectedExecutionInput);
-            this.selectedExecutionInput = selectedExecutionInput;
-            getComponent().setSelectedInput(selectedExecutionInput);
-        }
         init();
-        updateMainButtons(selectedExecutionInput);
     }
 
     @NotNull
     @Override
     protected MethodExecutionHistoryForm createComponent() {
-        return new MethodExecutionHistoryForm(this, executionHistory, debug);
+        return new MethodExecutionHistoryForm(this, selectedExecutionInput, debug);
     }
 
     @Override
@@ -186,15 +176,9 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
         }
     }
 
-    public void showMethodExecutionPanel(MethodExecutionInput executionInput){
-        getComponent().showMethodExecutionPanel(executionInput);
-    }
-
-
     @Override
     public void dispose() {
         super.dispose();
         //selectedExecutionInput = null;
-        executionHistory = null;
     }
 }

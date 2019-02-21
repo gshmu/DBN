@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -18,14 +19,14 @@ import javax.swing.*;
 
 public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends DisposableBase implements DBNForm, NotificationSupport {
     private ProjectRef projectRef;
-    private P parentComponent;
+    private WeakRef<P> parentComponent;
 
     public DBNFormImpl() {
     }
 
     public DBNFormImpl(@NotNull P parentComponent) {
         super(parentComponent);
-        this.parentComponent = parentComponent;
+        this.parentComponent = WeakRef.from(parentComponent);
     }
 
     public DBNFormImpl(Project project) {
@@ -36,8 +37,14 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
         return GeneralProjectSettings.getInstance(project).getEnvironmentSettings();
     }
 
+    @Nullable
     public P getParentComponent() {
-        return parentComponent;
+        return parentComponent == null ? null : parentComponent.get();
+    }
+
+    @NotNull
+    public P ensureParentComponent() {
+        return Failsafe.get(getParentComponent());
     }
 
     @Override
@@ -48,7 +55,7 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
         }
 
         if (parentComponent != null) {
-            return parentComponent.getProject();
+            return parentComponent.getnn().getProject();
         }
 
         DataContext dataContext = DataManager.getInstance().getDataContext(getComponent());
@@ -61,14 +68,4 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
     public JComponent getPreferredFocusedComponent() {
         return null;
     }
-
-    @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            parentComponent = null;
-        }
-    }
-
-
 }

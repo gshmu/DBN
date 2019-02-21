@@ -125,7 +125,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
         final JCheckBox reuseVariablesCheckBox = executionOptionsForm.getReuseVariablesCheckBox();
         if (isBulkExecution && executionVariables != null) {
             reuseVariablesCheckBox.setVisible(true);
-            reuseVariablesCheckBox.addActionListener(e -> getParentComponent().setReuseVariables(reuseVariablesCheckBox.isSelected()));
+            reuseVariablesCheckBox.addActionListener(e -> ensureParentComponent().setReuseVariables(reuseVariablesCheckBox.isSelected()));
         } else {
             reuseVariablesCheckBox.setVisible(false);
         }

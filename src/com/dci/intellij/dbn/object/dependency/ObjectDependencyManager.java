@@ -40,8 +40,8 @@ public class ObjectDependencyManager extends AbstractProjectComponent implements
         this.lastUserDependencyType = lastUserDependencyType;
     }
 
-    public void openDependencyTree(final DBSchemaObject schemaObject) {
-        ConnectionAction.invoke("opening object dependency tree", schemaObject, (Integer) null, action -> {
+    public void openDependencyTree(DBSchemaObject schemaObject) {
+        ConnectionAction.invoke("opening object dependency tree", schemaObject, null, action -> {
             ObjectDependencyTreeDialog dependencyTreeDialog = new ObjectDependencyTreeDialog(getProject(), schemaObject);
             dependencyTreeDialog.show();
         });

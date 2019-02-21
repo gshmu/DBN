@@ -1,12 +1,8 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
-import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
-import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
-import com.dci.intellij.dbn.object.DBMethod;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredTreeCellRenderer;
@@ -18,24 +14,19 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreeSelectionModel;
+import java.util.Collections;
 import java.util.List;
-
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     private MethodExecutionHistoryDialog dialog;
-    private MethodExecutionHistory executionHistory;
     private boolean grouped;
     private boolean debug;
 
-    MethodExecutionHistoryTree(MethodExecutionHistoryDialog dialog, MethodExecutionHistory executionHistory, boolean grouped, boolean debug) {
+    MethodExecutionHistoryTree(MethodExecutionHistoryDialog dialog, boolean grouped, boolean debug) {
         super(grouped ?
-                new MethodExecutionHistoryGroupedTreeModel(executionHistory.getExecutionInputs(), debug) :
-                new MethodExecutionHistorySimpleTreeModel(executionHistory.getExecutionInputs(), debug));
-        this.executionHistory = executionHistory;
+                new MethodExecutionHistoryGroupedTreeModel(Collections.emptyList(), debug) :
+                new MethodExecutionHistorySimpleTreeModel(Collections.emptyList(), debug));
         this.dialog = dialog;
         this.grouped = grouped;
         this.debug = debug;
@@ -43,7 +34,6 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         TreeUtil.expand(this, 4);
 
-        addTreeSelectionListener(treeSelectionListener);
         getModel().addTreeModelListener(treeModelListener);
     }
 
@@ -51,8 +41,12 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
         return dialog.getProject();
     }
 
-    void showGrouped(boolean grouped) {
-        List<MethodExecutionInput> executionInputs = executionHistory.getExecutionInputs();
+    @Override
+    public MethodExecutionHistoryTreeModel getModel() {
+        return (MethodExecutionHistoryTreeModel) super.getModel();
+    }
+
+    void init(List<MethodExecutionInput> executionInputs, boolean grouped) {
         MethodExecutionHistoryTreeModel model = grouped ?
                 new MethodExecutionHistoryGroupedTreeModel(executionInputs, debug) :
                 new MethodExecutionHistorySimpleTreeModel(executionInputs, debug);
@@ -64,7 +58,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
 
     void setSelectedInput(MethodExecutionInput executionInput) {
         if (executionInput != null) {
-            MethodExecutionHistoryTreeModel model = (MethodExecutionHistoryTreeModel) getModel();
+            MethodExecutionHistoryTreeModel model = getModel();
             getSelectionModel().setSelectionPath(model.getTreePath(executionInput));
         }
     }
@@ -86,7 +80,6 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     @Override
     public void dispose() {
         super.dispose();
-        executionHistory = null;
         dialog = null;
     }
 
@@ -124,33 +117,6 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     /**********************************************************
      *                         Listeners                      *
      **********************************************************/
-    private TreeSelectionListener treeSelectionListener = new TreeSelectionListener(){
-        @Override
-        public void valueChanged(TreeSelectionEvent e) {
-            MethodExecutionInput executionInput = getSelectedExecutionInput();
-            if (executionInput != null) {
-                ConnectionAction.invoke(
-                        instructions("Loading method details"),
-                        "loading the execution history", executionInput,
-                        action -> {
-                            DBMethod method = executionInput.getMethod();
-                            if (method != null) {
-                                method.getArguments();
-                            }
-
-                            SimpleLaterInvocator.invoke(() -> {
-                                Failsafe.ensure(dialog);
-                                dialog.showMethodExecutionPanel(executionInput);
-                                dialog.setSelectedExecutionInput(executionInput);
-                                dialog.updateMainButtons(executionInput);
-                                if (method != null) {
-                                    executionHistory.setSelection(executionInput.getMethodRef());
-                                }
-                            });
-                        });
-            }
-        }
-    };
 
     private TreeModelListener treeModelListener = new TreeModelHandler() {
         @Override

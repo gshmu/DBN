@@ -20,9 +20,9 @@ import java.util.List;
 import static com.dci.intellij.dbn.connection.ConnectionId.UNKNOWN_CONNECTION;
 
 public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel implements Disposable {
-    protected List<MethodExecutionInput> executionInputs;
+    List<MethodExecutionInput> executionInputs;
 
-    public MethodExecutionHistoryTreeModel(List<MethodExecutionInput> executionInputs) {
+    MethodExecutionHistoryTreeModel(List<MethodExecutionInput> executionInputs) {
         super(new DefaultMutableTreeNode());
         this.executionInputs = executionInputs;
         setRoot(new RootTreeNode());

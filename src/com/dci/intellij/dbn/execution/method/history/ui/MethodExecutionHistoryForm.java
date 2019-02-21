@@ -1,15 +1,19 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.connection.ConnectionAction;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionInputForm;
+import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.Disposable;
@@ -26,10 +30,13 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.TreeSelectionListener;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHistoryDialog> {
     private JPanel mainPanel;
@@ -37,15 +44,13 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
     private JPanel actionsPanel;
     private JPanel argumentsPanel;
     private JPanel contentPanel;
-    private MethodExecutionHistory executionHistory;
     private ChangeListener changeListener;
     private boolean debug;
 
     private Map<MethodExecutionInput, MethodExecutionInputForm> methodExecutionForms;
 
-    MethodExecutionHistoryForm(MethodExecutionHistoryDialog parentComponent, MethodExecutionHistory executionHistory, boolean debug) {
+    MethodExecutionHistoryForm(MethodExecutionHistoryDialog parentComponent, MethodExecutionInput selectedExecutionInput, boolean debug) {
         super(parentComponent);
-        this.executionHistory = executionHistory;
         this.debug = debug;
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true,
                 new ShowGroupedTreeAction(),
@@ -58,6 +63,27 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
         GuiUtils.replaceJSplitPaneWithIDEASplitter(contentPanel);
         JBSplitter splitter = (JBSplitter) contentPanel.getComponent(0);
         splitter.setProportion((float) 0.32);
+
+        MethodExecutionHistory executionHistory = getExecutionHistory();
+        if (selectedExecutionInput == null) {
+            selectedExecutionInput = executionHistory.getLastSelection();
+        }
+
+        if (selectedExecutionInput != null &&
+                !selectedExecutionInput.isObsolete() &&
+                !selectedExecutionInput.isInactive() &&
+                (!debug || DatabaseFeature.DEBUGGING.isSupported(selectedExecutionInput))) {
+            showMethodExecutionPanel(selectedExecutionInput);
+            setSelectedInput(selectedExecutionInput);
+        }
+        parentComponent.updateMainButtons(selectedExecutionInput);
+        List<MethodExecutionInput> executionInputs = executionHistory.getExecutionInputs();
+        getTree().init(executionInputs, executionHistory.isGroupEntries());
+        executionInputsTree.getSelectionModel().addTreeSelectionListener(treeSelectionListener);
+    }
+
+    private MethodExecutionHistory getExecutionHistory() {
+        return MethodExecutionManager.getInstance(getProject()).getExecutionHistory();
     }
 
     @NotNull
@@ -72,8 +98,9 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
     }
 
     private void createUIComponents() {
+        MethodExecutionHistory executionHistory = getExecutionHistory();
         boolean group = executionHistory.isGroupEntries();
-        executionInputsTree = new MethodExecutionHistoryTree(getParentComponent(), executionHistory, group, debug);
+        executionInputsTree = new MethodExecutionHistoryTree(getParentComponent(), group, debug);
         Disposer.register(this, (Disposable) executionInputsTree);
     }
 
@@ -85,10 +112,9 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
     public void dispose() {
         super.dispose();
         executionInputsTree = null;
-        executionHistory = null;
     }
 
-    void showMethodExecutionPanel(MethodExecutionInput executionInput) {
+    private void showMethodExecutionPanel(MethodExecutionInput executionInput) {
         argumentsPanel.removeAll();
         if (executionInput != null &&
                 !executionInput.isObsolete() &&
@@ -107,7 +133,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
 
     private ChangeListener getChangeListener() {
         if (changeListener == null) {
-            changeListener = e -> getParentComponent().setSaveButtonEnabled(true);
+            changeListener = e -> ensureParentComponent().setSaveButtonEnabled(true);
         }
         return changeListener;
     }
@@ -135,7 +161,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
         @Override
         public void update(@NotNull AnActionEvent e) {
             e.getPresentation().setEnabled(!getTree().isSelectionEmpty());
-            e.getPresentation().setVisible(getParentComponent().isEditable());
+            e.getPresentation().setVisible(ensureParentComponent().isEditable());
         }
     }
 
@@ -168,7 +194,9 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
         @Override
         public void setSelected(@NotNull AnActionEvent e, boolean state) {
             getTemplatePresentation().setText(state ? "Ungroup" : "Group by Program");
-            getTree().showGrouped(state);
+            MethodExecutionHistoryTree historyTree = getTree();
+            List<MethodExecutionInput> executionInputs = historyTree.getModel().getExecutionInputs();
+            historyTree.init(executionInputs, state);
             Project project = ActionUtil.getProject(e);
             if (project != null) {
                 MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
@@ -176,4 +204,31 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
             }
         }
     }
+
+
+    private TreeSelectionListener treeSelectionListener = e -> {
+        MethodExecutionInput executionInput = getTree().getSelectedExecutionInput();
+        if (executionInput != null) {
+            ConnectionAction.invoke(
+                    instructions("Loading method details"),
+                    "loading the execution history", executionInput,
+                    action -> {
+                        DBMethod method = executionInput.getMethod();
+                        if (method != null) {
+                            method.getArguments();
+                        }
+
+                        SimpleLaterInvocator.invoke(() -> {
+                            MethodExecutionHistoryDialog dialog = ensureParentComponent();
+                            showMethodExecutionPanel(executionInput);
+                            dialog.setSelectedExecutionInput(executionInput);
+                            dialog.updateMainButtons(executionInput);
+                            if (method != null) {
+                                MethodExecutionHistory executionHistory = getExecutionHistory();
+                                executionHistory.setSelection(executionInput.getMethodRef());
+                            }
+                        });
+                    });
+        }
+    };
 }
