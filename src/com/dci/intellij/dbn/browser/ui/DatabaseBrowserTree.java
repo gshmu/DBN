@@ -249,7 +249,7 @@ public class DatabaseBrowserTree extends DBNTree {
                     event.consume();
                 } else if (deliberate) {
                     BackgroundTask.invoke(getProject(),
-                            instructions("Loading Object Reference"),
+                            instructions("Loading object reference"),
                             (data, progress) -> {
                                 DBObject navigationObject = object.getDefaultNavigationObject();
                                 if (navigationObject != null) {
