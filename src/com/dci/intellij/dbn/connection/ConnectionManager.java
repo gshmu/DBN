@@ -37,7 +37,6 @@ import com.dci.intellij.dbn.connection.ui.ConnectionAuthenticationDialog;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -63,10 +62,7 @@ import java.util.stream.Collectors;
 import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
-import static com.dci.intellij.dbn.common.util.MessageUtil.options;
-import static com.dci.intellij.dbn.common.util.MessageUtil.showErrorDialog;
-import static com.dci.intellij.dbn.common.util.MessageUtil.showInfoDialog;
-import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
+import static com.dci.intellij.dbn.common.util.MessageUtil.*;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
 
 @State(
@@ -315,7 +311,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     }
 
     public static void showConnectionInfoDialog(ConnectionHandler connectionHandler) {
-        ConditionalLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(connectionHandler);
             infoDialog.setModal(true);
             infoDialog.show();
@@ -323,7 +319,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     }
 
     private static void showConnectionInfoDialog(ConnectionInfo connectionInfo, String connectionName, EnvironmentType environmentType) {
-        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(null, connectionInfo, connectionName, environmentType);
             infoDialog.setModal(true);
             infoDialog.show();
@@ -457,7 +453,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                     if (idleMinutes > idleMinutesToDisconnect) {
                         if (connection.hasDataChanges()) {
                             connection.set(ResourceStatus.RESOLVING_TRANSACTION, true);
-                            SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+                            SimpleLaterInvocator.invokeNonModal(() -> {
                                 IdleConnectionDialog idleConnectionDialog = new IdleConnectionDialog(connectionHandler, connection);
                                 idleConnectionDialog.show();
                             });

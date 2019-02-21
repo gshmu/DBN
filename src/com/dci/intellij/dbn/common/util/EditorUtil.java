@@ -19,7 +19,6 @@ import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBDatasetVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -234,7 +233,7 @@ public class EditorUtil {
             ReadActionRunner.invoke(false, () -> {
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                 FileEditor[] allEditors = fileEditorManager.getAllEditors();
-                SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+                SimpleLaterInvocator.invokeNonModal(() -> {
                     for (FileEditor fileEditor : allEditors) {
                         if (fileEditor instanceof SourceCodeEditor) {
                             SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
@@ -350,7 +349,7 @@ public class EditorUtil {
         }
     }
     public static void focusEditor(@Nullable final Editor editor) {
-        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             if (editor != null) {
                 Project project = editor.getProject();
                 IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true);

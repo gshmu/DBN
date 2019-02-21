@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.execution.logging.LogOutputContext;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -96,77 +95,67 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void addExecutionResult(final CompilerResult compilerResult) {
-        SimpleLaterInvocator.invoke(
-                ModalityState.NON_MODAL,
-                () -> {
-                    showExecutionConsole();
-                    ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                    executionConsoleForm.addResult(compilerResult);
-                });
+        SimpleLaterInvocator.invokeNonModal(() -> {
+            showExecutionConsole();
+            ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+            executionConsoleForm.addResult(compilerResult);
+        });
     }
 
     public void addExecutionResults(final List<CompilerResult> compilerResults) {
-        SimpleLaterInvocator.invoke(
-                ModalityState.NON_MODAL,
-                () -> {
-                    showExecutionConsole();
-                    ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                    executionConsoleForm.addResults(compilerResults);
-                });
+        SimpleLaterInvocator.invokeNonModal(() -> {
+            showExecutionConsole();
+            ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+            executionConsoleForm.addResults(compilerResults);
+        });
     }
 
     public void addExplainPlanResult(final ExplainPlanResult explainPlanResult) {
-        SimpleLaterInvocator.invoke(
-                ModalityState.NON_MODAL,
-                () -> {
-                    showExecutionConsole();
-                    ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                    executionConsoleForm.addResult(explainPlanResult);
-                });
+        SimpleLaterInvocator.invokeNonModal(() -> {
+            showExecutionConsole();
+            ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+            executionConsoleForm.addResult(explainPlanResult);
+        });
     }
 
     public void writeLogOutput(@NotNull final LogOutputContext context, final LogOutput output) {
-        SimpleLaterInvocator.invoke(
-                ModalityState.NON_MODAL,
-                () -> {
-                    if (!context.isClosed()) {
-                        showExecutionConsole();
-                        ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                        executionConsoleForm.displayLogOutput(context, output);
-                    }
-                });
+        SimpleLaterInvocator.invokeNonModal(() -> {
+            if (!context.isClosed()) {
+                showExecutionConsole();
+                ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+                executionConsoleForm.displayLogOutput(context, output);
+            }
+        });
     }
 
     public void addExecutionResult(@NotNull final StatementExecutionResult executionResult) {
-        SimpleLaterInvocator.invoke(
-                ModalityState.NON_MODAL,
-                () -> {
-                    showExecutionConsole();
-                    ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                    if (executionResult.isLoggingActive()) {
-                        LogOutputContext context = new LogOutputContext(executionResult.getConnectionHandler());
-                        context.setHideEmptyLines(false);
-                        String loggingOutput = executionResult.getLoggingOutput();
+        SimpleLaterInvocator.invokeNonModal(() -> {
+            showExecutionConsole();
+            ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+            if (executionResult.isLoggingActive()) {
+                LogOutputContext context = new LogOutputContext(executionResult.getConnectionHandler());
+                context.setHideEmptyLines(false);
+                String loggingOutput = executionResult.getLoggingOutput();
 
-                        executionConsoleForm.displayLogOutput(
-                                context, LogOutput.createSysOutput(context,
-                                        executionResult.getExecutionContext().getExecutionTimestamp(),
-                                        " - Statement execution started", false));
+                executionConsoleForm.displayLogOutput(
+                        context, LogOutput.createSysOutput(context,
+                                executionResult.getExecutionContext().getExecutionTimestamp(),
+                                " - Statement execution started", false));
 
-                        if (StringUtil.isNotEmptyOrSpaces(loggingOutput)) {
-                            executionConsoleForm.displayLogOutput(context,
-                                    LogOutput.createStdOutput(loggingOutput));
-                        }
+                if (StringUtil.isNotEmptyOrSpaces(loggingOutput)) {
+                    executionConsoleForm.displayLogOutput(context,
+                            LogOutput.createStdOutput(loggingOutput));
+                }
 
-                        executionConsoleForm.displayLogOutput(context,
-                                LogOutput.createSysOutput(context, " - Statement execution finished\n", false));
-                    }
+                executionConsoleForm.displayLogOutput(context,
+                        LogOutput.createSysOutput(context, " - Statement execution finished\n", false));
+            }
 
-                    executionConsoleForm.addResult(executionResult);
-                    if (!executionResult.isBulkExecution() && !executionResult.hasCompilerResult() && !focusOnExecution()) {
-                        executionResult.navigateToEditor(NavigationInstruction.FOCUS);
-                    }
-                });
+            executionConsoleForm.addResult(executionResult);
+            if (!executionResult.isBulkExecution() && !executionResult.hasCompilerResult() && !focusOnExecution()) {
+                executionResult.navigateToEditor(NavigationInstruction.FOCUS);
+            }
+        });
     }
 
     private boolean focusOnExecution() {
@@ -178,23 +167,19 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
 
     public void addExecutionResult(final MethodExecutionResult executionResult) {
-        SimpleLaterInvocator.invoke(
-                ModalityState.NON_MODAL,
-                () -> {
-                    showExecutionConsole();
-                    ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                    executionConsoleForm.addResult(executionResult);
-                });
+        SimpleLaterInvocator.invokeNonModal(() -> {
+            showExecutionConsole();
+            ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+            executionConsoleForm.addResult(executionResult);
+        });
     }
 
     public void selectExecutionResult(final StatementExecutionResult executionResult) {
-        SimpleLaterInvocator.invoke(
-                ModalityState.NON_MODAL,
-                () -> {
-                    ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-                    executionConsoleForm.selectResult(executionResult);
-                    showExecutionConsole();
-                });
+        SimpleLaterInvocator.invokeNonModal(() -> {
+            ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+            executionConsoleForm.selectResult(executionResult);
+            showExecutionConsole();
+        });
 
     }
 

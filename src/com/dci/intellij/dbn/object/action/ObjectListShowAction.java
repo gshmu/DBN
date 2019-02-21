@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -65,7 +64,7 @@ public abstract class ObjectListShowAction extends DumbAwareAction {
                         List<? extends DBObject> recentObjectList = getRecentObjectList();
                         List<? extends DBObject> objects = getObjectList();
                         if (!action.isCancelled()) {
-                            SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+                            SimpleLaterInvocator.invokeNonModal(() -> {
                                 if (objects.size() > 0) {
                                     ObjectListActionGroup actionGroup = new ObjectListActionGroup(ObjectListShowAction.this, objects, recentObjectList);
                                     JBPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
