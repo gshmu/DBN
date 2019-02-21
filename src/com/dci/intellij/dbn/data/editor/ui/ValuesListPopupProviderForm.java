@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableListImpl;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -175,7 +175,7 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
     }
 
     private void updateList() {
-        ConditionalLaterInvocator.invoke(() -> {
+        SimpleLaterInvocator.invoke(() -> {
             if (listModel.isFiltrable()) {
                 int index = list.getSelectedIndex();
                 listModel.notifyContentChanged();
