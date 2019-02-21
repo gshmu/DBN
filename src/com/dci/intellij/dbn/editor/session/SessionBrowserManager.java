@@ -24,7 +24,6 @@ import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
 import com.dci.intellij.dbn.editor.session.options.SessionInterruptionOption;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -242,7 +241,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                                     }
                                 }
 
-                                SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+                                SimpleLaterInvocator.invokeNonModal(() -> {
                                     for (SessionBrowser sessionBrowser : sessionBrowsers) {
                                         sessionBrowser.refreshLoadTimestamp();
                                     }

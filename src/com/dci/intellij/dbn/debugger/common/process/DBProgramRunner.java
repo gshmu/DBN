@@ -34,7 +34,6 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.history.LocalHistory;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.xdebugger.XDebugSession;
@@ -170,7 +169,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             @Nullable Callback callback,
             List<DBSchemaObject> dependencies) {
 
-        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             Project project = connectionHandler.getProject();
             DBRunConfig runConfiguration = (DBRunConfig) environment.getRunProfile();
             CompileDebugDependenciesDialog dependenciesDialog = new CompileDebugDependenciesDialog(runConfiguration, dependencies);
@@ -215,7 +214,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             T executionInput,
             ExecutionEnvironment environment,
             Callback callback) {
-        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
             Project project = environment.getProject();
 

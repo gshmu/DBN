@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.common.editor;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.EditorNotifications;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +16,7 @@ public abstract class EditorNotificationProvider<T extends EditorNotificationPan
     }
 
     public void updateEditorNotification(@Nullable final DBContentVirtualFile databaseContentFile) {
-        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             Project project = getProject();
             EditorNotifications notifications = EditorNotifications.getInstance(project);
             if (databaseContentFile ==  null) {

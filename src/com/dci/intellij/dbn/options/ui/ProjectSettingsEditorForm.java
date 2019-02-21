@@ -29,7 +29,6 @@ import com.intellij.ide.plugins.PluginInstaller;
 import com.intellij.ide.plugins.PluginManagerMain;
 import com.intellij.ide.plugins.PluginNode;
 import com.intellij.ide.plugins.RepositoryHelper;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.extensions.PluginId;
@@ -133,7 +132,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
                                         }
                                     }
 
-                                    SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+                                    SimpleLaterInvocator.invokeNonModal(() -> {
                                         try {
                                             PluginManagerMain.downloadPlugins(updateDescriptors, pluginIds, () -> PluginManagerMain.notifyPluginsUpdated(project), null);
                                         } catch (IOException e1) {

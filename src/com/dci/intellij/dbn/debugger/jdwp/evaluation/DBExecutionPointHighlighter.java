@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.debugger.jdwp.evaluation;
 
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -31,11 +30,27 @@ public class DBExecutionPointHighlighter {
     }
 
     public void show(final @NotNull XSourcePosition position, final boolean useSelection) {
-        ConditionalLaterInvocator.invoke(ModalityState.NON_MODAL, () -> doShow(position, useSelection));
+        SimpleLaterInvocator.invokeNonModal(() -> {
+            ApplicationManager.getApplication().assertIsDispatchThread();
+            removeHighlighter();
+
+            sourcePosition = position;
+            editor = openEditor();
+            myUseSelection = useSelection;
+            if (editor != null) {
+                addHighlighter();
+            }
+
+        });
     }
 
     public void hide() {
-        ConditionalLaterInvocator.invoke(ModalityState.NON_MODAL, () -> doHide());
+        SimpleLaterInvocator.invokeNonModal(() -> {
+            ApplicationManager.getApplication().assertIsDispatchThread();
+            removeHighlighter();
+            myOpenFileDescriptor = null;
+            editor = null;
+        });
     }
 
     public void navigateTo() {
@@ -53,18 +68,6 @@ public class DBExecutionPointHighlighter {
         show(sourcePosition, myUseSelection);
     }
 
-    private void doShow(@NotNull XSourcePosition position, final boolean useSelection) {
-        ApplicationManager.getApplication().assertIsDispatchThread();
-        removeHighlighter();
-
-        sourcePosition = position;
-        editor = openEditor();
-        myUseSelection = useSelection;
-        if (editor != null) {
-            addHighlighter();
-        }
-    }
-
     @Nullable
     private Editor openEditor() {
         VirtualFile file = sourcePosition.getFile();
@@ -79,13 +82,6 @@ public class DBExecutionPointHighlighter {
             return FileEditorManager.getInstance(project).openTextEditor(myOpenFileDescriptor, false);
         }
         return null;
-    }
-
-    private void doHide() {
-        ApplicationManager.getApplication().assertIsDispatchThread();
-        removeHighlighter();
-        myOpenFileDescriptor = null;
-        editor = null;
     }
 
     private void removeHighlighter() {

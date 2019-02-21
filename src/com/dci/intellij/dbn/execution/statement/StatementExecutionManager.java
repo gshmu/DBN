@@ -43,7 +43,6 @@ import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -74,9 +73,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
 @State(
     name = StatementExecutionManager.COMPONENT_NAME,
@@ -327,7 +324,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     private void promptExecutionDialogs(@NotNull List<StatementExecutionProcessor> processors, DBDebuggerType debuggerType, @NotNull RunnableTask callback) {
-        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             if (promptExecutionDialogs(processors, debuggerType)) {
                 callback.start();
             }
@@ -399,7 +396,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     public void promptPendingTransactionDialog(final StatementExecutionProcessor executionProcessor) {
         final ExecutionContext context = executionProcessor.getExecutionContext();
         context.set(PROMPTED, true);
-        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             try {
                 PendingTransactionDialog dialog = new PendingTransactionDialog(executionProcessor);
                 dialog.show();
