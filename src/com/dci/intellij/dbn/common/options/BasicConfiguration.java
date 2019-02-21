@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.options.ConfigurationException;
@@ -123,7 +123,7 @@ public abstract class BasicConfiguration<P extends Configuration, E extends Conf
 
     @Override
     public void reset() {
-        ConditionalLaterInvocator.invoke(() -> {
+        SimpleLaterInvocator.invoke(() -> {
             try {
                 IS_RESETTING.set(true);
                 Failsafe.get(configurationEditorForm).resetFormChanges();

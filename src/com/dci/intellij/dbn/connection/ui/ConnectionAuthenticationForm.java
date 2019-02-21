@@ -27,7 +27,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
     private String cachedUser = "";
     private String cachedPassword = "";
 
-    public ConnectionAuthenticationForm(@NotNull final ConnectionAuthenticationDialog parentComponent, final @Nullable ConnectionHandler connectionHandler) {
+    public ConnectionAuthenticationForm(@NotNull ConnectionAuthenticationDialog parentComponent, @Nullable ConnectionHandler connectionHandler) {
         super(parentComponent);
 
         AuthenticationInfo authenticationInfo = parentComponent.getAuthenticationInfo();
