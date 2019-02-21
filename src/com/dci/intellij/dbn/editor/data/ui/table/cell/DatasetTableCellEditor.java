@@ -16,6 +16,7 @@
  import com.dci.intellij.dbn.object.DBColumn;
  import com.intellij.ui.JBColor;
  import com.intellij.ui.SimpleTextAttributes;
+ import org.jetbrains.annotations.NotNull;
 
  import javax.swing.*;
  import javax.swing.border.Border;
@@ -61,7 +62,7 @@
         textField.setFont(table.getFont());
     }
 
-    public void prepareEditor(DatasetEditorModelCell cell) {
+    public void prepareEditor(@NotNull DatasetEditorModelCell cell) {
         setCell(cell);
         ColumnInfo columnInfo = cell.getColumnInfo();
         DBDataType dataType = columnInfo.getDataType();
@@ -73,7 +74,7 @@
                 String value = (String) userValue;
                 setEditable(value == null || value.indexOf('\n') == -1);
             } else if (genericDataType.is(GenericDataType.DATE_TIME, GenericDataType.NUMERIC)) {
-                setEditable(true);                    
+                setEditable(true);
             } else {
                 setEditable(false);
             }
@@ -99,10 +100,10 @@
         return getTextField().isEditable();
     }
 
-    void selectText(final JTextField textField) {
+    void selectText(JTextField textField) {
         if (textField.isEditable()) {
             String originalText = textField.getText();
-            SimpleLaterInvocator.invoke(textField, () -> {
+            SimpleLaterInvocator.invokeNonModal(() -> {
                 checkDisposed();
                 // select all only if the text didn't change
                 if (settings.getGeneralSettings().getSelectContentOnCellEdit().value()) {
@@ -166,13 +167,15 @@
                     textField.setCaretPosition(0);
                 } else  if (caretPosition == 0) {
                     e.consume();
-                    getCell().editPrevious();
+                    DatasetEditorModelCell cell = getCell();
+                    if (cell != null) cell.editPrevious();
                 }
             }
             else if (e.getKeyCode() == 39 ) { // RIGHT
                 if (!isSelected() && caretPosition == textField.getDocument().getLength()) {
                     e.consume();
-                    getCell().editNext();
+                    DatasetEditorModelCell cell = getCell();
+                    if (cell != null) cell.editNext();
                 }
             }
             else if (e.getKeyCode() == 27 ) { // ESC
@@ -187,25 +190,27 @@
      ********************************************************/
     private MouseMotionListener mouseMotionListener = new MouseMotionAdapter() {
         @Override
-        public void mouseMoved(final MouseEvent e) {
-            final JTextField textField = getTextField();
-            final DatasetEditorModelCell cell = getCell();
-            if (e.isControlDown() && cell.isNavigable()) {
+        public void mouseMoved(MouseEvent e) {
+            JTextField textField = getTextField();
+            DatasetEditorModelCell cell = getCell();
+            if (cell != null) {
+                if (e.isControlDown() && cell.isNavigable()) {
 
-                SimpleBackgroundTask.invoke(() -> {
-                    DBColumn column = cell.getColumnInfo().getColumn();
-                    DBColumn foreignKeyColumn = column.getForeignKeyColumn();
-                    if (foreignKeyColumn != null && !e.isConsumed()) {
-                        SimpleLaterInvocator.invoke(textField, () -> {
-                            textField.setToolTipText("<html>Show referenced <b>" + foreignKeyColumn.getDataset().getQualifiedName() + "</b> record<html>");
-                            textField.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                        });
-                    }
-                });
+                    SimpleBackgroundTask.invoke(() -> {
+                        DBColumn column = cell.getColumnInfo().getColumn();
+                        DBColumn foreignKeyColumn = column.getForeignKeyColumn();
+                        if (foreignKeyColumn != null && !e.isConsumed()) {
+                            SimpleLaterInvocator.invokeNonModal(() -> {
+                                textField.setToolTipText("<html>Show referenced <b>" + foreignKeyColumn.getDataset().getQualifiedName() + "</b> record<html>");
+                                textField.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                            });
+                        }
+                    });
 
-            } else {
-                textField.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
-                textField.setToolTipText(null);
+                } else {
+                    textField.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+                    textField.setToolTipText(null);
+                }
             }
         }
     };
@@ -213,11 +218,9 @@
     private MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseReleased(MouseEvent event) {
-            if (event.getButton() == MouseEvent.BUTTON3 ) {
-                DatasetEditorModelCell cell = getCell();
-                if (cell != null) {
-                    getTable().showPopupMenu(event, cell, cell.getColumnInfo());
-                }
+            DatasetEditorModelCell cell = getCell();
+            if (cell != null && event.getButton() == MouseEvent.BUTTON3 ) {
+                getTable().showPopupMenu(event, cell, cell.getColumnInfo());
             }
         }
 
@@ -225,7 +228,7 @@
         public void mouseClicked(MouseEvent event) {
             if (MouseUtil.isNavigationEvent(event)) {
                 DatasetEditorModelCell cell = getCell();
-                if (cell.isNavigable()) {
+                if (cell != null && cell.isNavigable()) {
                     DatasetEditorTable table = getTable();
                     DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
                     if (filterInput != null) {

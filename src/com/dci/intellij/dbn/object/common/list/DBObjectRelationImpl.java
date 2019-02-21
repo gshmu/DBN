@@ -47,9 +47,12 @@ public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObjec
     /*********************************************************
     *               DynamicContentElement                   *
     *********************************************************/
+    @NotNull
     @Override
     public String getName() {
-        return null;
+        String sourceObjectName = sourceObject.getQualifiedNameWithType();
+        String targetObjectName = targetObject.getQualifiedNameWithType();
+        return nvl(sourceObjectName, "UNKNOWN") + "." + nvl(targetObjectName, "UNKNOWN");
     }
 
     @Override

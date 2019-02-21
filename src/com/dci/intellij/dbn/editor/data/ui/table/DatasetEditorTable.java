@@ -59,12 +59,8 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.EventObject;
 
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.DELIBERATE_ACTION;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.PRESERVE_CHANGES;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.USE_CURRENT_FILTER;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.UPDATING;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
 public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     private static final DatasetLoadInstructions SORT_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(USE_CURRENT_FILTER, PRESERVE_CHANGES, DELIBERATE_ACTION);
@@ -194,7 +190,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                 runnable.run();
             } finally {
                 model.set(UPDATING, false);
-                SimpleLaterInvocator.invoke(this, () -> {
+                SimpleLaterInvocator.invokeNonModal(() -> {
                     DBNTableGutter tableGutter = getTableGutter();
                     GUIUtil.repaint(tableGutter);
                     GUIUtil.repaint(DatasetEditorTable.this);
@@ -204,7 +200,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     }
 
     public void showErrorPopup(DatasetEditorModelCell cell) {
-        SimpleLaterInvocator.invoke(this, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             checkDisposed();
 
             if (!isShowing()) {
@@ -226,16 +222,16 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     @Override
     public void clearSelection() {
-        SimpleLaterInvocator.invoke(this, () -> DatasetEditorTable.super.clearSelection());
+        SimpleLaterInvocator.invokeNonModal(() -> DatasetEditorTable.super.clearSelection());
     }
 
     @Override
     public void removeEditor() {
-        SimpleLaterInvocator.invoke(this, () -> DatasetEditorTable.super.removeEditor());
+        SimpleLaterInvocator.invokeNonModal(() -> DatasetEditorTable.super.removeEditor());
     }
 
     public void updateTableGutter() {
-        SimpleLaterInvocator.invoke(this, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             DBNTableGutter tableGutter = getTableGutter();
             GUIUtil.repaint(tableGutter);
         });
@@ -266,7 +262,9 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         if (editor instanceof DatasetTableCellEditor) {
             DatasetTableCellEditor cellEditor = (DatasetTableCellEditor) editor;
             DatasetEditorModelCell cell = (DatasetEditorModelCell) getCellAtPosition(rowIndex, columnIndex);
-            cellEditor.prepareEditor(cell);
+            if (cell != null) {
+                cellEditor.prepareEditor(cell);
+            }
         }
         return component;
     }
@@ -368,7 +366,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     public void fireEditingCancel() {
         if (isEditing()) {
-            SimpleLaterInvocator.invoke(this, () -> cancelEditing());
+            SimpleLaterInvocator.invokeNonModal(() -> cancelEditing());
         }
     }
 
@@ -522,7 +520,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             if (!progress.isCanceled()) {
                 ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
                 JPopupMenu popupMenu = actionPopupMenu.getComponent();
-                SimpleLaterInvocator.invoke(this, () -> {
+                SimpleLaterInvocator.invokeNonModal(() -> {
                     Component component = (Component) event.getSource();
                     if (component.isShowing()) {
                         int x = event.getX();

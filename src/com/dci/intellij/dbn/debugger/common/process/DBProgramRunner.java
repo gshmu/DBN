@@ -49,6 +49,8 @@ import static com.dci.intellij.dbn.common.util.MessageUtil.options;
 import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 
 public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericProgramRunner {
+    public static final String INVALID_RUNNER_ID = "DBNInvalidRunner";
+
     @Override
     @Nullable
     protected RunContentDescriptor doExecute(@NotNull Project project, @NotNull RunProfileState state, RunContentDescriptor contentToReuse, @NotNull ExecutionEnvironment env) throws ExecutionException {

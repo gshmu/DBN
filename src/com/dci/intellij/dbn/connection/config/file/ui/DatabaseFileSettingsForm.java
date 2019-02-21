@@ -11,6 +11,7 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.AnActionButtonUpdater;
 import com.intellij.ui.ToolbarDecorator;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -76,6 +77,7 @@ public class DatabaseFileSettingsForm extends DBNFormImpl<ConnectionDatabaseSett
         table.getParent().setBackground(table.getBackground());
     }
     
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

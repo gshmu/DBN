@@ -135,6 +135,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
         return executionProcessor;
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

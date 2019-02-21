@@ -30,6 +30,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -218,6 +219,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         return TabbedPaneUtil.getSelectedTabName(configTabbedPane);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;
@@ -225,8 +227,8 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
     private ConnectionPresentationChangeListener connectionPresentationChangeListener = new ConnectionPresentationChangeListener() {
         @Override
-        public void presentationChanged(final String name, final Icon icon, final Color color, final ConnectionId connectionId, DatabaseType databaseType) {
-            SimpleLaterInvocator.invoke(ConnectionSettingsForm.this, () -> {
+        public void presentationChanged(String name, Icon icon, Color color, ConnectionId connectionId, DatabaseType databaseType) {
+            SimpleLaterInvocator.invoke(() -> {
                 ConnectionSettings configuration = getConfiguration();
                 if (configuration.getConnectionId().equals(connectionId)) {
                     if (name != null) headerForm.setTitle(name);

@@ -16,6 +16,7 @@ public class DBNCollapsiblePanel<P extends DisposableProjectComponent> extends D
     private JPanel mainPanel;
     private boolean expanded = false;
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

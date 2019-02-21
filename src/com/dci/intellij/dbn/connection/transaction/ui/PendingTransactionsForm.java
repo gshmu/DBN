@@ -79,6 +79,7 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
         return false;
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;
@@ -138,6 +139,6 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
     };
 
     private void refreshForm() {
-        SimpleLaterInvocator.invoke(this, () -> updateListModel());
+        SimpleLaterInvocator.invoke(() -> updateListModel());
     }
 }

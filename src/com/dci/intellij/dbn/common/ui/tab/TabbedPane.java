@@ -72,6 +72,6 @@ public class TabbedPane extends JBEditorTabs implements com.dci.intellij.dbn.com
 
     @Override
     public void dispose() {
-        ConditionalLaterInvocator.invoke(this, () -> TabbedPane.super.dispose());
+        ConditionalLaterInvocator.invoke(() -> TabbedPane.super.dispose());
     }
 }

@@ -85,6 +85,21 @@ public class CommonUtil {
         return false;
     }
 
+    public static <T extends Comparable<T>> int safeCompare(@Nullable T value1, @Nullable T value2) {
+        if (value1 == null && value2 == null) {
+            return 0;
+        }
+        if (value1 == null) {
+            return -1;
+        }
+
+        if (value2 == null) {
+            return 1;
+        }
+
+        return value1.compareTo(value2);
+    }
+
     public static Document loadXmlFile(Class clazz, String name) {
         InputStream inputStream = clazz.getResourceAsStream(name);
         return createXMLDocument(inputStream);

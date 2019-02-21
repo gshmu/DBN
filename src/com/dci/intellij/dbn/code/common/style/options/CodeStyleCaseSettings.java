@@ -84,7 +84,9 @@ public abstract class CodeStyleCaseSettings extends BasicConfiguration<CodeStyle
             Element optionElement = (Element) object;
             String name = optionElement.getAttributeValue("name");
             CodeStyleCaseOption option = getCodeStyleCaseOption(name);
-            option.readConfiguration(optionElement);
+            if (option != null) {
+                option.readConfiguration(optionElement);
+            }
         }
     }
 

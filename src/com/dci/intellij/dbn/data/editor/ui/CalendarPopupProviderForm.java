@@ -16,6 +16,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -108,6 +109,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
         actionsPanelBottom.add(actionToolbarBottom.getComponent(), BorderLayout.EAST);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

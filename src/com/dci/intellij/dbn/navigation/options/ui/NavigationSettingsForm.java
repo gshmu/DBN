@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.navigation.options.ui;
 
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,6 +16,7 @@ public class NavigationSettingsForm extends CompositeConfigurationEditorForm<Nav
         objectsLookupSettingsPanel.add(settings.getObjectsLookupSettings().createComponent(), BorderLayout.CENTER);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

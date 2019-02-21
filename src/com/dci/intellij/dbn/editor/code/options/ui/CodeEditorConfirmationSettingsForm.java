@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorChangesOption;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorConfirmationSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -29,6 +30,7 @@ public class CodeEditorConfirmationSettingsForm extends ConfigurationEditorForm<
         registerComponent(mainPanel);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

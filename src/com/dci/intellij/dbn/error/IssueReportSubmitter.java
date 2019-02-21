@@ -72,7 +72,8 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
                 reportInfo[0] = submittedReportInfo;
             }
         };
-        String additionalInfo = ((LogMessage)events[0].getData()).getAdditionalInfo();
+        LogMessage data = (LogMessage) events[0].getData();
+        String additionalInfo = data == null ? null : data.getAdditionalInfo();
         submit(events, additionalInfo, parentComponent, consumer);
         return reportInfo[0];
     }

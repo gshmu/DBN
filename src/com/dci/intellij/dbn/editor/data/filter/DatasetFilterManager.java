@@ -92,11 +92,12 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
             }
         }
 
-        filter.setNew(false);
-        filter.setTemporary(true);
-        setActiveFilter(dataset, filter);
-        DatasetEditorManager.getInstance(getProject()).reloadEditorData(dataset);
-
+        if (filter != null) {
+            filter.setNew(false);
+            filter.setTemporary(true);
+            setActiveFilter(dataset, filter);
+            DatasetEditorManager.getInstance(getProject()).reloadEditorData(dataset);
+        }
     }
 
     public void addConditionToFilter(DatasetBasicFilter filter, DBDataset dataset, ColumnInfo columnInfo, Object value, boolean interactive) {

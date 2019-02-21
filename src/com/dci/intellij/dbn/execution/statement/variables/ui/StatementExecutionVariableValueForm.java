@@ -201,6 +201,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
     }
 
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

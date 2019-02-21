@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -34,6 +35,7 @@ public class CompilerTypeSelectionForm extends DBNFormImpl<CompilerTypeSelection
         parentComponent.registerRememberSelectionCheckBox(rememberSelectionCheckBox);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -62,6 +63,7 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
         return visibleObjectsList.isSelected(objectFilterEntry);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

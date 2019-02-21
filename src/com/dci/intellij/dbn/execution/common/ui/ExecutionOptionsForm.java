@@ -134,6 +134,7 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
         reuseVariablesCheckBox.setVisible(executionInput.hasExecutionVariables());
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

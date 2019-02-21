@@ -149,10 +149,10 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         updateBackground(loading);
     }
 
-    public void updateBackground(final boolean readonly) {
-        final JBViewport viewport = UIUtil.getParentOfType(JBViewport.class, this);
-        if (viewport != null) {
-            SimpleLaterInvocator.invoke(this, () -> {
+    public void updateBackground(boolean readonly) {
+        SimpleLaterInvocator.invoke(() -> {
+            JBViewport viewport = UIUtil.getParentOfType(JBViewport.class, this);
+            if (viewport != null) {
                 DataGridTextAttributes attributes = cellRenderer.getAttributes();
                 Color background = readonly ?
                         attributes.getLoadingData(false).getBgColor() :
@@ -160,8 +160,9 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
                 viewport.setBackground(background);
 
                 GUIUtil.repaint(viewport);
-            });
-        }
+            }
+        });
+
     }
 
     public boolean isLoading() {
@@ -219,10 +220,14 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         return getColumnModel().getColumn(columnIndex).getModelIndex();
     }
 
+    @Nullable
     protected DataModelCell getCellAtPosition(int rowIndex, int columnIndex) {
         DataModelRow row = getModel().getRowAtIndex(rowIndex);
-        int modelColumnIndex = getModelColumnIndex(columnIndex);
-        return row.getCellAtIndex(modelColumnIndex);
+        if (row != null) {
+            int modelColumnIndex = getModelColumnIndex(columnIndex);
+            return row.getCellAtIndex(modelColumnIndex);
+        }
+        return null;
     }
     /*********************************************************
      *                EditorColorsListener                  *

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.common.options.ui;
 
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,6 +20,7 @@ public class ExecutionEngineSettingsForm extends CompositeConfigurationEditorFor
         scriptExecutionPanel.add(settings.getScriptExecutionSettings().createComponent(), BorderLayout.CENTER);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

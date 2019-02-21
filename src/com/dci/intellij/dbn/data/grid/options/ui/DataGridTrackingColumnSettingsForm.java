@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.data.grid.options.DataGridSettingsChangeListener;
 import com.dci.intellij.dbn.data.grid.options.DataGridTrackingColumnSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,6 +38,7 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
         registerComponent(mainPanel);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

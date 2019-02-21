@@ -15,6 +15,7 @@ import com.intellij.openapi.actionSystem.Constraints;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -66,6 +67,7 @@ public class DatabaseLoggingResultForm extends DBNFormImpl implements ExecutionR
         return console;
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

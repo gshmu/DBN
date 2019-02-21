@@ -21,6 +21,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -78,6 +79,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
         return argumentRef.get();
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

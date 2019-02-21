@@ -141,9 +141,9 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
             });
         }
 
-        private boolean hasConnectivity(DBObjectList objectsList) {
+        private boolean hasConnectivity(@NotNull DBObjectList objectsList) {
             ConnectionHandler connectionHandler = objectsList.getConnectionHandler();
-            return connectionHandler != null && objectsList.getConnectionHandler().canConnect() && connectionHandler.isValid();
+            return objectsList.getConnectionHandler().canConnect() && connectionHandler.isValid();
         }
     }
 }

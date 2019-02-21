@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.keymap.KeymapUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -36,6 +37,7 @@ public class CodeCompletionFiltersSettingsForm extends CompositeConfigurationEdi
         updateBorderTitleForeground(mainPanel);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

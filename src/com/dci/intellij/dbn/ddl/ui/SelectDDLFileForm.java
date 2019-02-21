@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,6 +54,7 @@ public class SelectDDLFileForm extends DBNFormImpl {
         return doNotPromptCheckBox.isSelected();
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

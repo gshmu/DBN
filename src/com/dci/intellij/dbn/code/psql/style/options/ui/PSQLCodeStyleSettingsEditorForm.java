@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.code.psql.style.options.ui;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
 import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +23,7 @@ public class PSQLCodeStyleSettingsEditorForm extends CompositeConfigurationEdito
         updateBorderTitleForeground(previewPanel);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

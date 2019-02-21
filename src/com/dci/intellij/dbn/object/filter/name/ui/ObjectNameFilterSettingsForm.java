@@ -22,6 +22,7 @@ import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
@@ -124,6 +125,7 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
         return filtersTree;
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

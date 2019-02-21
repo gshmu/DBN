@@ -132,6 +132,7 @@ public class DBNHeaderForm extends DBNFormImpl{
         return mainPanel.getBackground();
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

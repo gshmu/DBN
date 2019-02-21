@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.options;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
@@ -63,6 +64,12 @@ public abstract class BasicConfiguration<P extends Configuration, E extends Conf
         return configurationEditorForm;
     }
 
+    @NotNull
+    public final E ensureSettingsEditor() {
+        return Failsafe.get(configurationEditorForm);
+    }
+
+
     @Override
     @NotNull
     public JComponent createComponent() {
@@ -116,19 +123,15 @@ public abstract class BasicConfiguration<P extends Configuration, E extends Conf
 
     @Override
     public void reset() {
-        if (configurationEditorForm != null) {
-            ConditionalLaterInvocator.invoke(configurationEditorForm, () -> {
-                try {
-                    if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) {
-                        IS_RESETTING.set(true);
-                        configurationEditorForm.resetFormChanges();
-                    }
-                } finally {
-                    modified = false;
-                    IS_RESETTING.set(false);
-                }
-            });
-        }
+        ConditionalLaterInvocator.invoke(() -> {
+            try {
+                IS_RESETTING.set(true);
+                Failsafe.get(configurationEditorForm).resetFormChanges();
+            } finally {
+                modified = false;
+                IS_RESETTING.set(false);
+            }
+        });
     }
 
     @Override

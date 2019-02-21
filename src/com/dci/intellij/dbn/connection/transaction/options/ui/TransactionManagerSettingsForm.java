@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.connection.transaction.TransactionOption;
 import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -55,6 +56,7 @@ public class TransactionManagerSettingsForm extends ConfigurationEditorForm<Tran
         registerComponent(mainPanel);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

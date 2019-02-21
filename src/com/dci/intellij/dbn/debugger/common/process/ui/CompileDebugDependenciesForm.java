@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -88,6 +89,7 @@ public class CompileDebugDependenciesForm extends DBNFormImpl<CompileDebugDepend
         return selectedIndicesArray;
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

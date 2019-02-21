@@ -62,6 +62,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
         rightActionPanel.add(rightActionToolbar.getComponent(), BorderLayout.EAST);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

@@ -126,6 +126,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
         return executionInput;
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

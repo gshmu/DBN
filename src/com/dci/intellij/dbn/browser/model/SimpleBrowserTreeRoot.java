@@ -135,7 +135,7 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override

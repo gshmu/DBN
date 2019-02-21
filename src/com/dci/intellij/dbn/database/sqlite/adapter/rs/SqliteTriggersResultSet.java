@@ -23,8 +23,7 @@ public class SqliteTriggersResultSet extends ResultSetAdapter {
         if (isType || isEvent) {
             String sourceCode = resultSet.getString("SOURCE_CODE");
 
-            Pattern p = TRIGGER_EVENT_REGEX;
-            Matcher m = p.matcher(sourceCode);
+            Matcher m = TRIGGER_EVENT_REGEX.matcher(sourceCode);
             if (m.find()) {
                 int start = m.start();
                 int end = m.end();
