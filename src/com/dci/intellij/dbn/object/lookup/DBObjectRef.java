@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.intellij.openapi.project.Project;
@@ -347,10 +348,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
                 object = getObject();
                 if (object == null) {
                     clearReference();
-                    ConnectionHandler connectionHandler =
-                            project == null || project.isDisposed() ?
-                                    ConnectionCache.findConnectionHandler(getConnectionId()) :
-                                    ConnectionManager.getInstance(project).getConnectionHandler(getConnectionId());
+                    ConnectionHandler connectionHandler = resolveConnectionHandler(project);
                     if (connectionHandler != null && !connectionHandler.isDisposed() && connectionHandler.isEnabled()) {
                         object = lookup(connectionHandler);
                         if (object != null) {
@@ -391,9 +389,11 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     protected T lookup(@NotNull ConnectionHandler connectionHandler) {
         DBObject object = null;
         if (parent == null) {
-            object = connectionHandler.getObjectBundle().getObject(objectType, objectName, overload);
+            DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+            object = objectBundle.getObject(objectType, objectName, overload);
         } else {
-            DBObject parentObject = parent.get();
+            Project project = connectionHandler.getProject();
+            DBObject parentObject = parent.get(project);
             if (parentObject != null) {
                 object = parentObject.getChildObject(objectType, objectName, overload, true);
                 DBObjectType genericType = objectType.getGenericType();
@@ -405,15 +405,23 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return (T) object;
     }
 
+
+    private ConnectionHandler resolveConnectionHandler(Project project) {
+        ConnectionId connectionId = getConnectionId();
+        return project == null || project.isDisposed() ?
+                ConnectionCache.findConnectionHandler(connectionId) :
+                ConnectionManager.getInstance(project).getConnectionHandler(connectionId);
+    }
+
     @Nullable
-    public ConnectionHandler lookupConnectionHandler() {
+    public ConnectionHandler resolveConnectionHandler() {
         return ConnectionCache.findConnectionHandler(getConnectionId());
     }
 
     @Nullable
     @Override
     public ConnectionHandler getConnectionHandler() {
-        return lookupConnectionHandler();
+        return resolveConnectionHandler();
     }
 
     @Override
