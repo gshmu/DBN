@@ -269,11 +269,16 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                         FileEditor oldEditor = event.getOldEditor();
                         SchemaId schemaId = databaseVirtualFile.getSchemaId();
                         boolean scroll = oldEditor != null && oldEditor.isValid();
-                        BrowserTreeNode treeNode = schemaId == null ?
-                                connectionHandler.getObjectBundle() :
-                                connectionHandler.getSchema(schemaId);
+                        BackgroundTask.invoke(
+                                getProject(),
+                                instructions("Loading data dictionary"), (data, progress) -> {
 
-                        navigateToElement(treeNode, scroll);
+                            BrowserTreeNode treeNode = schemaId == null ?
+                                    connectionHandler.getObjectBundle() :
+                                    connectionHandler.getSchema(schemaId);
+
+                            navigateToElement(treeNode, scroll);
+                        });
                     }
                 }
             }
