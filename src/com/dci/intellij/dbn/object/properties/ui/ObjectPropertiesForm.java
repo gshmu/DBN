@@ -47,6 +47,7 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
         EventUtil.subscribe(getProject(), this, BrowserTreeEventListener.TOPIC, browserTreeEventListener);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

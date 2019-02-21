@@ -15,6 +15,9 @@ public interface DBVirtualFile extends /*VirtualFileWithId, */EnvironmentTypePro
     @Nullable
     Project getProject();
 
+    @NotNull
+    Project ensureProject();
+
     Icon getIcon();
 
     @Override

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.code.common.completion.options.general.ui;
 import com.dci.intellij.dbn.code.common.completion.options.general.CodeCompletionFormatSettings;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -20,6 +21,7 @@ public class CodeCompletionFormatSettingsForm extends ConfigurationEditorForm<Co
         registerComponent(mainPanel);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

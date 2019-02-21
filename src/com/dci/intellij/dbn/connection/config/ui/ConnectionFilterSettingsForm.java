@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,6 +28,7 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
         registerComponent(hideEmptySchemasCheckBox);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

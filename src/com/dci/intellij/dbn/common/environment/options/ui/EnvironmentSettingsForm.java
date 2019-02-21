@@ -70,6 +70,7 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
         registerComponents(mainPanel);
     }
     
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

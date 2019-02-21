@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
 import com.dci.intellij.dbn.debugger.common.config.ui.DBProgramRunConfigurationEditorForm;
 import com.dci.intellij.dbn.debugger.jdbc.config.DBStatementJdbcRunConfig;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -27,6 +28,7 @@ public class DBStatementJdbcRunConfigurationEditorForm extends DBProgramRunConfi
 
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

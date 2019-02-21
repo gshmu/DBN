@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.execution.method.options.MethodExecutionSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -23,6 +24,7 @@ public class MethodExecutionSettingsForm extends ConfigurationEditorForm<MethodE
         registerComponent(mainPanel);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

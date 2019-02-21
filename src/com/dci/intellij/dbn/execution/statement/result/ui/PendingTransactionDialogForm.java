@@ -23,6 +23,7 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBColor;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -64,6 +65,7 @@ public class PendingTransactionDialogForm extends DBNFormImpl<PendingTransaction
         return executionProcessor;
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

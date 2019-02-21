@@ -98,6 +98,7 @@ public class CreateRenameSessionForm extends DBNFormImpl<CreateRenameSessionDial
         this.session = session;
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

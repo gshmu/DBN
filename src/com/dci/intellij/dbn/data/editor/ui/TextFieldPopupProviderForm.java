@@ -164,7 +164,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
                         return;
                     }
 
-                    SimpleLaterInvocator.invoke(this, () -> {
+                    SimpleLaterInvocator.invoke(() -> {
                         try {
                             if (!isShowingPopup()) {
                                 popup = createPopup();
@@ -194,7 +194,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
     @Override
     public void hidePopup() {
         if (isShowingPopup()) {
-            SimpleLaterInvocator.invoke(this, () -> {
+            SimpleLaterInvocator.invoke(() -> {
                 popup.cancel();
                 popup = null;
             });

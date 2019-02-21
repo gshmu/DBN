@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.dci.intellij.dbn.editor.data.model.RecordStatus;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +69,7 @@ public class BasicDataModelRow<T extends DataModelCell> extends PropertyHolderIm
 
 
 
+    @Nullable
     @Override
     public T getCellAtIndex(int index) {
         List<T> cells = getCells();

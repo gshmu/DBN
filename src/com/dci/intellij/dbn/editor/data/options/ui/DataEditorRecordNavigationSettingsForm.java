@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.data.record.navigation.RecordNavigationTarget;
 import com.dci.intellij.dbn.editor.data.options.DataEditorRecordNavigationSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -27,6 +28,7 @@ public class DataEditorRecordNavigationSettingsForm extends ConfigurationEditorF
         registerComponent(mainPanel);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

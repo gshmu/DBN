@@ -67,6 +67,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
 
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

@@ -133,7 +133,8 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
     public DBType getSuperType() {
         ConnectionHandler connectionHandler = getConnectionHandler();
         if (superType == null && superTypeOwner != null && superTypeName != null) {
-            DBType type = connectionHandler.getObjectBundle().getSchema(superTypeOwner).getType(superTypeName);
+            DBSchema schema = connectionHandler.getObjectBundle().getSchema(superTypeOwner);
+            DBType type = schema == null ? null : schema.getType(superTypeName);
             superType = DBObjectRef.from(type);
             superTypeOwner = null;
             superTypeName = null;

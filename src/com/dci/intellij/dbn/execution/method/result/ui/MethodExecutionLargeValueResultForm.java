@@ -96,6 +96,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecu
         return argumentRef.get();
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

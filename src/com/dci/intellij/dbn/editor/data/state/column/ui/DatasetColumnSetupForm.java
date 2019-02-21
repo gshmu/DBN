@@ -61,6 +61,7 @@ public class DatasetColumnSetupForm extends DBNFormImpl {
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

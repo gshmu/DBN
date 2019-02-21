@@ -55,7 +55,8 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
         return filter;
     }
 
-    public DatasetBasicFilter createBasicFilter(String columnName, Object columnValue, ConditionOperator operator, boolean interactive) {
+    @NotNull
+    DatasetBasicFilter createBasicFilter(String columnName, Object columnValue, ConditionOperator operator, boolean interactive) {
         String name = createFilterName("Filter");
         DatasetBasicFilter filter = new DatasetBasicFilter(this, name);
         if (columnValue != null) filter.setName(columnValue.toString());
@@ -69,7 +70,8 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
         return filter;
     }
 
-    public DatasetBasicFilter createBasicFilter(String columnName, Object columnValue, ConditionOperator operator) {
+    @NotNull
+    DatasetBasicFilter createBasicFilter(String columnName, Object columnValue, ConditionOperator operator) {
         String name = createFilterName("Filter");
         DatasetBasicFilter filter = new DatasetBasicFilter(this, name);
         if (columnValue != null) filter.setName(columnValue.toString());

@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.editor.data.options.DataEditorGeneralSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -26,6 +27,7 @@ public class DataEditorGeneralSettingsForm extends ConfigurationEditorForm<DataE
         registerComponent(mainPanel);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

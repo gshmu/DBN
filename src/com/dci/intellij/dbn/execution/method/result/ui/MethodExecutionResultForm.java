@@ -26,6 +26,7 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.tree.TreeUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -88,7 +89,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
     }
 
     public void rebuild() {
-        SimpleLaterInvocator.invoke(this, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             updateArgumentValueTree();
             updateOutputTabs();
             updateStatusBarLabels();
@@ -214,6 +215,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         actionsPanel.add(actionToolbar.getComponent());
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

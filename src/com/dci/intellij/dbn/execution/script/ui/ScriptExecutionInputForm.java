@@ -162,6 +162,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
                 !executionTimeoutForm.hasErrors());
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

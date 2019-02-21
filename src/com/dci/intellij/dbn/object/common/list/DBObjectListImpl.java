@@ -290,7 +290,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @Override
     public int getTreeDepth() {
         BrowserTreeNode treeParent = getParent();
-        return treeParent == null ? 0 : treeParent.getTreeDepth() + 1;
+        return treeParent.getTreeDepth() + 1;
     }
 
     @Override

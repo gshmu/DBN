@@ -40,6 +40,7 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFo
         newLabel.setText("Add " + getObjectType().getName());
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -111,6 +112,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         return environmentSettings.getEnvironmentTypes().getEnvironmentTypes();
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

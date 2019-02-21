@@ -54,10 +54,12 @@ public class DBFictiveObject extends DBObjectImpl implements PsiReference {
      *                       PsiReference                    *
      *********************************************************/
     @Override
+    @NotNull
     public PsiElement getElement() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
+    @NotNull
     @Override
     public TextRange getRangeInElement() {
         return new TextRange(0, name.length());

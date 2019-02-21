@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -161,19 +162,22 @@ public class DBNativeDataType implements DynamicContentElement{
         return callableStatement.getObject(parameterIndex);
     }
 
-    public void setValueToStatement(PreparedStatement preparedStatement, int parameterIndex, Object value) throws SQLException {
+    public <T> void setValueToStatement(PreparedStatement preparedStatement, int parameterIndex, T value) throws SQLException {
         GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
         if (ValueAdapter.supports(genericDataType)) {
-            ValueAdapter valueAdapter = ValueAdapter.create(genericDataType);
-            valueAdapter.write(preparedStatement.getConnection(), preparedStatement, parameterIndex, value);
+            ValueAdapter<T> valueAdapter = ValueAdapter.create(genericDataType);
+            if (valueAdapter != null) {
+                Connection connection = preparedStatement.getConnection();
+                valueAdapter.write(connection, preparedStatement, parameterIndex, value);
+            }
             return;
         }
         if (genericDataType == GenericDataType.CURSOR) return;// not supported
 
-        DataTypeParseAdapter parseAdapter = dataTypeDefinition.getParseAdapter();
+        DataTypeParseAdapter<T> parseAdapter = dataTypeDefinition.getParseAdapter();
         if (parseAdapter != null) {
-            value =  parseAdapter.toString(value);
-            preparedStatement.setString(parameterIndex, (String) value);
+            String stringValue =  parseAdapter.toString(value);
+            preparedStatement.setString(parameterIndex, stringValue);
             return;
         }
 

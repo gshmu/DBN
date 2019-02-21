@@ -217,6 +217,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         return connectionHandlerRef.getnn();
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;
@@ -293,7 +294,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     };
 
     private void refreshSessionData(DatabaseSession session) {
-        SimpleLaterInvocator.invoke(this, () -> {
+        SimpleLaterInvocator.invoke(() -> {
             checkDisposed();
             ConnectionHandler connectionHandler = getConnectionHandler();
 
@@ -305,7 +306,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     }
 
     private void refreshTransactionsData(DBNConnection connection) {
-        SimpleLaterInvocator.invoke(this, () -> {
+        SimpleLaterInvocator.invoke(() -> {
             checkDisposed();
             ConnectionHandler connectionHandler = getConnectionHandler();
 

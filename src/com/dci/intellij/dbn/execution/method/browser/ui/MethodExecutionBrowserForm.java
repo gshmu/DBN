@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.object.common.ui.ObjectTreeModel;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionListener;
@@ -113,13 +114,14 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
                 (data, progress) -> {
                     MethodBrowserSettings settings = getSettings();
                     ObjectTreeModel model = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), null);
-                    SimpleLaterInvocator.invoke(this, () -> {
+                    SimpleLaterInvocator.invoke(() -> {
                         methodsTree.setModel(model);
                         GUIUtil.repaint(methodsTree);
                     });
                 });
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

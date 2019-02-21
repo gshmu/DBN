@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.debugger.options.DebuggerSettings;
 import com.dci.intellij.dbn.debugger.options.DebuggerTypeOption;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -37,6 +38,7 @@ public class DebuggerSettingsForm extends ConfigurationEditorForm<DebuggerSettin
         registerComponent(mainPanel);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

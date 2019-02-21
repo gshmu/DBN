@@ -238,6 +238,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         return nameTextField.getText();
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

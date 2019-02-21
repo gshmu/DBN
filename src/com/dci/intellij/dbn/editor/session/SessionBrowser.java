@@ -87,7 +87,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         return preventLoading || editorTable.getSelectedRowCount() > 1;
     }
 
-    public void loadSessions(final boolean force) {
+    public void loadSessions(boolean force) {
         if (shouldLoad(force)) {
             ConnectionAction.invoke("loading the sessions", this,
                     instructions("Loading sessions", TaskInstruction.BACKGROUNDED),
@@ -118,7 +118,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     private void replaceModel(SessionBrowserModel newModel) {
         if (newModel != null) {
-            SimpleLaterInvocator.invoke(getComponent(), () -> {
+            SimpleLaterInvocator.invokeNonModal(() -> {
                 SessionBrowserTable editorTable = getEditorTable();
                 SessionBrowserModel oldModel = editorTable.getModel();
                 SessionBrowserState state = oldModel.getState();
@@ -295,7 +295,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         if (this.loading != loading) {
             this.loading = loading;
 
-            SimpleLaterInvocator.invoke(getComponent(), () -> {
+            SimpleLaterInvocator.invokeNonModal(() -> {
                 if (editorForm != null) {
                     if (SessionBrowser.this.loading)
                         editorForm.showLoadingHint(); else

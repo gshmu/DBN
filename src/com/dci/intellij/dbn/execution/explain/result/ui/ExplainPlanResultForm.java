@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -61,6 +62,7 @@ public class ExplainPlanResultForm extends DBNFormImpl implements ExecutionResul
         ExecutionManager.getInstance(project).selectResultTab(explainPlanResult);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

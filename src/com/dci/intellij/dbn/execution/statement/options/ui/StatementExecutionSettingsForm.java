@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -24,6 +25,7 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
         registerComponent(mainPanel);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

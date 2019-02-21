@@ -103,6 +103,7 @@ public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDial
         return console;
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

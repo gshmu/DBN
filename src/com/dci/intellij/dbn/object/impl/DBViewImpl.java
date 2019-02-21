@@ -40,7 +40,7 @@ public class DBViewImpl extends DBDatasetImpl implements DBView {
         if (typeOwner != null && typeName != null) {
             DBObjectBundle objectBundle = getConnectionHandler().getObjectBundle();
             DBSchema typeSchema = objectBundle.getSchema(typeOwner);
-            type = typeSchema.getType(typeName);
+            type = typeSchema == null ? null : typeSchema.getType(typeName);
         }
         return name;
     }

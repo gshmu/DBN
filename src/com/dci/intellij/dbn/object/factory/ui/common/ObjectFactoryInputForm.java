@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -20,6 +21,7 @@ public abstract class ObjectFactoryInputForm<T extends ObjectFactoryInput> exten
         this.index = index;
     }
 
+    @NotNull
     @Override
     public abstract JPanel getComponent();
 

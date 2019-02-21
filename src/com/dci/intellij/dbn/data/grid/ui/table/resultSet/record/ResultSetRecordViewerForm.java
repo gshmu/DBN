@@ -38,12 +38,12 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
     private JScrollPane columnsPanelScrollPane;
     private JPanel headerPanel;
 
-    private List<ResultSetRecordViewerColumnForm> columnForms = new ArrayList<ResultSetRecordViewerColumnForm>();
+    private List<ResultSetRecordViewerColumnForm> columnForms = new ArrayList<>();
 
     private ResultSetTable table;
     private ResultSetDataModelRow row;
 
-    public ResultSetRecordViewerForm(ResultSetRecordViewerDialog parentComponent, ResultSetTable<? extends ResultSetDataModel> table, boolean showDataTypes) {
+    ResultSetRecordViewerForm(ResultSetRecordViewerDialog parentComponent, ResultSetTable<? extends ResultSetDataModel> table, boolean showDataTypes) {
         super(parentComponent);
         this.table = table;
         ResultSetDataModel model = table.getModel();
@@ -110,6 +110,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
         return null;//columnForms.get(0).getViewComponent();
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;
@@ -222,11 +223,13 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             ResultSetDataModelRow row = getRow();
             ResultSetDataModelRow firstRow = (ResultSetDataModelRow) row.getModel().getRowAtIndex(0);
-            setRow(firstRow);
-            table.selectRow(0);
+            if (firstRow != null) {
+                setRow(firstRow);
+                table.selectRow(0);
+            }
         }
 
         @Override
@@ -274,8 +277,10 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
             if (row.getIndex() < model.getRowCount() -1) {
                 int index = row.getIndex() + 1;
                 ResultSetDataModelRow nextRow = (ResultSetDataModelRow) model.getRowAtIndex(index);
-                setRow(nextRow);
-                table.selectRow(index);
+                if (nextRow != null) {
+                    setRow(nextRow);
+                    table.selectRow(index);
+                }
             }
         }
 
@@ -292,12 +297,14 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             ResultSetDataModel model = getRow().getModel();
             int index = model.getRowCount() - 1 ;
             ResultSetDataModelRow lastRow = (ResultSetDataModelRow) model.getRowAtIndex(index);
-            setRow(lastRow);
-            table.selectRow(index);
+            if (lastRow != null) {
+                setRow(lastRow);
+                table.selectRow(index);
+            }
         }
 
         @Override

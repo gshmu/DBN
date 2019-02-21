@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
 import com.dci.intellij.dbn.editor.session.options.SessionInterruptionOption;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -34,6 +35,7 @@ public class SessionBrowserSettingsForm extends ConfigurationEditorForm<SessionB
         registerComponent(mainPanel);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

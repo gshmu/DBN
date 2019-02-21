@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.ddl.DDLFileTypeId;
 import com.dci.intellij.dbn.ddl.options.DDLFileExtensionSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -72,6 +73,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
         extensionTextFields.put("Type Bpdy", typeBodyTextField);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

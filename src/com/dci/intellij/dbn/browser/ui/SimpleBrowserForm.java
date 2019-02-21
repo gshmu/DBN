@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ui.JBUI;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -48,6 +49,7 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
         throw new IncorrectOperationException("Multiple connection tabs can not return one connection.");
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

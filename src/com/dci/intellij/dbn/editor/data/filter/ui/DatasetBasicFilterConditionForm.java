@@ -173,16 +173,17 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
     }
 
     public DatasetBasicFilterCondition createCondition() {
+        DBColumn selectedColumn = getSelectedColumn();
         return new DatasetBasicFilterCondition(
                 basicFilterForm.getConfiguration(),
-                getSelectedColumn().getName(),
+                selectedColumn == null ? null : selectedColumn.getName(),
                 editorComponent.getText(), getSelectedOperator(),
                 active);
     }
 
     public void remove() {
         DatasetBasicFilterCondition condition = getConfiguration();
-        DatasetBasicFilterForm settingsEditor = (DatasetBasicFilterForm) condition.getFilter().getSettingsEditor();
+        DatasetBasicFilterForm settingsEditor = (DatasetBasicFilterForm) condition.getFilter().ensureSettingsEditor();
         settingsEditor.removeConditionPanel(this);
     }
 
@@ -212,6 +213,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
         }
     };
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

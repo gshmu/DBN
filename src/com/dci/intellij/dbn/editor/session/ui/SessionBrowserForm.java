@@ -93,6 +93,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
         }
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;
@@ -103,7 +104,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     }
 
     public void showLoadingHint() {
-        ConditionalLaterInvocator.invoke(this, () -> {
+        ConditionalLaterInvocator.invokeNonModal(() -> {
             loadingLabel.setVisible(true);
             loadingIconPanel.setVisible(true);
             loadTimestampLabel.setVisible(false);
@@ -112,7 +113,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     }
 
     public void hideLoadingHint() {
-        ConditionalLaterInvocator.invoke(this, () -> {
+        ConditionalLaterInvocator.invokeNonModal(() -> {
             loadingLabel.setVisible(false);
             loadingIconPanel.setVisible(false);
             refreshLoadTimestamp();

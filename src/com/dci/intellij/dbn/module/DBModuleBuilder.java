@@ -74,12 +74,14 @@ public class DBModuleBuilder extends ModuleBuilder /*implements SourcePathsBuild
     public final String getContentEntryPath() {
         if (contentEntryPath == null) {
             contentEntryPath = getModuleFileDirectory();
-            new File(contentEntryPath).mkdirs();
+            if (contentEntryPath != null) {
+                new File(contentEntryPath).mkdirs();
+            }
         }
         return contentEntryPath;
     }
 
-    public List<Pair<String, String>> getSourcePaths() {
+    private List<Pair<String, String>> getSourcePaths() {
         if (sourcePaths == null) {
             sourcePaths = new ArrayList<Pair<String, String>>();
             /*String path = getContentEntryPath();

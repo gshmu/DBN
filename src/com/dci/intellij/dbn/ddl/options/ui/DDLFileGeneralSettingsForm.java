@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
 import com.dci.intellij.dbn.ddl.options.listener.DDLFileSettingsChangeListener;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -57,6 +58,7 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
         };
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

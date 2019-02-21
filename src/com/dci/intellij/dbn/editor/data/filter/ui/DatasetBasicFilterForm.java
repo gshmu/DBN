@@ -32,6 +32,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -258,6 +259,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
     /*************************************************
      *                  SettingsEditor               *
      *************************************************/
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

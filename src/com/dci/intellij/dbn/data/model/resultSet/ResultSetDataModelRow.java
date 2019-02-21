@@ -35,6 +35,7 @@ public class ResultSetDataModelRow<T extends ResultSetDataModelCell> extends Sor
         return (ResultSetDataModel) super.getModel();
     }
 
+    @NotNull
     protected  T createCell(ResultSet resultSet, ColumnInfo columnInfo) throws SQLException {
         return (T) new ResultSetDataModelCell(this, resultSet, (ResultSetColumnInfo) columnInfo);
     }

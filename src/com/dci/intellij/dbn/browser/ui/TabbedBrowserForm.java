@@ -19,6 +19,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.TabsListener;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -113,6 +114,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         return null;
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;
@@ -147,7 +149,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         if (browserForm != null) {
             connectionTabs.select(browserForm.getComponent(), focus);
             if (scroll) {
-                browserForm.selectElement(treeNode, focus, scroll);
+                browserForm.selectElement(treeNode, focus, true);
             }
         }
     }

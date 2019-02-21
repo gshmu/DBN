@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -88,6 +89,7 @@ public class DatasetSortingColumnForm extends DBNFormImpl<DatasetEditorSortingFo
         indexLabel.setText(Integer.toString(index));
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.ui.JBColor;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,13 +24,14 @@ public class DialogWithTimeoutForm extends DBNFormImpl {
         contentPanel.add(contentComponent, BorderLayout.CENTER);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;
     }
 
-    public void updateTimeLeft(final int secondsLeft) {
-        SimpleLaterInvocator.invoke(this, () -> {
+    public void updateTimeLeft(int secondsLeft) {
+        SimpleLaterInvocator.invoke(() -> {
             int minutes = 0;
             int seconds = secondsLeft;
             if (secondsLeft > 60) {

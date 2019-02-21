@@ -97,6 +97,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         ActionUtil.registerDataProvider(mainPanel, this);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

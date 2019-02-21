@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface DataTypeDefinition {
     @Nullable
-    DataTypeParseAdapter getParseAdapter();
+    <T> DataTypeParseAdapter<T> getParseAdapter();
 
     String getName();
     Class getTypeClass();

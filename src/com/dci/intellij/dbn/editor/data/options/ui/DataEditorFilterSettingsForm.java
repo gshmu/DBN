@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterType;
 import com.dci.intellij.dbn.editor.data.options.DataEditorFilterSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
@@ -37,6 +38,7 @@ public class DataEditorFilterSettingsForm extends ConfigurationEditorForm<DataEd
         };
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

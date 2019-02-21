@@ -42,12 +42,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DELETED;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DIRTY;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTED;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.UPDATING;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
 public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow> implements ListSelectionListener {
     private boolean isResultSetUpdatable;
@@ -302,8 +297,11 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
                             if (constraintColumn != null) {
                                 DBColumn foreignKeyColumn = constraintColumn.getForeignKeyColumn();
                                 if (foreignKeyColumn != null) {
-                                    Object value = cell.getRow().getCellForColumn(constraintColumn).getUserValue();
-                                    filterInput.setColumnValue(foreignKeyColumn, value);
+                                    DatasetEditorModelCell constraintCell = cell.getRow().getCellForColumn(constraintColumn);
+                                    if (constraintCell != null) {
+                                        Object value = constraintCell.getUserValue();
+                                        filterInput.setColumnValue(foreignKeyColumn, value);
+                                    }
                                 }
                             }
                         }
@@ -484,12 +482,16 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
         DatasetEditorModelCell cell = getCellAt(rowIndex, columnIndex);
-        cell.updateUserValue(value, false);
+        if (cell != null) {
+            cell.updateUserValue(value, false);
+        }
     }
 
     public void setValueAt(Object value, String errorMessage,  int rowIndex, int columnIndex) {
         DatasetEditorModelCell cell = getCellAt(rowIndex, columnIndex);
-        cell.updateUserValue(value, errorMessage);
+        if (cell != null) {
+            cell.updateUserValue(value, errorMessage);
+        }
     }
 
     @Override

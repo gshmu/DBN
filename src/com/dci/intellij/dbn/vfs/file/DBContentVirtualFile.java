@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -10,6 +9,7 @@ import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -32,20 +32,20 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements PropertyHolder<VirtualFileStatus>  {
-    DBEditableObjectVirtualFile mainDatabaseFile;
+    private WeakRef<DBEditableObjectVirtualFile> mainDatabaseFile;
     protected DBContentType contentType;
     private FileType fileType;
     private VirtualFileStatusHolder status = new VirtualFileStatusHolder();
 
     public DBContentVirtualFile(@NotNull DBEditableObjectVirtualFile mainDatabaseFile, DBContentType contentType) {
         super(mainDatabaseFile.getProject());
-        this.mainDatabaseFile = mainDatabaseFile;
+        this.mainDatabaseFile = WeakRef.from(mainDatabaseFile);
         this.contentType = contentType;
 
         DBObjectRef<DBSchemaObject> objectRef = mainDatabaseFile.getObjectRef();
         this.name = objectRef.getObjectName();
 
-        Project project = getProject();
+        Project project = ensureProject();
         DDLFileManager ddlFileManager = DDLFileManager.getInstance(project);
         DDLFileType ddlFileType = ddlFileManager.getDDLFileType(objectRef.getObjectType(), contentType);
         this.fileType = ddlFileType == null ? null : ddlFileType.getLanguageFileType();
@@ -70,7 +70,7 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
 
     @NotNull
     public DBEditableObjectVirtualFile getMainDatabaseFile() {
-        return Failsafe.get(mainDatabaseFile);
+        return mainDatabaseFile.getnn();
     }
 
     public DBContentType getContentType() {
@@ -79,6 +79,7 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
 
     @Override
     public boolean isValid() {
+        DBEditableObjectVirtualFile mainDatabaseFile = this.mainDatabaseFile.get();
         return super.isValid() && mainDatabaseFile != null && mainDatabaseFile.isValid();
     }
 
@@ -169,11 +170,5 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
     @Override
     public long getModificationStamp() {
         return 1;
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        mainDatabaseFile = null;
     }
 }

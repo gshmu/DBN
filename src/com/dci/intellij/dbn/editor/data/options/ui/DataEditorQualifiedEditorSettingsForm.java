@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
 import com.dci.intellij.dbn.editor.data.options.DataEditorQualifiedEditorSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -41,6 +42,7 @@ public class DataEditorQualifiedEditorSettingsForm extends ConfigurationEditorFo
         textLengthThresholdTextField.setText(Integer.toString(settings.getTextLengthThreshold()));
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

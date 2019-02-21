@@ -33,7 +33,7 @@ import java.util.List;
 public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObjectBundle{
     private VirtualConnectionHandler connectionHandler;
 
-    public DBVirtualObjectBundle(VirtualConnectionHandler connectionHandler) {
+    public DBVirtualObjectBundle(@NotNull VirtualConnectionHandler connectionHandler) {
         this.connectionHandler = connectionHandler;
     }
 
@@ -292,7 +292,7 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
     @NotNull
     @Override
     public Project getProject() {
-        return null;
+        return connectionHandler.getProject();
     }
 
     @Nullable

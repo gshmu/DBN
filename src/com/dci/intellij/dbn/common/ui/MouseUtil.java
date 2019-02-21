@@ -41,7 +41,7 @@ public class MouseUtil {
             Component[] components = component.getComponents();
             for (Component childComponent : components) {
                 if (childComponent instanceof JComponent)
-                removeMouseListeners((JComponent) childComponent, recursive);
+                removeMouseListeners((JComponent) childComponent, true);
             }
         }
     }

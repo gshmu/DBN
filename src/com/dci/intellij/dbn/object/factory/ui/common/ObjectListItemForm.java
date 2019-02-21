@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,6 +29,7 @@ public class ObjectListItemForm extends DBNFormImpl {
 
     }
 
+    @NotNull
     @Override
     public JPanel getComponent(){
         return mainPanel;

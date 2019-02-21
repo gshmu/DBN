@@ -11,6 +11,7 @@ import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.JBColor;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -61,6 +62,7 @@ public class DatasetEditorErrorForm extends DBNFormImpl implements ChangeListene
         return popup;
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;
@@ -68,7 +70,7 @@ public class DatasetEditorErrorForm extends DBNFormImpl implements ChangeListene
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        SimpleLaterInvocator.invoke(this, () -> {
+        SimpleLaterInvocator.invoke(() -> {
             if (popup.isVisible()) popup.cancel();
         });
     }

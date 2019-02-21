@@ -72,6 +72,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         mainPanel.addKeyListener(this);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

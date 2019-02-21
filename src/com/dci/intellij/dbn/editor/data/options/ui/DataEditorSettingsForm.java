@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.editor.data.options.ui;
 
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,6 +28,7 @@ public class DataEditorSettingsForm extends CompositeConfigurationEditorForm<Dat
     }
 
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

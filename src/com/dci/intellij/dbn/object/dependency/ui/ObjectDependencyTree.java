@@ -80,7 +80,7 @@ public class ObjectDependencyTree extends DBNTree implements Disposable{
 
                         ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
                         JPopupMenu popupMenu = actionPopupMenu.getComponent();
-                        SimpleLaterInvocator.invoke(ObjectDependencyTree.this, () -> {
+                        SimpleLaterInvocator.invoke(() -> {
                             if (isShowing()) {
                                 popupMenu.show(ObjectDependencyTree.this, event.getX(), event.getY());
                             }

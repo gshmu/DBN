@@ -76,6 +76,7 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
         }
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;
@@ -137,7 +138,7 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
     };
 
     private void refreshForm() {
-        SimpleLaterInvocator.invoke(this, () -> updateListModel());
+        SimpleLaterInvocator.invoke(() -> updateListModel());
 
     }
 }

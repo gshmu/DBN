@@ -85,18 +85,15 @@ public class DBDatabaseTriggerImpl extends DBTriggerImpl implements DBDatabaseTr
      *                         Loaders                       *
      *********************************************************/
     private class SourceCodeLoader extends DBSourceCodeLoader {
-        protected SourceCodeLoader(DBObject object) {
+        SourceCodeLoader(DBObject object) {
             super(object, false);
         }
 
         @Override
         public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
             ConnectionHandler connectionHandler = getConnectionHandler();
-            if (connectionHandler != null) {
-                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-                return metadataInterface.loadDatabaseTriggerSourceCode(getSchema().getName(), getName(), connection);
-            }
-            return null;
+            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+            return metadataInterface.loadDatabaseTriggerSourceCode(getSchema().getName(), getName(), connection);
         }
     }
 

@@ -91,6 +91,7 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
 
     protected void handleChange(boolean hasError){}
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

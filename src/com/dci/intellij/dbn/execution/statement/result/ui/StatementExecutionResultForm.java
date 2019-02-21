@@ -31,14 +31,14 @@ import javax.swing.*;
 import java.awt.*;
 
 public class StatementExecutionResultForm extends DBNFormImpl implements ExecutionResultForm<StatementExecutionCursorResult>, SearchableDataComponent {
+    private JScrollPane resultScrollPane;
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel statusPanel;
-    private JScrollPane resultScrollPane;
-    private ResultSetTable<ResultSetDataModel> resultTable;
-    private JLabel statusLabel;
     private JPanel searchPanel;
     private JPanel resultPanel;
+    private JLabel statusLabel;
+    private ResultSetTable<ResultSetDataModel> resultTable;
     private StatementExecutionCursorResult executionResult;
     private RecordViewInfo recordViewInfo;
 
@@ -96,7 +96,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     }
 
     public void reloadTableModel() {
-        SimpleLaterInvocator.invoke(this, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             StatementExecutionCursorResult executionResult = getExecutionResult();
             JScrollBar horizontalScrollBar = resultScrollPane.getHorizontalScrollBar();
             int horizontalScrolling = horizontalScrollBar.getValue();
@@ -113,7 +113,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     }
 
     public void updateVisibleComponents() {
-        SimpleLaterInvocator.invoke(this, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             StatementExecutionCursorResult executionResult = getExecutionResult();
             ResultSetDataModel dataModel = executionResult.getTableModel();
             ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
@@ -141,6 +141,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
         ExecutionManager.getInstance(project).selectResultTab(executionResult);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

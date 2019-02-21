@@ -48,6 +48,7 @@ public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
     private DocumentListener documentListener;
 
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

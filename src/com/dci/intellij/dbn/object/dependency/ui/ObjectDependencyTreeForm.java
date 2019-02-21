@@ -89,6 +89,7 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
         return DBObjectRef.get(objectRef);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

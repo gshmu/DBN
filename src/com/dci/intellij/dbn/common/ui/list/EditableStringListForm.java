@@ -6,6 +6,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.ToolbarDecorator;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -61,6 +62,7 @@ public class EditableStringListForm extends DBNFormImpl<DisposableProjectCompone
         Disposer.register(this, editableStringList);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return component;

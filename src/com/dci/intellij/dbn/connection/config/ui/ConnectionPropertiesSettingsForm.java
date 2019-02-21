@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,6 +35,7 @@ public class ConnectionPropertiesSettingsForm extends ConfigurationEditorForm<Co
         registerComponent(mainPanel);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;
