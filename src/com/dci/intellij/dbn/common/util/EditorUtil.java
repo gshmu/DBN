@@ -217,8 +217,7 @@ public class EditorUtil {
         editor.setViewer(readonly);
         EditorColorsScheme scheme = editor.getColorsScheme();
         Color defaultBackground = scheme.getDefaultBackground();
-        SimpleLaterInvocator.invoke(
-                editor.getComponent(),
+        SimpleLaterInvocator.invokeNonModal(
                 () -> {
                     editor.setBackgroundColor(readonly ? GUIUtil.adjustColor(defaultBackground, -0.03) : defaultBackground);
                     scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
@@ -408,9 +407,10 @@ public class EditorUtil {
 
     public static void releaseEditor(@Nullable Editor editor) {
         if (editor != null) {
-            ConditionalLaterInvocator.invoke(
-                    editor.getComponent(),
-                    () -> EditorFactory.getInstance().releaseEditor(editor));
+            ConditionalLaterInvocator.invoke(() -> {
+                EditorFactory editorFactory = EditorFactory.getInstance();
+                editorFactory.releaseEditor(editor);
+            });
         }
 
     }

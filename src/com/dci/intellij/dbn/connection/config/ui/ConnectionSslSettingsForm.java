@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionSslSettings;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
@@ -38,6 +39,7 @@ public class ConnectionSslSettingsForm extends ConfigurationEditorForm<Connectio
                 null, new FileChooserDescriptor(true, false, false, false, false, false));
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

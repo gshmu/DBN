@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -13,7 +14,6 @@ public abstract class ConditionalLaterInvocator<T> extends SimpleTask<T>{
     protected ConditionalLaterInvocator() {}
 
     @Override
-    @Deprecated
     public final void start() {
         start(null);
     }
@@ -23,11 +23,8 @@ public abstract class ConditionalLaterInvocator<T> extends SimpleTask<T>{
         if (application.isDispatchThread()) {
             run();
         } else {
-            if (modalityState == null) {
-                application.invokeLater(this/*, ModalityState.NON_MODAL*/);
-            } else {
-                application.invokeLater(this, modalityState);
-            }
+            modalityState = CommonUtil.nvl(modalityState, application.getDefaultModalityState());
+            application.invokeLater(this, modalityState);
         }
     }
 
@@ -40,11 +37,13 @@ public abstract class ConditionalLaterInvocator<T> extends SimpleTask<T>{
         };
     }
 
+    @Deprecated
     public static void invoke(@NotNull DBNForm parentForm, Runnable runnable) {
         Failsafe.ensure(parentForm);
         invoke(parentForm.getComponent(), runnable);
     }
 
+    @Deprecated
     public static void invoke(@NotNull Component parentComponent, Runnable runnable) {
         ModalityState modalityState = ModalityState.stateForComponent(parentComponent);
         invoke(modalityState, runnable);
@@ -54,7 +53,10 @@ public abstract class ConditionalLaterInvocator<T> extends SimpleTask<T>{
         ConditionalLaterInvocator.create(runnable).start(modalityState);
     }
 
-    @Deprecated
+    public static void invokeNonModal(Runnable runnable) {
+        invoke(ModalityState.NON_MODAL, runnable);
+    }
+
     public static void invoke(Runnable runnable) {
         ConditionalLaterInvocator.create(runnable).start();
     }

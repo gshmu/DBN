@@ -33,7 +33,7 @@ public class BasicDataTypeDefinition implements DataTypeDefinition {
 
     @Override
     @Nullable
-    public DataTypeParseAdapter getParseAdapter() {
+    public <T> DataTypeParseAdapter<T> getParseAdapter() {
         return parseAdapter;
     }
 

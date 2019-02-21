@@ -78,6 +78,7 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
         return tableModel.getConnections();
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;
@@ -102,7 +103,7 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
     };
 
     private void refreshForm(ConnectionHandler connectionHandler) {
-        SimpleLaterInvocator.invoke(this, () -> {
+        SimpleLaterInvocator.invoke(() -> {
             checkDisposed();
             PendingTransactionsTableModel oldTableModel = tableModel;
             tableModel = new PendingTransactionsTableModel(connectionHandler);

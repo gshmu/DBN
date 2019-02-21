@@ -171,6 +171,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
         configurationTabs.addTab(tabInfo);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

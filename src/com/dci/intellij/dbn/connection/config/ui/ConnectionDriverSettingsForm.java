@@ -138,6 +138,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
         return driverErrorLabel;
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

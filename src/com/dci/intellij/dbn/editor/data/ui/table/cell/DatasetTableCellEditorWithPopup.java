@@ -29,7 +29,7 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
     }
 
     @Override
-    public void prepareEditor(final DatasetEditorModelCell cell) {
+    public void prepareEditor(@NotNull final DatasetEditorModelCell cell) {
         getEditorComponent().setUserValueHolder(cell);
         super.prepareEditor(cell);
 
@@ -59,13 +59,16 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
 
     private boolean showAutoPopup() {
         DataEditorPopupSettings settings = this.settings.getPopupSettings();
-        DBDataType dataType = getCell().getColumnInfo().getDataType();
-        long dataLength = dataType.getLength();
-        if (!isEditable()) {
-            return true;
-        } else  if (settings.isActive() && (settings.getDataLengthThreshold() < dataLength || dataLength == 0)) {
-            if (settings.isActiveIfEmpty() || getTextField().getText().length() > 0) {
+        DatasetEditorModelCell cell = getCell();
+        if (cell != null) {
+            DBDataType dataType = cell.getColumnInfo().getDataType();
+            long dataLength = dataType.getLength();
+            if (!isEditable()) {
                 return true;
+            } else  if (settings.isActive() && (settings.getDataLengthThreshold() < dataLength || dataLength == 0)) {
+                if (settings.isActiveIfEmpty() || getTextField().getText().length() > 0) {
+                    return true;
+                }
             }
         }
         return false;

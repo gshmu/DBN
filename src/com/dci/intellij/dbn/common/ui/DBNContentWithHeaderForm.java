@@ -37,6 +37,7 @@ public abstract class DBNContentWithHeaderForm<T extends DBNDialog> extends DBNF
         return contentForm;
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

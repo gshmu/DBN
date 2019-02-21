@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.browser.options.ui;
 
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +23,7 @@ public class DatabaseBrowserSettingsForm extends CompositeConfigurationEditorFor
         editorSettingsPanel.add(settings.getEditorSettings().createComponent(), BorderLayout.CENTER);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

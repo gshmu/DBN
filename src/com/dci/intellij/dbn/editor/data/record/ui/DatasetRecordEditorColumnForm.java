@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -119,6 +120,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl<DatasetRecordEdit
         setCell(cell);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

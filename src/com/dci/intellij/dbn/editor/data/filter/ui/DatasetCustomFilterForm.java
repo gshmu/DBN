@@ -22,6 +22,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -109,6 +110,7 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
    /*************************************************
     *                  SettingsEditor               *
     *************************************************/
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

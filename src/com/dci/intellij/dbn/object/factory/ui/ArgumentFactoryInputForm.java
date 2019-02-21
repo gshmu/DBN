@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.object.factory.ArgumentFactoryInput;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
 import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputForm;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -66,6 +67,7 @@ public class ArgumentFactoryInputForm extends ObjectFactoryInputForm {
         nameTextField.requestFocus();
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,6 +53,7 @@ public class RecordViewerColumnForm extends DBNFormImpl<RecordViewerForm> {
         updateColumnValue(column);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

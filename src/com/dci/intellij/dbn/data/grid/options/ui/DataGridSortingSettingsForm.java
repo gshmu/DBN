@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.data.grid.options.DataGridSortingSettings;
 import com.dci.intellij.dbn.data.grid.options.NullSortingOption;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -27,6 +28,7 @@ public class DataGridSortingSettingsForm extends ConfigurationEditorForm<DataGri
         registerComponent(mainPanel);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

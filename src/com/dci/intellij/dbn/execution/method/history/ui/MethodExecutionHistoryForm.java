@@ -60,6 +60,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
         splitter.setProportion((float) 0.32);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

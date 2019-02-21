@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.diagnostic.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,17 +36,19 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
         return (DatasetEditorModel) super.getModel();
     }
 
-    public DatasetEditorModelCell getCellForColumn(DBColumn column) {
+    @Nullable
+    DatasetEditorModelCell getCellForColumn(DBColumn column) {
         int columnIndex = getModel().getHeader().indexOfColumn(column);
         return getCellAtIndex(columnIndex);
     }
 
+    @NotNull
     @Override
     protected DatasetEditorModelCell createCell(ResultSet resultSet, ColumnInfo columnInfo) throws SQLException {
         return new DatasetEditorModelCell(this, resultSet, (DatasetEditorColumnInfo) columnInfo);
     }
 
-    public void updateStatusFromRow(DatasetEditorModelRow oldRow) {
+    void updateStatusFromRow(DatasetEditorModelRow oldRow) {
         if (oldRow != null) {
             set(oldRow);
             setIndex(oldRow.getIndex());
@@ -53,17 +56,21 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
                 for (int i=1; i<getCells().size(); i++) {
                     DatasetEditorModelCell oldCell = oldRow.getCellAtIndex(i);
                     DatasetEditorModelCell newCell = getCellAtIndex(i);
-                    newCell.setOriginalUserValue(oldCell.getOriginalUserValue());
+                    if (oldCell != null && newCell != null) {
+                        newCell.setOriginalUserValue(oldCell.getOriginalUserValue());
+                    }
                 }
             }
         }
     }
 
-    public void updateDataFromRow(DataModelRow oldRow) throws SQLException {
+    void updateDataFromRow(DataModelRow oldRow) {
         for (int i=0; i<getCells().size(); i++) {
             DataModelCell oldCell = oldRow.getCellAtIndex(i);
             DatasetEditorModelCell newCell = getCellAtIndex(i);
-            newCell.updateUserValue(oldCell.getUserValue(), false);
+            if (oldCell != null && newCell != null) {
+                newCell.updateUserValue(oldCell.getUserValue(), false);
+            }
         }
     }
 
@@ -94,7 +101,9 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
                     int index = model.getHeader().indexOfColumn(uniqueColumn);
                     DatasetEditorModelCell localCell = getCellAtIndex(index);
                     DatasetEditorModelCell remoteCell = (DatasetEditorModelCell) row.getCellAtIndex(index);
-                    if (!localCell.matches(remoteCell, false)) return false;
+                    if (localCell != null && remoteCell != null) {
+                        if (!localCell.matches(remoteCell, false)) return false;
+                    }
                 }
                 return true;
             }
@@ -110,7 +119,7 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
             /*if (!localCell.equals(remoteCell) && (localCell.getUserValue()!= null || !ignoreNulls)) {
                 return false;
             }*/
-            if (!localCell.matches(remoteCell, lenient)) {
+            if (localCell != null && remoteCell != null && !localCell.matches(remoteCell, lenient)) {
                 return false;
             }
         }
@@ -125,16 +134,20 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
             if (messageObject instanceof DBColumn) {
                 DBColumn column = (DBColumn) messageObject;
                 DatasetEditorModelCell cell = getCellForColumn(column);
-                boolean isErrorNew = cell.notifyError(error, true);
-                if (isErrorNew && startEditing) cell.edit();
+                if (cell != null) {
+                    boolean isErrorNew = cell.notifyError(error, true);
+                    if (isErrorNew && startEditing) cell.edit();
+                }
             } else if (messageObject instanceof DBConstraint) {
                 DBConstraint constraint = (DBConstraint) messageObject;
                 DatasetEditorModelCell firstCell = null;
                 boolean isErrorNew = false;
                 for (DBColumn column : constraint.getColumns()) {
                     DatasetEditorModelCell cell = getCellForColumn(column);
-                    isErrorNew = cell.notifyError(error, false);
-                    if (firstCell == null) firstCell = cell;
+                    if (cell != null) {
+                        isErrorNew = cell.notifyError(error, false);
+                        if (firstCell == null) firstCell = cell;
+                    }
                 }
                 if (isErrorNew && showPopup) {
                     DatasetEditorTable table = getModel().getEditorTable();

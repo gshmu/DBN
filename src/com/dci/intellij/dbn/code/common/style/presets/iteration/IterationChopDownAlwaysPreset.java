@@ -22,17 +22,23 @@ public class IterationChopDownAlwaysPreset extends IterationAbstractPreset {
     @Nullable
     public Wrap getWrap(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
-        IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
-        ElementType elementType = psiElement.getElementType();
-        return getWrap(elementType, iterationElementType, true);
+        if (parentPsiElement != null) {
+            IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
+            ElementType elementType = psiElement.getElementType();
+            return getWrap(elementType, iterationElementType, true);
+        }
+        return null;
     }
 
     @Override
     @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
-        IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
-        ElementType elementType = psiElement.getElementType();
-        return getSpacing(iterationElementType, elementType, true);
+        if (parentPsiElement != null) {
+            IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
+            ElementType elementType = psiElement.getElementType();
+            return getSpacing(iterationElementType, elementType, true);
+        }
+        return null;
     }
 }

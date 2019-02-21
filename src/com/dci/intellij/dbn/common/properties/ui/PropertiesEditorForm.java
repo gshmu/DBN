@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.ToolbarDecorator;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -66,6 +67,7 @@ public class PropertiesEditorForm extends DBNFormImpl<DBNForm> {
         table.setProperties(properties);
     } 
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

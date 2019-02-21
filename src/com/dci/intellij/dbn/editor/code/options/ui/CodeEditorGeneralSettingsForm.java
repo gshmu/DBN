@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.editor.code.options.CodeEditorGeneralSettings;
 import com.dci.intellij.dbn.language.common.SpellcheckingSettingsListener;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -26,6 +27,7 @@ public class CodeEditorGeneralSettingsForm extends ConfigurationEditorForm<CodeE
         registerComponent(mainPanel);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

@@ -66,6 +66,7 @@ public class ObjectsLookupSettingsForm extends ConfigurationEditorForm<ObjectsLo
             setSelection(connectionComboBox, ConnectionOption.RECENT);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

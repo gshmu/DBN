@@ -9,6 +9,7 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -77,6 +78,7 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
         }
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

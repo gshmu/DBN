@@ -31,7 +31,9 @@ public interface Configuration<P extends Configuration, E extends ConfigurationE
         throw new UnsupportedOperationException();
     };
 
-    ConfigurationEditorForm getSettingsEditor();
+    E getSettingsEditor();
+
+    E ensureSettingsEditor();
 
     static void registerChangeNotifier(SettingsChangeNotifier notifier) {
         List<SettingsChangeNotifier> notifiers = SETTINGS_CHANGE_NOTIFIERS.get();

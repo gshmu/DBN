@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.debugger.jdwp.config.DBStatementJdwpRunConfig;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.util.Range;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -33,6 +34,7 @@ public class DBStatementJdwpRunConfigEditorForm extends DBProgramRunConfiguratio
         }
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

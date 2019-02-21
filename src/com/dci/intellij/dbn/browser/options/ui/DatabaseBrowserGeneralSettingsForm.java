@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -35,6 +36,7 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
         registerComponent(mainPanel);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

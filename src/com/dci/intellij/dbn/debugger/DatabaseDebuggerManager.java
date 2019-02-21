@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.debugger.common.config.DBRunConfigFactory;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfigType;
 import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfig;
 import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfigType;
+import com.dci.intellij.dbn.debugger.common.process.DBProgramRunner;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBMethodJdbcRunner;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBStatementJdbcRunner;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBMethodJdwpRunner;
@@ -316,7 +317,8 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
                 String runnerId =
                         debuggerType == DBDebuggerType.JDBC ? DBStatementJdbcRunner.RUNNER_ID :
-                        debuggerType == DBDebuggerType.JDWP ? DBStatementJdwpRunner.RUNNER_ID : null;
+                        debuggerType == DBDebuggerType.JDWP ? DBStatementJdwpRunner.RUNNER_ID :
+                                DBProgramRunner.INVALID_RUNNER_ID;
 
                 ProgramRunner programRunner = RunnerRegistry.getInstance().findRunnerById(runnerId);
                 if (programRunner != null) {

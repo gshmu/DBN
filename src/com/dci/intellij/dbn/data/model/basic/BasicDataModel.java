@@ -190,6 +190,7 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
         Disposer.dispose(row);
     }
 
+    @Nullable
     @Override
     public T getRowAtIndex(int index) {
         // model may be reloading when this is called, hence
@@ -198,6 +199,7 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
         return index > -1 && rows.size() > index ? rows.get(index) : null;
     }
 
+    @Nullable
     public DataModelCell getCellAt(int rowIndex, int columnIndex) {
         return getRows().get(rowIndex).getCellAtIndex(columnIndex);
     }

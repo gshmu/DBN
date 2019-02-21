@@ -54,7 +54,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
 
     private MethodExecutionInputForm methodExecutionInputForm;
 
-    public DBMethodJdwpRunConfigEditorForm(final DBMethodJdwpRunConfig configuration) {
+    public DBMethodJdwpRunConfigEditorForm(DBMethodJdwpRunConfig configuration) {
         super(configuration.getProject());
         readConfiguration(configuration);
         if (configuration.getCategory() != DBRunConfigCategory.CUSTOM) {
@@ -71,6 +71,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
         }
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;
@@ -111,24 +112,22 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
                         }
 
                         DBSchema schema = settings.getSchema();
-                        final ObjectTreeModel objectTreeModel = DatabaseFeature.DEBUGGING.isSupported(schema) ?
+                        ObjectTreeModel objectTreeModel = DatabaseFeature.DEBUGGING.isSupported(schema) ?
                                 new ObjectTreeModel(schema, settings.getVisibleObjectTypes(), settings.getMethod()) :
                                 new ObjectTreeModel(null, settings.getVisibleObjectTypes(), null);
 
-                        SimpleLaterInvocator.invoke(
-                                DBMethodJdwpRunConfigEditorForm.this,
-                                () -> {
-                                    MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
-                                    browserDialog.show();
-                                    if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                                        DBMethod method = browserDialog.getSelectedMethod();
-                                        MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
-                                        MethodExecutionInput methodExecutionInput = methodExecutionManager.getExecutionInput(method);
-                                        if (methodExecutionInput != null) {
-                                            setExecutionInput(methodExecutionInput, true);
-                                        }
-                                    }
-                                });
+                        SimpleLaterInvocator.invoke(() -> {
+                            MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
+                            browserDialog.show();
+                            if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                                DBMethod method = browserDialog.getSelectedMethod();
+                                MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
+                                MethodExecutionInput methodExecutionInput = methodExecutionManager.getExecutionInput(method);
+                                if (methodExecutionInput != null) {
+                                    setExecutionInput(methodExecutionInput, true);
+                                }
+                            }
+                        });
 
                     });
         }

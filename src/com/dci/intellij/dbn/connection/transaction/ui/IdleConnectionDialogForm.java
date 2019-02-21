@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,6 +31,7 @@ public class IdleConnectionDialogForm extends DBNFormImpl {
 
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

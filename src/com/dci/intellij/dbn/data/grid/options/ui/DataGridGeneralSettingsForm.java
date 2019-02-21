@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.data.grid.options.ui;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.data.grid.options.DataGridGeneralSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -21,6 +22,7 @@ public class DataGridGeneralSettingsForm extends ConfigurationEditorForm<DataGri
         registerComponent(mainPanel);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -41,6 +42,7 @@ public class GeneralProjectSettingsForm extends CompositeConfigurationEditorForm
         };
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

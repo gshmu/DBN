@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.ddl.options.ui;
 
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +19,7 @@ public class DDFileSettingsForm extends CompositeConfigurationEditorForm<DDLFile
         generalSettingsPanel.add(settings.getGeneralSettings().createComponent(), BorderLayout.CENTER);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.CallableStatement;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -80,10 +79,6 @@ public class StatementExecutionProcessor {
 
     public String getId() {
         return id;
-    }
-
-    public ResultSet executeQuery(@NotNull Connection connection, Object... arguments) throws SQLException {
-        return executeQuery(connection, false, arguments);
     }
 
     public ResultSet executeQuery(@NotNull DBNConnection connection, boolean forceExecution, Object... arguments) throws SQLException {

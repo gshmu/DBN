@@ -17,6 +17,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -98,6 +99,7 @@ public class RecordViewerForm extends DBNFormImpl<RecordViewerDialog> {
         return columnForms.get(0).getViewComponent();
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

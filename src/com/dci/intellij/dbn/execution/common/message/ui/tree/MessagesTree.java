@@ -137,9 +137,9 @@ public class MessagesTree extends DBNTree implements Disposable {
         scrollToPath(treePath, true, focus);
     }
 
-    private void scrollToPath(final TreePath treePath, final boolean select, final boolean focus) {
+    private void scrollToPath(TreePath treePath, boolean select, boolean focus) {
         if (treePath != null) {
-            SimpleLaterInvocator.invoke(this, () -> {
+            SimpleLaterInvocator.invokeNonModal(() -> {
                 scrollPathToVisible(treePath);
                 TreeSelectionModel selectionModel = getSelectionModel();
                 if (select) {

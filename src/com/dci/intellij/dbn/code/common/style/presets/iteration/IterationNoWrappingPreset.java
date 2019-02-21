@@ -24,15 +24,17 @@ public class IterationNoWrappingPreset extends IterationAbstractPreset {
     @Nullable
     public Spacing getSpacing(BasePsiElement psiElement, CodeStyleSettings settings) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
-        IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
-        ElementType elementType = psiElement.getElementType();
+        if (parentPsiElement != null) {
+            IterationElementType iterationElementType = (IterationElementType) parentPsiElement.getElementType();
+            ElementType elementType = psiElement.getElementType();
 
-        if (elementType instanceof TokenElementType) {
-            TokenElementType tokenElementType = (TokenElementType) elementType;
-            if (iterationElementType.isSeparator(tokenElementType)) {
-                return tokenElementType.isCharacter() ?
-                        SPACING_NO_SPACE :
-                        SPACING_ONE_SPACE;
+            if (elementType instanceof TokenElementType) {
+                TokenElementType tokenElementType = (TokenElementType) elementType;
+                if (iterationElementType.isSeparator(tokenElementType)) {
+                    return tokenElementType.isCharacter() ?
+                            SPACING_NO_SPACE :
+                            SPACING_ONE_SPACE;
+                }
             }
         }
         return SPACING_ONE_SPACE;

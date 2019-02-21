@@ -93,6 +93,7 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
         return patternTextField;
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

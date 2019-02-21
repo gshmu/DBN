@@ -127,12 +127,12 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     }
 
     public void navigateToElement(@Nullable final BrowserTreeNode treeNode, final boolean focus, final boolean scroll) {
-        DatabaseBrowserForm browserForm = getBrowserForm();
-        SimpleLaterInvocator.invoke(browserForm, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             ToolWindow toolWindow = getBrowserToolWindow();
 
             toolWindow.show(null);
             if (treeNode != null) {
+                DatabaseBrowserForm browserForm = getBrowserForm();
                 browserForm.selectElement(treeNode, focus, scroll);
             }
         });
@@ -144,8 +144,10 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
     private void navigateToElement(@Nullable BrowserTreeNode treeNode, boolean scroll) {
         if (treeNode != null) {
-            DatabaseBrowserForm browserForm = getBrowserForm();
-            SimpleLaterInvocator.invoke(browserForm, () -> browserForm.selectElement(treeNode, false, scroll));
+            SimpleLaterInvocator.invokeNonModal(() -> {
+                DatabaseBrowserForm browserForm = getBrowserForm();
+                browserForm.selectElement(treeNode, false, scroll);
+            });
         }
     }
 
@@ -188,7 +190,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
             BrowserToolWindowForm toolWindowForm = browserManager.getToolWindowForm();
             DatabaseBrowserTree browserTree = toolWindowForm.getBrowserTree(connectionHandler);
             if (browserTree != null && browserTree.getTargetSelection() != null) {
-                SimpleLaterInvocator.invoke(browserTree, () -> browserTree.scrollToSelectedElement());
+                SimpleLaterInvocator.invokeNonModal(() -> browserTree.scrollToSelectedElement());
             }
         }
     }

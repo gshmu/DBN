@@ -20,6 +20,7 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -124,6 +125,7 @@ public class BrowserToolWindowForm extends DBNFormImpl {
         return browserForm;
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.message.MessageType;
 import com.intellij.ui.RoundedLineBorder;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -48,6 +49,7 @@ public class DBNHintForm extends DBNFormImpl{
 
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

@@ -97,7 +97,7 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
 
             //selectCell(rowIndex, columnIndex);
 
-            SimpleLaterInvocator.invoke(component, () -> {
+            SimpleLaterInvocator.invoke(() -> {
                 component.requestFocus();
                 textField.selectAll();
             });

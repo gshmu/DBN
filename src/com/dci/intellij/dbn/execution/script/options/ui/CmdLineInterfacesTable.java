@@ -125,10 +125,10 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
 
     @Override
     public Component prepareEditor(TableCellEditor editor, int rowIndex, int columnIndex) {
-        final JTextField textField = (JTextField) super.prepareEditor(editor, rowIndex, columnIndex);
+        JTextField textField = (JTextField) super.prepareEditor(editor, rowIndex, columnIndex);
         textField.setBorder(JBUI.Borders.emptyLeft(3));
 
-        SimpleLaterInvocator.invoke(this, () -> {
+        SimpleLaterInvocator.invoke(() -> {
             textField.selectAll();
             textField.grabFocus();
         });

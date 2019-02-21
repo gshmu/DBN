@@ -133,7 +133,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
     public void afterRebuild(final DatasetEditorTable oldEditorTable) {
         if (oldEditorTable != null) {
-            SimpleLaterInvocator.invoke(this, () -> {
+            SimpleLaterInvocator.invokeNonModal(() -> {
                 DatasetEditorTable datasetEditorTable = getEditorTable();
                 datasetTableScrollPane.setViewportView(datasetEditorTable);
                 datasetEditorTable.initTableGutter();
@@ -144,6 +144,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         }
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;
@@ -160,11 +161,11 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     }
 
     public void showLoadingHint() {
-        ConditionalLaterInvocator.invoke(this, () -> loadingDataPanel.setVisible(true));
+        ConditionalLaterInvocator.invokeNonModal(() -> loadingDataPanel.setVisible(true));
     }
 
     public void hideLoadingHint() {
-        ConditionalLaterInvocator.invoke(this, () -> loadingDataPanel.setVisible(false));
+        ConditionalLaterInvocator.invokeNonModal(() -> loadingDataPanel.setVisible(false));
     }
 
     @NotNull

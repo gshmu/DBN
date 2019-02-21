@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -108,6 +109,7 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
         nameTextField.requestFocus();
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

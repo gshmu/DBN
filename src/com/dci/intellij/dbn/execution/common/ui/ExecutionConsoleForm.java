@@ -200,6 +200,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         }
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return getResultTabs();

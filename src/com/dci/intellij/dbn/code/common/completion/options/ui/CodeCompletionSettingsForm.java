@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.code.common.completion.options.ui;
 
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,6 +21,7 @@ public class CodeCompletionSettingsForm extends CompositeConfigurationEditorForm
         formatPanel.add(codeCompletionSettings.getFormatSettings().createComponent(), BorderLayout.CENTER);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

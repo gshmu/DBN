@@ -91,6 +91,7 @@ public class TnsNamesImportForm extends DBNFormImpl<TnsNamesImportDialog>{
         }
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

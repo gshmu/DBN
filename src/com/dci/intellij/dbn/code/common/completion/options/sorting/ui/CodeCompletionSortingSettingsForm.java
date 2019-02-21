@@ -12,6 +12,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,6 +54,7 @@ public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<C
          };
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

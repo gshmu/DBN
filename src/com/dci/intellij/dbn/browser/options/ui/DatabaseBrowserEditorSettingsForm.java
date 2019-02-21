@@ -14,6 +14,7 @@ import com.intellij.openapi.ui.ComboBoxTableRenderer;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBScrollPane;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -54,6 +55,7 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
         editorTypeTable.setModel(new EditorTypeTableModel(getConfiguration().getOptions()));
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

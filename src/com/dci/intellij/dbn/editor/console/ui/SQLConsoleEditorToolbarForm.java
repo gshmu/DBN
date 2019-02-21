@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,6 +33,7 @@ public class SQLConsoleEditorToolbarForm extends DBNFormImpl {
         Disposer.register(this, autoCommitLabel);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

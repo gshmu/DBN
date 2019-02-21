@@ -23,6 +23,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.DumbAwareAction;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -93,7 +94,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         DBDataset dataset = table.getDataset();
         DBColumn column = Failsafe.get(dataset.getColumn(columnInfo.getName()));
         if (columnValue != null) {
-            if (column.isForeignKey()) {
+            if (cell != null && column.isForeignKey()) {
                 DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
                 if (filterInput != null) {
                     add(new ShowReferencedRecordAction(filterInput));
@@ -150,12 +151,10 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             DatasetEditorTable editorTable = datasetEditor.getEditorTable();
-            if (editorTable != null) {
-                int columnIndex = columnInfo.getColumnIndex();
-                editorTable.hideColumn(columnIndex);
-            }
+            int columnIndex = columnInfo.getColumnIndex();
+            editorTable.hideColumn(columnIndex);
         }
     }
 
@@ -165,13 +164,11 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             DatasetEditorTable editorTable = datasetEditor.getEditorTable();
             int modelColumnIndex = columnInfo.getColumnIndex();
-            if (editorTable != null) {
-                int tableColumnIndex = editorTable.convertColumnIndexToView(modelColumnIndex);
-                editorTable.sort(tableColumnIndex, SortDirection.ASCENDING, false);
-            }
+            int tableColumnIndex = editorTable.convertColumnIndexToView(modelColumnIndex);
+            editorTable.sort(tableColumnIndex, SortDirection.ASCENDING, false);
         }
     }
 
@@ -181,13 +178,11 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             DatasetEditorTable editorTable = datasetEditor.getEditorTable();
             int modelColumnIndex = columnInfo.getColumnIndex();
-            if (editorTable != null) {
-                int tableColumnIndex = editorTable.convertColumnIndexToView(modelColumnIndex);
-                editorTable.sort(tableColumnIndex, SortDirection.DESCENDING, false);
-            }
+            int tableColumnIndex = editorTable.convertColumnIndexToView(modelColumnIndex);
+            editorTable.sort(tableColumnIndex, SortDirection.DESCENDING, false);
         }
     }
 

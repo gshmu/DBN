@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCase;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -60,6 +61,7 @@ public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyle
         objectCaseComboBox.setEnabled(enabled);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

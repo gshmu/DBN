@@ -152,7 +152,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
                     errorLabel.setVisible(true);
                 }
             } else {
-                formatter = new Formatter(locale, dateFormat, numberFormat);
+                formatter = new Formatter(locale, dateFormat == null ? DBDateFormat.MEDIUM : dateFormat, numberFormat);
                 customNumberFormatTextField.setText(formatter.getNumberFormatPattern());
                 customDateFormatTextField.setText(formatter.getDateFormatPattern());
                 customTimeFormatTextField.setText(formatter.getTimeFormatPattern());
@@ -176,6 +176,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         }
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

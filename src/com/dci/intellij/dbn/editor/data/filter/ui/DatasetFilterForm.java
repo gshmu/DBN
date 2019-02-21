@@ -82,6 +82,7 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
         return (DatasetFilter) filtersList.getSelectedValue();
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;
@@ -134,7 +135,7 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
                     JComponent component = filter.createComponent();
                     filterDetailsPanel.add(component, id);
 
-                    configurationEditorForm = filter.getSettingsEditor();
+                    configurationEditorForm = filter.ensureSettingsEditor();
                     filterDetailPanels.put(id, configurationEditorForm);
                     DisposerUtil.register(this, configurationEditorForm);
                 }

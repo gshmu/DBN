@@ -207,14 +207,14 @@ public class GUIUtil{
     }
 
     public static void repaint(JComponent component) {
-        ConditionalLaterInvocator.invoke(component, () -> {
+        ConditionalLaterInvocator.invoke(() -> {
             component.revalidate();
             component.repaint();
         });
     }
 
     public static void repaintAndFocus(JComponent component) {
-        ConditionalLaterInvocator.invoke(component, () -> {
+        ConditionalLaterInvocator.invoke(() -> {
             component.revalidate();
             component.repaint();
             component.requestFocus();

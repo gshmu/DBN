@@ -123,6 +123,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
         }
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

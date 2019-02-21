@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModelCell;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,7 +37,7 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
             dataTypeLabel.setText(dataType.getQualifiedName());
             dataTypeLabel.setForeground(UIUtil.getInactiveTextColor());
         } else {
-            dataTypeLabel.setVisible(showDataType);
+            dataTypeLabel.setVisible(false);
         }
 
         valueTextField = new JTextField();
@@ -50,6 +51,7 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
         setCell(cell);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

@@ -44,6 +44,7 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
         list.setBackground(BACKGROUND_COLOR);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;
@@ -174,7 +175,7 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
     }
 
     private void updateList() {
-        ConditionalLaterInvocator.invoke(this, () -> {
+        ConditionalLaterInvocator.invoke(() -> {
             if (listModel.isFiltrable()) {
                 int index = list.getSelectedIndex();
                 listModel.notifyContentChanged();

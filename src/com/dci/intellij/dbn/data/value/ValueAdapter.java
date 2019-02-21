@@ -36,7 +36,7 @@ public abstract class ValueAdapter<T> {
         return REGISTRY.containsKey(genericDataType);
     }
 
-    public static ValueAdapter create(GenericDataType genericDataType) throws SQLException {
+    public static <T> ValueAdapter<T> create(GenericDataType genericDataType) throws SQLException {
         try {
             Class<? extends ValueAdapter> valueAdapterClass = REGISTRY.get(genericDataType);
             return valueAdapterClass.newInstance();

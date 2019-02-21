@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.intellij.ui.tabs.TabInfo;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,6 +37,7 @@ public class CodeStyleSettingsForm extends CompositeConfigurationEditorForm<Proj
     }
 
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

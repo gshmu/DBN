@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class DBDatasetVirtualFile extends DBContentVirtualFile {
-    public DBDatasetVirtualFile(DBEditableObjectVirtualFile databaseFile, DBContentType contentType) {
+    DBDatasetVirtualFile(DBEditableObjectVirtualFile databaseFile, DBContentType contentType) {
         super(databaseFile, contentType);
     }
 

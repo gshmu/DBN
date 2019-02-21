@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data.options.ui;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.editor.data.options.DataEditorPopupSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
@@ -43,6 +44,7 @@ public class DataEditorPopupSettingsForm extends ConfigurationEditorForm<DataEdi
         delayTextField.setEnabled(enabled);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

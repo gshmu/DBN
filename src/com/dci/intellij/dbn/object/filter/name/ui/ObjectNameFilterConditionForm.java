@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.name.CompoundFilterCondition;
 import com.dci.intellij.dbn.object.filter.name.SimpleNameFilterCondition;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -94,6 +95,7 @@ public class ObjectNameFilterConditionForm extends DBNFormImpl<ObjectNameFilterC
         return joinTypeComboBox.getSelectedValue();
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

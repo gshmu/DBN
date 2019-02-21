@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data.options.ui;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.editor.data.options.DataEditorValueListPopupSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -22,6 +23,7 @@ public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorFo
         registerComponent(mainPanel);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

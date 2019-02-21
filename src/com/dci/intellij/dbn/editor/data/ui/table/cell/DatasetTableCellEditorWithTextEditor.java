@@ -57,7 +57,7 @@ public class DatasetTableCellEditorWithTextEditor extends DatasetTableCellEditor
     }
 
     @Override
-    public void prepareEditor(final DatasetEditorModelCell cell) {
+    public void prepareEditor(@NotNull DatasetEditorModelCell cell) {
         getEditorComponent().setUserValueHolder(cell);
         setCell(cell);
         ColumnInfo columnInfo = cell.getColumnInfo();

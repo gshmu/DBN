@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -83,10 +84,11 @@ public class AboutComponent extends DBNFormImpl{
             }
         });
         IdeaPluginDescriptor ideaPluginDescriptor = PluginManager.getPlugin(PluginId.getId("DBN"));
-        String version = ideaPluginDescriptor.getVersion();
+        String version = ideaPluginDescriptor == null ? "3.1.9999.0" : ideaPluginDescriptor.getVersion();
         buildLabel.setText("Build: " + version.substring(4, 8));
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
@@ -39,7 +40,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     private String name;
     private DatabaseType databaseType;
     private double databaseVersion;
-    private Project project;
+    private ProjectRef projectRef;
     private ConnectionHandlerStatusHolder connectionStatus;
     private DatabaseInterfaceProvider interfaceProvider;
     private Map<String, String> properties = new HashMap<String, String>();
@@ -47,14 +48,14 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     private DBObjectBundle objectBundle;
     private ConnectionInstructions instructions = new ConnectionInstructions();
     private Latent<ConnectionSettings> connectionSettings = Latent.basic(() -> {
-        ConnectionBundleSettings connectionBundleSettings = ConnectionBundleSettings.getInstance(project);
+        ConnectionBundleSettings connectionBundleSettings = ConnectionBundleSettings.getInstance(getProject());
         return new ConnectionSettings(connectionBundleSettings);
     });
 
-    public VirtualConnectionHandler(ConnectionId id, String name, DatabaseType databaseType, double databaseVersion, Project project){
+    public VirtualConnectionHandler(ConnectionId id, String name, DatabaseType databaseType, double databaseVersion, @NotNull Project project){
         this.id = id;
         this.name = name;
-        this.project = project;
+        this.projectRef = ProjectRef.from(project);
         this.databaseType = databaseType;
         this.databaseVersion = databaseVersion;
         this.ref = new ConnectionHandlerRef(this);
@@ -110,7 +111,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Override
     @NotNull
-    public Project getProject() {return project;}
+    public Project getProject() {return projectRef.getnn();}
 
     @Override
     public boolean isEnabled() {

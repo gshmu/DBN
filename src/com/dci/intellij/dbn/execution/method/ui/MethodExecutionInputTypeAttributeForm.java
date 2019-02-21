@@ -149,6 +149,7 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl<MethodExe
         return DBObjectRef.get(typeAttributeRef);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

@@ -13,6 +13,7 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.AsyncProcessIcon;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,9 +46,7 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
         public void sourceCodeLoading(DBSourceCodeVirtualFile sourceCodeFile) {
             DBSourceCodeVirtualFile virtualFile = getSourceCodeEditor().getVirtualFile();
             if (virtualFile.equals(sourceCodeFile)) {
-                SimpleLaterInvocator.invoke(
-                        SourceCodeEditorActionsPanel.this,
-                        () -> loadingDataPanel.setVisible(true));
+                SimpleLaterInvocator.invokeNonModal(() -> loadingDataPanel.setVisible(true));
             }
         }
 
@@ -55,9 +54,7 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
         public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
             DBSourceCodeVirtualFile virtualFile = getSourceCodeEditor().getVirtualFile();
             if (virtualFile.equals(sourceCodeFile)) {
-                SimpleLaterInvocator.invoke(
-                        SourceCodeEditorActionsPanel.this,
-                        () -> loadingDataPanel.setVisible(false));
+                SimpleLaterInvocator.invokeNonModal(() -> loadingDataPanel.setVisible(false));
             }
         }
     };
@@ -66,6 +63,7 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
         return Failsafe.get(sourceCodeEditor);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

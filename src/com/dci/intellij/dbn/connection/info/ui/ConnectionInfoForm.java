@@ -180,6 +180,7 @@ public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
         return StringUtil.isEmpty(value) ? "-" : value;
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

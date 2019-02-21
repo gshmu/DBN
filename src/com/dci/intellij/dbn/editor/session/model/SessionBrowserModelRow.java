@@ -23,6 +23,7 @@ public class SessionBrowserModelRow extends ResultSetDataModelRow<SessionBrowser
         return (SessionBrowserModel) super.getModel();
     }
 
+    @NotNull
     @Override
     protected SessionBrowserModelCell createCell(ResultSet resultSet, ColumnInfo columnInfo) throws SQLException {
         return new SessionBrowserModelCell(this, resultSet, (ResultSetColumnInfo) columnInfo);

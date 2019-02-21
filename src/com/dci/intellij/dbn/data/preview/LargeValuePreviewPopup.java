@@ -157,6 +157,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
         return StringUtil.countNewLines(text) + 1;
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

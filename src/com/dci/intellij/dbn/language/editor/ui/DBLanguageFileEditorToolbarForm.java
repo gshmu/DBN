@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,6 +36,7 @@ public class DBLanguageFileEditorToolbarForm extends DBNFormImpl {
         Disposer.register(this, autoCommitLabel);
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

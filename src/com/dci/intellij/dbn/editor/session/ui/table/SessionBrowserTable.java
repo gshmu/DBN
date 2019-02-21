@@ -85,23 +85,23 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
 
     @Override
     public void clearSelection() {
-        SimpleLaterInvocator.invoke(this, () -> SessionBrowserTable.super.clearSelection());
+        SimpleLaterInvocator.invokeNonModal(() -> SessionBrowserTable.super.clearSelection());
     }
 
     @Override
     public void removeEditor() {
-        SimpleLaterInvocator.invoke(this, () -> SessionBrowserTable.super.removeEditor());
+        SimpleLaterInvocator.invokeNonModal(() -> SessionBrowserTable.super.removeEditor());
     }
 
     public void updateTableGutter() {
-        SimpleLaterInvocator.invoke(this, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             DBNTableGutter tableGutter = getTableGutter();
             GUIUtil.repaint(tableGutter);
         });
     }
 
     @Override
-    public boolean editCellAt(final int row, final int column, final EventObject e) {
+    public boolean editCellAt(int row, int column, EventObject e) {
         return super.editCellAt(row, column, e);
     }
 
@@ -119,7 +119,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
         return sessionBrowser;
     }
 
-    private final ListSelectionListener listSelectionListener = new ListSelectionListener() {
+    private ListSelectionListener listSelectionListener = new ListSelectionListener() {
         @Override
         public void valueChanged(ListSelectionEvent e) {
             if (!e.getValueIsAdjusting()) {
@@ -146,7 +146,8 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
                 int selectedRowCount = getSelectedRowCount();
                 int selectedColumnCount = getSelectedColumnCount();
                 if (selectedRowCount == 1 && selectedColumnCount == 1) {
-                    sessionId = getModel().getRowAtIndex(getSelectedRow()).getSessionId();
+                    SessionBrowserModelRow selectedRow = getModel().getRowAtIndex(getSelectedRow());
+                    sessionId = selectedRow == null ? null : selectedRow.getSessionId();
                     columnIndex = getSelectedColumn();
                 } else if (selectedRowCount > 0 && selectedColumnCount > 0) {
                     sessionId = null;
@@ -180,9 +181,9 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
      *                        Popup                         *
      ********************************************************/
     public void showPopupMenu(
-            final MouseEvent event,
-            final SessionBrowserModelCell cell,
-            final SessionBrowserColumnInfo columnInfo) {
+            MouseEvent event,
+            SessionBrowserModelCell cell,
+            SessionBrowserColumnInfo columnInfo) {
         Component eventSource = (Component) event.getSource();
         if (eventSource.isShowing()) {
             ActionGroup actionGroup = new SessionBrowserTableActionGroup(sessionBrowser, cell, columnInfo);

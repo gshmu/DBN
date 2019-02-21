@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.code.common.completion.options.filter.ui;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,6 +21,7 @@ public class CodeCompletionFilterSettingsForm extends ConfigurationEditorForm<Co
         mainPanel.add(tree, BorderLayout.CENTER);
     }
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

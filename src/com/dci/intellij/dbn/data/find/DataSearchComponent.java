@@ -124,6 +124,7 @@ public class DataSearchComponent extends DBNFormImpl implements Disposable, Sele
         });
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

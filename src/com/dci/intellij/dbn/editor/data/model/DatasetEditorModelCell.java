@@ -78,11 +78,13 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
 
                 if (isValueAdapter) {
                     ValueAdapter valueAdapter = (ValueAdapter) userValue;
-                    if (newUserValue instanceof ValueAdapter) {
-                        ValueAdapter newValueAdapter = (ValueAdapter) newUserValue;
-                        newUserValue = newValueAdapter.read();
+                    if (valueAdapter != null) {
+                        if (newUserValue instanceof ValueAdapter) {
+                            ValueAdapter newValueAdapter = (ValueAdapter) newUserValue;
+                            newUserValue = newValueAdapter.read();
+                        }
+                        resultSetAdapter.setValue(columnIndex, valueAdapter, newUserValue);
                     }
-                    resultSetAdapter.setValue(columnIndex, valueAdapter, newUserValue);
                 } else {
                     DBDataType dataType = columnInfo.getDataType();
                     resultSetAdapter.setValue(columnIndex, dataType, newUserValue);
@@ -265,10 +267,10 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     }
 
     private void scrollToVisible() {
-        DatasetEditorTable table = getEditorTable();
-        SimpleLaterInvocator.invoke(table, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             int rowIndex = getRow().getIndex();
             int colIndex = getIndex();
+            DatasetEditorTable table = getEditorTable();
             Rectangle cellRect = table.getCellRect(rowIndex, colIndex, true);
             table.scrollRectToVisible(cellRect);
         });

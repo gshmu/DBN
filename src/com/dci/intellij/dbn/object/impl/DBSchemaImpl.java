@@ -300,7 +300,8 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
 
     @Override
     public DBIndex getIndex(String name) {
-        return (DBIndex) initChildObjects().getObjectList(INDEX).getObject(name);
+        DBObjectList indexList = initChildObjects().getObjectList(INDEX);
+        return indexList == null ? null : (DBIndex) indexList.getObject(name);
     }
 
     @Override

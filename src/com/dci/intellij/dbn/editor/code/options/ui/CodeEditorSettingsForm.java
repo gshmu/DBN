@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.editor.code.options.ui;
 
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,6 +20,7 @@ public class CodeEditorSettingsForm extends CompositeConfigurationEditorForm<Cod
     }
 
 
+    @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;

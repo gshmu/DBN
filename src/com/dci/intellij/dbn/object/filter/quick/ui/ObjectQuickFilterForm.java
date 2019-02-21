@@ -148,6 +148,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
         return objectList;
     }
 
+    @NotNull
     @Override
     public JComponent getComponent() {
         return mainPanel;

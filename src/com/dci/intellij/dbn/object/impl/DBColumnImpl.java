@@ -250,10 +250,14 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
             if (schema.isSystemSchema() == isSystemSchema) {
                 DBObjectListContainer childObjects = schema.getChildObjects();
                 if (childObjects != null) {
-                    List<DBColumn> columns = (List<DBColumn>) childObjects.getInternalObjectList(COLUMN).getObjects();
-                    for (DBColumn column : columns){
-                        if (this.equals(column.getForeignKeyColumn())) {
-                            list.add(column);
+                    DBObjectList internalColumns = childObjects.getInternalObjectList(COLUMN);
+                    List<DBColumn> columns = null;
+                    if (internalColumns != null) {
+                        columns = (List<DBColumn>) internalColumns.getObjects();
+                        for (DBColumn column : columns){
+                            if (this.equals(column.getForeignKeyColumn())) {
+                                list.add(column);
+                            }
                         }
                     }
                 }
