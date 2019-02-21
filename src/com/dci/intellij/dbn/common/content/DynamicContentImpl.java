@@ -242,7 +242,11 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
             // mark first the dirty status since dirty dependencies may
             // become valid due to parallel background load
             set(DIRTY, false);
-            getLoader().loadContent(this, force);
+            DynamicContentLoader<T> loader = getLoader();
+            loader.loadContent(this, force);
+
+            // refresh inner elements
+            elements.forEach(t -> t.refresh());
         } catch (DynamicContentLoadException e) {
             set(DIRTY, !e.isModelException());
         }
