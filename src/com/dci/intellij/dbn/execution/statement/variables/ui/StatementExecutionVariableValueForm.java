@@ -143,7 +143,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
 
         dataTypeComboBox.addListener((oldValue, newValue) -> {
             editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, oldValue == GenericDataType.DATE_TIME);
-            getParentComponent().updatePreview();
+            ensureParentComponent().updatePreview();
         });
 
         useNullCheckBox.setSelected(variable.useNull());
@@ -152,7 +152,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
             if (useNullValue) editorComponent.getTextField().setText("");
             editorComponent.setEnabled(!useNullValue);
             editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, dataTypeComboBox.getSelectedValue() == GenericDataType.DATE_TIME);
-            getParentComponent().updatePreview();
+            ensureParentComponent().updatePreview();
         });
 
         textField.setToolTipText("<html>While editing variable value, press <b>Up/Down</b> keys to change data type");
@@ -179,7 +179,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
         variable.setValue(trim);
         variable.setDataType(dataTypeComboBox.getSelectedValue());
         variable.setUseNull(useNullCheckBox.isSelected());
-        StatementExecutionProcessor executionProcessor = getParentComponent().getExecutionProcessor();
+        StatementExecutionProcessor executionProcessor = ensureParentComponent().getExecutionProcessor();
         Project project = executionProcessor.getProject();
         StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
         executionManager.cacheVariable(executionProcessor.getVirtualFile(), variable);

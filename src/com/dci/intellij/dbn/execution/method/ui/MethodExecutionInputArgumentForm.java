@@ -132,7 +132,8 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
             public List<String> getValues() {
                 DBArgument argument = getArgument();
                 if (argument != null) {
-                    return getParentComponent().getExecutionInput().getInputValueHistory(argument, null);
+                    MethodExecutionInput executionInput = ensureParentComponent().getExecutionInput();
+                    return executionInput.getInputValueHistory(argument, null);
                 }
 
                 return Collections.emptyList();
@@ -180,7 +181,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
     public void updateExecutionInput() {
         DBArgument argument = getArgument();
         if (argument != null) {
-            MethodExecutionInput executionInput = getParentComponent().getExecutionInput();
+            MethodExecutionInput executionInput = ensureParentComponent().getExecutionInput();
             if (typeAttributeForms.size() >0 ) {
                 for (MethodExecutionInputTypeAttributeForm typeAttributeComponent : typeAttributeForms) {
                     typeAttributeComponent.updateExecutionInput();

@@ -76,7 +76,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         ConnectionAction.invoke(
                 "opening the session browser",
                 connectionHandler,
-                (Integer) null,
+                null,
                 action -> {
                     Project project = getProject();
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
@@ -241,11 +241,13 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                                     }
                                 }
 
-                                SimpleLaterInvocator.invokeNonModal(() -> {
-                                    for (SessionBrowser sessionBrowser : sessionBrowsers) {
-                                        sessionBrowser.refreshLoadTimestamp();
-                                    }
-                                });
+                                if (sessionBrowsers.size() > 0) {
+                                    SimpleLaterInvocator.invoke(() -> {
+                                        for (SessionBrowser sessionBrowser : sessionBrowsers) {
+                                            sessionBrowser.refreshLoadTimestamp();
+                                        }
+                                    });
+                                }
                             }
                             return null;
                         }));

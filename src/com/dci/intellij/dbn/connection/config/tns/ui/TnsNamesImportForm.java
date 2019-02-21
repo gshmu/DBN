@@ -66,7 +66,7 @@ public class TnsNamesImportForm extends DBNFormImpl<TnsNamesImportDialog>{
     }
 
     private void updateButtons() {
-        TnsNamesImportDialog parentComponent = getParentComponent();
+        TnsNamesImportDialog parentComponent = ensureParentComponent();
         parentComponent.getImportSelectedAction().setEnabled(tnsNamesTable.getSelectedRowCount() > 0);
         parentComponent.getImportAllAction().setEnabled(tnsNamesTable.getRowCount() > 0);
     }

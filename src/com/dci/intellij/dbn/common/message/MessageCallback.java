@@ -23,6 +23,7 @@ public abstract class MessageCallback extends SimpleTask<Integer> {
         };
     }
 
+    @FunctionalInterface
     public interface Runnable {
         void run(Integer option);
     }

@@ -211,7 +211,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl<DatasetRecordEdit
     /*********************************************************
      *                     Listeners                         *
      *********************************************************/
-    DocumentListener documentListener = new DocumentAdapter() {
+    private DocumentListener documentListener = new DocumentAdapter() {
         @Override
         protected void textChanged(DocumentEvent documentEvent) {
             JTextField valueTextField = editorComponent.getTextField();
@@ -219,11 +219,11 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl<DatasetRecordEdit
         }
     };
 
-    KeyListener keyAdapter = new KeyAdapter() {
+    private KeyListener keyAdapter = new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent e) {
             if (!e.isConsumed()) {
-                DatasetRecordEditorForm parentComponent = getParentComponent();
+                DatasetRecordEditorForm parentComponent = ensureParentComponent();
                 if (e.getKeyCode() == 38) {//UP
                     parentComponent.focusPreviousColumnPanel(DatasetRecordEditorColumnForm.this);
                     e.consume();
@@ -236,8 +236,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl<DatasetRecordEdit
     };
 
 
-    boolean isError = false;
-    FocusListener focusListener = new FocusAdapter() {
+    private FocusListener focusListener = new FocusAdapter() {
         @Override
         public void focusGained(FocusEvent e) {
             if (e.getOppositeComponent() != null) {
@@ -248,7 +247,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl<DatasetRecordEdit
                 }
 
                 Rectangle rectangle = new Rectangle(mainPanel.getLocation(), mainPanel.getSize());
-                getParentComponent().getColumnsPanel().scrollRectToVisible(rectangle);
+                ensureParentComponent().getColumnsPanel().scrollRectToVisible(rectangle);
             }
         }
 
