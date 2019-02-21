@@ -33,41 +33,21 @@ public class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter impl
     }
 
     @Override
-    public void markSourcesDirty() {
-        contentDependency.markSourcesDirty();
-    }
-
-    @Override
     public boolean isDirty() {
         return contentDependency.isDirty();
     }
 
     @Override
-    public void beforeLoad() {
-        //contentDependency.getSourceContent().loadInBackground();
+    public void beforeLoad(boolean force) {
+        if (force) {
+            DynamicContent sourceContent = getSourceContent();
+            sourceContent.refresh();
+        }
     }
 
     @Override
     public void afterLoad() {
         contentDependency.reset();
-    }
-
-    @Override
-    public void beforeReload(DynamicContent dynamicContent) {
-/*        DynamicContent sourceContent = contentDependency.getSourceContent();
-        sourceContent.getDependencyAdapter().beforeReload(sourceContent);
-        sourceContent.removeElements(dynamicContent.getElements());*/
-    }
-
-    @Override
-    public void afterReload(DynamicContent dynamicContent) {
-/*        DynamicContent sourceContent = contentDependency.getSourceContent();
-        if (sourceContent.getClass().isAssignableFrom(dynamicContent.getClass())) {
-            sourceContent.addElements(dynamicContent.getElements());
-            sourceContent.getDependencyAdapter().afterReload(sourceContent);
-            sourceContent.updateChangeTimestamp();
-            contentDependency.reset();
-        }*/
     }
 
     @Override

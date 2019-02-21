@@ -576,6 +576,13 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         }
     }
 
+    public final void refresh(@NotNull DBObjectType childObjectType) {
+        DBObjectList objectList = getChildObjectList(childObjectType);
+        if (objectList != null) {
+            objectList.refresh();
+        }
+    }
+
     /*********************************************************
      *                   NavigationItem                      *
      *********************************************************/

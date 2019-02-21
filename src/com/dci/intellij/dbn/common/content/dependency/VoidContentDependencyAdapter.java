@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.content.dependency;
 
-import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 
 public class VoidContentDependencyAdapter implements ContentDependencyAdapter{
@@ -21,16 +20,12 @@ public class VoidContentDependencyAdapter implements ContentDependencyAdapter{
     }
 
     @Override
-    public void markSourcesDirty() {
-    }
-
-    @Override
     public boolean isDirty() {
         return false;
     }
 
     @Override
-    public void beforeLoad() {
+    public void beforeLoad(boolean force) {
 
     }
 
@@ -39,15 +34,6 @@ public class VoidContentDependencyAdapter implements ContentDependencyAdapter{
 
     }
 
-    @Override
-    public void beforeReload(DynamicContent dynamicContent) {
-
-    }
-
-    @Override
-    public void afterReload(DynamicContent dynamicContent) {
-
-    }
 
     @Override
     public boolean canLoadFast() {

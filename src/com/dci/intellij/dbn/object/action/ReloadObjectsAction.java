@@ -27,9 +27,7 @@ public class ReloadObjectsAction extends DumbAwareAction {
                 loaded ? "reloading the " + listName : "loading the " + listName,
                 objectList,
                 action -> {
-                    if (loaded)
-                        objectList.reload(); else
-                        objectList.load(true);
+                    objectList.reload();
                 });
     }
 }
