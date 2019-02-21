@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.init.DatabaseNavigatorInitializer;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -126,7 +125,7 @@ public class DatabaseNavigator extends SettingsSupport implements ApplicationCom
     private void resolvePluginConflict() {
         if (showPluginConflictDialog && sqlPluginActive()) {
             showPluginConflictDialog = false;
-            SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+            SimpleLaterInvocator.invokeNonModal(() -> {
                 List<String> disabledList = PluginManager.getDisabledPlugins();
                 String message =
                         "Database Navigator plugin (DBN) is not compatible with the IntelliJ IDEA built-in SQL functionality. " +

@@ -44,7 +44,6 @@ import com.intellij.debugger.engine.SuspendContextImpl;
 import com.intellij.debugger.impl.DebuggerSession;
 import com.intellij.debugger.impl.PrioritizedTask;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -66,12 +65,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.BREAKPOINT_SETTING_ALLOWED;
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.DEBUGGER_STOPPING;
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.SESSION_INITIALIZATION_THREW_EXCEPTION;
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.TARGET_EXECUTION_STARTED;
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.TARGET_EXECUTION_TERMINATED;
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.TARGET_EXECUTION_THREW_EXCEPTION;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.*;
 
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaDebugProcess implements DBDebugProcess {
     public static final Key<DBJdwpDebugProcess> KEY = new Key<DBJdwpDebugProcess>("DBNavigator.JdwpDebugProcess");
@@ -221,7 +215,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
             public void sessionPaused() {
                 XSuspendContext suspendContext = session.getSuspendContext();
                 if (!shouldSuspend(suspendContext)) {
-                    SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> session.resume());
+                    SimpleLaterInvocator.invokeNonModal(() -> session.resume());
                 } else {
                     XExecutionStack activeExecutionStack = suspendContext.getActiveExecutionStack();
                     if (activeExecutionStack != null) {

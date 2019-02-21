@@ -42,7 +42,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.State;
@@ -72,9 +71,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.action.DBNDataKeys.CONNECTION_HANDLER;
-import static com.dci.intellij.dbn.common.action.DBNDataKeys.DATABASE_SCHEMA;
-import static com.dci.intellij.dbn.common.action.DBNDataKeys.DATABASE_SESSION;
+import static com.dci.intellij.dbn.common.action.DBNDataKeys.*;
 import static com.dci.intellij.dbn.common.util.MessageUtil.options;
 import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 
@@ -468,7 +465,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
 
     public void selectConnectionAndSchema(@NotNull DBLanguagePsiFile file, @NotNull ConnectionAction callback) {
-        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             Project project = getProject();
             ConnectionHandler activeConnection = file.getConnectionHandler();
             if (activeConnection == null || activeConnection.isVirtual()) {

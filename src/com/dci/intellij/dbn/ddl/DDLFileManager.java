@@ -15,7 +15,6 @@ import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -180,7 +179,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
 
     @Override
     public void projectOpened() {
-        SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> registerExtensions(getExtensionSettings()));
+        SimpleLaterInvocator.invokeNonModal(() -> registerExtensions(getExtensionSettings()));
     }
 
     @Override

@@ -35,7 +35,6 @@ import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSessionStatementVirtualFile;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -55,13 +54,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.CONSOLES;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.DATASET_FILTERS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.OBJECTS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.OBJECT_CONTENTS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.SESSION_BROWSERS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.SESSION_STATEMENTS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.values;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.*;
 
 public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysicalFileSystem, */ApplicationComponent {
     public static final String PS = "/";
@@ -456,7 +449,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         DBEditableObjectVirtualFile databaseFile = findOrCreateDatabaseFile(project, object.getRef());
         databaseFile.setSelectedEditorProviderId(editorProviderId);
         if (!ProgressMonitor.isCancelled()) {
-            SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+            SimpleLaterInvocator.invokeNonModal(() -> {
                 if (isFileOpened(object) || databaseFile.preOpen()) {
                     DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scrollBrowser);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
@@ -476,7 +469,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
         sourceCodeManager.ensureSourcesLoaded(schemaObject);
         if (!ProgressMonitor.isCancelled()) {
-            SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+            SimpleLaterInvocator.invokeNonModal(() -> {
                 if (isFileOpened(schemaObject) || databaseFile.preOpen()) {
                     DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scrollBrowser);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);

@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -20,7 +20,6 @@ import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.connection.session.SessionManagerListener;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -68,7 +67,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
 
 
     private void showCreateRenameConsoleDialog(final ConnectionHandler connectionHandler, final DBConsoleVirtualFile consoleVirtualFile, final DBConsoleType consoleType) {
-        ConditionalLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             CreateRenameConsoleDialog createConsoleDialog = consoleVirtualFile == null ?
                     new CreateRenameConsoleDialog(connectionHandler, consoleType) :
                     new CreateRenameConsoleDialog(connectionHandler, consoleVirtualFile);

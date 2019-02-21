@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.ui.CreateRenameSessionDialog;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -50,7 +49,7 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
 
 
     private void showCreateRenameSessionDialog(ConnectionHandler connectionHandler, DatabaseSession session, @Nullable RunnableTask<DatabaseSession> callback) {
-        ConditionalLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+        SimpleLaterInvocator.invokeNonModal(() -> {
             CreateRenameSessionDialog dialog = session == null ?
                     new CreateRenameSessionDialog(connectionHandler) :
                     new CreateRenameSessionDialog(connectionHandler, session);
