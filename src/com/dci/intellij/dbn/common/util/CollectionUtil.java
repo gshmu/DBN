@@ -76,9 +76,7 @@ public class CollectionUtil {
 
     public static <T> void forEach(@Nullable Iterable<T> iterable, @NotNull Consumer<? super T> action) {
         if (iterable != null) {
-            for (T element : iterable) {
-                action.accept(element);
-            }
+            iterable.forEach(action);
         }
     }
 

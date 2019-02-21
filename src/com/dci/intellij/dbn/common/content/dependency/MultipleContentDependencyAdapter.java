@@ -34,15 +34,6 @@ public class MultipleContentDependencyAdapter extends BasicDependencyAdapter imp
     }
 
     @Override
-    public void markSourcesDirty() {
-        if (dependencies != null) {
-            for (ContentDependency dependency : dependencies) {
-                dependency.markSourcesDirty();
-            }
-        }
-    }
-
-    @Override
     public boolean isDirty() {
         if (dependencies != null) {
             for (ContentDependency dependency : dependencies) {
@@ -67,11 +58,11 @@ public class MultipleContentDependencyAdapter extends BasicDependencyAdapter imp
     }
 
     @Override
-    public void beforeLoad() {
-        // assuming all dependencies are hard, load them first
-        if (dependencies != null) {
+    public void beforeLoad(boolean force) {
+        if (force && dependencies != null) {
             for (ContentDependency dependency : dependencies) {
-                dependency.getSourceContent().load(false);
+                DynamicContent sourceContent = dependency.getSourceContent();
+                sourceContent.refresh();
             }
         }
     }
@@ -83,16 +74,6 @@ public class MultipleContentDependencyAdapter extends BasicDependencyAdapter imp
                 dependency.reset();
             }
         }
-    }
-
-    @Override
-    public void beforeReload(DynamicContent dynamicContent) {
-        beforeLoad();
-    }
-
-    @Override
-    public void afterReload(DynamicContent dynamicContent) {
-        afterLoad();
     }
 
     @Override

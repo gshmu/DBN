@@ -154,11 +154,6 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
         }
     }
 
-    @Override
-    public void reloadContent(DynamicContent<T> dynamicContent) throws DynamicContentLoadException, InterruptedException {
-        loadContent(dynamicContent, true);
-    }
-
     public class LoaderCache {
         private String name;
         private DBObject object;

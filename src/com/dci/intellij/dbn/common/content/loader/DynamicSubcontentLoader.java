@@ -38,7 +38,7 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> e
 
         DynamicContent sourceContent = dependencyAdapter.getSourceContent();
         DynamicContentLoader<T> alternativeLoader = getAlternativeLoader();
-        if (alternativeLoader == null || dependencyAdapter.isSourceContentReady() || force || BackgroundMonitor.getBackgroundProcessCount() > 10) {
+        if (alternativeLoader == null || dependencyAdapter.isSourceContentReady() || BackgroundMonitor.getBackgroundProcessCount() > 10) {
             //load from sub-content
             boolean matchedOnce = false;
             List<T> list = null;
@@ -77,10 +77,5 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> e
     @org.jetbrains.annotations.Nullable
     protected DynamicContentLoader<T> createAlternativeLoader() {
         return null;
-    }
-
-    @Override
-    public void reloadContent(DynamicContent<T> dynamicContent) throws DynamicContentLoadException, InterruptedException {
-        loadContent(dynamicContent, true);
     }
 }

@@ -25,12 +25,7 @@ public class VoidDynamicContent implements DynamicContent{
     }
 
     @Override
-    public boolean shouldLoad(boolean force) {
-        return false;
-    }
-
-    @Override
-    public void load(boolean force) {
+    public void load() {
 
     }
 

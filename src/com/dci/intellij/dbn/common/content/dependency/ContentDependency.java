@@ -17,8 +17,4 @@ public abstract class ContentDependency implements Disposable {
     public boolean isDirty() {
         return changeTimestamp != getSourceContent().getChangeTimestamp();
     }
-
-    public void markSourcesDirty() {
-        getSourceContent().markDirty();
-    }
 }

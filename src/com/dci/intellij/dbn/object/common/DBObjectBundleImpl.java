@@ -92,17 +92,8 @@ import java.util.Set;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
-import static com.dci.intellij.dbn.object.common.DBObjectRelationType.ROLE_PRIVILEGE;
-import static com.dci.intellij.dbn.object.common.DBObjectRelationType.ROLE_ROLE;
-import static com.dci.intellij.dbn.object.common.DBObjectRelationType.USER_PRIVILEGE;
-import static com.dci.intellij.dbn.object.common.DBObjectRelationType.USER_ROLE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.CHARSET;
-import static com.dci.intellij.dbn.object.common.DBObjectType.OBJECT_PRIVILEGE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.ROLE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.SCHEMA;
-import static com.dci.intellij.dbn.object.common.DBObjectType.SYNONYM;
-import static com.dci.intellij.dbn.object.common.DBObjectType.SYSTEM_PRIVILEGE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.USER;
+import static com.dci.intellij.dbn.object.common.DBObjectRelationType.*;
+import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 
 public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport {
     private ConnectionHandlerRef connectionHandlerRef;
@@ -191,37 +182,16 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         @Override
         public void dataDefinitionChanged(DBSchema schema, DBObjectType objectType) {
             if (schema.getConnectionHandler() == getConnectionHandler()) {
-                DBObjectList childObjectList = schema.getChildObjectList(objectType);
-                if (childObjectList != null && childObjectList.isLoaded()) {
-                    childObjectList.refresh();
-                }
-
-                Set<DBObjectType> childObjectTypes = objectType.getChildren();
-                for (DBObjectType childObjectType : childObjectTypes) {
-                    DBObjectListContainer childObjects = schema.getChildObjects();
-                    if (childObjects != null) {
-                        childObjectList = childObjects.getInternalObjectList(childObjectType);
-                        if (childObjectList != null && childObjectList.isLoaded()) {
-                            childObjectList.refresh();
-                        }
-                    }
-                }
+                schema.refresh(objectType);
+                objectType.getChildren().forEach(
+                        childObjectType -> schema.refresh(childObjectType));
             }
         }
 
         @Override
         public void dataDefinitionChanged(@NotNull DBSchemaObject schemaObject) {
             if (schemaObject.getConnectionHandler() == getConnectionHandler()) {
-                DBObjectListContainer childObjects = schemaObject.getChildObjects();
-                if (childObjects != null) {
-                    CollectionUtil.forEach(
-                            childObjects.getObjectLists(),
-                            objectList -> {
-                                if (objectList.isLoaded()) {
-                                    objectList.refresh();
-                                }
-                            });
-                }
+                schemaObject.refresh();
             }
         }
     };
