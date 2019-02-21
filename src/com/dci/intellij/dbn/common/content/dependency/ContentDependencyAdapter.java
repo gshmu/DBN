@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.content.dependency;
 
-import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.openapi.Disposable;
 
@@ -14,24 +13,19 @@ public interface ContentDependencyAdapter extends Disposable {
      */
     boolean canLoad(ConnectionHandler connectionHandler);
 
-    void markSourcesDirty();
-
     boolean isDirty();
 
     /**
      * This operation is triggered before loading the dynamic content is started.
      * It can be implemented by the adapters to load non-weak dependencies for example.
+     * @param force load flavor
      */
-    void beforeLoad();
+    default void beforeLoad(boolean force) {};
 
     /**
      * This operation is triggered after the loading of the dynamic content.
      */
-    void afterLoad();
-
-    void beforeReload(DynamicContent dynamicContent);
-
-    void afterReload(DynamicContent dynamicContent);
+    default void afterLoad() {};
 
     boolean isSubContent();
 

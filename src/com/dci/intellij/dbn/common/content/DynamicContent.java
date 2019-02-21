@@ -15,19 +15,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public interface DynamicContent<T extends DynamicContentElement> extends Disposable, Compactable, PropertyHolder<DynamicContentStatus> {
-    /**
-     * Checks if the loading of the content is required.
-     * e.g. after the content is once loaded, it only has to be loaded again if dependencies are dirty.
-     * @param force
-     */
-    boolean shouldLoad(boolean force);
 
     /**
      * Loads the content. It is typically called every time the content is queried.
      * The check shouldLoad() is made before to avoid pointless loads.
-     * @param force
      */
-    void load(boolean force);
+    void load();
 
     /**
      * Rebuilds the content. This method is called when reloading the content

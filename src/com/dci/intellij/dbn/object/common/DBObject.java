@@ -121,6 +121,8 @@ public interface DBObject extends PropertyHolder<DBObjectProperty>, BrowserTreeN
     @NotNull
     DBObjectPsiFacade getPsiFacade();
 
+    void refresh(DBObjectType objectType);
+
     @Override
     default DynamicContentType getDynamicContentType() {
         return getObjectType();
