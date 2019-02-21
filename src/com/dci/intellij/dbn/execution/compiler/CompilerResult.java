@@ -115,7 +115,7 @@ public class CompilerResult implements Disposable {
     public Project getProject() {
         DBSchemaObject object = DBObjectRef.get(objectRef);
         if (object == null) {
-            ConnectionHandler connectionHandler = objectRef.lookupConnectionHandler();
+            ConnectionHandler connectionHandler = objectRef.resolveConnectionHandler();
             if (connectionHandler != null) return connectionHandler.getProject();
         } else {
             return object.getProject();

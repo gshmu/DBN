@@ -62,7 +62,7 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBP
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return Failsafe.get(datasetRef.lookupConnectionHandler());
+        return Failsafe.get(datasetRef.resolveConnectionHandler());
     }
 
     @Nullable
