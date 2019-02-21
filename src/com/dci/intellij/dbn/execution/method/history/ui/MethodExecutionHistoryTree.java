@@ -47,6 +47,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     }
 
     void init(List<MethodExecutionInput> executionInputs, boolean grouped) {
+        MethodExecutionInput selectedExecutionInput = getSelectedExecutionInput();
         MethodExecutionHistoryTreeModel model = grouped ?
                 new MethodExecutionHistoryGroupedTreeModel(executionInputs, debug) :
                 new MethodExecutionHistorySimpleTreeModel(executionInputs, debug);
@@ -54,6 +55,11 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
         setModel(model);
         TreeUtil.expand(this, 4);
         this.grouped = grouped;
+        setSelectedInput(selectedExecutionInput);
+    }
+
+    boolean isGrouped() {
+        return grouped;
     }
 
     void setSelectedInput(MethodExecutionInput executionInput) {
@@ -61,10 +67,6 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
             MethodExecutionHistoryTreeModel model = getModel();
             getSelectionModel().setSelectionPath(model.getTreePath(executionInput));
         }
-    }
-
-    boolean isGrouped() {
-        return grouped;
     }
 
     @Nullable
