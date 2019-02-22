@@ -57,7 +57,7 @@ public class DBNConnection extends DBNConnectionBase {
                     (status, value) -> DBNConnection.super.set(status, value));
 
     private ResourceStatusAdapter<DBNConnection> invalid =
-            new ResourceStatusAdapter<DBNConnection>(this,
+            new ResourceStatusAdapterImpl<DBNConnection>(this,
                     ResourceStatus.INVALID,
                     ResourceStatus.INVALID_SETTING,
                     ResourceStatus.INVALID_CHECKING,
@@ -74,7 +74,7 @@ public class DBNConnection extends DBNConnectionBase {
             };
 
     private ResourceStatusAdapter<DBNConnection> autoCommit =
-            new ResourceStatusAdapter<DBNConnection>(this,
+            new ResourceStatusAdapterImpl<DBNConnection>(this,
                     ResourceStatus.AUTO_COMMIT,
                     ResourceStatus.AUTO_COMMIT_SETTING,
                     ResourceStatus.AUTO_COMMIT_CHECKING,
@@ -232,11 +232,7 @@ public class DBNConnection extends DBNConnectionBase {
      ********************************************************************/
     @Override
     public void setAutoCommit(boolean autoCommit) throws SQLException {
-        try {
-            this.autoCommit.change(autoCommit);
-        } catch (SQLException e) {
-            throw e;
-        }
+        this.autoCommit.set(autoCommit);
     }
 
     @Override
@@ -248,11 +244,7 @@ public class DBNConnection extends DBNConnectionBase {
     public void commit() throws SQLException {
         updateLastAccess();
 
-        try {
-            super.commit();
-        } catch (SQLException e) {
-            throw e;
-        }
+        super.commit();
         resetDataChanges();
         notifyStatusChange();
     }
@@ -261,11 +253,7 @@ public class DBNConnection extends DBNConnectionBase {
     public void rollback() throws SQLException {
         updateLastAccess();
 
-        try {
-            super.rollback();
-        } catch (SQLException e) {
-            throw e;
-        }
+        super.rollback();
         resetDataChanges();
         notifyStatusChange();
     }
@@ -274,11 +262,7 @@ public class DBNConnection extends DBNConnectionBase {
     public void close() throws SQLException {
         updateLastAccess();
 
-        try {
-            super.close();
-        } catch (SQLException e) {
-            throw e;
-        }
+        super.close();
         resetDataChanges();
         notifyStatusChange();
     }

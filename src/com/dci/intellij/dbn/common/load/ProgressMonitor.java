@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.load;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.thread.BasicCallable;
-import com.dci.intellij.dbn.common.thread.BasicRunnable;
+import com.dci.intellij.dbn.common.routine.BasicCallable;
+import com.dci.intellij.dbn.common.routine.BasicRunnable;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import org.jetbrains.annotations.NotNull;

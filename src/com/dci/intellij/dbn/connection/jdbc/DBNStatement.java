@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.thread.BasicCallable;
+import com.dci.intellij.dbn.common.routine.BasicCallable;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.diagnostic.Logger;

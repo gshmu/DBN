@@ -11,12 +11,13 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
     private static final Logger LOGGER = LoggerFactory.createLogger();
     private long initTimestamp = System.currentTimeMillis();
     protected T inner;
+    private ResourceType type;
 
     private ResourceStatusAdapter<Closeable> closed;
     private ResourceStatusAdapter<Cancellable> cancelled;
 
     protected Traceable traceable = new Traceable();
-    private ResourceType type;
+
 
     DBNResource(T inner, ResourceType type) {
         if (inner instanceof DBNResource) {
@@ -28,7 +29,7 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
 
         if (this instanceof Closeable) {
             final Closeable closeable = (Closeable) this;
-            closed = new ResourceStatusAdapter<Closeable>(closeable,
+            closed = new ResourceStatusAdapterImpl<Closeable>(closeable,
                     ResourceStatus.CLOSED,
                     ResourceStatus.CLOSED_SETTING,
                     ResourceStatus.CLOSED_CHECKING,
@@ -48,7 +49,7 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
 
         if (this instanceof Cancellable) {
             final Cancellable cancellable = (Cancellable) this;
-            cancelled = new ResourceStatusAdapter<Cancellable>(cancellable,
+            cancelled = new ResourceStatusAdapterImpl<Cancellable>(cancellable,
                     ResourceStatus.CANCELLED,
                     ResourceStatus.CANCELLED_SETTING,
                     ResourceStatus.CANCELLED_CHECKING,
@@ -87,7 +88,7 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
     }
 
     public void close() throws SQLException {
-        closed.change(true);
+        closed.set(true);
     }
 
     public boolean isCancelled() {
@@ -95,7 +96,7 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
     }
 
     public void cancel() throws SQLException {
-        cancelled.change(true);
+        cancelled.set(true);
     }
 
     public T getInner() {
