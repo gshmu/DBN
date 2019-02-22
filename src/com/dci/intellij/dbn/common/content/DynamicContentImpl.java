@@ -26,13 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.CHANGING;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DIRTY;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DISPOSED;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADED;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.MASTER;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
 import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> extends PropertyHolderImpl<DynamicContentStatus> implements DynamicContent<T> {
@@ -245,7 +239,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
             loader.loadContent(this, force);
 
             // refresh inner elements
-            elements.forEach(t -> t.refresh());
+            if (force) elements.forEach(t -> t.refresh());
         } catch (DynamicContentLoadException e) {
             set(DIRTY, !e.isModelException());
         }
