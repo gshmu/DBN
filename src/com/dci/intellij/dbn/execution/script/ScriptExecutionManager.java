@@ -5,10 +5,10 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleCallback;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -270,7 +270,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         }
     }
 
-    public void createCmdLineInterface(@NotNull DatabaseType databaseType, @Nullable Set<String> bannedNames, SimpleCallback<CmdLineInterface> callback) {
+    public void createCmdLineInterface(@NotNull DatabaseType databaseType, @Nullable Set<String> bannedNames, ParametricRunnable.Unsafe<CmdLineInterface> callback) {
         boolean updateSettings = false;
         VirtualFile virtualFile = selectCmdLineExecutable(databaseType, null);
         if (virtualFile != null) {
@@ -285,7 +285,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
             CmdLineInterfaceInputDialog dialog = new CmdLineInterfaceInputDialog(project, cmdLineInterface, bannedNames);
             dialog.show();
             if (dialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                callback.start(cmdLineInterface);
+                callback.run(cmdLineInterface);
                 if (updateSettings) {
                     CmdLineInterfaceBundle commandLineInterfaces = executionEngineSettings.getScriptExecutionSettings().getCommandLineInterfaces();
                     commandLineInterfaces.add(cmdLineInterface);

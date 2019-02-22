@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.message;
 
+import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 
 public abstract class MessageCallback extends SimpleTask<Integer> {
@@ -14,17 +15,12 @@ public abstract class MessageCallback extends SimpleTask<Integer> {
         return executeOption == null || executeOption.equals(getData());
     }
 
-    public static MessageCallback create(Integer executeOption, Runnable runnable) {
+    public static MessageCallback create(Integer executeOption, ParametricRunnable.Unsafe<Integer> runnable) {
         return new MessageCallback(executeOption) {
             @Override
             protected void execute() {
                 runnable.run(getData());
             }
         };
-    }
-
-    @FunctionalInterface
-    public interface Runnable {
-        void run(Integer option);
     }
 }
