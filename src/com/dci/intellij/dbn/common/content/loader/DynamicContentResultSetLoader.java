@@ -34,11 +34,11 @@ import java.util.UUID;
 public abstract class DynamicContentResultSetLoader<T extends DynamicContentElement> extends DynamicContentLoaderImpl<T> implements DynamicContentLoader<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    public DynamicContentResultSetLoader(@Nullable DynamicContentType parentContentType, @NotNull DynamicContentType contentType) {
-        this(parentContentType, contentType, true);
-    }
-    public DynamicContentResultSetLoader(@Nullable DynamicContentType parentContentType, @NotNull DynamicContentType contentType, boolean register) {
+    private boolean master;
+
+    public DynamicContentResultSetLoader(@Nullable DynamicContentType parentContentType, @NotNull DynamicContentType contentType, boolean register, boolean master) {
         super(parentContentType, contentType, register);
+        this.master = master;
     }
 
     public abstract ResultSet createResultSet(DynamicContent<T> dynamicContent, DBNConnection connection) throws SQLException;
@@ -130,8 +130,9 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
             }
             dynamicContent.checkDisposed();
             dynamicContent.setElements(list);
-            postLoadContent(dynamicContent, debugInfo);
+            dynamicContent.set(DynamicContentStatus.MASTER, master);
 
+            postLoadContent(dynamicContent, debugInfo);
         } catch (Exception e) {
             if (e instanceof InterruptedException) throw (InterruptedException) e;
             if (e instanceof ProcessCanceledException) throw (ProcessCanceledException) e;

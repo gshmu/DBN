@@ -32,6 +32,7 @@ import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DISPOSED;
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADED;
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.MASTER;
 import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> extends PropertyHolderImpl<DynamicContentStatus> implements DynamicContent<T> {
@@ -288,7 +289,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
         if (oldElements.size() != 0 || elements.size() != 0 ){
             notifyChangeListeners();
         }
-        if (!dependencyAdapter.isSubContent() && oldElements.size() > 0 ) {
+        if (is(MASTER)) {
             DisposerUtil.disposeInBackground(oldElements);
         }
     }

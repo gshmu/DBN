@@ -76,7 +76,7 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
     }
 
     static {
-        new DynamicContentResultSetLoader(PACKAGE_TYPE, TYPE_ATTRIBUTE) {
+        new DynamicContentResultSetLoader(PACKAGE_TYPE, TYPE_ATTRIBUTE, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
