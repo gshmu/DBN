@@ -32,7 +32,6 @@ import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DISPOSED;
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADED;
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING_IN_BACKGROUND;
 import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> extends PropertyHolderImpl<DynamicContentStatus> implements DynamicContent<T> {
@@ -109,10 +108,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
         return is(LOADING);
     }
 
-    public boolean isLoadingInBackground() {
-        return is(LOADING_IN_BACKGROUND);
-    }
-
     public boolean isIndexed() {
         return is(INDEXED);
     }
@@ -141,7 +136,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     }
 
     private boolean shouldLoad() {
-        if (isDisposed() || isLoading() || isLoadingInBackground()) {
+        if (isDisposed() || isLoading()) {
             return false;
         }
 
@@ -158,11 +153,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     }
 
     private boolean shouldReload() {
-        return !isDisposed() && isLoaded() && !isLoading() && !isLoadingInBackground();
-    }
-
-    private boolean shouldRefresh() {
-        return !isDisposed() && /*loaded && */!isLoading();
+        return !isDisposed() && isLoaded() && !isLoading();
     }
 
     @Override
@@ -212,7 +203,8 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
         }
     }
 
-    private void ensure() {
+    @Override
+    public void ensure() {
         if (shouldLoad()) {
             synchronized (this) {
                 if (shouldLoad()) {

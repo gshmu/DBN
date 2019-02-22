@@ -30,6 +30,11 @@ public class VoidDynamicContent implements DynamicContent{
     }
 
     @Override
+    public void ensure() {
+
+    }
+
+    @Override
     public void loadInBackground() {
 
     }
