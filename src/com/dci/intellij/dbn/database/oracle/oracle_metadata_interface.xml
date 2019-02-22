@@ -102,13 +102,15 @@
     </statement-execution-processor>
     <statement-execution-processor id="schemas" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
+            with obj as (select distinct o.OWNER from [PREFIX]_OBJECTS o)
             select
                 u.USERNAME as SCHEMA_NAME,
                 'N' as IS_PUBLIC,
                 decode(u.USERNAME, 'SYS', 'Y', 'SYSTEM', 'Y', 'N') as IS_SYSTEM,
-                case when (select count(1) from [PREFIX]_OBJECTS o where o.OWNER = u.USERNAME and ROWNUM = 1) > 0 then 'N' else 'Y' end as IS_EMPTY
-            from [PREFIX]_USERS u
-            union (
+                case when obj.OWNER is null then 'Y' else 'N' end as IS_EMPTY
+            from [PREFIX]_USERS u, obj
+            where obj.OWNER (+) = u.USERNAME
+            union all(
             select
                 'PUBLIC',
                 'Y' as IS_PUBLIC,
