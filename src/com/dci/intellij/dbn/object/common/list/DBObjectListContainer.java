@@ -324,10 +324,10 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
                             DBObjectType.ANY,
                             DBObjectType.OUTGOING_DEPENDENCY,
                             DBObjectType.INCOMING_DEPENDENCY)) {
-                        objectList.load();
+                        objectList.ensure();
                     }
                 } else {
-                    objectList.load();
+                    objectList.ensure();
                 }
                 checkDisposed();
             }
