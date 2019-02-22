@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
-import com.dci.intellij.dbn.common.thread.ReadAction;
+import com.dci.intellij.dbn.common.routine.ReadAction;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -54,13 +54,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.CONSOLES;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.DATASET_FILTERS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.OBJECTS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.OBJECT_CONTENTS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.SESSION_BROWSERS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.SESSION_STATEMENTS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.values;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.*;
 
 public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysicalFileSystem, */ApplicationComponent {
     public static final String PS = "/";
@@ -247,7 +241,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         if (databaseFile == null || databaseFile.isDisposed()){
             databaseFile = filesCache.get(objectRef);
             if (databaseFile == null || databaseFile.isDisposed()){
-                databaseFile = ReadAction.invoke(false, () -> new DBEditableObjectVirtualFile(project, objectRef));
+                databaseFile = ReadAction.invoke(() -> new DBEditableObjectVirtualFile(project, objectRef));
                 filesCache.put(objectRef, databaseFile);
             }
         }

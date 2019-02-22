@@ -1,9 +1,11 @@
-package com.dci.intellij.dbn.common.thread;
+package com.dci.intellij.dbn.common.routine;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 
-public abstract class WriteAction {
+public abstract class WriteAction implements BasicRunnable.Unsafe{
     private WriteAction() {}
 
     void start() {
@@ -15,14 +17,11 @@ public abstract class WriteAction {
         });
     }
 
-    abstract void run();
-
-
     public static void invoke(Runnable runnable) {
         new WriteAction() {
             @Override
-            void run() {
-                runnable.run();
+            public void run() {
+                Failsafe.lenient(() -> runnable.run());
             }
         }.start();
     }

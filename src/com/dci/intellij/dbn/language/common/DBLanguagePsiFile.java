@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
-import com.dci.intellij.dbn.common.thread.ReadAction;
+import com.dci.intellij.dbn.common.routine.ReadAction;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -333,7 +333,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
             return DBObjectPsiFacade.getPsiDirectory(parentObject);
 
         }
-        return ReadAction.invoke(true, DBLanguagePsiFile.super::getParent);
+        return ReadAction.invoke(() -> DBLanguagePsiFile.super.getParent());
     }
 
     @Override
@@ -341,7 +341,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         VirtualFile virtualFile = getViewProvider().getVirtualFile();
         return virtualFile.getFileSystem() instanceof DatabaseFileSystem ?
                 virtualFile.isValid() :
-                ReadAction.invoke(true, () -> super.isValid());
+                ReadAction.invoke(() -> super.isValid());
     }
 
     public String getParseRootId() {
