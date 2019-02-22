@@ -4,5 +4,6 @@ package com.dci.intellij.dbn.common.routine;
 public interface ParametricCallable<P, R, E extends Throwable> {
     R call(P parameter);
 
+    @FunctionalInterface
     interface Unsafe<P, R> extends ParametricCallable<P, R, RuntimeException> {}
 }
