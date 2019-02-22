@@ -202,7 +202,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
 
             @Override
             public DynamicContentLoader<DBNestedTable> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBNestedTable>(TABLE, NESTED_TABLE, false) {
+                return new DynamicContentResultSetLoader<DBNestedTable>(TABLE, NESTED_TABLE, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBNestedTable> dynamicContent, DBNConnection connection) throws SQLException {

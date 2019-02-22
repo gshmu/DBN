@@ -225,7 +225,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
 
             @Override
             public DynamicContentLoader<DBTypeAttribute> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBTypeAttribute>(TYPE, TYPE_ATTRIBUTE, false) {
+                return new DynamicContentResultSetLoader<DBTypeAttribute>(TYPE, TYPE_ATTRIBUTE, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBTypeAttribute> dynamicContent, DBNConnection connection) throws SQLException {
@@ -254,7 +254,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
 
             @Override
             public DynamicContentLoader<DBTypeFunction> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBTypeFunction>(TYPE, TYPE_FUNCTION, false) {
+                return new DynamicContentResultSetLoader<DBTypeFunction>(TYPE, TYPE_FUNCTION, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBTypeFunction> dynamicContent, DBNConnection connection) throws SQLException {
@@ -282,7 +282,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
 
             @Override
             public DynamicContentLoader<DBTypeProcedure> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBTypeProcedure>(TYPE, TYPE_PROCEDURE, false) {
+                return new DynamicContentResultSetLoader<DBTypeProcedure>(TYPE, TYPE_PROCEDURE, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBTypeProcedure> dynamicContent, DBNConnection connection) throws SQLException {

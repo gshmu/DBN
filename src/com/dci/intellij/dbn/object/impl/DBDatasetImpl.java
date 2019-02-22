@@ -138,7 +138,7 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
 
             @Override
             public DynamicContentLoader<DBColumn> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBColumn>(DATASET, COLUMN, false) {
+                return new DynamicContentResultSetLoader<DBColumn>(DATASET, COLUMN, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBColumn> dynamicContent, DBNConnection connection) throws SQLException {
@@ -167,7 +167,7 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
 
             @Override
             public DynamicContentLoader<DBConstraint> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBConstraint>(DATASET, CONSTRAINT, false) {
+                return new DynamicContentResultSetLoader<DBConstraint>(DATASET, CONSTRAINT, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBConstraint> dynamicContent, DBNConnection connection) throws SQLException {
@@ -196,7 +196,7 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
 
             @Override
             public DynamicContentLoader<DBDatasetTrigger> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBDatasetTrigger>(DATASET, DATASET_TRIGGER, false) {
+                return new DynamicContentResultSetLoader<DBDatasetTrigger>(DATASET, DATASET_TRIGGER, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBDatasetTrigger> dynamicContent, DBNConnection connection) throws SQLException {
@@ -225,7 +225,7 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
 
             @Override
             public DynamicContentLoader<DBIndex> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBIndex>(DATASET, INDEX, false) {
+                return new DynamicContentResultSetLoader<DBIndex>(DATASET, INDEX, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
@@ -253,7 +253,7 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
 
             @Override
             public DynamicContentLoader createAlternativeLoader() {
-                return new DynamicContentResultSetLoader(DATASET, INDEX_COLUMN, false) {
+                return new DynamicContentResultSetLoader(DATASET, INDEX_COLUMN, false, false) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
@@ -292,7 +292,7 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
 
             @Override
             public DynamicContentLoader createAlternativeLoader() {
-                return new DynamicContentResultSetLoader(DATASET, CONSTRAINT_COLUMN, false) {
+                return new DynamicContentResultSetLoader(DATASET, CONSTRAINT_COLUMN, false, false) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {

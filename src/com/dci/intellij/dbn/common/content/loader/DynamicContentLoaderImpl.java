@@ -24,17 +24,11 @@ public abstract class DynamicContentLoaderImpl<T extends DynamicContentElement> 
         }
     };
 
-    private DynamicContentType parentContentType;
-    private DynamicContentType contentType;
-
     public DynamicContentLoaderImpl(@Nullable DynamicContentType parentContentType, @NotNull DynamicContentType contentType, boolean register) {
-        this.parentContentType = parentContentType;
-        this.contentType = contentType;
         if (register) {
             register(parentContentType, contentType, this);
         }
     }
-
 
     private static void register(
             @Nullable DynamicContentType parentContentType,
