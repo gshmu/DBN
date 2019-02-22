@@ -23,8 +23,8 @@ public class ReloadObjectsAction extends AnAction {
         String listName = objectList.getName();
         boolean loaded = objectList.isLoaded();
         ConnectionAction.invoke(
-                instructions("Reloading " + objectList.getContentDescription() + "."),
                 loaded ? "reloading the " + listName : "loading the " + listName,
+                instructions("Reloading " + objectList.getContentDescription() + "."),
                 objectList,
                 action -> {
                     objectList.reload();

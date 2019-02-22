@@ -101,8 +101,9 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
     public void promptExecutionDialog(MethodExecutionInput executionInput, @NotNull DBDebuggerType debuggerType, RunnableTask callback) {
         ConnectionAction.invoke(
+                "the method execution",
                 instructions("Loading method details"),
-                "the method execution", executionInput,
+                executionInput,
                 action -> {
                     Project project = getProject();
                     ConnectionHandler connectionHandler = action.getConnectionHandler();

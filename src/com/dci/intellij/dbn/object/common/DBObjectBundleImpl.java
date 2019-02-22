@@ -92,8 +92,17 @@ import java.util.Set;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
-import static com.dci.intellij.dbn.object.common.DBObjectRelationType.*;
-import static com.dci.intellij.dbn.object.common.DBObjectType.*;
+import static com.dci.intellij.dbn.object.common.DBObjectRelationType.ROLE_PRIVILEGE;
+import static com.dci.intellij.dbn.object.common.DBObjectRelationType.ROLE_ROLE;
+import static com.dci.intellij.dbn.object.common.DBObjectRelationType.USER_PRIVILEGE;
+import static com.dci.intellij.dbn.object.common.DBObjectRelationType.USER_ROLE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.CHARSET;
+import static com.dci.intellij.dbn.object.common.DBObjectType.OBJECT_PRIVILEGE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.ROLE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.SCHEMA;
+import static com.dci.intellij.dbn.object.common.DBObjectType.SYNONYM;
+import static com.dci.intellij.dbn.object.common.DBObjectType.SYSTEM_PRIVILEGE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.USER;
 
 public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport {
     private ConnectionHandlerRef connectionHandlerRef;
@@ -141,7 +150,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
         objectLists = new DBObjectListContainer(this);
         users = objectLists.createObjectList(USER, this, INDEXED);
-        schemas = objectLists.createObjectList(SCHEMA, this, new DBObjectList[]{users}, INDEXED);
+        schemas = objectLists.createObjectList(SCHEMA, this, INDEXED);
         roles = objectLists.createObjectList(ROLE, this, INDEXED);
         systemPrivileges = objectLists.createObjectList(SYSTEM_PRIVILEGE, this, INDEXED);
         charsets = objectLists.createObjectList(CHARSET, this, INDEXED);
@@ -781,7 +790,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         new DynamicContentResultSetLoader<DBSchema>(null, SCHEMA) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBSchema> dynamicContent, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                 return metadataInterface.loadSchemas(connection);
             }
 
@@ -794,7 +803,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         new DynamicContentResultSetLoader<DBUser>(null, USER) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBUser> dynamicContent, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                 return metadataInterface.loadUsers(connection);
             }
 
@@ -807,7 +816,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         new DynamicContentResultSetLoader<DBRole>(null, ROLE) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBRole> dynamicContent, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                 return metadataInterface.loadRoles(connection);
             }
 
@@ -820,7 +829,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         new DynamicContentResultSetLoader<DBSystemPrivilege>(null, SYSTEM_PRIVILEGE) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBSystemPrivilege> dynamicContent, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                 return metadataInterface.loadSystemPrivileges(connection);
             }
 
@@ -833,7 +842,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         new DynamicContentResultSetLoader<DBObjectPrivilege>(null, OBJECT_PRIVILEGE) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBObjectPrivilege> dynamicContent, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                 return metadataInterface.loadObjectPrivileges(connection);
             }
 
@@ -846,7 +855,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         new DynamicContentResultSetLoader<DBCharset>(null, CHARSET) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBCharset> dynamicContent, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                 return metadataInterface.loadCharsets(connection);
             }
 
@@ -859,7 +868,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         new DynamicContentResultSetLoader(null, USER_ROLE) {
             @Override
             public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                 return metadataInterface.loadAllUserRoles(connection);
             }
 
@@ -880,7 +889,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         new DynamicContentResultSetLoader(null, USER_PRIVILEGE) {
             @Override
             public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                 return metadataInterface.loadAllUserPrivileges(connection);
             }
 
@@ -901,7 +910,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         new DynamicContentResultSetLoader(null, ROLE_ROLE) {
             @Override
             public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                 return metadataInterface.loadAllRoleRoles(connection);
             }
 
@@ -922,7 +931,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         new DynamicContentResultSetLoader(null, ROLE_PRIVILEGE) {
             @Override
             public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                 return metadataInterface.loadAllRolePrivileges(connection);
             }
 

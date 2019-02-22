@@ -57,8 +57,8 @@ public class ExplainPlanManager extends AbstractProjectComponent {
         connectionMappingManager.selectConnectionAndSchema(psiFile,
                 ConnectionAction.create(
                         "generating the explain plan",
-                        executable.getFile(),
                         instructions("Extracting explain plan for " + elementDescription, TaskInstruction.CANCELLABLE),
+                        executable.getFile(),
                         action -> {
                             ConnectionHandler connectionHandler = action.getConnectionHandler();
                             SchemaId currentSchema = executable.getFile().getSchemaId();

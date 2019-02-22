@@ -20,8 +20,8 @@ public class ConnectAction extends AbstractConnectionAction {
         connectionHandler.getInstructions().setAllowAutoConnect(true);
 
         ConnectionAction.invoke(
-                instructions("Trying to connect to " + connectionHandler.getName(), TaskInstruction.MANAGED),
                 "connecting to database",
+                instructions("Trying to connect to " + connectionHandler.getName(), TaskInstruction.MANAGED),
                 connectionHandler,
                 action -> ConnectionManager.testConnection(connectionHandler, false, true));
     }

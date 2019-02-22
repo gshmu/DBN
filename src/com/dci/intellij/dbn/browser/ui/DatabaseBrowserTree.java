@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ModalTask;
+import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -114,31 +115,33 @@ public class DatabaseBrowserTree extends DBNTree {
 
     public void scrollToSelectedElement() {
         if (getProject().isOpen() && targetSelection != null) {
-            targetSelection = (BrowserTreeNode) targetSelection.getUndisposedElement();
-            TreePath treePath = DatabaseBrowserUtils.createTreePath(targetSelection);
-            if (treePath != null) {
-                for (Object object : treePath.getPath()) {
-                    BrowserTreeNode treeNode = (BrowserTreeNode) object;
-                    if (treeNode == null || treeNode.isDisposed()) {
-                        targetSelection = null;
-                        return;
-                    }
+            SimpleBackgroundTask.invoke(() -> {
+                targetSelection = (BrowserTreeNode) targetSelection.getUndisposedElement();
+                TreePath treePath = DatabaseBrowserUtils.createTreePath(targetSelection);
+                if (treePath != null) {
+                    for (Object object : treePath.getPath()) {
+                        BrowserTreeNode treeNode = (BrowserTreeNode) object;
+                        if (treeNode == null || treeNode.isDisposed()) {
+                            targetSelection = null;
+                            return;
+                        }
 
 
-                    if (treeNode.equals(targetSelection)) {
-                        break;
+                        if (treeNode.equals(targetSelection)) {
+                            break;
+                        }
+
+                        if (!treeNode.isLeaf() && !treeNode.isTreeStructureLoaded()) {
+                            selectPath(DatabaseBrowserUtils.createTreePath(treeNode));
+                            treeNode.getChildren();
+                            return;
+                        }
                     }
 
-                    if (!treeNode.isLeaf() && !treeNode.isTreeStructureLoaded()) {
-                        selectPath(DatabaseBrowserUtils.createTreePath(treeNode));
-                        treeNode.getChildren();
-                        return;
-                    }
+                    targetSelection = null;
+                    selectPath(treePath);
                 }
-
-                targetSelection = null;
-                selectPath(treePath);
-            }
+            });
         }
     }
 

@@ -89,8 +89,9 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     public void loadSessions(boolean force) {
         if (shouldLoad(force)) {
-            ConnectionAction.invoke("loading the sessions", this,
+            ConnectionAction.invoke("loading the sessions",
                     instructions("Loading sessions", TaskInstruction.BACKGROUNDED),
+                    this,
                     action -> {
                         if (shouldLoad(force)) {
                             try {

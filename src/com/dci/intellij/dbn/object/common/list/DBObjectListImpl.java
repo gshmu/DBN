@@ -327,12 +327,12 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
             return Failsafe.lenient(Collections.emptyList(), () -> {
                 boolean scroll = !isTouched();
                 if (!isLoaded()) {
-                    loadInBackground(false);
+                    loadInBackground();
                     return elements;
                 }
 
                 if (elements.size() > 0 && elements.get(0).isDisposed()) {
-                    loadInBackground(false);
+                    loadInBackground();
                     return elements;
                 }
                 if (scroll) {

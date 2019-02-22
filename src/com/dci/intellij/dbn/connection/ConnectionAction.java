@@ -199,35 +199,36 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     }
 
     public static void invoke(
-            TaskInstructions taskInstructions, String description,
+            String description,
+            TaskInstructions taskInstructions,
             ConnectionProvider connectionProvider,
             ParametricRunnable<ConnectionAction> runnable) {
-        create(description, connectionProvider, taskInstructions, runnable, null, null).start();
+        create(description, taskInstructions, connectionProvider, runnable, null, null).start();
     }
 
     public static ConnectionAction create(
             String description,
-            ConnectionProvider connectionProvider,
             TaskInstructions taskInstructions,
+            ConnectionProvider connectionProvider,
             ParametricRunnable<ConnectionAction> action) {
-        return create(description, connectionProvider, taskInstructions, action, null, null);
+        return create(description, taskInstructions, connectionProvider, action, null, null);
     }
 
     public static void invoke(
             String description,
-            ConnectionProvider connectionProvider,
             TaskInstructions taskInstructions,
+            ConnectionProvider connectionProvider,
             ParametricRunnable<ConnectionAction> action,
             ParametricRunnable<ConnectionAction> cancel,
             Callable<Boolean> canExecute) {
 
-        create(description, connectionProvider, taskInstructions, action, cancel, canExecute).start();
+        create(description, taskInstructions, connectionProvider, action, cancel, canExecute).start();
     }
 
     public static ConnectionAction create(
             String description,
-            ConnectionProvider connectionProvider,
             TaskInstructions taskInstructions,
+            ConnectionProvider connectionProvider,
             ParametricRunnable<ConnectionAction> action,
             ParametricRunnable<ConnectionAction> cancel,
             Callable<Boolean> canExecute) {
