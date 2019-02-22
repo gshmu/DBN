@@ -111,7 +111,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
         });
     }
 
-    public static <T> BackgroundTask<T> create(@Nullable Project project, TaskInstructions instructions, BackgroundRunnable<T> runnable) {
+    public static <T> BackgroundTask<T> create(@Nullable Project project, TaskInstructions instructions, BackgroundRunnable.Unsafe<T> runnable) {
         return new BackgroundTask<T>(project, instructions) {
             @Override
             protected void execute(@NotNull ProgressIndicator progressIndicator) {
@@ -119,7 +119,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
             }
         };
     }
-    public static <T> void invoke(@Nullable Project project, TaskInstructions instructions, BackgroundRunnable<T> runnable) {
+    public static <T> void invoke(@Nullable Project project, TaskInstructions instructions, BackgroundRunnable.Unsafe<T> runnable) {
         create(project, instructions, runnable).start();
     }
 }
