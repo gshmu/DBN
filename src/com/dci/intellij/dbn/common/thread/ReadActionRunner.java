@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.thread;
 
+import com.dci.intellij.dbn.common.routine.BasicCallable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Computable;
@@ -24,7 +25,7 @@ public abstract class ReadActionRunner<T> {
 
     protected abstract T run();
 
-    public static <T> T invoke(boolean conditional, Callable<T> callable) {
+    public static <T> T invoke(boolean conditional, BasicCallable.Unsafe<T> callable) {
         return new ReadActionRunner<T>(conditional) {
             @Override
             protected T run() {
@@ -32,10 +33,5 @@ public abstract class ReadActionRunner<T> {
             }
 
         }.start();
-    }
-
-    @FunctionalInterface
-    public interface Callable<V> {
-        V call();
     }
 }

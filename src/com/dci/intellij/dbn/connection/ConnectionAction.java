@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageCallback;
+import com.dci.intellij.dbn.common.routine.ParametricCallable;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.BackgroundMonitor;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
@@ -219,7 +220,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             ConnectionProvider connectionProvider,
             ParametricRunnable.Unsafe<ConnectionAction> action,
             ParametricRunnable.Unsafe<ConnectionAction> cancel,
-            Callable<Boolean> canExecute) {
+            ParametricCallable.Unsafe<ConnectionAction, Boolean> canExecute) {
 
         create(description, taskInstructions, connectionProvider, action, cancel, canExecute).start();
     }
@@ -230,7 +231,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             ConnectionProvider connectionProvider,
             ParametricRunnable.Unsafe<ConnectionAction> action,
             ParametricRunnable.Unsafe<ConnectionAction> cancel,
-            Callable<Boolean> canExecute) {
+            ParametricCallable.Unsafe<ConnectionAction, Boolean> canExecute) {
 
         return new ConnectionAction(description, connectionProvider, taskInstructions) {
             @Override
@@ -255,13 +256,5 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
                 }
             }
         };
-    }
-    @FunctionalInterface
-    public interface Runnable {
-        void run(ConnectionAction action);
-    }
-
-    public interface Callable<V> {
-        V call(ConnectionAction action);
     }
 }
