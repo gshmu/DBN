@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiEl
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.thread.ReadAction;
+import com.dci.intellij.dbn.common.routine.ReadAction;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -245,7 +245,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         if (ApplicationManager.getApplication().isReadAccessAllowed()) {
             return super.getText();
         }
-        return ReadAction.invoke(false, BasePsiElement.super::getText);
+        return ReadAction.invoke(() -> BasePsiElement.super.getText());
     }
 
 
