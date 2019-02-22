@@ -85,8 +85,8 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
     @Override
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
-        DBObjectList objectList = getObjectList();
-        return Failsafe.get(objectList.getProject());
+        Project project = getVirtualFile().getProject();
+        return Failsafe.get(project);
     }
 
     @Override
