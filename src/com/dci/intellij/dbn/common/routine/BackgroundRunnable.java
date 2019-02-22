@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.common.thread;
+package com.dci.intellij.dbn.common.routine;
 
 import com.intellij.openapi.progress.ProgressIndicator;
 
