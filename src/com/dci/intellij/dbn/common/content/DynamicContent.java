@@ -25,6 +25,12 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
     void load();
 
     /**
+     * Ensures the content is loaded
+     * Calls load() in synchronized block
+     */
+    void ensure();
+
+    /**
      * Rebuilds the content. This method is called when reloading the content
      * is triggered deliberately by the user directly or by a ddl change.
      */

@@ -10,7 +10,6 @@ public enum DynamicContentStatus implements Property {
     CONCURRENT,
     LOADED,
     LOADING,
-    LOADING_IN_BACKGROUND,
     CHANGING;
 
     private final int index = Property.idx(this);
