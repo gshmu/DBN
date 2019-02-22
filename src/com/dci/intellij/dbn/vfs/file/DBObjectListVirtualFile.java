@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -94,19 +95,25 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
     @Override
     @Nullable
     public VirtualFile getParent() {
-        GenericDatabaseElement parent = objectList.getParentElement();
-        if (parent instanceof DBObject) {
-            DBObject parentObject = (DBObject) parent;
-            return DBObjectPsiFacade.getPsiDirectory(parentObject).getVirtualFile();
-        }
+        if (Failsafe.check(objectList)) {
+            GenericDatabaseElement parent = objectList.getParentElement();
+            if (parent instanceof DBObject) {
+                DBObject parentObject = (DBObject) parent;
+                return DBObjectPsiFacade.getPsiDirectory(parentObject).getVirtualFile();
+            }
 
-        if (parent instanceof DBObjectBundle) {
-            DBObjectBundle objectBundle = (DBObjectBundle) parent;
-            return objectBundle.getConnectionHandler().getPsiDirectory().getVirtualFile();
-
+            if (parent instanceof DBObjectBundle) {
+                DBObjectBundle objectBundle = (DBObjectBundle) parent;
+                return objectBundle.getConnectionHandler().getPsiDirectory().getVirtualFile();
+            }
         }
 
         return null;
+    }
+
+    @Override
+    public boolean isValid() {
+        return super.isValid() && Failsafe.check(objectList);
     }
 
     @Override

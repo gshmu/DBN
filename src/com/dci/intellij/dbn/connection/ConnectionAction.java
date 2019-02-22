@@ -180,9 +180,8 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     public static void invoke(
             String description,
             ConnectionProvider connectionProvider,
-            Integer executeOption,
             ParametricRunnable<ConnectionAction> action) {
-        create(description, connectionProvider, executeOption, action).start();
+        create(description, connectionProvider, null, action).start();
     }
 
     public static ConnectionAction create(

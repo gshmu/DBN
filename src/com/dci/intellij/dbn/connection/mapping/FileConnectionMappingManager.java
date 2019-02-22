@@ -71,7 +71,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.action.DBNDataKeys.*;
+import static com.dci.intellij.dbn.common.action.DBNDataKeys.CONNECTION_HANDLER;
+import static com.dci.intellij.dbn.common.action.DBNDataKeys.DATABASE_SCHEMA;
+import static com.dci.intellij.dbn.common.action.DBNDataKeys.DATABASE_SESSION;
 import static com.dci.intellij.dbn.common.util.MessageUtil.options;
 import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 
@@ -615,37 +617,38 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
      *             Select schema popup                 *
      ***************************************************/
     public void promptSchemaSelector(final DBLanguagePsiFile psiFile, final RunnableTask callback) throws IncorrectOperationException {
-        ConnectionAction.invoke("selecting the current schema", psiFile, (Integer) null, action -> {
-            DefaultActionGroup actionGroup = new DefaultActionGroup();
+        ConnectionAction.invoke("selecting the current schema", psiFile,
+                action -> {
+                    DefaultActionGroup actionGroup = new DefaultActionGroup();
 
-            ConnectionHandler connectionHandler = action.getConnectionHandler();
-            if (!connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
-                List<DBSchema> schemas = connectionHandler.getObjectBundle().getSchemas();
-                for (DBSchema schema  :schemas) {
-                    SchemaSelectAction schemaAction = new SchemaSelectAction(psiFile, schema, callback);
-                    actionGroup.add(schemaAction);
-                }
-            }
-
-            ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
-                    "Select Schema",
-                    actionGroup,
-                    SimpleDataContext.getProjectContext(null),
-                    JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                    true,
-                    null,
-                    1000,
-                    anAction -> {
-                        if (anAction instanceof SchemaSelectAction) {
-                            SchemaSelectAction schemaSelectAction = (SchemaSelectAction) anAction;
-                            return schemaSelectAction.isSelected();
+                    ConnectionHandler connectionHandler = action.getConnectionHandler();
+                    if (!connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
+                        List<DBSchema> schemas = connectionHandler.getObjectBundle().getSchemas();
+                        for (DBSchema schema : schemas) {
+                            SchemaSelectAction schemaAction = new SchemaSelectAction(psiFile, schema, callback);
+                            actionGroup.add(schemaAction);
                         }
-                        return false;
-                    },
-                    null);
+                    }
 
-            popupBuilder.showCenteredInCurrentWindow(getProject());
-        });
+                    ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
+                            "Select Schema",
+                            actionGroup,
+                            SimpleDataContext.getProjectContext(null),
+                            JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+                            true,
+                            null,
+                            1000,
+                            anAction -> {
+                                if (anAction instanceof SchemaSelectAction) {
+                                    SchemaSelectAction schemaSelectAction = (SchemaSelectAction) anAction;
+                                    return schemaSelectAction.isSelected();
+                                }
+                                return false;
+                            },
+                            null);
+
+                    popupBuilder.showCenteredInCurrentWindow(getProject());
+                });
     }
 
 
@@ -689,40 +692,41 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
      *             Select schema popup                 *
      ***************************************************/
     public void promptSessionSelector(final DBLanguagePsiFile psiFile, final RunnableTask callback) throws IncorrectOperationException {
-        ConnectionAction.invoke("selecting the current session", psiFile, null, action -> {
-            DefaultActionGroup actionGroup = new DefaultActionGroup();
+        ConnectionAction.invoke("selecting the current session", psiFile,
+                action -> {
+                    DefaultActionGroup actionGroup = new DefaultActionGroup();
 
-            ConnectionHandler connectionHandler = action.getConnectionHandler();
-            if (!connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
-                List<DatabaseSession> sessions = connectionHandler.getSessionBundle().getSessions();
-                for (DatabaseSession session : sessions) {
-                    SessionSelectAction sessionAction = new SessionSelectAction(psiFile, session, callback);
-                    actionGroup.add(sessionAction);
-                }
-                actionGroup.addSeparator();
-                actionGroup.add(new SessionCreateAction(psiFile, connectionHandler));
-            }
-
-            ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
-                    "Select Session",
-                    actionGroup,
-                    SimpleDataContext.getProjectContext(null),
-                    JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                    true,
-                    null,
-                    1000,
-                    conditionAction -> {
-                        if (conditionAction instanceof SessionSelectAction) {
-                            SessionSelectAction sessionSelectAction = (SessionSelectAction) conditionAction;
-                            return sessionSelectAction.isSelected();
+                    ConnectionHandler connectionHandler = action.getConnectionHandler();
+                    if (!connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
+                        List<DatabaseSession> sessions = connectionHandler.getSessionBundle().getSessions();
+                        for (DatabaseSession session : sessions) {
+                            SessionSelectAction sessionAction = new SessionSelectAction(psiFile, session, callback);
+                            actionGroup.add(sessionAction);
                         }
-                        return false;
-                    },
-                    null);
+                        actionGroup.addSeparator();
+                        actionGroup.add(new SessionCreateAction(psiFile, connectionHandler));
+                    }
 
-            popupBuilder.showCenteredInCurrentWindow(getProject());
+                    ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
+                            "Select Session",
+                            actionGroup,
+                            SimpleDataContext.getProjectContext(null),
+                            JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+                            true,
+                            null,
+                            1000,
+                            conditionAction -> {
+                                if (conditionAction instanceof SessionSelectAction) {
+                                    SessionSelectAction sessionSelectAction = (SessionSelectAction) conditionAction;
+                                    return sessionSelectAction.isSelected();
+                                }
+                                return false;
+                            },
+                            null);
 
-        });
+                    popupBuilder.showCenteredInCurrentWindow(getProject());
+
+                });
     }
 
 

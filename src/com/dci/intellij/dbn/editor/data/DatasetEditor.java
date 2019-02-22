@@ -67,8 +67,13 @@ import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.*;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
+import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.CONNECTED;
+import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.LOADED;
+import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.LOADING;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.DELIBERATE_ACTION;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.PRESERVE_CHANGES;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.REBUILD;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.USE_CURRENT_FILTER;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
 
@@ -287,43 +292,44 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
     public void loadData(final DatasetLoadInstructions instructions) {
         if (status.isNot(LOADING)) {
-            ConnectionAction.invoke("loading table data", this, null, action -> {
-                setLoading(true);
-                EventUtil.notify(project, DatasetLoadListener.TOPIC).datasetLoading(databaseFile);
-                SimpleBackgroundTask.invoke(() -> {
-                    DatasetEditorForm editorForm = getEditorForm();
-                    try {
-                        editorForm.showLoadingHint();
-                        editorForm.getEditorTable().cancelEditing();
-                        DatasetEditorTable oldEditorTable = instructions.isRebuild() ? editorForm.beforeRebuild() : null;
-                        try {
-                            DatasetEditorModel tableModel = getTableModel();
-                            tableModel.load(instructions.isUseCurrentFilter(), instructions.isPreserveChanges());
-                            DatasetEditorTable editorTable = getEditorTable();
-                            editorTable.clearSelection();
-                        } finally {
-                            if (!isDisposed()) {
-                                editorForm.afterRebuild(oldEditorTable);
-                            }
-                        }
-                        dataLoadError = null;
-                    } catch (ProcessCanceledException ignore) {
+            ConnectionAction.invoke("loading table data", this,
+                    action -> {
+                        setLoading(true);
+                        EventUtil.notify(project, DatasetLoadListener.TOPIC).datasetLoading(databaseFile);
+                        SimpleBackgroundTask.invoke(() -> {
+                            DatasetEditorForm editorForm = getEditorForm();
+                            try {
+                                editorForm.showLoadingHint();
+                                editorForm.getEditorTable().cancelEditing();
+                                DatasetEditorTable oldEditorTable = instructions.isRebuild() ? editorForm.beforeRebuild() : null;
+                                try {
+                                    DatasetEditorModel tableModel = getTableModel();
+                                    tableModel.load(instructions.isUseCurrentFilter(), instructions.isPreserveChanges());
+                                    DatasetEditorTable editorTable = getEditorTable();
+                                    editorTable.clearSelection();
+                                } finally {
+                                    if (!isDisposed()) {
+                                        editorForm.afterRebuild(oldEditorTable);
+                                    }
+                                }
+                                dataLoadError = null;
+                            } catch (ProcessCanceledException ignore) {
 
-                    } catch (SQLException e) {
-                        dataLoadError = e.getMessage();
-                        handleLoadError(e, instructions);
-                    } catch (Exception e) {
-                        if (e != AlreadyDisposedException.INSTANCE) {
-                            LOGGER.error("Error loading table data", e);
-                        }
-                    } finally {
-                        status.set(LOADED, true);
-                        editorForm.hideLoadingHint();
-                        setLoading(false);
-                        EventUtil.notify(getProject(), DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
-                    }
-                });
-            });
+                            } catch (SQLException e) {
+                                dataLoadError = e.getMessage();
+                                handleLoadError(e, instructions);
+                            } catch (Exception e) {
+                                if (e != AlreadyDisposedException.INSTANCE) {
+                                    LOGGER.error("Error loading table data", e);
+                                }
+                            } finally {
+                                status.set(LOADED, true);
+                                editorForm.hideLoadingHint();
+                                setLoading(false);
+                                EventUtil.notify(getProject(), DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
+                            }
+                        });
+                    });
         }
 
     }
