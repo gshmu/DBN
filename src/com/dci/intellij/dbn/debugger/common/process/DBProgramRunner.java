@@ -65,8 +65,8 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
 
         DBRunConfig runProfile = (DBRunConfig) environment.getRunProfile();
         ConnectionAction.invoke("the debug execution",
-                runProfile.getConnectionHandler(),
                 instructions("Checking debug privileges", TaskInstruction.CANCELLABLE),
+                runProfile.getConnectionHandler(),
                 action -> {
                     performPrivilegeCheck(
                             project,

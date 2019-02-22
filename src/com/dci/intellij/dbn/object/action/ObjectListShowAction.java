@@ -56,8 +56,8 @@ public abstract class ObjectListShowAction extends DumbAwareAction {
         DBObject sourceObject = getSourceObject();
         String listName = getListName();
         ConnectionAction.invoke(
-                instructions("Loading " + listName, TaskInstruction.CANCELLABLE),
                 "loading " + listName,
+                instructions("Loading " + listName, TaskInstruction.CANCELLABLE),
                 sourceObject,
                 action -> {
                     if (!action.isCancelled()) {

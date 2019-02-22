@@ -30,7 +30,7 @@ public class VoidDynamicContent implements DynamicContent{
     }
 
     @Override
-    public void loadInBackground(boolean force) {
+    public void loadInBackground() {
 
     }
 

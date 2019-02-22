@@ -33,7 +33,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.DBObjectRelationType.INDEX_COLUMN;
-import static com.dci.intellij.dbn.object.common.DBObjectType.*;
+import static com.dci.intellij.dbn.object.common.DBObjectType.INDEX;
+import static com.dci.intellij.dbn.object.common.DBObjectType.NESTED_TABLE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.TABLE;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.TEMPORARY;
 
 public class DBTableImpl extends DBDatasetImpl implements DBTable {
@@ -204,7 +206,7 @@ public class DBTableImpl extends DBDatasetImpl implements DBTable {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBNestedTable> dynamicContent, DBNConnection connection) throws SQLException {
-                        DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                        DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                         DBTable table = (DBTable) dynamicContent.getParentElement();
                         return metadataInterface.loadNestedTables(table.getSchema().getName(), table.getName(), connection);
                     }

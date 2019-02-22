@@ -29,7 +29,10 @@ import java.util.List;
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 import static com.dci.intellij.dbn.object.common.DBObjectType.ARGUMENT;
 import static com.dci.intellij.dbn.object.common.DBObjectType.METHOD;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DEBUGABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DETERMINISTIC;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.INVALIDABLE;
 
 public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMethod {
     protected DBObjectList<DBArgument> arguments;
@@ -185,7 +188,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
                 return new DynamicContentResultSetLoader<DBArgument>(METHOD, ARGUMENT, false) {
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBArgument> dynamicContent, DBNConnection connection) throws SQLException {
-                        DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                        DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                         DBMethod method = (DBMethod) dynamicContent.getParentElement();
                         String ownerName = method.getSchema().getName();
                         int overload = method.getOverload();
