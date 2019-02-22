@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.editor.action;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.thread.WriteActionRunner;
+import com.dci.intellij.dbn.common.thread.WriteAction;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -46,7 +46,7 @@ public class ConsoleSaveToFileAction extends DumbAwareAction {
             final Document document = DocumentUtil.getDocument(virtualFile);
             final VirtualFileWrapper virtualFileWrapper = fileSaverDialog.save(null, consoleVirtualFile.getName());
             if (document != null && virtualFileWrapper != null) {
-                WriteActionRunner.invoke(() -> {
+                WriteAction.invoke(() -> {
                     try {
                         VirtualFile newVirtualFile = virtualFileWrapper.getVirtualFile(true);
                         if (newVirtualFile != null) {

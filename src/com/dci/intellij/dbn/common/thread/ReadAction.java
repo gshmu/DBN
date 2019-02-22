@@ -5,13 +5,13 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Computable;
 
-public abstract class ReadActionRunner<T> {
+public abstract class ReadAction<T> {
     private boolean conditional;
-    private ReadActionRunner(boolean conditional) {
+    private ReadAction(boolean conditional) {
         this.conditional = conditional;
     }
 
-    public final T start() {
+    T start() {
         Application application = ApplicationManager.getApplication();
         if (conditional) {
             if (application.isReadAccessAllowed()) {
@@ -19,16 +19,16 @@ public abstract class ReadActionRunner<T> {
             }
         }
 
-        Computable<T> readAction = () -> ReadActionRunner.this.run();
+        Computable<T> readAction = () -> ReadAction.this.run();
         return application.runReadAction(readAction);
     }
 
-    protected abstract T run();
+    abstract T run();
 
     public static <T> T invoke(boolean conditional, BasicCallable.Unsafe<T> callable) {
-        return new ReadActionRunner<T>(conditional) {
+        return new ReadAction<T>(conditional) {
             @Override
-            protected T run() {
+            T run() {
                 return callable.call();
             }
 

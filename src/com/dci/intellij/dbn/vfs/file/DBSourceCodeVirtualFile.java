@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.vfs.file;
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.SynchronizedTask;
-import com.dci.intellij.dbn.common.thread.WriteActionRunner;
+import com.dci.intellij.dbn.common.thread.WriteAction;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -221,7 +221,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     private void updateFileContent(final SourceCodeContent newContent, final CharSequence newText) {
-        WriteActionRunner.invoke(() -> {
+        WriteAction.invoke(() -> {
             if (newContent != null) {
                 localContent = newContent;
             } else {
