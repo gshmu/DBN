@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.debugger.common.breakpoint;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.thread.ReadActionRunner;
+import com.dci.intellij.dbn.common.thread.ReadAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -109,7 +109,7 @@ public class DBBreakpointUtil {
     }
 
     public static List<XLineBreakpoint<XBreakpointProperties>> getDatabaseBreakpoints(final ConnectionHandler connectionHandler) {
-        return ReadActionRunner.invoke(false, () -> {
+        return ReadAction.invoke(false, () -> {
             DBBreakpointType databaseBreakpointType = XDebuggerUtil.getInstance().findBreakpointType(DBBreakpointType.class);
             Project project = connectionHandler.getProject();
             XBreakpointManager breakpointManager = XDebuggerManager.getInstance(project).getBreakpointManager();

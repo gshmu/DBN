@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
-import com.dci.intellij.dbn.common.thread.WriteActionRunner;
+import com.dci.intellij.dbn.common.thread.WriteAction;
 import com.dci.intellij.dbn.common.ui.ListUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -243,7 +243,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
             if (selectedDirectories.length > 0) {
                 String fileName = fileNameProvider.getFileName();
                 VirtualFile parentDirectory = selectedDirectories[0];
-                WriteActionRunner.invoke(() -> {
+                WriteAction.invoke(() -> {
                     try {
                         DBSchemaObject object = objectRef.getnn();
                         VirtualFile virtualFile = parentDirectory.createChildData(this, fileName);

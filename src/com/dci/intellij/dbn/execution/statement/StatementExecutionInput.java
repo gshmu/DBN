@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.statement;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.thread.ReadActionRunner;
+import com.dci.intellij.dbn.common.thread.ReadAction;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -108,7 +108,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
             ConnectionHandler connectionHandler = getConnectionHandler();
             SchemaId currentSchema = getTargetSchemaId();
             if (connectionHandler != null) {
-                executablePsiElement = ReadActionRunner.invoke(false, () -> {
+                executablePsiElement = ReadAction.invoke(false, () -> {
                     DBLanguageDialect languageDialect = executionProcessor.getPsiFile().getLanguageDialect();
                     DBLanguagePsiFile previewFile = DBLanguagePsiFile.createFromText(
                             getProject(),

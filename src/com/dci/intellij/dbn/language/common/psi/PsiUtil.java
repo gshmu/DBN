@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import com.dci.intellij.dbn.common.thread.ReadActionRunner;
+import com.dci.intellij.dbn.common.thread.ReadAction;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -312,7 +312,7 @@ public class PsiUtil {
 
     @Nullable
     public static PsiFile getPsiFile(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-        return ReadActionRunner.invoke(true, () -> {
+        return ReadAction.invoke(true, () -> {
             if (virtualFile.isValid()) {
                 PsiManager psiManager = PsiManager.getInstance(project);
                 return psiManager.findFile(virtualFile);

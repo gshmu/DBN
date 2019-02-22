@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.thread.WriteActionRunner;
+import com.dci.intellij.dbn.common.thread.WriteAction;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
@@ -46,7 +46,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
     private static boolean isRegisteringFileTypes = false;
 
     public static void registerExtensions(final DDLFileExtensionSettings settings) {
-        WriteActionRunner.invoke(() -> {
+        WriteAction.invoke(() -> {
             try {
                 isRegisteringFileTypes = true;
                 FileTypeManager fileTypeManager = FileTypeManager.getInstance();

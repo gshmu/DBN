@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
-import com.dci.intellij.dbn.common.thread.WriteActionRunner;
+import com.dci.intellij.dbn.common.thread.WriteAction;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -271,7 +271,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         console.system("Registering breakpoints...");
         List<XLineBreakpoint<XBreakpointProperties>> breakpoints = DBBreakpointUtil.getDatabaseBreakpoints(getConnectionHandler());
 
-        WriteActionRunner.invoke(() -> {
+        WriteAction.invoke(() -> {
             getBreakpointHandler().registerBreakpoints(breakpoints, null);
             registerDefaultBreakpoint();
             console.system("Done registering breakpoints");
