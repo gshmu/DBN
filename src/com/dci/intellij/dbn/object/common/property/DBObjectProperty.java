@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.property.Property;
 
 public enum DBObjectProperty implements Property {
     // generic
-    WEAK,
     TEMPORARY,
     NAVIGABLE,
     EDITABLE,
