@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.transaction;
 
-import com.dci.intellij.dbn.common.thread.BasicCallable;
-import com.dci.intellij.dbn.common.thread.BasicRunnable;
+import com.dci.intellij.dbn.common.routine.BasicCallable;
+import com.dci.intellij.dbn.common.routine.BasicRunnable;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;

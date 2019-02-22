@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.debugger;
 
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
+import com.dci.intellij.dbn.common.routine.BasicRunnable;
 import com.dci.intellij.dbn.common.thread.AbstractTask;
-import com.dci.intellij.dbn.common.thread.BasicRunnable;
 import com.dci.intellij.dbn.common.thread.ThreadFactory;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;

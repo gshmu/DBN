@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.cache;
 
-import com.dci.intellij.dbn.common.thread.BasicCallable;
+import com.dci.intellij.dbn.common.routine.BasicCallable;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.Nullable;
 

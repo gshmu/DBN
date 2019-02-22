@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
+import com.dci.intellij.dbn.common.routine.BasicCallable;
 import com.dci.intellij.dbn.common.util.Traceable;
 import com.intellij.openapi.progress.ProgressIndicator;
 

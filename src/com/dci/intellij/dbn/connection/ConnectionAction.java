@@ -4,9 +4,9 @@ import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageCallback;
+import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.BackgroundMonitor;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
@@ -180,7 +180,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     public static void invoke(
             String description,
             ConnectionProvider connectionProvider,
-            ParametricRunnable<ConnectionAction> action) {
+            ParametricRunnable.Unsafe<ConnectionAction> action) {
         create(description, connectionProvider, null, action).start();
     }
 
@@ -188,7 +188,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             String description,
             ConnectionProvider connectionProvider,
             Integer executeOption,
-            ParametricRunnable<ConnectionAction> action) {
+            ParametricRunnable.Unsafe<ConnectionAction> action) {
         return new ConnectionAction(description, connectionProvider, executeOption) {
             @Override
             protected void execute() {
@@ -201,7 +201,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             String description,
             TaskInstructions taskInstructions,
             ConnectionProvider connectionProvider,
-            ParametricRunnable<ConnectionAction> runnable) {
+            ParametricRunnable.Unsafe<ConnectionAction> runnable) {
         create(description, taskInstructions, connectionProvider, runnable, null, null).start();
     }
 
@@ -209,7 +209,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             String description,
             TaskInstructions taskInstructions,
             ConnectionProvider connectionProvider,
-            ParametricRunnable<ConnectionAction> action) {
+            ParametricRunnable.Unsafe<ConnectionAction> action) {
         return create(description, taskInstructions, connectionProvider, action, null, null);
     }
 
@@ -217,8 +217,8 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             String description,
             TaskInstructions taskInstructions,
             ConnectionProvider connectionProvider,
-            ParametricRunnable<ConnectionAction> action,
-            ParametricRunnable<ConnectionAction> cancel,
+            ParametricRunnable.Unsafe<ConnectionAction> action,
+            ParametricRunnable.Unsafe<ConnectionAction> cancel,
             Callable<Boolean> canExecute) {
 
         create(description, taskInstructions, connectionProvider, action, cancel, canExecute).start();
@@ -228,8 +228,8 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             String description,
             TaskInstructions taskInstructions,
             ConnectionProvider connectionProvider,
-            ParametricRunnable<ConnectionAction> action,
-            ParametricRunnable<ConnectionAction> cancel,
+            ParametricRunnable.Unsafe<ConnectionAction> action,
+            ParametricRunnable.Unsafe<ConnectionAction> cancel,
             Callable<Boolean> canExecute) {
 
         return new ConnectionAction(description, connectionProvider, taskInstructions) {
