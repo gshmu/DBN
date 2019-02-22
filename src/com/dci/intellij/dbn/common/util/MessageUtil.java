@@ -92,13 +92,14 @@ public class MessageUtil {
     }
 
     private static void showDialog(
-            @Nullable final Project project, final String message,
-            final String title,
-            final String[] options,
-            final int defaultOptionIndex,
-            final Icon icon,
-            final RunnableTask<Integer> callback,
-            final @Nullable DialogWrapper.DoNotAskOption doNotAskOption) {
+            @Nullable Project project,
+            String message,
+            String title,
+            String[] options,
+            int defaultOptionIndex,
+            @Nullable Icon icon,
+            @Nullable RunnableTask<Integer> callback,
+            @Nullable DialogWrapper.DoNotAskOption doNotAskOption) {
 
         SimpleLaterInvocator.invoke(() -> {
             int option = Messages.showDialog(project, message, Constants.DBN_TITLE_PREFIX + title, options, defaultOptionIndex, icon, doNotAskOption);

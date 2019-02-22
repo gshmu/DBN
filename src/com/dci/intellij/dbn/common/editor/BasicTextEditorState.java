@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.editor;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.thread.ReadActionRunner;
-import com.dci.intellij.dbn.common.thread.WriteActionRunner;
+import com.dci.intellij.dbn.common.thread.ReadAction;
+import com.dci.intellij.dbn.common.thread.WriteAction;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.intellij.codeInsight.folding.CodeFoldingManager;
 import com.intellij.openapi.editor.Document;
@@ -52,7 +52,7 @@ public class BasicTextEditorState implements FileEditorState {
 
         Element foldingElement = sourceElement.getChild("folding");
         if (foldingElement != null) {
-            ReadActionRunner.invoke(false, () -> {
+            ReadAction.invoke(false, () -> {
                 Document document = DocumentUtil.getDocument(virtualFile);
                 CodeFoldingManager instance = CodeFoldingManager.getInstance(project);
                 if (document != null) {
@@ -142,7 +142,7 @@ public class BasicTextEditorState implements FileEditorState {
         editor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE);
 
         if (foldingState != null) {
-            WriteActionRunner.invoke(() ->
+            WriteAction.invoke(() ->
                     Failsafe.lenient(() -> {
                         Project project = Failsafe.get(editor.getProject());
                         PsiDocumentManager.getInstance(project).commitDocument(document);
