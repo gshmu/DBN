@@ -14,7 +14,7 @@ public class MultipleContentDependencyAdapter extends BasicDependencyAdapter imp
     public MultipleContentDependencyAdapter(DynamicContent... sourceContents) {
         for (DynamicContent sourceContent : sourceContents) {
             if (sourceContent != null) {
-                if (dependencies == null) dependencies = new ArrayList<ContentDependency>();
+                if (dependencies == null) dependencies = new ArrayList<>();
                 dependencies.add(new BasicContentDependency(sourceContent));
             }
         }

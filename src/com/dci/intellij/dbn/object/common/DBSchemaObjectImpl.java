@@ -32,8 +32,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.DBObjectType.*;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
+import static com.dci.intellij.dbn.object.common.DBObjectType.INCOMING_DEPENDENCY;
+import static com.dci.intellij.dbn.object.common.DBObjectType.OUTGOING_DEPENDENCY;
+import static com.dci.intellij.dbn.object.common.DBObjectType.PACKAGE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.PACKAGE_BODY;
+import static com.dci.intellij.dbn.object.common.DBObjectType.TYPE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.TYPE_BODY;
+import static com.dci.intellij.dbn.object.common.DBObjectType.get;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.EDITABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.REFERENCEABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
 
 
 public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchemaObject {
@@ -197,7 +205,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
         new DynamicContentResultSetLoader(null, INCOMING_DEPENDENCY) {
             @Override
             public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                 DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
                 return metadataInterface.loadReferencedObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
             }
@@ -227,7 +235,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
         new DynamicContentResultSetLoader(null, OUTGOING_DEPENDENCY) {
             @Override
             public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
-                DatabaseMetadataInterface metadataInterface = dynamicContent.getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+                DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                 DBSchemaObject schemaObject = (DBSchemaObject) dynamicContent.getParentElement();
                 return metadataInterface.loadReferencingObjects(schemaObject.getSchema().getName(), schemaObject.getName(), connection);
             }

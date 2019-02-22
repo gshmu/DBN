@@ -23,8 +23,8 @@ public class ReloadObjectsAction extends DumbAwareAction {
         boolean loaded = objectList.isLoaded();
 
         ConnectionAction.invoke(
-                instructions("Reloading " + objectList.getObjectType().getListName()),
                 loaded ? "reloading the " + listName : "loading the " + listName,
+                instructions("Reloading " + objectList.getObjectType().getListName()),
                 objectList,
                 action -> {
                     objectList.reload();

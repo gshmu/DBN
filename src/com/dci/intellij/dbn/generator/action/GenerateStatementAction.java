@@ -31,8 +31,8 @@ public abstract class GenerateStatementAction extends DumbAwareAction implements
     @Override
     public final void actionPerformed(@NotNull AnActionEvent e) {
         ConnectionAction.invoke(
-                instructions("Extracting select statement", TaskInstruction.CANCELLABLE),
                 "generating the statement",
+                instructions("Extracting select statement", TaskInstruction.CANCELLABLE),
                 this,
                 action -> {
                     Project project = action.getProject();

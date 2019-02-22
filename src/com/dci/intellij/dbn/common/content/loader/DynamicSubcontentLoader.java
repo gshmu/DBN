@@ -65,7 +65,7 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> e
             }
             dynamicContent.setElements(list);
         } else {
-            sourceContent.loadInBackground(false);
+            sourceContent.loadInBackground();
             alternativeLoader.loadContent(dynamicContent, false);
         }
     }

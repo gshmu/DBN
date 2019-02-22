@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -97,7 +98,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         return CompileType.NORMAL;
     }
 
-    public void compileObject(final DBSchemaObject object, CompileType compileType, final CompilerAction compilerAction) {
+    public void compileObject(DBSchemaObject object, CompileType compileType, CompilerAction compilerAction) {
         assert compileType != CompileType.KEEP;
         Project project = object.getProject();
         DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
@@ -109,7 +110,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         }
     }
 
-    private void updateFilesContentState(final DBSchemaObject object, final DBContentType contentType) {
+    private void updateFilesContentState(DBSchemaObject object, DBContentType contentType) {
         Project project = getProject();
         BackgroundTask.invoke(project,
                 instructions("Refreshing local content state", TaskInstruction.BACKGROUNDED),
@@ -133,10 +134,9 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                 });
     }
 
-    public void compileInBackground(DBSchemaObject object, CompileType compileType, final CompilerAction compilerAction) {
+    public void compileInBackground(DBSchemaObject object, CompileType compileType, CompilerAction compilerAction) {
         Project project = getProject();
-        ConnectionAction.invoke("compiling the object", object,
-                null,
+        ConnectionAction.invoke("compiling the object", null, object,
                 action -> {
                     String taskTitle = "Compiling " + object.getObjectType().getName();
                     promptCompileTypeSelection(compileType, object,
@@ -218,16 +218,16 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         }
     }
 
-    public void compileInvalidObjects(final DBSchema schema, final CompileType compileType) {
-        ConnectionAction.invoke("compiling the invalid objects", schema, null,
+    public void compileInvalidObjects(DBSchema schema, CompileType compileType) {
+        TaskInstructions instructions = instructions("Compiling invalid objects", TaskInstruction.CANCELLABLE);
+        ConnectionAction.invoke("compiling the invalid objects", instructions, schema,
                 action -> {
                     Project project = getProject();
                     ConnectionHandler connectionHandler = action.getConnectionHandler();
-                    String taskTitle = "Compiling invalid objects";
 
                     promptCompileTypeSelection(compileType, null,
                             BackgroundTask.create(project,
-                                    instructions(taskTitle, TaskInstruction.CANCELLABLE),
+                                    instructions,
                                     (data, progress) -> {
                                         progress.setIndeterminate(true);
                                         doCompileInvalidObjects(schema.getPackages(), "packages", progress, data);

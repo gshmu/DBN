@@ -476,8 +476,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     public void loadSourceCode(DBSourceCodeVirtualFile sourceCodeFile, boolean force) {
         String objectDescription = sourceCodeFile.getObject().getQualifiedNameWithType();
         ConnectionAction.invoke(
-                instructions("Loading source code for " + objectDescription, BACKGROUNDED),
                 "loading the source code",
+                instructions("Loading source code for " + objectDescription, BACKGROUNDED),
                 sourceCodeFile,
                 action -> loadSourceFromDatabase(sourceCodeFile, force));
     }
@@ -485,8 +485,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     public void saveSourceCode(DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor, Runnable successCallback) {
         String objectDescription = sourceCodeFile.getObject().getQualifiedNameWithType();
         ConnectionAction.invoke(
-                instructions("Saving source code for " + objectDescription),
                 "saving the source code",
+                instructions("Saving source code for " + objectDescription),
                 sourceCodeFile,
                 action -> saveSourceToDatabase(sourceCodeFile, fileEditor, successCallback));
     }
@@ -494,8 +494,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     public void revertSourceCodeChanges(DBEditableObjectVirtualFile databaseFile, Runnable successCallback) {
         String objectDescription = databaseFile.getObject().getQualifiedNameWithType();
         ConnectionAction.invoke(
-                instructions("Loading source code for " + objectDescription, BACKGROUNDED),
                 "loading the source code",
+                instructions("Loading source code for " + objectDescription, BACKGROUNDED),
                 databaseFile,
                 action -> {
                     try {
@@ -514,8 +514,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     public void saveSourceCodeChanges(DBEditableObjectVirtualFile databaseFile, Runnable successCallback) {
         String objectDescription = databaseFile.getObject().getQualifiedNameWithType();
         ConnectionAction.invoke(
-                instructions("Saving source code for " + objectDescription),
                 "saving the source code",
+                instructions("Saving source code for " + objectDescription),
                 databaseFile,
                 action -> {
                     List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
