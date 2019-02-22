@@ -117,7 +117,7 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
 
             @Override
             public DynamicContentLoader<DBPackageFunction> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBPackageFunction>(PACKAGE, PACKAGE_FUNCTION, false) {
+                return new DynamicContentResultSetLoader<DBPackageFunction>(PACKAGE, PACKAGE_FUNCTION, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBPackageFunction> dynamicContent, DBNConnection connection) throws SQLException {
@@ -151,7 +151,7 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
 
             @Override
             public DynamicContentLoader<DBPackageProcedure> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBPackageProcedure>(PACKAGE, PACKAGE_PROCEDURE, false) {
+                return new DynamicContentResultSetLoader<DBPackageProcedure>(PACKAGE, PACKAGE_PROCEDURE, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBPackageProcedure> dynamicContent, DBNConnection connection) throws SQLException {
@@ -179,7 +179,7 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
 
             @Override
             public DynamicContentLoader<DBPackageType> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBPackageType>(PACKAGE, PACKAGE_TYPE, false) {
+                return new DynamicContentResultSetLoader<DBPackageType>(PACKAGE, PACKAGE_TYPE, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBPackageType> dynamicContent, DBNConnection connection) throws SQLException {

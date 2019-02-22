@@ -185,7 +185,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
 
             @Override
             public DynamicContentLoader<DBArgument> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBArgument>(METHOD, ARGUMENT, false) {
+                return new DynamicContentResultSetLoader<DBArgument>(METHOD, ARGUMENT, false, true) {
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBArgument> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();

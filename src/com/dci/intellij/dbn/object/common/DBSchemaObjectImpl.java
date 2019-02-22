@@ -202,7 +202,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
      *                         Loaders                       *
      *********************************************************/
     static {
-        new DynamicContentResultSetLoader(null, INCOMING_DEPENDENCY) {
+        new DynamicContentResultSetLoader(null, INCOMING_DEPENDENCY, true, false) {
             @Override
             public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
@@ -232,7 +232,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
             }
         };
 
-        new DynamicContentResultSetLoader(null, OUTGOING_DEPENDENCY) {
+        new DynamicContentResultSetLoader(null, OUTGOING_DEPENDENCY, true, false) {
             @Override
             public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
