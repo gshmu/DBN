@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
-import com.dci.intellij.dbn.common.thread.ReadAction;
-import com.dci.intellij.dbn.common.thread.WriteAction;
+import com.dci.intellij.dbn.common.routine.ReadAction;
+import com.dci.intellij.dbn.common.routine.WriteAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarkers;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockType;
@@ -91,7 +91,7 @@ public class DocumentUtil {
             Long lastRefresh = psiFile.getUserData(LAST_ANNOTATION_REFRESH_KEY);
             if (lastRefresh == null || TimeUtil.isOlderThan(lastRefresh, 1, TimeUnit.SECONDS)) {
                 psiFile.putUserData(LAST_ANNOTATION_REFRESH_KEY, System.currentTimeMillis());
-                ReadAction.invoke(false, () -> {
+                ReadAction.invoke(() -> {
                     if (psiFile.isValid()) {
                         Project project = psiFile.getProject();
                         DaemonCodeAnalyzer daemonCodeAnalyzer = DaemonCodeAnalyzer.getInstance(project);
@@ -173,7 +173,7 @@ public class DocumentUtil {
 
     @Nullable
     public static Document getDocument(final @NotNull VirtualFile virtualFile) {
-        return ReadAction.invoke(false, () -> {
+        return ReadAction.invoke(() -> {
             FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
             return fileDocumentManager.getDocument(virtualFile);
         });
