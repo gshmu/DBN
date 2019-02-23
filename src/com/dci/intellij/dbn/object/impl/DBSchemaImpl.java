@@ -94,8 +94,8 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         materializedViews = ol.createObjectList(MATERIALIZED_VIEW, this, INDEXED);
         synonyms = ol.createObjectList(SYNONYM, this, INDEXED);
         sequences = ol.createObjectList(SEQUENCE, this, INDEXED);
-        procedures = ol.createObjectList(PROCEDURE, this, INDEXED);
-        functions = ol.createObjectList(FUNCTION, this, INDEXED);
+        procedures = ol.createObjectList(PROCEDURE, this);
+        functions = ol.createObjectList(FUNCTION, this);
         packages = ol.createObjectList(PACKAGE, this, INDEXED);
         types = ol.createObjectList(TYPE, this, INDEXED);
         databaseTriggers = ol.createObjectList(DATABASE_TRIGGER, this, INDEXED);
