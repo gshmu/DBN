@@ -31,12 +31,12 @@ public class BackgroundMonitor {
         return timeoutProcess.get();
     }
 
-    static void startTimeoutProcess() {
+    public static void startTimeoutProcess() {
         timeoutProcess.set(true);
     }
 
 
-    static void endTimeoutProcess() {
+    public static void endTimeoutProcess() {
         timeoutProcess.set(false);
     }
 

@@ -45,10 +45,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
         INTERNAL_LIB_MAP.put(DatabaseType.SQLITE, sqlite);
 
         HashMap<String, String> postgres = new HashMap<>();
-        postgres.put("1.6", "postgresql-9.4-1201.jdbc4.jar");
-        postgres.put("1.7", "postgresql-9.4-1201.jdbc41.jar");
-        postgres.put("1.8", "postgresql-42.2.5.jar");
-        postgres.put("1.9", "postgresql-42.2.5.jar");
+        postgres.put("1.", "postgresql-42.2.5.jar");
         INTERNAL_LIB_MAP.put(DatabaseType.POSTGRES, postgres);
     }
 

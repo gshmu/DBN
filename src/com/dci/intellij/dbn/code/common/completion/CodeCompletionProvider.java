@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.code.common.completion;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
+import com.dci.intellij.dbn.common.thread.BackgroundMonitor;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -81,7 +82,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             if (invocationCount > 1) context.setExtended(true);
 
             try {
-
+                BackgroundMonitor.startTimeoutProcess();
                 if (leafBeforeCaret == null) {
                     addFileRootCompletions(consumer);
                 } else {
@@ -90,6 +91,8 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                 }
             } catch (ConsumerStoppedException e) {
 
+            } finally {
+                BackgroundMonitor.endTimeoutProcess();
             }
         }
     }
