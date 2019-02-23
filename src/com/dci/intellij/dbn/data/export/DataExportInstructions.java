@@ -136,7 +136,7 @@ public class DataExportInstructions extends SettingsSupport implements Persisten
         Element child = new Element("export-instructions");
         element.addContent(child);
 
-        setBoolean(child, "instructions-header", createHeader);
+        setBoolean(child, "create-header", createHeader);
         setBoolean(child, "quote-values-containing-separator", quoteValuesContainingSeparator);
         setBoolean(child, "quote-all-values", quoteAllValues);
         setString(child, "value-separator", valueSeparator);
@@ -152,7 +152,7 @@ public class DataExportInstructions extends SettingsSupport implements Persisten
     public void readState(Element element) {
         Element child = element.getChild("export-instructions");
         if (child != null) {
-            createHeader = getBoolean(child, "instructions-header", createHeader);
+            createHeader = getBoolean(child, "create-header", createHeader);
             quoteValuesContainingSeparator = getBoolean(child, "quote-values-containing-separator", quoteValuesContainingSeparator);
             quoteAllValues = getBoolean(child, "quote-all-values", quoteAllValues);
             valueSeparator = getString(child, "value-separator", valueSeparator);

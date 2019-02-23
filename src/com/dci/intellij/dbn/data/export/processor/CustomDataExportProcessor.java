@@ -51,7 +51,7 @@ public class CustomDataExportProcessor extends DataExportProcessor{
 
                 if (containsSeparator && !quote) {
                     throw new DataExportException(
-                        "Can not instructions columns header with the given separator.\n" +
+                        "Can not create columns header with the given separator.\n" +
                         "Column " + columnName + " already contains the separator '" + separator + "'. \n" +
                         "Please consider quoting.");
                 }
@@ -91,7 +91,7 @@ public class CustomDataExportProcessor extends DataExportProcessor{
 
                 if (containsSeparator && !quote) {
                     throw new DataExportException(
-                        "Can not instructions row " + rowIndex + " with the given separator.\n" +
+                        "Can not create row " + rowIndex + " with the given separator.\n" +
                         "Value for column " + columnName + " already contains the separator '" + separator + "'. \n" +
                         "Please consider quoting.");
                 }

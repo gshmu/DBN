@@ -75,7 +75,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
         List<String> errors = new ArrayList<>();
         factoryInput.validate(errors);
         if (errors.size() > 0) {
-            StringBuilder buffer = new StringBuilder("Could not instructions " + factoryInput.getObjectType().getName() + ". Please correct following errors: \n");
+            StringBuilder buffer = new StringBuilder("Could not create " + factoryInput.getObjectType().getName() + ". Please correct following errors: \n");
             for (String error : errors) {
                 buffer.append(" - ").append(error).append("\n");
             }
@@ -97,7 +97,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
                 DatabaseFileSystem.getInstance().openEditor(method, true);
                 notifyFactoryEvent(new ObjectFactoryEvent(method, ObjectFactoryEvent.EVENT_TYPE_CREATE));
             } catch (SQLException e) {
-                MessageUtil.showErrorDialog(project, "Could not instructions " + factoryInput.getObjectType().getName() + ".", e);
+                MessageUtil.showErrorDialog(project, "Could not create " + factoryInput.getObjectType().getName() + ".", e);
                 return false;
             }
         }

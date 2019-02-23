@@ -175,8 +175,8 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
                     FileUtil.writeToFile(temporaryScriptFile, executionInput.getTextContent());
                     if (!temporaryScriptFile.isFile() || !temporaryScriptFile.exists()) {
-                        executionManager.writeLogOutput(outputContext, LogOutput.createErrOutput("Failed to instructions temporary script file " + temporaryScriptFile + "."));
-                        throw new IllegalStateException("Failed to instructions temporary script file " + temporaryScriptFile + ". Check access rights at location.");
+                        executionManager.writeLogOutput(outputContext, LogOutput.createErrOutput("Failed to create temporary script file " + temporaryScriptFile + "."));
+                        throw new IllegalStateException("Failed to create temporary script file " + temporaryScriptFile + ". Check access rights at location.");
                     }
 
                     ProcessBuilder processBuilder = new ProcessBuilder(executionInput.getCommand());

@@ -76,7 +76,7 @@ public abstract class PseudoConstant<T extends PseudoConstant<T>> implements Con
                             constructor.setAccessible(true);
                             constant = constructor.newInstance(id);
                         } catch (Exception e) {
-                            LOGGER.error("Could not instructions constant " + id, e);
+                            LOGGER.error("Could not create constant " + id, e);
                         }
                     }
                 }
