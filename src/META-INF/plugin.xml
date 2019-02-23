@@ -31,9 +31,10 @@
             <li><b>3.1.0842</b>
             <ul>
                 <li>Optimized Oracle meta-data interface for large databases
-                <li>Support for latest IDE EAP versions
                 <li>SQLite data editor issues
                 <li>Optimized database connectivity and background operations
+                <li>Support for latest IDE EAP versions
+                <li>Discontinued support for IntelliJ 14.x and related products
                 <li>Bug fixes and performance improvements
             </ul>
             <li><b>3.1.0231</b>
