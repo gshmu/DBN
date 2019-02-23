@@ -62,7 +62,10 @@ import java.util.stream.Collectors;
 import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
-import static com.dci.intellij.dbn.common.util.MessageUtil.*;
+import static com.dci.intellij.dbn.common.util.MessageUtil.options;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showErrorDialog;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showInfoDialog;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
 
 @State(
@@ -272,7 +275,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 showWarningDialog(
                         project,
                         "Database file not available",
-                        "The database file \"" + file + "\" does not exist.\nDo you want to instructions?",
+                        "The database file \"" + file + "\" does not exist.\nDo you want to create it?",
                         options("Create", "Cancel"), 0,
                         callback);
             }

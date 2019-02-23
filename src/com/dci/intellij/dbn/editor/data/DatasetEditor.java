@@ -567,7 +567,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                         try {
                             model.postInsertRecord(true, false, true);
                         } catch (SQLException e1) {
-                            MessageUtil.showErrorDialog(project, "Could not instructions row in " + getDataset().getQualifiedNameWithType() + '.', e1);
+                            MessageUtil.showErrorDialog(project, "Could not create row in " + getDataset().getQualifiedNameWithType() + '.', e1);
                             model.cancelInsert(true);
                         }
                     }

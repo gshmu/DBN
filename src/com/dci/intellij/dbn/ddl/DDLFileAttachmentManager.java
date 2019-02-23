@@ -252,7 +252,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
                         updateDDLFiles(editableObjectFile);
                         DatabaseFileSystem.getInstance().reopenEditor(object);
                     } catch (IOException e) {
-                        MessageUtil.showErrorDialog(project, "Could not instructions file " + parentDirectory + File.separator + fileName + ".", e);
+                        MessageUtil.showErrorDialog(project, "Could not create file " + parentDirectory + File.separator + fileName + ".", e);
                     }
                 });
             }

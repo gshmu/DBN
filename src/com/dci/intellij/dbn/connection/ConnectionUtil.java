@@ -228,7 +228,7 @@ public class ConnectionUtil {
 
                 Connection connection = driver.connect(connectionUrl, properties);
                 if (connection == null) {
-                    throw new SQLException("Driver failed to instructions connection for this configuration. No failure information provided.");
+                    throw new SQLException("Driver failed to create connection for this configuration. No failure information provided.");
                 }
 
                 if (connectionStatus != null) {
@@ -404,7 +404,7 @@ public class ConnectionUtil {
         } catch (SQLException e) {
             sentWarningNotification(
                     "Savepoint",
-                    "Failed to instructions savepoint for",
+                    "Failed to create savepoint for",
                     connection,
                     e);
         }

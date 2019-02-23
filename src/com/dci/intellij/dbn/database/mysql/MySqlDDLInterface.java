@@ -40,7 +40,7 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
 
 
         if (objectTypeId == DatabaseObjectTypeId.VIEW) {
-            return kco.format("instructions" + (makeRerunnable ? " or replace" : "") + " view ") +
+            return kco.format("create" + (makeRerunnable ? " or replace" : "") + " view ") +
                     oco.format((useQualified ? schemaName + "." : "") + objectName) +
                     kco.format(" as\n") +
                     code;
@@ -56,7 +56,7 @@ public class MySqlDDLInterface extends DatabaseDDLInterfaceImpl {
             String dropStatement =
                     kco.format("drop " + objectType + " if exists ") +
                     oco.format((useQualified ? schemaName + "." : "") + objectName) + alternativeDelimiter + "\n";
-            String createStatement = kco.format("instructions definer=current_user\n") + code + alternativeDelimiter + "\n";
+            String createStatement = kco.format("create definer=current_user\n") + code + alternativeDelimiter + "\n";
             String delimiterReset = kco.format("delimiter ;");
             return delimiterChange + (makeRerunnable ? dropStatement : "") + createStatement + delimiterReset;
         }

@@ -15,7 +15,7 @@ public interface DBTrigger extends DBSchemaObject {
     TriggeringEvent TRIGGERING_EVENT_DROP     = new TriggeringEvent(4, "drop");
     TriggeringEvent TRIGGERING_EVENT_LOGON    = new TriggeringEvent(5, "logon");
     TriggeringEvent TRIGGERING_EVENT_ALTER    = new TriggeringEvent(5, "alter");
-    TriggeringEvent TRIGGERING_EVENT_CREATE   = new TriggeringEvent(5, "instructions");
+    TriggeringEvent TRIGGERING_EVENT_CREATE   = new TriggeringEvent(5, "create");
     TriggeringEvent TRIGGERING_EVENT_RENAME   = new TriggeringEvent(5, "rename");
     TriggeringEvent TRIGGERING_EVENT_DDL      = new TriggeringEvent(5, "ddl");
     TriggeringEvent TRIGGERING_EVENT_UNKNOWN  = new TriggeringEvent(6, "unknown");
