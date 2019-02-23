@@ -76,6 +76,7 @@ public abstract class ValueAdapter<T> {
         if (e instanceof SQLException) {
             throw (SQLException) e;
         } else {
+            LOGGER.error("Error creating value adapter for generic type " + genericDataType.name() + '.', e);
             throw new SQLException("Error creating value adapter for generic type " + genericDataType.name() + '.', e);
         }
     }
