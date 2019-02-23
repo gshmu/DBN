@@ -65,12 +65,12 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
      *********************************************************/
     @Override
     public void createView(String viewName, String code, DBNConnection connection) throws SQLException {
-        executeUpdate(connection, "instructions-view", viewName, code);
+        executeUpdate(connection, "create-view", viewName, code);
     }
 
     @Override
     public void createObject(String code, DBNConnection connection) throws SQLException {
-        executeUpdate(connection, "instructions-object", code);
+        executeUpdate(connection, "create-object", code);
     }
 
 

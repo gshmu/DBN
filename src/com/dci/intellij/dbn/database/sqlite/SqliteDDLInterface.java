@@ -46,7 +46,7 @@ public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
             String dropStatement =
                     kco.format("drop " + objectType + " if exists ") +
                     oco.format((useQualified ? schemaName + "." : "") + objectName) + alternativeDelimiter + "\n";
-            String createStatement = kco.format("instructions \n") + code + alternativeDelimiter + "\n";
+            String createStatement = kco.format("create \n") + code + alternativeDelimiter + "\n";
             return (makeRerunnable ? dropStatement : "") + createStatement;
         }
         return code;
@@ -109,7 +109,7 @@ public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
      *********************************************************/
     @Override
     public void createMethod(MethodFactoryInput method, DBNConnection connection) throws SQLException {
-        throw new SQLException("Operation not supported: [instructions method]");
+        throw new SQLException("Operation not supported: [create method]");
     }
 
 }

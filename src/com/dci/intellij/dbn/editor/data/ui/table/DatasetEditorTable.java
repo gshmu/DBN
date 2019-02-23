@@ -59,8 +59,12 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.EventObject;
 
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.DELIBERATE_ACTION;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.PRESERVE_CHANGES;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.USE_CURRENT_FILTER;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.UPDATING;
 
 public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     private static final DatasetLoadInstructions SORT_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(USE_CURRENT_FILTER, PRESERVE_CHANGES, DELIBERATE_ACTION);
@@ -464,7 +468,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                     try {
                         model.postInsertRecord(false, true, false);
                     } catch (SQLException e1) {
-                        MessageUtil.showErrorDialog(getProject(), "Could not instructions row in " + getDataset().getQualifiedNameWithType() + ".", e1);
+                        MessageUtil.showErrorDialog(getProject(), "Could not create row in " + getDataset().getQualifiedNameWithType() + ".", e1);
                     }
                 }
             }
