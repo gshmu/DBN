@@ -152,19 +152,19 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
         SQLException exception = SimpleTimeoutCall.invoke(10, null, daemon, () -> {
             try {
                 if (DatabaseNavigator.debugModeEnabled)
-                    LOGGER.info("Started changing " + subject + " to " + value);
+                    LOGGER.info("Started changing " + resource.getResourceType() + " resource " + subject + " status to " + value);
 
                 changeInner(value);
                 set(subject, value);
             } catch (Throwable e) {
-                LOGGER.warn("Failed to change " + subject + " to " + value + ": " + e.getMessage());
+                LOGGER.warn("Failed to change " + resource.getResourceType() + " resource " + subject + " status to " + value + ": " + e.getMessage());
                 fail();
                 return ExceptionUtil.toSqlException(e);
             } finally {
                 set(changing, false);
 
                 if (DatabaseNavigator.debugModeEnabled)
-                    LOGGER.info("Done changing " + subject + " to " + value);
+                    LOGGER.info("Done changing " + resource.getResourceType() + " resource " + subject + " status to " + value);
             }
             return null;
         });
