@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.1.0791.0</version>
+    <version>3.1.0842.0</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -28,8 +28,9 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.1.0791</b>
+            <li><b>3.1.0842</b>
             <ul>
+                <li>Optimized Oracle meta-data interface for large databases
                 <li>Support for latest IDE EAP versions
                 <li>SQLite data editor issues
                 <li>Optimized database connectivity and background operations
