@@ -64,7 +64,12 @@ public class DBNativeDataType implements DynamicContentElement{
 
         GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
         if (ValueAdapter.supports(genericDataType)) {
-            return ValueAdapter.create(genericDataType, resultSet, columnIndex);
+            try {
+                return ValueAdapter.create(genericDataType, resultSet, columnIndex);
+            } catch (Throwable e) {
+                return null;
+            }
+
         }
 
 /*

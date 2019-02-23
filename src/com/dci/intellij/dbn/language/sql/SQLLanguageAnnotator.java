@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.sql;
 
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.thread.BackgroundMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -27,29 +28,34 @@ public class SQLLanguageAnnotator implements Annotator {
     public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
         //SimpleTimeoutTask.invoke(1, true, () -> {
         Failsafe.lenient(() -> {
-            if (psiElement instanceof ExecutablePsiElement)  {
-                annotateExecutable((ExecutablePsiElement) psiElement, holder);
+            try {
+                BackgroundMonitor.startTimeoutProcess();
+                if (psiElement instanceof ExecutablePsiElement)  {
+                    annotateExecutable((ExecutablePsiElement) psiElement, holder);
 
-            } else if (psiElement instanceof ChameleonPsiElement)  {
-                annotateChameleon(psiElement, holder);
+                } else if (psiElement instanceof ChameleonPsiElement)  {
+                    annotateChameleon(psiElement, holder);
 
-            } else if (psiElement instanceof TokenPsiElement) {
-                annotateToken((TokenPsiElement) psiElement, holder);
+                } else if (psiElement instanceof TokenPsiElement) {
+                    annotateToken((TokenPsiElement) psiElement, holder);
 
-            } else if (psiElement instanceof IdentifierPsiElement) {
-                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
-                ConnectionHandler connectionHandler = identifierPsiElement.getConnectionHandler();
-                if (connectionHandler != null && !connectionHandler.isVirtual()) {
-                    annotateIdentifier(identifierPsiElement, holder);
+                } else if (psiElement instanceof IdentifierPsiElement) {
+                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
+                    ConnectionHandler connectionHandler = identifierPsiElement.getConnectionHandler();
+                    if (connectionHandler != null && !connectionHandler.isVirtual()) {
+                        annotateIdentifier(identifierPsiElement, holder);
+                    }
                 }
-            }
 
 
-            if (psiElement instanceof NamedPsiElement) {
-                NamedPsiElement namedPsiElement = (NamedPsiElement) psiElement;
-                if (namedPsiElement.hasErrors()) {
-                    holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.getElementType().getDescription());
+                if (psiElement instanceof NamedPsiElement) {
+                    NamedPsiElement namedPsiElement = (NamedPsiElement) psiElement;
+                    if (namedPsiElement.hasErrors()) {
+                        holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.getElementType().getDescription());
+                    }
                 }
+            } finally {
+                BackgroundMonitor.endTimeoutProcess();
             }
         });
     }
