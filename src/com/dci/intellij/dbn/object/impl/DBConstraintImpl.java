@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.object.impl;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
@@ -38,7 +37,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 import static com.dci.intellij.dbn.object.common.DBObjectType.COLUMN;
 import static com.dci.intellij.dbn.object.common.DBObjectType.CONSTRAINT;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DISABLEABLE;
@@ -93,8 +91,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
         columns = childObjects.createSubcontentObjectList(
                 COLUMN, this,
                 getDataset(),
-                DBObjectRelationType.CONSTRAINT_COLUMN,
-                INDEXED);
+                DBObjectRelationType.CONSTRAINT_COLUMN);
     }
 
     @Override
@@ -277,7 +274,9 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
     /*********************************************************
      *                         Loaders                       *
      *********************************************************/
-    private static final DynamicContentLoader COLUMNS_LOADER = DBObjectListFromRelationListLoader.create(CONSTRAINT, COLUMN);
+    static {
+        DBObjectListFromRelationListLoader.create(CONSTRAINT, COLUMN);
+    }
 
     @Override
     public DBOperationExecutor getOperationExecutor() {

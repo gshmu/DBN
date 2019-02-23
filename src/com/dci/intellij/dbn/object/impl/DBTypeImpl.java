@@ -43,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 import static com.dci.intellij.dbn.object.common.DBObjectType.TYPE;
 import static com.dci.intellij.dbn.object.common.DBObjectType.TYPE_ATTRIBUTE;
 import static com.dci.intellij.dbn.object.common.DBObjectType.TYPE_FUNCTION;
@@ -96,10 +95,10 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
         if (!isCollection()) {
             DBObjectListContainer container = initChildObjects();
             DBSchema schema = getSchema();
-            attributes = container.createSubcontentObjectList(TYPE_ATTRIBUTE, this, schema, INDEXED);
+            attributes = container.createSubcontentObjectList(TYPE_ATTRIBUTE, this, schema);
             procedures = container.createSubcontentObjectList(TYPE_PROCEDURE, this, schema);
             functions = container.createSubcontentObjectList(TYPE_FUNCTION, this, schema);
-            subTypes = container.createSubcontentObjectList(TYPE, this, schema, INDEXED);
+            subTypes = container.createSubcontentObjectList(TYPE, this, schema);
         }
     }
 

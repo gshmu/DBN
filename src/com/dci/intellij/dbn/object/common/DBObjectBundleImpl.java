@@ -90,7 +90,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.dci.intellij.dbn.object.common.DBObjectRelationType.ROLE_PRIVILEGE;
 import static com.dci.intellij.dbn.object.common.DBObjectRelationType.ROLE_ROLE;
@@ -149,11 +148,11 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         connectionConfigHash = connectionHandler.getSettings().getDatabaseSettings().hashCode();
 
         objectLists = new DBObjectListContainer(this);
-        users = objectLists.createObjectList(USER, this, INDEXED);
-        schemas = objectLists.createObjectList(SCHEMA, this, INDEXED);
-        roles = objectLists.createObjectList(ROLE, this, INDEXED);
-        systemPrivileges = objectLists.createObjectList(SYSTEM_PRIVILEGE, this, INDEXED);
-        charsets = objectLists.createObjectList(CHARSET, this, INDEXED);
+        users = objectLists.createObjectList(USER, this);
+        schemas = objectLists.createObjectList(SCHEMA, this);
+        roles = objectLists.createObjectList(ROLE, this);
+        systemPrivileges = objectLists.createObjectList(SYSTEM_PRIVILEGE, this);
+        charsets = objectLists.createObjectList(CHARSET, this);
         allPossibleTreeChildren = DatabaseBrowserUtils.createList(schemas, users, roles, systemPrivileges, charsets);
 
         objectRelationLists = new DBObjectRelationListContainer(this);

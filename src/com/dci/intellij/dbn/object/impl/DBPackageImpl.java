@@ -32,7 +32,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 import static com.dci.intellij.dbn.object.common.DBObjectType.PACKAGE;
 import static com.dci.intellij.dbn.object.common.DBObjectType.PACKAGE_FUNCTION;
 import static com.dci.intellij.dbn.object.common.DBObjectType.PACKAGE_PROCEDURE;
@@ -56,7 +55,7 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
         DBObjectListContainer childObjects = initChildObjects();
         functions = childObjects.createSubcontentObjectList(PACKAGE_FUNCTION, this, schema);
         procedures = childObjects.createSubcontentObjectList(PACKAGE_PROCEDURE, this, schema);
-        types = childObjects.createSubcontentObjectList(PACKAGE_TYPE, this, schema, INDEXED);
+        types = childObjects.createSubcontentObjectList(PACKAGE_TYPE, this, schema);
     }
 
     @Override

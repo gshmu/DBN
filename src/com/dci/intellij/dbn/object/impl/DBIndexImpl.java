@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBIndex;
@@ -22,7 +21,9 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.DBObjectType.COLUMN;
 import static com.dci.intellij.dbn.object.common.DBObjectType.INDEX;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.INVALIDABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.UNIQUE;
 
 public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
     private DBObjectList<DBColumn> columns;
@@ -113,10 +114,10 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
         return EMPTY_TREE_NODE_LIST;
     }
 
-    /**
-     * ******************************************************
-     * Loaders                       *
-     * *******************************************************
-     */
-    private static final DynamicContentLoader COLUMNS_LOADER = DBObjectListFromRelationListLoader.create(INDEX, COLUMN);
+    /*********************************************************
+     *                         Loaders                       *
+     *********************************************************/
+    static {
+        DBObjectListFromRelationListLoader.create(INDEX, COLUMN);
+    }
 }

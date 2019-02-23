@@ -23,10 +23,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.CHANGING;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DIRTY;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DISPOSED;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADED;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.MASTER;
 import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> extends PropertyHolderImpl<DynamicContentStatus> implements DynamicContent<T> {
@@ -38,7 +41,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
 
     private GenericDatabaseElement parent;
     private ContentDependencyAdapter dependencyAdapter;
-    private Map<String, T> index;
 
     protected List<T> elements = EMPTY_UNTOUCHED_CONTENT;
 
@@ -101,10 +103,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     @Override
     public boolean isLoading() {
         return is(LOADING);
-    }
-
-    public boolean isIndexed() {
-        return is(INDEXED);
     }
 
     /**
@@ -267,7 +265,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
         List<T> oldElements = this.elements;
         if (isDisposed() || elements == null || elements.size() == 0) {
             elements = EMPTY_CONTENT;
-            index = null;
         } else {
             sortElements(elements);
         }
@@ -278,7 +275,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
                 return DynamicContentImpl.this.getFilter();
             }
         };
-        updateIndex();
         compact();
         if (oldElements.size() != 0 || elements.size() != 0 ){
             notifyChangeListeners();
@@ -326,45 +322,21 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
         return elements;
     }
 
-
-    private void updateIndex() {
-        if (isIndexed()) {
-            List<T> elements = this.elements;
-            if (elements instanceof FiltrableList) {
-                elements = ((FiltrableList) elements).getFullList();
-            }
-            if (elements.size() > 30) {
-                if (index == null)
-                    index = new TreeMap<>(String.CASE_INSENSITIVE_ORDER); else
-                    index.clear();
-
-                for (T element : elements) {
-                    String name = element.getName();
-                    index.put(name, element);
-                }
-            } else {
-                index = null;
-            }
-        }
-    }
-
     @Override
     public T getElement(String name, int overload) {
         if (name != null) {
             List<T> elements = getAllElements();
-            if (/*isIndexed() && */index != null) {
-                return index.get(name);
-            } else {
-                for (T element : elements) {
-                    if (element.getName().equalsIgnoreCase(name)) {
-                        if (overload == 0 || overload == element.getOverload()) {
-                            return element;
-                        }
-                    }
-                }
-            }
+            return elements.
+                    stream().
+                    filter(element -> matchElement(element, name, overload)).
+                    findFirst().
+                    orElse(null);
         }
         return null;
+    }
+
+    protected boolean matchElement(T element, String name, int overload) {
+        return (overload == 0 || overload == element.getOverload()) && element.getName().equalsIgnoreCase(name);
     }
 
     @Override
@@ -402,7 +374,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
                 }
                 elements = EMPTY_DISPOSED_CONTENT;
             }
-            CollectionUtil.clearMap(index);
             Disposer.dispose(dependencyAdapter);
             dependencyAdapter = VoidContentDependencyAdapter.INSTANCE;
             parent = null;

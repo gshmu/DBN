@@ -26,7 +26,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 import static com.dci.intellij.dbn.object.common.DBObjectType.ARGUMENT;
 import static com.dci.intellij.dbn.object.common.DBObjectType.METHOD;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
@@ -78,7 +77,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     protected void initLists() {
         super.initLists();
         DBObjectListContainer container = initChildObjects();
-        arguments = container.createSubcontentObjectList(ARGUMENT, this, getSchema(), INDEXED);
+        arguments = container.createSubcontentObjectList(ARGUMENT, this, getSchema());
     }
 
     @Override
