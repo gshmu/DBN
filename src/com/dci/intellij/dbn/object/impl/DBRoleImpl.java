@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.DBGrantedPrivilege;
 import com.dci.intellij.dbn.object.DBGrantedRole;
@@ -25,8 +24,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
-import static com.dci.intellij.dbn.object.common.DBObjectType.*;
+import static com.dci.intellij.dbn.object.common.DBObjectType.GRANTED_PRIVILEGE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.GRANTED_ROLE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.ROLE;
 
 public class DBRoleImpl extends DBObjectImpl implements DBRole {
     DBObjectList<DBGrantedPrivilege> privileges;
@@ -45,8 +45,8 @@ public class DBRoleImpl extends DBObjectImpl implements DBRole {
     protected void initLists() {
         DBObjectListContainer ol = initChildObjects();
         DBObjectBundle sourceContentHolder = getConnectionHandler().getObjectBundle();
-        privileges = ol.createSubcontentObjectList(GRANTED_PRIVILEGE, this, sourceContentHolder, DBObjectRelationType.ROLE_PRIVILEGE, INDEXED);
-        grantedRoles = ol.createSubcontentObjectList(GRANTED_ROLE, this, sourceContentHolder, DBObjectRelationType.ROLE_ROLE, INDEXED);
+        privileges = ol.createSubcontentObjectList(GRANTED_PRIVILEGE, this, sourceContentHolder, DBObjectRelationType.ROLE_PRIVILEGE);
+        grantedRoles = ol.createSubcontentObjectList(GRANTED_ROLE, this, sourceContentHolder, DBObjectRelationType.ROLE_ROLE);
     }
 
     @Override
@@ -139,6 +139,8 @@ public class DBRoleImpl extends DBObjectImpl implements DBRole {
     /*********************************************************
      *                         Loaders                       *
      *********************************************************/
-    private static final DynamicContentLoader PRIVILEGES_LOADER = DBObjectListFromRelationListLoader.create(ROLE, GRANTED_PRIVILEGE);
-    private static final DynamicContentLoader ROLES_LOADER = DBObjectListFromRelationListLoader.create(ROLE, GRANTED_ROLE);
+    static {
+        DBObjectListFromRelationListLoader.create(ROLE, GRANTED_PRIVILEGE);
+        DBObjectListFromRelationListLoader.create(ROLE, GRANTED_ROLE);
+    }
 }

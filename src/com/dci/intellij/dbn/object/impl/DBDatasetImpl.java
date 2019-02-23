@@ -26,7 +26,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 import static com.dci.intellij.dbn.object.common.DBObjectRelationType.CONSTRAINT_COLUMN;
 import static com.dci.intellij.dbn.object.common.DBObjectRelationType.INDEX_COLUMN;
 import static com.dci.intellij.dbn.object.common.DBObjectType.COLUMN;
@@ -49,9 +48,9 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
         super.initLists();
         DBSchema schema = getSchema();
         DBObjectListContainer childObjects = initChildObjects();
-        columns = childObjects.createSubcontentObjectList(COLUMN, this, schema, INDEXED);
-        constraints = childObjects.createSubcontentObjectList(CONSTRAINT, this, schema, INDEXED);
-        triggers = childObjects.createSubcontentObjectList(DATASET_TRIGGER, this, schema, INDEXED);
+        columns = childObjects.createSubcontentObjectList(COLUMN, this, schema);
+        constraints = childObjects.createSubcontentObjectList(CONSTRAINT, this, schema);
+        triggers = childObjects.createSubcontentObjectList(DATASET_TRIGGER, this, schema);
 
         initChildObjectRelations().createSubcontentObjectRelationList(CONSTRAINT_COLUMN, this, schema);
     }

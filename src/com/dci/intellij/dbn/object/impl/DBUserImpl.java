@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.object.DBGrantedPrivilege;
@@ -33,8 +32,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
-import static com.dci.intellij.dbn.object.common.DBObjectType.*;
+import static com.dci.intellij.dbn.object.common.DBObjectType.GRANTED_PRIVILEGE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.GRANTED_ROLE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.USER;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SESSION_USER;
 
 public class DBUserImpl extends DBObjectImpl implements DBUser {
@@ -64,8 +64,8 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
     protected void initLists() {
         DBObjectListContainer childObjects = initChildObjects();
         DBObjectBundle sourceContentHolder = getConnectionHandler().getObjectBundle();
-        roles = childObjects.createSubcontentObjectList(GRANTED_ROLE, this, sourceContentHolder, DBObjectRelationType.USER_ROLE, INDEXED);
-        privileges = childObjects.createSubcontentObjectList(GRANTED_PRIVILEGE, this, sourceContentHolder, DBObjectRelationType.USER_PRIVILEGE, INDEXED);
+        roles = childObjects.createSubcontentObjectList(GRANTED_ROLE, this, sourceContentHolder, DBObjectRelationType.USER_ROLE);
+        privileges = childObjects.createSubcontentObjectList(GRANTED_PRIVILEGE, this, sourceContentHolder, DBObjectRelationType.USER_PRIVILEGE);
     }
 
 
@@ -167,7 +167,7 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
     protected List<DBObjectNavigationList> createNavigationLists() {
         DBSchema schema = getSchema();
         if(schema != null) {
-            List<DBObjectNavigationList> objectNavigationLists = new ArrayList<DBObjectNavigationList>();
+            List<DBObjectNavigationList> objectNavigationLists = new ArrayList<>();
             objectNavigationLists.add(new DBObjectNavigationListImpl("Schema", schema));
             return objectNavigationLists;
         }
@@ -186,6 +186,8 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
     /*********************************************************
      *                         Loaders                       *
      *********************************************************/
-    private static final DynamicContentLoader ROLES_LOADER = DBObjectListFromRelationListLoader.create(USER, GRANTED_ROLE);
-    private static final DynamicContentLoader PRIVILEGES_LOADER = DBObjectListFromRelationListLoader.create(USER, GRANTED_PRIVILEGE);
+    static {
+        DBObjectListFromRelationListLoader.create(USER, GRANTED_ROLE);
+        DBObjectListFromRelationListLoader.create(USER, GRANTED_PRIVILEGE);
+    }
 }

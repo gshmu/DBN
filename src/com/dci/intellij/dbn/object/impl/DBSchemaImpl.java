@@ -42,7 +42,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INDEXED;
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
 import static com.dci.intellij.dbn.object.common.DBObjectRelationType.CONSTRAINT_COLUMN;
 import static com.dci.intellij.dbn.object.common.DBObjectRelationType.INDEX_COLUMN;
@@ -89,25 +88,25 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         DBObjectListContainer ol = initChildObjects();
         DBObjectRelationListContainer orl = initChildObjectRelations();
 
-        tables = ol.createObjectList(TABLE, this, INDEXED);
-        views = ol.createObjectList(VIEW, this, INDEXED);
-        materializedViews = ol.createObjectList(MATERIALIZED_VIEW, this, INDEXED);
-        synonyms = ol.createObjectList(SYNONYM, this, INDEXED);
-        sequences = ol.createObjectList(SEQUENCE, this, INDEXED);
+        tables = ol.createObjectList(TABLE, this);
+        views = ol.createObjectList(VIEW, this);
+        materializedViews = ol.createObjectList(MATERIALIZED_VIEW, this);
+        synonyms = ol.createObjectList(SYNONYM, this);
+        sequences = ol.createObjectList(SEQUENCE, this);
         procedures = ol.createObjectList(PROCEDURE, this);
         functions = ol.createObjectList(FUNCTION, this);
-        packages = ol.createObjectList(PACKAGE, this, INDEXED);
-        types = ol.createObjectList(TYPE, this, INDEXED);
-        databaseTriggers = ol.createObjectList(DATABASE_TRIGGER, this, INDEXED);
-        dimensions = ol.createObjectList(DIMENSION, this, INDEXED);
-        clusters = ol.createObjectList(CLUSTER, this, INDEXED);
-        databaseLinks = ol.createObjectList(DBLINK, this, INDEXED);
+        packages = ol.createObjectList(PACKAGE, this);
+        types = ol.createObjectList(TYPE, this);
+        databaseTriggers = ol.createObjectList(DATABASE_TRIGGER, this);
+        dimensions = ol.createObjectList(DIMENSION, this);
+        clusters = ol.createObjectList(CLUSTER, this);
+        databaseLinks = ol.createObjectList(DBLINK, this);
 
-        DBObjectList constraints = ol.createObjectList(CONSTRAINT, this, INDEXED, INTERNAL);
-        DBObjectList indexes = ol.createObjectList(INDEX, this, INDEXED, INTERNAL);
+        DBObjectList constraints = ol.createObjectList(CONSTRAINT, this, INTERNAL);
+        DBObjectList indexes = ol.createObjectList(INDEX, this, INTERNAL);
         DBObjectList columns = ol.createObjectList(COLUMN, this, INTERNAL);
-        ol.createObjectList(DATASET_TRIGGER, this, INDEXED, INTERNAL);
-        ol.createObjectList(NESTED_TABLE, this, INDEXED, INTERNAL);
+        ol.createObjectList(DATASET_TRIGGER, this, INTERNAL);
+        ol.createObjectList(NESTED_TABLE, this, INTERNAL);
         ol.createObjectList(PACKAGE_FUNCTION, this, INTERNAL);
         ol.createObjectList(PACKAGE_PROCEDURE, this, INTERNAL);
         ol.createObjectList(PACKAGE_TYPE, this, INTERNAL);
