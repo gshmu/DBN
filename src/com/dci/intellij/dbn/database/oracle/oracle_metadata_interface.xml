@@ -329,6 +329,13 @@
 
     <statement-execution-processor id="all-dataset-columns" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
+            with obj as (select
+                             o.OWNER,
+                             o.OBJECT_NAME
+                         from [PREFIX]_OBJECTS o
+                         where
+                             o.OWNER = {0} and
+                             o.OBJECT_TYPE in ('TABLE', 'VIEW', 'MATERIALIZED VIEW'))
             select distinct
                 col.TABLE_NAME as DATASET_NAME,
                 col.COLUMN_NAME,
@@ -345,7 +352,7 @@
                 decode (pk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_PRIMARY_KEY,
                 decode (fk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_FOREIGN_KEY,
                 decode (uk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_UNIQUE_KEY
-            from [PREFIX]_TAB_COLS col,
+            from [PREFIX]_TAB_COLS col, obj,
                 (select
                      cc.OWNER,
                      cc.TABLE_NAME,
@@ -353,9 +360,11 @@
                      cc.COLUMN_NAME
                  from
                       [PREFIX]_CONSTRAINTS con,
-                      [PREFIX]_CONS_COLUMNS cc
+                      [PREFIX]_CONS_COLUMNS cc, obj
                  where
                       cc.OWNER = {0} and
+                      cc.OWNER = obj.OWNER and
+                      cc.TABLE_NAME = obj.OBJECT_NAME and
                       con.OWNER = cc.OWNER and
                       con.TABLE_NAME = cc.TABLE_NAME and
                       con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
@@ -367,9 +376,11 @@
                      cc.COLUMN_NAME
                  from
                       [PREFIX]_CONSTRAINTS con,
-                      [PREFIX]_CONS_COLUMNS cc
+                      [PREFIX]_CONS_COLUMNS cc, obj
                  where
                       cc.OWNER = {0} and
+                      cc.OWNER = obj.OWNER and
+                      cc.TABLE_NAME = obj.OBJECT_NAME and
                       con.OWNER = cc.OWNER and
                       con.TABLE_NAME = cc.TABLE_NAME and
                       con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
@@ -381,15 +392,19 @@
                      cc.COLUMN_NAME
                  from
                       [PREFIX]_CONSTRAINTS con,
-                      [PREFIX]_CONS_COLUMNS cc
+                      [PREFIX]_CONS_COLUMNS cc, obj
                  where
                       cc.OWNER = {0} and
+                      cc.OWNER = obj.OWNER and
+                      cc.TABLE_NAME = obj.OBJECT_NAME and
                       con.OWNER = cc.OWNER and
                       con.TABLE_NAME = cc.TABLE_NAME and
                       con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
                       con.CONSTRAINT_TYPE = 'U') uk
             where
                 col.OWNER = {0} and
+                col.OWNER = obj.OWNER and
+                col.TABLE_NAME = obj.OBJECT_NAME and
                 col.OWNER = pk.OWNER(+) and
                 col.TABLE_NAME = pk.TABLE_NAME(+) and
                 col.COLUMN_NAME = pk.COLUMN_NAME(+) and
@@ -402,7 +417,14 @@
             order by col.TABLE_NAME asc
         </statement>
         <statement prefixes="DBA, ALL" comment="Oracle 8.0">
-            select distinct
+           with obj as (select
+                            o.OWNER,
+                            o.OBJECT_NAME
+                        from [PREFIX]_OBJECTS o
+                        where
+                            o.OWNER = {0} and
+                            o.OBJECT_TYPE in ('TABLE', 'VIEW', 'MATERIALIZED VIEW'))
+           select distinct
                 col.TABLE_NAME as DATASET_NAME,
                 col.COLUMN_NAME,
                 col.COLUMN_ID as POSITION,
@@ -418,7 +440,7 @@
                 decode (pk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_PRIMARY_KEY,
                 decode (fk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_FOREIGN_KEY,
                 decode (uk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_UNIQUE_KEY
-            from [PREFIX]_TAB_COLUMNS col,
+            from [PREFIX]_TAB_COLUMNS col, obj,
                 (select
                      cc.OWNER,
                      cc.TABLE_NAME,
@@ -426,9 +448,11 @@
                      cc.COLUMN_NAME
                  from
                       [PREFIX]_CONSTRAINTS con,
-                      [PREFIX]_CONS_COLUMNS cc
+                      [PREFIX]_CONS_COLUMNS cc, obj
                  where
                       cc.OWNER = {0} and
+                      cc.OWNER = obj.OWNER and
+                      cc.TABLE_NAME = obj.OBJECT_NAME and
                       con.OWNER = cc.OWNER and
                       con.TABLE_NAME = cc.TABLE_NAME and
                       con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
@@ -440,9 +464,11 @@
                      cc.COLUMN_NAME
                  from
                       [PREFIX]_CONSTRAINTS con,
-                      [PREFIX]_CONS_COLUMNS cc
+                      [PREFIX]_CONS_COLUMNS cc, obj
                  where
                       cc.OWNER = {0} and
+                      cc.OWNERE = obj.OWNER and
+                      cc.TABLE_NAME = obj.OBJECT_NAME and
                       con.OWNER = cc.OWNER and
                       con.TABLE_NAME = cc.TABLE_NAME and
                       con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
@@ -454,15 +480,19 @@
                      cc.COLUMN_NAME
                  from
                       [PREFIX]_CONSTRAINTS con,
-                      [PREFIX]_CONS_COLUMNS cc
+                      [PREFIX]_CONS_COLUMNS cc, obj
                  where
                       cc.OWNER = {0} and
+                      cc.OWNER = obj.OWNER and
+                      cc.TABLE_NAME = obj.OBJECT_NAME and
                       con.OWNER = cc.OWNER and
                       con.TABLE_NAME = cc.TABLE_NAME and
                       con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
                       con.CONSTRAINT_TYPE = 'U') uk
             where
                 col.OWNER = {0} and
+                col.OWNER = obj.OWNER and
+                col.TABLE_NAME = obj.OBJECT_NAME and
                 col.OWNER = pk.OWNER(+) and
                 col.TABLE_NAME = pk.TABLE_NAME(+) and
                 col.COLUMN_NAME = pk.COLUMN_NAME(+) and
@@ -492,14 +522,24 @@
 
     <statement-execution-processor id="all-column-constraint-relations" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
+            with obj as (select
+                            o.OWNER,
+                            o.OBJECT_NAME
+                        from [PREFIX]_OBJECTS o
+                        where
+                            o.OWNER = {0} and
+                            o.OBJECT_TYPE in ('TABLE', 'VIEW', 'MATERIALIZED VIEW'))
             select
-               TABLE_NAME as DATASET_NAME,
-               COLUMN_NAME,
-               CONSTRAINT_NAME,
-               POSITION
-            from [PREFIX]_CONS_COLUMNS
-            where OWNER = {0}
-            order by TABLE_NAME asc
+               c.TABLE_NAME as DATASET_NAME,
+               c.COLUMN_NAME,
+               c.CONSTRAINT_NAME,
+               c.POSITION
+            from [PREFIX]_CONS_COLUMNS c, obj
+            where
+                c.OWNER = {0} and
+                c.OWNER = obj.OWNER and
+                c.TABLE_NAME = obj.OBJECT_NAME
+            order by c.TABLE_NAME asc
         </statement>
     </statement-execution-processor>
 
@@ -530,10 +570,17 @@
 
     <statement-execution-processor id="all-constraints" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
+            with obj as (select
+                            o.OWNER,
+                            o.OBJECT_NAME
+                         from [PREFIX]_OBJECTS o
+                         where
+                            o.OWNER = {0} and
+                            o.OBJECT_TYPE in ('TABLE', 'VIEW', 'MATERIALIZED VIEW'))
             select
-                TABLE_NAME as DATASET_NAME,
-                CONSTRAINT_NAME,
-                case CONSTRAINT_TYPE
+                c.TABLE_NAME as DATASET_NAME,
+                c.CONSTRAINT_NAME,
+                case c.CONSTRAINT_TYPE
                     when 'C' then 'CHECK'
                     when 'P' then 'PRIMARY KEY'
                     when 'U' then 'UNIQUE'
@@ -541,15 +588,18 @@
                     when 'V' then 'VIEW CHECK'
                     when 'O' then 'VIEW READONLY'
                 end as CONSTRAINT_TYPE,
-                R_OWNER as FK_CONSTRAINT_OWNER,
-                R_CONSTRAINT_NAME as FK_CONSTRAINT_NAME,
-                decode(STATUS, 'ENABLED', 'Y', 'N') as IS_ENABLED,
-                SEARCH_CONDITION as CHECK_CONDITION
-            from [PREFIX]_CONSTRAINTS
-            where OWNER = {0}
+                c.R_OWNER as FK_CONSTRAINT_OWNER,
+                c.R_CONSTRAINT_NAME as FK_CONSTRAINT_NAME,
+                decode(c.STATUS, 'ENABLED', 'Y', 'N') as IS_ENABLED,
+                c.SEARCH_CONDITION as CHECK_CONDITION
+            from [PREFIX]_CONSTRAINTS c, obj
+            where
+                c.OWNER = {0} and
+                c.OWNER = obj.OWNER and
+                c.TABLE_NAME = obj.OBJECT_NAME
             order by
-                TABLE_NAME,
-                CONSTRAINT_NAME asc
+                c.TABLE_NAME,
+                c.CONSTRAINT_NAME asc
         </statement>
     </statement-execution-processor>
 
