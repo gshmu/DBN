@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.object.impl;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.DBColumn;
@@ -38,8 +37,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.DBObjectType.*;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
+import static com.dci.intellij.dbn.object.common.DBObjectType.COLUMN;
+import static com.dci.intellij.dbn.object.common.DBObjectType.CONSTRAINT;
+import static com.dci.intellij.dbn.object.common.DBObjectType.INDEX;
+import static com.dci.intellij.dbn.object.common.DBObjectType.TYPE_ATTRIBUTE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.FOREIGN_KEY;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.HIDDEN;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.NULLABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.PRIMARY_KEY;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.UNIQUE_KEY;
 
 public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     private DBDataType dataType;
@@ -328,8 +334,10 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     /*********************************************************
      *                         Loaders                       *
      *********************************************************/
-    private static final DynamicContentLoader CONSTRAINTS_LOADER = DBObjectListFromRelationListLoader.create(COLUMN, CONSTRAINT);
-    private static final DynamicContentLoader INDEXES_LOADER = DBObjectListFromRelationListLoader.create(COLUMN, INDEX);
+    static {
+        DBObjectListFromRelationListLoader.create(COLUMN, CONSTRAINT);
+        DBObjectListFromRelationListLoader.create(COLUMN, INDEX);
+    }
 
     /*********************************************************
      *                     TreeElement                       *
