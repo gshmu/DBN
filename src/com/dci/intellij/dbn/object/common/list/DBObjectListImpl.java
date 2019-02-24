@@ -458,7 +458,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
             DBObject object = (DBObject) getTreeParent();
             return getName() + " of " + object.getQualifiedNameWithType();
         }*/
-        return getParentElement().getDynamicContentType() + " " + getName() + " - " + super.toString();
+        return getParentElement().getDynamicContentType() + " (" + getParentElement().getName() + ") " + getName() + " - " + super.toString();
     }
 
     @Override
