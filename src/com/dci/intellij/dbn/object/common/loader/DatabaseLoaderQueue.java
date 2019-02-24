@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseLoaderQueue extends Task.Modal implements Disposable {
-    boolean isActive = true;
+    private boolean isActive = true;
     private List<Runnable> queue = new ArrayList<Runnable>();
 
     public DatabaseLoaderQueue(@org.jetbrains.annotations.Nullable Project project) {

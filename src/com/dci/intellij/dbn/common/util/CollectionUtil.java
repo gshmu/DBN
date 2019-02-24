@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class CollectionUtil {
@@ -105,5 +106,9 @@ public class CollectionUtil {
                     filter(element -> element != null && filter.accepts(element)).
                     collect(Collectors.toList());
         }
+    }
+
+    public static <S, T> List<T> map(List<S> list, Function<S, T> mapper) {
+        return list.stream().map(mapper).collect(Collectors.toList());
     }
 }

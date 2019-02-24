@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
@@ -11,11 +12,9 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -40,6 +39,7 @@ import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -52,14 +52,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 import static com.dci.intellij.dbn.common.util.MessageUtil.*;
@@ -70,6 +68,8 @@ import static com.dci.intellij.dbn.connection.transaction.TransactionAction.acti
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class ConnectionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
+
     public static final String COMPONENT_NAME = "DBNavigator.Project.ConnectionManager";
 
     private Timer idleConnectionCleaner;
@@ -135,17 +135,19 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             ConnectionHandler connectionHandler = getConnectionHandler(connectionId);
             if (connectionHandler != null) {
                 Project project = getProject();
-                BackgroundTask.invoke(project,
-                        instructions("Refreshing database objects", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
-                        (data, progress) -> {
+                Progress.background(
+                        project,
+                        "Refreshing database objects", true,
+                        (progress) -> {
                             List<TransactionAction> actions = actions(TransactionAction.DISCONNECT);
 
                             DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
                             List<DBNConnection> connections = connectionHandler.getConnections();
                             for (DBNConnection connection : connections) {
+                                Progress.check(progress);
                                 transactionManager.execute(connectionHandler, connection, actions, false, null);
                             }
-                            connectionHandler.getObjectBundle().getObjectListContainer().reload();
+                            connectionHandler.getObjectBundle().getObjectListContainer().refresh();
                         });
             }
         }
@@ -158,13 +160,13 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         return connectionBundle;
     }
 
-    public static void testConnection(ConnectionHandler connectionHandler, boolean showSuccessMessage, boolean showErrorMessage) {
+    public static void testConnection(ConnectionHandler connectionHandler, SchemaId schemaId, SessionId sessionId, boolean showSuccessMessage, boolean showErrorMessage) {
         Project project = connectionHandler.getProject();
         ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
         String connectionName = connectionHandler.getName();
         try {
             databaseSettings.checkConfiguration();
-            connectionHandler.getMainConnection();
+            connectionHandler.getConnection(sessionId, schemaId);
             ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
             connectionStatus.setValid(true);
             connectionStatus.setConnected(true);
@@ -453,10 +455,11 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         @Override
         public void run() {
             try {
-                for (ConnectionHandler connectionHandler : getConnectionHandlers()) {
-                    resolveIdleStatus(connectionHandler);
-                }
-            } catch (Exception ignore){}
+                List<ConnectionHandler> connectionHandlers = getConnectionHandlers();
+                connectionHandlers.forEach(connectionHandler -> resolveIdleStatus(connectionHandler));
+            } catch (Exception e){
+                LOGGER.error("Failed to release idle connections", e);
+            }
         }
 
         private void resolveIdleStatus(ConnectionHandler connectionHandler) {
@@ -466,24 +469,24 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
             List<DBNConnection> activeConnections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
 
-            for (DBNConnection connection : activeConnections) {
-                if (connection.isIdle() && connection.isNot(ResourceStatus.RESOLVING_TRANSACTION)) {
-
-                    int idleMinutes = connection.getIdleMinutes();
-                    int idleMinutesToDisconnect = connectionHandler.getSettings().getDetailSettings().getIdleTimeToDisconnect();
-                    if (idleMinutes > idleMinutesToDisconnect) {
-                        if (connection.hasDataChanges()) {
-                            connection.set(ResourceStatus.RESOLVING_TRANSACTION, true);
-                            Dispatch.invokeNonModal(() -> {
-                                IdleConnectionDialog idleConnectionDialog = new IdleConnectionDialog(connectionHandler, connection);
-                                idleConnectionDialog.show();
-                            });
-                        } else {
-                            transactionManager.execute(connectionHandler, connection, actions, false, null);
+            activeConnections.
+                    stream().
+                    filter(connection -> connection.isIdle() && connection.isNot(ResourceStatus.RESOLVING_TRANSACTION)).
+                    forEach(connection -> {
+                        int idleMinutes = connection.getIdleMinutes();
+                        int idleMinutesToDisconnect = connectionHandler.getSettings().getDetailSettings().getIdleTimeToDisconnect();
+                        if (idleMinutes > idleMinutesToDisconnect) {
+                            if (connection.hasDataChanges()) {
+                                connection.set(ResourceStatus.RESOLVING_TRANSACTION, true);
+                                Dispatch.invokeNonModal(() -> {
+                                    IdleConnectionDialog idleConnectionDialog = new IdleConnectionDialog(connectionHandler, connection);
+                                    idleConnectionDialog.show();
+                                });
+                            } else {
+                                transactionManager.execute(connectionHandler, connection, actions, false, null);
+                            }
                         }
-                    }
-                }
-            }
+                    });
 
         }
     }
@@ -491,11 +494,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     void disposeConnections(@NotNull List<ConnectionHandler> connectionHandlers) {
         if (connectionHandlers.size() > 0) {
             Project project = getProject();
-            ConditionalLaterInvocator.invoke(() -> {
-                List<ConnectionId> connectionIds = new ArrayList<>();
-                for (ConnectionHandler connectionHandler : connectionHandlers) {
-                    connectionIds.add(connectionHandler.getConnectionId());
-                }
+            Dispatch.invoke(() -> {
+                List<ConnectionId> connectionIds = ConnectionHandler.ids(connectionHandlers);
 
                 ExecutionManager executionManager = ExecutionManager.getInstance(project);
                 executionManager.closeExecutionResults(connectionIds);
@@ -506,9 +506,12 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
                 methodExecutionManager.cleanupExecutionHistory(connectionIds);
 
-                BackgroundTask.invoke(project,
-                        instructions("Cleaning up connections", TaskInstruction.CANCELLABLE),
-                        (data, progress) -> DisposerUtil.dispose(connectionHandlers));
+                Background.run(() -> {
+                    connectionHandlers.forEach(connectionHandler -> {
+                        connectionHandler.getConnectionPool().closeConnections();
+                        DisposerUtil.dispose(connectionHandler);
+                    });
+                });
             });
         }
     }

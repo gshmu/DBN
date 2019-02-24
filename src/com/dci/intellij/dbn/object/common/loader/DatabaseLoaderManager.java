@@ -26,21 +26,23 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
         EventUtil.subscribe(project, this,
                 ConnectionLoadListener.TOPIC,
                 connectionHandler -> Dispatch.invokeNonModal(() -> {
+
+                    checkDisposed();
                     Failsafe.ensure(project);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                     FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
                     VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
                     for (VirtualFile openFile : openFiles) {
+
+                        checkDisposed();
                         ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(openFile);
                         if (activeConnection == connectionHandler) {
                             FileEditor[] fileEditors = fileEditorManager.getEditors(openFile);
                             for (FileEditor fileEditor : fileEditors) {
-                                Editor editor = EditorUtil.getEditor(fileEditor);
-                                if (editor != null) {
-                                    Failsafe.ensure(project);
-                                    DocumentUtil.refreshEditorAnnotations(editor);
-                                }
 
+                                checkDisposed();
+                                Editor editor = EditorUtil.getEditor(fileEditor);
+                                DocumentUtil.refreshEditorAnnotations(editor);
                             }
 
                         }
