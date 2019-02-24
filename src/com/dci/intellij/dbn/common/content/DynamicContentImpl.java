@@ -210,6 +210,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     @Override
     public final void loadInBackground() {
         if (shouldLoad()) {
+            System.out.println( this + " :invoked by " + ThreadMonitor.thread());
             ConnectionHandler connectionHandler = getConnectionHandler();
             String connectionString = " (" + connectionHandler.getName() + ')';
             Progress.background(
