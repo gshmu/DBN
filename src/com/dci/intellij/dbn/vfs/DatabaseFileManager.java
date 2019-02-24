@@ -312,7 +312,9 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                 if (connectionHandler != null) {
                     ConnectionDetailSettings connectionDetailSettings = connectionHandler.getSettings().getDetailSettings();
                     if (connectionDetailSettings.isRestoreWorkspace()) {
-                        ConnectionAction.invoke("opening database editors", connectionHandler,
+                        ConnectionAction.invoke(
+                                "opening database editors",
+                                connectionHandler,
                                 action -> BackgroundTask.invoke(project,
                                         instructions("Opening database editors", TaskInstruction.CANCELLABLE),
                                         (data, progress) -> {

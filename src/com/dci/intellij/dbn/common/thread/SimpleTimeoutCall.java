@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.routine.BasicCallable;
 import com.dci.intellij.dbn.common.util.Traceable;
 import com.intellij.openapi.progress.ProgressIndicator;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -48,14 +47,10 @@ public abstract class SimpleTimeoutCall<T> extends Traceable implements Callable
             @Override
             public T call() throws Exception {
                 trace(this);
-                try {
-                    BackgroundMonitor.startTimeoutProcess();
-                    return ProgressMonitor.invoke(progressIndicator, callable);
-                } catch (ParserConfigurationException ignore) {
-                } finally {
-                    BackgroundMonitor.endTimeoutProcess();
-                }
-                return defaultValue;
+                return BackgroundMonitor.call(
+                        ThreadProperty.TIMEOUT_PROCESS,
+                        defaultValue,
+                        () -> ProgressMonitor.invoke(progressIndicator, callable));
             }
         }.start();
     }

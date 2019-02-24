@@ -58,15 +58,15 @@ public class DebugStatementIntentionAction extends GenericIntentionAction implem
 
     @Override
     public void invoke(@NotNull final Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
-        final ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
-        final FileEditor fileEditor = EditorUtil.getFileEditor(editor);
+        ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
+        FileEditor fileEditor = EditorUtil.getFileEditor(editor);
         if (executable != null && fileEditor != null && psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile databasePsiFile = (DBLanguagePsiFile) psiFile;
 
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             connectionMappingManager.selectConnectionAndSchema(
                     databasePsiFile,
-                    ConnectionAction.create("", databasePsiFile, (Integer)null, action -> {
+                    ConnectionAction.create("", databasePsiFile, null, action -> {
                         StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
                         StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(fileEditor, executable, true);
                         if (executionProcessor != null) {

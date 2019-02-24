@@ -231,11 +231,11 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         }
     }
 
-    public void executeStatement(final @NotNull StatementExecutionProcessor executionProcessor) {
+    public void executeStatement(@NotNull StatementExecutionProcessor executionProcessor) {
         executeStatements(executionProcessor.asList(), executionProcessor.getVirtualFile());
     }
 
-    private void executeStatements(final List<StatementExecutionProcessor> executionProcessors, final VirtualFile virtualFile) {
+    private void executeStatements(List<StatementExecutionProcessor> executionProcessors, VirtualFile virtualFile) {
         if (executionProcessors.size() > 0) {
             Project project = getProject();
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
@@ -245,7 +245,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                     ConnectionAction.create(
                             "the statement execution",
                             () -> connectionMappingManager.getConnectionHandler(virtualFile),
-                            (Integer) null,
+                            null,
                             action -> promptExecutionDialogs(
                                     executionProcessors,
                                     DBDebuggerType.NONE,
@@ -294,8 +294,8 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         }
     }
 
-    public void executeStatementAtCursor(final FileEditor fileEditor) {
-        final Editor editor = EditorUtil.getEditor(fileEditor);
+    public void executeStatementAtCursor(FileEditor fileEditor) {
+        Editor editor = EditorUtil.getEditor(fileEditor);
         if (editor != null) {
             StatementExecutionProcessor executionProcessor = getExecutionProcessorAtCursor(fileEditor);
             if (executionProcessor != null) {
@@ -309,7 +309,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                             if (option == 0 || option == 1) {
                                 int offset = option == 0 ? 0 : editor.getCaretModel().getOffset();
                                 List<StatementExecutionProcessor> executionProcessors = getExecutionProcessorsFromOffset(fileEditor, offset);
-                                final VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
+                                VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
                                 executeStatements(executionProcessors, virtualFile);
                             }
                         }));
@@ -318,7 +318,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
     }
 
-    public void promptExecutionDialog(@NotNull StatementExecutionProcessor executionProcessor, final DBDebuggerType debuggerType, @NotNull final RunnableTask callback) {
+    public void promptExecutionDialog(@NotNull StatementExecutionProcessor executionProcessor, DBDebuggerType debuggerType, @NotNull RunnableTask callback) {
         promptExecutionDialogs(executionProcessor.asList(), debuggerType, callback);
 
     }
@@ -393,8 +393,8 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         return true;
     }
 
-    public void promptPendingTransactionDialog(final StatementExecutionProcessor executionProcessor) {
-        final ExecutionContext context = executionProcessor.getExecutionContext();
+    public void promptPendingTransactionDialog(StatementExecutionProcessor executionProcessor) {
+        ExecutionContext context = executionProcessor.getExecutionContext();
         context.set(PROMPTED, true);
         SimpleLaterInvocator.invokeNonModal(() -> {
             try {
