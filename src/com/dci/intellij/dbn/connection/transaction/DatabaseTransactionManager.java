@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.connection.transaction.ui.PendingTransactionsDetailD
 import com.dci.intellij.dbn.connection.transaction.ui.PendingTransactionsDialog;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -30,15 +31,9 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.COMMIT;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.DISCONNECT;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.ROLLBACK;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.TURN_AUTO_COMMIT_OFF;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.TURN_AUTO_COMMIT_ON;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
 
 public class DatabaseTransactionManager extends AbstractProjectComponent implements ProjectManagerListener{
 
@@ -70,9 +65,14 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
             } else {
                 String connectionName = connectionHandler.getConnectionName(connection);
                 String actionName = actions.get(0).getName();
-                BackgroundTask.invoke(project,
-                        instructions("Performing \"" + actionName + "\" on connection " + connectionName, background ? TaskInstruction.BACKGROUNDED : null),
-                        (data, progress) -> executeActions(connectionHandler, connection, actions, callback));
+
+                String title = "Performing \"" + actionName + "\" on connection " + connectionName;
+                ParametricRunnable.Unsafe<ProgressIndicator> executor =
+                        (progress) -> executeActions(connectionHandler, connection, actions, callback);
+
+                if (background)
+                    Progress.background(project, title, false, executor); else
+                    Progress.prompt(project, title, false, executor);
             }
         }
     }

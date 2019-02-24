@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -46,13 +47,7 @@ import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
 import static com.dci.intellij.dbn.object.common.DBObjectRelationType.CONSTRAINT_COLUMN;
 import static com.dci.intellij.dbn.object.common.DBObjectRelationType.INDEX_COLUMN;
 import static com.dci.intellij.dbn.object.common.DBObjectType.*;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DEBUGABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.EMPTY_SCHEMA;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.INVALIDABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.PUBLIC_SCHEMA;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SYSTEM_SCHEMA;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.USER_SCHEMA;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
     private DBObjectList<DBTable> tables;
@@ -516,6 +511,9 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
             if (objectList.isLoaded() && !objectList.isDirty() && !objectList.isLoading()) {
                 List<DBObject> objects = objectList.getObjects();
                 for (DBObject object : objects) {
+                    checkDisposed();
+                    ProgressMonitor.checkCancelled();
+
                     if (object instanceof DBSchemaObject) {
                         DBSchemaObject schemaObject = (DBSchemaObject) object;
                         DBObjectStatusHolder objectStatus = schemaObject.getStatus();

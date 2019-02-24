@@ -2,9 +2,8 @@ package com.dci.intellij.dbn.execution.statement;
 
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Synchronized;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -15,10 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
 public final class StatementExecutionQueue extends DisposableBase{
 
@@ -53,33 +49,31 @@ public final class StatementExecutionQueue extends DisposableBase{
                 () -> {
                     executing = true;
                     Project project = getProject();
-                    BackgroundTask.invoke(project,
-                            instructions("Executing statements", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
-                            (data, progress) -> {
+                    Progress.background(project, "Executing statements", true, (progress) -> {
+                        try {
+                            StatementExecutionProcessor processor = processors.poll();
+                            while (processor != null) {
+                                ExecutionContext context = processor.getExecutionContext();
                                 try {
-                                    StatementExecutionProcessor processor = processors.poll();
-                                    while (processor != null) {
-                                        ExecutionContext context = processor.getExecutionContext();
-                                        try {
-                                            context.set(QUEUED, false);
-                                            context.set(EXECUTING, true);
-                                            StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
-                                            statementExecutionManager.process(processor);
-                                        } catch (ProcessCanceledException ignore) {
-                                        }
-
-                                        if (progress.isCanceled()) {
-                                            cancelExecution();
-                                        }
-                                        processor = processors.poll();
-                                    }
-                                } finally {
-                                    executing = false;
-                                    if (progress.isCanceled()) {
-                                        cancelExecution();
-                                    }
+                                    context.set(QUEUED, false);
+                                    context.set(EXECUTING, true);
+                                    StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
+                                    statementExecutionManager.process(processor);
+                                } catch (ProcessCanceledException ignore) {
                                 }
-                            });
+
+                                if (progress.isCanceled()) {
+                                    cancelExecution();
+                                }
+                                processor = processors.poll();
+                            }
+                        } finally {
+                            executing = false;
+                            if (progress.isCanceled()) {
+                                cancelExecution();
+                            }
+                        }
+                    });
                 });
     }
 

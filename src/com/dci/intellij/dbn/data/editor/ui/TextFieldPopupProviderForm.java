@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
@@ -28,8 +27,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
-
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public abstract class TextFieldPopupProviderForm extends KeyAdapter implements DBNForm, TextFieldPopupProvider {
     protected TextFieldWithPopup editorComponent;
@@ -155,40 +152,38 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         if (isPreparingPopup) return;
 
         isPreparingPopup = true;
-        BackgroundTask.invoke(getProject(),
-                instructions("Loading " + getDescription(), TaskInstruction.CANCELLABLE),
-                (data, progress) -> {
-                    preparePopup();
-                    if (progress.isCanceled()) {
-                        isPreparingPopup = false;
-                        return;
-                    }
+        Progress.prompt(getProject(), "Loading " + getDescription(), true, (progress) -> {
+            preparePopup();
+            if (progress.isCanceled()) {
+                isPreparingPopup = false;
+                return;
+            }
 
-                    Dispatch.invoke(() -> {
-                        try {
-                            if (!isShowingPopup()) {
-                                popup = createPopup();
-                                if (popup != null) {
-                                    Disposer.register(TextFieldPopupProviderForm.this, popup);
+            Dispatch.invoke(() -> {
+                try {
+                    if (!isShowingPopup()) {
+                        popup = createPopup();
+                        if (popup != null) {
+                            Disposer.register(TextFieldPopupProviderForm.this, popup);
 
-                                    JPanel panel = (JPanel) popup.getContent();
-                                    panel.setBorder(Borders.COMPONENT_LINE_BORDER);
+                            JPanel panel = (JPanel) popup.getContent();
+                            panel.setBorder(Borders.COMPONENT_LINE_BORDER);
 
-                                    editorComponent.clearSelection();
+                            editorComponent.clearSelection();
 
-                                    if (editorComponent.isShowing()) {
-                                        Point location = editorComponent.getLocationOnScreen();
-                                        location.setLocation(location.getX() + 4, location.getY() + editorComponent.getHeight() + 4);
-                                        popup.showInScreenCoordinates(editorComponent, location);
-                                        //cellEditor.highlight(TextCellEditor.HIGHLIGHT_TYPE_POPUP);
-                                    }
-                                }
+                            if (editorComponent.isShowing()) {
+                                Point location = editorComponent.getLocationOnScreen();
+                                location.setLocation(location.getX() + 4, location.getY() + editorComponent.getHeight() + 4);
+                                popup.showInScreenCoordinates(editorComponent, location);
+                                //cellEditor.highlight(TextCellEditor.HIGHLIGHT_TYPE_POPUP);
                             }
-                        } finally {
-                            isPreparingPopup = false;
                         }
-                    });
-                });
+                    }
+                } finally {
+                    isPreparingPopup = false;
+                }
+            });
+        });
     }
 
     @Override
