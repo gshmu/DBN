@@ -14,15 +14,14 @@ import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -91,17 +90,8 @@ import java.util.List;
 import java.util.Set;
 
 import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
-import static com.dci.intellij.dbn.object.common.DBObjectRelationType.ROLE_PRIVILEGE;
-import static com.dci.intellij.dbn.object.common.DBObjectRelationType.ROLE_ROLE;
-import static com.dci.intellij.dbn.object.common.DBObjectRelationType.USER_PRIVILEGE;
-import static com.dci.intellij.dbn.object.common.DBObjectRelationType.USER_ROLE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.CHARSET;
-import static com.dci.intellij.dbn.object.common.DBObjectType.OBJECT_PRIVILEGE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.ROLE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.SCHEMA;
-import static com.dci.intellij.dbn.object.common.DBObjectType.SYNONYM;
-import static com.dci.intellij.dbn.object.common.DBObjectType.SYSTEM_PRIVILEGE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.USER;
+import static com.dci.intellij.dbn.object.common.DBObjectRelationType.*;
+import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 
 public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport {
     private ConnectionHandlerRef connectionHandlerRef;
@@ -412,7 +402,8 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                 if (visibleTreeChildren == null) {
                     visibleTreeChildren = new ArrayList<>();
                     visibleTreeChildren.add(new LoadInProgressTreeNode(this));
-                    SimpleBackgroundTask.invoke(() -> buildTreeChildren());
+
+                    Background.run(() -> buildTreeChildren());
                 }
             }
         }
@@ -420,44 +411,32 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     private void buildTreeChildren() {
-        Failsafe.ensure(this);
-        List<BrowserTreeNode> newTreeChildren = allPossibleTreeChildren;
-        Filter<BrowserTreeNode> filter = getConnectionHandler().getObjectTypeFilter();
-        if (!filter.acceptsAll(allPossibleTreeChildren)) {
-            newTreeChildren = new ArrayList<>();
-            for (BrowserTreeNode treeNode : allPossibleTreeChildren) {
-                if (treeNode != null && filter.accepts(treeNode)) {
-                    DBObjectList objectList = (DBObjectList) treeNode;
-                    newTreeChildren.add(objectList);
-                }
-            }
-        }
+        checkDisposed();
+        ConnectionHandler connectionHandler = getConnectionHandler();
 
-        for (BrowserTreeNode treeNode : newTreeChildren) {
-            DBObjectList objectList = (DBObjectList) treeNode;
+        List<BrowserTreeNode> treeChildren = allPossibleTreeChildren;
+        treeChildren = CollectionUtil.filter(treeChildren, connectionHandler.getObjectTypeFilter());
+
+        treeChildren.forEach(objectList -> {
             objectList.initTreeElement();
-            Failsafe.ensure(this);
-        }
+            checkDisposed();});
 
         if (visibleTreeChildren.size() == 1 && visibleTreeChildren.get(0) instanceof LoadInProgressTreeNode) {
             visibleTreeChildren.get(0).dispose();
         }
 
-        visibleTreeChildren = newTreeChildren;
+        visibleTreeChildren = treeChildren;
         treeChildrenLoaded = true;
 
-        Project project = Failsafe.get(getProject());
-        EventUtil.notify(project, BrowserTreeEventListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
-        DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
+        EventUtil.notify(getProject(), BrowserTreeEventListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
+        DatabaseBrowserManager.scrollToSelectedElement(connectionHandler);
     }
 
     @Override
     public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
-        if (visibleTreeChildren != null) {
-            for (BrowserTreeNode treeNode : visibleTreeChildren) {
-                treeNode.refreshTreeChildren(objectTypes);
-            }
-        }
+        CollectionUtil.forEach(
+                visibleTreeChildren,
+                treeNode -> treeNode.refreshTreeChildren(objectTypes));
     }
 
     @Override
@@ -467,11 +446,9 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
             buildTreeChildren();
         }
 
-        if (visibleTreeChildren != null) {
-            for (BrowserTreeNode treeNode : visibleTreeChildren) {
-                treeNode.rebuildTreeChildren();
-            }
-        }
+        CollectionUtil.forEach(
+                visibleTreeChildren,
+                treeNode -> treeNode.rebuildTreeChildren());
     }
 
     @Override

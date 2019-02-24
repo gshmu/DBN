@@ -6,7 +6,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class BackgroundMonitor {
+public class ThreadMonitor {
     private static AtomicInteger backgroundProcessCounter = new AtomicInteger(0);
     private static ThreadLocal<ThreadInfo> THREAD_PROPERTIES = new ThreadLocal<>();
 

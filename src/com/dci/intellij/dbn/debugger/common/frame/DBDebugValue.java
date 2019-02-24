@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.debugger.common.frame;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.debugger.common.evaluation.DBDebuggerEvaluator;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
@@ -42,7 +42,7 @@ public abstract class DBDebugValue<T extends DBDebugStackFrame> extends XNamedVa
     public void computePresentation(@NotNull final XValueNode node, @NotNull final XValuePlace place) {
         // enabling this will show always variables as changed
         //node.setPresentation(icon, null, "", childVariableNames != null);
-        SimpleBackgroundTask.invoke(() -> {
+        Background.run(() -> {
             XDebuggerEvaluator evaluator1 = getStackFrame().getEvaluator();
             DBDebuggerEvaluator<? extends DBDebugStackFrame, DBDebugValue> evaluator = (DBDebuggerEvaluator<? extends DBDebugStackFrame, DBDebugValue>) evaluator1;
             evaluator.computePresentation(DBDebugValue.this, node, place);
