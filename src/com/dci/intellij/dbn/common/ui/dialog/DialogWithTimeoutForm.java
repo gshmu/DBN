@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -31,7 +31,7 @@ public class DialogWithTimeoutForm extends DBNFormImpl {
     }
 
     public void updateTimeLeft(int secondsLeft) {
-        SimpleLaterInvocator.invoke(() -> {
+        Dispatch.invoke(() -> {
             int minutes = 0;
             int seconds = secondsLeft;
             if (secondsLeft > 60) {

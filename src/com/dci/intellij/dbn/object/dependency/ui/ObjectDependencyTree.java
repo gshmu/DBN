@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.object.dependency.ui;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -80,7 +80,7 @@ public class ObjectDependencyTree extends DBNTree implements Disposable{
 
                         ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
                         JPopupMenu popupMenu = actionPopupMenu.getComponent();
-                        SimpleLaterInvocator.invoke(() -> {
+                        Dispatch.invoke(() -> {
                             if (isShowing()) {
                                 popupMenu.show(ObjectDependencyTree.this, event.getX(), event.getY());
                             }

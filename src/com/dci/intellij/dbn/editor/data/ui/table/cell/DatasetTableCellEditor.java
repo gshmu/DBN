@@ -1,7 +1,7 @@
  package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
  import com.dci.intellij.dbn.common.thread.Background;
- import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+ import com.dci.intellij.dbn.common.thread.Dispatch;
  import com.dci.intellij.dbn.common.ui.Borders;
  import com.dci.intellij.dbn.common.ui.MouseUtil;
  import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
@@ -103,7 +103,7 @@
     void selectText(JTextField textField) {
         if (textField.isEditable()) {
             String originalText = textField.getText();
-            SimpleLaterInvocator.invokeNonModal(() -> {
+            Dispatch.invokeNonModal(() -> {
                 checkDisposed();
                 // select all only if the text didn't change
                 if (settings.getGeneralSettings().getSelectContentOnCellEdit().value()) {
@@ -200,7 +200,7 @@
                         DBColumn column = cell.getColumnInfo().getColumn();
                         DBColumn foreignKeyColumn = column.getForeignKeyColumn();
                         if (foreignKeyColumn != null && !e.isConsumed()) {
-                            SimpleLaterInvocator.invokeNonModal(() -> {
+                            Dispatch.invokeNonModal(() -> {
                                 textField.setToolTipText("<html>Show referenced <b>" + foreignKeyColumn.getDataset().getQualifiedName() + "</b> record<html>");
                                 textField.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                             });

@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -49,7 +49,7 @@ public class ObjectDependencyManager extends AbstractProjectComponent implements
                 TaskInstructions.instructions("Opening object dependency tree"),
                 schemaObject,
                 action -> {
-                    SimpleLaterInvocator.invoke(ModalityState.NON_MODAL, () -> {
+                    Dispatch.invoke(ModalityState.NON_MODAL, () -> {
                         ObjectDependencyTreeDialog dependencyTreeDialog = new ObjectDependencyTreeDialog(getProject(), schemaObject);
                         dependencyTreeDialog.show();
                     });

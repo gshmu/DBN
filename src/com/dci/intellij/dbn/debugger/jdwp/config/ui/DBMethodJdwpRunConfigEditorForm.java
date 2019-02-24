@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
@@ -116,7 +116,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
                                 new ObjectTreeModel(schema, settings.getVisibleObjectTypes(), settings.getMethod()) :
                                 new ObjectTreeModel(null, settings.getVisibleObjectTypes(), null);
 
-                        SimpleLaterInvocator.invoke(() -> {
+                        Dispatch.invoke(() -> {
                             MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
                             browserDialog.show();
                             if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {

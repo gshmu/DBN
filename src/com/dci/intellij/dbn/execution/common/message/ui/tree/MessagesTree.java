@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -139,7 +139,7 @@ public class MessagesTree extends DBNTree implements Disposable {
 
     private void scrollToPath(TreePath treePath, boolean select, boolean focus) {
         if (treePath != null) {
-            SimpleLaterInvocator.invokeNonModal(() -> {
+            Dispatch.invokeNonModal(() -> {
                 scrollPathToVisible(treePath);
                 TreeSelectionModel selectionModel = getSelectionModel();
                 if (select) {

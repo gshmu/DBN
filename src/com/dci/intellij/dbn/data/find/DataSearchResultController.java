@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.find;
 
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
@@ -104,7 +104,7 @@ public class DataSearchResultController implements Disposable {
 
                     searchResult.stopUpdating();
                     BasicTable table = searchableComponent.getTable();
-                    SimpleLaterInvocator.invoke(() -> {
+                    Dispatch.invoke(() -> {
                         int selectedRowIndex = table.getSelectedRow();
                         int selectedColumnIndex = table.getSelectedRow();
                         if (selectedRowIndex < 0) selectedRowIndex = 0;

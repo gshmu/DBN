@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -127,7 +127,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     }
 
     public void navigateToElement(@Nullable final BrowserTreeNode treeNode, final boolean focus, final boolean scroll) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             ToolWindow toolWindow = getBrowserToolWindow();
 
             toolWindow.show(null);
@@ -144,7 +144,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
     private void navigateToElement(@Nullable BrowserTreeNode treeNode, boolean scroll) {
         if (treeNode != null) {
-            SimpleLaterInvocator.invokeNonModal(() -> {
+            Dispatch.invokeNonModal(() -> {
                 DatabaseBrowserForm browserForm = getBrowserForm();
                 browserForm.selectElement(treeNode, false, scroll);
             });
@@ -190,7 +190,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
             BrowserToolWindowForm toolWindowForm = browserManager.getToolWindowForm();
             DatabaseBrowserTree browserTree = toolWindowForm.getBrowserTree(connectionHandler);
             if (browserTree != null && browserTree.getTargetSelection() != null) {
-                SimpleLaterInvocator.invokeNonModal(() -> browserTree.scrollToSelectedElement());
+                Dispatch.invokeNonModal(() -> browserTree.scrollToSelectedElement());
             }
         }
     }

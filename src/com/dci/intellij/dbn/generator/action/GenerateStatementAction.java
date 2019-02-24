@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.generator.action;
 
 import com.dci.intellij.dbn.common.thread.CommandWriteActionRunner;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -46,7 +46,7 @@ public abstract class GenerateStatementAction extends DumbAwareAction implements
     }
 
     private void pasteStatement(StatementGeneratorResult result, Project project) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             Editor editor = EditorUtil.getSelectedEditor(project, SQLFileType.INSTANCE);
             if (editor != null)
                 pasteToEditor(editor, result); else

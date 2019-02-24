@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -139,6 +139,6 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
     };
 
     private void refreshForm() {
-        SimpleLaterInvocator.invoke(() -> updateListModel());
+        Dispatch.invoke(() -> updateListModel());
     }
 }

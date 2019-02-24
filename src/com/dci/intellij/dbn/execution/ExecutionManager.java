@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
@@ -95,7 +95,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void addExecutionResult(final CompilerResult compilerResult) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             executionConsoleForm.addResult(compilerResult);
@@ -103,7 +103,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void addExecutionResults(final List<CompilerResult> compilerResults) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             executionConsoleForm.addResults(compilerResults);
@@ -111,7 +111,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void addExplainPlanResult(final ExplainPlanResult explainPlanResult) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             executionConsoleForm.addResult(explainPlanResult);
@@ -119,7 +119,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void writeLogOutput(@NotNull final LogOutputContext context, final LogOutput output) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             if (!context.isClosed()) {
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
@@ -129,7 +129,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void addExecutionResult(@NotNull final StatementExecutionResult executionResult) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             if (executionResult.isLoggingActive()) {
@@ -167,7 +167,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
 
     public void addExecutionResult(final MethodExecutionResult executionResult) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             executionConsoleForm.addResult(executionResult);
@@ -175,7 +175,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void selectExecutionResult(final StatementExecutionResult executionResult) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             executionConsoleForm.selectResult(executionResult);
             showExecutionConsole();
