@@ -43,12 +43,12 @@ public class DocumentUtil {
     private static final Key<Boolean> FOLDING_STATE_KEY = Key.create("FOLDING_STATE_KEY");
     private static final Key<Long> LAST_ANNOTATION_REFRESH_KEY = Key.create("LAST_ANNOTATION_REFRESH");
 
-    public static void touchDocument(final Editor editor, boolean reparse) {
-        final Document document = editor.getDocument();
+    public static void touchDocument(Editor editor, boolean reparse) {
+        Document document = editor.getDocument();
 
         // restart highlighting
         Project project = editor.getProject();
-        final PsiFile file = DocumentUtil.getFile(editor);
+        PsiFile file = DocumentUtil.getFile(editor);
         if (project != null && !project.isDisposed() && file instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) file;
             DBLanguage dbLanguage = dbLanguageFile.getDBLanguage();
@@ -82,11 +82,13 @@ public class DocumentUtil {
     }
 
 
-    public static void refreshEditorAnnotations(Editor editor) {
-        refreshEditorAnnotations(DocumentUtil.getFile(editor));
+    public static void refreshEditorAnnotations(@Nullable Editor editor) {
+        if (editor != null) {
+            refreshEditorAnnotations(DocumentUtil.getFile(editor));
+        }
     }
 
-    public static void refreshEditorAnnotations(@Nullable final PsiFile psiFile) {
+    public static void refreshEditorAnnotations(@Nullable PsiFile psiFile) {
         if (psiFile != null) {
             Long lastRefresh = psiFile.getUserData(LAST_ANNOTATION_REFRESH_KEY);
             if (lastRefresh == null || TimeUtil.isOlderThan(lastRefresh, 1, TimeUnit.SECONDS)) {
@@ -125,13 +127,13 @@ public class DocumentUtil {
         }
     }
 
-    public static void createGuardedBlocks(final Document document, final GuardedBlockType type, final GuardedBlockMarkers ranges, final String reason) {
+    public static void createGuardedBlocks(Document document, GuardedBlockType type, GuardedBlockMarkers ranges, String reason) {
         for (Range<Integer> range : ranges.getRanges()) {
             createGuardedBlock(document, type, range.getFrom(), range.getTo(), reason);
         }
     }
 
-    public static void createGuardedBlock(final Document document, final GuardedBlockType type, final int startOffset, final int endOffset, final String reason) {
+    public static void createGuardedBlock(Document document, GuardedBlockType type, int startOffset, int endOffset, String reason) {
         if (startOffset != endOffset) {
             WriteAction.invoke(() -> {
                 int textLength = document.getTextLength();
@@ -146,12 +148,12 @@ public class DocumentUtil {
         }
     }
 
-    public static void removeGuardedBlocks(final Document document, final GuardedBlockType type) {
+    public static void removeGuardedBlocks(Document document, GuardedBlockType type) {
         if (document instanceof DocumentEx) {
-            final DocumentEx documentEx = (DocumentEx) document;
+            DocumentEx documentEx = (DocumentEx) document;
             WriteAction.invoke(() -> {
                 List<RangeMarker> guardedBlocks = new ArrayList<>(documentEx.getGuardedBlocks());
-                for (final RangeMarker block : guardedBlocks) {
+                for (RangeMarker block : guardedBlocks) {
                     if (block.getUserData(GuardedBlockType.KEY) == type) {
                         document.removeGuardedBlock(block);
                     }
@@ -172,7 +174,7 @@ public class DocumentUtil {
     }
 
     @Nullable
-    public static Document getDocument(final @NotNull VirtualFile virtualFile) {
+    public static Document getDocument(@NotNull VirtualFile virtualFile) {
         return ReadAction.invoke(() -> {
             FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
             return fileDocumentManager.getDocument(virtualFile);
@@ -198,7 +200,7 @@ public class DocumentUtil {
         }
     }
 
-    public static void setText(final @NotNull Document document, final CharSequence text) {
+    public static void setText(@NotNull Document document, CharSequence text) {
         WriteAction.invoke(() -> {
             FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
             VirtualFile file = fileDocumentManager.getFile(document);
@@ -215,7 +217,7 @@ public class DocumentUtil {
         });
     }
 
-    public static void saveDocument(final  @NotNull Document document) {
+    public static void saveDocument(@NotNull Document document) {
         WriteAction.invoke(() -> {
             FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
             fileDocumentManager.saveDocument(document);

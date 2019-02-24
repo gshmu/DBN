@@ -10,8 +10,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -25,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> extends PropertyHolderImpl<DynamicContentStatus> implements DynamicContent<T> {
     protected static final List EMPTY_CONTENT = Collections.unmodifiableList(new ArrayList(0));
@@ -214,9 +212,10 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
         if (shouldLoad()) {
             ConnectionHandler connectionHandler = getConnectionHandler();
             String connectionString = " (" + connectionHandler.getName() + ')';
-            BackgroundTask.invoke(getProject(),
-                    instructions("Loading data dictionary" + connectionString, TaskInstruction.BACKGROUNDED),
-                    (data, progress) -> ensure());
+            Progress.background(
+                    getProject(),
+                    "Loading data dictionary" + connectionString, false,
+                    (progress) -> ensure());
         }
     }
 

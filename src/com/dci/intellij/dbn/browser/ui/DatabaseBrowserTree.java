@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.Background;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Timeout;
@@ -49,8 +48,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class DatabaseBrowserTree extends DBNTree {
     private BrowserTreeNode targetSelection;
@@ -253,15 +250,14 @@ public class DatabaseBrowserTree extends DBNTree {
                     databaseFileSystem.openEditor(object, deliberate);
                     event.consume();
                 } else if (deliberate) {
-                    BackgroundTask.invoke(getProject(),
-                            instructions("Loading object reference"),
-                            (data, progress) -> {
+                    Progress.prompt(getProject(), "Loading object reference", true,
+                            (progress) -> {
                                 DBObject navigationObject = object.getDefaultNavigationObject();
                                 if (navigationObject != null) {
+                                    Progress.check(progress);
                                     Dispatch.invokeNonModal(() -> navigationObject.navigate(true));
                                 }
                             });
-
                 }
             } else if (lastPathEntity instanceof DBObjectBundle) {
                 DBObjectBundle objectBundle = (DBObjectBundle) lastPathEntity;
