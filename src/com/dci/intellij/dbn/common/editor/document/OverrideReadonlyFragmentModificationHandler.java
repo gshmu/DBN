@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.editor.document;
 
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
@@ -35,7 +35,7 @@ public class OverrideReadonlyFragmentModificationHandler implements
             if (virtualFile instanceof DBSourceCodeVirtualFile || virtualFile instanceof LightVirtualFile || virtualFile instanceof DBConsoleVirtualFile) {
                 //Messages.showErrorDialog("You're not allowed to change name and type of the edited component.", "Action denied");
             } else {
-                SimpleLaterInvocator.invoke(() -> originalHandler.handle(e));
+                Dispatch.invoke(() -> originalHandler.handle(e));
             }
         }
     }

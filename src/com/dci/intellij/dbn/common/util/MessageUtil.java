@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.message.Message;
 import com.dci.intellij.dbn.common.message.MessageBundle;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
@@ -101,7 +101,7 @@ public class MessageUtil {
             @Nullable RunnableTask<Integer> callback,
             @Nullable DialogWrapper.DoNotAskOption doNotAskOption) {
 
-        SimpleLaterInvocator.invoke(() -> {
+        Dispatch.invoke(() -> {
             int option = Messages.showDialog(project, message, Constants.DBN_TITLE_PREFIX + title, options, defaultOptionIndex, icon, doNotAskOption);
             if (callback != null) {
                 callback.setData(option);

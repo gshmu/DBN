@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.connection.ssh.SshTunnelManager;
 import com.dci.intellij.dbn.connection.ssl.SslConnectionManager;
 import com.intellij.openapi.project.Project;
 
+import javax.annotation.Nullable;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.SQLException;
@@ -50,6 +51,7 @@ class Connector {
         return exception;
     }
 
+    @Nullable
     public DBNConnection connect() {
         //trace(this);
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();

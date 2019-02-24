@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.debugger.jdwp.evaluation;
 
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
@@ -30,7 +30,7 @@ public class DBExecutionPointHighlighter {
     }
 
     public void show(final @NotNull XSourcePosition position, final boolean useSelection) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             ApplicationManager.getApplication().assertIsDispatchThread();
             removeHighlighter();
 
@@ -45,7 +45,7 @@ public class DBExecutionPointHighlighter {
     }
 
     public void hide() {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             ApplicationManager.getApplication().assertIsDispatchThread();
             removeHighlighter();
             myOpenFileDescriptor = null;

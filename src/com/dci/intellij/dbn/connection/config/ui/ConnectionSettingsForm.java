@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
@@ -228,7 +228,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
     private ConnectionPresentationChangeListener connectionPresentationChangeListener = new ConnectionPresentationChangeListener() {
         @Override
         public void presentationChanged(String name, Icon icon, Color color, ConnectionId connectionId, DatabaseType databaseType) {
-            SimpleLaterInvocator.invoke(() -> {
+            Dispatch.invoke(() -> {
                 ConnectionSettings configuration = getConfiguration();
                 if (configuration.getConnectionId().equals(connectionId)) {
                     if (name != null) headerForm.setTitle(name);

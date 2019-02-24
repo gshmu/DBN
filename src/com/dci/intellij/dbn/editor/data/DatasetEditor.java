@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.Background;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -330,7 +330,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     }
 
     private void handleLoadError(SQLException e, DatasetLoadInstructions instr) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             checkDisposed();
             focusEditor();
             ConnectionHandler connectionHandler = getConnectionHandler();
@@ -532,7 +532,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             boolean statusChanged = getStatus().set(CONNECTED, connected);
 
             if (statusChanged) {
-                SimpleLaterInvocator.invokeNonModal(() -> {
+                Dispatch.invokeNonModal(() -> {
                     DatasetEditorTable editorTable = getEditorTable();
                     editorTable.updateBackground(!connected);
                     if (connected) {

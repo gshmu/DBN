@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.debugger.common.process;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -169,7 +169,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             @Nullable Callback callback,
             List<DBSchemaObject> dependencies) {
 
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             Project project = connectionHandler.getProject();
             DBRunConfig runConfiguration = (DBRunConfig) environment.getRunProfile();
             CompileDebugDependenciesDialog dependenciesDialog = new CompileDebugDependenciesDialog(runConfiguration, dependencies);
@@ -214,7 +214,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             T executionInput,
             ExecutionEnvironment environment,
             Callback callback) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
             Project project = environment.getProject();
 

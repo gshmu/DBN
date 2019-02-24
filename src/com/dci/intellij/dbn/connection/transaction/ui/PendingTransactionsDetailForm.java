@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -103,7 +103,7 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
     };
 
     private void refreshForm(ConnectionHandler connectionHandler) {
-        SimpleLaterInvocator.invoke(() -> {
+        Dispatch.invoke(() -> {
             checkDisposed();
             PendingTransactionsTableModel oldTableModel = tableModel;
             tableModel = new PendingTransactionsTableModel(connectionHandler);

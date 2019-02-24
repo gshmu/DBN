@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection.resource.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.message.MessageCallback;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -294,7 +294,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     };
 
     private void refreshSessionData(DatabaseSession session) {
-        SimpleLaterInvocator.invoke(() -> {
+        Dispatch.invoke(() -> {
             checkDisposed();
             ConnectionHandler connectionHandler = getConnectionHandler();
 
@@ -306,7 +306,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     }
 
     private void refreshTransactionsData(DBNConnection connection) {
-        SimpleLaterInvocator.invoke(() -> {
+        Dispatch.invoke(() -> {
             checkDisposed();
             ConnectionHandler connectionHandler = getConnectionHandler();
 

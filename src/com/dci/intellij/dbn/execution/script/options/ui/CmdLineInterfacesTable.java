@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.script.options.ui;
 
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
@@ -128,7 +128,7 @@ public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel
         JTextField textField = (JTextField) super.prepareEditor(editor, rowIndex, columnIndex);
         textField.setBorder(JBUI.Borders.emptyLeft(3));
 
-        SimpleLaterInvocator.invoke(() -> {
+        Dispatch.invoke(() -> {
             textField.selectAll();
             textField.grabFocus();
         });

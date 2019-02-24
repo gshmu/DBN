@@ -109,6 +109,7 @@ public class ConnectionUtil {
         }
     }
 
+    @Nullable
     public static DBNConnection connect(
             ConnectionSettings connectionSettings,
             @Nullable ConnectionHandlerStatusHolder connectionStatus,

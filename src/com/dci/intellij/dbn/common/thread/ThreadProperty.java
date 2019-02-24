@@ -5,9 +5,11 @@ import com.dci.intellij.dbn.common.property.Property;
 public enum ThreadProperty implements Property{
     CODE_COMPLETION,
     CODE_ANNOTATING,
-    BACKGROUND_PROGRESS,
-    BACKGROUND_PROCESS,
-    TIMEOUT_PROCESS
+
+    TIMEOUT_PROCESS,
+    BACKGROUND_THREAD,
+    BACKGROUND_TASK,
+    MODAL_TASK
 ;
 
     private final int index = Property.idx(this);

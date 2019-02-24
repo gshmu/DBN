@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.ui.table;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -261,7 +261,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
         @Override
         public void run() {
             if (scrollPane != null && scrollDistance != 0) {
-                SimpleLaterInvocator.invoke(() -> {
+                Dispatch.invoke(() -> {
                     JViewport viewport = scrollPane.getViewport();
                     Point viewPosition = viewport.getViewPosition();
                     viewport.setViewPosition(new Point((int) (viewPosition.x + scrollDistance), viewPosition.y));

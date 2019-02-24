@@ -7,6 +7,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 
+@Deprecated
 class TaskUtil {
     static void startTask(final Task task, final Project project) {
         Application application = ApplicationManager.getApplication();

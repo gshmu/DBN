@@ -48,8 +48,9 @@ public class ThreadMonitor {
         // default false
         ThreadInfo threadInfo = thread();
         return
-            threadInfo.is(ThreadProperty.BACKGROUND_PROCESS) ||
-            threadInfo.is(ThreadProperty.BACKGROUND_PROGRESS);
+            threadInfo.is(ThreadProperty.BACKGROUND_THREAD) ||
+            threadInfo.is(ThreadProperty.BACKGROUND_TASK) ||
+            threadInfo.is(ThreadProperty.MODAL_TASK);
     }
 
     public static boolean isTimeoutProcess() {

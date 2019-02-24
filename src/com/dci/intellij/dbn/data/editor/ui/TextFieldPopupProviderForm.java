@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNForm;
@@ -164,7 +164,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
                         return;
                     }
 
-                    SimpleLaterInvocator.invoke(() -> {
+                    Dispatch.invoke(() -> {
                         try {
                             if (!isShowingPopup()) {
                                 popup = createPopup();
@@ -194,7 +194,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
     @Override
     public void hidePopup() {
         if (isShowingPopup()) {
-            SimpleLaterInvocator.invoke(() -> {
+            Dispatch.invoke(() -> {
                 popup.cancel();
                 popup = null;
             });

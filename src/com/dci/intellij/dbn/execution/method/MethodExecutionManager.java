@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -117,7 +117,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                         } else {
                             // load the arguments in background
                             executionInput.getMethod().getArguments();
-                            SimpleLaterInvocator.invokeNonModal(() -> {
+                            Dispatch.invokeNonModal(() -> {
                                 MethodExecutionInputDialog executionDialog = new MethodExecutionInputDialog(executionInput, debuggerType);
                                 executionDialog.show();
                                 if (executionDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
@@ -137,7 +137,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
 
     public void showExecutionHistoryDialog(@Nullable MethodExecutionInput selection, boolean editable, boolean debug, @Nullable RunnableTask<MethodExecutionInput> callback) {
-        SimpleLaterInvocator.invoke(() -> {
+        Dispatch.invoke(() -> {
             Project project = getProject();
             MethodExecutionInput selectedInput = CommonUtil.nvln(selection, executionHistory.getLastSelection());
             MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(project, selectedInput, editable, debug);

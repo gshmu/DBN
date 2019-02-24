@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.routine.ParametricCallable;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
@@ -68,7 +68,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
 
     @Override
     public final void start() {
-        SimpleLaterInvocator.invoke(() -> ConnectionAction.super.start());
+        Dispatch.invoke(() -> ConnectionAction.super.start());
     }
 
     @Override
@@ -130,14 +130,14 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
         ConnectionManager.promptAuthenticationDialog(
                 connectionHandler,
                 temporaryAuthenticationInfo,
-                SimpleTask.create(authenticationInfo -> {
+                (authenticationInfo) -> {
                     if (authenticationInfo != null) {
                         executeAction();
                     } else {
                         ConnectionAction.this.cancel();
                         cancel();
                     }
-                }));
+                });
     }
 
     private void promptConnectDialog() {

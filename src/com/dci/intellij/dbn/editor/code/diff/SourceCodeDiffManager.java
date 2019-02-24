@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.code.diff;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -49,7 +49,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
 
     @Deprecated
     public void openCodeMergeDialogOld(String databaseContent, DBSourceCodeVirtualFile sourceCodeFile, SourceCodeEditor fileEditor, MergeAction action) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             com.intellij.openapi.diff.DiffRequestFactory diffRequestFactory = new com.intellij.openapi.diff.impl.mergeTool.DiffRequestFactoryImpl();
             Project project = sourceCodeFile.getProject();
             if (project != null) {
@@ -96,7 +96,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
     }
 
     public void openCodeMergeDialog(String databaseContent, DBSourceCodeVirtualFile sourceCodeFile, SourceCodeEditor fileEditor, MergeAction action) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             Project project = getProject();
             SourceCodeDiffContent leftContent = new SourceCodeDiffContent("Database version", databaseContent);
             SourceCodeDiffContent targetContent = new SourceCodeDiffContent("Merge result", sourceCodeFile.getOriginalContent());
@@ -148,7 +148,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
 
 
     public void openDiffWindow(@NotNull DBSourceCodeVirtualFile sourceCodeFile,  String referenceText, String referenceTitle, String windowTitle) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             Project project = sourceCodeFile.getProject();
             SimpleContent originalContent = new SimpleContent(referenceText, sourceCodeFile.getFileType());
             SourceCodeFileContent changedContent = new SourceCodeFileContent(project, sourceCodeFile);
