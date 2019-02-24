@@ -6,6 +6,8 @@ import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapter;
 import com.dci.intellij.dbn.common.thread.BackgroundMonitor;
+import com.dci.intellij.dbn.common.thread.ThreadInfo;
+import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +40,12 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> e
 
         DynamicContent sourceContent = dependencyAdapter.getSourceContent();
         DynamicContentLoader<T> alternativeLoader = getAlternativeLoader();
-        if (alternativeLoader == null || dependencyAdapter.isSourceContentReady() || BackgroundMonitor.getBackgroundProcessCount() > 10) {
+
+        if (alternativeLoader != null && useAlternativeLoader(dependencyAdapter)) {
+            sourceContent.loadInBackground();
+            alternativeLoader.loadContent(dynamicContent, false);
+
+        } else {
             //load from sub-content
             boolean matchedOnce = false;
             List<T> list = null;
@@ -65,9 +72,19 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> e
             }
             dynamicContent.setElements(list);
             dynamicContent.set(DynamicContentStatus.MASTER, false);
+        }
+    }
+
+    private boolean useAlternativeLoader(SubcontentDependencyAdapter dependencyAdapter) {
+        if (dependencyAdapter.isSourceContentReady()) {
+            return false;
         } else {
-            sourceContent.loadInBackground();
-            alternativeLoader.loadContent(dynamicContent, false);
+            ThreadInfo thread = BackgroundMonitor.thread();
+            if (thread.is(ThreadProperty.CODE_ANNOTATING) || thread.is(ThreadProperty.CODE_COMPLETION)) {
+                return false;
+            } else {
+                return true;
+            }
         }
     }
 

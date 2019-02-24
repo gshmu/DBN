@@ -73,7 +73,9 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     }
 
     public void openSessionBrowser(ConnectionHandler connectionHandler) {
-        ConnectionAction.invoke("opening the session browser", connectionHandler,
+        ConnectionAction.invoke(
+                "opening the session browser",
+                connectionHandler,
                 action -> {
                     Project project = getProject();
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);

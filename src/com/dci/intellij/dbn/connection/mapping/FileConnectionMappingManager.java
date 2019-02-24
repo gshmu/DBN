@@ -71,9 +71,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.action.DBNDataKeys.CONNECTION_HANDLER;
-import static com.dci.intellij.dbn.common.action.DBNDataKeys.DATABASE_SCHEMA;
-import static com.dci.intellij.dbn.common.action.DBNDataKeys.DATABASE_SESSION;
+import static com.dci.intellij.dbn.common.action.DBNDataKeys.*;
 import static com.dci.intellij.dbn.common.util.MessageUtil.options;
 import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 
@@ -616,8 +614,10 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     /***************************************************
      *             Select schema popup                 *
      ***************************************************/
-    public void promptSchemaSelector(final DBLanguagePsiFile psiFile, final RunnableTask callback) throws IncorrectOperationException {
-        ConnectionAction.invoke("selecting the current schema", psiFile,
+    public void promptSchemaSelector(DBLanguagePsiFile psiFile, RunnableTask callback) throws IncorrectOperationException {
+        ConnectionAction.invoke(
+                "selecting the current schema",
+                psiFile,
                 action -> {
                     DefaultActionGroup actionGroup = new DefaultActionGroup();
 
@@ -691,11 +691,12 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     /***************************************************
      *             Select schema popup                 *
      ***************************************************/
-    public void promptSessionSelector(final DBLanguagePsiFile psiFile, final RunnableTask callback) throws IncorrectOperationException {
-        ConnectionAction.invoke("selecting the current session", psiFile,
+    public void promptSessionSelector(DBLanguagePsiFile psiFile, RunnableTask callback) throws IncorrectOperationException {
+        ConnectionAction.invoke(
+                "selecting the current session",
+                psiFile,
                 action -> {
                     DefaultActionGroup actionGroup = new DefaultActionGroup();
-
                     ConnectionHandler connectionHandler = action.getConnectionHandler();
                     if (!connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
                         List<DatabaseSession> sessions = connectionHandler.getSessionBundle().getSessions();
@@ -776,7 +777,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            final DBLanguagePsiFile file = fileRef.get();
+            DBLanguagePsiFile file = fileRef.get();
             if (file != null) {
                 Project project = getProject();
                 DatabaseSessionManager sessionManager = DatabaseSessionManager.getInstance(project);

@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.language.psql;
 
 import com.dci.intellij.dbn.code.psql.color.PSQLTextAttributesKeys;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.BackgroundMonitor;
+import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -41,47 +41,39 @@ public class PSQLLanguageAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
-        Failsafe.lenient(() -> {
-            try{
-                BackgroundMonitor.startTimeoutProcess();
+        BackgroundMonitor.run(ThreadProperty.CODE_ANNOTATING, () -> {
+            if (psiElement instanceof BasePsiElement) {
+                BasePsiElement basePsiElement = (BasePsiElement) psiElement;
 
-                if (psiElement instanceof BasePsiElement) {
-                    BasePsiElement basePsiElement = (BasePsiElement) psiElement;
-
-                    ElementType elementType = basePsiElement.getElementType();
-                    if (elementType.is(ElementTypeAttribute.OBJECT_SPECIFICATION) || elementType.is(ElementTypeAttribute.OBJECT_DECLARATION)) {
-                        annotateSpecDeclarationNavigable(basePsiElement, holder);
-                    }
-
-                    if (basePsiElement instanceof TokenPsiElement) {
-                        annotateToken((TokenPsiElement) basePsiElement, holder);
-                    } else if (basePsiElement instanceof IdentifierPsiElement) {
-                        if (!basePsiElement.isInjectedContext()) {
-                            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
-                            ConnectionHandler connectionHandler = identifierPsiElement.getConnectionHandler();
-                            if (connectionHandler != null) {
-                                annotateIdentifier(identifierPsiElement, holder);
-                            }
-                        }
-                    } else if (basePsiElement instanceof NamedPsiElement) {
-                        NamedPsiElement namedPsiElement = (NamedPsiElement) basePsiElement;
-                        if (namedPsiElement.hasErrors()) {
-                            holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.getElementType().getDescription());
-                        }
-                    }
-
-                    if (basePsiElement instanceof ExecutablePsiElement) {
-                        ExecutablePsiElement executablePsiElement = (ExecutablePsiElement) basePsiElement;
-                        annotateExecutable(executablePsiElement, holder);
-                    }
-                } else if (psiElement instanceof ChameleonPsiElement) {
-                    Annotation annotation = holder.createInfoAnnotation(psiElement, null);
-                    annotation.setTextAttributes(SQLTextAttributesKeys.CHAMELEON);
+                ElementType elementType = basePsiElement.getElementType();
+                if (elementType.is(ElementTypeAttribute.OBJECT_SPECIFICATION) || elementType.is(ElementTypeAttribute.OBJECT_DECLARATION)) {
+                    annotateSpecDeclarationNavigable(basePsiElement, holder);
                 }
 
+                if (basePsiElement instanceof TokenPsiElement) {
+                    annotateToken((TokenPsiElement) basePsiElement, holder);
+                } else if (basePsiElement instanceof IdentifierPsiElement) {
+                    if (!basePsiElement.isInjectedContext()) {
+                        IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
+                        ConnectionHandler connectionHandler = identifierPsiElement.getConnectionHandler();
+                        if (connectionHandler != null) {
+                            annotateIdentifier(identifierPsiElement, holder);
+                        }
+                    }
+                } else if (basePsiElement instanceof NamedPsiElement) {
+                    NamedPsiElement namedPsiElement = (NamedPsiElement) basePsiElement;
+                    if (namedPsiElement.hasErrors()) {
+                        holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.getElementType().getDescription());
+                    }
+                }
 
-            } finally {
-                BackgroundMonitor.endTimeoutProcess();
+                if (basePsiElement instanceof ExecutablePsiElement) {
+                    ExecutablePsiElement executablePsiElement = (ExecutablePsiElement) basePsiElement;
+                    annotateExecutable(executablePsiElement, holder);
+                }
+            } else if (psiElement instanceof ChameleonPsiElement) {
+                Annotation annotation = holder.createInfoAnnotation(psiElement, null);
+                annotation.setTextAttributes(SQLTextAttributesKeys.CHAMELEON);
             }
         });
     }

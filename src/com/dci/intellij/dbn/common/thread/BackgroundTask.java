@@ -62,27 +62,25 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
 
     @Override
     public final void run(@NotNull ProgressIndicator progressIndicator) {
-        BackgroundMonitor.startBackgroundProcess();
-        Thread currentThread = Thread.currentThread();
-        int priority = currentThread.getPriority();
-        try {
-            progressIndicator.pushState();
-            currentThread.setPriority(Thread.MIN_PRIORITY);
-            initProgressIndicator(progressIndicator, true);
+        BackgroundMonitor.run(ThreadProperty.BACKGROUND_PROGRESS, () -> {
+            Thread currentThread = Thread.currentThread();
+            int priority = currentThread.getPriority();
+            try {
+                progressIndicator.pushState();
+                currentThread.setPriority(Thread.MIN_PRIORITY);
+                initProgressIndicator(progressIndicator, true);
 
-            execute(progressIndicator);
-        } catch (ProcessCanceledException e) {
-            // no action
-        } catch (Exception e) {
-            LOGGER.error("Error executing background operation.", e);
-        } finally {
-            currentThread.setPriority(priority);
-            progressIndicator.popState();
-            BackgroundMonitor.endBackgroundProcess();
-            /*if (progressIndicator.isRunning()) {
-                progressIndicator.stop();
-            }*/
-        }
+                execute(progressIndicator);
+            } catch (ProcessCanceledException e) {
+                // no action
+            } catch (Exception e) {
+                LOGGER.error("Error executing background operation.", e);
+            } finally {
+                currentThread.setPriority(priority);
+                progressIndicator.popState();
+            }
+        });
+
     }
 
     protected abstract void execute(@NotNull ProgressIndicator progressIndicator);
