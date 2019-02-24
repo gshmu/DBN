@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.WriteAction;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
@@ -179,7 +179,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
 
     @Override
     public void projectOpened() {
-        SimpleLaterInvocator.invokeNonModal(() -> registerExtensions(getExtensionSettings()));
+        Dispatch.invokeNonModal(() -> registerExtensions(getExtensionSettings()));
     }
 
     @Override

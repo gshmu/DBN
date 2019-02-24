@@ -22,14 +22,11 @@ public class ThreadFactory {
 
     @NotNull
     private static java.util.concurrent.ThreadFactory createThreadFactory(final String name, final boolean daemon) {
-        return new java.util.concurrent.ThreadFactory() {
-            @Override
-            public Thread newThread(@NotNull Runnable runnable) {
-                Thread thread = new Thread(runnable, name);
-                thread.setPriority(Thread.MIN_PRIORITY);
-                thread.setDaemon(daemon);
-                return thread;
-            }
+        return runnable -> {
+            Thread thread = new Thread(runnable, name);
+            thread.setPriority(Thread.MIN_PRIORITY);
+            thread.setDaemon(daemon);
+            return thread;
         };
     }
 

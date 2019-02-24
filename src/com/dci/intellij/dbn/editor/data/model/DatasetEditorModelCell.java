@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.data.model;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -267,7 +267,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     }
 
     private void scrollToVisible() {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             int rowIndex = getRow().getIndex();
             int colIndex = getIndex();
             DatasetEditorTable table = getEditorTable();

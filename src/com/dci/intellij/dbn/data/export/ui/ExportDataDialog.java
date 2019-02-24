@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.data.export.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.thread.ModalTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -73,17 +73,21 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
     @Override
     protected void doOKAction() {
         getComponent().validateEntries(
-                ModalTask.create(getProject(), "Creating export file", true, (data, progress) -> {
-                    ConnectionHandler connectionHandler = getConnectionHandler();
-                    DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());
-                    DataExportInstructions exportInstructions = getComponent().getExportInstructions();
-                    exportManager.setExportInstructions(exportInstructions);
-                    exportManager.exportSortableTableContent(
-                            table,
-                            exportInstructions,
-                            connectionHandler,
-                            SimpleLaterInvocator.create(() -> ExportDataDialog.super.doOKAction()));
-                }));
+                () -> Progress.modal(
+                        getProject(),
+                        "Creating export file", true,
+                        (progress) -> {
+                            ConnectionHandler connectionHandler = getConnectionHandler();
+                            DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());
+                            DataExportInstructions exportInstructions = getComponent().getExportInstructions();
+                            exportManager.setExportInstructions(exportInstructions);
+                            exportManager.exportSortableTableContent(
+                                    table,
+                                    exportInstructions,
+                                    connectionHandler,
+                                    () -> Dispatch.invoke(() -> ExportDataDialog.super.doOKAction()));
+                        })
+        );
     }
 
     @Override

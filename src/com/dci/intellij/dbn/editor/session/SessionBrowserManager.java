@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.routine.ReadAction;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -241,7 +241,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                                 }
 
                                 if (sessionBrowsers.size() > 0) {
-                                    SimpleLaterInvocator.invoke(() -> {
+                                    Dispatch.invoke(() -> {
                                         for (SessionBrowser sessionBrowser : sessionBrowsers) {
                                             sessionBrowser.refreshLoadTimestamp();
                                         }

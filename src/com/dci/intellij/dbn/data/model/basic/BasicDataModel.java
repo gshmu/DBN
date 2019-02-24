@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.common.list.FiltrableListImpl;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
@@ -258,7 +258,7 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
     }
 
     protected void notifyListeners(@Nullable ListDataEvent listDataEvent, @Nullable TableModelEvent modelEvent) {
-        SimpleLaterInvocator.invoke(() -> {
+        Dispatch.invoke(() -> {
             if (listDataEvent != null) {
                 if (listModel.loaded()) {
                     listModel.get().notifyListeners(listDataEvent);

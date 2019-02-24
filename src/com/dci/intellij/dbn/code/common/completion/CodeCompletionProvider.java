@@ -106,6 +106,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         ElementTypeLookupCache lookupCache = elementTypeBundle.getRootElementType().getLookupCache();
         ElementLookupContext lookupContext = new ElementLookupContext(context.getDatabaseVersion());
         Set<LeafElementType> firstPossibleLeafs = lookupCache.collectFirstPossibleLeafs(lookupContext);
+
         for (LeafElementType firstPossibleLeaf : firstPossibleLeafs) {
             if (firstPossibleLeaf instanceof TokenElementType) {
                 TokenElementType tokenElementType = (TokenElementType) firstPossibleLeaf;
@@ -136,6 +137,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         CodeCompletionFilterSettings filterSettings = context.getCodeCompletionFilterSettings();
         Map<String, LeafElementType> nextPossibleLeafs = new THashMap<String, LeafElementType>();
         IdentifierPsiElement parentIdentifierPsiElement = null;
+
         DBObject parentObject = null;
         PsiElement parent = element.getParent();
         if (parent instanceof QualifiedIdentifierPsiElement) {

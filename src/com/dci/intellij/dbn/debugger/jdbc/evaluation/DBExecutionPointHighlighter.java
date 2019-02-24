@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.debugger.jdbc.evaluation;
 
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
@@ -30,11 +30,11 @@ public class DBExecutionPointHighlighter {
     }
 
     public void show(final @NotNull XSourcePosition position, final boolean useSelection) {
-        SimpleLaterInvocator.invokeNonModal(() -> doShow(position, useSelection));
+        Dispatch.invokeNonModal(() -> doShow(position, useSelection));
     }
 
     public void hide() {
-        SimpleLaterInvocator.invokeNonModal(() -> doHide());
+        Dispatch.invokeNonModal(() -> doHide());
     }
 
     public void navigateTo() {

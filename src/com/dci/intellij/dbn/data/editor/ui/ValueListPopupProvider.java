@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.data.editor.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
@@ -109,7 +109,7 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
                             return;
                         }
 
-                        SimpleLaterInvocator.invoke(() -> {
+                        Dispatch.invoke(() -> {
                             try {
                                 if (!isShowingPopup()) {
                                     doShowPopup();

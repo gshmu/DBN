@@ -6,8 +6,8 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.message.MessageCallback;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -465,7 +465,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
 
     public void selectConnectionAndSchema(@NotNull DBLanguagePsiFile file, @NotNull ConnectionAction callback) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             Project project = getProject();
             ConnectionHandler activeConnection = file.getConnectionHandler();
             if (activeConnection == null || activeConnection.isVirtual()) {

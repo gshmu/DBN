@@ -62,7 +62,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
 
     @Override
     public final void run(@NotNull ProgressIndicator progressIndicator) {
-        ThreadMonitor.run(ThreadProperty.BACKGROUND_PROGRESS, () -> {
+        ThreadMonitor.run(ThreadProperty.BACKGROUND_TASK, () -> {
             Thread currentThread = Thread.currentThread();
             int priority = currentThread.getPriority();
             try {
@@ -101,7 +101,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
     }
 
     public static void initProgressIndicator(ProgressIndicator progressIndicator, boolean indeterminate, @Nullable String text) {
-        SimpleLaterInvocator.invoke(progressIndicator.getModalityState(), () -> {
+        Dispatch.invoke(progressIndicator.getModalityState(), () -> {
             if (progressIndicator.isRunning()) {
                 progressIndicator.setIndeterminate(indeterminate);
                 if (text != null) progressIndicator.setText(text);

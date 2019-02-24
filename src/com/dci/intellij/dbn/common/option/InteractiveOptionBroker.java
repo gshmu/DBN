@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
@@ -81,7 +81,7 @@ public class InteractiveOptionBroker<T extends InteractiveOption> implements Dia
     }
 
     public void resolve(Object[] messageArgs, ParametricRunnable.Unsafe<T> callback) {
-        SimpleLaterInvocator.invoke(() -> {
+        Dispatch.invoke(() -> {
             T option;
             if (selectedOption != null && !selectedOption.isAsk()) {
                 option = selectedOption;

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
@@ -40,7 +40,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
 
     private DatasetEditorModelCellValueListener cellValueListener = cell -> {
         if (cell == getCell()) {
-            SimpleLaterInvocator.invokeNonModal(() -> setCellValueToEditor());
+            Dispatch.invokeNonModal(() -> setCellValueToEditor());
         }
     };
 

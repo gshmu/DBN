@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.dispose;
 
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.thread.Background;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.Nullable;
@@ -67,9 +66,5 @@ public class DisposerUtil {
         if (disposable instanceof Disposable) {
             Disposer.register(parent, (Disposable) disposable);
         }
-    }
-
-    public static void disposeLater(final Disposable disposable) {
-        SimpleLaterInvocator.invoke(() -> Disposer.dispose(disposable));
     }
 }

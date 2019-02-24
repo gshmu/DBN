@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -64,7 +64,7 @@ public abstract class ObjectListShowAction extends DumbAwareAction {
                         List<? extends DBObject> recentObjectList = getRecentObjectList();
                         List<? extends DBObject> objects = getObjectList();
                         if (!action.isCancelled()) {
-                            SimpleLaterInvocator.invokeNonModal(() -> {
+                            Dispatch.invokeNonModal(() -> {
                                 if (objects.size() > 0) {
                                     ObjectListActionGroup actionGroup = new ObjectListActionGroup(ObjectListShowAction.this, objects, recentObjectList);
                                     JBPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -138,7 +138,7 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
     };
 
     private void refreshForm() {
-        SimpleLaterInvocator.invoke(() -> updateListModel());
+        Dispatch.invoke(() -> updateListModel());
 
     }
 }

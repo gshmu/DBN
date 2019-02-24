@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -324,7 +324,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     private void promptExecutionDialogs(@NotNull List<StatementExecutionProcessor> processors, DBDebuggerType debuggerType, @NotNull RunnableTask callback) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             if (promptExecutionDialogs(processors, debuggerType)) {
                 callback.start();
             }
@@ -396,7 +396,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     public void promptPendingTransactionDialog(StatementExecutionProcessor executionProcessor) {
         ExecutionContext context = executionProcessor.getExecutionContext();
         context.set(PROMPTED, true);
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             try {
                 PendingTransactionDialog dialog = new PendingTransactionDialog(executionProcessor);
                 dialog.show();

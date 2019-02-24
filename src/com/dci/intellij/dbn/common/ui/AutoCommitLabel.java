@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -59,7 +59,7 @@ public class AutoCommitLabel extends JLabel implements Disposable {
     }
 
     private void update() {
-        SimpleLaterInvocator.invoke(() -> {
+        Dispatch.invoke(() -> {
             ConnectionHandler connectionHandler = getConnectionHandler();
             if (connectionHandler != null) {
                 setVisible(true);

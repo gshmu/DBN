@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.editor.data.ui.table;
 
 import com.dci.intellij.dbn.common.thread.Background;
-import com.dci.intellij.dbn.common.thread.ModalTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.MouseUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
@@ -190,7 +190,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                 runnable.run();
             } finally {
                 model.set(UPDATING, false);
-                SimpleLaterInvocator.invokeNonModal(() -> {
+                Dispatch.invokeNonModal(() -> {
                     DBNTableGutter tableGutter = getTableGutter();
                     GUIUtil.repaint(tableGutter);
                     GUIUtil.repaint(DatasetEditorTable.this);
@@ -200,7 +200,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     }
 
     public void showErrorPopup(DatasetEditorModelCell cell) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             checkDisposed();
 
             if (!isShowing()) {
@@ -222,16 +222,16 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     @Override
     public void clearSelection() {
-        SimpleLaterInvocator.invokeNonModal(() -> DatasetEditorTable.super.clearSelection());
+        Dispatch.invokeNonModal(() -> DatasetEditorTable.super.clearSelection());
     }
 
     @Override
     public void removeEditor() {
-        SimpleLaterInvocator.invokeNonModal(() -> DatasetEditorTable.super.removeEditor());
+        Dispatch.invokeNonModal(() -> DatasetEditorTable.super.removeEditor());
     }
 
     public void updateTableGutter() {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             DBNTableGutter tableGutter = getTableGutter();
             GUIUtil.repaint(tableGutter);
         });
@@ -366,7 +366,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     public void fireEditingCancel() {
         if (isEditing()) {
-            SimpleLaterInvocator.invokeNonModal(() -> cancelEditing());
+            Dispatch.invokeNonModal(() -> cancelEditing());
         }
     }
 
@@ -515,23 +515,27 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             MouseEvent event,
             DatasetEditorModelCell cell,
             ColumnInfo columnInfo) {
-        ModalTask.invoke(getProject(), "Loading column information", true, (data, progress) -> {
-            ActionGroup actionGroup = new DatasetEditorTableActionGroup(datasetEditor, cell, columnInfo);
-            if (!progress.isCanceled()) {
-                ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
-                JPopupMenu popupMenu = actionPopupMenu.getComponent();
-                SimpleLaterInvocator.invokeNonModal(() -> {
-                    Component component = (Component) event.getSource();
-                    if (component.isShowing()) {
-                        int x = event.getX();
-                        int y = event.getY();
-                        if (x >= 0 && x < component.getWidth() && y >= 0 && y < component.getHeight()) {
-                            popupMenu.show(component, x, y);
+
+        Progress.modal(
+                getProject(),
+                "Loading column information", true,
+                (progress) -> {
+                    ActionGroup actionGroup = new DatasetEditorTableActionGroup(datasetEditor, cell, columnInfo);
+                    Progress.check(progress);
+
+                    ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
+                    JPopupMenu popupMenu = actionPopupMenu.getComponent();
+                    Dispatch.invokeNonModal(() -> {
+                        Component component = (Component) event.getSource();
+                        if (component.isShowing()) {
+                            int x = event.getX();
+                            int y = event.getY();
+                            if (x >= 0 && x < component.getWidth() && y >= 0 && y < component.getHeight()) {
+                                popupMenu.show(component, x, y);
+                            }
                         }
-                    }
+                    });
                 });
-            }
-        });
     }
 
 

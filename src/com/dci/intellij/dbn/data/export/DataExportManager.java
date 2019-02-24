@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.processor.CSVDataExportProcessor;
@@ -69,7 +68,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
             SortableTable table,
             DataExportInstructions instructions,
             ConnectionHandler connectionHandler,
-            final SimpleTask successCallback) {
+            @NotNull Runnable successCallback) {
         Project project = getProject();
         boolean isSelection = instructions.getScope() == DataExportInstructions.Scope.SELECTION;
         DataExportModel exportModel = new SortableTableExportModel(isSelection, table);
@@ -79,7 +78,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                 processor.export(exportModel, instructions, connectionHandler);
                 DataExportInstructions.Destination destination = instructions.getDestination();
                 if (destination == DataExportInstructions.Destination.CLIPBOARD) {
-                    successCallback.start();
+                    successCallback.run();
                     sendInfoNotification(Constants.DBN_TITLE_PREFIX + "Data Export", "Data content exported to clipboard.");
                 } else if (destination == DataExportInstructions.Destination.FILE) {
                     final File file = instructions.getFile();
@@ -93,7 +92,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                                 "Content exported to file " + file.getPath(),
                                 new String[]{"OK", "Open File"}, 0,
                                 MessageCallback.create(null, option -> {
-                                    successCallback.start();
+                                    successCallback.run();
                                     if (option == 1) {
                                         try {
                                             Desktop.getDesktop().open(file);

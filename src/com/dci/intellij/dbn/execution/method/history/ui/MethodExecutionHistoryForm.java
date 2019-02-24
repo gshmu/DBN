@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -219,7 +219,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
                             method.getArguments();
                         }
 
-                        SimpleLaterInvocator.invoke(() -> {
+                        Dispatch.invoke(() -> {
                             MethodExecutionHistoryDialog dialog = ensureParentComponent();
                             showMethodExecutionPanel(executionInput);
                             dialog.setSelectedExecutionInput(executionInput);

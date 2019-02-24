@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.common.loader;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -25,7 +25,7 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
         super(project);
         EventUtil.subscribe(project, this,
                 ConnectionLoadListener.TOPIC,
-                connectionHandler -> SimpleLaterInvocator.invokeNonModal(() -> {
+                connectionHandler -> Dispatch.invokeNonModal(() -> {
                     Failsafe.ensure(project);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                     FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);

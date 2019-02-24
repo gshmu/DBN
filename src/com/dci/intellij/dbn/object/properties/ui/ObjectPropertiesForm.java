@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -84,7 +84,7 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
                         ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
                         Disposer.register(ObjectPropertiesForm.this, tableModel);
 
-                        SimpleLaterInvocator.invokeNonModal(() -> {
+                        Dispatch.invokeNonModal(() -> {
                             objectLabel.setText(object.getName());
                             objectLabel.setIcon(object.getIcon());
                             objectTypeLabel.setText(NamingUtil.capitalize(object.getTypeName()) + ":");

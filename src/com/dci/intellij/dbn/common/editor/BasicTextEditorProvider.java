@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.editor;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
@@ -39,7 +39,7 @@ public abstract class BasicTextEditorProvider implements FileEditorProvider, App
     }
 
     protected void updateTabIcon(final DBEditableObjectVirtualFile databaseFile, final BasicTextEditor textEditor, final Icon icon) {
-        SimpleLaterInvocator.invokeNonModal(() -> {
+        Dispatch.invokeNonModal(() -> {
             Project project = Failsafe.get(databaseFile.getProject());
             EditorUtil.setEditorIcon(project, databaseFile, textEditor, icon);
         });

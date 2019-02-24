@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.browser.ui;
 
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
@@ -114,7 +114,7 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
                 (data, progress) -> {
                     MethodBrowserSettings settings = getSettings();
                     ObjectTreeModel model = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), null);
-                    SimpleLaterInvocator.invoke(() -> {
+                    Dispatch.invoke(() -> {
                         methodsTree.setModel(model);
                         GUIUtil.repaint(methodsTree);
                     });

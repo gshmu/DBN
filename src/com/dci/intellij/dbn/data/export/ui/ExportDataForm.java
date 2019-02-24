@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.data.export.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageCallback;
-import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -195,7 +194,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
             formatCustomRadioButton.isSelected() ? DataExportFormat.CUSTOM : null;
     }
 
-    void validateEntries(RunnableTask callback) {
+    void validateEntries(@NotNull Runnable callback) {
         boolean validValueSeparator = valueSeparatorTextField.getText().trim().length() > 0;
         boolean validFileName = fileNameTextField.getText().trim().length() > 0;
         boolean validFileLocation = fileLocationTextField.getText().trim().length() > 0;
@@ -227,12 +226,12 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
                 MessageUtil.showQuestionDialog(project, "File exists",
                         "File " + file.getPath() + " already exists. Overwrite?",
                         MessageUtil.OPTIONS_YES_NO, 0,
-                        MessageCallback.create(0, option -> callback.start()));
+                        MessageCallback.create(0, option -> callback.run()));
                 return;
             }
         }
 
-        callback.start();
+        callback.run();
     }
 
     private ActionListener actionListener = e -> enableDisableFields();
