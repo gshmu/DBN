@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.util;
 
+import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class CollectionUtil {
     public static <T extends Cloneable<T>> void cloneCollectionElements(Collection<T> source, Collection<T> target) {
@@ -92,5 +94,16 @@ public class CollectionUtil {
 
     public static <T> List<T> wrap(Collection<T> collection) {
         return new ArrayList<>(collection);
+    }
+
+    public static <T> List<T> filter(List<T> list, @Nullable Filter<T> filter) {
+        if (list.isEmpty() || filter == null || filter.acceptsAll(list)) {
+            return list;
+        } else {
+            return list.
+                    stream().
+                    filter(element -> element != null && filter.accepts(element)).
+                    collect(Collectors.toList());
+        }
     }
 }

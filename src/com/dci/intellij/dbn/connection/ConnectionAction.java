@@ -6,12 +6,12 @@ import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.routine.ParametricCallable;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
-import com.dci.intellij.dbn.common.thread.BackgroundMonitor;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.thread.TaskInstructions;
+import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -157,7 +157,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
     }
 
     private void executeAction() {
-        if (taskInstructions == null || BackgroundMonitor.isBackgroundProcess()) {
+        if (taskInstructions == null || ThreadMonitor.isBackgroundProcess()) {
             if (!ProgressMonitor.isCancelled()) {
                 execute();
             }

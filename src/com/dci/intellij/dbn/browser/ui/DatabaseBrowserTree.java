@@ -9,11 +9,11 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.ModalTask;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
 import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
-import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
+import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -115,7 +115,7 @@ public class DatabaseBrowserTree extends DBNTree {
 
     public void scrollToSelectedElement() {
         if (getProject().isOpen() && targetSelection != null) {
-            SimpleBackgroundTask.invoke(() -> {
+            Background.run(() -> {
                 if (targetSelection != null) {
                     targetSelection = (BrowserTreeNode) targetSelection.getUndisposedElement();
                     TreePath treePath = DatabaseBrowserUtils.createTreePath(targetSelection);
@@ -175,7 +175,7 @@ public class DatabaseBrowserTree extends DBNTree {
                     Object object = path.getLastPathComponent();
                     if (object instanceof ToolTipProvider) {
                         ToolTipProvider toolTipProvider = (ToolTipProvider) object;
-                        return SimpleTimeoutCall.invoke(1, null, true, () -> toolTipProvider.getToolTip());
+                        return Timeout.call(1, null, true, () -> toolTipProvider.getToolTip());
                     }
                 }
             }

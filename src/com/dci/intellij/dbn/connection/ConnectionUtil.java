@@ -4,26 +4,18 @@ import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
-import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
-import com.dci.intellij.dbn.connection.config.ConnectionSslSettings;
-import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
-import com.dci.intellij.dbn.connection.ssh.SshTunnelConnector;
-import com.dci.intellij.dbn.connection.ssh.SshTunnelManager;
-import com.dci.intellij.dbn.connection.ssl.SslConnectionManager;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,9 +26,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.sql.Savepoint;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 public class ConnectionUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -127,17 +116,19 @@ public class ConnectionUtil {
             @NotNull SessionId sessionId,
             boolean autoCommit,
             @Nullable DatabaseAttachmentHandler attachmentHandler) throws SQLException {
-        ConnectTimeoutCall connectCall = new ConnectTimeoutCall();
-        connectCall.sessionId = sessionId;
-        connectCall.temporaryAuthenticationInfo = temporaryAuthenticationInfo;
-        connectCall.connectionSettings = connectionSettings;
-        connectCall.connectionStatus = connectionStatus;
-        connectCall.autoCommit = autoCommit;
-        connectCall.databaseAttachmentHandler = attachmentHandler;
-        DBNConnection connection = connectCall.start();
+        Connector connector = new Connector(
+                sessionId,
+                temporaryAuthenticationInfo,
+                connectionSettings,
+                connectionStatus,
+                attachmentHandler,
+                autoCommit);
 
-        if (connectCall.exception != null) {
-            throw connectCall.exception;
+        DBNConnection connection = Timeout.call(30, null, true, () -> connector.connect());
+
+        SQLException exception = connector.getException();
+        if (exception != null) {
+            throw exception;
         }
 
         if (connection == null) {
@@ -147,147 +138,8 @@ public class ConnectionUtil {
         return connection;
     }
 
-    private static class ConnectTimeoutCall extends SimpleTimeoutCall<DBNConnection> {
-        private SessionId sessionId;
-        private AuthenticationInfo temporaryAuthenticationInfo;
-        private ConnectionSettings connectionSettings;
-        private ConnectionHandlerStatusHolder connectionStatus;
-        private DatabaseAttachmentHandler databaseAttachmentHandler;
-        private boolean autoCommit;
-
-        private SQLException exception;
-
-        ConnectTimeoutCall() {
-            super(30, null, true);
-        }
-
-        @Override
-        public DBNConnection call() {
-            trace(this);
-            ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
-            try {
-                Properties properties = new Properties();
-
-                // AUTHENTICATION
-                AuthenticationInfo authenticationInfo = databaseSettings.getAuthenticationInfo();
-                if (!authenticationInfo.isProvided() && temporaryAuthenticationInfo != null) {
-                    authenticationInfo = temporaryAuthenticationInfo;
-                }
-                if (authenticationInfo.isSupported() && !authenticationInfo.isOsAuthentication()) {
-                    String user = authenticationInfo.getUser();
-                    String password = authenticationInfo.getPassword();
-                    properties.put("user", user);
-                    if (StringUtil.isNotEmpty(password)) {
-                        properties.put("password", password);
-                    }
-                }
-
-                // SESSION INFO
-                ConnectionType connectionType = sessionId.getConnectionType();
-                String appName = "Database Navigator - " + connectionType.getName();
-                properties.put("ApplicationName", appName);
-                properties.put("v$session.program", appName);
-                Map<String, String> configProperties = databaseSettings.getParent().getPropertiesSettings().getProperties();
-                if (configProperties != null) {
-                    properties.putAll(configProperties);
-                }
-
-                // DRIVER
-                Driver driver = resolveDriver(databaseSettings);
-                if (driver == null) {
-                    throw new SQLException("Could not resolve driver class.");
-                }
-
-                // SSL
-                ConnectionSslSettings sslSettings = connectionSettings.getSslSettings();
-                if (sslSettings.isActive()) {
-                    SslConnectionManager connectionManager = SslConnectionManager.getInstance();
-                    connectionManager.ensureSslConnection(connectionSettings);
-                    DatabaseType databaseType = databaseSettings.getDatabaseType();
-                    if (databaseType == DatabaseType.MYSQL) {
-                        properties.setProperty("useSSL", "true");
-                        properties.setProperty("requireSSL", "true");
-                    } else if (databaseType == DatabaseType.POSTGRES) {
-                        properties.setProperty("ssl", "true");
-                    }
-                }
-
-                String connectionUrl = databaseSettings.getConnectionUrl();
-
-                // SSH Tunnel
-                ConnectionSshTunnelSettings sshTunnelSettings = connectionSettings.getSshTunnelSettings();
-                if (sshTunnelSettings.isActive()) {
-                    SshTunnelManager sshTunnelManager = SshTunnelManager.getInstance();
-                    SshTunnelConnector sshTunnelConnector = sshTunnelManager.ensureSshConnection(connectionSettings);
-                    if (sshTunnelConnector != null) {
-                        String localHost = sshTunnelConnector.getLocalHost();
-                        String localPort = Integer.toString(sshTunnelConnector.getLocalPort());
-                        connectionUrl = databaseSettings.getConnectionUrl(localHost, localPort);
-                    }
-                }
-
-                Connection connection = driver.connect(connectionUrl, properties);
-                if (connection == null) {
-                    throw new SQLException("Driver failed to create connection for this configuration. No failure information provided.");
-                }
-
-                if (connectionStatus != null) {
-                    connectionStatus.setConnectionException(null);
-                    connectionStatus.setConnected(true);
-                    connectionStatus.setValid(true);
-                }
-
-                Project project = connectionSettings.getProject();
-                if (databaseAttachmentHandler != null) {
-                    List<DatabaseFile> attachedDatabaseFiles = databaseSettings.getDatabaseInfo().getFiles().getSecondaryFiles();
-                    for (DatabaseFile databaseFile : attachedDatabaseFiles) {
-                        String path = databaseFile.getPath();
-                        try {
-                            databaseAttachmentHandler.attachDatabase(connection, path, databaseFile.getSchema());
-                        } catch (Exception e) {
-                            NotificationUtil.sendErrorNotification(
-                                    project,
-                                    "Database Attachment Failure",
-                                    "Unable to attach database file " + path + ". Cause: " + e.getMessage());
-                        }
-                    }
-                }
-
-                try {
-                    connection.setAutoCommit(autoCommit);
-                } catch (SQLException e) {
-                    // need to try twice (don't remember why)
-                    connection.setAutoCommit(autoCommit);
-                }
-
-                DatabaseType databaseType = getDatabaseType(connection);
-                databaseSettings.setDatabaseType(databaseType);
-                databaseSettings.setDatabaseVersion(getDatabaseVersion(connection));
-                databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
-                return new DBNConnection(
-                        project,
-                        connection,
-                        connectionSettings.getDatabaseSettings().getName(),
-                        connectionType,
-                        connectionSettings.getConnectionId(),
-                        sessionId);
-
-            } catch (Throwable e) {
-                DatabaseType databaseType = getDatabaseType(databaseSettings.getDriver());
-                databaseSettings.setDatabaseType(databaseType);
-                databaseSettings.setConnectivityStatus(ConnectivityStatus.INVALID);
-                if (connectionStatus != null) {
-                    connectionStatus.setConnectionException(e);
-                    connectionStatus.setValid(false);
-                }
-                exception = e instanceof SQLException ? (SQLException) e : new SQLException("Connection error: " + e.getMessage(), e);
-            }
-            return null;
-        }
-    }
-
     @Nullable
-    private static Driver resolveDriver(ConnectionDatabaseSettings databaseSettings) throws Exception {
+    static Driver resolveDriver(ConnectionDatabaseSettings databaseSettings) throws Exception {
         Driver driver = null;
         DatabaseDriverManager driverManager = DatabaseDriverManager.getInstance();
         DriverSource driverSource = databaseSettings.getDriverSource();
@@ -308,7 +160,7 @@ public class ConnectionUtil {
         return driver;
     }
 
-    private static DatabaseType getDatabaseType(String driver) {
+    protected static DatabaseType getDatabaseType(String driver) {
         return DatabaseType.resolve(driver);
 
     }

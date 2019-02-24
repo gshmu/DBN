@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.psql;
 
 import com.dci.intellij.dbn.code.psql.color.PSQLTextAttributesKeys;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
-import com.dci.intellij.dbn.common.thread.BackgroundMonitor;
+import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -41,7 +41,7 @@ public class PSQLLanguageAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
-        BackgroundMonitor.run(ThreadProperty.CODE_ANNOTATING, () -> {
+        ThreadMonitor.run(ThreadProperty.CODE_ANNOTATING, () -> {
             if (psiElement instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) psiElement;
 
