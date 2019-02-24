@@ -1,9 +1,13 @@
 package com.dci.intellij.dbn.code.common.intention;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.SessionId;
+import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.intellij.codeInsight.intention.LowPriorityAction;
 import com.intellij.openapi.editor.Editor;
@@ -47,15 +51,22 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
     }
 
     @Override
-    public void invoke(@NotNull final Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguagePsiFile = (DBLanguagePsiFile) psiFile;
-            final ConnectionHandler activeConnection = dbLanguagePsiFile.getConnectionHandler();
+            ConnectionHandler activeConnection = dbLanguagePsiFile.getConnectionHandler();
             if (activeConnection != null && !activeConnection.isDisposed() && !activeConnection.isVirtual()) {
                 activeConnection.getInstructions().setAllowAutoConnect(true);
-                BackgroundTask.invoke(project,
-                        instructions("Trying to connect to " + activeConnection.getName()),
-                        (data, progress) -> ConnectionManager.testConnection(activeConnection, false, true));
+
+                DatabaseSession databaseSession = dbLanguagePsiFile.getDatabaseSession();
+                SessionId sessionId = databaseSession == null ? SessionId.MAIN : databaseSession.getId();
+                SchemaId schemaId = dbLanguagePsiFile.getSchemaId();
+
+                ConnectionAction.invoke(
+                        "connecting to database",
+                        instructions("Trying to connect to " + activeConnection.getName(), TaskInstruction.MANAGED),
+                        activeConnection,
+                        action ->  ConnectionManager.testConnection(activeConnection, schemaId, sessionId ,false, true));
             }
         }
     }

@@ -15,9 +15,8 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -53,8 +52,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 @State(
     name = DatabaseBrowserManager.COMPONENT_NAME,
@@ -126,7 +123,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         return "DB Browser";
     }
 
-    public void navigateToElement(@Nullable final BrowserTreeNode treeNode, final boolean focus, final boolean scroll) {
+    public void navigateToElement(@Nullable BrowserTreeNode treeNode, boolean focus, boolean scroll) {
         Dispatch.invokeNonModal(() -> {
             ToolWindow toolWindow = getBrowserToolWindow();
 
@@ -184,7 +181,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         EventUtil.subscribe(project, this, ObjectFilterChangeListener.TOPIC, filterChangeListener);
     }
 
-    public static void scrollToSelectedElement(final ConnectionHandler connectionHandler) {
+    public static void scrollToSelectedElement(ConnectionHandler connectionHandler) {
         if (connectionHandler != null && !connectionHandler.isDisposed()) {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(connectionHandler.getProject());
             BrowserToolWindowForm toolWindowForm = browserManager.getToolWindowForm();
@@ -269,16 +266,17 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                         FileEditor oldEditor = event.getOldEditor();
                         SchemaId schemaId = databaseVirtualFile.getSchemaId();
                         boolean scroll = oldEditor != null && oldEditor.isValid();
-                        BackgroundTask.invoke(
+
+                        Progress.background(
                                 getProject(),
-                                instructions("Loading data dictionary"), (data, progress) -> {
+                                "Loading data dictionary", false,
+                                (progress) -> {
+                                    BrowserTreeNode treeNode = schemaId == null ?
+                                            connectionHandler.getObjectBundle() :
+                                            connectionHandler.getSchema(schemaId);
 
-                            BrowserTreeNode treeNode = schemaId == null ?
-                                    connectionHandler.getObjectBundle() :
-                                    connectionHandler.getSchema(schemaId);
-
-                            navigateToElement(treeNode, scroll);
-                        });
+                                    navigateToElement(treeNode, scroll);
+                                });
                     }
                 }
             }
@@ -326,7 +324,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     }
 
     @Override
-    public void loadState(@NotNull final Element element) {
+    public void loadState(@NotNull Element element) {
         autoscrollToEditor.readConfiguration(element);
         autoscrollFromEditor.readConfiguration(element);
         showObjectProperties.readConfiguration(element);
@@ -382,39 +380,44 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     private void initTouchedNodes(Element element) {
         Element nodesElement = element.getChild("loaded-nodes");
         if (nodesElement != null) {
-            final Project project = getProject();
+            Project project = getProject();
             List<Element> connectionElements = nodesElement.getChildren();
             ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-            for (final Element connectionElement : connectionElements) {
+
+            connectionElements.forEach(connectionElement -> {
                 ConnectionId connectionId = ConnectionId.get(connectionElement.getAttributeValue("connection-id"));
-                final ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
+                ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
                 if (connectionHandler != null) {
                     ConnectionDetailSettings settings = connectionHandler.getSettings().getDetailSettings();
                     if (settings.isRestoreWorkspaceDeep()) {
                         DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
                         String connectionString = " (" + connectionHandler.getName() + ")";
                         List<Element> schemaElements = connectionElement.getChildren();
-                        for (final Element schemaElement : schemaElements) {
+
+                        schemaElements.forEach(schemaElement -> {
                             String schemaName = schemaElement.getAttributeValue("name");
                             DBSchema schema = objectBundle.getSchema(schemaName);
                             if (schema != null) {
-                                BackgroundTask.invoke(project,
-                                        instructions("Loading data dictionary" + connectionString, TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
-                                        (data, progress) -> {
+                                Progress.background(project,
+                                        "Loading data dictionary" + connectionString, true,
+                                        (progress) -> {
                                             String objectTypesAttr = schemaElement.getAttributeValue("object-types");
                                             List<DBObjectType> objectTypes = DBObjectType.fromCsv(objectTypesAttr);
-                                            for (DBObjectType objectType : objectTypes) {
+
+                                            objectTypes.forEach(objectType -> {
                                                 DBObjectListContainer childObjects = schema.getChildObjects();
-                                                if (childObjects != null && !progress.isCanceled()) {
+                                                if (childObjects != null) {
+                                                    Progress.check(progress);
                                                     childObjects.loadObjectList(objectType);
                                                 }
-                                            }
+                                            });
                                         });
                             }
-                        }
+                        });
                     }
                 }
-            }
+
+            });
         }
     }
 
