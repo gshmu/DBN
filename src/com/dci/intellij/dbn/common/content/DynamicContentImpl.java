@@ -10,9 +10,9 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
-import com.dci.intellij.dbn.common.thread.BackgroundMonitor;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -24,12 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.CHANGING;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DIRTY;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DISPOSED;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADED;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.MASTER;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
 import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> extends PropertyHolderImpl<DynamicContentStatus> implements DynamicContent<T> {
@@ -291,7 +286,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     @Override
     @NotNull
     public List<T> getElements() {
-        if (BackgroundMonitor.isBackgroundProcess() || BackgroundMonitor.isTimeoutProcess() || getDependencyAdapter().canLoadFast()) {
+        if (ThreadMonitor.isBackgroundProcess() || ThreadMonitor.isTimeoutProcess() || getDependencyAdapter().canLoadFast()) {
             ensure();
         } else{
             loadInBackground();

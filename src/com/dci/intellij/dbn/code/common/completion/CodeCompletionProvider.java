@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.code.common.completion;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
+import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -80,21 +81,24 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             int invocationCount = parameters.getInvocationCount();
             if (invocationCount > 1) context.setExtended(true);
 
-            try {
-                if (leafBeforeCaret == null) {
-                    addFileRootCompletions(consumer);
-                } else {
-                    leafBeforeCaret = (LeafPsiElement) leafBeforeCaret.getOriginalElement();
-                    buildElementRelativeVariants(leafBeforeCaret, consumer);
-                }
-            } catch (ConsumerStoppedException ignore) {
-
-            } finally {
-            }
+            Timeout.run(1, true, () -> collectCompletionVariants(consumer, leafBeforeCaret));
         }
     }
 
-    private static void addFileRootCompletions(CodeCompletionLookupConsumer consumer) throws ConsumerStoppedException {
+    private void collectCompletionVariants(CodeCompletionLookupConsumer consumer, LeafPsiElement leafBeforeCaret) {
+        try {
+            if (leafBeforeCaret == null) {
+                collectRootCompletionVariants(consumer);
+            } else {
+                leafBeforeCaret = (LeafPsiElement) leafBeforeCaret.getOriginalElement();
+                collectElementRelativeVariants(leafBeforeCaret, consumer);
+            }
+        } catch (ConsumerStoppedException ignore) {
+
+        }
+    }
+
+    private static void collectRootCompletionVariants(CodeCompletionLookupConsumer consumer) throws ConsumerStoppedException {
         CodeCompletionContext context = consumer.getContext();
         DBLanguagePsiFile file = context.getFile();
 
@@ -123,7 +127,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         return null;
     }
 
-    private static void buildElementRelativeVariants(LeafPsiElement element, CodeCompletionLookupConsumer consumer) throws ConsumerStoppedException {
+    private static void collectElementRelativeVariants(LeafPsiElement element, CodeCompletionLookupConsumer consumer) throws ConsumerStoppedException {
 
         CodeCompletionContext context = consumer.getContext();
         ConnectionHandler connectionHandler = context.getConnectionHandler();
@@ -140,7 +144,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
 
             if (element.getElementType() == separator){
                 BasePsiElement parentPsiElement = element.getPrevElement();
-                if (parentPsiElement != null && parentPsiElement instanceof IdentifierPsiElement) {
+                if (parentPsiElement instanceof IdentifierPsiElement) {
                     parentIdentifierPsiElement = (IdentifierPsiElement) parentPsiElement;
                     parentObject = parentIdentifierPsiElement.resolveUnderlyingObject();
 

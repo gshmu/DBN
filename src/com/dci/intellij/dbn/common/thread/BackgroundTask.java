@@ -62,7 +62,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
 
     @Override
     public final void run(@NotNull ProgressIndicator progressIndicator) {
-        BackgroundMonitor.run(ThreadProperty.BACKGROUND_PROGRESS, () -> {
+        ThreadMonitor.run(ThreadProperty.BACKGROUND_PROGRESS, () -> {
             Thread currentThread = Thread.currentThread();
             int priority = currentThread.getPriority();
             try {
@@ -88,7 +88,7 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
     @Override
     public final void start() {
         boolean conditional = instructions != null && instructions.is(TaskInstruction.CONDITIONAL);
-        if (conditional && BackgroundMonitor.isBackgroundProcess()) {
+        if (conditional && ThreadMonitor.isBackgroundProcess()) {
             ProgressMonitor.checkCancelled();
             run(ProgressMonitor.getProgressIndicator());
         } else {

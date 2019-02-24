@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection.jdbc;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.FailsafeWeakRef;
-import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
+import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.ExceptionUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.diagnostic.Logger;
@@ -138,7 +138,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
     }
 
     private boolean checkControlled() {
-        return SimpleTimeoutCall.invoke(5, is(subject), true, () -> checkInner());
+        return Timeout.call(5, is(subject), true, () -> checkInner());
     }
 
     private void changeControlled(boolean value) throws SQLException{
@@ -149,7 +149,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
             daemon = false;
         }
 
-        SQLException exception = SimpleTimeoutCall.invoke(10, null, daemon, () -> {
+        SQLException exception = Timeout.call(10, null, daemon, () -> {
             try {
                 if (DatabaseNavigator.debugModeEnabled)
                     LOGGER.info("Started changing " + resource.getResourceType() + " resource " + subject + " status to " + value);

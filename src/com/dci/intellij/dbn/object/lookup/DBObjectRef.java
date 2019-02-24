@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.object.lookup;
 import com.dci.intellij.dbn.common.Reference;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
-import com.dci.intellij.dbn.common.thread.SimpleTimeoutCall;
+import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -320,7 +320,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
 
     @Nullable
     public T ensure(long timeoutSeconds) {
-        return SimpleTimeoutCall.invoke(timeoutSeconds, null, false, () -> get());
+        return Timeout.call(timeoutSeconds, null, false, () -> get());
 /*
         try {
             BackgroundMonitor.startTimeoutProcess();

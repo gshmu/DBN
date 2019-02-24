@@ -17,7 +17,7 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -699,7 +699,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
                     visibleTreeChildren = new ArrayList<>();
                     visibleTreeChildren.add(new LoadInProgressTreeNode(this));
 
-                    SimpleBackgroundTask.invoke(this::buildTreeChildren);
+                    Background.run(() -> buildTreeChildren());
                 }
             }
         }
@@ -707,35 +707,24 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     }
 
     private void buildTreeChildren() {
-        Failsafe.ensure(this);
-        ConnectionHandler connectionHandler = Failsafe.get(getConnectionHandler());
+        checkDisposed();
+        ConnectionHandler connectionHandler = getConnectionHandler();
 
         Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
         List<BrowserTreeNode> allPossibleTreeChildren = getAllPossibleTreeChildren();
-        List<BrowserTreeNode> newTreeChildren = allPossibleTreeChildren;
-        if (allPossibleTreeChildren.size() > 0) {
-            if (!filter.acceptsAll(allPossibleTreeChildren)) {
-                newTreeChildren = new ArrayList<>();
-                for (BrowserTreeNode treeNode : allPossibleTreeChildren) {
-                    if (treeNode != null && filter.accepts(treeNode)) {
-                        DBObjectList objectList = (DBObjectList) treeNode;
-                        newTreeChildren.add(objectList);
-                    }
-                }
-            }
-            newTreeChildren = new ArrayList<>(newTreeChildren);
 
-            for (BrowserTreeNode treeNode : newTreeChildren) {
-                DBObjectList objectList = (DBObjectList) treeNode;
-                objectList.initTreeElement();
-                Failsafe.ensure(this);
-            }
+        List<BrowserTreeNode> treeChildren = allPossibleTreeChildren;
+        treeChildren = CollectionUtil.filter(treeChildren, connectionHandler.getObjectTypeFilter());
 
-            if (visibleTreeChildren.size() == 1 && visibleTreeChildren.get(0) instanceof LoadInProgressTreeNode) {
-                visibleTreeChildren.get(0).dispose();
-            }
+        treeChildren.forEach(objectList -> {
+            objectList.initTreeElement();
+            checkDisposed();});
+
+        if (visibleTreeChildren.size() == 1 && visibleTreeChildren.get(0) instanceof LoadInProgressTreeNode) {
+            visibleTreeChildren.get(0).dispose();
         }
-        visibleTreeChildren = newTreeChildren;
+
+        visibleTreeChildren = treeChildren;
         CollectionUtil.compact(visibleTreeChildren);
         set(DBObjectProperty.TREE_LOADED, true);
 
@@ -747,11 +736,9 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
 
     @Override
     public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
-        if (visibleTreeChildren != null) {
-            for (BrowserTreeNode treeNode : visibleTreeChildren) {
-                treeNode.refreshTreeChildren(objectTypes);
-            }
-        }
+        CollectionUtil.forEach(
+                visibleTreeChildren,
+                treeNode -> treeNode.refreshTreeChildren(objectTypes));
     }
 
     @Override
@@ -761,11 +748,9 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         if (visibleTreeChildren != null && DatabaseBrowserUtils.treeVisibilityChanged(getAllPossibleTreeChildren(), visibleTreeChildren, filter)) {
             buildTreeChildren();
         }
-        if (visibleTreeChildren != null) {
-            for (BrowserTreeNode treeNode : visibleTreeChildren) {
-                treeNode.rebuildTreeChildren();
-            }
-        }
+        CollectionUtil.forEach(
+                visibleTreeChildren,
+                treeNode -> treeNode.rebuildTreeChildren());
     }
 
     @NotNull

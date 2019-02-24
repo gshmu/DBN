@@ -1,6 +1,6 @@
  package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
- import com.dci.intellij.dbn.common.thread.SimpleBackgroundTask;
+ import com.dci.intellij.dbn.common.thread.Background;
  import com.dci.intellij.dbn.common.thread.SimpleLaterInvocator;
  import com.dci.intellij.dbn.common.ui.Borders;
  import com.dci.intellij.dbn.common.ui.MouseUtil;
@@ -196,7 +196,7 @@
             if (cell != null) {
                 if (e.isControlDown() && cell.isNavigable()) {
 
-                    SimpleBackgroundTask.invoke(() -> {
+                    Background.run(() -> {
                         DBColumn column = cell.getColumnInfo().getColumn();
                         DBColumn foreignKeyColumn = column.getForeignKeyColumn();
                         if (foreignKeyColumn != null && !e.isConsumed()) {

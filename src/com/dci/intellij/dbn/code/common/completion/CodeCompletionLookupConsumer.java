@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.code.common.lookup.VariableLookupItemBuilder;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
+import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
@@ -24,7 +25,7 @@ import java.util.Collection;
 
 public class CodeCompletionLookupConsumer implements LookupConsumer {
     private CodeCompletionContext context;
-    boolean addParenthesis;
+    private boolean addParenthesis;
 
     public CodeCompletionLookupConsumer(CodeCompletionContext context) {
         this.context = context;
@@ -35,19 +36,20 @@ public class CodeCompletionLookupConsumer implements LookupConsumer {
         check();
         Failsafe.lenient(() -> {
             LookupItemBuilder lookupItemBuilder = null;
+            DBLanguage language = context.getLanguage();
             if (object instanceof DBObject) {
                 DBObject dbObject = (DBObject) object;
-                lookupItemBuilder = dbObject.getLookupItemBuilder(context.getLanguage());
+                lookupItemBuilder = dbObject.getLookupItemBuilder(language);
             }
             else if (object instanceof DBObjectPsiElement) {
                 DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) object;
-                lookupItemBuilder = objectPsiElement.getObject().getLookupItemBuilder(context.getLanguage());
+                lookupItemBuilder = objectPsiElement.getObject().getLookupItemBuilder(language);
 
             } else if (object instanceof TokenElementType) {
                 TokenElementType tokenElementType = (TokenElementType) object;
                 String text = tokenElementType.getText();
                 if (StringUtils.isNotEmpty(text)) {
-                    lookupItemBuilder = tokenElementType.getLookupItemBuilder(context.getLanguage());
+                    lookupItemBuilder = tokenElementType.getLookupItemBuilder(language);
                 } else {
                     CodeCompletionFilterSettings filterSettings = context.getCodeCompletionFilterSettings();
                     TokenTypeCategory tokenTypeCategory = tokenElementType.getTokenTypeCategory();
@@ -60,7 +62,7 @@ public class CodeCompletionLookupConsumer implements LookupConsumer {
                             }
                         }
                     } else if (filterSettings.acceptReservedWord(tokenTypeCategory)) {
-                        lookupItemBuilder = tokenElementType.getLookupItemBuilder(context.getLanguage());
+                        lookupItemBuilder = tokenElementType.getLookupItemBuilder(language);
                     }
                 }
             } else if (object instanceof IdentifierPsiElement) {
