@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.Compactable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -56,6 +57,8 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
                 for (DBObjectList<DBObject> objectList : objectLists.values()) {
                     if (check(objectList) && (visitInternal || !objectList.isInternal())) {
                         checkDisposed(visitor);
+                        ProgressMonitor.checkCancelled();
+
                         visitor.visitObjectList(objectList);
                     }
                 }

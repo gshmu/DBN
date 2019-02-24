@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.navigation;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
@@ -177,7 +178,9 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
                     boolean isLookupEnabled = objectsLookupSettings.isEnabled(objectType);
                     DBObject originalParentObject = parentObject;
                     for (DBObject object : objectList.getElements()) {
-                        Failsafe.ensure(this);
+                        checkDisposed();
+                        ProgressMonitor.checkCancelled();
+
                         if (isLookupEnabled) {
                             if (bucket == null) bucket = new THashSet<String>();
                             bucket.add(object.getName());
@@ -240,7 +243,9 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
                     boolean isLookupEnabled = objectsLookupSettings.isEnabled(objectType);
                     DBObject originalParentObject = parentObject;
                     for (DBObject object : objectList.getObjects()) {
-                        Failsafe.ensure(this);
+                        checkDisposed();
+                        ProgressMonitor.checkCancelled();
+
                         if (isLookupEnabled && object.getName().equals(objectName)) {
                             if (bucket == null) bucket = new ArrayList<DBObject>();
                             bucket.add(object);

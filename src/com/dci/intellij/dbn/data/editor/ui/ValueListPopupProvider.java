@@ -2,9 +2,8 @@ package com.dci.intellij.dbn.data.editor.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -29,8 +28,6 @@ import javax.swing.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
-
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class ValueListPopupProvider implements TextFieldPopupProvider{
     private TextFieldWithPopup editorComponent;
@@ -98,9 +95,10 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
             if (isPreparingPopup) return;
 
             isPreparingPopup = true;
-            BackgroundTask.invoke(editorComponent.getProject(),
-                    instructions("Loading " + getDescription(), TaskInstruction.CANCELLABLE),
-                    (data, progress) -> {
+            Progress.prompt(
+                    editorComponent.getProject(),
+                    "Loading " + getDescription(), true,
+                    (progress) -> {
                         // load the values
                         getValues();
                         getSecondaryValues();

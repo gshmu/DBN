@@ -20,6 +20,8 @@ public class DBObjectRecursiveLoaderVisitor extends DisposableBase implements DB
             List<DBObject> objects = objectList.getObjects();
             for (DBObject object : objects) {
                 ProgressMonitor.checkCancelled();
+                checkDisposed();
+
                 DBObjectListContainer childObjects = object.getChildObjects();
                 if (childObjects != null) {
                     childObjects.visitLists(this, false);
