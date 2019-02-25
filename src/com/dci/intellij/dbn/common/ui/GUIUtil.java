@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.Colors;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.ui.Splitter;
@@ -207,14 +207,14 @@ public class GUIUtil{
     }
 
     public static void repaint(JComponent component) {
-        ConditionalLaterInvocator.invoke(() -> {
+        Dispatch.invoke(() -> {
             component.revalidate();
             component.repaint();
         });
     }
 
     public static void repaintAndFocus(JComponent component) {
-        ConditionalLaterInvocator.invoke(() -> {
+        Dispatch.invoke(() -> {
             component.revalidate();
             component.repaint();
             component.requestFocus();
