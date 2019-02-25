@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.data.find;
 
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.model.DataModel;
@@ -12,11 +11,10 @@ import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindResult;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.project.Project;
 
 import java.awt.*;
-
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataSearchResultController implements Disposable {
     private SearchableDataComponent searchableComponent;
@@ -67,59 +65,59 @@ public class DataSearchResultController implements Disposable {
     }
 
     void updateResult(DataFindModel findModel) {
-        Project project = searchableComponent.getTable().getProject();
-        BackgroundTask.invoke(project,
-                instructions("Updating search results", TaskInstruction.BACKGROUNDED),
-                (data, progress) -> {
-                    DataModel dataModel = searchableComponent.getTable().getModel();
-                    DataSearchResult searchResult = dataModel.getSearchResult();
+        Background.run(() -> {
+            BasicTable table = searchableComponent.getTable();
+            DataModel dataModel = table.getModel();
+            DataSearchResult searchResult = dataModel.getSearchResult();
 
-                    long updateTimestamp = System.currentTimeMillis();
-                    searchResult.startUpdating(updateTimestamp);
+            long updateTimestamp = System.currentTimeMillis();
+            searchResult.startUpdating(updateTimestamp);
 
-                    FindManager findManager = FindManager.getInstance(project);
+            FindManager findManager = FindManager.getInstance(table.getProject());
 
-                    for (Object r : dataModel.getRows()) {
-                        searchResult.checkTimestamp(updateTimestamp);
-                        DataModelRow row = (DataModelRow) r;
-                        for (Object c : row.getCells()) {
-                            searchResult.checkTimestamp(updateTimestamp);
-                            DataModelCell cell = (DataModelCell) c;
-                            String userValue = cell.getFormattedUserValue();
-                            if (userValue != null) {
-                                int findOffset = 0;
-                                while (true) {
-                                    FindResult findResult = findManager.findString(userValue, findOffset, findModel);
-                                    searchResult.checkTimestamp(updateTimestamp);
-                                    if (findResult.isStringFound()) {
-                                        searchResult.addMatch(cell, findResult.getStartOffset(), findResult.getEndOffset());
-                                        findOffset = findResult.getEndOffset();
-                                    } else {
-                                        break;
-                                    }
-                                }
+            List<DataSearchResultMatch> matches = new ArrayList<>();
+            for (Object r : dataModel.getRows()) {
+                DataModelRow row = (DataModelRow) r;
+                for (Object c : row.getCells()) {
+                    DataModelCell cell = (DataModelCell) c;
+                    String userValue = cell.getFormattedUserValue();
+                    if (userValue != null) {
+                        int findOffset = 0;
+                        while (true) {
+                            FindResult findResult = findManager.findString(userValue, findOffset, findModel);
+                            if (findResult.isStringFound()) {
+                                int startOffset = findResult.getStartOffset();
+                                int endOffset = findResult.getEndOffset();
+
+                                searchResult.checkTimestamp(updateTimestamp);
+                                DataSearchResultMatch match = new DataSearchResultMatch(cell, startOffset, endOffset);
+                                matches.add(match);
+
+                                findOffset = endOffset;
+                            } else {
+                                break;
                             }
                         }
                     }
+                }
+            }
+            searchResult.setMatches(matches);
 
-                    searchResult.stopUpdating();
-                    BasicTable table = searchableComponent.getTable();
-                    Dispatch.invoke(() -> {
-                        int selectedRowIndex = table.getSelectedRow();
-                        int selectedColumnIndex = table.getSelectedRow();
-                        if (selectedRowIndex < 0) selectedRowIndex = 0;
-                        if (selectedColumnIndex < 0) selectedColumnIndex = 0;
-                        searchableComponent.cancelEditActions();
+            searchResult.stopUpdating();
+            Dispatch.invoke(() -> {
+                int selectedRowIndex = table.getSelectedRow();
+                int selectedColumnIndex = table.getSelectedRow();
+                if (selectedRowIndex < 0) selectedRowIndex = 0;
+                if (selectedColumnIndex < 0) selectedColumnIndex = 0;
+                searchableComponent.cancelEditActions();
 
-                        table.clearSelection();
-                        GUIUtil.repaint(table);
+                table.clearSelection();
+                GUIUtil.repaint(table);
 
-                        selectFirst(selectedRowIndex, selectedColumnIndex);
-                        searchResult.notifyListeners();
-                    });
-
-                });
-
+                selectFirst(selectedRowIndex, selectedColumnIndex);
+                searchResult.notifyListeners();
+            });
+        });
     }
 
     @Override

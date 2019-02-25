@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -85,13 +86,6 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
         return mainPanel;
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        dataSearchComponent = null;
-        resultTable = null;
-    }
-
     private void createUIComponents() {
         resultScrollPane = new BasicTableScrollPane();
     }
@@ -136,9 +130,10 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
         return null;
     }
 
+    @NotNull
     @Override
     public ResultSetTable getTable() {
-        return resultTable;
+        return Failsafe.get(resultTable);
     }
 
     /********************************************************
@@ -162,4 +157,13 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
     public DataProvider getDataProvider() {
         return dataProvider;
     }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        dataSearchComponent = null;
+        resultTable = null;
+    }
+
+
 }

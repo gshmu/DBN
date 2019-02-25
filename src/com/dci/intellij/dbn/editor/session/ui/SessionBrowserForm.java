@@ -210,6 +210,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
         return null;
     }
 
+    @NotNull
     @Override
     public BasicTable getTable() {
         return getEditorTable();
