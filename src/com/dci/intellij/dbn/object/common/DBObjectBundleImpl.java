@@ -86,6 +86,7 @@ import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -413,9 +414,10 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     private void buildTreeChildren() {
         checkDisposed();
         ConnectionHandler connectionHandler = getConnectionHandler();
+        Filter<BrowserTreeNode> objectTypeFilter = connectionHandler.getObjectTypeFilter();
 
-        List<BrowserTreeNode> treeChildren = allPossibleTreeChildren;
-        treeChildren = CollectionUtil.filter(treeChildren, connectionHandler.getObjectTypeFilter());
+        List<BrowserTreeNode> treeChildren = CollectionUtil.filter(allPossibleTreeChildren, false, true, objectTypeFilter);
+        treeChildren = CommonUtil.nvl(treeChildren, Collections.emptyList());
 
         treeChildren.forEach(objectList -> {
             objectList.initTreeElement();

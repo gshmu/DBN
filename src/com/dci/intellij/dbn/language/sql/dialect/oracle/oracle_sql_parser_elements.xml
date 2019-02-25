@@ -8970,7 +8970,7 @@
         </sequence>
     </element-def>
     <element-def description="XML table column" id="xml_table_column">
-        <object-ref id="000004914" type="COLUMN" />
+        <object-def id="000004914" type="COLUMN" />
         <one-of id="000004915">
             <sequence id="000004916">
                 <token id="000004917" type-id="KW_FOR" />
