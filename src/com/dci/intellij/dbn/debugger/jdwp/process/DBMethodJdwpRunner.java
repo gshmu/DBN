@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdwp.process;
 
-import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStarter;
@@ -39,7 +38,7 @@ public class DBMethodJdwpRunner extends DBProgramRunner<MethodExecutionInput> {
     }
 
     @Override
-    protected void promptExecutionDialog(MethodExecutionInput executionInput, RunnableTask callback) {
+    protected void promptExecutionDialog(MethodExecutionInput executionInput, Runnable callback) {
         Project project = executionInput.getProject();
         MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
         executionManager.promptExecutionDialog(executionInput, DBDebuggerType.JDWP, callback);

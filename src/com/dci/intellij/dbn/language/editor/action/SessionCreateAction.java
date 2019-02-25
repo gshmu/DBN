@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -31,12 +30,12 @@ public class SessionCreateAction extends DumbAwareAction {
             ConnectionHandler connectionHandler = connectionHandlerRef.getnn();
             sessionManager.showCreateSessionDialog(
                     connectionHandler,
-                    SimpleTask.create(session -> {
+                    (session) -> {
                         if (session != null) {
                             FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);
                             mappingManager.setDatabaseSession(editor, session);
                         }
-                    }));
+                    });
         }
     }
 }

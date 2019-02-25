@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
+import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -39,16 +39,16 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
         return Failsafe.getComponent(project, DatabaseSessionManager.class);
     }
 
-    public void showCreateSessionDialog(ConnectionHandler connectionHandler, @Nullable RunnableTask<DatabaseSession> callback) {
+    public void showCreateSessionDialog(ConnectionHandler connectionHandler, @Nullable ParametricRunnable.Unsafe<DatabaseSession> callback) {
         showCreateRenameSessionDialog(connectionHandler, null, callback);
     }
 
-    public void showRenameSessionDialog(@NotNull DatabaseSession session, @Nullable RunnableTask<DatabaseSession> callback) {
+    public void showRenameSessionDialog(@NotNull DatabaseSession session, @Nullable ParametricRunnable.Unsafe<DatabaseSession> callback) {
         showCreateRenameSessionDialog(session.getConnectionHandler(), session, callback);
     }
 
 
-    private void showCreateRenameSessionDialog(ConnectionHandler connectionHandler, DatabaseSession session, @Nullable RunnableTask<DatabaseSession> callback) {
+    private void showCreateRenameSessionDialog(ConnectionHandler connectionHandler, DatabaseSession session, @Nullable ParametricRunnable.Unsafe<DatabaseSession> callback) {
         Dispatch.invokeNonModal(() -> {
             CreateRenameSessionDialog dialog = session == null ?
                     new CreateRenameSessionDialog(connectionHandler) :
@@ -56,8 +56,7 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
             dialog.setModal(true);
             dialog.show();
             if (callback != null) {
-                callback.setData(dialog.getSession());
-                callback.start();
+                callback.run(dialog.getSession());
             }
         });
     }

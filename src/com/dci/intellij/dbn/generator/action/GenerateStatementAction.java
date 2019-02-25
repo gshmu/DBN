@@ -2,7 +2,8 @@ package com.dci.intellij.dbn.generator.action;
 
 import com.dci.intellij.dbn.common.thread.CommandWriteActionRunner;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.Progress;
+import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -21,8 +22,6 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
-
 public abstract class GenerateStatementAction extends DumbAwareAction implements ConnectionProvider {
     GenerateStatementAction(String text) {
         super(text);
@@ -30,19 +29,17 @@ public abstract class GenerateStatementAction extends DumbAwareAction implements
 
     @Override
     public final void actionPerformed(@NotNull AnActionEvent e) {
-        ConnectionAction.invoke(
-                "generating the statement",
-                instructions("Extracting select statement", TaskInstruction.CANCELLABLE),
-                this,
-                action -> {
-                    Project project = action.getProject();
-                    StatementGeneratorResult result = generateStatement(project);
-                    if (result.getMessages().hasErrors()) {
-                        MessageUtil.showErrorDialog(project, "Error generating statement", result.getMessages());
-                    } else {
-                        pasteStatement(result, project);
-                    }
-                });
+        Project project = ActionUtil.ensureProject(e);
+        ConnectionAction.invoke("generating the statement", false, this,
+                (action) -> Progress.prompt(project, "Extracting select statement", true,
+                        (progress) -> {
+                            StatementGeneratorResult result = generateStatement(project);
+                            if (result.getMessages().hasErrors()) {
+                                MessageUtil.showErrorDialog(project, "Error generating statement", result.getMessages());
+                            } else {
+                                pasteStatement(result, project);
+                            }
+                        }));
     }
 
     private void pasteStatement(StatementGeneratorResult result, Project project) {

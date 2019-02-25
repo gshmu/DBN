@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.code.common.intention;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -17,8 +16,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class DatabaseConnectIntentionAction extends GenericIntentionAction implements LowPriorityAction{
     @Override
@@ -54,19 +51,16 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
     public void invoke(@NotNull Project project, Editor editor, PsiFile psiFile) throws IncorrectOperationException {
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguagePsiFile = (DBLanguagePsiFile) psiFile;
-            ConnectionHandler activeConnection = dbLanguagePsiFile.getConnectionHandler();
-            if (activeConnection != null && !activeConnection.isDisposed() && !activeConnection.isVirtual()) {
-                activeConnection.getInstructions().setAllowAutoConnect(true);
+            ConnectionHandler connectionHandler = dbLanguagePsiFile.getConnectionHandler();
+            if (connectionHandler != null && !connectionHandler.isDisposed() && !connectionHandler.isVirtual()) {
+                connectionHandler.getInstructions().setAllowAutoConnect(true);
 
                 DatabaseSession databaseSession = dbLanguagePsiFile.getDatabaseSession();
                 SessionId sessionId = databaseSession == null ? SessionId.MAIN : databaseSession.getId();
                 SchemaId schemaId = dbLanguagePsiFile.getSchemaId();
 
-                ConnectionAction.invoke(
-                        "connecting to database",
-                        instructions("Trying to connect to " + activeConnection.getName(), TaskInstruction.MANAGED),
-                        activeConnection,
-                        action ->  ConnectionManager.testConnection(activeConnection, schemaId, sessionId ,false, true));
+                ConnectionAction.invoke("", true, connectionHandler,
+                        (action) -> ConnectionManager.testConnection(connectionHandler, schemaId, sessionId, false, true));
             }
         }
     }

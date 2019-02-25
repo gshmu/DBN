@@ -5,11 +5,9 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.TaskInstructions;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ui.ObjectDependencyTreeDialog;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -44,16 +42,11 @@ public class ObjectDependencyManager extends AbstractProjectComponent implements
     }
 
     public void openDependencyTree(DBSchemaObject schemaObject) {
-        ConnectionAction.invoke(
-                "opening object dependency tree",
-                TaskInstructions.instructions("Opening object dependency tree"),
-                schemaObject,
-                action -> {
-                    Dispatch.invoke(ModalityState.NON_MODAL, () -> {
-                        ObjectDependencyTreeDialog dependencyTreeDialog = new ObjectDependencyTreeDialog(getProject(), schemaObject);
-                        dependencyTreeDialog.show();
-                    });
-                });
+        ConnectionAction.invoke("opening object dependency tree", false, schemaObject,
+                (action) -> Dispatch.invoke(() -> {
+                    ObjectDependencyTreeDialog dependencyTreeDialog = new ObjectDependencyTreeDialog(getProject(), schemaObject);
+                    dependencyTreeDialog.show();
+                }));
     }
 
     @Override

@@ -287,8 +287,8 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
     public void loadData(final DatasetLoadInstructions instructions) {
         if (status.isNot(LOADING)) {
-            ConnectionAction.invoke("loading table data", this,
-                    action -> {
+            ConnectionAction.invoke("loading table data", false, this,
+                    (action) -> {
                         setLoading(true);
                         EventUtil.notify(project, DatasetLoadListener.TOPIC).datasetLoading(databaseFile);
                         Background.run(() -> {
