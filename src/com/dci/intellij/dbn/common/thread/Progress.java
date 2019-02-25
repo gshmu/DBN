@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.routine.ParametricCallback;
+import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.PerformInBackgroundOption;
@@ -13,7 +13,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public interface Progress {
-    static void background(Project project, String title, boolean cancellable, ParametricCallback<ProgressIndicator> runnable) {
+    static void background(Project project, String title, boolean cancellable, ParametricRunnable<ProgressIndicator> runnable) {
         Failsafe.lenient(() -> {
             Task task = new Task.Backgroundable(Failsafe.get(project), title, cancellable, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
                 @Override
@@ -26,7 +26,7 @@ public interface Progress {
         });
     }
 
-    static void prompt(Project project, String title, boolean cancellable, ParametricCallback<ProgressIndicator> runnable) {
+    static void prompt(Project project, String title, boolean cancellable, ParametricRunnable<ProgressIndicator> runnable) {
         Failsafe.lenient(() -> {
             Task task = new Task.Backgroundable(Failsafe.get(project), title, cancellable, PerformInBackgroundOption.DEAF) {
                 @Override
@@ -39,7 +39,7 @@ public interface Progress {
         });
     }
 
-    static void modal(Project project, String title, boolean cancellable, ParametricCallback<ProgressIndicator> runnable) {
+    static void modal(Project project, String title, boolean cancellable, ParametricRunnable<ProgressIndicator> runnable) {
         Failsafe.lenient(() -> {
             Task task = new Task.Modal(Failsafe.get(project), title, cancellable) {
                 @Override

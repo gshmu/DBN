@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.explain;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.routine.ParametricCallback;
+import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -46,7 +46,7 @@ public class ExplainPlanManager extends AbstractProjectComponent {
      *                       Execution                       *
      *********************************************************/
 
-    public void explainPlan(ExecutablePsiElement executable, @Nullable ParametricCallback<ExplainPlanResult> callback) {
+    public void explainPlan(ExecutablePsiElement executable, @Nullable ParametricRunnable<ExplainPlanResult> callback) {
         Project project = getProject();
         String elementDescription = executable.getSpecificElementType().getDescription();
 

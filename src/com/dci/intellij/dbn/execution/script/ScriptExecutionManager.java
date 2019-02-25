@@ -4,10 +4,9 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
-import com.dci.intellij.dbn.common.routine.ParametricCallback;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -56,8 +55,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
+import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
 @State(
@@ -121,9 +119,8 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 }
                 clearOutputOption = executionInput.isClearOutput();
 
-                BackgroundTask.invoke(project,
-                        instructions("Executing database script", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
-                        (data, progress) -> {
+                Progress.prompt(project, "Executing database script", true,
+                        (progress) -> {
                             try {
                                 doExecuteScript(executionInput);
                             } catch (Exception e) {
@@ -268,7 +265,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         }
     }
 
-    public void createCmdLineInterface(@NotNull DatabaseType databaseType, @Nullable Set<String> bannedNames, ParametricCallback<CmdLineInterface> callback) {
+    public void createCmdLineInterface(@NotNull DatabaseType databaseType, @Nullable Set<String> bannedNames, ParametricRunnable<CmdLineInterface> callback) {
         boolean updateSettings = false;
         VirtualFile virtualFile = selectCmdLineExecutable(databaseType, null);
         if (virtualFile != null) {

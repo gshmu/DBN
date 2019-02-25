@@ -2,8 +2,7 @@ package com.dci.intellij.dbn.execution.statement.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
@@ -14,8 +13,6 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
-
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class ExecutionResultVariablesDialogAction extends AbstractExecutionResultAction {
     public ExecutionResultVariablesDialogAction() {
@@ -29,13 +26,11 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
             StatementExecutionCursorProcessor executionProcessor = executionResult.getExecutionProcessor();
             Project project = executionResult.getProject();
             StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
-            String taskTitle = "Executing " + executionResult.getExecutionProcessor().getStatementName();
             statementExecutionManager.promptExecutionDialog(
                     executionProcessor,
                     DBDebuggerType.NONE,
-                    BackgroundTask.create(project,
-                            instructions(taskTitle, TaskInstruction.CANCELLABLE),
-                            (data, progress) -> {
+                    () -> Progress.prompt(project, "Executing " + executionResult.getExecutionProcessor().getStatementName(), true,
+                            (progress) -> {
                                 try {
                                     executionProcessor.execute();
                                 } catch (SQLException ex) {

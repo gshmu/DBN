@@ -63,7 +63,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 import static com.dci.intellij.dbn.common.util.MessageUtil.*;
 import static com.dci.intellij.dbn.common.util.NamingUtil.unquote;

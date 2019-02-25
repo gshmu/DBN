@@ -3,11 +3,9 @@ package com.dci.intellij.dbn.execution.method;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.routine.ParametricCallback;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
+import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -44,8 +42,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
+import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
@@ -140,7 +137,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             @Nullable MethodExecutionInput selection,
             boolean editable,
             boolean debug,
-            @Nullable ParametricCallback<MethodExecutionInput> callback) {
+            @Nullable ParametricRunnable<MethodExecutionInput> callback) {
 
         Dispatch.invoke(() -> {
             Project project = getProject();
@@ -177,11 +174,10 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
             MethodExecutionProcessor executionProcessor = executionInterface.createExecutionProcessor(method);
 
-            BackgroundTask.invoke(project,
-                    instructions("Executing method", TaskInstruction.CANCELLABLE),
-                    (data, progress) -> {
+            Progress.prompt(project, "Executing method", true,
+                    (progress) -> {
                         try {
-                            BackgroundTask.initProgressIndicator(progress, true, "Executing " + method.getQualifiedNameWithType());
+                            progress.setText("Executing " + method.getQualifiedNameWithType());
                             executionProcessor.execute(executionInput, DBDebuggerType.NONE);
                             if (context.isNot(CANCELLED)) {
                                 ExecutionManager executionManager = ExecutionManager.getInstance(project);
@@ -234,7 +230,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         }
     }
 
-    public void promptMethodBrowserDialog(MethodExecutionInput executionInput, boolean debug, ParametricCallback<MethodExecutionInput> callback) {
+    public void promptMethodBrowserDialog(MethodExecutionInput executionInput, boolean debug, ParametricRunnable<MethodExecutionInput> callback) {
         Project project = getProject();
         Progress.prompt(project, "Loading executable elements", true,
                 (progress) -> {

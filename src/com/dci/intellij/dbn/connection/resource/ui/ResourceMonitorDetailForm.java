@@ -30,7 +30,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
 
 

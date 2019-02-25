@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.browser.ui;
 
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
@@ -28,8 +28,6 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrowserDialog> {
 
@@ -109,9 +107,8 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
     }
 
     private void updateTree() {
-        BackgroundTask.invoke(getProject(),
-                instructions("Loading executable components"),
-                (data, progress) -> {
+        Progress.prompt(getProject(), "Loading executable components", false,
+                (progress) -> {
                     MethodBrowserSettings settings = getSettings();
                     ObjectTreeModel model = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), null);
                     Dispatch.invoke(() -> {
