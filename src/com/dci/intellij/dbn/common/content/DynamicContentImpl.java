@@ -171,10 +171,11 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
                     try {
                         performLoad(true);
                         List<T> elements = getAllElements();
-                        for (T element : elements) {
-                            checkDisposed();
-                            element.refresh();
-                        }
+                        CollectionUtil.forEach(elements,
+                                (element) -> {
+                                    checkDisposed();
+                                    element.refresh();
+                                });
                         set(LOADED, true);
                     } catch (Exception e) {
                         setElements(EMPTY_CONTENT);
@@ -322,14 +323,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
             List<T> elements = getAllElements();
             return CollectionUtil.first(elements,
                     (element) -> matchElement(element, name, overload));
-
-/*
-            return elements.
-                    stream().
-                    filter(element -> matchElement(element, name, overload)).
-                    findFirst().
-                    orElse(null);
-*/
         }
         return null;
     }
@@ -341,16 +334,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     @Override
     @Nullable
     public List<T> getElements(String name) {
-        List<T> elements = null;
-        for (T element : getAllElements()) {
-            if (element.getName().equalsIgnoreCase(name)) {
-                if (elements == null) {
-                    elements = new ArrayList<T>();
-                }
-                elements.add(element);
-            }
-        }
-        return elements;
+        return CollectionUtil.filter(getAllElements(), false, false, (element) -> element.getName().equalsIgnoreCase(name));
     }
 
     @Override
