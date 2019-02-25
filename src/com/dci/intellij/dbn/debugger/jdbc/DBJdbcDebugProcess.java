@@ -5,10 +5,8 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.routine.WriteAction;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.RunnableTask;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Synchronized;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -62,7 +60,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.getBreakpointId;
 import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.setBreakpointId;
 import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.*;
@@ -152,9 +149,8 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
             XDebugSessionImpl sessionImpl = (XDebugSessionImpl) session;
             sessionImpl.getSessionData().setBreakpointsMuted(false);
         }
-        BackgroundTask.invoke(project,
-                instructions("Initialize debug environment", TaskInstruction.BACKGROUNDED),
-                (data, progress) -> {
+        Progress.background(project, "Initialize debug environment", true,
+                (progress) -> {
                     try {
                         T executionInput = getExecutionInput();
                         console.system("Initializing debug environment...");
@@ -185,19 +181,16 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
     private void synchronizeSession() {
         Project project = getProject();
-        BackgroundTask.invoke(project,
-                instructions("Initialize debug environment", TaskInstruction.BACKGROUNDED),
-                (data, progress) -> {
+        Progress.background(project, "Initialize debug environment", false,
+                (progress) -> {
                     if (is(PROCESS_TERMINATING) || is(TARGET_EXECUTION_TERMINATED)) {
                         getSession().stop();
                     } else {
-
                         set(BREAKPOINT_SETTING_ALLOWED, true);
                         progress.setText("Registering breakpoints");
                         registerBreakpoints(
-                                BackgroundTask.create(project,
-                                        instructions("Synchronizing debug session"),
-                                        (data1, progress1) -> {
+                                () -> Progress.background(project, "Synchronizing debug session", false,
+                                        (progress1) -> {
                                             DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
                                             try {
                                                 startTargetProgram();
@@ -223,9 +216,8 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     }
 
     private void startTargetProgram() {
-        BackgroundTask.invoke(getProject(),
-                instructions("Running debugger target program", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
-                (data, progress) -> {
+        Progress.background(getProject(), "Running debugger target program", false,
+                (progress) -> {
                     if (is(PROCESS_TERMINATING)) return;
                     if (is(SESSION_INITIALIZATION_THREW_EXCEPTION)) return;
                     T executionInput = getExecutionInput();
@@ -260,7 +252,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
      * breakpoints need to be registered after the database session is started,
      * otherwise they do not get valid ids
      */
-    private void registerBreakpoints(RunnableTask callback) {
+    private void registerBreakpoints(Runnable callback) {
         console.system("Registering breakpoints...");
         List<XLineBreakpoint<XBreakpointProperties>> breakpoints = DBBreakpointUtil.getDatabaseBreakpoints(getConnectionHandler());
 
@@ -268,7 +260,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
             getBreakpointHandler().registerBreakpoints(breakpoints, null);
             registerDefaultBreakpoint();
             console.system("Done registering breakpoints");
-            callback.start();
+            callback.run();
         });
     }
 
@@ -311,9 +303,8 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
     private void stopDebugger() {
         Project project = getProject();
-        BackgroundTask.invoke(project,
-                instructions("Stopping debugger", TaskInstruction.BACKGROUNDED),
-                (data, progress) -> {
+        Progress.background(project, "Stopping debugger", false,
+                (progress) -> {
                     progress.setText("Stopping debug environment.");
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     try {
@@ -337,10 +328,11 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
                         if (runProfile != null && runProfile.getCategory() != DBRunConfigCategory.CUSTOM) {
                             runProfile.setCanRun(false);
                         }
-                        DatabaseDebuggerManager.getInstance(project).unregisterDebugSession(connectionHandler);
+                        DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
+                        debuggerManager.unregisterDebugSession(connectionHandler);
                         console.system("Debugger stopped");
                     }
-                });
+            });
     }
 
     private void releaseDebugConnection() {
