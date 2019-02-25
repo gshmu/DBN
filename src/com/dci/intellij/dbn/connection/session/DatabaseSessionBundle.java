@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -107,14 +106,14 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
 
     void addSession(SessionId id, String name) {
         sessions.add(new DatabaseSession(id, name, ConnectionType.SESSION, getConnectionHandler()));
-        Collections.sort(sessions);
+        java.util.Collections.sort(sessions);
     }
 
     DatabaseSession createSession(String name) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         DatabaseSession session = new DatabaseSession(null, name, ConnectionType.SESSION, connectionHandler);
         sessions.add(session);
-        Collections.sort(sessions);
+        java.util.Collections.sort(sessions);
         return session;
     }
 

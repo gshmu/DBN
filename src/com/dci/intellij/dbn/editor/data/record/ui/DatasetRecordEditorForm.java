@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -131,7 +130,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
                 columnSortingType == ColumnSortingType.BY_INDEX ? indexedComparator : null;
 
         if (comparator != null) {
-            Collections.sort(columnForms, comparator);
+            java.util.Collections.sort(columnForms, comparator);
             columnsPanel.removeAll();
             for (DatasetRecordEditorColumnForm columnForm : columnForms) {
                 columnsPanel.add(columnForm.getComponent());
