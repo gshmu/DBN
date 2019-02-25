@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -110,7 +110,7 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
         public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(connectionHandler.getProject());
             if (!connectionManager.hasUncommittedChanges()) {
-                ConditionalLaterInvocator.invoke(() -> {
+                Dispatch.invoke(() -> {
                     getCancelAction().putValue(Action.NAME, "Close");
                     commitAllAction.setEnabled(false);
                     rollbackAllAction.setEnabled(false);
