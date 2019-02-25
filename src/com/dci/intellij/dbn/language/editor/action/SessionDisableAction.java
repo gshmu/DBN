@@ -11,7 +11,7 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 
 public class SessionDisableAction extends DumbAwareAction {
     private ConnectionHandlerRef connectionHandlerRef;

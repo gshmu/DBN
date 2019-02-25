@@ -55,7 +55,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 
 @State(
     name = DDLFileAttachmentManager.COMPONENT_NAME,

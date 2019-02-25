@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.debugger.common.process;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -40,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.common.util.MessageUtil.options;
 import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 
@@ -212,38 +211,39 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
             Project project = environment.getProject();
 
-            promptExecutionDialog(executionInput, SimpleTask.create(data -> {
-                DBDebugProcessStarter debugProcessStarter = createProcessStarter(connectionHandler);
-                try {
-                    XDebugSession session = XDebuggerManager.getInstance(project).startSession(
-                            environment,
-                            debugProcessStarter);
+            promptExecutionDialog(executionInput,
+                    () -> {
+                        DBDebugProcessStarter debugProcessStarter = createProcessStarter(connectionHandler);
+                        try {
+                            XDebugSession session = XDebuggerManager.getInstance(project).startSession(
+                                    environment,
+                                    debugProcessStarter);
 
-                    RunContentDescriptor descriptor = session.getRunContentDescriptor();
+                            RunContentDescriptor descriptor = session.getRunContentDescriptor();
 
-                    if (callback != null) callback.processStarted(descriptor);
-                    Executor executor = environment.getExecutor();
-                    if (true /*LocalHistoryConfiguration.getInstance().ADD_LABEL_ON_RUNNING*/) {
-                        RunProfile runProfile = environment.getRunProfile();
-                        LocalHistory.getInstance().putSystemLabel(project, executor.getId() + " " + runProfile.getName());
-                    }
+                            if (callback != null) callback.processStarted(descriptor);
+                            Executor executor = environment.getExecutor();
+                            if (true /*LocalHistoryConfiguration.getInstance().ADD_LABEL_ON_RUNNING*/) {
+                                RunProfile runProfile = environment.getRunProfile();
+                                LocalHistory.getInstance().putSystemLabel(project, executor.getId() + " " + runProfile.getName());
+                            }
 
-                    ExecutionManager.getInstance(project).getContentManager().showRunContent(executor, descriptor);
+                            ExecutionManager.getInstance(project).getContentManager().showRunContent(executor, descriptor);
 
-                    ProcessHandler processHandler = descriptor.getProcessHandler();
-                    if (processHandler != null) {
-                        processHandler.startNotify();
-                        ExecutionConsole executionConsole = descriptor.getExecutionConsole();
-                        if (executionConsole instanceof ConsoleView) {
-                            ConsoleView consoleView = (ConsoleView) executionConsole;
-                            consoleView.attachToProcess(processHandler);
+                            ProcessHandler processHandler = descriptor.getProcessHandler();
+                            if (processHandler != null) {
+                                processHandler.startNotify();
+                                ExecutionConsole executionConsole = descriptor.getExecutionConsole();
+                                if (executionConsole instanceof ConsoleView) {
+                                    ConsoleView consoleView = (ConsoleView) executionConsole;
+                                    consoleView.attachToProcess(processHandler);
+                                }
+                            }
+
+                        } catch (ExecutionException e) {
+                            NotificationUtil.sendErrorNotification(project, "Debugger", "Error initializing debug environment: " + e.getMessage());
                         }
-                    }
-
-                } catch (ExecutionException e) {
-                    NotificationUtil.sendErrorNotification(project, "Debugger", "Error initializing debug environment: " + e.getMessage());
-                }
-            }));
+                    });
         });
     }
 

@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.project.Project;
 
-import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 
 public class SourceCodeReadonlyNotificationPanel extends SourceCodeEditorNotificationPanel{
     public SourceCodeReadonlyNotificationPanel(DBSchemaObject schemaObject, SourceCodeEditor sourceCodeEditor) {

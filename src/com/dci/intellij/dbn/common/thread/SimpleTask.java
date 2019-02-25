@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.routine.ParametricCallback;
 
 @Deprecated
 public abstract class SimpleTask<T> extends AbstractTask<T>{
@@ -30,13 +29,4 @@ public abstract class SimpleTask<T> extends AbstractTask<T>{
     }
 
     protected abstract void execute();
-
-    public static <T> SimpleTask<T> create(ParametricCallback<T> runnable) {
-        return new SimpleTask<T>() {
-            @Override
-            protected void execute() {
-                runnable.run(getData());
-            }
-        };
-    }
 }

@@ -7,8 +7,8 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -49,8 +49,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<ProjectSettings> {
     private JPanel mainPanel;
@@ -112,9 +110,8 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
                     if (dialog != null) dialog.doCancelAction();
 
                     Project project = generalSettings.getProject();
-                    BackgroundTask.invoke(project,
-                            instructions("Updating plugin"),
-                            (task, progress) -> {
+                    Progress.prompt(project, "Updating plugin", false,
+                            (progress) -> {
                                 try {
                                     List<PluginNode> updateDescriptors = new ArrayList<>();
                                     List<IdeaPluginDescriptor> descriptors = RepositoryHelper.loadCachedPlugins();

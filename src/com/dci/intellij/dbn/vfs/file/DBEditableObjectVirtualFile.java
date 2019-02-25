@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 

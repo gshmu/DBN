@@ -5,9 +5,8 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeEventAdapter;
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -21,8 +20,6 @@ import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
     private JPanel mainPanel;
@@ -78,9 +75,8 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
             this.object = object;
 
             Project project = object.getProject();
-            BackgroundTask.invoke(project,
-                    instructions("Rendering object properties", TaskInstruction.BACKGROUNDED),
-                    (task, progress) -> {
+            Progress.background(project, "Rendering object properties", false,
+                    (progress) -> {
                         ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
                         Disposer.register(ObjectPropertiesForm.this, tableModel);
 
