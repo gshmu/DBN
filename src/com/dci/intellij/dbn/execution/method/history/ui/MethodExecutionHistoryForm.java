@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.method.history.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -35,8 +36,6 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHistoryDialog> {
     private JPanel mainPanel;
@@ -209,27 +208,25 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
     private TreeSelectionListener treeSelectionListener = e -> {
         MethodExecutionInput executionInput = getTree().getSelectedExecutionInput();
         if (executionInput != null) {
-            ConnectionAction.invoke(
-                    "loading the execution history",
-                    instructions("Loading method details"),
-                    executionInput,
-                    action -> {
-                        DBMethod method = executionInput.getMethod();
-                        if (method != null) {
-                            method.getArguments();
-                        }
+            ConnectionAction.invoke("loading the execution history", true, executionInput,
+                    (action) -> Progress.prompt(executionInput.getProject(), "Loading method details", false,
+                            (progress) -> {
+                                DBMethod method = executionInput.getMethod();
+                                if (method != null) {
+                                    method.getArguments();
+                                }
 
-                        Dispatch.invoke(() -> {
-                            MethodExecutionHistoryDialog dialog = ensureParentComponent();
-                            showMethodExecutionPanel(executionInput);
-                            dialog.setSelectedExecutionInput(executionInput);
-                            dialog.updateMainButtons(executionInput);
-                            if (method != null) {
-                                MethodExecutionHistory executionHistory = getExecutionHistory();
-                                executionHistory.setSelection(executionInput.getMethodRef());
-                            }
-                        });
-                    });
+                                Dispatch.invoke(() -> {
+                                    MethodExecutionHistoryDialog dialog = ensureParentComponent();
+                                    showMethodExecutionPanel(executionInput);
+                                    dialog.setSelectedExecutionInput(executionInput);
+                                    dialog.updateMainButtons(executionInput);
+                                    if (method != null) {
+                                        MethodExecutionHistory executionHistory = getExecutionHistory();
+                                        executionHistory.setSelection(executionInput.getMethodRef());
+                                    }
+                                });
+                            }));
         }
     };
 }

@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -40,8 +40,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class SessionBrowser extends UserDataHolderBase implements FileEditor, Disposable, ConnectionProvider, DataProviderSupplier {
     private DBSessionBrowserVirtualFile sessionBrowserFile;
@@ -89,23 +87,24 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
 
     public void loadSessions(boolean force) {
         if (shouldLoad(force)) {
-            ConnectionAction.invoke("loading the sessions",
-                    instructions("Loading sessions", TaskInstruction.BACKGROUNDED),
-                    this,
-                    action -> {
-                        if (shouldLoad(force)) {
-                            try {
-                                setLoading(true);
-                                SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
-                                SessionBrowserModel model = sessionBrowserManager.loadSessions(sessionBrowserFile);
-                                replaceModel(model);
-                            } finally {
-                                EventUtil.notify(getProject(), SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
-                                setLoading(false);
-                            }
-                        }
+            ConnectionAction.invoke("loading the sessions", false, this,
+                    (action) -> {
+                        Progress.background(getProject(), "Loading sessions", false,
+                                (progress) -> {
+                                    if (shouldLoad(force)) {
+                                        try {
+                                            setLoading(true);
+                                            SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
+                                            SessionBrowserModel model = sessionBrowserManager.loadSessions(sessionBrowserFile);
+                                            replaceModel(model);
+                                        } finally {
+                                            EventUtil.notify(getProject(), SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
+                                            setLoading(false);
+                                        }
+                                    }
+                                });
                     },
-                    cancel -> {
+                    (cancel) -> {
                         setLoading(false);
                         setRefreshInterval(0);
                     },

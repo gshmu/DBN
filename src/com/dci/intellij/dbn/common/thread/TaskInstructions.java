@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
+@Deprecated
 public class TaskInstructions extends PropertyHolderImpl<TaskInstruction> {
     private String title;
 

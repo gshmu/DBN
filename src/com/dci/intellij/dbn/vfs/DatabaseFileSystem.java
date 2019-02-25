@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.routine.ReadAction;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionCache;
@@ -53,7 +53,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.*;
 
 public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysicalFileSystem, */ApplicationComponent {
@@ -419,29 +418,27 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     }
 
     public void openEditor(DBObject object, @Nullable EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {
-        ConnectionAction.invoke(
-                "opening the object editor",
-                instructions("Opening editor", TaskInstruction.CANCELLABLE, TaskInstruction.CONDITIONAL),
-                object,
-                action -> {
-                    EditorProviderId providerId = editorProviderId;
-                    if (editorProviderId == null) {
-                        EditorStateManager editorStateManager = EditorStateManager.getInstance(object.getProject());
-                        providerId = editorStateManager.getEditorProvider(object.getObjectType());
-                    }
+        ConnectionAction.invoke("opening the object editor", false, object,
+                (action) -> Progress.prompt(object.getProject(), "Opening editor", true,
+                        (progress) -> {
+                            EditorProviderId providerId = editorProviderId;
+                            if (editorProviderId == null) {
+                                EditorStateManager editorStateManager = EditorStateManager.getInstance(object.getProject());
+                                providerId = editorStateManager.getEditorProvider(object.getObjectType());
+                            }
 
-                    if (object.is(DBObjectProperty.SCHEMA_OBJECT)) {
-                        DBObjectListContainer childObjects = object.getChildObjects();
-                        if (childObjects != null) childObjects.load();
+                            if (object.is(DBObjectProperty.SCHEMA_OBJECT)) {
+                                DBObjectListContainer childObjects = object.getChildObjects();
+                                if (childObjects != null) childObjects.load();
 
-                        openSchemaObject((DBSchemaObject) object, providerId, scrollBrowser, focusEditor);
+                                openSchemaObject((DBSchemaObject) object, providerId, scrollBrowser, focusEditor);
 
-                    } else if (object.getParentObject().is(DBObjectProperty.SCHEMA_OBJECT)) {
-                        DBObjectListContainer childObjects = object.getParentObject().getChildObjects();
-                        if (childObjects != null) childObjects.load();
-                        openChildObject(object, providerId, scrollBrowser, focusEditor);
-                    }
-                });
+                            } else if (object.getParentObject().is(DBObjectProperty.SCHEMA_OBJECT)) {
+                                DBObjectListContainer childObjects = object.getParentObject().getChildObjects();
+                                if (childObjects != null) childObjects.load();
+                                openChildObject(object, providerId, scrollBrowser, focusEditor);
+                            }
+                        }));
     }
 
     private void openSchemaObject(@NotNull DBSchemaObject object, EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {

@@ -3,8 +3,7 @@ package com.dci.intellij.dbn.vfs;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -44,7 +43,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
@@ -312,12 +310,9 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                 if (connectionHandler != null) {
                     ConnectionDetailSettings connectionDetailSettings = connectionHandler.getSettings().getDetailSettings();
                     if (connectionDetailSettings.isRestoreWorkspace()) {
-                        ConnectionAction.invoke(
-                                "opening database editors",
-                                connectionHandler,
-                                action -> BackgroundTask.invoke(project,
-                                        instructions("Opening database editors", TaskInstruction.CANCELLABLE),
-                                        (data, progress) -> {
+                        ConnectionAction.invoke("opening database editors", false, connectionHandler,
+                                (action) -> Progress.prompt(getProject(), "Opening database editors", true,
+                                        (progress) -> {
                                             progress.setIndeterminate(true);
                                             progress.setText2(connectionHandler.getQualifiedName());
                                             DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();

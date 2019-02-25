@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.progress.PerformInBackgroundOption;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -57,12 +56,7 @@ public interface Progress {
     static void start(Task task) {
         ProgressManager progressManager = ProgressManager.getInstance();
         Application application = ApplicationManager.getApplication();
-        if (application.isDispatchThread()) {
-            progressManager.run(task);
-        } else {
-            application.invokeLater(() ->
-                    progressManager.run(task), ModalityState.NON_MODAL);
-        }
+        application.invokeLater(() -> progressManager.run(task));
     }
 
     static void check(ProgressIndicator progress) {

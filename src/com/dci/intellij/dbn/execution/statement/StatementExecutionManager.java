@@ -4,11 +4,8 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageCallback;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.RunnableTask;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -72,7 +69,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
 @State(
@@ -242,14 +238,11 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
             DBLanguagePsiFile file =  executionProcessors.get(0).getPsiFile();
             connectionMappingManager.selectConnectionAndSchema(file,
-                    ConnectionAction.create(
-                            "the statement execution",
+                    () -> ConnectionAction.invoke(
+                            "the statement execution", false,
                             () -> connectionMappingManager.getConnectionHandler(virtualFile),
-                            null,
-                            action -> promptExecutionDialogs(
-                                    executionProcessors,
-                                    DBDebuggerType.NONE,
-                                    SimpleTask.create(data -> {
+                            (action) -> promptExecutionDialogs(executionProcessors, DBDebuggerType.NONE,
+                                    () -> {
                                         for (StatementExecutionProcessor executionProcessor : executionProcessors) {
                                             ExecutionContext context = executionProcessor.getExecutionContext();
                                             StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
@@ -257,9 +250,8 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                             ConnectionId connectionId = executionInput.getConnectionHandlerId();
                                             if (context.isNot(EXECUTING) && context.isNot(QUEUED)) {
                                                 if (sessionId == SessionId.POOL) {
-                                                    BackgroundTask.invoke(project,
-                                                            instructions("Executing statement", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
-                                                            (data1, progress) -> process(executionProcessor));
+                                                    Progress.background(project, "Executing statement", true,
+                                                            (progress) -> process(executionProcessor));
                                                 } else {
                                                     StatementExecutionQueue executionQueue = getExecutionQueue(connectionId, sessionId);
                                                     if (!executionQueue.contains(executionProcessor)) {
@@ -268,7 +260,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                                 }
                                             }
                                         }
-                                    }))));
+                                    })));
         }
     }
 
@@ -318,15 +310,15 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
     }
 
-    public void promptExecutionDialog(@NotNull StatementExecutionProcessor executionProcessor, DBDebuggerType debuggerType, @NotNull RunnableTask callback) {
+    public void promptExecutionDialog(@NotNull StatementExecutionProcessor executionProcessor, DBDebuggerType debuggerType, @NotNull Runnable callback) {
         promptExecutionDialogs(executionProcessor.asList(), debuggerType, callback);
 
     }
 
-    private void promptExecutionDialogs(@NotNull List<StatementExecutionProcessor> processors, DBDebuggerType debuggerType, @NotNull RunnableTask callback) {
+    private void promptExecutionDialogs(@NotNull List<StatementExecutionProcessor> processors, DBDebuggerType debuggerType, @NotNull Runnable callback) {
         Dispatch.invokeNonModal(() -> {
             if (promptExecutionDialogs(processors, debuggerType)) {
-                callback.start();
+                callback.run();
             }
         });
     }

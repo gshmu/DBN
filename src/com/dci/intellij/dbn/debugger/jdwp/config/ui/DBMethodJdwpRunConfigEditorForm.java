@@ -3,14 +3,12 @@ package com.dci.intellij.dbn.debugger.jdwp.config.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
@@ -18,19 +16,14 @@ import com.dci.intellij.dbn.debugger.common.config.ui.DBProgramRunConfigurationE
 import com.dci.intellij.dbn.debugger.jdwp.config.DBMethodJdwpRunConfig;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
-import com.dci.intellij.dbn.execution.method.browser.MethodBrowserSettings;
-import com.dci.intellij.dbn.execution.method.browser.ui.MethodExecutionBrowserDialog;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionInputForm;
 import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.ui.ObjectTreeModel;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.Range;
 import com.intellij.util.ui.UIUtil;
@@ -39,8 +32,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEditorForm<DBMethodJdwpRunConfig>{
     private JPanel headerPanel;
@@ -99,37 +90,10 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             Project project = ActionUtil.ensureProject(e);
-            BackgroundTask.invoke(project,
-                    instructions("Loading executable elements"),
-                    (data, progress) -> {
-                        MethodBrowserSettings settings = MethodExecutionManager.getInstance(project).getBrowserSettings();
-                        MethodExecutionInput executionInput = getExecutionInput();
-                        DBMethod currentMethod = executionInput == null ? null : executionInput.getMethod();
-                        if (currentMethod != null) {
-                            settings.setConnectionHandler(currentMethod.getConnectionHandler());
-                            settings.setSchema(currentMethod.getSchema());
-                            settings.setMethod(currentMethod);
-                        }
 
-                        DBSchema schema = settings.getSchema();
-                        ObjectTreeModel objectTreeModel = DatabaseFeature.DEBUGGING.isSupported(schema) ?
-                                new ObjectTreeModel(schema, settings.getVisibleObjectTypes(), settings.getMethod()) :
-                                new ObjectTreeModel(null, settings.getVisibleObjectTypes(), null);
-
-                        Dispatch.invoke(() -> {
-                            MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
-                            browserDialog.show();
-                            if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                                DBMethod method = browserDialog.getSelectedMethod();
-                                MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
-                                MethodExecutionInput methodExecutionInput = methodExecutionManager.getExecutionInput(method);
-                                if (methodExecutionInput != null) {
-                                    setExecutionInput(methodExecutionInput, true);
-                                }
-                            }
-                        });
-
-                    });
+            MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
+            executionManager.promptMethodBrowserDialog(getExecutionInput(), true,
+                    (executionInput) -> setExecutionInput(executionInput, true));
         }
     }
     public class OpenMethodHistoryAction extends AnAction {
@@ -142,11 +106,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
             Project project = ActionUtil.ensureProject(e);
             MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(project);
             methodExecutionManager.showExecutionHistoryDialog(getExecutionInput(), false, true,
-                    SimpleTask.create((executionInput) -> {
-                        if (executionInput != null) {
-                            setExecutionInput(executionInput, true);
-                        }
-                    }));
+                    (executionInput) -> setExecutionInput(executionInput, true));
         }
     }
 
@@ -183,41 +143,54 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
         toPortTextField.setText(String.valueOf(configuration.getTcpPortRange().getTo()));
     }
 
-    public void setExecutionInput(MethodExecutionInput executionInput, boolean touchForm) {
-        methodArgumentsPanel.removeAll();
-        DisposerUtil.dispose(methodExecutionInputForm);
-        methodExecutionInputForm = null;
+    public void setExecutionInput(@Nullable MethodExecutionInput executionInput, boolean touchForm) {
+        Progress.modal(getProject(), "Loading method arguments", false,
+                (progress) -> {
+                    // initialize method and arguments
+                    if (executionInput != null) {
+                        DBMethod method = executionInput.getMethod();
+                        if (method != null) {
+                            method.getArguments();
+                        }
+                    }
 
-        String headerTitle = "No method selected";
-        Icon headerIcon = null;
-        Color headerBackground = UIUtil.getPanelBackground();
+                    Dispatch.invoke(() -> {
+                        methodArgumentsPanel.removeAll();
+                        DisposerUtil.dispose(methodExecutionInputForm);
+                        methodExecutionInputForm = null;
 
-        if (executionInput != null) {
-            DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
-            headerTitle = methodRef.getPath();
-            headerIcon = methodRef.getObjectType().getIcon();
-            DBMethod method = executionInput.getMethod();
-            if (method != null) {
-                methodExecutionInputForm = new MethodExecutionInputForm(this, executionInput, false, DBDebuggerType.JDWP);
-                Disposer.register(this, methodExecutionInputForm);
-                methodArgumentsPanel.add(methodExecutionInputForm.getComponent(), BorderLayout.CENTER);
-                if (touchForm) methodExecutionInputForm.touch();
-                headerIcon = method.getOriginalIcon();
-                if (getEnvironmentSettings(method.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
-                    headerBackground = method.getEnvironmentType().getColor();
-                }
-            }
-        }
+                        String headerTitle = "No method selected";
+                        Icon headerIcon = null;
+                        Color headerBackground = UIUtil.getPanelBackground();
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(
-                headerTitle,
-                headerIcon,
-                headerBackground,
-                this);
-        headerPanel.removeAll();
-        headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
+                        if (executionInput != null) {
+                            DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
+                            headerTitle = methodRef.getPath();
+                            headerIcon = methodRef.getObjectType().getIcon();
+                            DBMethod method = executionInput.getMethod();
+                            if (method != null) {
+                                methodExecutionInputForm = new MethodExecutionInputForm(this, executionInput, false, DBDebuggerType.JDWP);
+                                Disposer.register(this, methodExecutionInputForm);
+                                methodArgumentsPanel.add(methodExecutionInputForm.getComponent(), BorderLayout.CENTER);
+                                if (touchForm) methodExecutionInputForm.touch();
+                                headerIcon = method.getOriginalIcon();
+                                if (getEnvironmentSettings(method.getProject()).getVisibilitySettings().getDialogHeaders().value()) {
+                                    headerBackground = method.getEnvironmentType().getColor();
+                                }
+                            }
+                        }
 
-        GUIUtil.repaint(mainPanel);
+                        DBNHeaderForm headerForm = new DBNHeaderForm(
+                                headerTitle,
+                                headerIcon,
+                                headerBackground,
+                                this);
+                        headerPanel.removeAll();
+                        headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
+
+                        GUIUtil.repaint(mainPanel);
+                    });
+                });
     }
 
     @Override

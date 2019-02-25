@@ -2,9 +2,8 @@ package com.dci.intellij.dbn.debugger.jdwp.process;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -64,7 +63,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.*;
 
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaDebugProcess implements DBDebugProcess {
@@ -288,10 +286,8 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
         // trigger in managed thread
         DebugProcessImpl debugProcess = getDebuggerSession().getProcess();
         ManagedThreadCommand.schedule(debugProcess, PrioritizedTask.Priority.LOW, () -> {
-            Project project = getProject();
-            BackgroundTask.invoke(project,
-                    instructions("Running debugger target program", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
-                    (task, progress) -> {
+            Progress.background(getProject(), "Running debugger target program", false,
+                    (progress) -> {
                         T executionInput = getExecutionInput();
                         progress.setText("Executing " + (executionInput == null ? " target program" : executionInput.getExecutionContext().getTargetName()));
                         console.system("Executing target program");
@@ -327,17 +323,13 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
     }
 
     private void stopDebugger() {
-        Project project = getProject();
-        BackgroundTask.invoke(project,
-                instructions("Stopping debugger", TaskInstruction.BACKGROUNDED),
-                (task, progress) -> {
-                    progress.setText("Stopping debug environment.");
+        Progress.background(getProject(), "Stopping debugger", false,
+                (progress) -> {
                     T executionInput = getExecutionInput();
                     if (executionInput != null && isNot(TARGET_EXECUTION_TERMINATED)) {
                         ExecutionContext context = executionInput.getExecutionContext();
                         ConnectionUtil.cancel(context.getStatement());
                     }
-
 
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     try {
@@ -353,7 +345,8 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                             runProfile.setCanRun(false);
                         }
 
-                        DatabaseDebuggerManager.getInstance(project).unregisterDebugSession(connectionHandler);
+                        DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
+                        debuggerManager.unregisterDebugSession(connectionHandler);
                         releaseTargetConnection();
                         console.system("Debugger stopped");
                     }

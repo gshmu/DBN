@@ -3,11 +3,11 @@ package com.dci.intellij.dbn.editor.session;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.routine.ReadAction;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -46,7 +46,6 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 
 @State(
@@ -73,10 +72,8 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     }
 
     public void openSessionBrowser(ConnectionHandler connectionHandler) {
-        ConnectionAction.invoke(
-                "opening the session browser",
-                connectionHandler,
-                action -> {
+        ConnectionAction.invoke("opening the session browser", false, connectionHandler,
+                (action) -> {
                     Project project = getProject();
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                     DBSessionBrowserVirtualFile sessionBrowserFile = connectionHandler.getSessionBrowserFile();
@@ -159,9 +156,8 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         String taskAction = (type == SessionInterruptionType.KILL? "Killing" : "Disconnecting") + (sessionIds.size() == 1 ? " Session" : " Sessions");
 
         Project project = getProject();
-        BackgroundTask.invoke(project,
-                instructions(taskAction, TaskInstruction.CANCELLABLE),
-                (data, progress) -> {
+        Progress.prompt(project, taskAction, true,
+                (progress) -> {
                     ConnectionHandler connectionHandler = Failsafe.get(sessionBrowser.getConnectionHandler());
                     DBNConnection connection = null;
                     try {
@@ -172,7 +168,9 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
 
                         for (Object sessionId : sessionIds.keySet()) {
                             Object serialNumber = sessionIds.get(sessionId);
-                            if (progress.isCanceled()) return;
+                            checkDisposed();
+                            ProgressMonitor.checkCancelled();
+
                             try {
                                 boolean immediate = option == SessionInterruptionOption.IMMEDIATE;
                                 boolean postTransaction = option == SessionInterruptionOption.POST_TRANSACTION;

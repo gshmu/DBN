@@ -4,8 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -41,8 +40,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
     private JPanel actionsPanel;
@@ -98,23 +95,21 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
                 String schemaName = selectedRow.getSchema();
                 Project project = sessionBrowser.getProject();
 
-                BackgroundTask.invoke(project,
-                        instructions("Loading session current SQL", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
-                        (data, progress) -> {
-                            ConnectionHandler connectionHandler = getConnectionHandler();
-                            DBSchema schema = null;
-                            if (StringUtil.isNotEmpty(schemaName)) {
-                                schema = connectionHandler.getObjectBundle().getSchema(schemaName);
-                            }
+                Background.run(() -> {
+                    ConnectionHandler connectionHandler = getConnectionHandler();
+                    DBSchema schema = null;
+                    if (StringUtil.isNotEmpty(schemaName)) {
+                        schema = connectionHandler.getObjectBundle().getSchema(schemaName);
+                    }
 
-                            checkCancelled(sessionId);
-                            SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(project);
-                            String sql = sessionBrowserManager.loadSessionCurrentSql(connectionHandler, sessionId);
+                    checkCancelled(sessionId);
+                    SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(project);
+                    String sql = sessionBrowserManager.loadSessionCurrentSql(connectionHandler, sessionId);
 
-                            checkCancelled(sessionId);
-                            setSchemaId(SchemaId.from(schema));
-                            setPreviewText(sql.replace("\r\n", "\n"));
-                        });
+                    checkCancelled(sessionId);
+                    setSchemaId(SchemaId.from(schema));
+                    setPreviewText(sql.replace("\r\n", "\n"));
+                });
             } else {
                 setPreviewText("");
             }
