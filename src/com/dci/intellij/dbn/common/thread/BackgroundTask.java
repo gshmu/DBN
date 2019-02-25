@@ -96,10 +96,12 @@ public abstract class BackgroundTask<T> extends Task.Backgroundable implements R
         }
     }
 
+    @Deprecated // TODO review
     protected static void initProgressIndicator(ProgressIndicator progressIndicator, boolean indeterminate) {
         initProgressIndicator(progressIndicator, indeterminate, null);
     }
 
+    @Deprecated // TODO review
     public static void initProgressIndicator(ProgressIndicator progressIndicator, boolean indeterminate, @Nullable String text) {
         Dispatch.invoke(progressIndicator.getModalityState(), () -> {
             if (progressIndicator.isRunning()) {
