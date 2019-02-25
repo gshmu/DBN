@@ -238,6 +238,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         return null;
     }
 
+    @NotNull
     @Override
     public BasicTable getTable() {
         return getEditorTable();
