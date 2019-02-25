@@ -5034,7 +5034,7 @@
         </sequence>
     </element-def>
     <element-def description="XML table column" id="xml_table_column">
-        <object-ref id="000002589" type="COLUMN" />
+        <object-def id="000002589" type="COLUMN" />
         <one-of id="000002590">
             <sequence id="000002591">
                 <token id="000002592" type-id="KW_FOR" />

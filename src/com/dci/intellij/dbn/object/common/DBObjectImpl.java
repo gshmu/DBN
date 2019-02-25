@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -64,6 +65,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObject, ToolTipProvider {
@@ -708,12 +710,10 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     private void buildTreeChildren() {
         checkDisposed();
         ConnectionHandler connectionHandler = getConnectionHandler();
+        Filter<BrowserTreeNode> objectTypeFilter = connectionHandler.getObjectTypeFilter();
 
-        Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
-        List<BrowserTreeNode> allPossibleTreeChildren = getAllPossibleTreeChildren();
-
-        List<BrowserTreeNode> treeChildren = allPossibleTreeChildren;
-        treeChildren = CollectionUtil.filter(treeChildren, connectionHandler.getObjectTypeFilter());
+        List<BrowserTreeNode> treeChildren = CollectionUtil.filter(getAllPossibleTreeChildren(), false, true, objectTypeFilter);
+        treeChildren = CommonUtil.nvl(treeChildren, Collections.emptyList());
 
         treeChildren.forEach(objectList -> {
             objectList.initTreeElement();

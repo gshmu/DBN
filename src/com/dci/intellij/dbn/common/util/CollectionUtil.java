@@ -106,14 +106,19 @@ public class CollectionUtil {
         return collection.indexOf(element) == collection.size() - 1;
     }
 
-    public static <T> List<T> filter(List<T> list, @Nullable Filter<T> filter) {
+    @Nullable
+    public static <T> List<T> filter(@NotNull List<T> list, boolean wrap, boolean ensure, @Nullable Filter<T> filter) {
         if (list.isEmpty() || filter == null || filter.acceptsAll(list)) {
-            return list;
+            return wrap ? new ArrayList<>(list) : list;
         } else {
-            List<T> filteredList = new ArrayList<>();
+            // implicitly wrapping
+            List<T> filteredList = ensure ? new ArrayList<>() : null;
             for (int i = 0; i < list.size(); i++) {
                 T element = list.get(i);
                 if (filter.accepts(element)) {
+                    if (filteredList == null) {
+                        filteredList = new ArrayList<>();
+                    }
                     filteredList.add(element);
                 }
             }
