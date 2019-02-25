@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.intellij.openapi.Disposable;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class DataSearchResult implements Disposable {
     private Set<DataSearchResultListener> listeners = new HashSet<>();
-    private List<DataSearchResultMatch> matches = CollectionUtil.createConcurrentList();
+    private List<DataSearchResultMatch> matches = Collections.emptyList();
     private DataSearchResultMatch selectedMatch;
     private int matchesLimit;
     private long updateTimestamp = 0;
@@ -23,7 +23,7 @@ public class DataSearchResult implements Disposable {
 
     public void clear() {
         selectedMatch = null;
-        matches = new ArrayList<>();
+        matches = Collections.emptyList();
     }
 
     public int size() {
@@ -70,9 +70,8 @@ public class DataSearchResult implements Disposable {
         return isUpdating;
     }
 
-    public void addMatch(DataModelCell cell, int startOffset, int endOffset) {
-        DataSearchResultMatch match = new DataSearchResultMatch(cell, startOffset, endOffset);
-        matches.add(match);
+    public void setMatches(List<DataSearchResultMatch> matches) {
+        this.matches = matches;
     }
 
     public Iterator<DataSearchResultMatch> getMatches(final DataModelCell cell) {
