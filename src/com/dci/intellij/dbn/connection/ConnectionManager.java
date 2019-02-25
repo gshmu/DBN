@@ -162,27 +162,31 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     public static void testConnection(ConnectionHandler connectionHandler, SchemaId schemaId, SessionId sessionId, boolean showSuccessMessage, boolean showErrorMessage) {
         Project project = connectionHandler.getProject();
-        ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
-        String connectionName = connectionHandler.getName();
-        try {
-            databaseSettings.checkConfiguration();
-            connectionHandler.getConnection(sessionId, schemaId);
-            ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
-            connectionStatus.setValid(true);
-            connectionStatus.setConnected(true);
-            if (showSuccessMessage) {
-                showSuccessfulConnectionMessage(project, connectionName);
-            }
-        } catch (ConfigurationException e) {
-            if (showErrorMessage) {
-                showInvalidConfigMessage(project, e);
+        Progress.prompt(project, "Trying to connect to " + connectionHandler.getName(), true,
+                (progress) -> {
+                    ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
+                    String connectionName = connectionHandler.getName();
+                    try {
+                        databaseSettings.checkConfiguration();
+                        connectionHandler.getConnection(sessionId, schemaId);
+                        ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
+                        connectionStatus.setValid(true);
+                        connectionStatus.setConnected(true);
+                        if (showSuccessMessage) {
+                            showSuccessfulConnectionMessage(project, connectionName);
+                        }
+                    } catch (ConfigurationException e) {
+                        if (showErrorMessage) {
+                            showInvalidConfigMessage(project, e);
 
-            }
-        } catch (Exception e) {
-            if (showErrorMessage) {
-                showErrorConnectionMessage(project, connectionName, e);
-            }
-        }
+                        }
+                    } catch (Exception e) {
+                        if (showErrorMessage) {
+                            showErrorConnectionMessage(project, connectionName, e);
+                        }
+                    }
+                });
+
     }
 
     public static void testConfigConnection(ConnectionSettings connectionSettings, boolean showMessageDialog) {

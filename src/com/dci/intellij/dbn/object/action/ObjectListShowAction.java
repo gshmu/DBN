@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -24,8 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 
 public abstract class ObjectListShowAction extends DumbAwareAction {
     private DBObjectRef sourceObjectRef;
@@ -55,41 +53,38 @@ public abstract class ObjectListShowAction extends DumbAwareAction {
     public final void actionPerformed(@NotNull AnActionEvent e) {
         DBObject sourceObject = getSourceObject();
         String listName = getListName();
-        ConnectionAction.invoke(
-                "loading " + listName,
-                instructions("Loading " + listName, TaskInstruction.CANCELLABLE),
-                sourceObject,
-                action -> {
-                    if (!action.isCancelled()) {
-                        List<? extends DBObject> recentObjectList = getRecentObjectList();
-                        List<? extends DBObject> objects = getObjectList();
-                        if (!action.isCancelled()) {
-                            Dispatch.invokeNonModal(() -> {
-                                if (objects.size() > 0) {
-                                    ObjectListActionGroup actionGroup = new ObjectListActionGroup(ObjectListShowAction.this, objects, recentObjectList);
-                                    JBPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
-                                            ObjectListShowAction.this.getTitle(),
-                                            actionGroup,
-                                            e.getDataContext(),
-                                            JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                                            true, null, 10);
+        ConnectionAction.invoke("loading " + listName, true, sourceObject,
+                (action) -> Progress.prompt(sourceObject.getProject(), "Loading " + listName, true,
+                        (progress) -> {
+                            if (!action.isCancelled()) {
+                                List<? extends DBObject> recentObjectList = getRecentObjectList();
+                                List<? extends DBObject> objects = getObjectList();
+                                if (!action.isCancelled()) {
+                                    Dispatch.invokeNonModal(() -> {
+                                        if (objects.size() > 0) {
+                                            ObjectListActionGroup actionGroup = new ObjectListActionGroup(ObjectListShowAction.this, objects, recentObjectList);
+                                            JBPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
+                                                    ObjectListShowAction.this.getTitle(),
+                                                    actionGroup,
+                                                    e.getDataContext(),
+                                                    JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+                                                    true, null, 10);
 
-                                    popup.getContent().setBackground(Colors.LIGHT_BLUE);
-                                    showPopup(popup);
-                                } else {
-                                    JLabel label = new JLabel(getEmptyListMessage(), Icons.EXEC_MESSAGES_INFO, SwingConstants.LEFT);
-                                    label.setBorder(JBUI.Borders.empty(3));
-                                    JPanel panel = new JPanel(new BorderLayout());
-                                    panel.add(label);
-                                    panel.setBackground(Colors.LIGHT_BLUE);
-                                    ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(panel, null);
-                                    JBPopup popup = popupBuilder.createPopup();
-                                    showPopup(popup);
+                                            popup.getContent().setBackground(Colors.LIGHT_BLUE);
+                                            showPopup(popup);
+                                        } else {
+                                            JLabel label = new JLabel(getEmptyListMessage(), Icons.EXEC_MESSAGES_INFO, SwingConstants.LEFT);
+                                            label.setBorder(JBUI.Borders.empty(3));
+                                            JPanel panel = new JPanel(new BorderLayout());
+                                            panel.add(label);
+                                            panel.setBackground(Colors.LIGHT_BLUE);
+                                            ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(panel, null);
+                                            JBPopup popup = popupBuilder.createPopup();
+                                            showPopup(popup);
+                                        }
+                                    });
                                 }
-                            });
-                        }
-                    }
-                });
+                            }}));
     }
 
     private void showPopup(JBPopup popup) {

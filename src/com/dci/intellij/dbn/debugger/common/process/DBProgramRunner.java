@@ -2,12 +2,9 @@ package com.dci.intellij.dbn.debugger.common.process;
 
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -44,7 +41,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.dci.intellij.dbn.common.util.MessageUtil.options;
 import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 
@@ -65,19 +61,18 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             ExecutionEnvironment environment) throws ExecutionException {
 
         DBRunConfig runProfile = (DBRunConfig) environment.getRunProfile();
-        ConnectionAction.invoke("the debug execution",
-                instructions("Checking debug privileges", TaskInstruction.CANCELLABLE),
-                runProfile.getConnectionHandler(),
-                action -> {
-                    performPrivilegeCheck(
-                            project,
-                            (T) runProfile.getExecutionInput(),
-                            environment,
-                            null);
-                },
+        ConnectionHandler connectionHandler = runProfile.getConnectionHandler();
+        ConnectionAction.invoke("the debug execution", false, connectionHandler,
+                (action) -> Progress.prompt(project, "Checking debug privileges", true,
+                        (progress)-> {
+                            performPrivilegeCheck(
+                                    project,
+                                    (T) runProfile.getExecutionInput(),
+                                    environment,
+                                    null);
+                        }),
                 null,
                 (action) -> {
-                    ConnectionHandler connectionHandler = action.getConnectionHandler();
                     DatabaseDebuggerManager databaseDebuggerManager = DatabaseDebuggerManager.getInstance(project);
                     return databaseDebuggerManager.checkForbiddenOperation(connectionHandler,
                             "Another debug session is active on this connection. You can only run one debug session at the time.");
@@ -139,7 +134,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                     "Initializing debug environment", true,
                     (progress) -> {
                         DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
-                        BackgroundTask.initProgressIndicator(progress, true, "Loading method dependencies");
+                        progress.setText2("Loading method dependencies");
 
                         if (!project.isDisposed() && !progress.isCanceled()) {
                             List<DBMethod> methods = runProfile.getMethods();
@@ -255,5 +250,5 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
 
     protected abstract DBDebugProcessStarter createProcessStarter(ConnectionHandler connectionHandler);
 
-    protected abstract void promptExecutionDialog(T executionInput, RunnableTask callback);
+    protected abstract void promptExecutionDialog(T executionInput, Runnable callback);
 }

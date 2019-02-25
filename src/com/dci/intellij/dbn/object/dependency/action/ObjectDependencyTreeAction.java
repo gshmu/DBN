@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.object.dependency.action;
 
+import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyManager;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -19,9 +20,9 @@ public class ObjectDependencyTreeAction extends DumbAwareAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = e.getProject();
+        Project project = ActionUtil.ensureProject(e);
         DBSchemaObject schemaObject = DBObjectRef.get(schemaObjectRef);
-        if (schemaObject != null && project != null) {
+        if (schemaObject != null) {
             ObjectDependencyManager dependencyManager = ObjectDependencyManager.getInstance(project);
             dependencyManager.openDependencyTree(schemaObject);
         }
