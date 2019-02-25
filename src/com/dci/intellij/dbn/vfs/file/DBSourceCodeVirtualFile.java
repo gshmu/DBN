@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.vfs.file;
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.routine.WriteAction;
-import com.dci.intellij.dbn.common.thread.SynchronizedTask;
+import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -103,9 +103,8 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     public void refreshContentState() {
-        SynchronizedTask.invoke(
-                () -> "REFRESH_STATE:" + getUrl(),
-                (data) -> {
+        Synchronized.sync("REFRESH_STATE:" + getUrl(),
+                () -> {
                     if (isNot(REFRESHING) && isLoaded()) {
                         try {
                             set(REFRESHING, true);

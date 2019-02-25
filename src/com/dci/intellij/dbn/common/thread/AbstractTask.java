@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.util.Traceable;
 
+@Deprecated
 public abstract class AbstractTask<T> extends Traceable implements RunnableTask<T>{
     private T data;
 

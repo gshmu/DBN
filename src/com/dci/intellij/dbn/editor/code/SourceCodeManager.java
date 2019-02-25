@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManag
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.thread.SynchronizedTask;
+import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -175,9 +175,9 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     private void loadSourceFromDatabase(@NotNull DBSourceCodeVirtualFile sourceCodeFile, boolean force) {
-        SynchronizedTask.invoke(
-                () -> "LOAD_SOURCE:" + sourceCodeFile.getUrl(),
-                data -> {
+        Synchronized.sync(
+                "LOAD_SOURCE:" + sourceCodeFile.getUrl(),
+                () -> {
                     boolean initialLoad = !sourceCodeFile.isLoaded();
                     if (sourceCodeFile.isNot(LOADING) && (initialLoad || force)) {
                         sourceCodeFile.set(LOADING, true);

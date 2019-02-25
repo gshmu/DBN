@@ -1,9 +1,12 @@
 package com.dci.intellij.dbn.common.thread;
 
-import com.dci.intellij.dbn.common.routine.BasicRunnable;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
+import org.jetbrains.annotations.NotNull;
 
 public interface Synchronized {
-    static <E extends Throwable> void run(Object syncObject, Condition<Boolean> condition, BasicRunnable<E> runnable) throws E {
+    SyncObjectProvider SYNC_OBJECT_PROVIDER = new SyncObjectProvider();
+
+    static void run(Object syncObject, Condition condition, Runnable runnable) {
         if(condition.evaluate()) {
             synchronized (syncObject) {
                 if(condition.evaluate()) {
@@ -13,8 +16,21 @@ public interface Synchronized {
         }
     }
 
+    static void sync(@NotNull String syncKey, Runnable runnable) {
+        Failsafe.lenient(() -> {
+            try {
+                Object syncObject = SYNC_OBJECT_PROVIDER.get(syncKey);
+                synchronized (syncObject) {
+                    runnable.run();
+                }
+            } finally {
+                SYNC_OBJECT_PROVIDER.release(syncKey);
+            }
+        });
+    }
+
     @FunctionalInterface
-    interface Condition<T> {
-        T evaluate();
+    interface Condition {
+        boolean evaluate();
     }
 }
