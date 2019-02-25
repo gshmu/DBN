@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.debugger.common.process;
 
-import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -41,6 +40,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
 import static com.dci.intellij.dbn.common.util.MessageUtil.options;
 import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 
@@ -104,13 +104,12 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                 showWarningDialog(
                         project, "Insufficient privileges", buffer.toString(),
                         options("Continue anyway", "Cancel"), 0,
-                        MessageCallback.create(0, option -> {
-                            performInitialize(
-                                    connectionHandler,
-                                    executionInput,
-                                    environment,
-                                    callback);
-                        }));
+                        (option) -> conditional(option == 0,
+                                () -> performInitialize(
+                                        connectionHandler,
+                                        executionInput,
+                                        environment,
+                                        callback)));
             } else {
                 performInitialize(
                         connectionHandler,

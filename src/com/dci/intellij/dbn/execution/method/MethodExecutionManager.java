@@ -3,8 +3,7 @@ package com.dci.intellij.dbn.execution.method;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.message.MessageCallback;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.ParametricCallback;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -45,6 +44,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
 import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
@@ -140,7 +140,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             @Nullable MethodExecutionInput selection,
             boolean editable,
             boolean debug,
-            @Nullable ParametricRunnable.Unsafe<MethodExecutionInput> callback) {
+            @Nullable ParametricCallback<MethodExecutionInput> callback) {
 
         Dispatch.invoke(() -> {
             Project project = getProject();
@@ -197,8 +197,8 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                                         "Method execution error",
                                         "Error executing " + method.getQualifiedNameWithType() + ".\n" + e.getMessage().trim(),
                                         new String[]{"Try Again", "Cancel"}, 0,
-                                        MessageCallback.create(0, option ->
-                                                startMethodExecution(executionInput, DBDebuggerType.NONE)));
+                                        (option) -> conditional(option == 0,
+                                                () -> startMethodExecution(executionInput, DBDebuggerType.NONE)));
                             }
                         }
                     });
@@ -234,7 +234,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         }
     }
 
-    public void promptMethodBrowserDialog(MethodExecutionInput executionInput, boolean debug, ParametricRunnable.Unsafe<MethodExecutionInput> callback) {
+    public void promptMethodBrowserDialog(MethodExecutionInput executionInput, boolean debug, ParametricCallback<MethodExecutionInput> callback) {
         Project project = getProject();
         Progress.prompt(project, "Loading executable elements", true,
                 (progress) -> {

@@ -3,9 +3,8 @@ package com.dci.intellij.dbn.connection;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
-import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.routine.ParametricCallable;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.ParametricCallback;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -92,7 +91,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionManager.promptDatabaseInitDialog(
                 connectionHandler,
-                MessageCallback.create(null, option -> {
+                (option) -> {
                     if (option == 0) {
                         ConnectionInstructions instructions = connectionHandler.getInstructions();
                         instructions.setAllowAutoInit(true);
@@ -106,7 +105,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
                         ConnectionAction.this.cancel();
                         cancel();
                     }
-                }));
+                });
     }
 
     private void promptAuthenticationDialog() {
@@ -131,7 +130,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
         ConnectionManager.promptConnectDialog(
                 connectionHandler,
                 description,
-                MessageCallback.create(null, option -> {
+                (option) -> {
                     if (option == 0) {
                         connectionHandler.getInstructions().setAllowAutoConnect(true);
                         execute();
@@ -139,7 +138,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
                         ConnectionAction.this.cancel();
                         cancel();
                     }
-                }));
+                });
     }
 
     @NotNull
@@ -155,7 +154,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             String description,
             boolean interactive,
             ConnectionProvider connectionProvider,
-            ParametricRunnable.Unsafe<ConnectionAction> action) {
+            ParametricCallback<ConnectionAction> action) {
         create(description, interactive, connectionProvider, null, action).start();
     }
 
@@ -165,7 +164,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             boolean interactive,
             ConnectionProvider connectionProvider,
             Integer executeOption,
-            ParametricRunnable.Unsafe<ConnectionAction> action) {
+            ParametricCallback<ConnectionAction> action) {
         return new ConnectionAction(description, interactive, connectionProvider, executeOption) {
             @Override
             protected void execute() {
@@ -178,8 +177,8 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             String description,
             boolean interactive,
             ConnectionProvider connectionProvider,
-            ParametricRunnable.Unsafe<ConnectionAction> action,
-            ParametricRunnable.Unsafe<ConnectionAction> cancel,
+            ParametricCallback<ConnectionAction> action,
+            ParametricCallback<ConnectionAction> cancel,
             ParametricCallable.Unsafe<ConnectionAction, Boolean> canExecute) {
 
         create(description, interactive, connectionProvider, action, cancel, canExecute).start();
@@ -189,8 +188,8 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             String description,
             boolean interactive,
             ConnectionProvider connectionProvider,
-            ParametricRunnable.Unsafe<ConnectionAction> action,
-            ParametricRunnable.Unsafe<ConnectionAction> cancel,
+            ParametricCallback<ConnectionAction> action,
+            ParametricCallback<ConnectionAction> cancel,
             ParametricCallable.Unsafe<ConnectionAction, Boolean> canExecute) {
 
         return new ConnectionAction(description, interactive, connectionProvider) {

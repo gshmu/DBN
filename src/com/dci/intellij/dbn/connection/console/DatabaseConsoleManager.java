@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -37,6 +36,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
 
 @State(
     name = DatabaseConsoleManager.COMPONENT_NAME,
@@ -107,13 +108,14 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                 "You will loose the information contained in this console.\n" +
                         "Are you sure you want to delete the console?",
                 MessageUtil.OPTIONS_YES_NO, 0,
-                MessageCallback.create(0, option -> {
-                    FileEditorManager.getInstance(project).closeFile(consoleFile);
-                    ConnectionHandler connectionHandler = consoleFile.getConnectionHandler();
-                    String fileName = consoleFile.getName();
-                    connectionHandler.getConsoleBundle().removeConsole(fileName);
-                    eventDispatcher.getMulticaster().fileDeleted(new VirtualFileEvent(this, consoleFile, fileName, null));
-                }));
+                (option) -> conditional(option == 0,
+                        () -> {
+                            FileEditorManager.getInstance(project).closeFile(consoleFile);
+                            ConnectionHandler connectionHandler = consoleFile.getConnectionHandler();
+                            String fileName = consoleFile.getName();
+                            connectionHandler.getConsoleBundle().removeConsole(fileName);
+                            eventDispatcher.getMulticaster().fileDeleted(new VirtualFileEvent(this, consoleFile, fileName, null));
+                        }));
     }
 
 

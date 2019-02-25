@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.compiler;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.ParametricCallback;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -292,7 +292,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         }
     }
 
-    private void promptCompileTypeSelection(CompileType compileType, @Nullable DBSchemaObject program, @NotNull ParametricRunnable.Unsafe<CompileType> callback) {
+    private void promptCompileTypeSelection(CompileType compileType, @Nullable DBSchemaObject program, @NotNull ParametricCallback<CompileType> callback) {
         if (compileType == CompileType.ASK) {
             CompilerTypeSelectionDialog dialog = new CompilerTypeSelectionDialog(getProject(), program);
             dialog.show();

@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -37,6 +36,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
 
 @State(
     name = ProjectSettingsManager.COMPONENT_NAME,
@@ -203,19 +204,20 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
                 project, "Default project settings",
                 "This will overwrite your default settings with the ones from the current project (including database connections configuration). \nAre you sure you want to continue?",
                 new String[]{"Yes", "No"}, 0,
-                MessageCallback.create(0, option -> {
-                    try {
-                        Element element = new Element("state");
-                        getProjectSettings().writeConfiguration(element);
+                (option) -> conditional(option == 0,
+                        () -> {
+                            try {
+                                Element element = new Element("state");
+                                getProjectSettings().writeConfiguration(element);
 
-                        ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
-                        ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getDefaultProjectSettings();
-                        defaultProjectSettings.readConfiguration(element);
-                        MessageUtil.showInfoDialog(project, "Project settings", "Project settings exported as default");
-                    } finally {
-                        ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(false);
-                    }
-                }));
+                                ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
+                                ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getDefaultProjectSettings();
+                                defaultProjectSettings.readConfiguration(element);
+                                MessageUtil.showInfoDialog(project, "Project settings", "Project settings exported as default");
+                            } finally {
+                                ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(false);
+                            }
+                        }));
     }
 
     public void importDefaultSettings(final boolean isNewProject) {
@@ -231,24 +233,25 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
                     project, "Default project settings",
                     message,
                     new String[]{"Yes", "No"}, 0,
-                    MessageCallback.create(0, option -> {
-                        try {
-                            Element element = new Element("state");
-                            ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getDefaultProjectSettings();
-                            defaultProjectSettings.writeConfiguration(element);
+                    (option) -> conditional(option == 0,
+                            () -> {
+                                try {
+                                    Element element = new Element("state");
+                                    ProjectSettings defaultProjectSettings = DefaultProjectSettingsManager.getInstance().getDefaultProjectSettings();
+                                    defaultProjectSettings.writeConfiguration(element);
 
-                            ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
-                            getProjectSettings().readConfiguration(element);
+                                    ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
+                                    getProjectSettings().readConfiguration(element);
 
-                            EventUtil.notify(project, ConnectionSettingsListener.TOPIC).connectionsChanged();
+                                    EventUtil.notify(project, ConnectionSettingsListener.TOPIC).connectionsChanged();
 
-                            if (!isNewProject) {
-                                MessageUtil.showInfoDialog(project, "Project settings", "Default project settings loaded to project \"" + project.getName() + "\".");
-                            }
-                        } finally {
-                            ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(false);
-                        }
-                    }));
+                                    if (!isNewProject) {
+                                        MessageUtil.showInfoDialog(project, "Project settings", "Default project settings loaded to project \"" + project.getName() + "\".");
+                                    }
+                                } finally {
+                                    ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(false);
+                                }
+                            }));
         }
     }
 
