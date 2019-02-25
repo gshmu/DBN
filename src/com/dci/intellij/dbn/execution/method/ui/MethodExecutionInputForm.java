@@ -24,7 +24,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -80,7 +79,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
 
         //topSeparator.setVisible(false);
         DBMethod method = executionInput.getMethod();
-        List<DBArgument> arguments = method == null ? Collections.emptyList() : new ArrayList<>(method.getArguments());
+        List<DBArgument> arguments = method == null ? java.util.Collections.emptyList() : new ArrayList<>(method.getArguments());
         noArgumentsLabel.setVisible(arguments.size() == 0);
         for (DBArgument argument: arguments) {
             if (argument.isInput()) {

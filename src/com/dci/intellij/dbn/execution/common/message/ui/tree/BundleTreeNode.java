@@ -7,7 +7,6 @@ import com.intellij.openapi.util.Disposer;
 
 import javax.swing.tree.TreeNode;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -74,7 +73,7 @@ public abstract class BundleTreeNode extends DisposableBase implements MessagesT
 
     @Override
     public Enumeration children() {
-        return Collections.enumeration(children);
+        return java.util.Collections.enumeration(children);
     }
 
     /*********************************************************

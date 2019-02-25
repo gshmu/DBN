@@ -64,12 +64,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObject, ToolTipProvider {
-    private static final List<DBObject> EMPTY_OBJECT_LIST = Collections.unmodifiableList(new ArrayList<>(0));
-    public static final List<BrowserTreeNode> EMPTY_TREE_NODE_LIST = Collections.unmodifiableList(new ArrayList<BrowserTreeNode>(0));
+    private static final List<DBObject> EMPTY_OBJECT_LIST = java.util.Collections.unmodifiableList(new ArrayList<>(0));
+    public static final List<BrowserTreeNode> EMPTY_TREE_NODE_LIST = java.util.Collections.unmodifiableList(new ArrayList<BrowserTreeNode>(0));
 
     private List<BrowserTreeNode> allPossibleTreeChildren;
     private List<BrowserTreeNode> visibleTreeChildren;
@@ -394,7 +393,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
                 return objectNames;
             }
         }
-        return Collections.emptyList();
+        return java.util.Collections.emptyList();
     }
 
     @Override

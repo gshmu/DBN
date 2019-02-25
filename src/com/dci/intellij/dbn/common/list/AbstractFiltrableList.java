@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +29,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
     // update methods should not be affected by filtering
     @Override
     public void sort(Comparator<? super T> comparator)          {
-        Collections.sort(list, comparator);}
+        java.util.Collections.sort(list, comparator);}
 
     @Override
     public boolean add(T o)                             {return list.add(o);}

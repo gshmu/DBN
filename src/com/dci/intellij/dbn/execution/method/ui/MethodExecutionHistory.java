@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class MethodExecutionHistory implements PersistentStateElement, Disposable{
@@ -102,7 +101,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
         if (create) {
             MethodExecutionInput executionInput = new MethodExecutionInput(getProject(), method);
             executionInputs.add(executionInput);
-            Collections.sort(executionInputs);
+            java.util.Collections.sort(executionInputs);
             selection = DBObjectRef.from(method);
             return executionInput;
         }
@@ -120,7 +119,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
         if (method != null) {
             MethodExecutionInput executionInput = new MethodExecutionInput(getProject(), method);
             executionInputs.add(executionInput);
-            Collections.sort(executionInputs);
+            java.util.Collections.sort(executionInputs);
             selection = methodRef;
             return executionInput;
         }
@@ -158,7 +157,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
                 executionInput.readConfiguration(configElement);
                 executionInputs.add(executionInput);
             }
-            Collections.sort(executionInputs);
+            java.util.Collections.sort(executionInputs);
 
             Element selectionElement = historyElement.getChild("selection");
             if (selectionElement != null) {
