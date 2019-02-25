@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.debugger;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
@@ -77,6 +76,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 
 @State(
@@ -358,10 +358,11 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                                             applicationInfo.getFullVersion() + "\".\n" +
                                             "Do you want to use classic debugger over JDBC instead?",
                                     new String[]{"Use " + DBDebuggerType.JDBC.getName(), "Cancel"}, 0,
-                                    MessageCallback.create(0, option -> {
-                                        debuggerStarter.setDebuggerType(DBDebuggerType.JDBC);
-                                        debuggerStarter.start();
-                                    }));
+                                    (option) -> conditional(option == 0,
+                                            () -> {
+                                                debuggerStarter.setDebuggerType(DBDebuggerType.JDBC);
+                                                debuggerStarter.start();
+                                            }));
                         }
                     }
                 });

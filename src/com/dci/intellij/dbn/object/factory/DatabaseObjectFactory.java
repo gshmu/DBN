@@ -32,6 +32,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
+
 public class DatabaseObjectFactory extends AbstractProjectComponent {
 
     private DatabaseObjectFactory(Project project) {
@@ -109,14 +111,16 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
                 "Drop object",
                 "Are you sure you want to drop the " + object.getQualifiedNameWithType() + "?",
                 MessageUtil.OPTIONS_YES_NO, 0,
-                ConnectionAction.create("dropping the object", false, object, 0, action -> {
-                    Project project = getProject();
-                    DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
-                    databaseFileManager.closeFile(object);
+                (option) -> conditional(option == 0,
+                        () -> ConnectionAction.invoke("dropping the object", false, object,
+                                (action) -> {
+                                    Project project = getProject();
+                                    DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(project);
+                                    databaseFileManager.closeFile(object);
 
-                    Progress.prompt(project, "Dropping " + object.getQualifiedNameWithType(), false,
-                            (progress) -> doDropObject(object));
-                }));
+                                    Progress.prompt(project, "Dropping " + object.getQualifiedNameWithType(), false,
+                                            (progress) -> doDropObject(object));
+                        })));
 
     }
 

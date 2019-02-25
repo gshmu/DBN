@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui;
 
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.ParametricCallback;
 
 public abstract class PresentableFactory<T extends Presentable> {
     private String actionName;
@@ -13,5 +13,5 @@ public abstract class PresentableFactory<T extends Presentable> {
         return actionName;
     }
 
-    public abstract void create(ParametricRunnable.Unsafe<T> callback);
+    public abstract void create(ParametricCallback<T> callback);
 }

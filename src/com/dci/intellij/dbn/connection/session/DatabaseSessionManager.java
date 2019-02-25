@@ -3,8 +3,7 @@ package com.dci.intellij.dbn.connection.session;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.message.MessageCallback;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.ParametricCallback;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -24,6 +23,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
+
 @State(
     name = DatabaseSessionManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
@@ -39,16 +40,16 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
         return Failsafe.getComponent(project, DatabaseSessionManager.class);
     }
 
-    public void showCreateSessionDialog(ConnectionHandler connectionHandler, @Nullable ParametricRunnable.Unsafe<DatabaseSession> callback) {
+    public void showCreateSessionDialog(ConnectionHandler connectionHandler, @Nullable ParametricCallback<DatabaseSession> callback) {
         showCreateRenameSessionDialog(connectionHandler, null, callback);
     }
 
-    public void showRenameSessionDialog(@NotNull DatabaseSession session, @Nullable ParametricRunnable.Unsafe<DatabaseSession> callback) {
+    public void showRenameSessionDialog(@NotNull DatabaseSession session, @Nullable ParametricCallback<DatabaseSession> callback) {
         showCreateRenameSessionDialog(session.getConnectionHandler(), session, callback);
     }
 
 
-    private void showCreateRenameSessionDialog(ConnectionHandler connectionHandler, DatabaseSession session, @Nullable ParametricRunnable.Unsafe<DatabaseSession> callback) {
+    private void showCreateRenameSessionDialog(ConnectionHandler connectionHandler, DatabaseSession session, @Nullable ParametricCallback<DatabaseSession> callback) {
         Dispatch.invokeNonModal(() -> {
             CreateRenameSessionDialog dialog = session == null ?
                     new CreateRenameSessionDialog(connectionHandler) :
@@ -88,7 +89,8 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
                     "Delete Session",
                     "Are you sure you want to delete the session \"" + session.getName() + "\" for connection\"" + session.getConnectionHandler().getName() + "\"" ,
                     MessageUtil.OPTIONS_YES_NO, 0,
-                    MessageCallback.create(0, option -> deleteSession(session)));
+                    (option) -> conditional(option == 0,
+                            () -> deleteSession(session)));
         } else {
             deleteSession(session);
         }

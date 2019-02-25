@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.vfs.file;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -42,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
@@ -111,7 +111,9 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                                 project, "No DDL file found",
                                 "Could not find any DDL file for " + object.getQualifiedNameWithType() + ". Do you want to create one? \n" +
                                 "(You can disable this check in \"DDL File\" options)", MessageUtil.OPTIONS_YES_NO, 0,
-                                MessageCallback.create(0, option -> fileAttachmentManager.createDDLFile(objectRef)));
+                                (option) -> conditional(option == 0,
+                                        () -> fileAttachmentManager.createDDLFile(objectRef)));
+
                     }
                 }
             }

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.script.ui;
 
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.ParametricCallback;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -72,7 +72,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         cmdLineExecutableComboBox.set(ValueSelectorOption.HIDE_ICON, true);
         cmdLineExecutableComboBox.setValueFactory(new PresentableFactory<CmdLineInterface>("New Cmd-Line Interface...") {
             @Override
-            public void create(ParametricRunnable.Unsafe<CmdLineInterface> callback) {
+            public void create(ParametricCallback<CmdLineInterface> callback) {
                 ConnectionHandler connectionHandler = connectionComboBox.getSelectedValue();
                 if (connectionHandler != null) {
                     ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);

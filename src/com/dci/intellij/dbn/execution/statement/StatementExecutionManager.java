@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.execution.statement;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -297,14 +296,15 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                         getProject(),
                         "Multiple statement execution",
                         "No statement found under the caret. \nExecute all statements in the file or just the ones after the cursor?",
-                        OPTIONS_MULTIPLE_STATEMENT_EXEC, 0, MessageCallback.create(null, option -> {
+                        OPTIONS_MULTIPLE_STATEMENT_EXEC, 0,
+                        (option) -> {
                             if (option == 0 || option == 1) {
                                 int offset = option == 0 ? 0 : editor.getCaretModel().getOffset();
                                 List<StatementExecutionProcessor> executionProcessors = getExecutionProcessorsFromOffset(fileEditor, offset);
                                 VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
                                 executeStatements(executionProcessors, virtualFile);
                             }
-                        }));
+                        });
             }
         }
 
