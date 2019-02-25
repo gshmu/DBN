@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FiltrableList;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.ParametricCallback;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Contract;
@@ -137,7 +137,7 @@ public class CollectionUtil {
         return list.stream().map(mapper).collect(Collectors.toList());
     }
 
-    public static <T> void first(@Nullable List<T> list, Predicate<? super T> predicate, ParametricRunnable.Unsafe<T> callback) {
+    public static <T> void first(@Nullable List<T> list, Predicate<? super T> predicate, ParametricCallback<T> callback) {
         if (list != null && !list.isEmpty()) {
             // indexed loop is supposed to be fastest
             for (int i=0; i<list.size(); i++) {

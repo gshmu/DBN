@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.ParametricCallback;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -67,7 +67,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                 String actionName = actions.get(0).getName();
 
                 String title = "Performing \"" + actionName + "\" on connection " + connectionName;
-                ParametricRunnable.Unsafe<ProgressIndicator> executor =
+                ParametricCallback<ProgressIndicator> executor =
                         (progress) -> executeActions(connectionHandler, connection, actions, callback);
 
                 if (background)

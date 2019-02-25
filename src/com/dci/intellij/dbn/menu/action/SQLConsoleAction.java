@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.menu.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -31,6 +30,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
 
 public class SQLConsoleAction extends DumbAwareAction {
     public SQLConsoleAction() {
@@ -83,10 +84,11 @@ public class SQLConsoleAction extends DumbAwareAction {
                 MessageUtil.showInfoDialog(
                         project, "No connections available.", "No database connections found. Please setup a connection first",
                         new String[]{"Setup Connection", "Cancel"}, 0,
-                        MessageCallback.create(0, option -> {
-                            ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-                            settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
-                        }));
+                        (option) -> conditional(option == 0,
+                                () -> {
+                                    ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
+                                    settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
+                                }));
             }
 
         }

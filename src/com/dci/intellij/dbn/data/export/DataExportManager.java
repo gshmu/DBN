@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.processor.CSVDataExportProcessor;
@@ -91,7 +90,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                                 "Export info",
                                 "Content exported to file " + file.getPath(),
                                 new String[]{"OK", "Open File"}, 0,
-                                MessageCallback.create(null, option -> {
+                                (option) -> {
                                     successCallback.run();
                                     if (option == 1) {
                                         try {
@@ -105,7 +104,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                                             );
                                         }
                                     }
-                                }));
+                                });
                     } else {
                         sendInfoNotification(Constants.DBN_TITLE_PREFIX + "Data Export", "Content exported to file " + file.getPath());
                     }

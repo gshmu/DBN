@@ -95,7 +95,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
     }
 
     public void openCodeMergeDialog(String databaseContent, DBSourceCodeVirtualFile sourceCodeFile, SourceCodeEditor fileEditor, MergeAction action) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
             Project project = getProject();
             SourceCodeDiffContent leftContent = new SourceCodeDiffContent("Database version", databaseContent);
             SourceCodeDiffContent targetContent = new SourceCodeDiffContent("Merge result", sourceCodeFile.getOriginalContent());

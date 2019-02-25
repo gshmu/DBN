@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.list.FiltrableList;
-import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -71,6 +70,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.dci.intellij.dbn.common.action.DBNDataKeys.*;
+import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
 import static com.dci.intellij.dbn.common.util.MessageUtil.options;
 import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 
@@ -478,8 +478,8 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                 showWarningDialog(project,
                         "No valid connection", message,
                         options("Select Connection", "Cancel"), 0,
-                        MessageCallback.create(0, option ->
-                                promptConnectionSelector(file, false, true, true, callback)));
+                        (option) -> conditional(option == 0,
+                                () -> promptConnectionSelector(file, false, true, true, callback)));
 
             } else if (file.getSchemaId() == null) {
                 String message =
@@ -488,13 +488,13 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                 showWarningDialog(project,
                         "No schema selected", message,
                         options("Use Current Schema", "Select Schema", "Cancel"), 0,
-                        MessageCallback.create(null, option -> {
+                        (option) -> {
                             if (option == 0) {
                                 callback.run();
                             } else if (option == 1) {
                                 promptSchemaSelector(file, callback);
                             }
-                        }));
+                        });
             } else {
                 callback.run();
             }

@@ -9,9 +9,8 @@ import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
-import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
-import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.ParametricCallback;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -58,6 +57,7 @@ import java.util.TimerTask;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
 import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 import static com.dci.intellij.dbn.common.util.MessageUtil.*;
@@ -203,9 +203,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                                 showMessageDialog));
             } else {
                 promptDatabaseInitDialog(databaseSettings,
-                        MessageCallback.create(0, option ->
-                                ensureAuthenticationProvided(databaseSettings, (authenticationInfo) ->
-                                        attemptConfigConnection(
+                        (option) -> conditional(option == 0,
+                                () -> ensureAuthenticationProvided(databaseSettings,
+                                        (authenticationInfo) -> attemptConfigConnection(
                                                 connectionSettings,
                                                 authenticationInfo,
                                                 showMessageDialog))));
@@ -270,7 +270,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     private static void ensureAuthenticationProvided(
             @NotNull ConnectionDatabaseSettings databaseSettings,
-            @NotNull ParametricRunnable.Unsafe<AuthenticationInfo> callback) {
+            @NotNull ParametricCallback<AuthenticationInfo> callback) {
 
         AuthenticationInfo authenticationInfo = databaseSettings.getAuthenticationInfo().clone();
         if (!authenticationInfo.isProvided()) {
@@ -280,12 +280,12 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    static void promptDatabaseInitDialog(ConnectionHandler connectionHandler, MessageCallback callback) {
+    static void promptDatabaseInitDialog(ConnectionHandler connectionHandler, ParametricCallback<Integer> callback) {
         ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
         promptDatabaseInitDialog(databaseSettings, callback);
     }
 
-    private static void promptDatabaseInitDialog(ConnectionDatabaseSettings databaseSettings, MessageCallback callback) {
+    private static void promptDatabaseInitDialog(ConnectionDatabaseSettings databaseSettings, ParametricCallback<Integer> callback) {
         DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
         if (databaseInfo.getUrlType() == DatabaseUrlType.FILE) {
             String file = databaseInfo.getFiles().getMainFile().getPath();
@@ -303,7 +303,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    static void promptConnectDialog(ConnectionHandler connectionHandler, @Nullable String actionDesc, MessageCallback callback) {
+    static void promptConnectDialog(ConnectionHandler connectionHandler, @Nullable String actionDesc, ParametricCallback<Integer> callback) {
         showInfoDialog(
                 connectionHandler.getProject(),
                 "Not connected to database",
@@ -353,7 +353,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     static void promptAuthenticationDialog(
             @Nullable ConnectionHandler connectionHandler,
             @NotNull AuthenticationInfo authenticationInfo,
-            @NotNull ParametricRunnable.Unsafe<AuthenticationInfo> callback) {
+            @NotNull ParametricCallback<AuthenticationInfo> callback) {
 
         ConnectionAuthenticationDialog passwordDialog = new ConnectionAuthenticationDialog(null, connectionHandler, authenticationInfo);
         passwordDialog.show();

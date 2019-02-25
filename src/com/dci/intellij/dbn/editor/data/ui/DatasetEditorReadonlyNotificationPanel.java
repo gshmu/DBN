@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
-import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -9,6 +8,8 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.project.Project;
+
+import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
 
 public class DatasetEditorReadonlyNotificationPanel extends DatasetEditorNotificationPanel{
     public DatasetEditorReadonlyNotificationPanel(final DBSchemaObject schemaObject) {
@@ -22,10 +23,11 @@ public class DatasetEditorReadonlyNotificationPanel extends DatasetEditorNotific
                     "Enable edit-mode",
                     "Are you sure you want to enable editing for " + schemaObject.getQualifiedNameWithType(),
                     new String[]{"Yes", "Cancel"}, 0,
-                    MessageCallback.create(0, option -> {
-                        EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
-                        environmentManager.enableEditing(schemaObject, DBContentType.DATA);
-                    })));
+                    (option) -> conditional(option == 0,
+                            () -> {
+                                EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+                                environmentManager.enableEditing(schemaObject, DBContentType.DATA);
+                            })));
         } else {
             setText("Active edit-mode! (the environment \"" + environmentName + "\" is configured with readonly data to prevent accidental changes)");
             createActionLabel("Cancel Editing", () -> {

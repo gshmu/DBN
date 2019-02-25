@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.ddl;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.routine.WriteAction;
 import com.dci.intellij.dbn.common.ui.ListUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -55,6 +54,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
 
 @State(
     name = DDLFileAttachmentManager.COMPONENT_NAME,
@@ -325,7 +326,8 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
             MessageUtil.showInfoDialog(getProject(),
                     "No DDL files found",
                     message.toString(), options, 0,
-                    MessageCallback.create(1, option -> createDDLFile(objectRef)));
+                    (option) -> conditional(option == 0,
+                            () -> createDDLFile(objectRef)));
         } else {
             DBSchemaObject object = objectRef.getnn();
             int exitCode = showFileAttachDialog(object, virtualFiles, false);

@@ -8,8 +8,6 @@ import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModif
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
-import com.dci.intellij.dbn.common.message.MessageCallback;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.SynchronizedTask;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -65,7 +63,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
+import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 import static com.dci.intellij.dbn.common.util.MessageUtil.*;
 import static com.dci.intellij.dbn.common.util.NamingUtil.unquote;
@@ -110,8 +108,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                             "The " + schemaObject.getQualifiedNameWithType() + " has been updated in database. You have unsaved changes in the object editor.\n" +
                                     "Do you want to discard the changes and reload the updated database version?",
                             new String[]{"Reload", "Keep changes"}, 0,
-                            MessageCallback.create(0, option ->
-                                    reloadAndUpdateEditors(databaseFile, false)));
+                            (option) -> conditional(option == 0,
+                                    () -> reloadAndUpdateEditors(databaseFile, false)));
                 } else {
                     reloadAndUpdateEditors(databaseFile, true);
                 }
@@ -233,22 +231,25 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
                         showWarningDialog(project,"Version conflict",message,
                                 options("Merge Changes", "Cancel"), 0,
-                                BackgroundTask.create(project,
-                                        instructions("Loading database source code"),
-                                        (data, progress) -> {
-                                            if (data == 0) {
-                                                try {
-                                                    SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
-                                                    String databaseContent = sourceCodeContent.getText().toString();
-                                                    SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
-                                                    diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, fileEditor, MergeAction.SAVE);
-                                                } catch (SQLException e) {
-                                                    showErrorDialog(project, "Could not load database sources.", e);
-                                                }
-                                            } else {
-                                                sourceCodeFile.set(SAVING, false);
-                                            }
-                                        }));
+                                (option) -> {
+                                    if (option == 0) {
+                                        Progress.prompt(project,
+                                                "Loading database source code", false,
+                                                (progress) -> {
+                                                    try {
+                                                        SourceCodeContent sourceCodeContent = loadSourceFromDatabase(object, contentType);
+                                                        String databaseContent = sourceCodeContent.getText().toString();
+                                                        SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
+                                                        diffManager.openCodeMergeDialog(databaseContent, sourceCodeFile, fileEditor, MergeAction.SAVE);
+                                                    } catch (SQLException e) {
+                                                        showErrorDialog(project, "Could not load database sources.", e);
+                                                    }
+                                                });
+
+                                    } else {
+                                        sourceCodeFile.set(SAVING, false);
+                                    }
+                                });
 
                     } else {
                         storeSourceToDatabase(sourceCodeFile, fileEditor, successCallback);

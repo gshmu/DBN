@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -361,7 +360,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                     String[] options = {"Edit filter", "Remove filter", "Ignore filter", "Cancel"};
 
                     MessageUtil.showErrorDialog(project, "Error", message, options, 0,
-                            MessageCallback.create(null, option -> {
+                            (option) -> {
                                 DatasetLoadInstructions instructions = instr.clone();
                                 instructions.setDeliberateAction(true);
 
@@ -378,7 +377,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                     instructions.setUseCurrentFilter(false);
                                     loadData(instructions);
                                 }
-                            }));
+                            });
                 }
             } else {
                 String message =
