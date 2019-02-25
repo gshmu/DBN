@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.common.util;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.routine.ReadAction;
-import com.dci.intellij.dbn.common.thread.ConditionalLaterInvocator;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
@@ -406,7 +405,7 @@ public class EditorUtil {
 
     public static void releaseEditor(@Nullable Editor editor) {
         if (editor != null) {
-            ConditionalLaterInvocator.invoke(() -> {
+            Dispatch.invoke(() -> {
                 EditorFactory editorFactory = EditorFactory.getInstance();
                 editorFactory.releaseEditor(editor);
             });

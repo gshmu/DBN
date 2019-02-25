@@ -62,7 +62,6 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
 
     public ProjectSettingsEditorForm(ProjectSettings globalSettings) {
         super(globalSettings);
-        globalSettings.reset();
 
         configurationTabs = new TabbedPane(this);
         //configurationTabs.setAdjustBorders(false);
@@ -79,7 +78,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
         ExecutionEngineSettings executionEngineSettings = globalSettings.getExecutionEngineSettings();
         OperationSettings operationSettings = globalSettings.getOperationSettings();
         DDLFileSettings ddlFileSettings = globalSettings.getDdlFileSettings();
-        final GeneralProjectSettings generalSettings = globalSettings.getGeneralSettings();
+        GeneralProjectSettings generalSettings = globalSettings.getGeneralSettings();
 
         addSettingsPanel(connectionSettings);
         addSettingsPanel(browserSettings);
@@ -92,6 +91,8 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
         addSettingsPanel(operationSettings);
         addSettingsPanel(ddlFileSettings);
         addSettingsPanel(generalSettings);
+        globalSettings.reset();
+
         tabsPanel.setFocusable(true);
 
         newVersionLabel.setForeground(JBColor.DARK_GRAY);
@@ -99,6 +100,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
         DatabaseNavigator databaseNavigator = DatabaseNavigator.getInstance();
         String pluginVersion = databaseNavigator.getPluginVersion();
         String repositoryPluginVersion = databaseNavigator.getRepositoryPluginVersion();
+
         if (StringUtil.isNotEmpty(pluginVersion) && StringUtil.isNotEmpty(repositoryPluginVersion)&& repositoryPluginVersion.compareTo(pluginVersion) > 0) {
             Color panelBackground = EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.NOTIFICATION_BACKGROUND);
             newVersionLabel.setText("A new version of the plugin is available (" + repositoryPluginVersion + ")");
