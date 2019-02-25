@@ -202,13 +202,13 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         DataSearchComponent dataSearchComponent = getSearchComponent();
         dataSearchComponent.initializeFindModel();
 
+        JTextField searchField = dataSearchComponent.getSearchField();
         if (searchPanel.isVisible()) {
-            dataSearchComponent.getSearchField().selectAll();
+            searchField.selectAll();
         } else {
             searchPanel.setVisible(true);    
         }
-        dataSearchComponent.getSearchField().requestFocus();
-
+        Dispatch.invoke(() -> searchField.requestFocus());
     }
 
     private DataSearchComponent getSearchComponent() {
