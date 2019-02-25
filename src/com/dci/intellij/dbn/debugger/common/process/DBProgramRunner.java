@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.BackgroundTask;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.RunnableTask;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.dci.intellij.dbn.common.thread.TaskInstruction;
@@ -134,11 +135,12 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
         if (runProfile.isCompileDependencies()) {
             Project project = connectionHandler.getProject();
 
-            BackgroundTask.invoke(project,
-                    instructions("Initializing debug environment", TaskInstruction.CANCELLABLE),
-                    (data, progress) -> {
+            Progress.prompt( project,
+                    "Initializing debug environment", true,
+                    (progress) -> {
                         DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
                         BackgroundTask.initProgressIndicator(progress, true, "Loading method dependencies");
+
                         if (!project.isDisposed() && !progress.isCanceled()) {
                             List<DBMethod> methods = runProfile.getMethods();
                             List<DBSchemaObject> dependencies = debuggerManager.loadCompileDependencies(methods, progress);
@@ -179,26 +181,24 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             if (dependenciesDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE){
                 if (selectedDependencies.size() > 0) {
 
-                    BackgroundTask.invoke(project,
-                            instructions("Compiling dependencies", TaskInstruction.CANCELLABLE),
-                            (data, progress) -> {
+                    Progress.prompt(project, "Compiling dependencies", true,
+                            (progress) -> {
                                 DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
                                 for (DBSchemaObject schemaObject : selectedDependencies) {
-                                    if (!progress.isCanceled()) {
-                                        progress.setText("Compiling " + schemaObject.getQualifiedNameWithType());
-                                        DBContentType contentType = schemaObject.getContentType();
-                                        CompilerAction compilerAction = new CompilerAction(CompilerActionSource.BULK_COMPILE, contentType);
-                                        compilerManager.compileObject(schemaObject, CompileType.DEBUG, compilerAction);
-                                    }
+                                    Progress.check(progress);
+
+                                    progress.setText("Compiling " + schemaObject.getQualifiedNameWithType());
+                                    DBContentType contentType = schemaObject.getContentType();
+                                    CompilerAction compilerAction = new CompilerAction(CompilerActionSource.BULK_COMPILE, contentType);
+                                    compilerManager.compileObject(schemaObject, CompileType.DEBUG, compilerAction);
                                 }
                                 EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, null);
-                                if (!progress.isCanceled()) {
-                                    performExecution(
-                                            executionInput,
-                                            environment,
-                                            callback);
-                                }
+                                Progress.check(progress);
 
+                                performExecution(
+                                        executionInput,
+                                        environment,
+                                        callback);
                             });
                 } else {
                     performExecution(
