@@ -17,12 +17,12 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MapLatent;
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Background;
-import com.dci.intellij.dbn.common.thread.BackgroundTask;
-import com.dci.intellij.dbn.common.thread.TaskInstruction;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -90,7 +90,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.thread.TaskInstructions.instructions;
 import static com.dci.intellij.dbn.object.common.DBObjectRelationType.*;
 import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 
@@ -198,9 +197,8 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     private final SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
         public void sourceCodeSaved(final DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
-            BackgroundTask.invoke(getProject(),
-                    instructions("Reloading database object", TaskInstruction.BACKGROUNDED),
-                    (task, progress) -> {
+            Progress.background(getProject(), "Reloading database object", false,
+                    (progress) -> {
                         DBObject object = sourceCodeFile.getObject();
                         object.refresh();
                     });
@@ -675,23 +673,22 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         ConnectionHandler connectionHandler = getConnectionHandler();
         if (DatabaseFeature.OBJECT_INVALIDATION.isSupported(connectionHandler)) {
             Project project = getProject();
-            BackgroundTask.invoke(project,
-                    instructions("Updating objects status", TaskInstruction.BACKGROUNDED, TaskInstruction.CANCELLABLE),
-                    (task, progress) -> {
+            Progress.background(project, "Updating objects status", true,
+                    (progress) -> {
                         try {
                             List<DBSchema> schemas = requester == null ? getSchemas() : requester.getReferencingSchemas();
 
                             int size = schemas.size();
                             for (int i = 0; i < size; i++) {
-                                if (!progress.isCanceled()) {
-                                    DBSchema schema = schemas.get(i);
-                                    if (size > 3) {
-                                        progress.setIndeterminate(false);
-                                        progress.setFraction(CommonUtil.getProgressPercentage(i, size));
-                                    }
-                                    progress.setText("Updating object status in schema " + schema.getName() + "... ");
-                                    schema.refreshObjectsStatus();
+                                ProgressMonitor.checkCancelled();
+
+                                DBSchema schema = schemas.get(i);
+                                if (size > 3) {
+                                    progress.setIndeterminate(false);
+                                    progress.setFraction(CommonUtil.getProgressPercentage(i, size));
                                 }
+                                progress.setText("Updating object status in schema " + schema.getName() + "... ");
+                                schema.refreshObjectsStatus();
                             }
                         } catch (SQLException e) {
                             sendErrorNotification("Object Status Refresh", "Could not refresh object status. Cause: " + e.getMessage());

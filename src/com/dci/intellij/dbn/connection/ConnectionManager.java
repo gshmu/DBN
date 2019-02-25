@@ -9,8 +9,9 @@ import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
-import com.dci.intellij.dbn.common.routine.ParametricCallback;
+import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -57,7 +58,7 @@ import java.util.TimerTask;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.dci.intellij.dbn.common.routine.ParametricCallback.conditional;
+import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 import static com.dci.intellij.dbn.common.util.MessageUtil.*;
@@ -270,7 +271,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     private static void ensureAuthenticationProvided(
             @NotNull ConnectionDatabaseSettings databaseSettings,
-            @NotNull ParametricCallback<AuthenticationInfo> callback) {
+            @NotNull ParametricRunnable<AuthenticationInfo> callback) {
 
         AuthenticationInfo authenticationInfo = databaseSettings.getAuthenticationInfo().clone();
         if (!authenticationInfo.isProvided()) {
@@ -280,12 +281,12 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    static void promptDatabaseInitDialog(ConnectionHandler connectionHandler, ParametricCallback<Integer> callback) {
+    static void promptDatabaseInitDialog(ConnectionHandler connectionHandler, MessageCallback callback) {
         ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
         promptDatabaseInitDialog(databaseSettings, callback);
     }
 
-    private static void promptDatabaseInitDialog(ConnectionDatabaseSettings databaseSettings, ParametricCallback<Integer> callback) {
+    private static void promptDatabaseInitDialog(ConnectionDatabaseSettings databaseSettings, MessageCallback callback) {
         DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
         if (databaseInfo.getUrlType() == DatabaseUrlType.FILE) {
             String file = databaseInfo.getFiles().getMainFile().getPath();
@@ -303,7 +304,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    static void promptConnectDialog(ConnectionHandler connectionHandler, @Nullable String actionDesc, ParametricCallback<Integer> callback) {
+    static void promptConnectDialog(ConnectionHandler connectionHandler, @Nullable String actionDesc, MessageCallback callback) {
         showInfoDialog(
                 connectionHandler.getProject(),
                 "Not connected to database",
@@ -353,7 +354,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     static void promptAuthenticationDialog(
             @Nullable ConnectionHandler connectionHandler,
             @NotNull AuthenticationInfo authenticationInfo,
-            @NotNull ParametricCallback<AuthenticationInfo> callback) {
+            @NotNull ParametricRunnable<AuthenticationInfo> callback) {
 
         ConnectionAuthenticationDialog passwordDialog = new ConnectionAuthenticationDialog(null, connectionHandler, authenticationInfo);
         passwordDialog.show();

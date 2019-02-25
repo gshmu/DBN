@@ -1,26 +1,13 @@
 package com.dci.intellij.dbn.common.message;
 
-import com.dci.intellij.dbn.common.routine.ParametricCallback;
-import com.dci.intellij.dbn.common.thread.SimpleTask;
+import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import org.jetbrains.annotations.Nullable;
 
-public abstract class MessageCallback extends SimpleTask<Integer> {
-    private Integer executeOption;
+public interface MessageCallback extends ParametricRunnable<Integer> {
 
-    private MessageCallback(Integer executeOption) {
-        this.executeOption = executeOption;
-    }
-
-    @Override
-    protected boolean canExecute() {
-        return executeOption == null || executeOption.equals(getData());
-    }
-
-    public static MessageCallback create(Integer executeOption, ParametricCallback<Integer> runnable) {
-        return new MessageCallback(executeOption) {
-            @Override
-            protected void execute() {
-                runnable.run(getData());
-            }
-        };
+    static void conditional(boolean condition, @Nullable Runnable runnable) {
+        if (condition && runnable != null) {
+            runnable.run();
+        }
     }
 }

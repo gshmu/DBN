@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.routine.ParametricCallable;
-import com.dci.intellij.dbn.common.routine.ParametricCallback;
+import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.SimpleTask;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -154,7 +154,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             String description,
             boolean interactive,
             ConnectionProvider connectionProvider,
-            ParametricCallback<ConnectionAction> action) {
+            ParametricRunnable<ConnectionAction> action) {
         create(description, interactive, connectionProvider, null, action).start();
     }
 
@@ -164,7 +164,7 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             boolean interactive,
             ConnectionProvider connectionProvider,
             Integer executeOption,
-            ParametricCallback<ConnectionAction> action) {
+            ParametricRunnable<ConnectionAction> action) {
         return new ConnectionAction(description, interactive, connectionProvider, executeOption) {
             @Override
             protected void execute() {
@@ -173,13 +173,13 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
         };
     }
 
-    public static void invoke(
+    public static <T extends Throwable> void invoke(
             String description,
             boolean interactive,
             ConnectionProvider connectionProvider,
-            ParametricCallback<ConnectionAction> action,
-            ParametricCallback<ConnectionAction> cancel,
-            ParametricCallable.Unsafe<ConnectionAction, Boolean> canExecute) {
+            ParametricRunnable<ConnectionAction> action,
+            ParametricRunnable<ConnectionAction> cancel,
+            ParametricCallable<ConnectionAction, Boolean> canExecute) {
 
         create(description, interactive, connectionProvider, action, cancel, canExecute).start();
     }
@@ -188,9 +188,9 @@ public abstract class ConnectionAction extends SimpleTask<Integer> {
             String description,
             boolean interactive,
             ConnectionProvider connectionProvider,
-            ParametricCallback<ConnectionAction> action,
-            ParametricCallback<ConnectionAction> cancel,
-            ParametricCallable.Unsafe<ConnectionAction, Boolean> canExecute) {
+            ParametricRunnable<ConnectionAction> action,
+            ParametricRunnable<ConnectionAction> cancel,
+            ParametricCallable<ConnectionAction, Boolean> canExecute) {
 
         return new ConnectionAction(description, interactive, connectionProvider) {
             @Override

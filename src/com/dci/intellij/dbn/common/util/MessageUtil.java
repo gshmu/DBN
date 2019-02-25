@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.message.Message;
 import com.dci.intellij.dbn.common.message.MessageBundle;
-import com.dci.intellij.dbn.common.routine.ParametricCallback;
+import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -62,15 +62,15 @@ public class MessageUtil {
         showDialog(project, message, title, OPTIONS_OK, 0, Icons.DIALOG_ERROR, null, null);
     }
 
-    public static void showErrorDialog(@Nullable Project project, String title, String message, String[] options, int defaultOptionIndex, ParametricCallback<Integer> callback) {
+    public static void showErrorDialog(@Nullable Project project, String title, String message, String[] options, int defaultOptionIndex, MessageCallback callback) {
         showDialog(project, message, title, options, defaultOptionIndex, Icons.DIALOG_ERROR, callback, null);
     }
 
-    public static void showQuestionDialog(@Nullable Project project, String title, String message, String[] options, int defaultOptionIndex, ParametricCallback<Integer> callback) {
+    public static void showQuestionDialog(@Nullable Project project, String title, String message, String[] options, int defaultOptionIndex, MessageCallback callback) {
         showQuestionDialog(project, title, message, options, defaultOptionIndex, callback, null);
     }
 
-    public static void showQuestionDialog(@Nullable Project project, String title, String message, String[] options, int defaultOptionIndex, ParametricCallback<Integer> callback, @Nullable DialogWrapper.DoNotAskOption doNotAskOption) {
+    public static void showQuestionDialog(@Nullable Project project, String title, String message, String[] options, int defaultOptionIndex, MessageCallback callback, @Nullable DialogWrapper.DoNotAskOption doNotAskOption) {
         showDialog(project, message, title, options, defaultOptionIndex, Icons.DIALOG_QUESTION, callback, doNotAskOption);
     }
 
@@ -79,7 +79,7 @@ public class MessageUtil {
         showWarningDialog(project, title, message, OPTIONS_OK, 0, null);
     }
 
-    public static void showWarningDialog(@Nullable Project project, String title, String message, String[] options, int defaultOptionIndex, ParametricCallback<Integer> callback) {
+    public static void showWarningDialog(@Nullable Project project, String title, String message, String[] options, int defaultOptionIndex, MessageCallback callback) {
         showDialog(project, message, title, options, defaultOptionIndex, Icons.DIALOG_WARNING, callback, null);
     }
 
@@ -87,7 +87,7 @@ public class MessageUtil {
         showInfoDialog(project, title, message, OPTIONS_OK, 0, null);
     }
 
-    public static void showInfoDialog(@Nullable Project project, String title, String message, String[] options, int defaultOptionIndex, ParametricCallback<Integer> callback) {
+    public static void showInfoDialog(@Nullable Project project, String title, String message, String[] options, int defaultOptionIndex, MessageCallback callback) {
         showDialog(project, message, title, options, defaultOptionIndex, Icons.DIALOG_INFORMATION, callback, null);
     }
 
@@ -98,7 +98,7 @@ public class MessageUtil {
             String[] options,
             int defaultOptionIndex,
             @Nullable Icon icon,
-            @Nullable ParametricCallback<Integer> callback,
+            @Nullable MessageCallback callback,
             @Nullable DialogWrapper.DoNotAskOption doNotAskOption) {
 
         Dispatch.invoke(() -> {
