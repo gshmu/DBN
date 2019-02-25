@@ -8,15 +8,15 @@ public interface NotificationSupport {
         NotificationUtil.sendNotification(getProject(), type, title, message, args);
     }
 
-    default public void sendInfoNotification(String title, String message, Object ... args) {
+    default void sendInfoNotification(String title, String message, Object... args) {
         NotificationUtil.sendInfoNotification(getProject(), title, message, args);
     }
 
-    default public void sendWarningNotification(String title, String message, Object ... args) {
+    default void sendWarningNotification(String title, String message, Object... args) {
         NotificationUtil.sendWarningNotification(getProject(), title, message, args);
     }
 
-    default public void sendErrorNotification(String title, String message, Object ... args) {
+    default void sendErrorNotification(String title, String message, Object... args) {
         NotificationUtil.sendErrorNotification(getProject(), title, message, args);
     }
 

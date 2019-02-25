@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
+@Deprecated
 public abstract class ConditionalLaterInvocator<T> extends SimpleTask<T>{
     protected ConditionalLaterInvocator() {}
 
