@@ -203,7 +203,7 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
         super.dispose();
         resultPanel = null;
         executionInput = null;
-        CollectionUtil.clearMap(cursorModels);
+        CollectionUtil.clear(cursorModels);
         argumentValues.clear();
     }
 

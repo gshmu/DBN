@@ -27,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -149,7 +148,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
                 sortingType == ColumnSortingType.BY_INDEX ? indexedComparator : null;
 
         if (comparator != null) {
-            Collections.sort(columnForms, comparator);
+            java.util.Collections.sort(columnForms, comparator);
             columnsPanel.removeAll();
             for (ResultSetRecordViewerColumnForm columnForm : columnForms) {
                 columnsPanel.add(columnForm.getComponent());

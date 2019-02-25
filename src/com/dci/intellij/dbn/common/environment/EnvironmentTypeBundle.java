@@ -28,7 +28,7 @@ public class EnvironmentTypeBundle implements Iterable<EnvironmentType>, Cloneab
     
     private void setElements(List<EnvironmentType> environmentTypes) {
         this.environmentTypes.clear();
-        CollectionUtil.cloneCollectionElements(environmentTypes, this.environmentTypes);        
+        CollectionUtil.cloneElements(environmentTypes, this.environmentTypes);
     }
     
     @NotNull

@@ -352,7 +352,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                         if (childObjects != null) {
                             CollectionUtil.forEach(
                                     childObjects.getObjectLists(),
-                                    objectList -> {
+                                    (objectList) -> {
                                         if (objectList.isLoaded() || objectList.isLoading()) {
                                             objectTypes.add(objectList.getObjectType());
                                         }

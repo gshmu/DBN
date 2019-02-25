@@ -20,15 +20,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> extends PropertyHolderImpl<DynamicContentStatus> implements DynamicContent<T> {
-    protected static final List EMPTY_CONTENT = Collections.unmodifiableList(new ArrayList(0));
-    protected static final List EMPTY_DISPOSED_CONTENT = Collections.unmodifiableList(new ArrayList(0));
-    protected static final List EMPTY_UNTOUCHED_CONTENT = Collections.unmodifiableList(new ArrayList(0));
+    protected static final List EMPTY_CONTENT = java.util.Collections.unmodifiableList(new ArrayList(0));
+    protected static final List EMPTY_DISPOSED_CONTENT = java.util.Collections.unmodifiableList(new ArrayList(0));
+    protected static final List EMPTY_UNTOUCHED_CONTENT = java.util.Collections.unmodifiableList(new ArrayList(0));
 
     private long changeTimestamp = 0;
 
@@ -280,7 +279,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     }
 
     public void sortElements(List<T> elements) {
-        Collections.sort(elements);
+        java.util.Collections.sort(elements);
     }
 
     @Override
@@ -321,11 +320,16 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     public T getElement(String name, int overload) {
         if (name != null) {
             List<T> elements = getAllElements();
+            return CollectionUtil.first(elements,
+                    (element) -> matchElement(element, name, overload));
+
+/*
             return elements.
                     stream().
                     filter(element -> matchElement(element, name, overload)).
                     findFirst().
                     orElse(null);
+*/
         }
         return null;
     }

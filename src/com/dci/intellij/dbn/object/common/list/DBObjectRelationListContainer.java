@@ -28,7 +28,7 @@ public class DBObjectRelationListContainer implements Disposable, Compactable {
 
     @Override
     public void compact() {
-        CollectionUtil.compactElements(objectRelationLists);
+        CollectionUtil.compactRecursive(objectRelationLists);
     }
 
     public List<DBObjectRelationList> getObjectRelationLists() {
