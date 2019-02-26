@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 
-public abstract class WriteAction implements BasicRunnable.Unsafe{
+public abstract class WriteAction implements BasicRunnable{
     private WriteAction() {}
 
     void start() {
@@ -17,7 +17,7 @@ public abstract class WriteAction implements BasicRunnable.Unsafe{
         });
     }
 
-    public static void invoke(Runnable runnable) {
+    public static void invoke(java.lang.Runnable runnable) {
         new WriteAction() {
             @Override
             public void run() {

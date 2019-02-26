@@ -78,7 +78,7 @@ public class Failsafe {
         return true;
     }
 
-    public static <T> T lenient(T defaultValue, BasicCallable.Unsafe<T> callable) {
+    public static <T> T lenient(T defaultValue, BasicCallable<T> callable){
         try {
             return callable.call();
         } catch (ProcessCanceledException e) {
@@ -86,13 +86,13 @@ public class Failsafe {
         }
     }
 
-    public static void lenient(BasicRunnable.Unsafe runnable) {
+    public static void lenient(BasicRunnable runnable){
         try {
             runnable.run();
         } catch (ProcessCanceledException ignore) {}
     }
 
-    public static void lenient(BasicRunnable.Unsafe runnable, BasicRunnable.Unsafe cancel) {
+    public static void lenient(BasicRunnable runnable, BasicRunnable cancel){
         try {
             runnable.run();
         } catch (ProcessCanceledException ignore) {
