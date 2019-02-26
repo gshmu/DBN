@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.debugger.common.config;
 
-import com.dci.intellij.dbn.common.routine.ReadAction;
+import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -39,7 +39,7 @@ public abstract class DBStatementRunConfig extends DBRunConfig<StatementExecutio
         if (executionInput != null) {
             ExecutablePsiElement executablePsiElement = executionInput.getExecutionProcessor().getCachedExecutable();
             if (executablePsiElement != null) {
-                return ReadAction.invoke(() -> {
+                return Read.call(() -> {
                     Set<DBObject> objects = executablePsiElement.collectObjectReferences(DBObjectType.METHOD);
                     if (objects != null) {
                         List<DBMethod> methods = new ArrayList<DBMethod>();

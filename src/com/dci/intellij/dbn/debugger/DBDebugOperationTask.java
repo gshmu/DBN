@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.debugger;
 
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
-import com.dci.intellij.dbn.common.routine.ManagedRunnable;
+import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.common.thread.AbstractTask;
 import com.dci.intellij.dbn.common.thread.ThreadFactory;
 import com.intellij.openapi.project.Project;
@@ -57,7 +57,7 @@ public abstract class DBDebugOperationTask<T> extends AbstractTask<T> implements
         sendErrorNotification("Debugger", "Error performing debug operation (" + operationDescription + ").", e.getMessage());
     }
 
-    public static <T> void invoke(@NotNull Project project, String title, ManagedRunnable<SQLException> runnable) {
+    public static <T> void invoke(@NotNull Project project, String title, ThrowableRunnable<SQLException> runnable) {
         new DBDebugOperationTask<T>(project, title) {
             @Override
             public void execute() throws SQLException {
