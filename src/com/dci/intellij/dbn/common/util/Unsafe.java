@@ -4,18 +4,18 @@ import com.dci.intellij.dbn.common.routine.BasicCallable;
 import com.dci.intellij.dbn.common.routine.BasicRunnable;
 
 public interface Unsafe {
-    static void invoke(BasicRunnable<Exception> runnable) {
+    static void invoke(BasicRunnable runnable) {
         try {
             runnable.run();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw ExceptionUtil.toRuntimeException(e);
         }
     }
 
-    static <T> T invoke(BasicCallable<T, Exception> callable) {
+    static <T> T invoke(BasicCallable<T> callable) {
         try {
             return callable.call();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw ExceptionUtil.toRuntimeException(e);
         }
     }
