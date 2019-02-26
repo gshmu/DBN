@@ -54,9 +54,13 @@ public interface Progress {
     }
 
     static void start(Task task) {
-        ProgressManager progressManager = ProgressManager.getInstance();
         Application application = ApplicationManager.getApplication();
-        application.invokeLater(() -> progressManager.run(task));
+        application.invokeLater(() -> {
+            if (!task.getProject().isDisposed()) {
+                ProgressManager progressManager = ProgressManager.getInstance();
+                progressManager.run(task);
+            }
+        });
     }
 
     static void check(ProgressIndicator progress) {

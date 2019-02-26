@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.thread;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.BasicCallable;
 import com.dci.intellij.dbn.common.routine.BasicRunnable;
-import com.intellij.openapi.progress.ProcessCanceledException;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,27 +21,24 @@ public class ThreadMonitor {
 
 
 
-    public static <E extends Throwable> void run(ThreadProperty threadProperty, BasicRunnable<E> runnable) throws E{
+    public static void run(ThreadProperty threadProperty, BasicRunnable runnable){
         ThreadInfo threadInfo = thread();
         try {
             threadInfo.set(threadProperty, true);
-            runnable.run();
-        } catch (ProcessCanceledException ignore){
+            Failsafe.lenient(runnable);
         } finally {
             threadInfo.set(threadProperty, false);
         }
     }
 
-    public static <T, E extends Throwable> T call(ThreadProperty threadProperty, T defaultValue, BasicCallable<T, E> runnable) throws E{
+    public static <T> T call(ThreadProperty threadProperty, T defaultValue, BasicCallable<T> callable) {
         ThreadInfo threadInfo = thread();
         try {
             threadInfo.set(threadProperty, true);
-            return runnable.call();
-        } catch (ProcessCanceledException ignore){
+            return Failsafe.lenient(defaultValue, callable);
         } finally {
             threadInfo.set(threadProperty, false);
         }
-        return defaultValue;
     }
 
     public static boolean isBackgroundProcess() {
