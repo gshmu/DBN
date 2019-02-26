@@ -24,7 +24,7 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
     private boolean restoreWorkspaceDeep = true;
     private int idleTimeToDisconnect = 30;
     private int idleTimeToDisconnectPool = 5;
-    private int passwordExpiryTime = 10;
+    private int credentialExpiryTime = 10;
     private int maxConnectionPoolSize = 7;
     private String alternativeStatementDelimiter;
 
@@ -140,12 +140,12 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
         this.idleTimeToDisconnectPool = idleTimeToDisconnectPool;
     }
 
-    public int getPasswordExpiryTime() {
-        return passwordExpiryTime;
+    public int getCredentialExpiryTime() {
+        return credentialExpiryTime;
     }
 
-    public void setPasswordExpiryTime(int passwordExpiryTime) {
-        this.passwordExpiryTime = passwordExpiryTime;
+    public void setCredentialExpiryTime(int credentialExpiryTime) {
+        this.credentialExpiryTime = credentialExpiryTime;
     }
 
     public String getAlternativeStatementDelimiter() {
@@ -184,7 +184,7 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
         environmentTypeId = EnvironmentTypeId.get(getString(element, "environment-type", EnvironmentTypeId.DEFAULT.id()));
         idleTimeToDisconnect = getInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
         idleTimeToDisconnectPool = getInteger(element, "idle-time-to-disconnect-pool", idleTimeToDisconnectPool);
-        passwordExpiryTime = getInteger(element, "password-expiry-time", passwordExpiryTime);
+        credentialExpiryTime = getInteger(element, "credential-expiry-time", credentialExpiryTime);
         maxConnectionPoolSize = getInteger(element, "max-connection-pool-size", maxConnectionPoolSize);
         alternativeStatementDelimiter = getString(element, "alternative-statement-delimiter", null);
     }
@@ -202,7 +202,7 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
         setString(element, "environment-type", environmentTypeId.id());
         setInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
         setInteger(element, "idle-time-to-disconnect-pool", idleTimeToDisconnectPool);
-        setInteger(element, "password-expiry-time", passwordExpiryTime);
+        setInteger(element, "credential-expiry-time", credentialExpiryTime);
         setInteger(element, "max-connection-pool-size", maxConnectionPoolSize);
         setString(element, "alternative-statement-delimiter", CommonUtil.nvl(alternativeStatementDelimiter, ""));
     }

@@ -169,7 +169,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         int maxPoolSize = ConfigurationEditorUtil.validateIntegerInputValue(maxPoolSizeTextField, "Max connection pool size", true, 3, 20, "");
         configuration.setIdleTimeToDisconnect(idleTimeToDisconnect);
         configuration.setIdleTimeToDisconnectPool(idleTimeToDisconnectPool);
-        configuration.setPasswordExpiryTime(passwordExpiryTime);
+        configuration.setCredentialExpiryTime(passwordExpiryTime);
         configuration.setMaxConnectionPoolSize(maxPoolSize);
     }
 
@@ -186,7 +186,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         setSelection(environmentTypesComboBox, configuration.getEnvironmentType());
         idleTimeTextField.setText(Integer.toString(configuration.getIdleTimeToDisconnect()));
         idleTimePoolTextField.setText(Integer.toString(configuration.getIdleTimeToDisconnectPool()));
-        passwordExpiryTextField.setText(Integer.toString(configuration.getPasswordExpiryTime()));
+        passwordExpiryTextField.setText(Integer.toString(configuration.getCredentialExpiryTime()));
         maxPoolSizeTextField.setText(Integer.toString(configuration.getMaxConnectionPoolSize()));
         alternativeStatementDelimiterTextField.setText(configuration.getAlternativeStatementDelimiter());
     }

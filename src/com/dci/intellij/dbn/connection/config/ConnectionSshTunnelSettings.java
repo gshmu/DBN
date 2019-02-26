@@ -9,6 +9,11 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 public class ConnectionSshTunnelSettings extends BasicProjectConfiguration<ConnectionSettings, ConnectionSshTunnelSettingsForm> {
+    @Deprecated // TODO move to keychain
+    private static final String OLD_PWD_ATTRIBUTE = "proxy-password";
+    @Deprecated // TODO move to keychain
+    private static final String TEMP_PWD_ATTRIBUTE = "deprecated-proxy-pwd";
+
     private boolean active = false;
     private String host;
     private String user;
@@ -120,14 +125,11 @@ public class ConnectionSshTunnelSettings extends BasicProjectConfiguration<Conne
         host = getString(element, "proxy-host", host);
         port = getString(element, "proxy-port", port);
         user = getString(element, "proxy-user", user);
-        password = PasswordUtil.decodePassword(getString(element, "proxy-password", password));
 
-        // TODO remove (backward compatibility)
-        if (active && StringUtil.isEmpty(host)) {
-            host = getString(element, "host", host);
-            port = getString(element, "port", port);
-            user = getString(element, "user", user);
-            password = PasswordUtil.decodePassword(getString(element, "password", password));
+
+        password = PasswordUtil.decodePassword(getString(element, TEMP_PWD_ATTRIBUTE, password));
+        if (StringUtil.isEmpty(password)) {
+            password = PasswordUtil.decodePassword(getString(element, OLD_PWD_ATTRIBUTE, password));
         }
 
         authType = getEnum(element, "auth-type", authType);
@@ -141,7 +143,7 @@ public class ConnectionSshTunnelSettings extends BasicProjectConfiguration<Conne
         setString(element, "proxy-host", host);
         setString(element, "proxy-port", port);
         setString(element, "proxy-user", user);
-        setString(element, "proxy-password", PasswordUtil.encodePassword(password));
+        setString(element, TEMP_PWD_ATTRIBUTE, PasswordUtil.encodePassword(password));
         setEnum(element, "auth-type", authType);
         setString(element, "key-file", keyFile);
         setString(element, "key-passphrase", PasswordUtil.encodePassword(keyPassphrase));

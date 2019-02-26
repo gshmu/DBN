@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import org.jetbrains.annotations.NotNull;
 
 public class ExecutionResultResumeAction extends AbstractExecutionResultAction {
     public ExecutionResultResumeAction() {
@@ -11,7 +12,7 @@ public class ExecutionResultResumeAction extends AbstractExecutionResultAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         StatementExecutionCursorResult executionResult = getExecutionResult(e);
         if (executionResult != null) {
             executionResult.fetchNextRecords();
@@ -20,7 +21,7 @@ public class ExecutionResultResumeAction extends AbstractExecutionResultAction {
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         StatementExecutionCursorResult executionResult = getExecutionResult(e);
 
         boolean enabled = executionResult != null &&

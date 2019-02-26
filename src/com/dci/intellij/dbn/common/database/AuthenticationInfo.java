@@ -13,9 +13,14 @@ import com.dci.intellij.dbn.credentials.DatabaseCredentialManager;
 import org.jdom.Element;
 
 public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSettings, ConfigurationEditorForm> implements Cloneable<AuthenticationInfo>{
+    @Deprecated // TODO move to keychain
+    private static final String OLD_PWD_ATTRIBUTE = "password";
+    @Deprecated // TODO move to keychain
+    private static final String TEMP_PWD_ATTRIBUTE = "deprecated-pwd";
+
     private long timestamp = System.currentTimeMillis();
     private boolean osAuthentication;
-    private boolean emptyPassword;
+    private boolean emptyAuthentication;
     private boolean supported = true;
     private String user;
     private String password;
@@ -70,16 +75,16 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
         this.supported = supported;
     }
 
-    public boolean isEmptyPassword() {
-        return emptyPassword;
+    public boolean isEmptyAuthentication() {
+        return emptyAuthentication;
     }
 
-    public void setEmptyPassword(boolean emptyPassword) {
-        this.emptyPassword = emptyPassword;
+    public void setEmptyAuthentication(boolean emptyAuthentication) {
+        this.emptyAuthentication = emptyAuthentication;
     }
 
     public boolean isProvided() {
-        return !supported || osAuthentication || (StringUtil.isNotEmpty(user) && (StringUtil.isNotEmpty(password) || emptyPassword));
+        return !supported || osAuthentication || (StringUtil.isNotEmpty(user) && (StringUtil.isNotEmpty(password) || emptyAuthentication));
     }
 
     public boolean isOlderThan(long millis) {
@@ -104,13 +109,17 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
 
         // old storage fallback - TODO cleanup
         if (StringUtil.isEmpty(password)) {
-            password = PasswordUtil.decodePassword(getString(element, "password", null));
-            if (StringUtil.isNotEmpty(password) && DatabaseCredentialManager.USE) {
-                credentialManager.setPassword(getConnectionId(), user, password);
+            password = PasswordUtil.decodePassword(getString(element, TEMP_PWD_ATTRIBUTE, password));
+            if (StringUtil.isEmpty(password)) {
+                password = PasswordUtil.decodePassword(getString(element, OLD_PWD_ATTRIBUTE, password));
+            }
+
+            if (StringUtil.isNotEmpty(this.password) && DatabaseCredentialManager.USE) {
+                credentialManager.setPassword(getConnectionId(), user, this.password);
             }
         }
 
-        emptyPassword = getBoolean(element, "empty-password", emptyPassword);
+        emptyAuthentication = getBoolean(element, "empty-authentication", emptyAuthentication);
         osAuthentication = getBoolean(element, "os-authentication", osAuthentication);
         supported = getParent().getDatabaseType().isAuthenticationSupported();
     }
@@ -118,13 +127,13 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
     @Override
     public void writeConfiguration(Element element) {
         setBoolean(element, "os-authentication", osAuthentication);
-        setBoolean(element, "empty-password", emptyPassword);
+        setBoolean(element, "empty-authentication", emptyAuthentication);
         setString(element, "user", nvl(user));
 
         String encodedPassword = PasswordUtil.encodePassword(password);
-        if (DatabaseCredentialManager.USE)
-            setString(element, "deprecated-pwd", encodedPassword); else
-            setString(element, "password", encodedPassword);
+        if (!DatabaseCredentialManager.USE){
+            setString(element, TEMP_PWD_ATTRIBUTE, encodedPassword);
+        }
     }
 
     @Override
@@ -133,7 +142,7 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
         authenticationInfo.user = user;
         authenticationInfo.password = password;
         authenticationInfo.osAuthentication = osAuthentication;
-        authenticationInfo.emptyPassword = emptyPassword;
+        authenticationInfo.emptyAuthentication = emptyAuthentication;
         authenticationInfo.supported = supported;
         return authenticationInfo;
     }

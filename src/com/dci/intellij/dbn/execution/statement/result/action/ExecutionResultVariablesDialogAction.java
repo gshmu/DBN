@@ -41,7 +41,7 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         boolean visible = false;
         StatementExecutionCursorResult executionResult = getExecutionResult(e);
         if (executionResult != null) {
