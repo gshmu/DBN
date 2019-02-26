@@ -25,17 +25,19 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
 
     public MethodExecutionHistoryDialog(
             @NotNull Project project,
-            @Nullable MethodExecutionInput selectedExecutionInput,
+            @Nullable MethodExecutionInput executionInput,
             boolean editable,
             boolean debug) {
 
         super(project, "Method execution history", true);
+        this.selectedExecutionInput = executionInput;
         this.editable = editable;
         this.debug = debug;
-        this.selectedExecutionInput = selectedExecutionInput;
         setModal(true);
         setResizable(true);
         init();
+
+        updateMainButtons(executionInput);
     }
 
     @NotNull
