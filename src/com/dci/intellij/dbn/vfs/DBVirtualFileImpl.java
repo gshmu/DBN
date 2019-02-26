@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.Presentable;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
@@ -54,13 +53,10 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
         this.documentHashCode = documentHashCode;
     }
 
+    @NotNull
     public ConnectionId getConnectionId() {
         return getConnectionHandler().getConnectionId();
     }
-
-    @NotNull
-    @Override
-    public abstract ConnectionHandler getConnectionHandler();
 
     @Override
     public boolean isInLocalFileSystem() {

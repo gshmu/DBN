@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.vfs.file;
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.ddl.DDLFileManager;
 import com.dci.intellij.dbn.ddl.DDLFileType;
@@ -86,6 +87,13 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
     @NotNull
     public DBSchemaObject getObject() {
         return getMainDatabaseFile().getObject();
+    }
+
+
+    @NotNull
+    @Override
+    public ConnectionId getConnectionId() {
+        return getMainDatabaseFile().getConnectionId();
     }
 
     @NotNull

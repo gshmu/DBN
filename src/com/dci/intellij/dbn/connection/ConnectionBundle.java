@@ -158,6 +158,12 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
 
     @NotNull
     @Override
+    public ConnectionId getConnectionId() {
+        throw new UnsupportedOperationException();
+    }
+
+    @NotNull
+    @Override
     public ConnectionHandler getConnectionHandler() {
         throw new UnsupportedOperationException();
     }
@@ -216,6 +222,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     /*********************************************************
     *                  ItemPresentation                      *
     *********************************************************/
+    @NotNull
     @Override
     public String getName() {
         return getPresentableText();

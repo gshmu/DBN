@@ -29,6 +29,7 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionPool;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -235,6 +236,12 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Override
     public boolean isValid() {
         return connectionConfigHash == getConnectionHandler().getSettings().getDatabaseSettings().hashCode();
+    }
+
+    @NotNull
+    @Override
+    public ConnectionId getConnectionId() {
+        return connectionHandlerRef.getConnectionId();
     }
 
     @Override
@@ -534,6 +541,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Override
     public boolean canNavigateToSource() {return false;}
 
+    @NotNull
     @Override
     public String getName() {
         return getPresentableText();

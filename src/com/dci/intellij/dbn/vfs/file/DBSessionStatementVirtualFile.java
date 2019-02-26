@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
@@ -29,14 +30,14 @@ import java.nio.charset.Charset;
 
 public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
+    private WeakRef<SessionBrowser> sessionBrowser;
     private CharSequence content = "";
-    private SessionBrowser sessionBrowser;
     private SchemaId schemaId;
 
 
     public DBSessionStatementVirtualFile(SessionBrowser sessionBrowser, String content) {
         super(sessionBrowser.getProject());
-        this.sessionBrowser = sessionBrowser;
+        this.sessionBrowser = WeakRef.from(sessionBrowser);
         this.content = content;
         ConnectionHandler connectionHandler = Failsafe.get(sessionBrowser.getConnectionHandler());
         name = connectionHandler.getName();
@@ -51,8 +52,9 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
         return languageDialect == null ? null : fileViewProvider.initializePsiFile(languageDialect);
     }
 
+    @NotNull
     public SessionBrowser getSessionBrowser() {
-        return sessionBrowser;
+        return sessionBrowser.getnn();
     }
 
     @Override
@@ -60,10 +62,12 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
         return Icons.FILE_SQL;
     }
 
+
+
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        ConnectionHandler connectionHandler = sessionBrowser == null ? null : sessionBrowser.getConnectionHandler();
+        ConnectionHandler connectionHandler = getSessionBrowser().getConnectionHandler();
         return Failsafe.get(connectionHandler);
     }
 
@@ -170,6 +174,5 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
     @Override
     public void dispose() {
         super.dispose();
-        sessionBrowser = null;
     }
 }

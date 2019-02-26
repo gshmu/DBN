@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -192,6 +193,12 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
 
     @NotNull
     @Override
+    public ConnectionId getConnectionId() {
+        return connectionHandler.getConnectionId();
+    }
+
+    @NotNull
+    @Override
     public ConnectionHandler getConnectionHandler() {
         return connectionHandler;
     }
@@ -306,7 +313,7 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
         return null;
     }
 
-    @Nullable
+    @NotNull
     @Override
     public String getName() {
         return null;

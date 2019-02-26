@@ -38,6 +38,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -52,6 +53,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.*;
 
@@ -252,71 +254,71 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         return DatabaseFileManager.getInstance(project).isFileOpened(object);
     }
 
-    private static String createPath(ConnectionHandler connectionHandler) {
-        return connectionHandler.getConnectionId().id();
-    }
-
     /********************************************************
      *                    GENERIC                           *
      ********************************************************/
     @NotNull
     static String createPath(DBVirtualFile virtualFile) {
-        ConnectionHandler connectionHandler = virtualFile.getConnectionHandler();
-        if (virtualFile instanceof DBConnectionVirtualFile) {
-            DBConnectionVirtualFile file = (DBConnectionVirtualFile) virtualFile;
-            return createPath(file.getConnectionHandler());
+        try {
+            ConnectionId connectionId = virtualFile.getConnectionId();
+            if (virtualFile instanceof DBConnectionVirtualFile) {
+                DBConnectionVirtualFile file = (DBConnectionVirtualFile) virtualFile;
+                return file.getConnectionId() + "";
+            }
+
+            if (virtualFile instanceof DBObjectVirtualFile) {
+                DBObjectVirtualFile file = (DBObjectVirtualFile) virtualFile;
+                DBObjectRef objectRef = file.getObjectRef();
+                return objectRef.getConnectionId() + PS + OBJECTS + objectRef.serialize();
+
+            }
+
+            if (virtualFile instanceof DBContentVirtualFile) {
+                DBContentVirtualFile file = (DBContentVirtualFile) virtualFile;
+                DBObjectRef objectRef = file.getObject().getRef();
+                DBContentType contentType = file.getContentType();
+                return objectRef.getConnectionId() + PS + OBJECT_CONTENTS + contentType.name() + PS + objectRef.serialize();
+            }
+
+            if (virtualFile instanceof DBObjectListVirtualFile) {
+                DBObjectListVirtualFile file = (DBObjectListVirtualFile) virtualFile;
+                DBObjectList objectList = file.getObjectList();
+                GenericDatabaseElement parentElement = objectList.getParentElement();
+                String listName = objectList.getObjectType().getListName();
+                String connectionPath = connectionId.id();
+                if (parentElement instanceof DBObject) {
+                    DBObject object = (DBObject) parentElement;
+                    DBObjectRef objectRef = object.getRef();
+                    return connectionPath + PS + objectRef.serialize() + PS + listName;
+                } else {
+                    return connectionPath + PS + listName; }
+            }
+
+            if (virtualFile instanceof DBDatasetFilterVirtualFile) {
+                DBDatasetFilterVirtualFile file = (DBDatasetFilterVirtualFile) virtualFile;
+                return connectionId + PS + DATASET_FILTERS + file.getDataset().getRef().serialize();
+            }
+
+            if (virtualFile instanceof DBConsoleVirtualFile) {
+                DBConsoleVirtualFile file = (DBConsoleVirtualFile) virtualFile;
+                return connectionId + PS + CONSOLES + file.getName();
+            }
+
+            if (virtualFile instanceof DBSessionBrowserVirtualFile) {
+                DBSessionBrowserVirtualFile file = (DBSessionBrowserVirtualFile) virtualFile;
+                return connectionId + PS + SESSION_BROWSERS + file.getName();
+
+            }
+
+            if (virtualFile instanceof DBSessionStatementVirtualFile) {
+                DBSessionStatementVirtualFile file = (DBSessionStatementVirtualFile) virtualFile;
+                return connectionId + PS + SESSION_STATEMENTS + file.getName();
+            }
+
+            throw new IllegalArgumentException("File of type " + virtualFile.getClass() + " is not supported");
+        } catch (ProcessCanceledException e) {
+            return "DISPOSED\""+ UUID.randomUUID().toString();
         }
-
-        if (virtualFile instanceof DBObjectVirtualFile) {
-            DBObjectVirtualFile file = (DBObjectVirtualFile) virtualFile;
-            DBObjectRef objectRef = file.getObjectRef();
-            return objectRef.getConnectionId() + PS + OBJECTS + objectRef.serialize();
-
-        }
-
-        if (virtualFile instanceof DBContentVirtualFile) {
-            DBContentVirtualFile file = (DBContentVirtualFile) virtualFile;
-            DBObjectRef objectRef = file.getObject().getRef();
-            DBContentType contentType = file.getContentType();
-            return objectRef.getConnectionId() + PS + OBJECT_CONTENTS + contentType.name() + PS + objectRef.serialize();
-        }
-
-        if (virtualFile instanceof DBObjectListVirtualFile) {
-            DBObjectListVirtualFile file = (DBObjectListVirtualFile) virtualFile;
-            DBObjectList objectList = file.getObjectList();
-            GenericDatabaseElement parentElement = objectList.getParentElement();
-            String listName = objectList.getObjectType().getListName();
-            String connectionPath = createPath(connectionHandler);
-            if (parentElement instanceof DBObject) {
-                DBObject object = (DBObject) parentElement;
-                DBObjectRef objectRef = object.getRef();
-                return connectionPath + PS + objectRef.serialize() + PS + listName;
-            } else {
-                return connectionPath + PS + listName; }
-        }
-
-        if (virtualFile instanceof DBDatasetFilterVirtualFile) {
-            DBDatasetFilterVirtualFile file = (DBDatasetFilterVirtualFile) virtualFile;
-            return createPath(connectionHandler) + PS + DATASET_FILTERS + file.getDataset().getRef().serialize();
-        }
-
-        if (virtualFile instanceof DBConsoleVirtualFile) {
-            DBConsoleVirtualFile file = (DBConsoleVirtualFile) virtualFile;
-            return createPath(connectionHandler) + PS + CONSOLES + file.getName();
-        }
-
-        if (virtualFile instanceof DBSessionBrowserVirtualFile) {
-            DBSessionBrowserVirtualFile file = (DBSessionBrowserVirtualFile) virtualFile;
-            return createPath(connectionHandler) + PS + SESSION_BROWSERS + file.getName();
-
-        }
-
-        if (virtualFile instanceof DBSessionStatementVirtualFile) {
-            DBSessionStatementVirtualFile file = (DBSessionStatementVirtualFile) virtualFile;
-            return createPath(connectionHandler) + PS + SESSION_STATEMENTS + file.getName();
-        }
-
-        throw new IllegalArgumentException("File of type " + virtualFile.getClass() + " is not supported");
     }
 
     @NotNull
