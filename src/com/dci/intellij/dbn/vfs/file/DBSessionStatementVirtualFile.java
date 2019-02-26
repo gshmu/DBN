@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.vfs.file;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
@@ -62,7 +63,11 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
         return Icons.FILE_SQL;
     }
 
-
+    @NotNull
+    @Override
+    public ConnectionId getConnectionId() {
+        return getSessionBrowser().getConnectionId();
+    }
 
     @Override
     @NotNull
