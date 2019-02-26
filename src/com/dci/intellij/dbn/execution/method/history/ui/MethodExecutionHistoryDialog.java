@@ -157,7 +157,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
         }
     }
 
-    public void updateMainButtons(MethodExecutionInput selection){
+    void updateMainButtons(MethodExecutionInput selection){
         if (selection == null) {
             if (executeAction != null) executeAction.setEnabled(false);
             if (debugAction != null) debugAction.setEnabled(false);
@@ -169,7 +169,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
         }
     }
 
-    public void setSaveButtonEnabled(boolean enabled){
+    void setSaveButtonEnabled(boolean enabled){
         if (!isDisposed()) {
             if (saveAction != null) saveAction.setEnabled(enabled);
             closeAction.putValue(Action.NAME, enabled ? "Cancel" : "Close");

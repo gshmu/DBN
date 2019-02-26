@@ -3,6 +3,10 @@ package com.dci.intellij.dbn.code.common.style.options.ui;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCase;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.actionSystem.Shortcut;
+import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,6 +47,11 @@ public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyle
         resetFormChanges();
         enableDisableOptions();
 
+        Shortcut[] codeFormat = KeyUtil.getShortcuts(IdeActions.ACTION_EDITOR_REFORMAT);
+
+        enableCheckBox.setText("Allow case auto-format (" + KeymapUtil.getShortcutsText(codeFormat) + ')');
+
+
         registerComponent(mainPanel);
         enableCheckBox.addActionListener(e -> enableDisableOptions());
 
@@ -54,11 +63,13 @@ public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyle
 
     private void enableDisableOptions() {
         boolean enabled = enableCheckBox.isSelected();
+/*
         keywordCaseComboBox.setEnabled(enabled);
         functionCaseComboBox.setEnabled(enabled);
         parameterCaseComboBox.setEnabled(enabled);
         datatypeCaseComboBox.setEnabled(enabled);
         objectCaseComboBox.setEnabled(enabled);
+*/
     }
 
     @NotNull
