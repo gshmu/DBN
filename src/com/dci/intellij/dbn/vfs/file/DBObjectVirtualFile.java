@@ -45,6 +45,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
         return DBObjectRef.getnn(objectRef);
     }
 
+    @NotNull
     @Override
     public final ConnectionId getConnectionId() {
         return objectRef.getConnectionId();

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.vfs.file;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -57,6 +58,13 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBP
     @Override
     public Icon getIcon() {
         return Icons.DBO_TABLE;
+    }
+
+
+    @NotNull
+    @Override
+    public ConnectionId getConnectionId() {
+        return datasetRef.getConnectionId();
     }
 
     @Override

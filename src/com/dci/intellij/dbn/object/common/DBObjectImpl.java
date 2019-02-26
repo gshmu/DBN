@@ -25,6 +25,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -310,6 +311,13 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     public DBObjectBundle getObjectBundle() {
         ConnectionHandler connectionHandler = getConnectionHandler();
         return connectionHandler.getObjectBundle();
+    }
+
+
+    @NotNull
+    @Override
+    public ConnectionId getConnectionId() {
+        return connectionHandlerRef.getConnectionId();
     }
 
     @Override

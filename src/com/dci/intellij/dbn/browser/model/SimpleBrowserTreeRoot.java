@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
@@ -132,6 +133,13 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
     /**************************************************
      *              GenericDatabaseElement            *
      **************************************************/
+
+    @NotNull
+    @Override
+    public ConnectionId getConnectionId() {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
@@ -154,6 +162,7 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
     /*********************************************************
      *                  NavigationItem                       *
      *********************************************************/
+    @NotNull
     @Override
     public String getName() {
         return getPresentableText();
