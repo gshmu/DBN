@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
@@ -381,6 +382,12 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
                 detailsForm.update(null);
             }
         }
+    }
+
+
+    @NotNull
+    public ConnectionId getConnectionId() {
+        return sessionBrowserFile.getConnectionId();
     }
 
     @Override
