@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.intellij.ui.RoundedLineBorder;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,7 +45,7 @@ public class DBNHintForm extends DBNFormImpl{
             mainPanel.setBorder(new RoundedLineBorder(UIUtil.getBoundsColor(), 4));
         } else {
             GridLayoutManager gridLayoutManager = (GridLayoutManager) mainPanel.getLayout();
-            gridLayoutManager.setMargin(new Insets(0,0,0,0));
+            gridLayoutManager.setMargin(JBUI.emptyInsets());
         }
 
     }

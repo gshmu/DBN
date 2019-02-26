@@ -10,7 +10,7 @@ import java.util.List;
 
 public abstract class CodeStyleCaseSettings extends BasicConfiguration<CodeStyleCustomSettings, CodeStyleCaseSettingsForm> {
     private List<CodeStyleCaseOption> options = new ArrayList<CodeStyleCaseOption>();
-    private boolean enabled = false;
+    private boolean enabled = true;
 
     public CodeStyleCaseSettings(CodeStyleCustomSettings parent) {
         super(parent);
