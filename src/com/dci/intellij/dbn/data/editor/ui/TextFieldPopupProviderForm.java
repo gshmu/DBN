@@ -190,8 +190,10 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
     public void hidePopup() {
         if (isShowingPopup()) {
             Dispatch.invoke(() -> {
-                popup.cancel();
-                popup = null;
+                if (isShowingPopup()) {
+                    popup.cancel();
+                    popup = null;
+                }
             });
         }
     }
