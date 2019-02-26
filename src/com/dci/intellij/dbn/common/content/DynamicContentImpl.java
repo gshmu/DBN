@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
@@ -66,6 +67,10 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     @NotNull
     public GenericDatabaseElement getParentElement() {
         return Failsafe.get(parent);
+    }
+
+    public ConnectionId getConnectionId() {
+        return getParentElement().getConnectionId();
     }
 
     @Override

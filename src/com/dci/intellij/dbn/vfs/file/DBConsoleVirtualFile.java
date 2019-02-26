@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -108,6 +109,12 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
             case DEBUG: return Icons.FILE_SQL_DEBUG_CONSOLE;
         }
         return null;
+    }
+
+    @NotNull
+    @Override
+    public ConnectionId getConnectionId() {
+        return connectionHandlerRef.getConnectionId();
     }
 
     @Override

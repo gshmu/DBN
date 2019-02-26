@@ -8,9 +8,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface GenericDatabaseElement extends ConnectionProvider, Disposable {
+    @NotNull
     String getName();
-    @NotNull Project getProject();
+
+    @NotNull
+    Project getProject();
+
     @Nullable GenericDatabaseElement getParentElement();
+
     GenericDatabaseElement getUndisposedElement();
 
     @Nullable
@@ -21,6 +26,9 @@ public interface GenericDatabaseElement extends ConnectionProvider, Disposable {
     default DynamicContentType getDynamicContentType() {
         return null;
     }
+
+    @NotNull
+    ConnectionId getConnectionId();
 
     @NotNull
     @Override

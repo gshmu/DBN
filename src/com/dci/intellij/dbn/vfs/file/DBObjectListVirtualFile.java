@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -36,6 +37,12 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
 
     public T getObjectList() {
         return objectList;
+    }
+
+    @NotNull
+    @Override
+    public ConnectionId getConnectionId() {
+        return objectList.getConnectionId();
     }
 
     @Override

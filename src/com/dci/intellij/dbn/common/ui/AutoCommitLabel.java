@@ -84,7 +84,7 @@ public class AutoCommitLabel extends JLabel implements Disposable {
     @Nullable
     private ConnectionHandler getConnectionHandler() {
         try {
-            return this.connectionHandlerRef == null ? null : this.connectionHandlerRef.getnn();
+            return ConnectionHandlerRef.get(connectionHandlerRef);
         } catch (AlreadyDisposedException e) {
             this.connectionHandlerRef = null;
             return null;
