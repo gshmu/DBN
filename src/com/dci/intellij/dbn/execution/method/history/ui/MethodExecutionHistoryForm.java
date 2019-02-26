@@ -64,10 +64,6 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
         splitter.setProportion((float) 0.32);
 
         MethodExecutionHistory executionHistory = getExecutionHistory();
-        if (selectedExecutionInput == null) {
-            selectedExecutionInput = executionHistory.getLastSelection();
-        }
-
         if (selectedExecutionInput != null &&
                 !selectedExecutionInput.isObsolete() &&
                 !selectedExecutionInput.isInactive() &&
@@ -75,7 +71,6 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
             showMethodExecutionPanel(selectedExecutionInput);
             setSelectedInput(selectedExecutionInput);
         }
-        parentComponent.updateMainButtons(selectedExecutionInput);
         List<MethodExecutionInput> executionInputs = executionHistory.getExecutionInputs();
         getTree().init(executionInputs, executionHistory.isGroupEntries());
         executionInputsTree.getSelectionModel().addTreeSelectionListener(treeSelectionListener);

@@ -143,6 +143,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             Project project = getProject();
             MethodExecutionInput selectedInput = CommonUtil.nvln(selection, executionHistory.getLastSelection());
             MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(project, selectedInput, editable, debug);
+
             executionHistoryDialog.show();
             MethodExecutionInput newlySelected = executionHistoryDialog.getSelectedExecutionInput();
             if (newlySelected != null && callback != null) {
