@@ -9,8 +9,8 @@ public interface PersistentStateElement<T extends PersistentStateElement> {
 
     static <T extends PersistentStateElement> T cloneElement(T source, T target) {
         Element element = new Element("Element");
-        source.readState(element);
-        target.writeState(element);
+        source.writeState(element);
+        target.readState(element);
         return target;
     }
 }
