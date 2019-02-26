@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.routine.WriteAction;
 import com.dci.intellij.dbn.common.thread.Synchronized;
+import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -40,7 +40,11 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.LATEST;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MERGED;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.OUTDATED;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.REFRESHING;
 
 public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, ConnectionProvider, DocumentListener {
 
@@ -220,7 +224,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     private void updateFileContent(final SourceCodeContent newContent, final CharSequence newText) {
-        WriteAction.invoke(() -> {
+        Write.run(() -> {
             if (newContent != null) {
                 localContent = newContent;
             } else {

@@ -5,9 +5,9 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
-import com.dci.intellij.dbn.common.routine.ReadAction;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
+import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -224,7 +224,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         @Override
         public void run() {
             if (openFiles.size() > 0) {
-                ReadAction.invoke(() ->
+                Read.run(() ->
                         Failsafe.lenient(null, () -> {
                             Project project = getProject();
                             if (!project.isDisposed()) {

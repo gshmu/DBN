@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.routine.BasicRunnable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -9,11 +8,11 @@ import com.intellij.openapi.application.ModalityState;
 
 public interface Dispatch {
 
-    static void invoke(BasicRunnable runnable) {
+    static void invoke(Runnable runnable) {
         invoke(null, runnable);
     }
 
-    static void conditional(BasicRunnable runnable) {
+    static void conditional(Runnable runnable) {
         Application application = ApplicationManager.getApplication();
         if (application.isDispatchThread()) {
             Failsafe.lenient(runnable);
@@ -22,13 +21,13 @@ public interface Dispatch {
         }
     }
 
-    static void invoke(ModalityState modalityState, BasicRunnable runnable) {
+    static void invoke(ModalityState modalityState, Runnable runnable) {
         Application application = ApplicationManager.getApplication();
         modalityState = CommonUtil.nvl(modalityState, application.getDefaultModalityState());
         application.invokeLater(() -> Failsafe.lenient(runnable), modalityState/*, ModalityState.NON_MODAL*/);
     }
 
-    static void invokeNonModal(BasicRunnable runnable) {
+    static void invokeNonModal(Runnable runnable) {
         invoke(ModalityState.NON_MODAL, runnable);
     }
 }

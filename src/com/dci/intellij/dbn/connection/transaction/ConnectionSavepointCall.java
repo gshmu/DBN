@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.transaction;
 
-import com.dci.intellij.dbn.common.routine.ManagedCallable;
-import com.dci.intellij.dbn.common.routine.ManagedRunnable;
+import com.dci.intellij.dbn.common.routine.ThrowableCallable;
+import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
@@ -41,7 +41,7 @@ public abstract class ConnectionSavepointCall<T>{
 
     public abstract T execute() throws SQLException;
 
-    public static <R> R invoke(DBNResultSet resultSet, ManagedCallable<R, SQLException> callable) throws SQLException {
+    public static <R> R invoke(DBNResultSet resultSet, ThrowableCallable<R, SQLException> callable) throws SQLException {
         return new ConnectionSavepointCall<R>(resultSet) {
             @Override
             public R execute() throws SQLException {
@@ -50,7 +50,7 @@ public abstract class ConnectionSavepointCall<T>{
         }.start();
     }
 
-    public static <R> R invoke(DBNConnection connection, ManagedCallable<R, SQLException> callable) throws SQLException {
+    public static <R> R invoke(DBNConnection connection, ThrowableCallable<R, SQLException> callable) throws SQLException {
         return new ConnectionSavepointCall<R>(connection) {
             @Override
             public R execute() throws SQLException {
@@ -59,7 +59,7 @@ public abstract class ConnectionSavepointCall<T>{
         }.start();
     }
 
-    public static <R> void invoke(DBNResultSet resultSet, ManagedRunnable<SQLException> runnable) throws SQLException {
+    public static <R> void invoke(DBNResultSet resultSet, ThrowableRunnable<SQLException> runnable) throws SQLException {
         new ConnectionSavepointCall<R>(resultSet) {
             @Override
             public R execute() throws SQLException {
@@ -69,7 +69,7 @@ public abstract class ConnectionSavepointCall<T>{
         }.start();
     }
 
-    public static <R> void invoke(DBNConnection connection, ManagedRunnable<SQLException> runnable) throws SQLException {
+    public static <R> void invoke(DBNConnection connection, ThrowableRunnable<SQLException> runnable) throws SQLException {
         new ConnectionSavepointCall<R>(connection) {
             @Override
             public R execute() throws SQLException {

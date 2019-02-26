@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.routine.BasicCallable;
-import com.dci.intellij.dbn.common.routine.BasicRunnable;
 
 public interface Unsafe {
-    static void invoke(BasicRunnable runnable) {
+    static void invoke(Runnable runnable) {
         try {
             runnable.run();
         } catch (Throwable e) {

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
-import com.dci.intellij.dbn.common.routine.ReadAction;
-import com.dci.intellij.dbn.common.routine.WriteAction;
+import com.dci.intellij.dbn.common.thread.Read;
+import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarkers;
 import com.dci.intellij.dbn.editor.code.content.GuardedBlockType;
@@ -93,13 +93,12 @@ public class DocumentUtil {
             Long lastRefresh = psiFile.getUserData(LAST_ANNOTATION_REFRESH_KEY);
             if (lastRefresh == null || TimeUtil.isOlderThan(lastRefresh, 1, TimeUnit.SECONDS)) {
                 psiFile.putUserData(LAST_ANNOTATION_REFRESH_KEY, System.currentTimeMillis());
-                ReadAction.invoke(() -> {
+                Read.run(() -> {
                     if (psiFile.isValid()) {
                         Project project = psiFile.getProject();
                         DaemonCodeAnalyzer daemonCodeAnalyzer = DaemonCodeAnalyzer.getInstance(project);
                         daemonCodeAnalyzer.restart(psiFile);
                     }
-                    return null;
                 });
             }
         }
@@ -135,7 +134,7 @@ public class DocumentUtil {
 
     public static void createGuardedBlock(Document document, GuardedBlockType type, int startOffset, int endOffset, String reason) {
         if (startOffset != endOffset) {
-            WriteAction.invoke(() -> {
+            Write.run(() -> {
                 int textLength = document.getTextLength();
                 if (endOffset <= textLength) {
                     RangeMarker rangeMarker = document.createGuardedBlock(startOffset, endOffset);
@@ -151,7 +150,7 @@ public class DocumentUtil {
     public static void removeGuardedBlocks(Document document, GuardedBlockType type) {
         if (document instanceof DocumentEx) {
             DocumentEx documentEx = (DocumentEx) document;
-            WriteAction.invoke(() -> {
+            Write.run(() -> {
                 List<RangeMarker> guardedBlocks = new ArrayList<>(documentEx.getGuardedBlocks());
                 for (RangeMarker block : guardedBlocks) {
                     if (block.getUserData(GuardedBlockType.KEY) == type) {
@@ -175,7 +174,7 @@ public class DocumentUtil {
 
     @Nullable
     public static Document getDocument(@NotNull VirtualFile virtualFile) {
-        return ReadAction.invoke(() -> {
+        return Read.call(() -> {
             FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
             return fileDocumentManager.getDocument(virtualFile);
         });
@@ -201,7 +200,7 @@ public class DocumentUtil {
     }
 
     public static void setText(@NotNull Document document, CharSequence text) {
-        WriteAction.invoke(() -> {
+        Write.run(() -> {
             FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
             VirtualFile file = fileDocumentManager.getFile(document);
             if (file != null && file.isValid()) {
@@ -218,7 +217,7 @@ public class DocumentUtil {
     }
 
     public static void saveDocument(@NotNull Document document) {
-        WriteAction.invoke(() -> {
+        Write.run(() -> {
             FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
             fileDocumentManager.saveDocument(document);
         });

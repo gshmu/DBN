@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.execution.statement.result.ui;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.routine.ReadAction;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -56,7 +56,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
 
         actionsPanel.add(actionToolbar.getComponent());
 
-        recordViewInfo = ReadAction.invoke(() ->
+        recordViewInfo = Read.call(() ->
                 new RecordViewInfo(
                     executionResult.getName(),
                     executionResult.getIcon()));

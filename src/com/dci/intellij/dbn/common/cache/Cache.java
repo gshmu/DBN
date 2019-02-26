@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.cache;
 
-import com.dci.intellij.dbn.common.routine.ManagedCallable;
+import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +31,7 @@ public class Cache {
         return cacheValue != null && !cacheValue.isOlderThan(expiryTimeMillis);
     }
 
-    public <T, E extends Throwable> T get(String key, ManagedCallable<T, E> loader) throws E {
+    public <T, E extends Throwable> T get(String key, ThrowableCallable<T, E> loader) throws E {
         T value = get(key);
         if (value == null) {
             synchronized (this) {
