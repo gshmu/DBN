@@ -21,7 +21,7 @@ public class ExecutionResultSettingsAction extends AbstractExecutionResultAction
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         super.update(e);
         e.getPresentation().setText("Settings");
     }

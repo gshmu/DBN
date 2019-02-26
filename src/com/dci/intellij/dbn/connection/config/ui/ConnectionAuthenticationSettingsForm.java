@@ -63,7 +63,7 @@ public class ConnectionAuthenticationSettingsForm extends DBNFormImpl<Connection
         authenticationInfo.setUser(userTextField.getText());
         authenticationInfo.setPassword(new String(passwordField.getPassword()));
         authenticationInfo.setOsAuthentication(osAuthenticationCheckBox.isSelected());
-        authenticationInfo.setEmptyPassword(emptyPasswordCheckBox.isSelected());
+        authenticationInfo.setEmptyAuthentication(emptyPasswordCheckBox.isSelected());
     }
 
     public void resetFormChanges(AuthenticationInfo authenticationInfo) {
@@ -75,7 +75,7 @@ public class ConnectionAuthenticationSettingsForm extends DBNFormImpl<Connection
         userTextField.setText(authenticationInfo.getUser());
         passwordField.setText(authenticationInfo.getPassword());
         osAuthenticationCheckBox.setSelected(authenticationInfo.isOsAuthentication());
-        emptyPasswordCheckBox.setSelected(authenticationInfo.isEmptyPassword());
+        emptyPasswordCheckBox.setSelected(authenticationInfo.isEmptyAuthentication());
         updateAuthenticationFields();
     }
 

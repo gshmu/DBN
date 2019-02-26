@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorR
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -33,7 +34,7 @@ public abstract class AbstractExecutionResultAction extends DumbAwareAction {
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         StatementExecutionCursorResult executionResult = getExecutionResult(e);
         e.getPresentation().setEnabled(executionResult != null);
     }

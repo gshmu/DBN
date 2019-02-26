@@ -13,6 +13,15 @@ public interface Dispatch {
         invoke(null, runnable);
     }
 
+    static void conditional(BasicRunnable runnable) {
+        Application application = ApplicationManager.getApplication();
+        if (application.isDispatchThread()) {
+            Failsafe.lenient(runnable);
+        } else {
+            invoke(null, runnable);
+        }
+    }
+
     static void invoke(ModalityState modalityState, BasicRunnable runnable) {
         Application application = ApplicationManager.getApplication();
         modalityState = CommonUtil.nvl(modalityState, application.getDefaultModalityState());

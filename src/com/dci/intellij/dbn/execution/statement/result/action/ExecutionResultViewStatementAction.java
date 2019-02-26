@@ -23,7 +23,7 @@ public class ExecutionResultViewStatementAction extends AbstractExecutionResultA
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         super.update(e);
         e.getPresentation().setText("View SQL Statement");
     }
