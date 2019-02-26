@@ -13,8 +13,8 @@ import com.dci.intellij.dbn.connection.ssh.SshTunnelConnector;
 import com.dci.intellij.dbn.connection.ssh.SshTunnelManager;
 import com.dci.intellij.dbn.connection.ssl.SslConnectionManager;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.SQLException;
