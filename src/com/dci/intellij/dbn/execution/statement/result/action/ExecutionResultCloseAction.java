@@ -23,7 +23,7 @@ public class ExecutionResultCloseAction extends AbstractExecutionResultAction {
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         super.update(e);
         getTemplatePresentation().setText("Close");
     }

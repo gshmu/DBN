@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.data.export.ui.ExportDataDialog;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class ExecutionResultExportAction extends AbstractExecutionResultAction {
     public ExecutionResultExportAction() {
@@ -12,7 +13,7 @@ public class ExecutionResultExportAction extends AbstractExecutionResultAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         StatementExecutionCursorResult executionResult = getExecutionResult(e);
         if (executionResult != null) {
             ResultSetTable table = executionResult.getResultTable();
@@ -24,7 +25,7 @@ public class ExecutionResultExportAction extends AbstractExecutionResultAction {
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         super.update(e);
         getTemplatePresentation().setText("Export Data");
     }

@@ -46,7 +46,7 @@ public class PostgresExecutionInterface extends DatabaseExecutionInterfaceImpl {
         }
 
         command.add("--username=" + authenticationInfo.getUser());
-        if (authenticationInfo.isEmptyPassword()) {
+        if (authenticationInfo.isEmptyAuthentication()) {
             command.add("--no-password");
         } else {
             executionInput.getEnvironmentVars().put("PGPASSWORD", authenticationInfo.getPassword());

@@ -38,7 +38,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
             cachedUser = user;
         }
 
-        boolean isEmptyPassword = authenticationInfo.isEmptyPassword();
+        boolean isEmptyPassword = authenticationInfo.isEmptyAuthentication();
         emptyPasswordCheckBox.setSelected(isEmptyPassword);
         passwordField.setEnabled(!isEmptyPassword);
         passwordField.setBackground(isEmptyPassword ? UIUtil.getPanelBackground() : UIUtil.getTextFieldBackground());
@@ -48,7 +48,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
             DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler, this);
             headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-            int passwordExpiryTime = connectionHandler.getSettings().getDetailSettings().getPasswordExpiryTime();
+            int passwordExpiryTime = connectionHandler.getSettings().getDetailSettings().getCredentialExpiryTime();
             String expiryTimeText = passwordExpiryTime == 0 ? "0 - no expiry" :
                     passwordExpiryTime == 1 ? "1 minute" : passwordExpiryTime + " minutes";
 
@@ -89,7 +89,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
         });
 
         emptyPasswordCheckBox.addActionListener(e -> {
-            authenticationInfo.setEmptyPassword(emptyPasswordCheckBox.isSelected());
+            authenticationInfo.setEmptyAuthentication(emptyPasswordCheckBox.isSelected());
             updateAuthenticationFields();
             parentComponent.updateConnectButton();
         });

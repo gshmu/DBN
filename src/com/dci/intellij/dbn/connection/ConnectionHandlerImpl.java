@@ -140,7 +140,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     public AuthenticationInfo getTemporaryAuthenticationInfo() {
         AuthenticationInfo authenticationInfo = temporaryAuthenticationInfo.get();
         if (authenticationInfo.isProvided()) {
-            int passwordExpiryTime = getSettings().getDetailSettings().getPasswordExpiryTime() * 60000;
+            int passwordExpiryTime = getSettings().getDetailSettings().getCredentialExpiryTime() * 60000;
             long lastAccessTimestamp = getConnectionPool().getLastAccessTimestamp();
             if (lastAccessTimestamp > 0 && authenticationInfo.isOlderThan(passwordExpiryTime) && TimeUtil.isOlderThan(lastAccessTimestamp, passwordExpiryTime)) {
                 temporaryAuthenticationInfo.reset();

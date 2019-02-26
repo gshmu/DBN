@@ -25,9 +25,10 @@ import java.awt.*;
 
 import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 
-public class AutoCommitLabel extends JLabel implements Disposable {
+public class AutoCommitLabel extends JPanel implements Disposable {
     private interface Colors {
         Color DISCONNECTED = new JBColor(new Color(0x454545), new Color(0x808080));
+        Color CONNECTED = new JBColor(new Color(0x454545), new Color(0x808080));
         Color AUTO_COMMIT_ON = new JBColor(new Color(0xFF0000), new Color(0xBC3F3C));
         Color AUTO_COMMIT_OFF = new JBColor(new Color(0x009600), new Color(0x629755));
     }
@@ -35,10 +36,21 @@ public class AutoCommitLabel extends JLabel implements Disposable {
     private SessionId sessionId;
     private boolean subscribed = false;
     private WeakRef<VirtualFile> virtualFileRef;
+    private JLabel connectionLabel;
+    private JLabel autoCommitLabel = new JLabel();
 
     public AutoCommitLabel() {
-        super("");
-        setFont(GUIUtil.BOLD_FONT);
+        setLayout(new BorderLayout());
+        connectionLabel = new JLabel();
+        //connectionLabel.setFont(GUIUtil.BOLD_FONT);
+        add(connectionLabel, BorderLayout.EAST);
+
+        autoCommitLabel = new JLabel();
+        autoCommitLabel.setFont(GUIUtil.BOLD_FONT);
+        add(autoCommitLabel, BorderLayout.WEST);
+
+        add(new JLabel(" "), BorderLayout.CENTER);
+
     }
 
     public void init(Project project, VirtualFile virtualFile, ConnectionHandler connectionHandler, DatabaseSession session) {
@@ -59,22 +71,33 @@ public class AutoCommitLabel extends JLabel implements Disposable {
     }
 
     private void update() {
-        Dispatch.invoke(() -> {
+        Dispatch.conditional(() -> {
             ConnectionHandler connectionHandler = getConnectionHandler();
             if (connectionHandler != null) {
                 setVisible(true);
                 boolean disconnected = !connectionHandler.isConnected(sessionId);
                 boolean autoCommit = connectionHandler.isAutoCommit();
-                setText(disconnected ? "Not connected to database" : autoCommit ? "Auto-Commit ON" : "Auto-Commit OFF");
-                setForeground(disconnected ?
-                        Colors.DISCONNECTED : autoCommit ?
+
+                connectionLabel.setForeground(disconnected ? Colors.DISCONNECTED : Colors.CONNECTED);
+                DatabaseSession session = connectionHandler.getSessionBundle().getSession(sessionId);
+
+
+                String sessionName = session.getName();
+                connectionLabel.setText(disconnected ? " - not connected" : " - connected");
+                connectionLabel.setToolTipText(
+                        disconnected ?
+                                "Not connected to " + sessionName + " database session" : "");
+
+                connectionLabel.setFont(disconnected ? GUIUtil.REGULAR_FONT : GUIUtil.BOLD_FONT);
+
+                autoCommitLabel.setForeground(autoCommit ?
                         Colors.AUTO_COMMIT_ON :
                         Colors.AUTO_COMMIT_OFF);
-                setToolTipText(
-                        disconnected ? "The connection to database has been closed. No editing possible" :
-                                autoCommit ?
-                                        "Auto-Commit is enabled for connection \"" + connectionHandler + "\". Data changes will be automatically committed to the database." :
-                                        "Auto-Commit is disabled for connection \"" + connectionHandler + "\". Data changes will need to be manually committed to the database.");
+                autoCommitLabel.setText(autoCommit ? "Auto-Commit ON" : "Auto-Commit OFF");
+                autoCommitLabel.setToolTipText(
+                        autoCommit ?
+                                "Auto-Commit is enabled for connection \"" + connectionHandler + "\". Data changes will be automatically committed to the database." :
+                                "Auto-Commit is disabled for connection \"" + connectionHandler + "\". Data changes will need to be manually committed to the database.");
             } else {
                 setVisible(false);
             }
@@ -103,7 +126,7 @@ public class AutoCommitLabel extends JLabel implements Disposable {
         public void connectionChanged(VirtualFile virtualFile, ConnectionHandler connectionHandler) {
             VirtualFile localVirtualFile = getVirtualFile();
             if (virtualFile.equals(localVirtualFile)) {
-                AutoCommitLabel.this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+                connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
                 update();
             }
         }
@@ -112,7 +135,7 @@ public class AutoCommitLabel extends JLabel implements Disposable {
         public void sessionChanged(VirtualFile virtualFile, DatabaseSession session) {
             VirtualFile localVirtualFile = getVirtualFile();
             if (virtualFile.equals(localVirtualFile)) {
-                AutoCommitLabel.this.sessionId = session == null ? SessionId.MAIN : session.getId();
+                sessionId = session == null ? SessionId.MAIN : session.getId();
                 update();
             }
         }
@@ -124,7 +147,11 @@ public class AutoCommitLabel extends JLabel implements Disposable {
     private TransactionListener transactionListener = new TransactionListener() {
         @Override
         public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
-            if (action.isOneOf(TransactionAction.TURN_AUTO_COMMIT_ON, TransactionAction.TURN_AUTO_COMMIT_OFF) && ConnectionHandlerRef.get(connectionHandlerRef) == connectionHandler) {
+            if (action.isOneOf(
+                    TransactionAction.TURN_AUTO_COMMIT_ON,
+                    TransactionAction.TURN_AUTO_COMMIT_OFF) &&
+                    ConnectionHandlerRef.get(connectionHandlerRef) == connectionHandler) {
+
                 update();
             }
         }

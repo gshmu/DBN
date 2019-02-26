@@ -58,7 +58,10 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
     private EditorEx viewer;
     private String statementText;
 
-    public StatementExecutionInputForm(final StatementExecutionInputsDialog parentComponent, final StatementExecutionProcessor executionProcessor, @NotNull DBDebuggerType debuggerType, boolean isBulkExecution) {
+    public StatementExecutionInputForm(
+            @NotNull StatementExecutionInputsDialog parentComponent,
+            @NotNull StatementExecutionProcessor executionProcessor,
+            @NotNull DBDebuggerType debuggerType, boolean isBulkExecution) {
         super(parentComponent);
         this.executionProcessor = executionProcessor;
         this.statementText = executionProcessor.getExecutionInput().getExecutableStatementText();
@@ -122,7 +125,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
         updatePreview();
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
 
-        final JCheckBox reuseVariablesCheckBox = executionOptionsForm.getReuseVariablesCheckBox();
+        JCheckBox reuseVariablesCheckBox = executionOptionsForm.getReuseVariablesCheckBox();
         if (isBulkExecution && executionVariables != null) {
             reuseVariablesCheckBox.setVisible(true);
             reuseVariablesCheckBox.addActionListener(e -> ensureParentComponent().setReuseVariables(reuseVariablesCheckBox.isSelected()));
