@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.BasicCallable;
-import com.dci.intellij.dbn.common.routine.BasicRunnable;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,7 +20,7 @@ public class ThreadMonitor {
 
 
 
-    public static void run(ThreadProperty threadProperty, BasicRunnable runnable){
+    public static void run(ThreadProperty threadProperty, Runnable runnable){
         ThreadInfo threadInfo = thread();
         try {
             threadInfo.set(threadProperty, true);

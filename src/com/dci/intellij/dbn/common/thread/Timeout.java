@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.routine.BasicCallable;
-import com.dci.intellij.dbn.common.routine.BasicRunnable;
 import com.intellij.openapi.diagnostic.Logger;
 
 import java.util.concurrent.ExecutionException;
@@ -32,7 +31,7 @@ public interface Timeout {
         }
     }
 
-    static void run(long seconds, boolean daemon, BasicRunnable runnable) {
+    static void run(long seconds, boolean daemon, Runnable runnable) {
         try {
             ExecutorService executorService = ThreadFactory.timeoutExecutor(daemon);
             Future future = executorService.submit(
