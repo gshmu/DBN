@@ -461,11 +461,14 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
             if (model.is(INSERTING)) {
                 int insertRowIndex = getModel().getInsertRowIndex();
                 if (insertRowIndex != -1 && (insertRowIndex == e.getFirstIndex() || insertRowIndex == e.getLastIndex()) && getSelectedRow() != insertRowIndex) {
-                    try {
-                        model.postInsertRecord(false, true, false);
-                    } catch (SQLException e1) {
-                        MessageUtil.showErrorDialog(getProject(), "Could not create row in " + getDataset().getQualifiedNameWithType() + ".", e1);
-                    }
+                    Progress.prompt(getProject(), "Refreshing data", false,
+                            (progress) -> {
+                                try {
+                                    model.postInsertRecord(false, true, false);
+                                } catch (SQLException e1) {
+                                    MessageUtil.showErrorDialog(getProject(), "Could not create row in " + getDataset().getQualifiedNameWithType() + ".", e1);
+                                }
+                            });
                 }
             }
             startCellEditing(e);

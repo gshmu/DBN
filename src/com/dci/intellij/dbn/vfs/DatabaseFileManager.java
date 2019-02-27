@@ -179,9 +179,16 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                                 SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
 
                                 switch (option) {
-                                    case SAVE: sourceCodeManager.saveSourceCodeChanges(databaseFile, null); break;
-                                    case DISCARD: sourceCodeManager.revertSourceCodeChanges(databaseFile, null); break;
-                                    case CANCEL: throw new ProcessCanceledException();
+                                    case CANCEL: break;
+                                    case SAVE: {
+                                        sourceCodeManager.saveSourceCodeChanges(databaseFile, () -> source.closeFile(file));
+                                        break;
+                                    }
+
+                                    case DISCARD: {
+                                        sourceCodeManager.revertSourceCodeChanges(databaseFile, () -> source.closeFile(file));
+                                        break;
+                                    }
                                     case SHOW: {
                                         List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
                                         for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
@@ -190,11 +197,10 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                                                 diffManager.opedDatabaseDiffWindow(sourceCodeFile);
                                             }
                                         }
-                                        throw new ProcessCanceledException();
-
                                     }
                                 }
                             });
+                    throw new ProcessCanceledException();
                 }
             }
 

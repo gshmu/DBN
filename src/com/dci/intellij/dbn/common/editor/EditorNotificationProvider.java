@@ -15,7 +15,7 @@ public abstract class EditorNotificationProvider<T extends EditorNotificationPan
         this.projectRef = ProjectRef.from(project);
     }
 
-    public void updateEditorNotification(@Nullable final DBContentVirtualFile databaseContentFile) {
+    public void updateEditorNotification(@Nullable DBContentVirtualFile databaseContentFile) {
         Dispatch.invokeNonModal(() -> {
             Project project = getProject();
             EditorNotifications notifications = EditorNotifications.getInstance(project);

@@ -39,7 +39,7 @@ import java.util.Map;
 public class MethodExecutionResult extends DisposableBase implements ExecutionResult, Disposable {
     private MethodExecutionInput executionInput;
     private MethodExecutionResultForm resultPanel;
-    private List<ArgumentValue> argumentValues = new ArrayList<ArgumentValue>();
+    private List<ArgumentValue> argumentValues = new ArrayList<>();
     private Map<DBObjectRef<DBArgument>, ResultSetDataModel> cursorModels;
     private DBDebuggerType debuggerType;
     private String logOutput;
@@ -57,7 +57,7 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
     }
 
     public void calculateExecDuration() {
-        this.executionDuration = (int) (System.currentTimeMillis() - executionInput.getExecutionContext().getExecutionTimestamp());
+        this.executionDuration = (int) (System.currentTimeMillis() - getExecutionInput().getExecutionContext().getExecutionTimestamp());
     }
 
     public void addArgumentValue(DBArgument argument, Object value) throws SQLException {
@@ -67,7 +67,7 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
         if (value instanceof DBNResultSet) {
             DBNResultSet resultSet = (DBNResultSet) value;
             if (cursorModels == null) {
-                cursorModels = new HashMap<DBObjectRef<DBArgument>, ResultSetDataModel>();
+                cursorModels = new HashMap<>();
             }
 
             ExecutionEngineSettings settings = ExecutionEngineSettings.getInstance(argument.getProject());
@@ -142,7 +142,7 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
 
     @Override
     public ConnectionId getConnectionId() {
-        return executionInput.getConnectionId();
+        return getExecutionInput().getConnectionId();
     }
 
     @Override

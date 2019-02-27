@@ -474,7 +474,8 @@ public abstract class IdentifierPsiElement extends LeafPsiElement {
     private boolean isValidReference(DBObject referencedObject) {
         if (referencedObject instanceof DBVirtualObject) {
             DBVirtualObject object = (DBVirtualObject) referencedObject;
-            if (object.getUnderlyingPsiElement().containsPsiElement(this)) {
+            BasePsiElement underlyingPsiElement = object.getUnderlyingPsiElement();
+            if (underlyingPsiElement != null && underlyingPsiElement.containsPsiElement(this)) {
                 return false;
             }
         }

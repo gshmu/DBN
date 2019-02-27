@@ -310,10 +310,6 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
         if (objectLists != null)  {
             for (DBObjectList objectList : objectLists.values()) {
                 if (check(objectList)) {
-                    if (objectList.isLoaded()) {
-                        List<DBObject> allElements = objectList.getAllElements();
-                        CollectionUtil.forEach(allElements, (object) -> object.refresh());
-                    }
                     objectList.refresh();
                     checkDisposed();
                 }
