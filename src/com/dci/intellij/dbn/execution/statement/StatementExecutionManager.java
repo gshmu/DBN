@@ -273,6 +273,8 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                 connection = connectionHandler.getConnection(executionInput.getTargetSessionId(), schema);
             } catch (SQLException e) {
                 sendErrorNotification("Error executing " + executionProcessor.getStatementName() + ". Failed to ensure connectivity.", e.getMessage());
+                ExecutionContext context = executionProcessor.getExecutionContext();
+                context.reset();
             }
 
             if (connection != null) {

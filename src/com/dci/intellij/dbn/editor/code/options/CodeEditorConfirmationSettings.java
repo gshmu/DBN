@@ -23,7 +23,7 @@ public class CodeEditorConfirmationSettings extends BasicConfiguration<CodeEdito
                     "Revert the changes for {0}?" + REMEMBER_OPTION_HINT, true);
 
     private InteractiveOptionBroker<CodeEditorChangesOption> exitOnChanges =
-            new InteractiveOptionBroker<CodeEditorChangesOption>(
+            new InteractiveOptionBroker<>(
                     "exit-on-changes",
                     "Unsaved Changes",
                     "You are about to close the editor for {0} and you have unsaved changes.\nPlease choose whether to save or discard the changes." + REMEMBER_OPTION_HINT,

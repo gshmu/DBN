@@ -166,7 +166,7 @@ public class DBObjectPsiElement extends DisposableBase implements PsiNamedElemen
 
     @Override
     public boolean isValid() {
-        return true;
+        return DBObjectRef.get(objectRef) != null;
     }
 
     @Override

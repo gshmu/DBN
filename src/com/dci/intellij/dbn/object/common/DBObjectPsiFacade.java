@@ -11,6 +11,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class DBObjectPsiFacade extends DisposableBase {
     private DBObjectRef objectRef;
@@ -35,6 +36,7 @@ public final class DBObjectPsiFacade extends DisposableBase {
         return psiFile.get();
     }
 
+    @Nullable
     public PsiElement getPsiElement() {
         return psiElementRef == null ? psiElement.get() : PsiElementRef.get(psiElementRef);
     }
@@ -43,15 +45,17 @@ public final class DBObjectPsiFacade extends DisposableBase {
         return psiDirectory.get();
     }
 
-    public static PsiDirectory getPsiDirectory(DBObject object) {
+    public static PsiDirectory getPsiDirectory(@Nullable DBObject object) {
         return object == null ? null : Failsafe.get(object).getPsiFacade().getPsiDirectory();
     }
 
-    public static PsiElement getPsiElement(DBObject object) {
+    @Nullable
+    public static PsiElement getPsiElement(@Nullable DBObject object) {
         return object == null ? null : Failsafe.get(object).getPsiFacade().getPsiElement();
     }
 
-    public static PsiFile getPsiFile(DBObject object) {
+    @Nullable
+    public static PsiFile getPsiFile(@Nullable DBObject object) {
         return object == null ? null : Failsafe.get(object).getPsiFacade().getPsiFile();
     }
 
