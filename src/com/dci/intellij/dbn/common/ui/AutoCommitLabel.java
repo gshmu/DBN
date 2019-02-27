@@ -73,7 +73,7 @@ public class AutoCommitLabel extends JPanel implements Disposable {
     private void update() {
         Dispatch.conditional(() -> {
             ConnectionHandler connectionHandler = getConnectionHandler();
-            if (connectionHandler != null) {
+            if (connectionHandler != null && !connectionHandler.isVirtual()) {
                 setVisible(true);
                 boolean disconnected = !connectionHandler.isConnected(sessionId);
                 boolean autoCommit = connectionHandler.isAutoCommit();
