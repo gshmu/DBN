@@ -13,7 +13,9 @@ public interface ContentDependencyAdapter extends Disposable {
      */
     boolean canLoad(ConnectionHandler connectionHandler);
 
-    boolean isDirty();
+    boolean areSourcesDirty();
+
+    void refreshSources();
 
     /**
      * This operation is triggered before loading the dynamic content is started.

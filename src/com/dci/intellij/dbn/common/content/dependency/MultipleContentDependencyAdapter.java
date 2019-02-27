@@ -34,7 +34,7 @@ public class MultipleContentDependencyAdapter extends BasicDependencyAdapter imp
     }
 
     @Override
-    public boolean isDirty() {
+    public boolean areSourcesDirty() {
         if (dependencies != null) {
             for (ContentDependency dependency : dependencies) {
                 if (dependency.isDirty()) {
@@ -43,6 +43,17 @@ public class MultipleContentDependencyAdapter extends BasicDependencyAdapter imp
             }
         }
         return false;
+    }
+
+    @Override
+    public void refreshSources() {
+        if (dependencies != null) {
+            for (ContentDependency dependency : dependencies) {
+                dependency.getSourceContent().refresh();
+            }
+        }
+
+        super.refreshSources();
     }
 
     @Override
