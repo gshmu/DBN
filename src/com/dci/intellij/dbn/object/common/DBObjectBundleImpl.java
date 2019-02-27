@@ -197,12 +197,14 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     private final SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
-        public void sourceCodeSaved(final DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
-            Progress.background(getProject(), "Reloading database object", false,
-                    (progress) -> {
-                        DBObject object = sourceCodeFile.getObject();
-                        object.refresh();
-                    });
+        public void sourceCodeSaved(DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
+            if (sourceCodeFile.getConnectionId() == getConnectionId()) {
+                Progress.background(getProject(), "Reloading database object", false,
+                        (progress) -> {
+                            DBObject object = sourceCodeFile.getObject();
+                            object.refresh();
+                        });
+            }
         }
     };
 
