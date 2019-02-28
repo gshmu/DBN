@@ -197,7 +197,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
             }
             connection = createPoolConnection();
         }
-        ConnectionUtil.setReadonly(connection, readonly);
+        ConnectionUtil.setReadonly(connectionHandler, connection, readonly);
         ConnectionUtil.setAutoCommit(connection, readonly);
         return connection;
     }
@@ -238,7 +238,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
         DBNConnection connection = ConnectionUtil.connect(connectionHandler, SessionId.POOL);
 
         ConnectionUtil.setAutoCommit(connection, true);
-        ConnectionUtil.setReadonly(connection, true);
+        ConnectionUtil.setReadonly(connectionHandler, connection, true);
         connectionStatus.setConnected(true);
         connectionStatus.setValid(true);
 
@@ -270,7 +270,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
                 try {
                     ConnectionUtil.rollback(connection);
                     ConnectionUtil.setAutoCommit(connection, true);
-                    ConnectionUtil.setReadonly(connection, true);
+                    ConnectionUtil.setReadonly(getConnectionHandler(), connection, true);
                     connection.set(ResourceStatus.RESERVED, false);
                 } catch (SQLException e) {
                     dropConnection(connection);
