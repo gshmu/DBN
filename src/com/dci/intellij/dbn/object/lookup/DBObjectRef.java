@@ -352,7 +352,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
                 if (object == null) {
                     clearReference();
                     ConnectionHandler connectionHandler = resolveConnectionHandler(project);
-                    if (connectionHandler != null && !connectionHandler.isDisposed() && connectionHandler.isEnabled()) {
+                    if (Failsafe.check(connectionHandler) && connectionHandler.isEnabled()) {
                         object = lookup(connectionHandler);
                         if (object != null) {
                             reference = WeakRef.from(object);

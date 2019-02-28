@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.debugger.common.config;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.debugger.common.config.ui.DBProgramRunConfigurationEditorForm;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.intellij.openapi.options.ConfigurationException;
@@ -24,7 +25,7 @@ public abstract class DBRunConfigEditor<T extends DBRunConfig, F extends DBProgr
     protected abstract F createConfigurationEditorForm();
 
     public F getConfigurationEditorForm(boolean create) {
-        if (create && (configurationEditorForm == null || configurationEditorForm.isDisposed())) {
+        if (create && !Failsafe.check(configurationEditorForm)) {
             configurationEditorForm = createConfigurationEditorForm();
         }
         return configurationEditorForm;

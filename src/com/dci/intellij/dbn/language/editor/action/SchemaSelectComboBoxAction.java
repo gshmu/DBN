@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.editor.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -34,7 +35,7 @@ public class SchemaSelectComboBoxAction extends DBNComboBoxAction implements Dum
         VirtualFile virtualFile = getVirtualFile(component);
         if (virtualFile != null) {
             ConnectionHandler activeConnection = FileConnectionMappingManager.getInstance(project).getConnectionHandler(virtualFile);
-            if (activeConnection != null && !activeConnection.isVirtual() && !activeConnection.isDisposed()) {
+            if (Failsafe.check(activeConnection) && !activeConnection.isVirtual()) {
                 for (DBSchema schema : activeConnection.getObjectBundle().getSchemas()){
                     actionGroup.add(new SchemaSelectAction(schema));
                 }

@@ -620,7 +620,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                             DefaultActionGroup actionGroup = new DefaultActionGroup();
 
                             ConnectionHandler connectionHandler = action.getConnectionHandler();
-                            if (!connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
+                            if (Failsafe.check(connectionHandler) && !connectionHandler.isVirtual()) {
                                 List<DBSchema> schemas = connectionHandler.getObjectBundle().getSchemas();
                                 for (DBSchema schema : schemas) {
                                     SchemaSelectAction schemaAction = new SchemaSelectAction(psiFile, schema, callback);
@@ -696,7 +696,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                 (action) -> {
                     DefaultActionGroup actionGroup = new DefaultActionGroup();
                     ConnectionHandler connectionHandler = action.getConnectionHandler();
-                    if (!connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
+                    if (Failsafe.check(connectionHandler) && !connectionHandler.isVirtual()) {
                         List<DatabaseSession> sessions = connectionHandler.getSessionBundle().getSessions();
                         for (DatabaseSession session : sessions) {
                             SessionSelectAction sessionAction = new SessionSelectAction(psiFile, session, callback);

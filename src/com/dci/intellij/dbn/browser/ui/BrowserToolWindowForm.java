@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.browser.options.BrowserDisplayMode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.browser.options.listener.DisplayModeSettingsListener;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -160,7 +161,7 @@ public class BrowserToolWindowForm extends DBNFormImpl {
 
         @Override
         public void connectionNameChanged(ConnectionId connectionId) {
-            if (browserForm instanceof TabbedBrowserForm && !browserForm.isDisposed()) {
+            if (browserForm instanceof TabbedBrowserForm && Failsafe.check(browserForm)) {
                 TabbedBrowserForm tabbedBrowserForm = (TabbedBrowserForm) browserForm;
                 tabbedBrowserForm.refreshTabInfo(connectionId);
             }

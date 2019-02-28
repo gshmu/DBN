@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -55,13 +56,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.CONSOLES;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.DATASET_FILTERS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.OBJECTS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.OBJECT_CONTENTS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.SESSION_BROWSERS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.SESSION_STATEMENTS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.values;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.*;
 
 public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysicalFileSystem, */ApplicationComponent {
     public static final String PS = "/";
@@ -134,7 +129,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         if (index > -1) {
             ConnectionId connectionId = ConnectionId.get(path.substring(0, index));
             ConnectionHandler connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
-            if (connectionHandler != null && !connectionHandler.isDisposed() && connectionHandler.isEnabled()) {
+            if (Failsafe.check(connectionHandler) && connectionHandler.isEnabled()) {
                 if (allowFileLookup(connectionHandler)) {
                     Project project = connectionHandler.getProject();
                     String relativePath = path.substring(index + 1);
@@ -245,9 +240,9 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     @NotNull
     public DBEditableObjectVirtualFile findOrCreateDatabaseFile(@NotNull Project project, @NotNull DBObjectRef objectRef) {
         DBEditableObjectVirtualFile databaseFile = filesCache.get(objectRef);
-        if (databaseFile == null || databaseFile.isDisposed()){
+        if (!Failsafe.check(databaseFile)){
             databaseFile = filesCache.get(objectRef);
-            if (databaseFile == null || databaseFile.isDisposed()){
+            if (!Failsafe.check(databaseFile)){
                 databaseFile = Read.call(() -> new DBEditableObjectVirtualFile(project, objectRef));
                 filesCache.put(objectRef, databaseFile);
             }

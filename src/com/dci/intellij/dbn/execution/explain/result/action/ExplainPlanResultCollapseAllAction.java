@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.explain.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.dci.intellij.dbn.execution.explain.result.ui.ExplainPlanResultForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -14,7 +15,7 @@ public class ExplainPlanResultCollapseAllAction extends AbstractExplainPlanResul
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         ExplainPlanResult explainPlanResult = getExplainPlanResult(e);
-        if (explainPlanResult != null && !explainPlanResult.isDisposed()) {
+        if (Failsafe.check(explainPlanResult)) {
             ExplainPlanResultForm resultForm = explainPlanResult.getForm(false);
             if (resultForm != null) {
                 resultForm.collapseAllNodes();

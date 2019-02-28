@@ -75,7 +75,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     }
 
     public TabbedPane getResultTabs() {
-        if (!isDisposed() && (resultTabs == null || resultTabs.isDisposed())) {
+        if (!isDisposed() && !Failsafe.check(resultTabs)) {
             resultTabs = new TabbedPane(this);
             mainPanel.removeAll();
             mainPanel.add(resultTabs, BorderLayout.CENTER);
@@ -433,7 +433,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
     public void addResultTab(ExecutionResult executionResult) {
         ExecutionResultForm resultForm = executionResult.getForm(true);
-        if (resultForm != null && !resultForm.isDisposed()) {
+        if (Failsafe.check(resultForm)) {
             JComponent component = resultForm.getComponent();
             TabInfo tabInfo = new TabInfo(component);
             tabInfo.setObject(resultForm);

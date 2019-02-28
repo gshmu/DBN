@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.code.common.intention;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -40,7 +41,7 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguagePsiFile = (DBLanguagePsiFile) psiFile;
             ConnectionHandler activeConnection = dbLanguagePsiFile.getConnectionHandler();
-            if (activeConnection != null && !activeConnection.isDisposed() && !activeConnection.isVirtual() && !activeConnection.canConnect() && !activeConnection.isConnected()) {
+            if (Failsafe.check(activeConnection) && !activeConnection.isVirtual() && !activeConnection.canConnect() && !activeConnection.isConnected()) {
                 return true;
             }
         }
@@ -52,7 +53,7 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguagePsiFile = (DBLanguagePsiFile) psiFile;
             ConnectionHandler connectionHandler = dbLanguagePsiFile.getConnectionHandler();
-            if (connectionHandler != null && !connectionHandler.isDisposed() && !connectionHandler.isVirtual()) {
+            if (Failsafe.check(connectionHandler) && !connectionHandler.isVirtual()) {
                 connectionHandler.getInstructions().setAllowAutoConnect(true);
 
                 DatabaseSession databaseSession = dbLanguagePsiFile.getDatabaseSession();

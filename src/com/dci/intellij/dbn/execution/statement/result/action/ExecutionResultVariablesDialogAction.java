@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -44,7 +45,7 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
     public void update(@NotNull AnActionEvent e) {
         boolean visible = false;
         StatementExecutionCursorResult executionResult = getExecutionResult(e);
-        if (executionResult != null) {
+        if (Failsafe.check(executionResult)) {
             StatementExecutionCursorProcessor executionProcessor = executionResult.getExecutionProcessor();
             StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
             visible = executionVariables != null && executionVariables.getVariables().size() > 0;
