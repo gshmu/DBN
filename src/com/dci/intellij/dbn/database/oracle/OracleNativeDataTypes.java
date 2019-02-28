@@ -13,10 +13,10 @@ public class OracleNativeDataTypes extends DatabaseNativeDataTypes {
     {
         createLiteralDefinition("CHAR", String.class, OracleTypes.CHAR);
         createLiteralDefinition("CHAR VARYING", String.class, OracleTypes.CHAR);
-        createLiteralDefinition("VARCHAR2", String.class, OracleTypes.VARCHAR);
-        createLiteralDefinition("VARCHAR", String.class, OracleTypes.VARCHAR);
         createLiteralDefinition("CHARACTER", String.class, OracleTypes.CHAR);
         createLiteralDefinition("CHARACTER VARYING", String.class, OracleTypes.CHAR);
+        createLiteralDefinition("LONG", String.class, OracleTypes.LONGVARCHAR);
+        createLiteralDefinition("LONG RAW", String.class, OracleTypes.LONGVARCHAR);
         createLiteralDefinition("NATIONAL CHAR", String.class, OracleTypes.CHAR);
         createLiteralDefinition("NATIONAL CHAR VARYING", String.class, OracleTypes.CHAR);
         createLiteralDefinition("NATIONAL CHARACTER", String.class, OracleTypes.CHAR);
@@ -24,31 +24,39 @@ public class OracleNativeDataTypes extends DatabaseNativeDataTypes {
         createLiteralDefinition("NCHAR VARYING", String.class, OracleTypes.CHAR);
         createLiteralDefinition("NCHAR", String.class, OracleTypes.CHAR);
         createLiteralDefinition("NVARCHAR2", String.class, OracleTypes.CHAR);
-        createLiteralDefinition("STRING", String.class, OracleTypes.VARCHAR);
         createLiteralDefinition("RAW", String.class, OracleTypes.RAW);
-        
-        createLiteralDefinition("LONG RAW", String.class, OracleTypes.LONGVARCHAR);
-        createLiteralDefinition("LONG", String.class, OracleTypes.LONGVARCHAR);
+        createLiteralDefinition("STRING", String.class, OracleTypes.VARCHAR);
+        createLiteralDefinition("VARCHAR", String.class, OracleTypes.VARCHAR);
+        createLiteralDefinition("VARCHAR2", String.class, OracleTypes.VARCHAR);
 
-        createNumericDefinition("NUMBER", BigDecimal.class, OracleTypes.NUMBER);
+
         createNumericDefinition("BINARY_INTEGER", Integer.class, OracleTypes.INTEGER);
         createNumericDefinition("BINARY_FLOAT", Float.class, OracleTypes.BINARY_FLOAT);
         createNumericDefinition("BINARY_DOUBLE", Double.class, OracleTypes.BINARY_DOUBLE);
-        createNumericDefinition("NUMERIC", Short.class, OracleTypes.NUMERIC);
-        createNumericDefinition("DECIMAL", Short.class, OracleTypes.DECIMAL);
-        createNumericDefinition("DEC", Short.class, OracleTypes.DECIMAL);
+        createNumericDefinition("DECIMAL", BigDecimal.class, OracleTypes.DECIMAL);
+        createNumericDefinition("DEC", BigDecimal.class, OracleTypes.DECIMAL);
+        createNumericDefinition("DOUBLE PRECISION", Double.class, OracleTypes.DOUBLE);
+        createNumericDefinition("FLOAT", Double.class, OracleTypes.FLOAT);
         createNumericDefinition("INTEGER", Integer.class, OracleTypes.INTEGER);
         createNumericDefinition("INT", Integer.class, OracleTypes.INTEGER);
-        createNumericDefinition("SMALLINT", Short.class, OracleTypes.SMALLINT);
-        createNumericDefinition("FLOAT", Float.class, OracleTypes.FLOAT);
-        createNumericDefinition("DOUBLE PRECISION", Double.class, OracleTypes.DOUBLE);
+        createNumericDefinition("NATURAL", Integer.class, OracleTypes.INTEGER);
+        createNumericDefinition("NATURALN", Integer.class, OracleTypes.INTEGER);
+        createNumericDefinition("NUMBER", BigDecimal.class, OracleTypes.NUMBER);
+        createNumericDefinition("NUMERIC", BigDecimal.class, OracleTypes.NUMERIC);
+        createNumericDefinition("PLS_INTEGER", Integer.class, OracleTypes.INTEGER);
+        createNumericDefinition("POSITIVE", Integer.class, OracleTypes.INTEGER);
+        createNumericDefinition("POSITIVEN", Integer.class, OracleTypes.INTEGER);
         createNumericDefinition("REAL", Float.class, OracleTypes.FLOAT);
+        createNumericDefinition("SMALLINT", Integer.class, OracleTypes.SMALLINT);
+        createNumericDefinition("SIGNTYPE", Integer.class, OracleTypes.SMALLINT);
 
         createDateTimeDefinition("DATE", Timestamp.class, OracleTypes.DATE);
         createDateTimeDefinition("TIME", Timestamp.class, OracleTypes.TIME);
         createDateTimeDefinition("TIME WITH TIME ZONE", Timestamp.class, OracleTypes.TIMESTAMPTZ);
-        createDateTimeDefinition("TIMESTAMP WITH LOCAL TIME ZONE", Timestamp.class, OracleTypes.TIMESTAMPLTZ);
         createDateTimeDefinition("TIMESTAMP", Timestamp.class, OracleTypes.TIMESTAMP);
+        createDateTimeDefinition("TIMESTAMP WITH LOCAL TIME ZONE", Timestamp.class, OracleTypes.TIMESTAMPLTZ);
+        createDateTimeDefinition("TIMESTAMP WITH LOCAL TZ", Timestamp.class, OracleTypes.TIMESTAMPLTZ);
+        createDateTimeDefinition("TIMESTAMP WITH TZ", Timestamp.class, OracleTypes.TIMESTAMPLTZ);
         createBasicDefinition("INTERVAL DAY TO SECOND", Object.class, OracleTypes.INTERVALDS, GenericDataType.PROPRIETARY);
         createBasicDefinition("INTERVAL YEAR TO MONTH", Object.class, OracleTypes.INTERVALYM, GenericDataType.PROPRIETARY);
         createBasicDefinition("INTERVALDS", Object.class, OracleTypes.INTERVALDS, GenericDataType.PROPRIETARY);
@@ -64,6 +72,7 @@ public class OracleNativeDataTypes extends DatabaseNativeDataTypes {
         createBasicDefinition("UROWID", Object.class, OracleTypes.ROWID, GenericDataType.ROWID);
         createBasicDefinition("REF CURSOR", Object.class, OracleTypes.CURSOR, GenericDataType.CURSOR);
  
+        createBasicDefinition("BOOLEAN", Boolean.class, OracleTypes.VARCHAR, GenericDataType.BOOLEAN);
         createBasicDefinition("PL/SQL BOOLEAN", String.class, OracleTypes.VARCHAR, GenericDataType.BOOLEAN);
     }
 
