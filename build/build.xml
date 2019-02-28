@@ -64,7 +64,7 @@
     </path>
 
 
-    <taskdef name="javac2" classname="com.intellij.uiDesigner.ant.Javac2">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2">
         <classpath refid="classpath.ide"/>
     </taskdef>
 
