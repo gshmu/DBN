@@ -37,7 +37,7 @@ public abstract class DBSourceCodeLoader {
             }
 
             if (sourceCode.length() == 0 && !lenient)
-                throw new SQLException("Object not found in database.");
+                throw new SQLException("Source lookup returned empty");
 
             return StringUtil.removeCharacter(sourceCode.toString(), '\r');
         } finally {
