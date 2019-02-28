@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ResultSetUtil extends DisposableBase{
-    public static void insertRow(final ResultSet resultSet) throws SQLException {
+    public static void insertRow(ResultSet resultSet) throws SQLException {
         try {
             resultSet.insertRow();
         } catch (Throwable e) {
@@ -19,7 +19,7 @@ public class ResultSetUtil extends DisposableBase{
         }
     }
 
-    public static void moveToInsertRow(final ResultSet resultSet) throws SQLException {
+    public static void moveToInsertRow(ResultSet resultSet) throws SQLException {
         try {
             resultSet.moveToInsertRow();
         } catch (Throwable e) {
@@ -28,7 +28,7 @@ public class ResultSetUtil extends DisposableBase{
                     new SQLException("Error selecting insert row: [" + e.getClass().getSimpleName() + "] " + e.getMessage());
         }
     }
-    public static void moveToCurrentRow(final ResultSet resultSet) throws SQLException {
+    public static void moveToCurrentRow(ResultSet resultSet) throws SQLException {
         try {
             resultSet.moveToCurrentRow();
         } catch (Throwable e) {
@@ -69,7 +69,7 @@ public class ResultSetUtil extends DisposableBase{
         }
     }
 
-    public static void absolute(final ResultSet resultSet, int row) throws SQLException {
+    public static void absolute(ResultSet resultSet, int row) throws SQLException {
         try {
             resultSet.absolute(row);
         } catch (Throwable e) {

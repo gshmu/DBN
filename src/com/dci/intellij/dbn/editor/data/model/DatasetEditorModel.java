@@ -3,7 +3,9 @@ package com.dci.intellij.dbn.editor.data.model;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
+import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
@@ -321,21 +323,26 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     public void deleteRecords(int[] rowIndexes) {
         DatasetEditorTable editorTable = getEditorTable();
         editorTable.fireEditingCancel();
-        for (int index : rowIndexes) {
-            DatasetEditorModelRow row = getRowAtIndex(index);
-            if (row != null && row.isNot(DELETED)) {
-                int rsRowIndex = row.getResultSetRowIndex();
-                row.delete();
-                if (row.is(DELETED)) {
-                    shiftResultSetRowIndex(rsRowIndex, -1);
-                    notifyRowUpdated(index);
-                }
-            }
-            set(MODIFIED, true);
-        }
-        DBDataset dataset = getDataset();
-        DBNConnection connection = getConnection();
-        connection.notifyDataChanges(dataset.getVirtualFile());
+        Progress.prompt(getProject(), "Deleting records", true,
+                (progres) -> {
+                    for (int index : rowIndexes) {
+                        DatasetEditorModelRow row = getRowAtIndex(index);
+                        if (!ProgressMonitor.isCancelled()) break;
+
+                        if (row != null && row.isNot(DELETED)) {
+                            int rsRowIndex = row.getResultSetRowIndex();
+                            row.delete();
+                            if (row.is(DELETED)) {
+                                shiftResultSetRowIndex(rsRowIndex, -1);
+                                notifyRowUpdated(index);
+                            }
+                        }
+                        set(MODIFIED, true);
+                    }
+                    DBDataset dataset = getDataset();
+                    DBNConnection connection = getConnection();
+                    connection.notifyDataChanges(dataset.getVirtualFile());
+                } );
     }
 
     public void insertRecord(int rowIndex) {

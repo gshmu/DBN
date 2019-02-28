@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.connection.transaction.ConnectionSavepointCall;
+import com.dci.intellij.dbn.connection.transaction.ConnectionSavepoint;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -27,13 +27,16 @@ import java.util.concurrent.atomic.AtomicReference;
 public abstract class CancellableDatabaseCall<T> implements Callable<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
+    private long startTimestamp = System.currentTimeMillis();
+    private int threadInfo = ThreadMonitor.thread().computed();
+    private transient ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
+
+
     private DBNConnection connection;
     private int timeout;
-    private long startTimestamp = System.currentTimeMillis();
     private TimeUnit timeUnit;
     private boolean createSavepoint;
 
-    private transient ProgressIndicator progressIndicator;
     private transient Future<T> future;
     private transient boolean cancelled = false;
     private transient boolean cancelRequested = false;
@@ -43,7 +46,6 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
         this.connection = connection;
         this.timeout = timeout;
         this.timeUnit = timeUnit;
-        this.progressIndicator = ProgressMonitor.getProgressIndicator();
         createSavepoint = !DatabaseFeature.CONNECTION_ERROR_RECOVERY.isSupported(connectionHandler);
     }
 
@@ -53,27 +55,34 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
     @Override
     public T call() throws Exception {
-        if (createSavepoint) {
-            AtomicReference<Exception> innerException = new AtomicReference<>();
-            T result = ConnectionSavepointCall.invoke(connection, () -> {
-                try {
-                    return CancellableDatabaseCall.this.execute();
-                } catch (SQLException e) {
-                    throw e;
-                } catch (Exception e) {
-                    innerException.set(e);
-                    return null;
+        int originalThreadInfo = ThreadMonitor.thread().computed();
+        try {
+            ThreadMonitor.thread().computed(threadInfo);
+            ThreadMonitor.thread().set(ThreadProperty.CANCELABLE_PROCESS, true);
+            if (createSavepoint) {
+                AtomicReference<Exception> innerException = new AtomicReference<>();
+                T result = ConnectionSavepoint.call(connection, () -> {
+                    try {
+                        return CancellableDatabaseCall.this.execute();
+                    } catch (SQLException e) {
+                        throw e;
+                    } catch (Exception e) {
+                        innerException.set(e);
+                        return null;
+                    }
+                });
+
+                Exception exception = innerException.get();
+                if (exception != null) {
+                    throw exception;
                 }
-            });
+                return result;
 
-            Exception exception = innerException.get();
-            if (exception != null) {
-                throw exception;
+            } else {
+                return execute();
             }
-            return result;
-
-        } else {
-            return execute();
+        } finally {
+            ThreadMonitor.thread().computed(originalThreadInfo);
         }
     }
 
@@ -92,7 +101,6 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
             TimerTask cancelCheckTask = new TimerTask() {
                 @Override
                 public void run() {
-                    ProgressIndicator progressIndicator = CancellableDatabaseCall.this.progressIndicator;
                     if (!cancelled && isCancelRequested()) {
                         cancelled = true;
                         if (future != null) future.cancel(true);
