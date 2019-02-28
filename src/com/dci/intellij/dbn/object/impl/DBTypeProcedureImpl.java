@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.DBTypeProcedure;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,6 +39,7 @@ public class DBTypeProcedureImpl extends DBProcedureImpl implements DBTypeProced
         return true;
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.TYPE_PROCEDURE;

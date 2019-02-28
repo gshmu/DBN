@@ -40,6 +40,7 @@ public class DBTypeAttributeImpl extends DBObjectImpl implements DBTypeAttribute
         return position;
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.TYPE_ATTRIBUTE;

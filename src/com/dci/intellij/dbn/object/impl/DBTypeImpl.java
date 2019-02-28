@@ -43,10 +43,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.DBObjectType.TYPE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.TYPE_ATTRIBUTE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.TYPE_FUNCTION;
-import static com.dci.intellij.dbn.object.common.DBObjectType.TYPE_PROCEDURE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 
 public class DBTypeImpl extends DBProgramImpl implements DBType {
     private static final List<DBTypeAttribute> EMPTY_ATTRIBUTE_LIST = Collections.unmodifiableList(new ArrayList<>(0));
@@ -102,6 +99,7 @@ public class DBTypeImpl extends DBProgramImpl implements DBType {
         }
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return TYPE;

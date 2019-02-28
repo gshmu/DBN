@@ -23,7 +23,6 @@ import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
@@ -128,7 +127,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
     private List<DBContentVirtualFile> computeContentFiles() {
         List<DBContentVirtualFile> contentFiles = new ArrayList<>();
-        DBContentType objectContentType = getObjectRef().getObjectType().getContentType();
+        DBContentType objectContentType = getContentType();
         if (objectContentType.isBundle()) {
             DBContentType[] contentTypes = objectContentType.getSubContentTypes();
             for (DBContentType contentType : contentTypes) {
@@ -169,13 +168,8 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
     @Nullable
     public List<VirtualFile> getAttachedDDLFiles() {
-        DBSchemaObject object = getObject();
-        Project project = object.getProject();
-        DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-        if (object.is(DBObjectProperty.EDITABLE)) {
-            return fileAttachmentManager.getAttachedDDLFiles(object.getRef());
-        }
-        return null;
+        DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(getProject());
+        return fileAttachmentManager.getAttachedDDLFiles(getObjectRef());
     }
 
     @Nullable
@@ -298,6 +292,11 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
         }
 
         return false;
+    }
+
+    @NotNull
+    public DBContentType getContentType() {
+        return objectRef.getObjectType().getContentType();
     }
 }
 

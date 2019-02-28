@@ -32,10 +32,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.DBObjectType.PACKAGE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.PACKAGE_FUNCTION;
-import static com.dci.intellij.dbn.object.common.DBObjectType.PACKAGE_PROCEDURE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.PACKAGE_TYPE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 
 public class DBPackageImpl extends DBProgramImpl implements DBPackage {
     protected DBObjectList<DBPackageType> types;
@@ -68,6 +65,7 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
         return types.getObject(name);
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return PACKAGE;

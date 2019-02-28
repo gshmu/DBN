@@ -34,6 +34,7 @@ public class DBGrantedRoleImpl extends DBObjectImpl implements DBGrantedRole {
         return name;
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.GRANTED_ROLE;

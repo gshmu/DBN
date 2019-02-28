@@ -22,6 +22,7 @@ public class DBClusterImpl extends DBSchemaObjectImpl implements DBCluster {
         return resultSet.getString("CLUSTER_NAME");
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.CLUSTER;

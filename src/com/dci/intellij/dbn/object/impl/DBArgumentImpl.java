@@ -144,6 +144,7 @@ public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
                isOutput() ? Icons.DBO_ARGUMENT_OUT : Icons.DBO_ARGUMENT;
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.ARGUMENT;

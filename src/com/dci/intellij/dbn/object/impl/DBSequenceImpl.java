@@ -31,6 +31,7 @@ public class DBSequenceImpl extends DBSchemaObjectImpl implements DBSequence {
         properties.set(SCHEMA_OBJECT, true);
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.SEQUENCE;

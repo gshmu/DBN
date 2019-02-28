@@ -23,6 +23,7 @@ public class DBCharsetImpl extends DBObjectImpl implements DBCharset {
         return resultSet.getString("CHARSET_NAME");
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.CHARSET;

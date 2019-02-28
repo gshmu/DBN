@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.loader.DBSourceCodeLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -32,6 +33,7 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
         return (DBDataset) getParentObject();
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.DATASET_TRIGGER;

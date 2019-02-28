@@ -40,6 +40,7 @@ public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterialized
         childObjectRelations.createSubcontentObjectRelationList(INDEX_COLUMN, this, schema);
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.MATERIALIZED_VIEW;

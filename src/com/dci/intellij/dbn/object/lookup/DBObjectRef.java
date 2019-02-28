@@ -42,16 +42,19 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     public DBObjectRef(T object, String name) {
-        reference = WeakRef.from(object);
-        objectName = name;
-        objectType = object.getObjectType();
-        overload = object.getOverload();
+        this(object, object.getObjectType(), name);
+    }
+    public DBObjectRef(T object, DBObjectType objectType, String name) {
+        this.reference = WeakRef.from(object);
+        this.objectName = name;
+        this.objectType = objectType;
+        this.overload = object.getOverload();
         DBObject parentObj = object.getParentObject();
         if (parentObj != null) {
-            parent = parentObj.getRef();
+            this.parent = parentObj.getRef();
         } else if (!(object instanceof DBVirtualObject)){
             ConnectionHandler connectionHandler = object.getConnectionHandler();
-            connectionId = connectionHandler.getConnectionId();
+            this.connectionId = connectionHandler.getConnectionId();
         }
     }
 
@@ -506,6 +509,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         }
     }
 
+    @NotNull
     public DBObjectType getObjectType() {
         return objectType;
     }

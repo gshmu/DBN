@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
 import com.dci.intellij.dbn.object.common.loader.DBSourceCodeLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -37,6 +38,7 @@ public class DBProcedureImpl extends DBMethodImpl implements DBProcedure {
         return resultSet.getString("PROCEDURE_NAME");
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.PROCEDURE;
