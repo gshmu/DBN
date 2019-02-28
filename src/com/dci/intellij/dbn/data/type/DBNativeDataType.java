@@ -105,6 +105,7 @@ public class DBNativeDataType implements DynamicContentElement{
                     clazz == Date.class ? resultSet.getDate(columnIndex) :
                     clazz == Time.class ? resultSet.getTime(columnIndex) :
                     clazz == Timestamp.class ? resultSet.getTimestamp(columnIndex) :
+                    clazz == Boolean.class ? resultSet.getBoolean(columnIndex) :
                     //clazz == Array.class ? resultSet.getArray(columnIndex) :
                             resultSet.getObject(columnIndex);
         } catch (SQLException e) {
@@ -149,6 +150,7 @@ public class DBNativeDataType implements DynamicContentElement{
                 if(clazz == Date.class) resultSet.updateDate(columnIndex, (Date) value); else
                 if(clazz == Time.class) resultSet.updateTime(columnIndex, (Time) value); else
                 if(clazz == Timestamp.class) resultSet.updateTimestamp(columnIndex, (Timestamp) value); else
+                if(clazz == Boolean.class) resultSet.updateBoolean(columnIndex, (Boolean) value); else
                 //if(clazz == Array.class) resultSet.updateArray(columnIndex, (Array) value); else
                         resultSet.updateObject(columnIndex, value);
             } else {
