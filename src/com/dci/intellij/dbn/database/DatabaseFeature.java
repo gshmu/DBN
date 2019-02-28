@@ -27,6 +27,7 @@ public enum DatabaseFeature {
     UPDATABLE_RESULT_SETS("Updatable result sets"),
     CURRENT_SCHEMA("Current schema initializing"),
     CONSTRAINT_MANIPULATION("Constraint manipulation"),
+    READONLY_CONNECTIVITY("Readonly connectivity"),
     ;
 
     private String description;

@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
@@ -279,17 +280,18 @@ public class ConnectionUtil {
         }
     }
 
-    public static void setReadonly(DBNConnection connection, boolean readonly) {
-        try {
-            connection.setReadOnly(readonly);
-        } catch (SQLException e) {
-/*
+    public static void setReadonly(ConnectionHandler connectionHandler, DBNConnection connection, boolean readonly) {
+        boolean readonlySupported = DatabaseFeature.READONLY_CONNECTIVITY.isSupported(connectionHandler);
+        if (readonlySupported) {
+            try {
+                connection.setReadOnly(readonly);
+            } catch (SQLException e) {
             sentWarningNotification(
                     "Readonly",
                     "Failed to initialize readonly status for",
                     connection,
                     e);
-*/
+            }
         }
     }
 
