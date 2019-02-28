@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
@@ -27,7 +28,7 @@ public class ConnectionCache implements ApplicationComponent{
                     for (Project project : projectManager.getOpenProjects()) {
                         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
                         connectionHandler = connectionManager.getConnectionHandler(connectionId);
-                        if (connectionHandler != null && !connectionHandler.isDisposed()) {
+                        if (Failsafe.check(connectionHandler)) {
                             CACHE.put(connectionId, connectionHandler);
                             return connectionHandler;
                         }
@@ -35,7 +36,7 @@ public class ConnectionCache implements ApplicationComponent{
                 }
             }
         }
-        return connectionHandler == null || connectionHandler.isDisposed() ? null : connectionHandler;
+        return Failsafe.check(connectionHandler) ? connectionHandler : null;
     }
 
 

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.logging.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -38,7 +39,7 @@ public class ToggleDatabaseLoggingEditorAction extends ToggleAction implements D
         if (project != null && virtualFile != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(virtualFile);
-            if (activeConnection != null && !activeConnection.isVirtual() && !activeConnection.isDisposed()) {
+            if (Failsafe.check(activeConnection) && !activeConnection.isVirtual()) {
                 return activeConnection ;
             }
 

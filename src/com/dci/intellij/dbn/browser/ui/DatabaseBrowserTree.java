@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -119,7 +120,7 @@ public class DatabaseBrowserTree extends DBNTree {
                     if (treePath != null) {
                         for (Object object : treePath.getPath()) {
                             BrowserTreeNode treeNode = (BrowserTreeNode) object;
-                            if (treeNode == null || treeNode.isDisposed()) {
+                            if (!Failsafe.check(treeNode)) {
                                 targetSelection = null;
                                 return;
                             }
@@ -296,7 +297,7 @@ public class DatabaseBrowserTree extends DBNTree {
     private TreeSelectionListener treeSelectionListener = new TreeSelectionListener() {
         @Override
         public void valueChanged(TreeSelectionEvent e) {
-            if (!isDisposed() && listenersEnabled) {
+            if (Failsafe.check(this) && listenersEnabled) {
                 Object object = e.getPath().getLastPathComponent();
                 if (object instanceof BrowserTreeNode) {
                     BrowserTreeNode treeNode = (BrowserTreeNode) object;

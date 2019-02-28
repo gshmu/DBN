@@ -3,9 +3,9 @@ package com.dci.intellij.dbn.editor.data.model;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
-import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.Progress;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
@@ -324,10 +324,11 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         DatasetEditorTable editorTable = getEditorTable();
         editorTable.fireEditingCancel();
         Progress.prompt(getProject(), "Deleting records", true,
-                (progres) -> {
+                (progress) -> {
                     for (int index : rowIndexes) {
+                        progress.setFraction(CommonUtil.getProgressPercentage(index, rowIndexes.length));
                         DatasetEditorModelRow row = getRowAtIndex(index);
-                        if (!ProgressMonitor.isCancelled()) break;
+                        if (progress.isCanceled()) break;
 
                         if (row != null && row.isNot(DELETED)) {
                             int rsRowIndex = row.getResultSetRowIndex();

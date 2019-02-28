@@ -94,7 +94,7 @@ public class DatasetBasicFilterCondition extends BasicConfiguration<DatasetBasic
         ConditionOperator operator = this.operator;
         String value = this.value;
 
-        if (editorForm != null && !editorForm.isDisposed()) {
+        if (Failsafe.check(editorForm)) {
             operator = editorForm.getSelectedOperator();
             DBColumn selectedColumn = editorForm.getSelectedColumn();
             if (selectedColumn != null) {

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -265,7 +266,7 @@ public class MessagesTree extends DBNTree implements Disposable {
 
     private void navigateInObjectEditor(CompilerMessage compilerMessage, NavigationInstruction instruction) {
         DBEditableObjectVirtualFile databaseFile = compilerMessage.getDatabaseFile();
-        if (databaseFile != null && !databaseFile.isDisposed()) {
+        if (Failsafe.check(databaseFile)) {
             DBContentVirtualFile contentFile = compilerMessage.getContentFile();
             if (contentFile instanceof DBSourceCodeVirtualFile) {
                 CompilerAction compilerAction = compilerMessage.getCompilerResult().getCompilerAction();

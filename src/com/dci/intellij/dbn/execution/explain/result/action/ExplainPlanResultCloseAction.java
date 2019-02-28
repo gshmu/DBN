@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.explain.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -15,7 +16,7 @@ public class ExplainPlanResultCloseAction extends AbstractExplainPlanResultActio
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         ExplainPlanResult explainPlanResult = getExplainPlanResult(e);
-        if (explainPlanResult != null && !explainPlanResult.isDisposed()) {
+        if (Failsafe.check(explainPlanResult)) {
             Project project = explainPlanResult.getProject();
             ExecutionManager executionManager = ExecutionManager.getInstance(project);
             executionManager.removeResultTab(explainPlanResult);

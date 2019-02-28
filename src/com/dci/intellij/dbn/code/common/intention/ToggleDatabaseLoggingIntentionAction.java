@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.code.common.intention;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -72,8 +73,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
     }
 
     private static boolean supportsLogging(ConnectionHandler connectionHandler) {
-        return connectionHandler != null &&
-                !connectionHandler.isDisposed() &&
+        return Failsafe.check(connectionHandler) &&
                 !connectionHandler.isVirtual() &&
                 DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler);
     }

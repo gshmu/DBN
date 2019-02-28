@@ -31,7 +31,7 @@ public class SessionBrowserTableCellRenderer extends BasicTableCellRenderer {
         SessionBrowserModelCell cell = (SessionBrowserModelCell) value;
         SessionBrowserTable sessionBrowserTable = (SessionBrowserTable) table;
 
-        if (cell != null && !cell.isDisposed() && !sessionBrowserTable.isDisposed() && !sessionBrowserTable.getProject().isDisposed()) {
+        if (Failsafe.check(cell, sessionBrowserTable)) {
             SessionBrowserModelRow row = cell.getRow();
             boolean isLoading = sessionBrowserTable.isLoading();
 

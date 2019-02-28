@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.dci.intellij.dbn.data.find.DataSearchResultMatch;
@@ -55,7 +56,7 @@ public class BasicTableCellRenderer extends ColoredTableCellRenderer {
 
 
         DataModelCell cell = (DataModelCell) value;
-        if (cell != null && !cell.isDisposed()) {
+        if (Failsafe.check(cell)) {
             boolean isLazyValue = cell.getUserValue() instanceof LargeObjectValue;
 
             BasicTableTextAttributes attributes = (BasicTableTextAttributes) getAttributes();
