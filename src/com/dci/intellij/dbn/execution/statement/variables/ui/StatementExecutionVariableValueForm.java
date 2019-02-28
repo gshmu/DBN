@@ -103,7 +103,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
         editorComponent.setEnabled(!variable.useNull());
         editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, variable.getDataType() == GenericDataType.DATE_TIME);
         valueFieldPanel.add(editorComponent, BorderLayout.CENTER);
-        final JTextField textField = editorComponent.getTextField();
+        JTextField textField = editorComponent.getTextField();
         String value = variable.getValue();
         if (StringUtil.isEmpty(value)) {
             StatementExecutionVariable cachedVariable = variablesCache.getVariable(virtualFile, variable.getName());
@@ -113,7 +113,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
                 textField.getDocument().addDocumentListener(new DocumentAdapter() {
                     @Override
                     protected void textChanged(@NotNull DocumentEvent documentEvent) {
-                    textField.setForeground(UIUtil.getTextFieldForeground());
+                        textField.setForeground(UIUtil.getTextFieldForeground());
                     }
                 });
             }
@@ -142,7 +142,8 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
         });
 
         dataTypeComboBox.addListener((oldValue, newValue) -> {
-            editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, oldValue == GenericDataType.DATE_TIME);
+            variable.setDataType(newValue);
+            editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, newValue == GenericDataType.DATE_TIME);
             ensureParentComponent().updatePreview();
         });
 
