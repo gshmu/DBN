@@ -26,6 +26,19 @@ public class DBDebugSourcePosition extends XSourcePositionWrapper {
 
     @NotNull
     @Override
+    public VirtualFile getFile() {
+        VirtualFile file = super.getFile();
+/*
+        if (file instanceof DBSourceCodeVirtualFile) {
+            DBSourceCodeVirtualFile sourceCodeVirtualFile = (DBSourceCodeVirtualFile) file;
+            return sourceCodeVirtualFile.getMainDatabaseFile();
+        }
+*/
+        return file;
+    }
+
+    @NotNull
+    @Override
     public Navigatable createNavigatable(@NotNull Project project) {
         VirtualFile file = myPosition.getFile();
         return myPosition.getOffset() != -1

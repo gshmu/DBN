@@ -80,6 +80,14 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
         }
     }
 
+    public int computed() {
+        return computed;
+    }
+
+    public void computed(int computed) {
+        this.computed = computed;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
