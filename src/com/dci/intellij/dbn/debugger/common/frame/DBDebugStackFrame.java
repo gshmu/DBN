@@ -62,7 +62,7 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
         VirtualFile virtualFile = getVirtualFile();
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
             DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
-            SourceCodeManager.getInstance(project).ensureSourcesLoaded(databaseFile.getObject());
+            SourceCodeManager.getInstance(project).ensureSourcesLoaded(databaseFile.getObject(), true);
         }
 
 

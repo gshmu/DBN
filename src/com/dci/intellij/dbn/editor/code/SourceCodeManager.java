@@ -65,10 +65,18 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
-import static com.dci.intellij.dbn.common.util.MessageUtil.*;
+import static com.dci.intellij.dbn.common.util.MessageUtil.options;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showErrorDialog;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showQuestionDialog;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 import static com.dci.intellij.dbn.common.util.NamingUtil.unquote;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
-import static com.intellij.openapi.util.text.StringUtil.*;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.LOADING;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
+import static com.intellij.openapi.util.text.StringUtil.equalsIgnoreCase;
+import static com.intellij.openapi.util.text.StringUtil.indexOfIgnoreCase;
+import static com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces;
+import static com.intellij.openapi.util.text.StringUtil.replaceIgnoreCase;
 
 @State(
     name = SourceCodeManager.COMPONENT_NAME,
@@ -164,17 +172,17 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public void ensureSourcesLoaded(@NotNull DBSchemaObject schemaObject) {
+    public void ensureSourcesLoaded(@NotNull DBSchemaObject schemaObject, boolean notifyError) {
         DBEditableObjectVirtualFile editableObjectFile = schemaObject.getEditableVirtualFile();
         List<DBSourceCodeVirtualFile> sourceCodeFiles = editableObjectFile.getSourceCodeFiles();
         for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
             if (!sourceCodeFile.isLoaded()) {
-                loadSourceFromDatabase(sourceCodeFile, false);
+                loadSourceFromDatabase(sourceCodeFile, false, notifyError);
             }
         }
     }
 
-    private void loadSourceFromDatabase(@NotNull DBSourceCodeVirtualFile sourceCodeFile, boolean force) {
+    private void loadSourceFromDatabase(@NotNull DBSourceCodeVirtualFile sourceCodeFile, boolean force, boolean notifyError) {
         Synchronized.sync(
                 "LOAD_SOURCE:" + sourceCodeFile.getUrl(),
                 () -> {
@@ -191,7 +199,12 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                         } catch (SQLException e) {
                             sourceCodeFile.setSourceLoadError(e.getMessage());
                             sourceCodeFile.set(MODIFIED, false);
-                            sendErrorNotification("Source Load Error", "Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database. Cause: " + e.getMessage());
+                            if (notifyError) {
+                                sendErrorNotification(
+                                        "Source Load Error",
+                                        "Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database. " +
+                                                "Cause: " + e.getMessage());
+                            }
                         } finally {
                             sourceCodeFile.set(LOADING, false);
                             EventUtil.notify(project, SourceCodeManagerListener.TOPIC).sourceCodeLoaded(sourceCodeFile, initialLoad);
@@ -470,7 +483,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         String objectDescription = sourceCodeFile.getObject().getQualifiedNameWithType();
         ConnectionAction.invoke("loading the source code", false, sourceCodeFile,
                 (action) -> Progress.background(getProject(), "Loading source code for " + objectDescription, false,
-                        (progress) -> loadSourceFromDatabase(sourceCodeFile, force)));
+                        (progress) -> loadSourceFromDatabase(sourceCodeFile, force, false)));
     }
 
     public void saveSourceCode(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor, Runnable successCallback) {

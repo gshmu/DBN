@@ -54,7 +54,7 @@ public class DBDebugUtil {
             DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
             Project project = Failsafe.get(databaseFile.getProject());
             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-            sourceCodeManager.ensureSourcesLoaded(databaseFile.getObject());
+            sourceCodeManager.ensureSourcesLoaded(databaseFile.getObject(), false);
 
             DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
             databaseFileSystem.openEditor(databaseFile.getObject(), false);

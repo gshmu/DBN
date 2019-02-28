@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
+import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
@@ -99,8 +100,13 @@ public class DBViewImpl extends DBDatasetImpl implements DBView {
 
         @Override
         public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
-            return getConnectionHandler().getInterfaceProvider().getMetadataInterface().loadViewSourceCode(
-                   getSchema().getName(), getName(), connection);
+            DatabaseMetadataInterface metadataInterface = getConnectionHandler().getInterfaceProvider().getMetadataInterface();
+            String ownerName = getSchema().getName();
+            String viewName = getName();
+            return metadataInterface.loadViewSourceCode(
+                    ownerName,
+                    viewName,
+                    connection);
         }
     }
 
