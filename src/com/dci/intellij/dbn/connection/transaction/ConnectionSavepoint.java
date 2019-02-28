@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 
