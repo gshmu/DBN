@@ -34,6 +34,7 @@ import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSystemPrivilege;
 import com.dci.intellij.dbn.object.DBUser;
@@ -366,9 +367,10 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         // TODO improve this logic (currently only drilling one level down in the dependencies)
         List<DBSchemaObject> compileList = new ArrayList<>();
         for (DBMethod method : methods) {
-            DBSchemaObject executable = method.getProgram() == null ? method : method.getProgram();
+            DBProgram program = method.getProgram();
+            DBSchemaObject executable = program == null ? method : program;
             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(getProject());
-            sourceCodeManager.ensureSourcesLoaded(executable);
+            sourceCodeManager.ensureSourcesLoaded(executable, true);
 
             addToCompileList(compileList, executable);
 
