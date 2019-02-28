@@ -55,7 +55,7 @@ public class PsiUtil {
     }
 
     @Nullable
-    public static VirtualFile getVirtualFileForElement(PsiElement psiElement) {
+    public static VirtualFile getVirtualFileForElement(@NotNull PsiElement psiElement) {
         PsiFile psiFile = null;
         try {
             psiFile = psiElement.getContainingFile().getOriginalFile();
@@ -65,6 +65,7 @@ public class PsiUtil {
         return psiFile == null ? null : psiFile.getVirtualFile();
     }
 
+    @Nullable
     public static BasePsiElement resolveAliasedEntityElement(IdentifierPsiElement aliasElement) {
         PsiElement psiElement = aliasElement.isReference() ? aliasElement.resolve() : aliasElement; 
         if (psiElement instanceof BasePsiElement) {
@@ -101,7 +102,8 @@ public class PsiUtil {
         return null;
     }
 
-    public static IdentifierPsiElement lookupObjectPriorTo(BasePsiElement element, DBObjectType objectType) {
+    @Nullable
+    public static IdentifierPsiElement lookupObjectPriorTo(@NotNull BasePsiElement element, DBObjectType objectType) {
         SequencePsiElement scope = element.findEnclosingSequencePsiElement();
 
         if (scope != null) {
@@ -112,7 +114,7 @@ public class PsiUtil {
                     BasePsiElement basePsiElement = (BasePsiElement) child;
                     ObjectLookupAdapter lookupInput = new ObjectLookupAdapter(null, objectType);
                     BasePsiElement objectPsiElement = lookupInput.findInScope(basePsiElement);
-                    if (objectPsiElement != null && objectPsiElement instanceof IdentifierPsiElement) {
+                    if (objectPsiElement instanceof IdentifierPsiElement) {
                         return (IdentifierPsiElement) objectPsiElement;
                     }
                 }
@@ -123,7 +125,7 @@ public class PsiUtil {
     }
 
     @Nullable
-    public static ExecutablePsiElement lookupExecutableAtCaret(Editor editor, boolean lenient) {
+    public static ExecutablePsiElement lookupExecutableAtCaret(@NotNull Editor editor, boolean lenient) {
         // GTK: PsiElement psiElement = PsiFile.findElementA(offset)
 
         int offset = editor.getCaretModel().getOffset();
@@ -163,6 +165,7 @@ public class PsiUtil {
         return null;
     }
 
+    @Nullable
     public static BasePsiElement lookupElementAtOffset(@NotNull PsiFile file, ElementTypeAttribute typeAttribute, int offset) {
         PsiElement element = file.findElementAt(offset);
         while (element != null && !(element instanceof PsiFile)) {
@@ -208,7 +211,8 @@ public class PsiUtil {
     }
 
 
-    public static LeafPsiElement lookupLeafAtOffset(PsiFile file, int originalOffset) {
+    @Nullable
+    public static LeafPsiElement lookupLeafAtOffset(@NotNull PsiFile file, int originalOffset) {
         int offset = originalOffset;
         PsiElement element = file.findElementAt(offset);
         while (element != null && offset >= 0) {
@@ -237,7 +241,7 @@ public class PsiUtil {
         }
     }
 
-    public static Iterator<PsiElement> getChildrenIterator(final @NotNull PsiElement element) {
+    private static Iterator<PsiElement> getChildrenIterator(@NotNull PsiElement element) {
         return new Iterator<PsiElement>() {
             private PsiElement current = element.getFirstChild();
             @Override
@@ -269,7 +273,7 @@ public class PsiUtil {
         return count;
     }
 
-    public static PsiElement getNextSibling(PsiElement psiElement) {
+    public static PsiElement getNextSibling(@NotNull PsiElement psiElement) {
         PsiElement nextPsiElement = psiElement.getNextSibling();
         while (ignore(nextPsiElement)) {
             nextPsiElement = nextPsiElement.getNextSibling();
@@ -278,7 +282,7 @@ public class PsiUtil {
     }
 
     @Nullable
-    public static PsiElement getFirstLeaf(PsiElement psiElement) {
+    public static PsiElement getFirstLeaf(@NotNull PsiElement psiElement) {
         PsiElement childPsiElement = psiElement.getFirstChild();
         if (childPsiElement == null) {
             return psiElement;
@@ -289,7 +293,7 @@ public class PsiUtil {
     }
 
     @Nullable
-    public static PsiElement getNextLeaf(PsiElement psiElement) {
+    public static PsiElement getNextLeaf(@Nullable PsiElement psiElement) {
         if (psiElement == null) {
             return null;
         } else {
@@ -324,7 +328,7 @@ public class PsiUtil {
 
 
     @Nullable
-    public static BasePsiElement getBasePsiElement(PsiElement element) {
+    public static BasePsiElement getBasePsiElement(@Nullable PsiElement element) {
         while (element != null && !(element instanceof PsiFile)) {
             if (element instanceof BasePsiElement) {
                 return (BasePsiElement) element;
@@ -344,7 +348,7 @@ public class PsiUtil {
         return null;
     }
 
-    public static Language getLanguage(PsiElement element) {
+    public static Language getLanguage(@NotNull PsiElement element) {
         Language language = element.getLanguage();
         if (language instanceof DBLanguageDialect) {
             DBLanguageDialect languageDialect = (DBLanguageDialect) language;
