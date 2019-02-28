@@ -46,6 +46,7 @@ public class PostgresCompatibilityInterface extends DatabaseCompatibilityInterfa
             case UPDATABLE_RESULT_SETS: return true;
             case CURRENT_SCHEMA: return true;
             case CONSTRAINT_MANIPULATION: return true;
+            case READONLY_CONNECTIVITY: return true;
             default: return false;
         }
     }
