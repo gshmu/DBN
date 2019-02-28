@@ -268,6 +268,17 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
         }
     }
 
+    @Override
+    public void setSelectedItem(Object anObject) {
+        T oldValue = getSelectedValue();
+
+        super.setSelectedItem(anObject);
+        T newValue = getSelectedValue();
+        for (ValueSelectorListener<T> listener : listeners) {
+            listener.selectionChanged(oldValue, newValue);
+        }
+    }
+
     private void selectValue(T value) {
         T oldValue = getSelectedValue();
         DBNComboBoxModel<T> model = getModel();
@@ -276,19 +287,6 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
         }
         if (!CommonUtil.safeEqual(oldValue, value) || (model.isEmpty() && value == null)) {
             setSelectedItem(value);
-/*
-            if (selectedValue == null) {
-                label.setIcon(options.is(ValueSelectorOption.HIDE_ICON) ? null : cropIcon(icon));
-                label.setText(text);
-            } else {
-                label.setIcon(options.is(ValueSelectorOption.HIDE_ICON) ? null : cropIcon(selectedValue.getIcon()));
-                label.setText(getName(selectedValue));
-            }
-*/
-
-            for (ValueSelectorListener<T> listener : listeners) {
-                listener.selectionChanged(oldValue, value);
-            }
         }
     }
 
