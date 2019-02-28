@@ -30,7 +30,7 @@ public class DatabaseBrowserAction extends DumbAwareAction {
         if (project != null && !project.isDefault()) {
             ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
             ToolWindow toolWindow = toolWindowManager.getToolWindow(DatabaseBrowserManager.TOOL_WINDOW_ID);
-            presentation.setVisible(!toolWindow.isVisible());
+            presentation.setVisible(toolWindow != null && !toolWindow.isVisible());
         }
 
     }
