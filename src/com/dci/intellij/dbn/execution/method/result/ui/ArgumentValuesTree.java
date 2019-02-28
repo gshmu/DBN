@@ -47,7 +47,7 @@ public class ArgumentValuesTree extends DBNTree{
                     if (userValue instanceof ArgumentValue) {
                         ArgumentValue argumentValue = (ArgumentValue) userValue;
                         DBArgument argument = argumentValue.getArgument();
-                        if (argument.isOutput()) {
+                        if (argument != null && argument.isOutput()) {
                             Object value = argumentValue.getValue();
                             if (value instanceof ResultSet || argumentValue.isLargeObject()) {
                                 parentForm.selectArgumentOutputTab(argument);

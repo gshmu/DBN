@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.method;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
@@ -38,9 +37,9 @@ public class ArgumentValue {
         return argumentRef;
     }
 
-    @NotNull
+    @Nullable
     public DBArgument getArgument() {
-        return Failsafe.get(argumentRef.get());
+        return argumentRef.get();
     }
 
     public DBTypeAttribute getAttribute() {
@@ -60,8 +59,11 @@ public class ArgumentValue {
 
     public boolean isLargeObject() {
         DBArgument argument = getArgument();
-        DBDataType dataType = argument.getDataType();
-        return dataType.isNative() && dataType.getNativeDataType().isLargeObject();
+        if (argument != null) {
+            DBDataType dataType = argument.getDataType();
+            return dataType.isNative() && dataType.getNativeDataType().isLargeObject();
+        }
+        return false;
     }
 
     public boolean isCursor() {

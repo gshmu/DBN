@@ -138,35 +138,34 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
 
         boolean isFirst = true;
         for (ArgumentValue argumentValue : executionResult.getArgumentValues()) {
-            if (argumentValue.isCursor()) {
-                DBArgument argument = argumentValue.getArgument();
+            DBArgument argument = argumentValue.getArgument();
+            if (argument != null) {
+                if (argumentValue.isCursor()) {
+                    MethodExecutionCursorResultForm cursorResultForm =
+                            new MethodExecutionCursorResultForm(this, executionResult, argument);
 
-                MethodExecutionCursorResultForm cursorResultForm =
-                        new MethodExecutionCursorResultForm(this, executionResult, argument);
+                    TabInfo tabInfo = new TabInfo(cursorResultForm.getComponent());
+                    tabInfo.setText(argument.getName());
+                    tabInfo.setIcon(argument.getIcon());
+                    tabInfo.setObject(cursorResultForm);
+                    outputTabs.addTab(tabInfo);
+                    if (isFirst) {
+                        outputTabs.select(tabInfo, false);
+                        isFirst = false;
+                    }
+                } else if (argumentValue.isLargeObject()) {
+                    MethodExecutionLargeValueResultForm largeValueResultForm =
+                            new MethodExecutionLargeValueResultForm(this, executionResult, argument);
 
-                TabInfo tabInfo = new TabInfo(cursorResultForm.getComponent());
-                tabInfo.setText(argument.getName());
-                tabInfo.setIcon(argument.getIcon());
-                tabInfo.setObject(cursorResultForm);
-                outputTabs.addTab(tabInfo);
-                if (isFirst) {
-                    outputTabs.select(tabInfo, false);
-                    isFirst = false;
-                }
-            } else if (argumentValue.isLargeObject()) {
-                DBArgument argument = argumentValue.getArgument();
-
-                MethodExecutionLargeValueResultForm largeValueResultForm =
-                        new MethodExecutionLargeValueResultForm(this, executionResult, argument);
-
-                TabInfo tabInfo = new TabInfo(largeValueResultForm.getComponent());
-                tabInfo.setText(argument.getName());
-                tabInfo.setIcon(argument.getIcon());
-                tabInfo.setObject(largeValueResultForm);
-                outputTabs.addTab(tabInfo);
-                if (isFirst) {
-                    outputTabs.select(tabInfo, false);
-                    isFirst = false;
+                    TabInfo tabInfo = new TabInfo(largeValueResultForm.getComponent());
+                    tabInfo.setText(argument.getName());
+                    tabInfo.setIcon(argument.getIcon());
+                    tabInfo.setObject(largeValueResultForm);
+                    outputTabs.addTab(tabInfo);
+                    if (isFirst) {
+                        outputTabs.select(tabInfo, false);
+                        isFirst = false;
+                    }
                 }
             }
         }

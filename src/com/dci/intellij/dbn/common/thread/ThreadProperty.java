@@ -7,6 +7,7 @@ public enum ThreadProperty implements Property{
     CODE_ANNOTATING,
 
     TIMEOUT_PROCESS,
+    CANCELABLE_PROCESS,
     BACKGROUND_THREAD,
     BACKGROUND_TASK,
     MODAL_TASK
