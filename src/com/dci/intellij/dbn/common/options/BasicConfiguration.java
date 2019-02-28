@@ -97,7 +97,7 @@ public abstract class BasicConfiguration<P extends Configuration, E extends Conf
 
     @Override
     public void apply() throws ConfigurationException {
-        if (configurationEditorForm != null && !configurationEditorForm.isDisposed()) {
+        if (Failsafe.check(configurationEditorForm)) {
             configurationEditorForm.applyFormChanges();
         }
         modified = false;

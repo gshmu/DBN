@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.logging.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.component.ComponentBase;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.dci.intellij.dbn.execution.logging.LogOutputContext;
@@ -22,7 +23,7 @@ public class DatabaseLogOutputKillAction extends AbstractDatabaseLogOutputAction
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ensureProject(e);
         DatabaseLoggingResult loggingResult = getDatabaseLogOutput(e);
-        if (loggingResult != null && !loggingResult.isDisposed()) {
+        if (Failsafe.check(loggingResult)) {
             final LogOutputContext context = loggingResult.getContext();
             if (context.isActive()) {
                 MessageUtil.showQuestionDialog(

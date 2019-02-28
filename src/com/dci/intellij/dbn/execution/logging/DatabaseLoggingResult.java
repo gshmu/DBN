@@ -98,7 +98,7 @@ public class DatabaseLoggingResult extends DisposableBase implements ExecutionRe
 
     public void write(LogOutputContext context, LogOutput output) {
         this.context = context;
-        if (logOutputForm != null && ! logOutputForm.isDisposed()) {
+        if (Failsafe.check(logOutputForm)) {
             DatabaseLoggingResultConsole console = logOutputForm.getConsole();
             if (output.isClearBuffer()) {
                 console.clear();

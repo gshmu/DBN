@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
@@ -151,7 +152,7 @@ public abstract class LeafPsiElement extends BasePsiElement implements PsiRefere
     }
 
     private static Set<DBObject> addObjectToSet(Set<DBObject> objects, DBObject object) {
-        if (object != null && !object.isDisposed()) {
+        if (Failsafe.check(object)) {
             if (objects == null) objects = new THashSet<>();
             objects.add(object);
         }

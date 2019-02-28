@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.code.common.completion.options.general.CodeCompletio
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -33,7 +34,7 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
     @Override
     protected void adjustLookupItem(@NotNull CodeCompletionLookupItem lookupItem) {
         DBObject object = getObject();
-        if (object != null && !object.isDisposed()) {
+        if (Failsafe.check(object)) {
             if (object.needsNameQuoting()) {
                 DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(object);
                 String lookupString = object.getName();

@@ -105,7 +105,7 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
         if (resultPanel == null && create) {
             resultPanel = new MethodExecutionResultForm(getProject(), this);
         }
-        return resultPanel == null || resultPanel.isDisposed() ? null : resultPanel;
+        return Failsafe.check(resultPanel) ? resultPanel : null;
     }
 
     @Override

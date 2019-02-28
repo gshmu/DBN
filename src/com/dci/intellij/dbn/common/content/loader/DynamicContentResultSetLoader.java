@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -144,7 +145,7 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
             boolean modelException = false;
             if (e instanceof SQLException) {
                 SQLException sqlException = (SQLException) e;
-                if (!dynamicContent.isDisposed()) {
+                if (Failsafe.check(dynamicContent)) {
                     DatabaseInterfaceProvider interfaceProvider = dynamicContent.getConnectionHandler().getInterfaceProvider();
                     modelException = interfaceProvider.getMessageParserInterface().isModelException(sqlException);
                 }

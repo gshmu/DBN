@@ -31,7 +31,7 @@ public class ConnectionHandlerRef{
     @Nullable
     public ConnectionHandler get() {
         ConnectionHandler connectionHandler = reference == null ? null : reference.get();
-        if ((connectionHandler == null || connectionHandler.isDisposed()) && connectionId != null) {
+        if (!Failsafe.check(connectionHandler) && connectionId != null) {
             connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
             reference = WeakRef.from(connectionHandler);
         }
@@ -55,6 +55,6 @@ public class ConnectionHandlerRef{
 
     public boolean isValid() {
         ConnectionHandler connectionHandler = reference == null ? null : reference.get();
-        return connectionHandler != null && !connectionHandler.isDisposed();
+        return Failsafe.check(connectionHandler);
     }
 }

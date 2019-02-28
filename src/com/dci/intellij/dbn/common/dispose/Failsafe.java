@@ -60,6 +60,14 @@ public class Failsafe {
         return object;
     }
 
+    public static boolean check(Object ... objects) {
+        for (Object object : objects) {
+            if (!check(object)) {
+                return false;
+            }
+        }
+        return true;
+    }
     public static boolean check(Object object) {
         if (object == null) {
             return false;

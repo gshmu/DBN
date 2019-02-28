@@ -116,8 +116,8 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
 
                     SimpleTextAttributes textAttributes =
                             isDisposed ? SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES :
-                                    showBold ? (showGrey ? SimpleTextAttributes.GRAYED_BOLD_ATTRIBUTES : SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES) :
-                                            (showGrey ? SimpleTextAttributes.GRAYED_ATTRIBUTES : SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                            showBold ? (showGrey ? SimpleTextAttributes.GRAYED_BOLD_ATTRIBUTES : SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES) :
+                                    (showGrey ? SimpleTextAttributes.GRAYED_ATTRIBUTES : SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
                     if (displayName == null) displayName = "displayName null!!";
 

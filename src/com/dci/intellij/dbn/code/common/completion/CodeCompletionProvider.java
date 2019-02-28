@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.code.common.completion;
 
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.common.thread.Timeout;
@@ -323,7 +324,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         PsiElement sourceElement = context.getElementAtCaret();
         ConnectionHandler connectionHandler = context.getConnectionHandler();
 
-        if (connectionHandler != null && !connectionHandler.isDisposed() && !connectionHandler.isVirtual()) {
+        if (Failsafe.check(connectionHandler) && !connectionHandler.isVirtual()) {
             DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
             if (sourceElement.getParent() instanceof QualifiedIdentifierPsiElement && sourceElement.getParent().getFirstChild() != sourceElement) {
                 QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = (QualifiedIdentifierPsiElement) sourceElement.getOriginalElement().getParent();

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.editor.action;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionType;
@@ -33,7 +34,7 @@ public class SessionSelectComboBoxAction extends DBNComboBoxAction implements Du
         VirtualFile virtualFile = getVirtualFile(component);
         if (virtualFile != null) {
             ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getConnectionHandler(virtualFile);
-            if (connectionHandler != null && !connectionHandler.isVirtual() && !connectionHandler.isDisposed()) {
+            if (Failsafe.check(connectionHandler) && !connectionHandler.isVirtual()) {
                 DatabaseSessionBundle sessionBundle = connectionHandler.getSessionBundle();
 
                 if (isDebugConsole(virtualFile)) {

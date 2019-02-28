@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.data.filter;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
@@ -22,7 +23,7 @@ public class DatasetFilterUtil {
             for (SortingInstruction sortingInstruction : sortingInstructions) {
                 SortDirection sortDirection = sortingInstruction.getDirection();
                 DBColumn column = dataset.getColumn(sortingInstruction.getColumnName());
-                if (column != null && !column.isDisposed() && !sortDirection.isIndefinite()) {
+                if (Failsafe.check(column) && !sortDirection.isIndefinite()) {
                     DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(column);
                     String orderByClause = compatibilityInterface.getOrderByClause(column.getQuotedName(false), sortDirection, nullsFirst);
                     buffer.append(instructionAdded ? ", " : "");

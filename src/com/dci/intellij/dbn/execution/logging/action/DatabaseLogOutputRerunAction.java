@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.logging.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.dci.intellij.dbn.execution.logging.LogOutputContext;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
@@ -21,7 +22,7 @@ public class DatabaseLogOutputRerunAction extends AbstractDatabaseLogOutputActio
     public void actionPerformed(@NotNull AnActionEvent e) {
         Project project = ensureProject(e);
         DatabaseLoggingResult loggingResult = getDatabaseLogOutput(e);
-        if (loggingResult != null && !loggingResult.isDisposed()) {
+        if (Failsafe.check(loggingResult)) {
             LogOutputContext context = loggingResult.getContext();
             VirtualFile sourceFile = context.getSourceFile();
             if (sourceFile != null) {
