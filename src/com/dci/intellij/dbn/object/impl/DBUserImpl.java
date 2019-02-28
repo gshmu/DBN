@@ -32,9 +32,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.DBObjectType.GRANTED_PRIVILEGE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.GRANTED_ROLE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.USER;
+import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SESSION_USER;
 
 public class DBUserImpl extends DBObjectImpl implements DBUser {
@@ -69,6 +67,7 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
     }
 
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return USER;

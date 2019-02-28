@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.DBSystemPrivilege;
 import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,6 +17,7 @@ public class DBSystemPrivilegeImpl extends DBPrivilegeImpl implements DBSystemPr
         super(connectionHandler, resultSet);
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.SYSTEM_PRIVILEGE;

@@ -62,6 +62,7 @@ public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
         properties.set(INVALIDABLE, true);
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.SYNONYM;

@@ -31,7 +31,7 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     private ProjectRef projectRef;
     private DatabaseFileSystem fileSystem = DatabaseFileSystem.getInstance();
 
-    public DBVirtualFileImpl(Project project) {
+    public DBVirtualFileImpl(@NotNull Project project) {
         //id = ID_STORE.getAndIncrement();
         id = DummyFileIdGenerator.next();
         projectRef = ProjectRef.from(project);
@@ -70,9 +70,9 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     }
 
     @Override
-    @Nullable
+    @NotNull
     public Project getProject() {
-        return projectRef.get();
+        return projectRef.getnn();
     }
 
     @Override

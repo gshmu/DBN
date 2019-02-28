@@ -23,6 +23,7 @@ public class DBNestedTableColumnImpl extends DBObjectImpl implements DBNestedTab
         return null; //TODO
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.NESTED_TABLE_COLUMN;

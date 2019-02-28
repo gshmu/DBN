@@ -23,6 +23,7 @@ public class DBDimensionImpl extends DBSchemaObjectImpl implements DBDimension {
         return resultSet.getString("DIMENSION_NAME");
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.TYPE;

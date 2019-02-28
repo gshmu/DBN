@@ -132,6 +132,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         return getObjectBundle().getUser(getName());
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return SCHEMA;

@@ -32,7 +32,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface DBObject extends PropertyHolder<DBObjectProperty>, BrowserTreeNode, DynamicContentElement, LookupItemBuilderProvider, Referenceable, EnvironmentTypeProvider, PresentableConnectionProvider {
+    @NotNull
     DBObjectType getObjectType();
+
     boolean isOfType(DBObjectType objectType);
 
     DBLanguageDialect getLanguageDialect(DBLanguage language);

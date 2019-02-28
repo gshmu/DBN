@@ -13,10 +13,8 @@ import java.util.List;
 
 public class DBFictiveObject extends DBObjectImpl implements PsiReference {
     private String name;
-    private DBObjectType objectType;
     public DBFictiveObject(DBObjectType objectType, String name) {
-        super(null, name);
-        this.objectType = objectType;
+        super(null, objectType, name);
     }
 
     @Override
@@ -34,9 +32,10 @@ public class DBFictiveObject extends DBObjectImpl implements PsiReference {
         return getName();
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
-        return objectType;
+        return getRef().getObjectType();
     }
 
     @Override

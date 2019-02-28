@@ -32,6 +32,7 @@ public class DBGrantedPrivilegeImpl extends DBObjectImpl implements DBGrantedPri
         return name;
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.GRANTED_PRIVILEGE;
