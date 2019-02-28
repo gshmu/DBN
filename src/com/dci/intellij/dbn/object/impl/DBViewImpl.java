@@ -45,6 +45,7 @@ public class DBViewImpl extends DBDatasetImpl implements DBView {
         return name;
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.VIEW;

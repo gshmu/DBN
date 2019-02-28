@@ -100,9 +100,9 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         init(resultSet);
     }
 
-    protected DBObjectImpl(@Nullable ConnectionHandler connectionHandler, String name) {
+    protected DBObjectImpl(@Nullable ConnectionHandler connectionHandler, DBObjectType objectType, String name) {
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
-        objectRef = new DBObjectRef(this, name);
+        objectRef = new DBObjectRef(this, objectType, name);
     }
 
     private void init(ResultSet resultSet) throws SQLException {

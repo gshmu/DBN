@@ -36,6 +36,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     private ContentDependencyAdapter dependencyAdapter;
 
     protected List<T> elements = EMPTY_UNTOUCHED_CONTENT;
+    private final Object ENSURE_SYNC = new Object();
 
     protected DynamicContentImpl(
             @NotNull GenericDatabaseElement parent,
@@ -196,9 +197,9 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
 
     @Override
     public void ensure() {
-        if (shouldLoad()) {
-            synchronized (this) {
-                if (shouldLoad()) {
+        if (!isLoaded() || shouldLoad()) {
+            synchronized (ENSURE_SYNC) {
+                if (!isLoaded() || shouldLoad()) {
                     load();
                 }
             }

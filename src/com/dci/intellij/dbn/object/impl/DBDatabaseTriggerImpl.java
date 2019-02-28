@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.loader.DBSourceCodeLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -24,6 +25,7 @@ public class DBDatabaseTriggerImpl extends DBTriggerImpl implements DBDatabaseTr
         super(schema, resultSet);
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.DATABASE_TRIGGER;

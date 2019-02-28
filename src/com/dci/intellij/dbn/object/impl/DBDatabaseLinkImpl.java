@@ -34,6 +34,7 @@ public class DBDatabaseLinkImpl extends DBSchemaObjectImpl implements DBDatabase
         properties.set(SCHEMA_OBJECT, true);
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.DBLINK;

@@ -21,9 +21,7 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.DBObjectType.COLUMN;
 import static com.dci.intellij.dbn.object.common.DBObjectType.INDEX;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.INVALIDABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.UNIQUE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
     private DBObjectList<DBColumn> columns;
@@ -60,6 +58,7 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
         }
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return INDEX;

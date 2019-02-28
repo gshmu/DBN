@@ -1,9 +1,7 @@
 package com.dci.intellij.dbn.editor.code;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
-import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
 import com.intellij.openapi.project.Project;
@@ -17,17 +15,14 @@ public class SourceCodeEditorProvider extends BasicSourceCodeEditorProvider {
 
     @Override
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-        return Failsafe.lenient(false, () -> {
-            if (virtualFile instanceof DBEditableObjectVirtualFile) {
-                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
+        if (virtualFile instanceof DBEditableObjectVirtualFile) {
+            DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
 
-                DBSchemaObject object = databaseFile.getObject();
-                DBContentType contentType = object.getContentType();
-                return contentType != null && contentType.isOneOf(DBContentType.CODE, DBContentType.CODE_AND_DATA);
+            DBContentType contentType = databaseFile.getContentType();
+            return contentType.isOneOf(DBContentType.CODE, DBContentType.CODE_AND_DATA);
 
-            }
-            return false;
-        });
+        }
+        return false;
     }
 
 

@@ -52,6 +52,7 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
         return (DBPackage) getParentObject();
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return PACKAGE_TYPE;

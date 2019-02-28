@@ -38,6 +38,7 @@ public class DBNestedTableImpl extends DBObjectImpl implements DBNestedTable {
         return name;
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.NESTED_TABLE;

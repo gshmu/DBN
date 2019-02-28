@@ -37,15 +37,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.DBObjectType.COLUMN;
-import static com.dci.intellij.dbn.object.common.DBObjectType.CONSTRAINT;
-import static com.dci.intellij.dbn.object.common.DBObjectType.INDEX;
-import static com.dci.intellij.dbn.object.common.DBObjectType.TYPE_ATTRIBUTE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.FOREIGN_KEY;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.HIDDEN;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.NULLABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.PRIMARY_KEY;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.UNIQUE_KEY;
+import static com.dci.intellij.dbn.object.common.DBObjectType.*;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     private DBDataType dataType;
@@ -88,6 +81,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
         }
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return COLUMN;

@@ -24,9 +24,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.DBObjectType.GRANTED_PRIVILEGE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.GRANTED_ROLE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.ROLE;
+import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 
 public class DBRoleImpl extends DBObjectImpl implements DBRole {
     DBObjectList<DBGrantedPrivilege> privileges;
@@ -49,6 +47,7 @@ public class DBRoleImpl extends DBObjectImpl implements DBRole {
         grantedRoles = ol.createSubcontentObjectList(GRANTED_ROLE, this, sourceContentHolder, DBObjectRelationType.ROLE_ROLE);
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return ROLE;

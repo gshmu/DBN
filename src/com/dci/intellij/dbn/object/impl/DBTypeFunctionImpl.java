@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.DBTypeFunction;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,6 +40,7 @@ public class DBTypeFunctionImpl extends DBFunctionImpl implements DBTypeFunction
         return true;
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return DBObjectType.TYPE_FUNCTION;

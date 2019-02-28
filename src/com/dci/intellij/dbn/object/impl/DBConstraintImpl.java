@@ -113,6 +113,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
         return enabled ? Icons.DBO_CONSTRAINT : Icons.DBO_CONSTRAINT_DISABLED;
     }
 
+    @NotNull
     @Override
     public DBObjectType getObjectType() {
         return CONSTRAINT;
