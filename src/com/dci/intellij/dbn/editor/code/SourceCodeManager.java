@@ -324,7 +324,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         return true;
     }
 
-    private boolean isValidObjectTypeAndName(@NotNull DBLanguagePsiFile psiFile, DBSchemaObject object, DBContentType contentType) {
+    private boolean isValidObjectTypeAndName(@NotNull DBLanguagePsiFile psiFile, @NotNull DBSchemaObject object, DBContentType contentType) {
         ConnectionHandler connectionHandler = object.getConnectionHandler();
         DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
         if (ddlInterface.includesTypeAndNameInSourceContent(object.getObjectType().getTypeId())) {
@@ -370,7 +370,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         return true;
     }
 
-    private String text(PsiElement psiElement) {
+    private String text(@NotNull PsiElement psiElement) {
         return unquote(psiElement.getText());
     }
 
@@ -389,7 +389,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         });
     }
 
-    public BasePsiElement getObjectNavigationElement(DBSchemaObject parentObject, DBContentType contentType, DBObjectType objectType, CharSequence objectName) {
+    public BasePsiElement getObjectNavigationElement(@NotNull DBSchemaObject parentObject, DBContentType contentType, DBObjectType objectType, CharSequence objectName) {
         DBEditableObjectVirtualFile editableObjectFile = parentObject.getEditableVirtualFile();
         DBContentVirtualFile contentFile = editableObjectFile.getContentFile(contentType);
         if (contentFile != null) {
@@ -404,7 +404,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         return null;
     }
 
-    public void navigateToObject(DBSchemaObject parentObject, BasePsiElement basePsiElement) {
+    public void navigateToObject(@NotNull DBSchemaObject parentObject, @NotNull BasePsiElement basePsiElement) {
         DBEditableObjectVirtualFile editableObjectFile = parentObject.getEditableVirtualFile();
         DBLanguagePsiFile psiFile = basePsiElement.getFile();
         VirtualFile elementVirtualFile = psiFile.getVirtualFile();
@@ -466,21 +466,21 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         return canClose;
     }
 
-    public void loadSourceCode(DBSourceCodeVirtualFile sourceCodeFile, boolean force) {
+    public void loadSourceCode(@NotNull DBSourceCodeVirtualFile sourceCodeFile, boolean force) {
         String objectDescription = sourceCodeFile.getObject().getQualifiedNameWithType();
         ConnectionAction.invoke("loading the source code", false, sourceCodeFile,
                 (action) -> Progress.background(getProject(), "Loading source code for " + objectDescription, false,
                         (progress) -> loadSourceFromDatabase(sourceCodeFile, force)));
     }
 
-    public void saveSourceCode(DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor, Runnable successCallback) {
+    public void saveSourceCode(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor, Runnable successCallback) {
         String objectDescription = sourceCodeFile.getObject().getQualifiedNameWithType();
         ConnectionAction.invoke("saving the source code", false, sourceCodeFile,
                 (action) -> Progress.prompt(getProject(), "Saving source code for " + objectDescription, false,
                         (progress) -> saveSourceToDatabase(sourceCodeFile, fileEditor, successCallback)));
     }
 
-    public void revertSourceCodeChanges(DBEditableObjectVirtualFile databaseFile, Runnable successCallback) {
+    public void revertSourceCodeChanges(@NotNull DBEditableObjectVirtualFile databaseFile, Runnable successCallback) {
         try {
             List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
             for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
@@ -511,7 +511,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 */
     }
 
-    public void saveSourceCodeChanges(DBEditableObjectVirtualFile databaseFile, Runnable successCallback) {
+    public void saveSourceCodeChanges(@NotNull DBEditableObjectVirtualFile databaseFile, Runnable successCallback) {
         String objectDescription = databaseFile.getObject().getQualifiedNameWithType();
         ConnectionAction.invoke("saving the source code", false, databaseFile,
                 (action) -> Progress.prompt(getProject(), "Saving source code for " + objectDescription, false,
