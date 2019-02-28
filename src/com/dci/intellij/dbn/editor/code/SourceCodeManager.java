@@ -481,6 +481,18 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     public void revertSourceCodeChanges(DBEditableObjectVirtualFile databaseFile, Runnable successCallback) {
+        try {
+            List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
+            for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
+                sourceCodeFile.revertLocalChanges();
+            }
+        } finally {
+            if (successCallback != null) {
+                successCallback.run();
+            }
+        }
+
+/*
         String objectDescription = databaseFile.getObject().getQualifiedNameWithType();
         ConnectionAction.invoke("loading the source code", false, databaseFile,
                 (action) -> Progress.background(getProject(), "Loading source code for " + objectDescription, false,
@@ -496,6 +508,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                                 }
                             }
                         }));
+*/
     }
 
     public void saveSourceCodeChanges(DBEditableObjectVirtualFile databaseFile, Runnable successCallback) {
