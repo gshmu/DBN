@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionResultForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -14,9 +15,9 @@ public class ExecutionResultFindDataAction extends AbstractExecutionResultAction
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         StatementExecutionCursorResult executionResult = getExecutionResult(e);
-        if (executionResult != null) {
+        if (Failsafe.check(executionResult)) {
             StatementExecutionResultForm resultForm = executionResult.getForm(false);
-            if (resultForm != null) {
+            if (Failsafe.check(resultForm)) {
                 resultForm.showSearchHeader();
             }
         }

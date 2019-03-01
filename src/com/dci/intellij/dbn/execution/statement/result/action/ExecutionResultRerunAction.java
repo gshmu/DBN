@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.execution.statement.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -22,12 +24,17 @@ public class ExecutionResultRerunAction extends AbstractExecutionResultAction {
     @Override
     public void update(@NotNull AnActionEvent e) {
         StatementExecutionCursorResult executionResult = getExecutionResult(e);
+
+        boolean enabled = false;
+        if (Failsafe.check(executionResult)) {
+            ResultSetTable resultTable = executionResult.getResultTable();
+            if (Failsafe.check(resultTable)) {
+                enabled = !resultTable.isLoading();
+            }
+        }
+
         Presentation presentation = e.getPresentation();
-        presentation.setEnabled(
-                executionResult != null &&
-                executionResult.getResultTable() != null &&
-                !executionResult.getResultTable().isLoading());
-        
+        presentation.setEnabled(enabled);
         presentation.setText("Rerun Statement");
     }
 }

@@ -47,8 +47,10 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
         StatementExecutionCursorResult executionResult = getExecutionResult(e);
         if (Failsafe.check(executionResult)) {
             StatementExecutionCursorProcessor executionProcessor = executionResult.getExecutionProcessor();
-            StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
-            visible = executionVariables != null && executionVariables.getVariables().size() > 0;
+            if (Failsafe.check(executionProcessor)) {
+                StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
+                visible = executionVariables != null && executionVariables.getVariables().size() > 0;
+            }
         }
         e.getPresentation().setVisible(visible);
         e.getPresentation().setText("Open Variables Dialog");

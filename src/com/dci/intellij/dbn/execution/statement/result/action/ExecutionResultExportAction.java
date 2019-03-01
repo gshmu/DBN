@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.data.export.ui.ExportDataDialog;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
@@ -15,10 +16,10 @@ public class ExecutionResultExportAction extends AbstractExecutionResultAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         StatementExecutionCursorResult executionResult = getExecutionResult(e);
-        if (executionResult != null) {
-            ResultSetTable table = executionResult.getResultTable();
-            if (table != null) {
-                ExportDataDialog dialog = new ExportDataDialog(table, executionResult);
+        if (Failsafe.check(executionResult)) {
+            ResultSetTable resultTable = executionResult.getResultTable();
+            if (Failsafe.check(resultTable)) {
+                ExportDataDialog dialog = new ExportDataDialog(resultTable, executionResult);
                 dialog.show();
             }
         }

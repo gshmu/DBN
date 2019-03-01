@@ -1,6 +1,9 @@
 package com.dci.intellij.dbn.execution.statement.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
+import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -23,12 +26,17 @@ public class ExecutionResultResumeAction extends AbstractExecutionResultAction {
     @Override
     public void update(@NotNull AnActionEvent e) {
         StatementExecutionCursorResult executionResult = getExecutionResult(e);
+        boolean enabled = false;
 
-        boolean enabled = executionResult != null &&
-                executionResult.hasResult() &&
-                executionResult.getResultTable() != null &&
-                !executionResult.getResultTable().isLoading() &&
-                !executionResult.getTableModel().isResultSetExhausted();
+        if (Failsafe.check(executionResult) && executionResult.hasResult()) {
+            ResultSetTable resultTable = executionResult.getResultTable();
+            if (Failsafe.check(resultTable)) {
+                ResultSetDataModel tableModel = resultTable.getModel();
+                if (Failsafe.check(tableModel)) {
+                    enabled = !resultTable.isLoading() && !tableModel.isResultSetExhausted();
+                }
+            }
+        }
 
         Presentation presentation = e.getPresentation();
         presentation.setEnabled(enabled);
