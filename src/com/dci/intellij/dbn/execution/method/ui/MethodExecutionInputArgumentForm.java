@@ -42,9 +42,9 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
     private UserValueHolderImpl<String> userValueHolder;
 
     private DBObjectRef<DBArgument> argumentRef;
-    private List<MethodExecutionInputTypeAttributeForm> typeAttributeForms = new ArrayList<MethodExecutionInputTypeAttributeForm>();
+    private List<MethodExecutionInputTypeAttributeForm> typeAttributeForms = new ArrayList<>();
 
-    public MethodExecutionInputArgumentForm(MethodExecutionInputForm parentForm, final DBArgument argument) {
+    MethodExecutionInputArgumentForm(MethodExecutionInputForm parentForm, final DBArgument argument) {
         super(parentForm);
         this.argumentRef = DBObjectRef.from(argument);
         String argumentName = argument.getName();
@@ -93,7 +93,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
                     contentType = TextContentType.getPlainText(project);
                 }
 
-                userValueHolder = new UserValueHolderImpl<String>(argumentName, DBObjectType.ARGUMENT, dataType, project);
+                userValueHolder = new UserValueHolderImpl<>(argumentName, DBObjectType.ARGUMENT, dataType, project);
                 userValueHolder.setUserValue(value);
                 userValueHolder.setContentType(contentType);
                 inputField.setUserValueHolder(userValueHolder);
@@ -147,7 +147,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
                     MethodExecutionManager executionManager = MethodExecutionManager.getInstance(argument.getProject());
                     MethodExecutionArgumentValue argumentValue = executionManager.getArgumentValuesCache().getArgumentValue(connectionHandler.getConnectionId(), argument.getName(), false);
                     if (argumentValue != null) {
-                        List<String> cachedValues = new ArrayList<String>(argumentValue.getValueHistory());
+                        List<String> cachedValues = new ArrayList<>(argumentValue.getValueHistory());
                         cachedValues.removeAll(getValues());
                         return cachedValues;
                     }
@@ -205,7 +205,8 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
 
         return new int[] {
             (int) Math.max(metrics[0], argumentLabel.getPreferredSize().getWidth()),
-            (int) Math.max(metrics[1], inputFieldPanel.getPreferredSize().getWidth())};
+            (int) Math.max(metrics[1], inputFieldPanel.getPreferredSize().getWidth()),
+            (int) Math.max(metrics[2], argumentTypeLabel.getPreferredSize().getWidth())};
     }
 
     protected void adjustMetrics(int[] metrics) {
@@ -216,6 +217,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
         }
         argumentLabel.setPreferredSize(new Dimension(metrics[0], argumentLabel.getHeight()));
         inputFieldPanel.setPreferredSize(new Dimension(metrics[1], inputFieldPanel.getHeight()));
+        argumentTypeLabel.setPreferredSize(new Dimension(metrics[2], argumentTypeLabel.getHeight()));
     }
 
     public void addDocumentListener(DocumentListener documentListener){
