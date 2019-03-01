@@ -326,17 +326,14 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         } else {
             return Failsafe.lenient(Collections.emptyList(), () -> {
                 boolean scroll = !isTouched();
-                if (!isLoaded()) {
+                if (!isLoaded() || isDirty()) {
                     loadInBackground();
-                    return elements;
+                    scroll = false;
                 }
 
-                if (elements.size() > 0 && elements.get(0).isDisposed()) {
-                    loadInBackground();
-                    return elements;
-                }
                 if (scroll) {
-                    DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
+                    ConnectionHandler connectionHandler = getConnectionHandler();
+                    DatabaseBrowserManager.scrollToSelectedElement(connectionHandler);
                 }
                 return elements;
             });
