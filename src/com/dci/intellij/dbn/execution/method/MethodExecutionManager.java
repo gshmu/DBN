@@ -139,19 +139,31 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             boolean debug,
             @Nullable ParametricRunnable<MethodExecutionInput> callback) {
 
-        Dispatch.invoke(() -> {
-            Project project = getProject();
-            MethodExecutionInput selectedInput = CommonUtil.nvln(selection, executionHistory.getLastSelection());
-            MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(project, selectedInput, editable, debug);
+        Project project = getProject();
+        Progress.prompt(project, "Loading method execution history", true,
+                (progress) -> {
+                    MethodExecutionInput selectedInput = CommonUtil.nvln(selection, executionHistory.getLastSelection());
+                    if (selectedInput != null) {
+                        // initialize method arguments while in background
+                        DBMethod method = selectedInput.getMethod();
+                        if (Failsafe.check(method)) {
+                            method.getArguments();
+                        }
+                    }
 
-            executionHistoryDialog.show();
-            MethodExecutionInput newlySelected = executionHistoryDialog.getSelectedExecutionInput();
-            if (newlySelected != null && callback != null) {
-                if (executionHistoryDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-                    callback.run(newlySelected);
-                }
-            }
-        });
+                    if (!progress.isCanceled()) {
+                        Dispatch.invoke(() -> {
+                            MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(project, selectedInput, editable, debug);
+                            executionHistoryDialog.show();
+                            MethodExecutionInput newlySelected = executionHistoryDialog.getSelectedExecutionInput();
+                            if (newlySelected != null && callback != null) {
+                                if (executionHistoryDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                                    callback.run(newlySelected);
+                                }
+                            }
+                        });
+                    }
+                });
     }
 
     public void execute(DBMethod method) {
