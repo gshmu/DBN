@@ -3,14 +3,17 @@ package com.dci.intellij.dbn.common.content;
 import com.dci.intellij.dbn.common.property.Property;
 
 public enum DynamicContentStatus implements Property {
-    DIRTY,
-    DISPOSED,
+    MASTER,
     INTERNAL,
     CONCURRENT,
+
+    DIRTY,
     LOADED,
-    LOADING,
+    DISPOSED,
+
     CHANGING,
-    MASTER;
+    LOADING,
+    LOADING_IN_BACKGROUND;
 
     private final int index = Property.idx(this);
 
