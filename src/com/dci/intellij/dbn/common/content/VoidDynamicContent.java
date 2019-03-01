@@ -76,6 +76,11 @@ public class VoidDynamicContent implements DynamicContent{
     }
 
     @Override
+    public boolean isLoadingInBackground() {
+        return false;
+    }
+
+    @Override
     public boolean isDirty() {
         return false;
     }
