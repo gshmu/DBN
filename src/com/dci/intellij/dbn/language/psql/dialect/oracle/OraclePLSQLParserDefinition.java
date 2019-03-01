@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class OraclePLSQLParserDefinition extends PSQLParserDefinition {
 
-    public OraclePLSQLParserDefinition(OraclePLSQLParser parser) {
+    OraclePLSQLParserDefinition(OraclePLSQLParser parser) {
         super(parser);
     }
 

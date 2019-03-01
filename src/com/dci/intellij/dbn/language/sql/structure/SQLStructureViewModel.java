@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class SQLStructureViewModel extends DBLanguageStructureViewModel {
     private Filter[] filters = new Filter[]{new SQLStructureViewModelFilter()};
 
-    public SQLStructureViewModel(Editor editor, PsiFile psiFile) {
+    SQLStructureViewModel(Editor editor, PsiFile psiFile) {
         super(editor, psiFile);
     }
 

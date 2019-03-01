@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class Iso92SQLParserDefinition extends SQLParserDefinition {
 
-    public Iso92SQLParserDefinition(Iso92SQLParser parser) {
+    Iso92SQLParserDefinition(Iso92SQLParser parser) {
         super(parser);
     }
 

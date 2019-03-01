@@ -12,7 +12,7 @@ public class PSQLFileType extends DBLanguageFileType {
 
     public static final PSQLFileType INSTANCE = new PSQLFileType(PSQLLanguage.INSTANCE, "psql", "PSQL files (DBN)", DBContentType.CODE);
 
-    public PSQLFileType(@NotNull Language language, String extension, String description, DBContentType contentType) {
+    private PSQLFileType(@NotNull Language language, String extension, String description, DBContentType contentType) {
         super(language, extension, description, contentType);
     }
 

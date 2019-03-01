@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.language.psql.dialect.PSQLLanguageDialect;
 import com.dci.intellij.dbn.language.sql.dialect.sqlite.SqliteSQLHighlighter;
 
 public class SqlitePSQLHighlighter extends SqliteSQLHighlighter {
-    public SqlitePSQLHighlighter(PSQLLanguageDialect languageDialect) {
+    SqlitePSQLHighlighter(PSQLLanguageDialect languageDialect) {
         super(languageDialect);
     }
 

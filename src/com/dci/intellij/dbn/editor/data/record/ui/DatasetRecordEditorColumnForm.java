@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorValueListPopupSettings
 import com.dci.intellij.dbn.object.DBColumn;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -198,7 +199,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl<DatasetRecordEdit
                     valueTextField.setForeground(UIUtil.getTextFieldForeground());
                 } catch (ParseException e1) {
                     if (highlightError) {
-                        valueTextField.setForeground(Color.RED);
+                        valueTextField.setForeground(JBColor.RED);
                     }
 
                     //DBDataType dataType = cell.getColumnInfo().getDataType();

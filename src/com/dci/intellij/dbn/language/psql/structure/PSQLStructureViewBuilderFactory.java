@@ -14,12 +14,16 @@ import org.jetbrains.annotations.Nullable;
 public class PSQLStructureViewBuilderFactory implements PsiStructureViewFactory {
 
     @Override
-    public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile) {
+    public StructureViewBuilder getStructureViewBuilder(@NotNull final PsiFile psiFile) {
         return new TreeBasedStructureViewBuilder() {
             @NotNull
             public StructureViewModel createStructureViewModel() {
                 try {
-                    return psiFile == null || !psiFile.isValid() || psiFile.getProject().isDisposed() || PsiEditorUtil.Service.getInstance() == null ? EmptyStructureViewModel.INSTANCE : new PSQLStructureViewModel(null, psiFile);
+                    return !psiFile.isValid() ||
+                            psiFile.getProject().isDisposed() ||
+                            PsiEditorUtil.Service.getInstance() == null ?
+                                    EmptyStructureViewModel.INSTANCE :
+                                    new PSQLStructureViewModel(null, psiFile);
                 } catch (Throwable e) {
                     // TODO dirty workaround (compatibility issue)
                     return EmptyStructureViewModel.INSTANCE;
@@ -30,7 +34,11 @@ public class PSQLStructureViewBuilderFactory implements PsiStructureViewFactory 
             @Override
             public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
                 try {
-                    return psiFile == null || !psiFile.isValid() || psiFile.getProject().isDisposed() || PsiEditorUtil.Service.getInstance() == null ? EmptyStructureViewModel.INSTANCE : new PSQLStructureViewModel(editor, psiFile);
+                    return !psiFile.isValid() ||
+                            psiFile.getProject().isDisposed() ||
+                            PsiEditorUtil.Service.getInstance() == null ?
+                                    EmptyStructureViewModel.INSTANCE :
+                                    new PSQLStructureViewModel(editor, psiFile);
                 } catch (Throwable e) {
                     // TODO dirty workaround (compatibility issue)
                     return EmptyStructureViewModel.INSTANCE;

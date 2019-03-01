@@ -17,7 +17,7 @@ import java.util.List;
 
 public class SQLStructureViewElement extends DBLanguageStructureViewElement<SQLStructureViewElement> {
 
-    public SQLStructureViewElement(PsiElement psiElement) {
+    SQLStructureViewElement(PsiElement psiElement) {
         super(psiElement);
     }
 
@@ -70,7 +70,7 @@ public class SQLStructureViewElement extends DBLanguageStructureViewElement<SQLS
     protected List<SQLStructureViewElement> visitChild(PsiElement child, List<SQLStructureViewElement> elements) {
         if (child instanceof ChameleonPsiElement) {
             if (elements == null) {
-                elements = new ArrayList<SQLStructureViewElement>();
+                elements = new ArrayList<>();
             }
             elements.add(new SQLStructureViewElement(child));
             return elements;

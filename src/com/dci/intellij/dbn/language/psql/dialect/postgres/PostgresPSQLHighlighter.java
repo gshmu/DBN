@@ -9,7 +9,7 @@ import com.intellij.lexer.Lexer;
 import org.jetbrains.annotations.NotNull;
 
 public class PostgresPSQLHighlighter extends PSQLSyntaxHighlighter {
-    public PostgresPSQLHighlighter(PSQLLanguageDialect languageDialect) {
+    PostgresPSQLHighlighter(PSQLLanguageDialect languageDialect) {
         super(languageDialect, "postgres_psql_highlighter_tokens.xml");
     }
 
