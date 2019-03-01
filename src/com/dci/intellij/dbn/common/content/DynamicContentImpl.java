@@ -214,9 +214,11 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     @Override
     public void refresh() {
         if (isLoaded() && !isLoading()) {
-            ContentDependencyAdapter dependencyAdapter = getDependencyAdapter();
-            dependencyAdapter.refreshSources();
             markDirty();
+            dependencyAdapter.refreshSources();
+            if (!is(INTERNAL)){
+                CollectionUtil.forEach(elements, element -> element.refresh());
+            }
         }
     }
 
@@ -226,7 +228,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
             synchronized (this) {
                 if (shouldLoadInBackground()) {
                     set(LOADING_IN_BACKGROUND, true);
-                    //System.out.println( this + " :invoked by " + ThreadMonitor.thread());
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     String connectionString = " (" + connectionHandler.getName() + ')';
                     Progress.background(
@@ -249,6 +250,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     }
 
     private void performLoad(boolean force) throws InterruptedException {
+        System.out.println( this + " :invoked by " + ThreadMonitor.thread());
         checkDisposed();
         dependencyAdapter.beforeLoad(force);
         checkDisposed();
