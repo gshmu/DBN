@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.result.action;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
@@ -36,7 +37,7 @@ public abstract class AbstractExecutionResultAction extends DumbAwareAction {
     @Override
     public void update(@NotNull AnActionEvent e) {
         StatementExecutionCursorResult executionResult = getExecutionResult(e);
-        e.getPresentation().setEnabled(executionResult != null);
+        e.getPresentation().setEnabled(Failsafe.check(executionResult));
     }
 
 }
