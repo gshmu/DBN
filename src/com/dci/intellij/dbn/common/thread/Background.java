@@ -5,9 +5,7 @@ import java.util.concurrent.ExecutorService;
 public interface Background {
     static void run(Runnable runnable) {
         ExecutorService executorService = ThreadFactory.backgroundExecutor();
-        executorService.submit(
-                () -> ThreadMonitor.run(ThreadProperty.BACKGROUND_THREAD,
-                        () -> runnable.run()));
+        executorService.submit(() -> ThreadMonitor.run(ThreadProperty.BACKGROUND_THREAD, runnable));
     }
 
 }
