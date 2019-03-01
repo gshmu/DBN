@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.method.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.RowIcon;
 
 import javax.swing.*;
@@ -21,7 +22,7 @@ public class ObjectHierarchyPanel extends JPanel {
         Color color = new Color(255, 255, 239);
         setBackground(color);
         Border border = new CompoundBorder(
-                new LineBorder(Color.GRAY, 1, false),
+                new LineBorder(JBColor.GRAY, 1, false),
                 new LineBorder(color, 4, false));
         setBorder(border);
         this.object = object;

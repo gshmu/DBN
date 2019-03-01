@@ -22,6 +22,7 @@ public class MysqlSQLLanguageDialect extends SQLLanguageDialect {
     protected DBLanguageSyntaxHighlighter createSyntaxHighlighter() {
         return new MysqlSQLHighlighter(this);
 }
+
     @Override
     protected MysqlSQLParserDefinition createParserDefinition() {
         MysqlSQLParser parser = new MysqlSQLParser(this);

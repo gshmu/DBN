@@ -26,6 +26,7 @@ public class SQLParserDefinition extends DBLanguageParserDefinition {
         return getDefaultParseDefinition().createLexer(project);
     }
 
+    @NotNull
     private static DBLanguageParserDefinition getDefaultParseDefinition() {
         return SQLLanguage.INSTANCE.getMainLanguageDialect().getParserDefinition();
     }

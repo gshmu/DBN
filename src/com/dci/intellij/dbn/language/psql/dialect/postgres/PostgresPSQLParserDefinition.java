@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PostgresPSQLParserDefinition extends PSQLParserDefinition {
 
-    public PostgresPSQLParserDefinition(PostgresPSQLParser parser) {
+    PostgresPSQLParserDefinition(PostgresPSQLParser parser) {
         super(parser);
     }
 

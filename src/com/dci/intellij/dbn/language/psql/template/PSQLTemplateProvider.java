@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class PSQLTemplateProvider implements DefaultLiveTemplatesProvider {
 
-    public static final String[] TEMPLATES = new String[]{"com/dci/intellij/dbn/language/psql/template/default"};
+    private static final String[] TEMPLATES = new String[]{"com/dci/intellij/dbn/language/psql/template/default"};
 
     @Override
     public String[] getDefaultLiveTemplateFiles() {

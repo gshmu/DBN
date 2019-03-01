@@ -7,6 +7,7 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -19,13 +20,13 @@ public class PSQLStructureViewModelGroup implements Group {
     private static TextAttributesKey TEXT_ATTRIBUTES_KEY =
             TextAttributesKey.createTextAttributesKey(
                     "PSQLStructureViewModelGroup",
-                    new TextAttributes(Color.BLACK, null, null, null, Font.BOLD));
+                    new TextAttributes(JBColor.BLACK, null, null, null, Font.BOLD));
 
     private DBObjectType objectType;
     private List<TreeElement> children = new ArrayList<TreeElement>();
 
 
-    public PSQLStructureViewModelGroup(DBObjectType objectType) {
+    PSQLStructureViewModelGroup(DBObjectType objectType) {
         this.objectType = objectType;
     }
 

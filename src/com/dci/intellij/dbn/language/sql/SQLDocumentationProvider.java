@@ -15,7 +15,7 @@ import java.util.List;
 public class SQLDocumentationProvider implements DocumentationProvider {
 
     @Nullable
-    public String getQuickNavigateInfo(PsiElement element) {
+    private String getQuickNavigateInfo(PsiElement element) {
         if (element instanceof DBObjectPsiElement) {
             DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) element;
             return objectPsiElement.getObject().getNavigationTooltipText();

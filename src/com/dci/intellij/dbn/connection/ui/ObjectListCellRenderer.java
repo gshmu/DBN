@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.ui;
 
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.ui.DottedBorder;
+import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
@@ -17,7 +18,7 @@ public class ObjectListCellRenderer extends DefaultListCellRenderer {
         if (!cellHasFocus && isSelected) {
             label.setForeground(list.getForeground());
             label.setBackground(list.hasFocus() ? list.getBackground() : UIUtil.getFocusedFillColor());
-            label.setBorder(new DottedBorder(Color.BLACK));
+            label.setBorder(new DottedBorder(JBColor.BLACK));
         }
         return label;
     }

@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class SQLTemplateProvider implements DefaultLiveTemplatesProvider {
 
-    public static final String[] TEMPLATES = new String[]{"com/dci/intellij/dbn/language/sql/template/default"};
+    private static final String[] TEMPLATES = new String[]{"com/dci/intellij/dbn/language/sql/template/default"};
 
     @Override
     public String[] getDefaultLiveTemplateFiles() {

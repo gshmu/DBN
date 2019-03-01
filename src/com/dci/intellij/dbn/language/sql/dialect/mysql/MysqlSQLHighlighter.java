@@ -9,7 +9,7 @@ import com.intellij.lexer.Lexer;
 import org.jetbrains.annotations.NotNull;
 
 public class MysqlSQLHighlighter extends SQLSyntaxHighlighter {
-    public MysqlSQLHighlighter(SQLLanguageDialect languageDialect) {
+    MysqlSQLHighlighter(SQLLanguageDialect languageDialect) {
         super(languageDialect, "mysql_sql_highlighter_tokens.xml");
     }
 
