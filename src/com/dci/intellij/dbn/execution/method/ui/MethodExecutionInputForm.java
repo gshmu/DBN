@@ -46,12 +46,17 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
     private MethodExecutionInput executionInput;
     private Set<ChangeListener> changeListeners = new HashSet<>();
 
-    public MethodExecutionInputForm(DisposableProjectComponent parentComponent, final MethodExecutionInput executionInput, boolean showHeader, @NotNull DBDebuggerType debuggerType) {
+    public MethodExecutionInputForm(
+            DisposableProjectComponent parentComponent,
+            @NotNull MethodExecutionInput executionInput,
+            boolean showHeader,
+            @NotNull DBDebuggerType debuggerType) {
+
         super(parentComponent);
         this.executionInput = executionInput;
         DBObjectRef methodRef = executionInput.getMethodRef();
 
-        final ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
+        ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
         if (debuggerType.isDebug()) {
             versionPanel.setVisible(true);
             versionPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
@@ -75,7 +80,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
         headerPanel.setVisible(showHeader);
 
         argumentsPanel.setLayout(new BoxLayout(argumentsPanel, BoxLayout.Y_AXIS));
-        int[] metrics = new int[]{0, 0};
+        int[] metrics = new int[]{0, 0, 0};
 
         //topSeparator.setVisible(false);
         DBMethod method = executionInput.getMethod();
