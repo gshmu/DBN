@@ -18,8 +18,8 @@ import java.awt.*;
 
 public class EnvironmentType extends SettingsSupport implements Cloneable<EnvironmentType>, PersistentConfiguration, Presentable {
 
-    public static final Color DEFAULT_REGULAR_COLOR = Color.LIGHT_GRAY;
-    public static final Color DEFAULT_DARK_COLOR = Color.DARK_GRAY;
+    private static final Color DEFAULT_REGULAR_COLOR = Color.LIGHT_GRAY;
+    private static final Color DEFAULT_DARK_COLOR = Color.DARK_GRAY;
 
     public interface EnvironmentColor {
 /*        JBColor DEVELOPMENT = new JBColor(new Color(-2430209), new Color(0x445F80));

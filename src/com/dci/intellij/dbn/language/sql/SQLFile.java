@@ -6,7 +6,7 @@ import com.intellij.psi.FileViewProvider;
 import org.jetbrains.annotations.NotNull;
 
 public class SQLFile extends DBLanguagePsiFile {
-    public SQLFile(FileViewProvider fileViewProvider, @NotNull SQLLanguage language) {
+    SQLFile(FileViewProvider fileViewProvider, @NotNull SQLLanguage language) {
         super(fileViewProvider, SQLFileType.INSTANCE, language);
     }
 

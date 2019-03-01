@@ -9,7 +9,7 @@ import com.intellij.lexer.Lexer;
 import org.jetbrains.annotations.NotNull;
 
 public class OracleSQLHighlighter extends SQLSyntaxHighlighter {
-    public OracleSQLHighlighter(SQLLanguageDialect languageDialect) {
+    OracleSQLHighlighter(SQLLanguageDialect languageDialect) {
         super(languageDialect, "oracle_sql_highlighter_tokens.xml");
     }
 

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PSQLFile extends DBLanguagePsiFile {
 
-    public PSQLFile(FileViewProvider fileViewProvider, @NotNull PSQLLanguage language) {
+    PSQLFile(FileViewProvider fileViewProvider, @NotNull PSQLLanguage language) {
         super(fileViewProvider, PSQLFileType.INSTANCE, language);
     }
 

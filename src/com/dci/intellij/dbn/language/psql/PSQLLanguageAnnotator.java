@@ -78,7 +78,7 @@ public class PSQLLanguageAnnotator implements Annotator {
         });
     }
 
-    private static void annotateToken(TokenPsiElement tokenPsiElement, AnnotationHolder holder) {
+    private static void annotateToken(@NotNull TokenPsiElement tokenPsiElement, AnnotationHolder holder) {
         TokenTypeCategory flavor = tokenPsiElement.getElementType().getFlavor();
         if (flavor != null) {
             Annotation annotation = holder.createInfoAnnotation(tokenPsiElement, null);
@@ -91,7 +91,7 @@ public class PSQLLanguageAnnotator implements Annotator {
         }
     }
 
-     private static void annotateIdentifier(final IdentifierPsiElement identifierPsiElement, final AnnotationHolder holder) {
+     private static void annotateIdentifier(@NotNull final IdentifierPsiElement identifierPsiElement, final AnnotationHolder holder) {
         if (identifierPsiElement.isInjectedContext()) return;
 
         if (identifierPsiElement.isReference()) {
@@ -112,7 +112,7 @@ public class PSQLLanguageAnnotator implements Annotator {
 */
     }
 
-    private static void annotateAliasRef(IdentifierPsiElement aliasReference, AnnotationHolder holder) {
+    private static void annotateAliasRef(IdentifierPsiElement aliasReference, @NotNull AnnotationHolder holder) {
         /*if (aliasReference.resolve() == null) {
             Annotation annotation = holder.createWarningAnnotation(aliasReference, "Unknown identifier");
             annotation.setTextAttributes(PSQLTextAttributesKeys.UNKNOWN_IDENTIFIER);
@@ -125,7 +125,7 @@ public class PSQLLanguageAnnotator implements Annotator {
         annotation.setTextAttributes(PSQLTextAttributesKeys.ALIAS);
     }
 
-    private static void annotateAliasDef(IdentifierPsiElement aliasDefinition, AnnotationHolder holder) {
+    private static void annotateAliasDef(IdentifierPsiElement aliasDefinition, @NotNull AnnotationHolder holder) {
         /*Set<PsiElement> aliasDefinitions = new HashSet<PsiElement>();
         SequencePsiElement sourceScope = aliasDefinition.getEnclosingScopePsiElement();
         sourceScope.collectAliasDefinitionPsiElements(aliasDefinitions, aliasDefinition.getUnquotedText(), DBObjectType.ANY, null);
@@ -136,7 +136,7 @@ public class PSQLLanguageAnnotator implements Annotator {
         annotation.setTextAttributes(SQLTextAttributesKeys.ALIAS);
     }
 
-    private static void annotateObject(IdentifierPsiElement objectReference, AnnotationHolder holder) {
+    private static void annotateObject(@NotNull IdentifierPsiElement objectReference, AnnotationHolder holder) {
         PsiElement reference = objectReference.resolve();
         /*ConnectionHandler connectionHandler = objectReference.getConnectionHandler();
         if (reference == null && connectionHandler != null && connectionHandler.getConnectionStatus().isValid()) {
@@ -146,7 +146,7 @@ public class PSQLLanguageAnnotator implements Annotator {
         }*/
     }
 
-    private static void annotateSpecDeclarationNavigable(BasePsiElement basePsiElement, AnnotationHolder holder) {
+    private static void annotateSpecDeclarationNavigable(@NotNull BasePsiElement basePsiElement, AnnotationHolder holder) {
         if (basePsiElement.isInjectedContext()) return;
 
         BasePsiElement subjectPsiElement = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
@@ -217,7 +217,7 @@ public class PSQLLanguageAnnotator implements Annotator {
         }
     }
 
-    private static void annotateExecutable(ExecutablePsiElement executablePsiElement, AnnotationHolder holder) {
+    private static void annotateExecutable(@NotNull ExecutablePsiElement executablePsiElement, AnnotationHolder holder) {
         if (executablePsiElement.isInjectedContext()) return;
 
         if (executablePsiElement.isValid() && !executablePsiElement.isNestedExecutable()) {

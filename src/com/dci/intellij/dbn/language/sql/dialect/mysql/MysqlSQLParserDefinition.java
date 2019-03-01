@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class MysqlSQLParserDefinition extends SQLParserDefinition {
 
-    public MysqlSQLParserDefinition(MysqlSQLParser parser) {
+    MysqlSQLParserDefinition(MysqlSQLParser parser) {
         super(parser);
     }
 

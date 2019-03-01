@@ -9,7 +9,7 @@ import com.intellij.lexer.Lexer;
 import org.jetbrains.annotations.NotNull;
 
 public class Iso92SQLHighlighter extends SQLSyntaxHighlighter {
-    public Iso92SQLHighlighter(SQLLanguageDialect languageDialect) {
+    Iso92SQLHighlighter(SQLLanguageDialect languageDialect) {
         super(languageDialect, "iso92_sql_highlighter_tokens.xml");
     }
 

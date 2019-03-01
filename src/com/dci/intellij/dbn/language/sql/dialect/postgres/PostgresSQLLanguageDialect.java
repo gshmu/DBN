@@ -22,6 +22,7 @@ public class PostgresSQLLanguageDialect extends SQLLanguageDialect {
     protected DBLanguageSyntaxHighlighter createSyntaxHighlighter() {
         return new PostgresSQLHighlighter(this);
 }
+
     @Override
     protected PostgresSQLParserDefinition createParserDefinition() {
         PostgresSQLParser parser = new PostgresSQLParser(this);

@@ -55,7 +55,7 @@ public class SQLLanguageAnnotator implements Annotator {
         });
     }
 
-    private static void annotateToken(TokenPsiElement tokenPsiElement, AnnotationHolder holder) {
+    private static void annotateToken(@NotNull TokenPsiElement tokenPsiElement, AnnotationHolder holder) {
         TokenTypeCategory flavor = tokenPsiElement.getElementType().getFlavor();
         if (flavor != null) {
             Annotation annotation = holder.createInfoAnnotation(tokenPsiElement, null);
@@ -68,7 +68,7 @@ public class SQLLanguageAnnotator implements Annotator {
         }
     }
 
-    private void annotateIdentifier(IdentifierPsiElement identifierPsiElement, final AnnotationHolder holder) {
+    private void annotateIdentifier(@NotNull IdentifierPsiElement identifierPsiElement, final AnnotationHolder holder) {
         if (identifierPsiElement.getLanguageDialect().isReservedWord(identifierPsiElement.getText())) {
             Annotation annotation = holder.createInfoAnnotation(identifierPsiElement, null);
             annotation.setTextAttributes(SQLTextAttributesKeys.IDENTIFIER);
@@ -82,7 +82,7 @@ public class SQLLanguageAnnotator implements Annotator {
         }
     }
 
-    private static void annotateAliasRef(IdentifierPsiElement aliasReference, AnnotationHolder holder) {
+    private static void annotateAliasRef(@NotNull IdentifierPsiElement aliasReference, AnnotationHolder holder) {
         if (aliasReference.resolve() == null &&  aliasReference.getResolveTrialsCount() > 3) {
             Annotation annotation = holder.createWarningAnnotation(aliasReference, "Unknown identifier");
             annotation.setTextAttributes(SQLTextAttributesKeys.UNKNOWN_IDENTIFIER);
@@ -92,7 +92,7 @@ public class SQLLanguageAnnotator implements Annotator {
         }
     }
 
-    private void annotateAliasDef(IdentifierPsiElement aliasDefinition, AnnotationHolder holder) {
+    private void annotateAliasDef(IdentifierPsiElement aliasDefinition, @NotNull AnnotationHolder holder) {
         /*Set<BasePsiElement> aliasDefinitions = new HashSet<BasePsiElement>();
         BasePsiElement scope = aliasDefinition.getEnclosingScopePsiElement();
         scope.collectAliasDefinitionPsiElements(aliasDefinitions, aliasDefinition.getUnquotedText(), DBObjectType.ANY);
@@ -103,7 +103,7 @@ public class SQLLanguageAnnotator implements Annotator {
         annotation.setTextAttributes(SQLTextAttributesKeys.ALIAS);
     }
 
-    private static void annotateObject(IdentifierPsiElement objectReference, AnnotationHolder holder) {
+    private static void annotateObject(@NotNull IdentifierPsiElement objectReference, AnnotationHolder holder) {
         if (!objectReference.isResolving() && !objectReference.isDefinition()) {
             PsiElement reference = objectReference.resolve();
             if (reference == null && objectReference.getResolveTrialsCount() > 3 && checkConnection(objectReference)) {
@@ -116,7 +116,7 @@ public class SQLLanguageAnnotator implements Annotator {
         }
     }
 
-    private static boolean checkConnection(IdentifierPsiElement objectReference) {
+    private static boolean checkConnection(@NotNull IdentifierPsiElement objectReference) {
         ConnectionHandler connectionHandler = objectReference.getConnectionHandler();
         return connectionHandler != null &&
                 !connectionHandler.isVirtual() &&
@@ -125,7 +125,7 @@ public class SQLLanguageAnnotator implements Annotator {
                 !connectionHandler.getConnectionStatus().is(ConnectionHandlerStatus.LOADING);
     }
 
-    private static void annotateExecutable(ExecutablePsiElement executablePsiElement, AnnotationHolder holder) {
+    private static void annotateExecutable(@NotNull ExecutablePsiElement executablePsiElement, AnnotationHolder holder) {
         if (executablePsiElement.isInjectedContext()) return;
 
         if (executablePsiElement.isValid() && !executablePsiElement.isNestedExecutable()) {

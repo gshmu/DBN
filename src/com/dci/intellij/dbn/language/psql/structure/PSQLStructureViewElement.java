@@ -5,7 +5,7 @@ import com.intellij.psi.PsiElement;
 
 public class PSQLStructureViewElement extends DBLanguageStructureViewElement<PSQLStructureViewElement> {
 
-    public PSQLStructureViewElement(PsiElement psiElement) {
+    PSQLStructureViewElement(PsiElement psiElement) {
         super(psiElement);
     }
 
