@@ -17,6 +17,7 @@ public enum GenericDataType implements Presentable{
     ARRAY("Array"),
     XMLTYPE("XML Type"),
     PROPRIETARY("Proprietary"),
+    COMPLEX("Complex"),
     ;
 
     private String name;
