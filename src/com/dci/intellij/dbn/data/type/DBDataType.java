@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.data.type;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.data.value.ComplexValue;
 import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBType;
@@ -143,7 +144,7 @@ public class DBDataType {
         if (nativeDataType != null) {
             return nativeDataType.getValueFromResultSet(resultSet, columnIndex);
         } else {
-            return declaredType == null ? "[" + name + "]" : '[' + declaredType.getName() + ']';
+            return new ComplexValue(resultSet, columnIndex);
         }
     }
 
