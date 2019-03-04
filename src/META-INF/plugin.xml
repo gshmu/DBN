@@ -164,6 +164,7 @@
         <component><implementation-class>com.dci.intellij.dbn.editor.session.SessionBrowserManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.generator.StatementGenerationManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.object.common.loader.DatabaseLoaderManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.object.common.operation.DatabaseOperationManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.object.factory.DatabaseObjectFactory</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.object.filter.name.ObjectNameFilterManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager</implementation-class></component>
