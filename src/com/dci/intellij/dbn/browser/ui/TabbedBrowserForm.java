@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.browser.ui;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
@@ -178,12 +179,14 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
             for (TabInfo tabInfo : connectionTabs.getTabs()) {
                 SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
-                ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
-                JBColor environmentColor = connectionHandler.getEnvironmentType().getColor();
-                if (visibilitySettings.getConnectionTabs().value()) {
-                    tabInfo.setTabColor(environmentColor);
-                } else {
-                    tabInfo.setTabColor(null);
+                if (Failsafe.check(browserForm)) {
+                    ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
+                    JBColor environmentColor = connectionHandler.getEnvironmentType().getColor();
+                    if (visibilitySettings.getConnectionTabs().value()) {
+                        tabInfo.setTabColor(environmentColor);
+                    } else {
+                        tabInfo.setTabColor(null);
+                    }
                 }
             }
         }
