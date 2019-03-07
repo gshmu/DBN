@@ -40,7 +40,7 @@ public class EventUtil {
     }
 
     public static <T> void notify(@Nullable Project project, Topic<T> topic, ParametricRunnable<T> callback) {
-        if (Failsafe.check(project) && /*!project.isDefault() &&*/ project == Failsafe.DUMMY_PROJECT) {
+        if (Failsafe.check(project) && /*!project.isDefault() &&*/ project != Failsafe.DUMMY_PROJECT) {
             MessageBus messageBus = project.getMessageBus();
             T publisher = messageBus.syncPublisher(topic);
             Failsafe.lenient(() -> callback.run(publisher));
