@@ -3,15 +3,16 @@ package com.dci.intellij.dbn.browser.options.ui;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserEditorSettings;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
+import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.editor.DefaultEditorOption;
 import com.dci.intellij.dbn.object.common.editor.DefaultEditorType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBoxTableRenderer;
-import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
@@ -63,13 +64,13 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
 
     public class EditorTypeTable extends DBNEditableTable<EditorTypeTableModel> {
 
-        public EditorTypeTable(Project project, List<DefaultEditorOption> options) {
+        EditorTypeTable(Project project, List<DefaultEditorOption> options) {
             super(project, new EditorTypeTableModel(options), true);
             setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             adjustRowHeight(3);
-            setDefaultRenderer(DBObjectType.class, new ColoredTableCellRenderer() {
+            setDefaultRenderer(DBObjectType.class, new DBNColoredTableCellRenderer() {
                 @Override
-                protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
+                protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
                     DBObjectType objectType = (DBObjectType) value;
                     if (objectType != null) {
                         setIcon(objectType.getIcon());
@@ -81,9 +82,9 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
                 }
             });
 
-            setDefaultRenderer(DefaultEditorType.class, new ColoredTableCellRenderer() {
+            setDefaultRenderer(DefaultEditorType.class, new DBNColoredTableCellRenderer() {
                 @Override
-                protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
+                protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
                     DefaultEditorType editorType = (DefaultEditorType) value;
                     append(editorType.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
                     setBorder(SELECTION_BORDER);

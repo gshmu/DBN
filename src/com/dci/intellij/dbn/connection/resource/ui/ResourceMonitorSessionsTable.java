@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
 import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.ConnectionPool;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
-import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.text.DateFormatUtil;
 
@@ -23,9 +23,9 @@ class ResourceMonitorSessionsTable extends DBNTable<ResourceMonitorSessionsTable
     }
 
 
-    public class CellRenderer extends ColoredTableCellRenderer {
+    public class CellRenderer extends DBNColoredTableCellRenderer {
         @Override
-        protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
+        protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
             DatabaseSession session = (DatabaseSession) value;
             ConnectionPool connectionPool = session.getConnectionHandler().getConnectionPool();
 
