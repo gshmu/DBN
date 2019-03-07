@@ -107,7 +107,7 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
     public DDLMappedNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor) {
         Project project = getProject();
         DDLFileGeneralSettings generalSettings = DDLFileSettings.getInstance(project).getGeneralSettings();
-        if (generalSettings.isSynchronizeDDLFilesEnabled()) {
+        if (generalSettings.isSynchronizeDDLFilesEnabled() && Failsafe.check(fileEditor)) {
             if (virtualFile instanceof DBEditableObjectVirtualFile) {
                 if (fileEditor instanceof DDLFileEditor) {
                     DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
