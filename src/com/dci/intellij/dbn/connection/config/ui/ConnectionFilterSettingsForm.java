@@ -43,8 +43,9 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
         Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (notifyFilterListeners) {
-                ObjectFilterChangeListener listener = EventUtil.notify(project, ObjectFilterChangeListener.TOPIC);
-                listener.nameFiltersChanged(configuration.getConnectionId(), DBObjectType.SCHEMA);
+                EventUtil.notify(project,
+                        ObjectFilterChangeListener.TOPIC,
+                        (listener) -> listener.nameFiltersChanged(configuration.getConnectionId(), DBObjectType.SCHEMA));
             }
         });
     }

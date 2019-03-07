@@ -101,7 +101,9 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
                     if (true || getResource().isNot(ConnectionHandlerStatus.LOADING)) {
                         ConnectionHandler connectionHandler = Failsafe.get(getConnectionHandler());
                         Project project = connectionHandler.getProject();
-                        EventUtil.notify(project, ConnectionLoadListener.TOPIC).contentsLoaded(connectionHandler);
+                        EventUtil.notify(project,
+                                ConnectionLoadListener.TOPIC,
+                                (listener) -> listener.contentsLoaded(connectionHandler));
                     }
                 }
             };
@@ -197,8 +199,9 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
         public final void statusChanged(ConnectionHandlerStatus status) {
             ConnectionHandler connectionHandler = connectionHandlerRef.getnn();
             Project project = connectionHandler.getProject();
-            ConnectionHandlerStatusListener statusListener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
-            statusListener.statusChanged(connectionHandler.getConnectionId());
+            EventUtil.notify(project,
+                    ConnectionHandlerStatusListener.TOPIC,
+                    (listener) -> listener.statusChanged(connectionHandler.getConnectionId()));
         }
     }
 }

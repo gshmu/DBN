@@ -185,7 +185,9 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                                     CompilerAction compilerAction = new CompilerAction(CompilerActionSource.BULK_COMPILE, contentType);
                                     compilerManager.compileObject(schemaObject, CompileType.DEBUG, compilerAction);
                                 }
-                                EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, null);
+                                EventUtil.notify(project,
+                                        CompileManagerListener.TOPIC,
+                                        (listener) -> listener.compileFinished(connectionHandler, null));
                                 Progress.check(progress);
 
                                 performExecution(

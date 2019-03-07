@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.properties.ui.PropertiesEditorForm;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -50,10 +51,12 @@ public class ConnectionPropertiesSettingsForm extends ConfigurationEditorForm<Co
         applyFormChanges(configuration);
 
         Project project = configuration.getProject();
+        ConnectionId connectionId = configuration.getConnectionId();
         SettingsChangeNotifier.register(() -> {
             if (settingsChanged) {
-                ConnectionHandlerStatusListener listener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
-                listener.statusChanged(configuration.getConnectionId());
+                EventUtil.notify(project,
+                        ConnectionHandlerStatusListener.TOPIC,
+                        (listener) -> listener.statusChanged(connectionId));
             }
         });
     }

@@ -243,7 +243,9 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
                                     ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
                                     getProjectSettings().readConfiguration(element);
 
-                                    EventUtil.notify(project, ConnectionSettingsListener.TOPIC).connectionsChanged();
+                                    EventUtil.notify(project,
+                                            ConnectionSettingsListener.TOPIC,
+                                            (listener) -> listener.connectionsChanged());
 
                                     if (!isNewProject) {
                                         MessageUtil.showInfoDialog(project, "Project settings", "Default project settings loaded to project \"" + project.getName() + "\".");

@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.DatabaseUrlPattern;
@@ -28,6 +29,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -180,9 +182,15 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                         connectivityStatus == ConnectivityStatus.VALID ? Icons.CONNECTION_CONNECTED :
                         connectivityStatus == ConnectivityStatus.INVALID ? Icons.CONNECTION_INVALID : Icons.CONNECTION_INACTIVE;
 
-        ConnectionPresentationChangeListener listener = EventUtil.notify(configuration.getProject(), ConnectionPresentationChangeListener.TOPIC);
         EnvironmentType environmentType = connectionSettings.getDetailSettings().getEnvironmentType();
-        listener.presentationChanged(name, icon, environmentType.getColor(), getConfiguration().getConnectionId(), configuration.getDatabaseType());
+        JBColor color = environmentType.getColor();
+        ConnectionId connectionId = configuration.getConnectionId();
+        DatabaseType databaseType = configuration.getDatabaseType();
+
+        EventUtil.notify(
+                configuration.getProject(),
+                ConnectionPresentationChangeListener.TOPIC,
+                (listener) -> listener.presentationChanged(name, icon, color, connectionId, databaseType));
     }
 
     //protected abstract ConnectionDatabaseSettings createConfig(ConnectionSettings configuration);
@@ -313,14 +321,17 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
         Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
+            ConnectionId connectionId = configuration.getConnectionId();
             if (nameChanged) {
-                ConnectionSettingsListener listener = EventUtil.notify(project, ConnectionSettingsListener.TOPIC);
-                listener.connectionNameChanged(configuration.getConnectionId());
+                EventUtil.notify(project,
+                        ConnectionSettingsListener.TOPIC,
+                        (listener) -> listener.connectionNameChanged(connectionId));
             }
 
             if (settingsChanged) {
-                ConnectionSettingsListener listener = EventUtil.notify(project, ConnectionSettingsListener.TOPIC);
-                listener.connectionChanged(configuration.getConnectionId());
+                EventUtil.notify(project,
+                        ConnectionSettingsListener.TOPIC,
+                        (listener) -> listener.connectionChanged(connectionId));
             }
         });
     }

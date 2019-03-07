@@ -280,7 +280,9 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             MessageUtil.showErrorDialog(message, e);
 */
         } finally {
-            EventUtil.notify(project, DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
+            EventUtil.notify(project,
+                    DatasetLoadListener.TOPIC,
+                    (listener) -> listener.datasetLoaded(databaseFile));
         }
     }
 
@@ -289,7 +291,10 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             ConnectionAction.invoke("loading table data", false, this,
                     (action) -> {
                         setLoading(true);
-                        EventUtil.notify(project, DatasetLoadListener.TOPIC).datasetLoading(databaseFile);
+                        EventUtil.notify(project,
+                                DatasetLoadListener.TOPIC,
+                                (listener) -> listener.datasetLoading(databaseFile));
+
                         Background.run(() -> {
                             DatasetEditorForm editorForm = getEditorForm();
                             try {
@@ -320,7 +325,9 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                                 status.set(LOADED, true);
                                 editorForm.hideLoadingHint();
                                 setLoading(false);
-                                EventUtil.notify(getProject(), DatasetLoadListener.TOPIC).datasetLoaded(databaseFile);
+                                EventUtil.notify(getProject(),
+                                        DatasetLoadListener.TOPIC,
+                                        (listener) -> listener.datasetLoaded(databaseFile));
                             }
                         });
                     });

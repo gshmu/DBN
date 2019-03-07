@@ -18,7 +18,7 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
     private EnvironmentTypeBundle environmentTypes;
     private Project project;
 
-    public EnvironmentTypesTableModel(Project project, EnvironmentTypeBundle environmentTypes) {
+    EnvironmentTypesTableModel(Project project, EnvironmentTypeBundle environmentTypes) {
         this.project = project;
         this.environmentTypes = new EnvironmentTypeBundle(environmentTypes);
         addTableModelListener(defaultModelListener);
@@ -38,11 +38,12 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
         return environmentTypes.size();
     }
     
-    TableModelListener defaultModelListener = new TableModelListener() {
+    private TableModelListener defaultModelListener = new TableModelListener() {
         @Override
         public void tableChanged(TableModelEvent e) {
-            EnvironmentConfigLocalListener listener = EventUtil.notify(project, EnvironmentConfigLocalListener.TOPIC);
-            listener.settingsChanged(environmentTypes);
+            EventUtil.notify(project,
+                    EnvironmentConfigLocalListener.TOPIC,
+                    (listener) -> listener.settingsChanged(environmentTypes));
         }
     };    
 

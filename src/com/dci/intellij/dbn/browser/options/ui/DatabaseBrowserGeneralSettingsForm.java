@@ -60,11 +60,14 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
         Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (displayModeChanged) {
-                DisplayModeSettingsListener listener = EventUtil.notify(project, DisplayModeSettingsListener.TOPIC);
-                listener.displayModeChanged(displayMode);
+                EventUtil.notify(project,
+                        DisplayModeSettingsListener.TOPIC,
+                        (listener) -> listener.displayModeChanged(displayMode));
+
             } else if (repaintTree) {
-                ObjectDetailSettingsListener listener = EventUtil.notify(project, ObjectDetailSettingsListener.TOPIC);
-                listener.displayDetailsChanged();
+                EventUtil.notify(project,
+                        ObjectDetailSettingsListener.TOPIC,
+                        (listener) -> listener.displayDetailsChanged());
             }
         });
     }

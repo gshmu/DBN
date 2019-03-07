@@ -64,7 +64,9 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
 
     public DatabaseSession createSession(ConnectionHandler connectionHandler, String name) {
         DatabaseSession session = connectionHandler.getSessionBundle().createSession(name);
-        EventUtil.notify(getProject(), SessionManagerListener.TOPIC).sessionCreated(session);
+        EventUtil.notify(getProject(),
+                SessionManagerListener.TOPIC,
+                (listener) -> listener.sessionCreated(session));
         return session;
     }
 
@@ -72,7 +74,9 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
         ConnectionHandler connectionHandler = session.getConnectionHandler();
         String oldName = session.getName();
         connectionHandler.getSessionBundle().renameSession(oldName, newName);
-        EventUtil.notify(getProject(), SessionManagerListener.TOPIC).sessionChanged(session);
+        EventUtil.notify(getProject(),
+                SessionManagerListener.TOPIC,
+                (listener) -> listener.sessionChanged(session));
     }
 
     @Override
@@ -99,7 +103,9 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
     public void deleteSession(@NotNull DatabaseSession session) {
         ConnectionHandler connectionHandler = session.getConnectionHandler();
         connectionHandler.getSessionBundle().deleteSession(session.getId());
-        EventUtil.notify(getProject(), SessionManagerListener.TOPIC).sessionDeleted(session);
+        EventUtil.notify(getProject(),
+                SessionManagerListener.TOPIC,
+                (listener) -> listener.sessionDeleted(session));
     }
 
     /*********************************************

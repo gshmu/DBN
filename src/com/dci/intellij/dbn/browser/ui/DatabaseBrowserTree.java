@@ -306,7 +306,9 @@ public class DatabaseBrowserTree extends DBNTree {
                     }
                 }
 
-                EventUtil.notify(getProject(), BrowserTreeEventListener.TOPIC).selectionChanged();
+                EventUtil.notify(getProject(),
+                        BrowserTreeEventListener.TOPIC,
+                        (listener) -> listener.selectionChanged());
             }
         }
     };

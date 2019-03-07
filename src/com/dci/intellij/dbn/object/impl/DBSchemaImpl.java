@@ -488,7 +488,9 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
         }
 
         for (BrowserTreeNode treeNode : refreshNodes) {
-            EventUtil.notify(getProject(), BrowserTreeEventListener.TOPIC).nodeChanged(treeNode, TreeEventType.NODES_CHANGED);
+            EventUtil.notify(getProject(),
+                    BrowserTreeEventListener.TOPIC,
+                    (listener) -> listener.nodeChanged(treeNode, TreeEventType.NODES_CHANGED));
         }
 
     }
