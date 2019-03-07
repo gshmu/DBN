@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.code;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.EditorNotificationProvider;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -101,7 +102,7 @@ public class SourceCodeEditorNotificationProvider extends EditorNotificationProv
     public SourceCodeEditorNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor) {
         SourceCodeEditorNotificationPanel notificationPanel = null;
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
-            if (fileEditor instanceof SourceCodeEditor) {
+            if (fileEditor instanceof SourceCodeEditor && Failsafe.check(fileEditor)) {
                 DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
                 DBSchemaObject editableObject = editableObjectFile.getObject();
                 SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;

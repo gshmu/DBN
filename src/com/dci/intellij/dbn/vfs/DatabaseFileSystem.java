@@ -56,13 +56,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.CONSOLES;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.DATASET_FILTERS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.OBJECTS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.OBJECT_CONTENTS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.SESSION_BROWSERS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.SESSION_STATEMENTS;
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.values;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.*;
 
 public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysicalFileSystem, */ApplicationComponent {
     public static final String PS = "/";
@@ -430,22 +424,24 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         ConnectionAction.invoke("opening the object editor", false, object,
                 (action) -> Progress.prompt(object.getProject(), "Opening editor", true,
                         (progress) -> {
-                            EditorProviderId providerId = editorProviderId;
-                            if (editorProviderId == null) {
-                                EditorStateManager editorStateManager = EditorStateManager.getInstance(object.getProject());
-                                providerId = editorStateManager.getEditorProvider(object.getObjectType());
-                            }
+                            if (Failsafe.check(object)) {
+                                EditorProviderId providerId = editorProviderId;
+                                if (editorProviderId == null) {
+                                    EditorStateManager editorStateManager = EditorStateManager.getInstance(object.getProject());
+                                    providerId = editorStateManager.getEditorProvider(object.getObjectType());
+                                }
 
-                            if (object.is(DBObjectProperty.SCHEMA_OBJECT)) {
-                                DBObjectListContainer childObjects = object.getChildObjects();
-                                if (childObjects != null) childObjects.load();
+                                if (object.is(DBObjectProperty.SCHEMA_OBJECT)) {
+                                    DBObjectListContainer childObjects = object.getChildObjects();
+                                    if (childObjects != null) childObjects.load();
 
-                                openSchemaObject((DBSchemaObject) object, providerId, scrollBrowser, focusEditor);
+                                    openSchemaObject((DBSchemaObject) object, providerId, scrollBrowser, focusEditor);
 
-                            } else if (object.getParentObject().is(DBObjectProperty.SCHEMA_OBJECT)) {
-                                DBObjectListContainer childObjects = object.getParentObject().getChildObjects();
-                                if (childObjects != null) childObjects.load();
-                                openChildObject(object, providerId, scrollBrowser, focusEditor);
+                                } else if (object.getParentObject().is(DBObjectProperty.SCHEMA_OBJECT)) {
+                                    DBObjectListContainer childObjects = object.getParentObject().getChildObjects();
+                                    if (childObjects != null) childObjects.load();
+                                    openChildObject(object, providerId, scrollBrowser, focusEditor);
+                                }
                             }
                         }));
     }
@@ -455,8 +451,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         DBEditableObjectVirtualFile databaseFile = findOrCreateDatabaseFile(project, object.getRef());
         databaseFile.setSelectedEditorProviderId(editorProviderId);
         if (!ProgressMonitor.isCancelled()) {
-            Dispatch.invokeNonModal(() -> {
-                if (isFileOpened(object) || databaseFile.preOpen()) {
+            Dispatch.invoke(() -> {
+                if (Failsafe.check(object) && (isFileOpened(object) || databaseFile.preOpen())) {
                     DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scrollBrowser);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                     fileEditorManager.openFile(databaseFile, focusEditor);
@@ -475,8 +471,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
         sourceCodeManager.ensureSourcesLoaded(schemaObject, false);
         if (!ProgressMonitor.isCancelled()) {
-            Dispatch.invokeNonModal(() -> {
-                if (isFileOpened(schemaObject) || databaseFile.preOpen()) {
+            Dispatch.invoke(() -> {
+                if (Failsafe.check(schemaObject) && (isFileOpened(schemaObject) || databaseFile.preOpen())) {
                     DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scrollBrowser);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                     FileEditor[] fileEditors = fileEditorManager.openFile(databaseFile, focusEditor);

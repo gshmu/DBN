@@ -104,8 +104,14 @@ public class DocumentUtil {
         }
     }
 
+    @Nullable
     public static Document getDocument(@NotNull PsiFile file) {
-        return PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
+        if (file.isValid()) {
+            Project project = file.getProject();
+            PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
+            return documentManager.getDocument(file);
+        }
+        return null;
     }
 
     @Nullable
