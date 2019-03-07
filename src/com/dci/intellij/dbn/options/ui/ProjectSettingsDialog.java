@@ -22,7 +22,7 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> 
     private ProjectSettings projectSettings;
 
     public ProjectSettingsDialog(Project project) {
-        super(project, "Settings", true);
+        super(project, project.isDefault() ? "Default Settings" : "Settings", true);
         setModal(true);
         setResizable(true);
         //setHorizontalStretch(1.5f);
