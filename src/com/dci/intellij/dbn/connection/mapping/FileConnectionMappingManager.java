@@ -408,8 +408,9 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             if (changed) {
                 DocumentUtil.touchDocument(editor, true);
 
-                FileConnectionMappingListener mappingListener = EventUtil.notify(getProject(), FileConnectionMappingListener.TOPIC);
-                mappingListener.connectionChanged(virtualFile, connectionHandler);
+                EventUtil.notify(getProject(),
+                        FileConnectionMappingListener.TOPIC,
+                        (listener) -> listener.connectionChanged(virtualFile, connectionHandler));
             }
         }
     }
@@ -422,8 +423,9 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             if (changed) {
                 DocumentUtil.touchDocument(editor, false);
 
-                FileConnectionMappingListener mappingListener = EventUtil.notify(getProject(), FileConnectionMappingListener.TOPIC);
-                mappingListener.schemaChanged(virtualFile, schema);
+                EventUtil.notify(getProject(),
+                        FileConnectionMappingListener.TOPIC,
+                        (listener) -> listener.schemaChanged(virtualFile, schema));
             }
         }
     }
@@ -434,8 +436,9 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         if (isSessionSelectable(virtualFile)) {
             setDatabaseSession(virtualFile, session);
 
-            FileConnectionMappingListener mappingListener = EventUtil.notify(getProject(), FileConnectionMappingListener.TOPIC);
-            mappingListener.sessionChanged(virtualFile, session);
+            EventUtil.notify(getProject(),
+                    FileConnectionMappingListener.TOPIC,
+                    (listener) -> listener.sessionChanged(virtualFile, session));
         }
     }
 

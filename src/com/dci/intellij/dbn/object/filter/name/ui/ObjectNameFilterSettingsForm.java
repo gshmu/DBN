@@ -150,9 +150,9 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
         Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (notifyFilterListeners) {
-                ObjectFilterChangeListener listener = EventUtil.notify(project, ObjectFilterChangeListener.TOPIC);
                 DBObjectType[] refreshObjectTypes = filterObjectTypes.toArray(new DBObjectType[0]);
-                listener.nameFiltersChanged(configuration.getConnectionId(), refreshObjectTypes);
+                EventUtil.notify(project, ObjectFilterChangeListener.TOPIC,
+                        (listener) -> listener.nameFiltersChanged(configuration.getConnectionId(), refreshObjectTypes));
             }
         });
     }

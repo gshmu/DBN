@@ -99,7 +99,9 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
                                             SessionBrowserModel model = sessionBrowserManager.loadSessions(sessionBrowserFile);
                                             replaceModel(model);
                                         } finally {
-                                            EventUtil.notify(getProject(), SessionBrowserLoadListener.TOPIC).sessionsLoaded(sessionBrowserFile);
+                                            EventUtil.notify(getProject(),
+                                                    SessionBrowserLoadListener.TOPIC,
+                                                    (listener) -> listener.sessionsLoaded(sessionBrowserFile));
                                             setLoading(false);
                                         }
                                     }

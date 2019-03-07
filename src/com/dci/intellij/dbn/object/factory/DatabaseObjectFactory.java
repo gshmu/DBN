@@ -49,9 +49,14 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
         int eventType = event.getEventType();
         Project project = getProject();
         if (eventType == ObjectFactoryEvent.EVENT_TYPE_CREATE) {
-            EventUtil.notify(project, ObjectFactoryListener.TOPIC).objectCreated(object);
+            EventUtil.notify(project,
+                    ObjectFactoryListener.TOPIC,
+                    (listener) -> listener.objectCreated(object));
+
         } else if (eventType == ObjectFactoryEvent.EVENT_TYPE_DROP) {
-            EventUtil.notify(project, ObjectFactoryListener.TOPIC).objectDropped(object);
+            EventUtil.notify(project,
+                    ObjectFactoryListener.TOPIC,
+                    (listener) -> listener.objectDropped(object));
         }
     }
 

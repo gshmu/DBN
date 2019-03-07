@@ -512,14 +512,17 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         if (isDataDefinitionStatement()) {
             DBSchemaObject affectedObject = getAffectedObject();
             if (affectedObject != null) {
-                DataDefinitionChangeListener listener = EventUtil.notify(project, DataDefinitionChangeListener.TOPIC);
-                listener.dataDefinitionChanged(affectedObject);
+                EventUtil.notify(project,
+                        DataDefinitionChangeListener.TOPIC,
+                        (listener) -> listener.dataDefinitionChanged(affectedObject));
             } else {
                 DBSchema affectedSchema = getAffectedSchema();
                 IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
                 if (affectedSchema != null && subjectPsiElement != null) {
-                    DataDefinitionChangeListener listener = EventUtil.notify(project, DataDefinitionChangeListener.TOPIC);
-                    listener.dataDefinitionChanged(affectedSchema, subjectPsiElement.getObjectType());
+                    DBObjectType objectType = subjectPsiElement.getObjectType();
+                    EventUtil.notify(project,
+                            DataDefinitionChangeListener.TOPIC,
+                            (listener) -> listener.dataDefinitionChanged(affectedSchema, objectType));
                 }
             }
         }
@@ -584,7 +587,9 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                                 if (compileType == CompileType.DEBUG) {
                                     compilerManager.compileObject(object, compileType, compilerAction);
                                 }
-                                EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
+                                EventUtil.notify(project,
+                                        CompileManagerListener.TOPIC,
+                                        (listener) -> listener.compileFinished(connectionHandler, object));
                             }
                             object.refresh();
                         }

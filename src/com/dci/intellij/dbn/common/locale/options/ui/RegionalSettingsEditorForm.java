@@ -205,7 +205,9 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (modified) {
-                EventUtil.notify(project, RegionalSettingsListener.TOPIC).settingsChanged();
+                EventUtil.notify(project,
+                        RegionalSettingsListener.TOPIC,
+                        (listener) -> listener.settingsChanged());
             }});
     }
 

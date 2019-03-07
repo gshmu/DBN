@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.resource.ui.ResourceMonitorDialog;
@@ -29,15 +30,11 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.COMMIT;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.DISCONNECT;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.ROLLBACK;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.TURN_AUTO_COMMIT_OFF;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.TURN_AUTO_COMMIT_ON;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
 
 public class DatabaseTransactionManager extends AbstractProjectComponent implements ProjectManagerListener{
 
@@ -89,10 +86,8 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
             @Nullable Runnable callback) {
 
         Project project = getProject();
-        TransactionListener transactionListener = EventUtil.notify(project, TransactionListener.TOPIC);
         for (TransactionAction action : actions) {
-            Runnable actionCallback = isLast(actions, action) ? callback : null;
-            executeAction(connectionHandler, connection, project, transactionListener, action);
+            executeAction(connectionHandler, connection, project, action);
         }
         Failsafe.run(callback);
     }
@@ -101,14 +96,17 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
             @NotNull ConnectionHandler connectionHandler,
             @NotNull DBNConnection connection,
             @NotNull Project project,
-            @NotNull TransactionListener transactionListener,
             @NotNull TransactionAction action) {
 
+
         String connectionName = connectionHandler.getConnectionName(connection);
-        boolean success = true;
+        AtomicBoolean success = new AtomicBoolean(true);
         try {
             // notify pre-action
-            transactionListener.beforeAction(connectionHandler, connection, action);
+            EventUtil.notify(project,
+                    TransactionListener.TOPIC,
+                    (listener) -> listener.beforeAction(connectionHandler, connection, action));
+
             ProgressMonitor.setTaskDescription("Performing " + action.getName() + " on connection " + connectionName);
 
             action.execute(connectionHandler, connection);
@@ -126,15 +124,19 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                     action.getFailureNotificationMessage(),
                     connectionName,
                     ex.getMessage());
-            success = false;
+            success.set(false);
         } finally {
             if (!project.isDisposed()) {
                 // notify post-action
-                transactionListener.afterAction(connectionHandler, connection, action, success);
+                EventUtil.notify(project,
+                        TransactionListener.TOPIC,
+                        (listener) -> listener.afterAction(connectionHandler, connection, action, success.get()));
 
                 if (action.isStatusChange()) {
-                    ConnectionHandlerStatusListener statusListener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
-                    statusListener.statusChanged(connectionHandler.getConnectionId());
+                    ConnectionId connectionId = connectionHandler.getConnectionId();
+                    EventUtil.notify(project,
+                            ConnectionHandlerStatusListener.TOPIC,
+                            (listener) -> listener.statusChanged(connectionId));
                 }
             }
         }

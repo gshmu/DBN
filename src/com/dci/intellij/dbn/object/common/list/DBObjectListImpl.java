@@ -246,8 +246,9 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
             Project project = getProject();
             BrowserTreeNode treeParent = getParent();
             if (isNot(INTERNAL) && isTouched() && Failsafe.check(project) && treeParent.isTreeStructureLoaded()) {
-                BrowserTreeEventListener treeEventListener = EventUtil.notify(project, BrowserTreeEventListener.TOPIC);
-                treeEventListener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
+                EventUtil.notify(project,
+                        BrowserTreeEventListener.TOPIC,
+                        (listener) -> listener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED));
             }
         });
     }

@@ -215,7 +215,9 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                                     " - Script execution interrupted by user" :
                                     " - Script execution finished", false);
                     executionManager.writeLogOutput(outputContext, logOutput);
-                    EventUtil.notify(project, ScriptExecutionListener.TOPIC).scriptExecuted(sourceFile);
+                    EventUtil.notify(project,
+                            ScriptExecutionListener.TOPIC,
+                            (listener) -> listener.scriptExecuted(sourceFile));
                     return null;
                 }
 

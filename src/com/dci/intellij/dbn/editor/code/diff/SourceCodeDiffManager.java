@@ -72,7 +72,9 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
                         case 0:
                             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
                             sourceCodeManager.storeSourceToDatabase(sourceCodeFile, fileEditor, null);
-                            EventUtil.notify(project, SourceCodeDifManagerListener.TOPIC).contentMerged(sourceCodeFile, action);
+                            EventUtil.notify(project,
+                                    SourceCodeDifManagerListener.TOPIC,
+                                    (listener) -> listener.contentMerged(sourceCodeFile, action));
                             break;
                         case 1:
                             sourceCodeFile.set(SAVING, false);
@@ -83,7 +85,9 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
                     switch (result) {
                         case 0:
                             sourceCodeFile.markAsMerged();
-                            EventUtil.notify(project, SourceCodeDifManagerListener.TOPIC).contentMerged(sourceCodeFile, action);
+                            EventUtil.notify(project,
+                                    SourceCodeDifManagerListener.TOPIC,
+                                    (listener) -> listener.contentMerged(sourceCodeFile, action));
                             break;
                         case 1:
                             break;
@@ -117,7 +121,9 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
                                     case RESOLVED:
                                         SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
                                         sourceCodeManager.storeSourceToDatabase(sourceCodeFile, fileEditor, null);
-                                        EventUtil.notify(project, SourceCodeDifManagerListener.TOPIC).contentMerged(sourceCodeFile, action);
+                                        EventUtil.notify(project,
+                                                SourceCodeDifManagerListener.TOPIC,
+                                                (listener) -> listener.contentMerged(sourceCodeFile, action));
                                         break;
                                     case CANCEL:
                                         sourceCodeFile.set(SAVING, false);
@@ -129,7 +135,9 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
                                     case RIGHT:
                                     case RESOLVED:
                                         sourceCodeFile.markAsMerged();
-                                        EventUtil.notify(project, SourceCodeDifManagerListener.TOPIC).contentMerged(sourceCodeFile, action);
+                                        EventUtil.notify(project,
+                                                SourceCodeDifManagerListener.TOPIC,
+                                                (listener) -> listener.contentMerged(sourceCodeFile, action));
                                         break;
                                     case CANCEL:
                                         break;
