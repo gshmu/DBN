@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
@@ -9,7 +10,6 @@ import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelCell;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.intellij.ui.SimpleTextAttributes;
 
-import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 
@@ -26,7 +26,7 @@ public class SessionBrowserTableCellRenderer extends BasicTableCellRenderer {
     }
 
     @Override
-    protected void customizeCellRenderer(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int columnIndex) {
+    protected void customizeCellRenderer(DBNTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int columnIndex) {
         acquireState(table, isSelected, false, rowIndex, columnIndex);
         SessionBrowserModelCell cell = (SessionBrowserModelCell) value;
         SessionBrowserTable sessionBrowserTable = (SessionBrowserTable) table;

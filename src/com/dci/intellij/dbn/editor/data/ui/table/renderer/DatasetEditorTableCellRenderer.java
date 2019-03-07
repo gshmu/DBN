@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui.table.renderer;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
@@ -10,7 +11,6 @@ import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.ui.SimpleTextAttributes;
 
-import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 
@@ -19,7 +19,7 @@ import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
 
     @Override
-    protected void customizeCellRenderer(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int columnIndex) {
+    protected void customizeCellRenderer(DBNTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int columnIndex) {
         acquireState(table, isSelected, false, rowIndex, columnIndex);
         DatasetEditorModelCell cell = (DatasetEditorModelCell) value;
         DatasetEditorTable datasetEditorTable = (DatasetEditorTable) table;
