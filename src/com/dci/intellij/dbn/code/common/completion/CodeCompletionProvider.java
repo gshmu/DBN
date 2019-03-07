@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletion
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
-import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -57,7 +56,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
     public static final CodeCompletionProvider INSTANCE = new CodeCompletionProvider();
 
 
-    public CodeCompletionProvider() {
+    private CodeCompletionProvider() {
         super();
     }
 
@@ -82,7 +81,8 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             int invocationCount = parameters.getInvocationCount();
             if (invocationCount > 1) context.setExtended(true);
 
-            Timeout.run(1, true, () -> collectCompletionVariants(consumer, leafBeforeCaret));
+            //Timeout.run(1, true, () -> collectCompletionVariants(consumer, leafBeforeCaret));
+            collectCompletionVariants(consumer, leafBeforeCaret);
         }
     }
 
@@ -287,7 +287,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         return lookupContext;
     }
 
-    public static String[] buildAliasDefinitionNames(BasePsiElement aliasElement) {
+    private static String[] buildAliasDefinitionNames(BasePsiElement aliasElement) {
         IdentifierPsiElement aliasedObject = PsiUtil.lookupObjectPriorTo(aliasElement, DBObjectType.ANY);
         if (aliasedObject != null && aliasedObject.isObject()) {
             CharSequence unquotedText = aliasedObject.getUnquotedText();
