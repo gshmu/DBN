@@ -129,19 +129,21 @@ public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProc
                     BasePsiElement subject = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
                     int offset = subject.getTextOffset();
                     Document document = DocumentUtil.getDocument(psqlFile);
-                    int line = document.getLineNumber(offset);
+                    if (document != null) {
+                        int line = document.getLineNumber(offset);
 
-                    DBSchemaObject schemaObject = DBDebugUtil.getMainDatabaseObject(method);
-                    if (schemaObject != null) {
-                        try {
-                            defaultBreakpointInfo = getDebuggerInterface().addProgramBreakpoint(
-                                    method.getSchema().getName(),
-                                    schemaObject.getName(),
-                                    schemaObject.getObjectType().getName().toUpperCase(),
-                                    line,
-                                    getDebugConnection());
-                        } catch (SQLException e) {
-                            e.printStackTrace();
+                        DBSchemaObject schemaObject = DBDebugUtil.getMainDatabaseObject(method);
+                        if (schemaObject != null) {
+                            try {
+                                defaultBreakpointInfo = getDebuggerInterface().addProgramBreakpoint(
+                                        method.getSchema().getName(),
+                                        schemaObject.getName(),
+                                        schemaObject.getObjectType().getName().toUpperCase(),
+                                        line,
+                                        getDebugConnection());
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
