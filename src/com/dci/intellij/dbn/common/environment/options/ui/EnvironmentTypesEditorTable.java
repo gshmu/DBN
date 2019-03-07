@@ -17,7 +17,7 @@ import java.awt.event.MouseListener;
 
 public class EnvironmentTypesEditorTable extends DBNEditableTable<EnvironmentTypesTableModel> {
 
-    public EnvironmentTypesEditorTable(Project project, EnvironmentTypeBundle environmentTypes) {
+    EnvironmentTypesEditorTable(Project project, EnvironmentTypeBundle environmentTypes) {
         super(project, new EnvironmentTypesTableModel(project, environmentTypes), true);
         setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         setSelectionBackground(UIUtil.getTableBackground());
@@ -35,19 +35,19 @@ public class EnvironmentTypesEditorTable extends DBNEditableTable<EnvironmentTyp
         addMouseListener(mouseListener);
     }
 
-    public void setEnvironmentTypes(EnvironmentTypeBundle environmentTypes) {
+    void setEnvironmentTypes(EnvironmentTypeBundle environmentTypes) {
         super.setModel(new EnvironmentTypesTableModel(getProject(), environmentTypes));
         setFixedWidth(columnModel.getColumn(2), 100);
         setFixedWidth(columnModel.getColumn(3), 100);
         setFixedWidth(columnModel.getColumn(4), 60);
     }
 
-    void setFixedWidth(TableColumn tableColumn, int width) {
+    private void setFixedWidth(TableColumn tableColumn, int width) {
         tableColumn.setMaxWidth(width);
         tableColumn.setMinWidth(width);
     }
 
-    MouseListener mouseListener = new MouseAdapter() {
+    private MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {

@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.common.ui.table;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.TableUtil;
 import com.intellij.util.ui.UIUtil;
@@ -29,9 +28,9 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
         setCellSelectionEnabled(true);
         putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
-        setDefaultRenderer(String.class, new ColoredTableCellRenderer() {
+        setDefaultRenderer(String.class, new DBNColoredTableCellRenderer() {
             @Override
-            protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
+            protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
                 acquireState(table, false, false, row, column);
                 Color background = table.getBackground();
                 Color foreground = table.getForeground();

@@ -3,15 +3,16 @@ package com.dci.intellij.dbn.browser.options.ui;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSortingSettings;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
+import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
 import com.dci.intellij.dbn.object.common.sorting.SortingType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBoxTableRenderer;
-import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
@@ -67,9 +68,9 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
             setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             adjustRowHeight(3);
 
-            setDefaultRenderer(DBObjectType.class, new ColoredTableCellRenderer() {
+            setDefaultRenderer(DBObjectType.class, new DBNColoredTableCellRenderer() {
                 @Override
-                protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
+                protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
                     DBObjectType objectType = (DBObjectType) value;
                     if (objectType != null) {
                         setIcon(objectType.getIcon());
@@ -81,9 +82,9 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
                 }
             });
 
-            setDefaultRenderer(SortingType.class, new ColoredTableCellRenderer() {
+            setDefaultRenderer(SortingType.class, new DBNColoredTableCellRenderer() {
                 @Override
-                protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
+                protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
                     SortingType sortingType = (SortingType) value;
                     append(sortingType.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
                     setBorder(SELECTION_BORDER);
