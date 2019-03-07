@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
+import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.dci.intellij.dbn.data.find.DataSearchResultMatch;
@@ -11,10 +13,8 @@ import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.dci.intellij.dbn.data.model.DataModel;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
-import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 
-import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import java.awt.*;
@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 
-public class BasicTableCellRenderer extends ColoredTableCellRenderer {
+public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
     private Map<Color, Border> lineBorderCache = new HashMap<Color, Border>();
 
     protected Border getLineBorder(Color color) {
@@ -46,7 +46,7 @@ public class BasicTableCellRenderer extends ColoredTableCellRenderer {
     }
 
     @Override
-    protected void customizeCellRenderer(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int columnIndex) {
+    protected void customizeCellRenderer(DBNTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int columnIndex) {
 
         SortableTable sortableTable = (SortableTable) table;
         boolean isLoading = sortableTable.isLoading();

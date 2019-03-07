@@ -1,15 +1,14 @@
 package com.dci.intellij.dbn.execution.script.options.ui;
 
+import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
+import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
-import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 
-import javax.swing.*;
-
-public class CmdLineInterfacesTableCellRenderer extends ColoredTableCellRenderer{
+public class CmdLineInterfacesTableCellRenderer extends DBNColoredTableCellRenderer {
     @Override
-    protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
+    protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
         if (value instanceof DatabaseType) {
             DatabaseType databaseType = (DatabaseType) value;
             setIcon(databaseType.getIcon());

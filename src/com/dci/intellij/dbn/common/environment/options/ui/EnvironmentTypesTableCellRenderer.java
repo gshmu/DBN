@@ -1,19 +1,19 @@
 package com.dci.intellij.dbn.common.environment.options.ui;
 
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
+import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
+import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.ui.ColoredSideBorder;
-import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 
-import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
-public class EnvironmentTypesTableCellRenderer extends ColoredTableCellRenderer{
+public class EnvironmentTypesTableCellRenderer extends DBNColoredTableCellRenderer {
     @Override
-    protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
+    protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
         if (column == 2 || column == 3) {
 
         }
