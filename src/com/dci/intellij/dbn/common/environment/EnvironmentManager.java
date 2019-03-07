@@ -62,7 +62,9 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
         DBContentVirtualFile contentFile = schemaObject.getEditableVirtualFile().getContentFile(contentType);
         if (contentFile != null) {
             EditorUtil.setEditorsReadonly(contentFile, false);
-            EventUtil.notify(getProject(), EnvironmentManagerListener.TOPIC).editModeChanged(contentFile);
+            EventUtil.notify(getProject(),
+                    EnvironmentManagerListener.TOPIC,
+                    (listener) -> listener.editModeChanged(contentFile));
         }
     }
 
@@ -72,7 +74,9 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
         DBContentVirtualFile contentFile = schemaObject.getEditableVirtualFile().getContentFile(contentType);
         if (contentFile != null) {
             EditorUtil.setEditorsReadonly(contentFile, readonly);
-            EventUtil.notify(getProject(), EnvironmentManagerListener.TOPIC).editModeChanged(contentFile);
+            EventUtil.notify(getProject(),
+                    EnvironmentManagerListener.TOPIC,
+                    (listener) -> listener.editModeChanged(contentFile));
         }
     }
 

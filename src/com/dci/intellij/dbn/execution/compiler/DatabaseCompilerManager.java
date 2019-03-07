@@ -64,7 +64,9 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                         compileObject(object, compileType, compilerAction);
                     }
                     ConnectionHandler connectionHandler = object.getConnectionHandler();
-                    EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
+                    EventUtil.notify(project,
+                            CompileManagerListener.TOPIC,
+                            (listener) -> listener.compileFinished(connectionHandler, object));
 
                     createCompilerResult(object, compilerAction);
                 }
@@ -138,7 +140,9 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                                 (progress) -> {
                                     doCompileObject(object, selectedCompileType, compilerAction);
                                     ConnectionHandler connectionHandler = object.getConnectionHandler();
-                                    EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, object);
+                                    EventUtil.notify(project,
+                                            CompileManagerListener.TOPIC,
+                                            (listener) -> listener.compileFinished(connectionHandler, object));
 
                                     DBContentType contentType = compilerAction.getContentType();
                                     updateFilesContentState(object, contentType);
@@ -224,7 +228,9 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                                         doCompileInvalidObjects(schema.getProcedures(), "procedures", progress, selectedCompileType);
                                         doCompileInvalidObjects(schema.getDatasetTriggers(), "dataset triggers", progress, selectedCompileType);
                                         doCompileInvalidObjects(schema.getDatabaseTriggers(), "database triggers", progress, selectedCompileType);
-                                        EventUtil.notify(project, CompileManagerListener.TOPIC).compileFinished(connectionHandler, null);
+                                        EventUtil.notify(project,
+                                                CompileManagerListener.TOPIC,
+                                                (listener) -> listener.compileFinished(connectionHandler, null));
 
 /*
                                     if (!progress.isCanceled()) {

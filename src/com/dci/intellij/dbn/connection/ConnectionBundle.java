@@ -117,7 +117,10 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
         if (listChanged) {
             Project project = configuration.getProject();
             SettingsChangeNotifier.register(() -> {
-                EventUtil.notify(project, ConnectionSettingsListener.TOPIC).connectionsChanged();
+                EventUtil.notify(project,
+                        ConnectionSettingsListener.TOPIC,
+                        (listener) -> listener.connectionsChanged());
+
                 ConnectionManager connectionManager = ConnectionManager.getInstance(project);
                 connectionManager.disposeConnections(oldConnectionHandlers);
             });

@@ -49,8 +49,10 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
 
     public void applyFilter(DBObjectList objectList, @Nullable ObjectQuickFilter filter) {
         objectList.setQuickFilter(filter);
-        BrowserTreeEventListener treeChangeListener = EventUtil.notify(getProject(), BrowserTreeEventListener.TOPIC);
-        treeChangeListener.nodeChanged(objectList, TreeEventType.STRUCTURE_CHANGED);
+        EventUtil.notify(getProject(),
+                BrowserTreeEventListener.TOPIC,
+                (listener) -> listener.nodeChanged(objectList, TreeEventType.STRUCTURE_CHANGED));
+
         CacheKey cacheKey = new CacheKey(objectList);
         if (filter == null || filter.isEmpty()) {
             cachedFilters.remove(cacheKey);

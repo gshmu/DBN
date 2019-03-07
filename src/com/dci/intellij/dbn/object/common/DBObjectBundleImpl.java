@@ -437,7 +437,10 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         visibleTreeChildren = treeChildren;
         treeChildrenLoaded = true;
 
-        EventUtil.notify(getProject(), BrowserTreeEventListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
+        EventUtil.notify(getProject(),
+                BrowserTreeEventListener.TOPIC,
+                (listener) -> listener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED));
+
         DatabaseBrowserManager.scrollToSelectedElement(connectionHandler);
     }
 

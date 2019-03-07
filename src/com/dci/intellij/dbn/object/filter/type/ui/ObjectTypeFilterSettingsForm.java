@@ -80,8 +80,9 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
         SettingsChangeNotifier.register(() -> {
              if (notifyFilterListeners) {
                  ConnectionId connectionId = configuration.getConnectionId();
-                 ObjectFilterChangeListener listener = EventUtil.notify(project, ObjectFilterChangeListener.TOPIC);
-                 listener.typeFiltersChanged(connectionId);
+                 EventUtil.notify(project,
+                         ObjectFilterChangeListener.TOPIC,
+                         (listener) -> listener.typeFiltersChanged(connectionId));
              }
          });
     }

@@ -267,10 +267,11 @@ public class DBNConnection extends DBNConnectionBase {
         notifyStatusChange();
     }
 
-    protected void notifyStatusChange() {
+    private void notifyStatusChange() {
         Failsafe.lenient(() -> {
-            ConnectionStatusListener statusListener = EventUtil.notify(getProject(), ConnectionStatusListener.TOPIC);
-            statusListener.statusChanged(id, sessionId);
+            EventUtil.notify(getProject(),
+                    ConnectionStatusListener.TOPIC,
+                    (listener) -> listener.statusChanged(id, sessionId));
         });
     }
 

@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.browser.options.listener.ObjectDetailSettingsListener;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -41,7 +42,9 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
         Disposer.register(this, browserTree);
     }
     
+    @NotNull
     public ConnectionHandler getConnectionHandler(){
+        DatabaseBrowserTree browserTree = getBrowserTree();
         if (browserTree.getModel() instanceof TabbedBrowserTreeModel) {
             TabbedBrowserTreeModel treeModel = (TabbedBrowserTreeModel) browserTree.getModel();
             return treeModel.getConnectionHandler();
@@ -56,18 +59,19 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
     }
 
     @Override
+    @NotNull
     public DatabaseBrowserTree getBrowserTree() {
-        return browserTree;
+        return Failsafe.get(browserTree);
     }
 
     @Override
     public void selectElement(BrowserTreeNode treeNode, boolean focus, boolean scroll) {
-        browserTree.selectElement(treeNode, focus);
+        getBrowserTree().selectElement(treeNode, focus);
     }
 
     @Override
     public void rebuildTree() {
-        browserTree.getModel().getRoot().rebuildTreeChildren();
+        getBrowserTree().getModel().getRoot().rebuildTreeChildren();
     }
 
     @Override

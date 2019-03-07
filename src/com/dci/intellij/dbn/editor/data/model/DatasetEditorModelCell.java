@@ -108,7 +108,9 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
                 if (valueChanged) {
                     DBNConnection connection = getModel().getConnection();
                     connection.notifyDataChanges(getDataset().getVirtualFile());
-                    EventUtil.notify(getProject(), DatasetEditorModelCellValueListener.TOPIC).valueChanged(this);
+                    EventUtil.notify(getProject(),
+                            DatasetEditorModelCellValueListener.TOPIC,
+                            (listener) -> listener.valueChanged(this));
                 }
                 try {
                     resultSetAdapter.refreshRow();

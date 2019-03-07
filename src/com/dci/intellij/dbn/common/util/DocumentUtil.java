@@ -36,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -60,10 +61,11 @@ public class DocumentUtil {
                 ((EditorEx) editor).setHighlighter(editorHighlighter);
             }
             if (reparse) {
-                EventUtil.notify(project, DocumentBulkUpdateListener.TOPIC).updateStarted(document);
-                ArrayList<VirtualFile> files = new ArrayList<>();
-                files.add(file.getVirtualFile());
-                FileContentUtil.reparseFiles(project, files, true);
+                EventUtil.notify(project,
+                        DocumentBulkUpdateListener.TOPIC,
+                        (listener) -> listener.updateStarted(document));
+
+                FileContentUtil.reparseFiles(project, Collections.singletonList(file.getVirtualFile()), true);
                 CodeFoldingManager codeFoldingManager = CodeFoldingManager.getInstance(project);
                 codeFoldingManager.buildInitialFoldings(editor);
             }

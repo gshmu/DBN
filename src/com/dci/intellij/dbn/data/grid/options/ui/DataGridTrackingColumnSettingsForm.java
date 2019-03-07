@@ -67,8 +67,9 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
         Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (visibilityChanged) {
-                DataGridSettingsChangeListener listener = EventUtil.notify(project, DataGridSettingsChangeListener.TOPIC);
-                listener.trackingColumnsVisibilityChanged(trackingColumnsVisible);
+                EventUtil.notify(project,
+                        DataGridSettingsChangeListener.TOPIC,
+                        (listener) -> listener.trackingColumnsVisibilityChanged(trackingColumnsVisible));
             }
         });
     }

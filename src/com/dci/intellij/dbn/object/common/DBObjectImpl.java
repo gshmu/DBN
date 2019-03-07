@@ -737,7 +737,9 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
 
 
         Project project = Failsafe.get(getProject());
-        EventUtil.notify(project, BrowserTreeEventListener.TOPIC).nodeChanged(this, TreeEventType.STRUCTURE_CHANGED);
+        EventUtil.notify(project,
+                BrowserTreeEventListener.TOPIC,
+                (listener) -> listener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED));
         DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());
     }
 

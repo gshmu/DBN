@@ -50,7 +50,10 @@ public class CodeEditorGeneralSettingsForm extends ConfigurationEditorForm<CodeE
 
         Project project = configuration.getProject();
         if (spellcheckingSettingsChanged) {
-            SettingsChangeNotifier.register(() -> EventUtil.notify(project, SpellcheckingSettingsListener.TOPIC).settingsChanged());
+            SettingsChangeNotifier.register(
+                    () -> EventUtil.notify(project,
+                            SpellcheckingSettingsListener.TOPIC,
+                            (listener) -> listener.settingsChanged()));
         }
     }
 

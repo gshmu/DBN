@@ -76,12 +76,14 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         EventUtil.subscribe(project, this, EnvironmentConfigLocalListener.TOPIC, presentationChangeListener);
     }
 
-    public void notifyPresentationChanges() {
+    private void notifyPresentationChanges() {
         Project project = getConfiguration().getProject();
-        ConnectionPresentationChangeListener listener = EventUtil.notify(project, ConnectionPresentationChangeListener.TOPIC);
         EnvironmentType environmentType = getSelection(environmentTypesComboBox);
         Color color = environmentType == null ? null : environmentType.getColor();
-        listener.presentationChanged(null, null, color, getConfiguration().getConnectionId(), null);
+
+        EventUtil.notify(project,
+                ConnectionPresentationChangeListener.TOPIC,
+                (listener) -> listener.presentationChanged(null, null, color, getConfiguration().getConnectionId(), null));
     }
 
     public EnvironmentType getSelectedEnvironmentType() {
@@ -138,13 +140,14 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (environmentChanged) {
-                EnvironmentManagerListener listener = EventUtil.notify(project, EnvironmentManagerListener.TOPIC);
-                listener.configurationChanged();
+                EventUtil.notify(project,
+                        EnvironmentManagerListener.TOPIC,
+                        (listener) -> listener.configurationChanged());
             }
 
             if (settingsChanged) {
-                ConnectionHandlerStatusListener listener = EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC);
-                listener.statusChanged(configuration.getConnectionId());
+                EventUtil.notify(project, ConnectionHandlerStatusListener.TOPIC,
+                        (listener) -> listener.statusChanged(configuration.getConnectionId()));
             }
         });
     }

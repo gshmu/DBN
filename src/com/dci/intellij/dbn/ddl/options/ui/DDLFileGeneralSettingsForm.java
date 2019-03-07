@@ -76,8 +76,9 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
         Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (settingChanged) {
-                DDLFileSettingsChangeListener listener = EventUtil.notify(project, DDLFileSettingsChangeListener.TOPIC);
-                listener.settingsChanged();
+                EventUtil.notify(project,
+                        DDLFileSettingsChangeListener.TOPIC,
+                        (listener) -> listener.settingsChanged());
 
             }
         });

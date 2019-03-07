@@ -85,7 +85,7 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
         boolean settingsChanged = configuration.setEnvironmentTypes(environmentTypeBundle);
 
         EnvironmentVisibilitySettings visibilitySettings = configuration.getVisibilitySettings();
-        final boolean visibilityChanged =
+        boolean visibilityChanged =
             visibilitySettings.getConnectionTabs().to(connectionTabsCheckBox) ||
             visibilitySettings.getObjectEditorTabs().to(objectEditorTabsCheckBox) ||
             visibilitySettings.getScriptEditorTabs().to(scriptEditorTabsCheckBox)||
@@ -95,8 +95,9 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
         Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (settingsChanged || visibilityChanged) {
-                EnvironmentManagerListener listener = EventUtil.notify(project, EnvironmentManagerListener.TOPIC);
-                listener.configurationChanged();
+                EventUtil.notify(project,
+                        EnvironmentManagerListener.TOPIC,
+                        (listener) -> listener.configurationChanged());
             }
         });
     }
