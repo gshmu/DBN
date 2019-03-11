@@ -36,7 +36,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     private ContentDependencyAdapter dependencyAdapter;
 
     protected List<T> elements = EMPTY_UNTOUCHED_CONTENT;
-    private final Object ENSURE_SYNC = new Object();
 
     protected DynamicContentImpl(
             @NotNull GenericDatabaseElement parent,
@@ -103,11 +102,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
         return is(LOADING);
     }
 
-    @Override
-    public boolean isLoadingInBackground() {
-        return is(LOADING_IN_BACKGROUND);
-    }
-
     /**
      * The content can load
      */
@@ -150,6 +144,14 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
 
     private boolean shouldReload() {
         return !isDisposed() && isLoaded() && !isLoading();
+    }
+
+    private boolean shouldRefresh() {
+        return !isDisposed() && isLoaded() && !isLoading() && !is(REFRESHING);
+    }
+
+    private boolean shouldLoadInBackground() {
+        return shouldLoad() && !is(LOADING_IN_BACKGROUND);
     }
 
     @Override
@@ -203,7 +205,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     @Override
     public void ensure() {
         if (!isLoaded() || shouldLoad()) {
-            synchronized (ENSURE_SYNC) {
+            synchronized (this) {
                 if (!isLoaded() || shouldLoad()) {
                     load();
                 }
@@ -213,11 +215,20 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
 
     @Override
     public void refresh() {
-        if (isLoaded() && !isLoading()) {
-            markDirty();
-            dependencyAdapter.refreshSources();
-            if (!is(INTERNAL)){
-                CollectionUtil.forEach(elements, element -> element.refresh());
+        if (shouldRefresh()) {
+            synchronized (this) {
+                if (shouldRefresh()) {
+                    try {
+                        set(REFRESHING, true);
+                        markDirty();
+                        dependencyAdapter.refreshSources();
+                        if (!is(INTERNAL)){
+                            CollectionUtil.forEach(elements, element -> element.refresh());
+                        }
+                    } finally {
+                        set(REFRESHING, false);
+                    }
+                }
             }
         }
     }
@@ -243,10 +254,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
                 }
             }
         }
-    }
-
-    private boolean shouldLoadInBackground() {
-        return shouldLoad() && !isLoadingInBackground();
     }
 
     private void performLoad(boolean force) throws InterruptedException {
