@@ -60,8 +60,6 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
      */
     boolean isLoading();
 
-    boolean isLoadingInBackground();
-
     /**
      * The content has been loaded but with errors (e.g. because of database connectivity problems)
      */

@@ -12,6 +12,7 @@ public enum DynamicContentStatus implements Property {
     DISPOSED,
 
     CHANGING,
+    REFRESHING,
     LOADING,
     LOADING_IN_BACKGROUND;
 
