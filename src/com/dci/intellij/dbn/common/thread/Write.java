@@ -8,7 +8,8 @@ public interface Write {
     static void run(Runnable runnable) {
         Dispatch.conditional(() -> {
             Application application = ApplicationManager.getApplication();
-            application.runWriteAction(() -> Failsafe.lenient(runnable));
+            application.runWriteAction(
+                    () -> Failsafe.lenient(() -> runnable.run()));
         });
     }
 }

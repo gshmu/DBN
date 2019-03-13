@@ -26,33 +26,34 @@ public class SQLLanguageAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
-        //SimpleTimeoutTask.invoke(1, true, () -> {
-        ThreadMonitor.run(ThreadProperty.CODE_ANNOTATING, () -> {
-            if (psiElement instanceof ExecutablePsiElement)  {
-                annotateExecutable((ExecutablePsiElement) psiElement, holder);
+        ThreadMonitor.run(null,
+                ThreadProperty.CODE_ANNOTATING,
+                () -> {
+                    if (psiElement instanceof ExecutablePsiElement) {
+                        annotateExecutable((ExecutablePsiElement) psiElement, holder);
 
-            } else if (psiElement instanceof ChameleonPsiElement)  {
-                annotateChameleon(psiElement, holder);
+                    } else if (psiElement instanceof ChameleonPsiElement) {
+                        annotateChameleon(psiElement, holder);
 
-            } else if (psiElement instanceof TokenPsiElement) {
-                annotateToken((TokenPsiElement) psiElement, holder);
+                    } else if (psiElement instanceof TokenPsiElement) {
+                        annotateToken((TokenPsiElement) psiElement, holder);
 
-            } else if (psiElement instanceof IdentifierPsiElement) {
-                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
-                ConnectionHandler connectionHandler = identifierPsiElement.getConnectionHandler();
-                if (connectionHandler != null && !connectionHandler.isVirtual()) {
-                    annotateIdentifier(identifierPsiElement, holder);
-                }
-            }
+                    } else if (psiElement instanceof IdentifierPsiElement) {
+                        IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
+                        ConnectionHandler connectionHandler = identifierPsiElement.getConnectionHandler();
+                        if (connectionHandler != null && !connectionHandler.isVirtual()) {
+                            annotateIdentifier(identifierPsiElement, holder);
+                        }
+                    }
 
 
-            if (psiElement instanceof NamedPsiElement) {
-                NamedPsiElement namedPsiElement = (NamedPsiElement) psiElement;
-                if (namedPsiElement.hasErrors()) {
-                    holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.getElementType().getDescription());
-                }
-            }
-        });
+                    if (psiElement instanceof NamedPsiElement) {
+                        NamedPsiElement namedPsiElement = (NamedPsiElement) psiElement;
+                        if (namedPsiElement.hasErrors()) {
+                            holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.getElementType().getDescription());
+                        }
+                    }
+                });
     }
 
     private static void annotateToken(@NotNull TokenPsiElement tokenPsiElement, AnnotationHolder holder) {

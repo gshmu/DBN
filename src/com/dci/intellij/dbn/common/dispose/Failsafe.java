@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.dispose;
 
-import com.dci.intellij.dbn.common.routine.BasicCallable;
+import com.dci.intellij.dbn.common.routine.ThrowableCallable;
+import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.intellij.mock.MockProject;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -85,7 +86,7 @@ public class Failsafe {
         return true;
     }
 
-    public static <T> T lenient(T defaultValue, BasicCallable<T> callable){
+    public static <T, E extends Throwable> T lenient(T defaultValue, ThrowableCallable<T, E> callable) throws E{
         try {
             return callable.call();
         } catch (ProcessCanceledException e) {
@@ -93,7 +94,7 @@ public class Failsafe {
         }
     }
 
-    public static void lenient(Runnable runnable){
+    public static <E extends Throwable> void lenient(ThrowableRunnable<E> runnable) throws E {
         try {
             runnable.run();
         } catch (ProcessCanceledException ignore) {}

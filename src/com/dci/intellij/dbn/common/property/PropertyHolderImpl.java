@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.common.property;
 
 import com.dci.intellij.dbn.common.util.Cloneable;
+import com.dci.intellij.dbn.common.util.Unsafe;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>, Cloneable<PropertyHolder<T>> {
     //private static PrimeNumberIndex INDEX = new PrimeNumberIndex(100);
@@ -17,7 +19,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
 
     protected abstract T[] properties();
 
-    public void set(PropertyHolderImpl<T> source) {
+    protected void replace(PropertyHolderImpl<T> source) {
         this.computed = source.computed;
     }
 
@@ -80,13 +82,30 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
         }
     }
 
-    public int computed() {
-        return computed;
-    }
-
     public void computed(int computed) {
         this.computed = computed;
     }
+
+    public void merge(@Nullable PropertyHolder<T> source) {
+        if (source != null) {
+            for (T property : properties()) {
+                if (source.is(property)) {
+                    set(property, true);
+                }
+            }
+        }
+    }
+
+    public void unmerge(@Nullable PropertyHolder<T> source) {
+        if (source != null) {
+            for (T property : properties()) {
+                if (source.is(property)) {
+                    set(property, false);
+                }
+            }
+        }
+    }
+
 
     @Override
     public String toString() {
@@ -103,11 +122,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
     }
 
     @Override
-    public PropertyHolderImpl clone() {
-        try {
-            return (PropertyHolderImpl) super.clone();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    public PropertyHolder<T> clone() {
+        return Unsafe.call(() -> (PropertyHolder<T>) super.clone());
     }
 }
