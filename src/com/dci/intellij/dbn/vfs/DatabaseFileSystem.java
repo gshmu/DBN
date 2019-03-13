@@ -422,7 +422,9 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
     public void openEditor(DBObject object, @Nullable EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {
         ConnectionAction.invoke("opening the object editor", false, object,
-                (action) -> Progress.prompt(object.getProject(), "Opening editor", true,
+                (action) -> Progress.prompt(
+                        object.getProject(),
+                        "Opening editor (" + object.getQualifiedName() + ")", true,
                         (progress) -> {
                             if (Failsafe.check(object)) {
                                 EditorProviderId providerId = editorProviderId;

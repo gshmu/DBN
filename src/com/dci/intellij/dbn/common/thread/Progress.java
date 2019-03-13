@@ -13,12 +13,17 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public interface Progress {
+
+
     static void background(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
         Failsafe.lenient(() -> {
+            ThreadInfo invoker = ThreadMonitor.current();
             Task task = new Task.Backgroundable(Failsafe.get(project), title, cancellable, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
-                    ThreadMonitor.run(ThreadProperty.BACKGROUND_TASK,
+                    ThreadMonitor.run(
+                            invoker,
+                            ThreadProperty.BACKGROUND_TASK,
                             () -> runnable.run(indicator));
                 }
             };
@@ -28,10 +33,13 @@ public interface Progress {
 
     static void prompt(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
         Failsafe.lenient(() -> {
+            ThreadInfo invoker = ThreadMonitor.current();
             Task task = new Task.Backgroundable(Failsafe.get(project), title, cancellable, PerformInBackgroundOption.DEAF) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
-                    ThreadMonitor.run(ThreadProperty.BACKGROUND_TASK,
+                    ThreadMonitor.run(
+                            invoker,
+                            ThreadProperty.BACKGROUND_TASK,
                             () -> runnable.run(indicator));
                 }
             };
@@ -41,10 +49,13 @@ public interface Progress {
 
     static void modal(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
         Failsafe.lenient(() -> {
+            ThreadInfo invoker = ThreadMonitor.current();
             Task task = new Task.Modal(Failsafe.get(project), title, cancellable) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
-                    ThreadMonitor.run(ThreadProperty.MODAL_TASK,
+                    ThreadMonitor.run(
+                            invoker,
+                            ThreadProperty.MODAL_TASK,
                             () -> runnable.run(indicator));
 
                 }

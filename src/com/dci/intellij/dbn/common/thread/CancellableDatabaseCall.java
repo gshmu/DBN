@@ -28,7 +28,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private long startTimestamp = System.currentTimeMillis();
-    private int threadInfo = ThreadMonitor.thread().computed();
+    private ThreadInfo invoker = ThreadMonitor.current();
     private transient ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
 
 
@@ -55,35 +55,34 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
     @Override
     public T call() throws Exception {
-        int originalThreadInfo = ThreadMonitor.thread().computed();
-        try {
-            ThreadMonitor.thread().computed(threadInfo);
-            ThreadMonitor.thread().set(ThreadProperty.CANCELABLE_PROCESS, true);
-            if (createSavepoint) {
-                AtomicReference<Exception> innerException = new AtomicReference<>();
-                T result = ConnectionSavepoint.call(connection, () -> {
-                    try {
-                        return CancellableDatabaseCall.this.execute();
-                    } catch (SQLException e) {
-                        throw e;
-                    } catch (Exception e) {
-                        innerException.set(e);
-                        return null;
+        return ThreadMonitor.call(
+                invoker,
+                ThreadProperty.CANCELABLE_PROCESS,
+                null,
+                () -> {
+                    if (createSavepoint) {
+                        AtomicReference<Exception> innerException = new AtomicReference<>();
+                        T result = ConnectionSavepoint.call(connection, () -> {
+                            try {
+                                return CancellableDatabaseCall.this.execute();
+                            } catch (SQLException e) {
+                                throw e;
+                            } catch (Exception e) {
+                                innerException.set(e);
+                                return null;
+                            }
+                        });
+
+                        Exception exception = innerException.get();
+                        if (exception != null) {
+                            throw exception;
+                        }
+                        return result;
+
+                    } else {
+                        return execute();
                     }
                 });
-
-                Exception exception = innerException.get();
-                if (exception != null) {
-                    throw exception;
-                }
-                return result;
-
-            } else {
-                return execute();
-            }
-        } finally {
-            ThreadMonitor.thread().computed(originalThreadInfo);
-        }
     }
 
     public abstract T execute() throws Exception;

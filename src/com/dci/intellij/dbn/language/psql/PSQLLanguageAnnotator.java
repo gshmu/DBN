@@ -41,41 +41,43 @@ public class PSQLLanguageAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
-        ThreadMonitor.run(ThreadProperty.CODE_ANNOTATING, () -> {
-            if (psiElement instanceof BasePsiElement) {
-                BasePsiElement basePsiElement = (BasePsiElement) psiElement;
+        ThreadMonitor.run(null,
+                ThreadProperty.CODE_ANNOTATING,
+                () -> {
+                    if (psiElement instanceof BasePsiElement) {
+                        BasePsiElement basePsiElement = (BasePsiElement) psiElement;
 
-                ElementType elementType = basePsiElement.getElementType();
-                if (elementType.is(ElementTypeAttribute.OBJECT_SPECIFICATION) || elementType.is(ElementTypeAttribute.OBJECT_DECLARATION)) {
-                    annotateSpecDeclarationNavigable(basePsiElement, holder);
-                }
-
-                if (basePsiElement instanceof TokenPsiElement) {
-                    annotateToken((TokenPsiElement) basePsiElement, holder);
-                } else if (basePsiElement instanceof IdentifierPsiElement) {
-                    if (!basePsiElement.isInjectedContext()) {
-                        IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
-                        ConnectionHandler connectionHandler = identifierPsiElement.getConnectionHandler();
-                        if (connectionHandler != null) {
-                            annotateIdentifier(identifierPsiElement, holder);
+                        ElementType elementType = basePsiElement.getElementType();
+                        if (elementType.is(ElementTypeAttribute.OBJECT_SPECIFICATION) || elementType.is(ElementTypeAttribute.OBJECT_DECLARATION)) {
+                            annotateSpecDeclarationNavigable(basePsiElement, holder);
                         }
-                    }
-                } else if (basePsiElement instanceof NamedPsiElement) {
-                    NamedPsiElement namedPsiElement = (NamedPsiElement) basePsiElement;
-                    if (namedPsiElement.hasErrors()) {
-                        holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.getElementType().getDescription());
-                    }
-                }
 
-                if (basePsiElement instanceof ExecutablePsiElement) {
-                    ExecutablePsiElement executablePsiElement = (ExecutablePsiElement) basePsiElement;
-                    annotateExecutable(executablePsiElement, holder);
-                }
-            } else if (psiElement instanceof ChameleonPsiElement) {
-                Annotation annotation = holder.createInfoAnnotation(psiElement, null);
-                annotation.setTextAttributes(SQLTextAttributesKeys.CHAMELEON);
-            }
-        });
+                        if (basePsiElement instanceof TokenPsiElement) {
+                            annotateToken((TokenPsiElement) basePsiElement, holder);
+                        } else if (basePsiElement instanceof IdentifierPsiElement) {
+                            if (!basePsiElement.isInjectedContext()) {
+                                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
+                                ConnectionHandler connectionHandler = identifierPsiElement.getConnectionHandler();
+                                if (connectionHandler != null) {
+                                    annotateIdentifier(identifierPsiElement, holder);
+                                }
+                            }
+                        } else if (basePsiElement instanceof NamedPsiElement) {
+                            NamedPsiElement namedPsiElement = (NamedPsiElement) basePsiElement;
+                            if (namedPsiElement.hasErrors()) {
+                                holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.getElementType().getDescription());
+                            }
+                        }
+
+                        if (basePsiElement instanceof ExecutablePsiElement) {
+                            ExecutablePsiElement executablePsiElement = (ExecutablePsiElement) basePsiElement;
+                            annotateExecutable(executablePsiElement, holder);
+                        }
+                    } else if (psiElement instanceof ChameleonPsiElement) {
+                        Annotation annotation = holder.createInfoAnnotation(psiElement, null);
+                        annotation.setTextAttributes(SQLTextAttributesKeys.CHAMELEON);
+                    }
+                });
     }
 
     private static void annotateToken(@NotNull TokenPsiElement tokenPsiElement, AnnotationHolder holder) {

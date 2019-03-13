@@ -257,7 +257,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     }
 
     private void performLoad(boolean force) throws InterruptedException {
-        System.out.println( this + " :invoked by " + ThreadMonitor.thread());
+        System.out.println( this + " :invoked by " + ThreadMonitor.current());
         checkDisposed();
         dependencyAdapter.beforeLoad(force);
         checkDisposed();

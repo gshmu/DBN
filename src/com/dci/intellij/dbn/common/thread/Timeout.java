@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.routine.BasicCallable;
+import com.dci.intellij.dbn.common.routine.ThrowableCallable;
+import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.diagnostic.Logger;
 
@@ -15,11 +16,24 @@ public interface Timeout {
     Logger LOGGER = LoggerFactory.createLogger();
 
 
-    static <T> T call(long seconds, T defaultValue, boolean daemon, BasicCallable<T> callable) {
+    static <T> T call(long seconds, T defaultValue, boolean daemon, ThrowableCallable<T, Throwable> callable) {
         try {
+            ThreadInfo invoker = ThreadMonitor.current();
             ExecutorService executorService = ThreadFactory.timeoutExecutor(daemon);
             Future<T> future = executorService.submit(
-                    () -> ThreadMonitor.call(ThreadProperty.TIMEOUT_PROCESS, defaultValue, callable));
+                    () -> {
+                        try {
+                            return ThreadMonitor.call(
+                                    invoker,
+                                    ThreadProperty.TIMEOUT_PROCESS,
+                                    defaultValue,
+                                    callable);
+                        } catch (Throwable e) {
+                            LOGGER.error("Timeout operation failed. Returning default " + defaultValue, e);
+                            return defaultValue;
+
+                        }
+                    });
             try {
                 return future.get(seconds, TimeUnit.SECONDS);
             } catch (TimeoutException | InterruptedException e) {
@@ -33,11 +47,21 @@ public interface Timeout {
         }
     }
 
-    static void run(long seconds, boolean daemon, Runnable runnable) {
+    static void run(long seconds, boolean daemon, ThrowableRunnable<Throwable> runnable) {
         try {
+            ThreadInfo invoker = ThreadMonitor.current();
             ExecutorService executorService = ThreadFactory.timeoutExecutor(daemon);
             Future future = executorService.submit(
-                    () -> ThreadMonitor.run(ThreadProperty.TIMEOUT_PROCESS, runnable));
+                    () -> {
+                        try {
+                            ThreadMonitor.run(
+                                    invoker,
+                                    ThreadProperty.TIMEOUT_PROCESS,
+                                    runnable);
+                        } catch (Throwable e) {
+                            LOGGER.error("Timeout operation failed.", e);
+                        }
+                    });
             try {
                 future.get(seconds, TimeUnit.SECONDS);
             } catch (TimeoutException | InterruptedException e) {

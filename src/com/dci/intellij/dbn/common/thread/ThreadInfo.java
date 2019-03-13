@@ -7,4 +7,9 @@ public class ThreadInfo extends PropertyHolderImpl<ThreadProperty> {
     protected ThreadProperty[] properties() {
         return ThreadProperty.values();
     }
+
+    @Override
+    public ThreadInfo clone() {
+        return (ThreadInfo) super.clone();
+    }
 }
