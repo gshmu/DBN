@@ -56,20 +56,21 @@ public class DBNConnection extends DBNConnectionBase {
                     ResourceStatus.RESERVED,
                     (status, value) -> DBNConnection.super.set(status, value));
 
-    private ResourceStatusAdapter<DBNConnection> invalid =
+    private ResourceStatusAdapter<DBNConnection> valid =
             new ResourceStatusAdapterImpl<DBNConnection>(this,
-                    ResourceStatus.INVALID,
-                    ResourceStatus.INVALID_SETTING,
-                    ResourceStatus.INVALID_CHECKING,
+                    ResourceStatus.VALID,
+                    ResourceStatus.VALID_SETTING,
+                    ResourceStatus.VALID_CHECKING,
                     TimeUtil.FIVE_SECONDS,
-                    true) { // true is terminal status
+                    Boolean.TRUE,
+                    Boolean.FALSE) { // false is terminal status
                 @Override
                 protected void changeInner(boolean value) throws SQLException {
                 }
 
                 @Override
                 protected boolean checkInner() throws SQLException {
-                    return !isActive() && !inner.isValid(2);
+                    return isActive() || inner.isValid(2);
                 }
             };
 
@@ -79,7 +80,8 @@ public class DBNConnection extends DBNConnectionBase {
                     ResourceStatus.AUTO_COMMIT_SETTING,
                     ResourceStatus.AUTO_COMMIT_CHECKING,
                     TimeUtil.FIVE_SECONDS,
-                    false) { // no terminal status
+                    Boolean.FALSE,
+                    null) { // no terminal status
                 @Override
                 protected void changeInner(boolean value) throws SQLException {
                     try {
@@ -191,7 +193,7 @@ public class DBNConnection extends DBNConnectionBase {
             ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
             switch (status) {
                 case CLOSED: connectionStatus.getConnected().markDirty(); break;
-                case INVALID: connectionStatus.getValid().markDirty(); break;
+                case VALID: connectionStatus.getValid().markDirty(); break;
                 case ACTIVE: connectionStatus.getActive().markDirty(); break;
             }
         }
@@ -305,13 +307,8 @@ public class DBNConnection extends DBNConnectionBase {
 
     @Override
     public boolean isValid(int timeout) {
-        return !isInvalid();
+        return valid.get();
     }
-
-    public boolean isInvalid() {
-        return invalid.get();
-    }
-
 
     @Override
     public boolean set(ResourceStatus status, boolean value) {
