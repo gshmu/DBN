@@ -86,6 +86,11 @@ public class VoidDynamicContent implements DynamicContent{
     }
 
     @Override
+    public boolean isEmpty() {
+        return true;
+    }
+
+    @Override
     public void markDirty() {
 
     }
