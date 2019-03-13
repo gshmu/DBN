@@ -8,9 +8,9 @@ public enum ResourceStatus implements Property {
     CLOSED_CHECKING,
     CLOSED_SETTING,
 
-    INVALID,
-    INVALID_SETTING,
-    INVALID_CHECKING,
+    VALID,
+    VALID_SETTING,
+    VALID_CHECKING,
 
     // statement
     CANCELLED,
