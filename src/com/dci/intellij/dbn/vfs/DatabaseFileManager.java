@@ -320,7 +320,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                     ConnectionDetailSettings connectionDetailSettings = connectionHandler.getSettings().getDetailSettings();
                     if (connectionDetailSettings.isRestoreWorkspace()) {
                         ConnectionAction.invoke("opening database editors", false, connectionHandler,
-                                (action) -> Progress.prompt(project, "Opening database editors", true,
+                                (action) -> Progress.prompt(project, "Opening database editors (" + connectionHandler.getQualifiedName() +")", true,
                                         (progress) -> {
                                             progress.setIndeterminate(true);
                                             progress.setText2(connectionHandler.getQualifiedName());

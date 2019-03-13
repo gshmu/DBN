@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.common.util;
 
-import com.dci.intellij.dbn.common.routine.BasicCallable;
+import com.dci.intellij.dbn.common.routine.ThrowableCallable;
+import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 
 public interface Unsafe {
-    static void invoke(Runnable runnable) {
+    static void run(ThrowableRunnable<Throwable> runnable) {
         try {
             runnable.run();
         } catch (Throwable e) {
@@ -11,7 +12,7 @@ public interface Unsafe {
         }
     }
 
-    static <T> T invoke(BasicCallable<T> callable) {
+    static <T> T call(ThrowableCallable<T, Throwable> callable) {
         try {
             return callable.call();
         } catch (Throwable e) {

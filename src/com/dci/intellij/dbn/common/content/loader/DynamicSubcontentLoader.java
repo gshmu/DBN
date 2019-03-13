@@ -79,8 +79,8 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> e
         if (dependencyAdapter.isSourceContentReady()) {
             return false;
         } else {
-            ThreadInfo thread = ThreadMonitor.thread();
-            if (thread.is(ThreadProperty.CODE_ANNOTATING) || thread.is(ThreadProperty.CODE_COMPLETION)) {
+            ThreadInfo thread = ThreadMonitor.current();
+            if (thread.is(ThreadProperty.CODE_ANNOTATING) || ThreadMonitor.getProcessCount(ThreadProperty.BACKGROUND_TASK) > 5) {
                 return false;
             } else {
                 return true;

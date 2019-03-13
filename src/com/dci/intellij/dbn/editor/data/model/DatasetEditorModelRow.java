@@ -50,7 +50,7 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
 
     void updateStatusFromRow(DatasetEditorModelRow oldRow) {
         if (oldRow != null) {
-            set(oldRow);
+            replace(oldRow);
             setIndex(oldRow.getIndex());
             if (oldRow.is(RecordStatus.MODIFIED)) {
                 for (int i=1; i<getCells().size(); i++) {
