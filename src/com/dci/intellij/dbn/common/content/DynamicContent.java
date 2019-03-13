@@ -68,6 +68,8 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
     @Override
     boolean isDisposed();
 
+    boolean isEmpty();
+
     void markDirty();
 
     Project getProject();
