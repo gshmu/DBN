@@ -133,7 +133,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
             for (DBContentType contentType : contentTypes) {
                 DBContentVirtualFile virtualFile =
                         contentType.isCode() ? new DBSourceCodeVirtualFile(this, contentType) :
-                                contentType.isData() ? new DBDatasetVirtualFile(this, contentType) : null;
+                        contentType.isData() ? new DBDatasetVirtualFile(this, contentType) : null;
                 if (virtualFile != null) {
                     contentFiles.add(virtualFile);
                     Disposer.register(this, virtualFile);

@@ -41,6 +41,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
@@ -462,6 +463,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             try {
                 List<ConnectionHandler> connectionHandlers = getConnectionHandlers();
                 connectionHandlers.forEach(connectionHandler -> resolveIdleStatus(connectionHandler));
+            } catch (ProcessCanceledException ignore){
             } catch (Exception e){
                 LOGGER.error("Failed to release idle connections", e);
             }
@@ -526,8 +528,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     ***********************************************/
 
     @Override
-    public boolean canCloseProject(@NotNull Project project) {
-        if (project == getProject() && hasUncommittedChanges()) {
+    public boolean canCloseProject() {
+        if (hasUncommittedChanges()) {
+            Project project = getProject();
             DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
             TransactionManagerSettings transactionManagerSettings = transactionManager.getSettings();
             InteractiveOptionBroker<TransactionOption> closeProjectOptionHandler = transactionManagerSettings.getCloseProject();

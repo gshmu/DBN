@@ -370,7 +370,7 @@ public class SequencePsiElement extends BasePsiElement {
     }
 
     @Override
-    public boolean matches(BasePsiElement basePsiElement, MatchType matchType) {
+    public boolean matches(@Nullable BasePsiElement basePsiElement, MatchType matchType) {
         PsiElement localChild = getFirstChild();
         PsiElement remoteChild = basePsiElement == null ? null : basePsiElement.getFirstChild();
 

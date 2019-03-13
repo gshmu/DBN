@@ -32,6 +32,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.ContainerUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +58,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     public static final String COMPONENT_NAME = "DBNavigator.Project.SessionEditorManager";
 
     private Timer timestampUpdater;
-    private List<DBSessionBrowserVirtualFile> openFiles = new ArrayList<>();
+    private List<DBSessionBrowserVirtualFile> openFiles = ContainerUtil.createConcurrentList();
 
     private SessionBrowserManager(Project project) {
         super(project);
