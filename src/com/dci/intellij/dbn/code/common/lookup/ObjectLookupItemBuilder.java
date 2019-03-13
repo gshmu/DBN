@@ -89,43 +89,47 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
 
     @Override
     public CharSequence getText(CodeCompletionContext context) {
-        DBObject object = getObject();
-        Project project = context.getFile().getProject();
-        CodeStyleCaseSettings styleCaseSettings = DBLCodeStyleManager.getInstance(project).getCodeStyleCaseSettings(language);
-        CodeStyleCaseOption caseOption = styleCaseSettings.getObjectCaseOption();
-        String text = caseOption.format(objectRef.getObjectName());
+        String text = objectRef.getObjectName();
+        if (StringUtil.isNotEmptyOrSpaces(text)) {
+            DBObject object = getObject();
+            if (object instanceof DBVirtualObject && text.contains(CodeCompletionContributor.DUMMY_TOKEN)) {
+                return null;
+            }
 
-        if (object instanceof DBVirtualObject && text.contains(CodeCompletionContributor.DUMMY_TOKEN)) {
-            return null;
-        }
+            Project project = context.getFile().getProject();
+            CodeStyleCaseSettings styleCaseSettings = DBLCodeStyleManager.getInstance(project).getCodeStyleCaseSettings(language);
+            CodeStyleCaseOption caseOption = styleCaseSettings.getObjectCaseOption();
 
-        String userInput = context.getUserInput();
-        CodeCompletionFormatSettings codeCompletionFormatSettings = CodeCompletionSettings.getInstance(project).getFormatSettings();
-        if (StringUtil.isNotEmpty(userInput) && !text.startsWith(userInput) && !codeCompletionFormatSettings.isEnforceCodeStyleCase()) {
-            char firstInputChar = userInput.charAt(0);
-            char firstPresentationChar = text.charAt(0);
+            text = caseOption.format(text);
 
-            if (Character.toUpperCase(firstInputChar) == Character.toUpperCase(firstPresentationChar)) {
-                boolean upperCaseInput = Character.isUpperCase(firstInputChar);
-                boolean upperCasePresentation = Character.isUpperCase(firstPresentationChar);
+            String userInput = context.getUserInput();
+            CodeCompletionFormatSettings codeCompletionFormatSettings = CodeCompletionSettings.getInstance(project).getFormatSettings();
+            if (StringUtil.isNotEmpty(userInput) && !text.startsWith(userInput) && !codeCompletionFormatSettings.isEnforceCodeStyleCase()) {
+                char firstInputChar = userInput.charAt(0);
+                char firstPresentationChar = text.charAt(0);
 
-                if (StringUtil.isMixedCase(text)) {
-                    if (upperCaseInput != upperCasePresentation) {
+                if (Character.toUpperCase(firstInputChar) == Character.toUpperCase(firstPresentationChar)) {
+                    boolean upperCaseInput = Character.isUpperCase(firstInputChar);
+                    boolean upperCasePresentation = Character.isUpperCase(firstPresentationChar);
+
+                    if (StringUtil.isMixedCase(text)) {
+                        if (upperCaseInput != upperCasePresentation) {
+                            text = upperCaseInput ?
+                                    text.toUpperCase() :
+                                    text.toLowerCase();
+                        }
+                    } else {
                         text = upperCaseInput ?
                                 text.toUpperCase() :
                                 text.toLowerCase();
                     }
                 } else {
-                    text = upperCaseInput ?
-                            text.toUpperCase() :
-                            text.toLowerCase();
+                    return null;
                 }
-            } else {
-                return null;
             }
+            return text;
         }
-
-        return text;
+        return null;
     }
 
     @Override

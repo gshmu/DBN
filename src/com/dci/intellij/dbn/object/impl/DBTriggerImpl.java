@@ -110,7 +110,7 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
     public DBOperationExecutor getOperationExecutor() {
         return operationType -> {
             ConnectionHandler connectionHandler = getConnectionHandler();
-            DBNConnection connection = connectionHandler.getMainConnection(getSchemaIdentifier());
+            DBNConnection connection = connectionHandler.getPoolConnection(getSchemaIdentifier(), false);
             try {
                 DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
                 if (operationType == DBOperationType.ENABLE) {

@@ -54,6 +54,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     public static final String COMPONENT_NAME = "DBNavigator.Project.DatabaseFileManager";
 
     private Set<DBEditableObjectVirtualFile> openFiles = ContainerUtil.newConcurrentSet();
+    private Map<ConnectionId, List<DBObjectRef<DBSchemaObject>>> pendingOpenFiles = new HashMap<>();
     private boolean projectInitialized = false;
     private String sessionId;
 
@@ -108,14 +109,6 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     @NotNull
     public String getComponentName() {
         return COMPONENT_NAME;
-    }
-
-    @Override
-    public void projectOpened() {
-        Project project = getProject();
-        EventUtil.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
-        EventUtil.subscribe(project, this, FileEditorManagerListener.Before.FILE_EDITOR_MANAGER, fileEditorManagerListenerBefore);
-        EventUtil.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
     }
 
     private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsAdapter() {
@@ -242,10 +235,18 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         }
     }
 
+    @Override
+    public void projectOpened() {
+        Project project = getProject();
+        EventUtil.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        EventUtil.subscribe(project, this, FileEditorManagerListener.Before.FILE_EDITOR_MANAGER, fileEditorManagerListenerBefore);
+        EventUtil.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
+        reopenDatabaseEditors();
+    }
+
 
     @Override
-    public void projectClosed(@NotNull Project project) {
-        if (project == getProject()) {
+    public void projectClosed() {
 /*
             // TODO seems to be obsolete since file unique id
             PsiManagerImpl psiManager = (PsiManagerImpl) PsiManager.getInstance(project);
@@ -266,8 +267,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
             }
 */
 
-            DatabaseFileSystem.getInstance().clearCachedFiles(project);
-        }
+        DatabaseFileSystem.getInstance().clearCachedFiles(getProject());
     }
 
     /*********************************************
@@ -291,11 +291,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
 
     @Override
     public void loadState(@NotNull Element element) {
-        Map<ConnectionId, List<DBObjectRef<DBSchemaObject>>> openObjectRefs = new HashMap<>();
         Element openFilesElement = element.getChild("open-files");
-        Project project = getProject();
-        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-
         if (openFilesElement != null) {
             List<Element> fileElements = openFilesElement.getChildren();
             fileElements.forEach((fileElement) -> {
@@ -303,21 +299,28 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                 if (objectRef != null) {
                     ConnectionId connectionId = objectRef.getConnectionId();
                     List<DBObjectRef<DBSchemaObject>> objectRefs =
-                            openObjectRefs.computeIfAbsent(connectionId, k -> new ArrayList<>());
+                            pendingOpenFiles.computeIfAbsent(connectionId, k -> new ArrayList<>());
                     objectRefs.add(objectRef);
                 }
             });
         }
+    }
 
-        if (!openObjectRefs.isEmpty()) {
-            openObjectRefs.keySet().forEach(connectionId -> {
-                List<DBObjectRef<DBSchemaObject>> objectRefs = openObjectRefs.get(connectionId);
+    private void reopenDatabaseEditors() {
+        Project project = getProject();
+        if (pendingOpenFiles != null && !pendingOpenFiles.isEmpty()) {
+            Map<ConnectionId, List<DBObjectRef<DBSchemaObject>>> pendingOpenFiles = this.pendingOpenFiles;
+            this.pendingOpenFiles = null;
+
+            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+            pendingOpenFiles.keySet().forEach(connectionId -> {
+                List<DBObjectRef<DBSchemaObject>> objectRefs = pendingOpenFiles.get(connectionId);
                 ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
                 if (connectionHandler != null) {
                     ConnectionDetailSettings connectionDetailSettings = connectionHandler.getSettings().getDetailSettings();
                     if (connectionDetailSettings.isRestoreWorkspace()) {
                         ConnectionAction.invoke("opening database editors", false, connectionHandler,
-                                (action) -> Progress.prompt(getProject(), "Opening database editors", true,
+                                (action) -> Progress.prompt(project, "Opening database editors", true,
                                         (progress) -> {
                                             progress.setIndeterminate(true);
                                             progress.setText2(connectionHandler.getQualifiedName());

@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
-import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -68,7 +67,7 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
         }
     };
 
-    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerAdapter() {
+    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
         @Override
         public void configurationChanged() {
             Project project = getProject();

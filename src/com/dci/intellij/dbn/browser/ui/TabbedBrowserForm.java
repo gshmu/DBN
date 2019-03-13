@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
-import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -172,14 +171,14 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
     /********************************************************
      *                       Listeners                      *
      ********************************************************/
-    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerAdapter() {
+    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
         @Override
         public void configurationChanged() {
             Project project = getProject();
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
             for (TabInfo tabInfo : connectionTabs.getTabs()) {
-                SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
-                if (Failsafe.check(browserForm)) {
+                Failsafe.lenient(() -> {
+                    SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
                     ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
                     JBColor environmentColor = connectionHandler.getEnvironmentType().getColor();
                     if (visibilitySettings.getConnectionTabs().value()) {
@@ -187,7 +186,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
                     } else {
                         tabInfo.setTabColor(null);
                     }
-                }
+                });
             }
         }
     };

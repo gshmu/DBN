@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
-import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -118,7 +117,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         }
     };
 
-    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerAdapter() {
+    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
         @Override
         public void editModeChanged(DBContentVirtualFile databaseContentFile) {
             if (databaseContentFile instanceof DBSourceCodeVirtualFile) {
@@ -433,44 +432,43 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     @Override
-    public boolean canCloseProject(@NotNull Project project) {
+    public boolean canCloseProject() {
         boolean canClose = true;
-        if (project == getProject()) {
-            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-            VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
+        Project project = getProject();
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
 
-            for (VirtualFile openFile : openFiles) {
-                if (openFile instanceof DBEditableObjectVirtualFile) {
-                    DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) openFile;
-                    if (databaseFile.isModified()) {
-                        canClose = false;
-                        if (!databaseFile.isSaving()) {
-                            DBSchemaObject object = databaseFile.getObject();
-                            String objectDescription = object.getQualifiedNameWithType();
-                            Project objectProject = object.getProject();
+        for (VirtualFile openFile : openFiles) {
+            if (openFile instanceof DBEditableObjectVirtualFile) {
+                DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) openFile;
+                if (databaseFile.isModified()) {
+                    canClose = false;
+                    if (!databaseFile.isSaving()) {
+                        DBSchemaObject object = databaseFile.getObject();
+                        String objectDescription = object.getQualifiedNameWithType();
+                        Project objectProject = object.getProject();
 
-                            CodeEditorSettings codeEditorSettings = CodeEditorSettings.getInstance(objectProject);
-                            CodeEditorConfirmationSettings confirmationSettings = codeEditorSettings.getConfirmationSettings();
-                            confirmationSettings.getExitOnChanges().resolve(
-                                    list(objectDescription),
-                                    option -> {
-                                        switch (option) {
-                                            case SAVE: saveSourceCodeChanges(databaseFile, () -> closeProject()); break;
-                                            case DISCARD: revertSourceCodeChanges(databaseFile, () -> closeProject()); break;
-                                            case SHOW: {
-                                                List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
-                                                for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
-                                                    if (sourceCodeFile.is(MODIFIED)) {
-                                                        SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(objectProject);
-                                                        diffManager.opedDatabaseDiffWindow(sourceCodeFile);
-                                                    }
+                        CodeEditorSettings codeEditorSettings = CodeEditorSettings.getInstance(objectProject);
+                        CodeEditorConfirmationSettings confirmationSettings = codeEditorSettings.getConfirmationSettings();
+                        confirmationSettings.getExitOnChanges().resolve(
+                                list(objectDescription),
+                                option -> {
+                                    switch (option) {
+                                        case SAVE: saveSourceCodeChanges(databaseFile, () -> closeProject()); break;
+                                        case DISCARD: revertSourceCodeChanges(databaseFile, () -> closeProject()); break;
+                                        case SHOW: {
+                                            List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
+                                            for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {
+                                                if (sourceCodeFile.is(MODIFIED)) {
+                                                    SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(objectProject);
+                                                    diffManager.opedDatabaseDiffWindow(sourceCodeFile);
                                                 }
+                                            }
 
-                                            } break;
-                                            case CANCEL: break;
-                                        }
-                                    });
-                        }
+                                        } break;
+                                        case CANCEL: break;
+                                    }
+                                });
                     }
                 }
             }

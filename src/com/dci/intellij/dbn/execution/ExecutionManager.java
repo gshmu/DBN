@@ -67,13 +67,14 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     private ToolWindow initExecutionConsole() {
-        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(getProject());
+        Project project = getProject();
+        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
         ToolWindow toolWindow = toolWindowManager.getToolWindow(TOOL_WINDOW_ID);
         if (toolWindow == null) {
             synchronized (this) {
                 toolWindow = toolWindowManager.getToolWindow(TOOL_WINDOW_ID);
                 if (toolWindow == null) {
-                    toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, true, ToolWindowAnchor.BOTTOM, getProject(), true);
+                    toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, true, ToolWindowAnchor.BOTTOM, project, true);
                     toolWindow.setIcon(Icons.WINDOW_EXECUTION_CONSOLE);
                     toolWindow.setToHideOnEmptyContent(true);
                 }
@@ -224,11 +225,10 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
 
     @Override
-    public void projectClosing(@NotNull Project project) {
+    public void projectClosing() {
         if (executionConsoleForm.loaded()) {
             getExecutionConsoleForm().removeAllTabs();
         }
-        super.projectClosing(project);
     }
 
     @Override
