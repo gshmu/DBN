@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.common.environment;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -88,7 +87,7 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
         return COMPONENT_NAME;
     }
 
-    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerAdapter() {
+    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
         @Override
         public void configurationChanged() {
             FileEditorManagerImpl fileEditorManager = (FileEditorManagerImpl) FileEditorManager.getInstance(getProject());

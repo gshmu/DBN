@@ -511,6 +511,7 @@
             <className>com.dci.intellij.dbn.code.common.intention.ExecuteScriptIntentionAction</className>
             <category>DBNavigator</category>
         </intentionAction>-->
+        <fileTemplateGroup implementation="com.dci.intellij.dbn.common.file.DBNFileTemplateGroupDescriptorFactory"/>
     </extensions>
     <helpset file="help.jar" path="/Help.hs"/>
 

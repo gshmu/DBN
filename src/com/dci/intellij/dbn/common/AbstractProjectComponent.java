@@ -35,6 +35,14 @@ public abstract class AbstractProjectComponent extends SettingsSupport implement
     public void projectClosed() {
     }
 
+    public boolean canCloseProject() {
+        return true;
+    }
+
+    public void projectClosing() {
+
+    }
+
     @Override
     public void initComponent() {
     }
@@ -72,23 +80,24 @@ public abstract class AbstractProjectComponent extends SettingsSupport implement
      *            ProjectManagerListener           *
      ***********************************************/
     @Override
-    public void projectOpened(@NotNull Project project) {
-
-    }
+    public final void projectOpened(@NotNull Project project) {}
 
     @Override
-    public boolean canCloseProject(@NotNull Project project) {
+    public final void projectClosed(@NotNull Project project) {}
+
+    @Override
+    public final boolean canCloseProject(@NotNull Project project) {
+        if (project.equals(getProject())) {
+            return canCloseProject();
+        }
         return true;
     }
 
     @Override
-    public void projectClosed(@NotNull Project project) {
-
-    }
-
-    @Override
-    public void projectClosing(@NotNull Project project) {
-
+    public final void projectClosing(@NotNull Project project) {
+        if (project.equals(getProject())) {
+            projectClosing();
+        }
     }
 
 

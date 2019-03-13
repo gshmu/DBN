@@ -278,6 +278,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                     }
                 }
             }
+            objectList.set(DynamicContentStatus.LOADED, true);
         }
         return objectList;
     }

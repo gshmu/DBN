@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
-import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerAdapter;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.message.MessageType;
@@ -96,7 +95,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         return getResultTabs().getTabCount();
     }
 
-    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerAdapter() {
+    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
         @Override
         public void configurationChanged() {
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(getProject()).getVisibilitySettings();

@@ -723,7 +723,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return getElementType().getLanguageDialect();
     }
 
-    public abstract boolean matches(BasePsiElement basePsiElement, MatchType matchType);
+    public abstract boolean matches(@Nullable BasePsiElement basePsiElement, MatchType matchType);
 
     public DBObject resolveUnderlyingObject() {
         if (isVirtualObject()) {

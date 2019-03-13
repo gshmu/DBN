@@ -60,6 +60,10 @@ public class ConnectionCache implements ApplicationComponent{
     private ProjectLifecycleListener projectLifecycleListener = new ProjectLifecycleListener() {
 
         @Override
+        public void beforeProjectLoaded(@NotNull Project project) {
+        }
+
+        @Override
         public void projectComponentsInitialized(@NotNull Project project) {
             if (!project.isDefault()) {
                 ConnectionManager connectionManager = ConnectionManager.getInstance(project);
