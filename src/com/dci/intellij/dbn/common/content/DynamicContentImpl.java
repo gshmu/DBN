@@ -385,6 +385,11 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     }
 
     @Override
+    public boolean isEmpty() {
+        return size() == 0;
+    }
+
+    @Override
     public void dispose() {
         if (!isDisposed()) {
             set(DISPOSED, true);
