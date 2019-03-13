@@ -34,7 +34,8 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
                     ResourceStatus.CLOSED_SETTING,
                     ResourceStatus.CLOSED_CHECKING,
                     TimeUtil.FIVE_SECONDS,
-                    true) {
+                    Boolean.FALSE,
+                    Boolean.TRUE) {
                 @Override
                 protected void changeInner(boolean value) throws SQLException {
                     closeable.closeInner();
@@ -54,7 +55,8 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
                     ResourceStatus.CANCELLED_SETTING,
                     ResourceStatus.CANCELLED_CHECKING,
                     TimeUtil.FIVE_SECONDS,
-                    true) {
+                    Boolean.FALSE,
+                    Boolean.TRUE) {
                 @Override
                 protected void changeInner(boolean value) throws SQLException {
                     cancellable.cancelInner();

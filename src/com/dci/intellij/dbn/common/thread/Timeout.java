@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.routine.BasicCallable;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.diagnostic.Logger;
 
 import java.util.concurrent.ExecutionException;
@@ -26,7 +27,8 @@ public interface Timeout {
                 return defaultValue;
             }
         } catch (ExecutionException e) {
-            LOGGER.error(e);
+            Throwable exception = CommonUtil.nvl(e.getCause(), e);
+            LOGGER.error("Timeout operation failed. Returning default " + defaultValue, exception);
             return defaultValue;
         }
     }
@@ -43,7 +45,8 @@ public interface Timeout {
             }
 
         } catch (ExecutionException e) {
-            LOGGER.error(e);
+            Throwable exception = CommonUtil.nvl(e.getCause(), e);
+            LOGGER.error("Timeout operation failed.", exception);
         }
     }
 

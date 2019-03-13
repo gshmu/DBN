@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.util.ExceptionUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -21,15 +22,16 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
     private final ResourceStatus checking;
     private final long checkInterval;
     private long checkTimestamp;
-    private boolean terminal;
+    private Boolean terminalStatus;
 
-    protected ResourceStatusAdapterImpl(T resource, ResourceStatus subject, ResourceStatus changing, ResourceStatus checking, long checkInterval, boolean terminal) {
+    ResourceStatusAdapterImpl(T resource, ResourceStatus subject, ResourceStatus changing, ResourceStatus checking, long checkInterval, @NotNull Boolean initialStatus, @Nullable Boolean terminalStatus) {
         this.resource = new FailsafeWeakRef<T>(resource);
         this.subject = subject;
         this.changing = changing;
         this.checking = checking;
         this.checkInterval = checkInterval;
-        this.terminal = terminal;
+        this.terminalStatus = terminalStatus;
+        set(subject, initialStatus);
     }
 
     @Override
@@ -107,8 +109,8 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
     }
 
     private void fail() {
-        if (terminal) {
-            set(subject, true); // TODO really
+        if (terminalStatus != null) {
+            set(subject, terminalStatus);
         } else {
             if (checkInterval > 0) {
                 checkTimestamp =
@@ -119,9 +121,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
     }
 
     private boolean canCheck() {
-        if (isChecking() || isChanging()) {
-            return false;
-        } else if (terminal && value()) {
+        if (isChecking() || isChanging() || isTerminal()) {
             return false;
         } else {
             return true;
@@ -129,13 +129,15 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
     }
 
     private boolean canChange(boolean value) {
-        if (isChanging()) {
-            return false;
-        } else if (terminal && value()) {
+        if (isChanging() || isTerminal()) {
             return false;
         } else {
             return get() != value;
         }
+    }
+
+    private boolean isTerminal() {
+        return terminalStatus != null && terminalStatus == value();
     }
 
     private boolean checkControlled() throws SQLException{
@@ -143,9 +145,13 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
         Boolean result = Timeout.call(5, is(subject), true, () -> {
             try {
                 return checkInner();
+            } catch (AbstractMethodError e) {
+                // not implemented (??) TODO suggest using built in drivers
+                LOGGER.warn("Functionality not supported by jdbc driver", e);
+                return value();
             } catch (SQLException e) {
                 exception.set(e);
-                return false;
+                return terminalStatus == null ? value() : terminalStatus;
             }
         });
         if (exception.get() != null) {
