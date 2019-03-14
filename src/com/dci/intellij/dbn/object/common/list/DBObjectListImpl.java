@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.navigation.psi.DBObjectListPsiDirectory;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -146,7 +147,11 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @Nullable
     public Filter<T> getConfigFilter() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler.isVirtual() ? null : (Filter<T>) connectionHandler.getSettings().getFilterSettings().getNameFilter(objectType);
+        if (Failsafe.check(connectionHandler) && !connectionHandler.isVirtual()) {
+            ConnectionFilterSettings filterSettings = connectionHandler.getSettings().getFilterSettings();
+            return (Filter<T>) filterSettings.getNameFilter(objectType);
+        }
+        return null;
     }
 
     @Override
@@ -196,9 +201,12 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     public void sortElements(List<T> elements) {
         DatabaseBrowserSettings browserSettings = DatabaseBrowserSettings.getInstance(getProject());
         DatabaseBrowserSortingSettings sortingSettings = browserSettings.getSortingSettings();
-        DBObjectComparator comparator = objectType == DBObjectType.ANY ? null : sortingSettings.getComparator(objectType);
+        DBObjectComparator<T> comparator =
+                objectType == DBObjectType.ANY ? null :
+                        sortingSettings.getComparator(objectType);
+
         if (comparator != null) {
-            Collections.sort(elements, comparator);
+            elements.sort(comparator);
         } else {
             super.sortElements(elements);
         }

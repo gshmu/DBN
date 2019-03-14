@@ -9,7 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public abstract class DBObjectComparator<T extends DBObject> implements Comparator<T>{
-    public static final List<DBObjectComparator> REGISTRY = new ArrayList<DBObjectComparator>();
+    private static final List<DBObjectComparator> REGISTRY = new ArrayList<>();
     static {
         new DBColumnNameComparator();
         new DBColumnPositionComparator();

@@ -64,6 +64,15 @@ public class ThreadMonitor {
         }
     }
 
+    public static boolean is(ThreadProperty ... properties) {
+        ThreadInfo threadInfo = current();
+        for (ThreadProperty property : properties) {
+            if (threadInfo.is(property)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public static boolean isBackgroundProcess() {
         // default false
         ThreadInfo threadInfo = current();

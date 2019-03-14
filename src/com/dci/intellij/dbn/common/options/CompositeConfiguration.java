@@ -40,7 +40,6 @@ public abstract class CompositeConfiguration<P extends Configuration, E extends 
             configuration.apply();
         }
         super.apply();
-        onApply();
     }
 
     @Override
