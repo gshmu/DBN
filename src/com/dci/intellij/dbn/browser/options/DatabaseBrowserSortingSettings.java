@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.browser.options;
 
 import com.dci.intellij.dbn.browser.options.ui.DatabaseBrowserSortingSettingsForm;
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
+import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
 import com.dci.intellij.dbn.object.common.sorting.SortingType;
@@ -14,9 +15,9 @@ import java.util.List;
 public class DatabaseBrowserSortingSettings
         extends BasicProjectConfiguration<DatabaseBrowserSettings, DatabaseBrowserSortingSettingsForm> {
 
-    private List<DBObjectComparator> comparators = new ArrayList<DBObjectComparator>();
+    private List<DBObjectComparator> comparators = new ArrayList<>();
 
-    public DatabaseBrowserSortingSettings(DatabaseBrowserSettings parent) {
+    DatabaseBrowserSortingSettings(DatabaseBrowserSettings parent) {
         super(parent);
         comparators.add(DBObjectComparator.get(DBObjectType.COLUMN, SortingType.NAME));
         comparators.add(DBObjectComparator.get(DBObjectType.FUNCTION, SortingType.NAME));
@@ -32,7 +33,7 @@ public class DatabaseBrowserSortingSettings
         this.comparators = comparators;
     }
 
-    public DBObjectComparator getComparator(DBObjectType objectType) {
+    public <T extends DBObject> DBObjectComparator<T> getComparator(DBObjectType objectType) {
         for (DBObjectComparator comparator : comparators) {
             if (comparator.getObjectType().matches(objectType)) {
                 return comparator;

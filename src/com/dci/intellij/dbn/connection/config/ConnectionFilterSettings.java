@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.config;
 
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -23,7 +24,26 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
 
     private static final Filter<DBSchema> EMPTY_SCHEMAS_FILTER = schema -> !schema.isEmptySchema();
 
-    private transient Filter<DBSchema> cachedSchemaFilter;
+    private Latent<Filter<DBSchema>> schemaFilter = Latent.mutable(
+            () -> hideEmptySchemas,
+            () -> {
+                Filter<DBObject> filter = objectNameFilterSettings.getFilter(DBObjectType.SCHEMA);
+                if (filter == null) {
+                    return EMPTY_SCHEMAS_FILTER;
+                } else {
+                    return new Filter<DBSchema>() {
+                        @Override
+                        public int hashCode() {
+                            return filter.hashCode() + EMPTY_SCHEMAS_FILTER.hashCode();
+                        }
+
+                        @Override
+                        public boolean accepts(DBSchema schema) {
+                            return EMPTY_SCHEMAS_FILTER.accepts(schema) && filter.accepts(schema);
+                        }
+                    };
+                }
+            });
 
     ConnectionFilterSettings(ConnectionSettings connectionSettings) {
         super(connectionSettings.getProject());
@@ -97,38 +117,10 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
         super.writeConfiguration(element);
     }
 
-    @Override
-    protected void onApply() {
-        super.onApply();
-        cachedSchemaFilter = null;
-    }
-
     @Nullable
     public Filter<? extends DBObject> getNameFilter(DBObjectType objectType) {
-        final Filter<DBObject> filter = objectNameFilterSettings.getFilter(objectType);
-        if (objectType == DBObjectType.SCHEMA) {
-            if (hideEmptySchemas) {
-                if (filter == null) {
-                    return EMPTY_SCHEMAS_FILTER;
-                } else {
-                    if (cachedSchemaFilter == null) {
-                        cachedSchemaFilter = new Filter<DBSchema>() {
-                            @Override
-                            public int hashCode() {
-                                return filter.hashCode() + EMPTY_SCHEMAS_FILTER.hashCode();
-                            }
-
-                            @Override
-                            public boolean accepts(DBSchema schema) {
-                                return EMPTY_SCHEMAS_FILTER.accepts(schema) && filter.accepts(schema);
-                            }
-                        };
-
-                    }
-                    return cachedSchemaFilter;
-                }
-            }
-        }
-        return filter;
+        return objectType == DBObjectType.SCHEMA ?
+                schemaFilter.get() :
+                objectNameFilterSettings.getFilter(objectType);
     }
 }
