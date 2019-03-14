@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -75,6 +76,7 @@ public class WrapperElementTypeImpl extends AbstractElementType implements Wrapp
         return new WrapperElementTypeLookupCache(this);
     }
 
+    @NotNull
     @Override
     public WrapperElementTypeParser createParser() {
         return new WrapperElementTypeParser(this);

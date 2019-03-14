@@ -18,6 +18,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import gnu.trove.THashSet;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Set;
@@ -52,6 +53,7 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
         return new SequenceElementTypeLookupCache<SequenceElementType>(this);
     }
 
+    @NotNull
     @Override
     public SequenceElementTypeParser createParser() {
         return new SequenceElementTypeParser<SequenceElementType>(this);

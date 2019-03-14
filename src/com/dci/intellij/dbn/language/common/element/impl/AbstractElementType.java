@@ -132,6 +132,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
 
     protected abstract ElementTypeLookupCache createLookupCache();
 
+    @NotNull
     protected abstract ElementTypeParser createParser();
 
     @Override
@@ -231,7 +232,8 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     }
 
     @Override
-    public @NotNull ElementTypeParser getParser() {
+    @NotNull
+    public ElementTypeParser getParser() {
         return parser.get();
     }
 

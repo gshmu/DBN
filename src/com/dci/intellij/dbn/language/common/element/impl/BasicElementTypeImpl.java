@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.language.common.element.parser.impl.BasicElementType
 import com.dci.intellij.dbn.language.common.psi.UnknownPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 
 public class BasicElementTypeImpl extends AbstractElementType implements BasicElementType {
 
@@ -22,6 +23,7 @@ public class BasicElementTypeImpl extends AbstractElementType implements BasicEl
         return new BasicElementTypeLookupCache(this);
     }
 
+    @NotNull
     @Override
     public BasicElementTypeParser createParser() {
         return new BasicElementTypeParser(this);

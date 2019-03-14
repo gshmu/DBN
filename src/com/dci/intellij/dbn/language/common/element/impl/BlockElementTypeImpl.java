@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.language.common.psi.BlockPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockElementTypeImpl extends SequenceElementTypeImpl implements BlockElementType {
     public static final int INDENT_NONE = 0;
@@ -26,6 +27,7 @@ public class BlockElementTypeImpl extends SequenceElementTypeImpl implements Blo
         return new BlockElementTypeLookupCache(this);
     }
 
+    @NotNull
     @Override
     public BlockElementTypeParser createParser() {
         return new BlockElementTypeParser(this);
