@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 
 public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements IdentifierElementType {
@@ -43,6 +44,7 @@ public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements Id
         return new IdentifierElementTypeLookupCache(this);
     }
 
+    @NotNull
     @Override
     public IdentifierElementTypeParser createParser() {
         return new IdentifierElementTypeParser(this);

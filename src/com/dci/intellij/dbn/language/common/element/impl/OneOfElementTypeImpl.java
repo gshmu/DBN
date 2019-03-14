@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -48,6 +49,7 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
         return new OneOfElementTypeLookupCache(this);
     }
 
+    @NotNull
     @Override
     protected OneOfElementTypeParser createParser() {
         return new OneOfElementTypeParser(this);

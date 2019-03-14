@@ -14,6 +14,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import gnu.trove.THashSet;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
@@ -32,6 +33,7 @@ public class NamedElementTypeImpl extends SequenceElementTypeImpl implements Nam
         return new NamedElementTypeLookupCache(this);
     }
 
+    @NotNull
     @Override
     public NamedElementTypeParser createParser() {
         return new NamedElementTypeParser(this);

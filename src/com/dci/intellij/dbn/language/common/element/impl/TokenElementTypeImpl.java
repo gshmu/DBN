@@ -75,6 +75,7 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
         return new TokenElementTypeLookupCache(this);
     }
 
+    @NotNull
     @Override
     public TokenElementTypeParser createParser() {
         return new TokenElementTypeParser(this);

@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -51,6 +52,7 @@ public class QualifiedIdentifierElementTypeImpl extends AbstractElementType impl
         return new QualifiedIdentifierElementTypeLookupCache(this);
     }
 
+    @NotNull
     @Override
     public QualifiedIdentifierElementTypeParser createParser() {
         return new QualifiedIdentifierElementTypeParser(this);
