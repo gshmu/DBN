@@ -57,7 +57,7 @@ public class DBDebugUtil {
             sourceCodeManager.ensureSourcesLoaded(databaseFile.getObject(), false);
 
             DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-            databaseFileSystem.openEditor(databaseFile.getObject(), false);
+            databaseFileSystem.connectAndOpenEditor(databaseFile.getObject(), null, false, false);
         } else if (virtualFile instanceof DBSourceCodeVirtualFile) {
             DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
             DBEditableObjectVirtualFile mainDatabaseFile = sourceCodeFile.getMainDatabaseFile();

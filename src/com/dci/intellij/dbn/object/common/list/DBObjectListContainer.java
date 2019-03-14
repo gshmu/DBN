@@ -320,15 +320,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
     public void load() {
         if (objectLists != null)  {
             for (DBObjectList objectList : objectLists.values()) {
-                if (objectList.isInternal() && check(objectList)) {
-                    DBObjectType objectType = objectList.getObjectType();
-                    if (!objectType.isOneOf(
-                            DBObjectType.ANY,
-                            DBObjectType.OUTGOING_DEPENDENCY,
-                            DBObjectType.INCOMING_DEPENDENCY)) {
-                        objectList.ensure();
-                    }
-                } else {
+                if (!objectList.isInternal()) {
                     objectList.ensure();
                 }
                 checkDisposed();

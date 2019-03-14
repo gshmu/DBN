@@ -99,7 +99,9 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
 
                 DBMethod method = (DBMethod) schema.getChildObject(objectType, factoryInput.getObjectName(), false);
                 Failsafe.get(method.getChildObjectList(DBObjectType.ARGUMENT)).reload();
-                DatabaseFileSystem.getInstance().openEditor(method, true);
+
+                DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+                databaseFileSystem.connectAndOpenEditor(method, null, false, true);
                 notifyFactoryEvent(new ObjectFactoryEvent(method, ObjectFactoryEvent.EVENT_TYPE_CREATE));
             } catch (SQLException e) {
                 MessageUtil.showErrorDialog(project, "Could not create " + factoryInput.getObjectType().getName() + ".", e);
