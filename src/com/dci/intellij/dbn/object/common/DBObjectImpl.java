@@ -345,6 +345,11 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     }
 
     @Override
+    public void initChildren() {
+        if (childObjects != null) childObjects.load();
+    }
+
+    @Override
     public DBObjectRelationListContainer getChildObjectRelations() {
         return childObjectRelations;
     }

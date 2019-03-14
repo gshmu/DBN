@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.vfs;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
+import com.dci.intellij.dbn.common.routine.ProgressRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
@@ -23,7 +24,6 @@ import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
-import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.file.DBConnectionVirtualFile;
@@ -412,40 +412,40 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     /*********************************************************
      *              FileEditorManagerListener                *
      *********************************************************/
-    public void openEditor(DBObject object, boolean focusEditor) {
-        openEditor(object, null, false, focusEditor);
-    }
+    public void connectAndOpenEditor(DBObject object, @Nullable EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {
+        ConnectionAction.invoke(
+                "opening the object editor", false, object,
+                (action) -> {
+                    Project project = object.getProject();
+                    String title = "Opening editor (" + object.getQualifiedName() + ")";
+                    ProgressRunnable runnable = (progress) -> openEditor(object, editorProviderId, scrollBrowser, focusEditor);
 
-    public void openEditor(DBObject object, @Nullable EditorProviderId editorProviderId, boolean focusEditor) {
-        openEditor(object, editorProviderId, false, focusEditor);
+                    if (focusEditor)
+                        Progress.prompt(project, title, true, runnable); else
+                        Progress.background( project, title, true, runnable);
+                });
     }
 
     public void openEditor(DBObject object, @Nullable EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {
-        ConnectionAction.invoke("opening the object editor", false, object,
-                (action) -> Progress.prompt(
-                        object.getProject(),
-                        "Opening editor (" + object.getQualifiedName() + ")", true,
-                        (progress) -> {
-                            if (Failsafe.check(object)) {
-                                EditorProviderId providerId = editorProviderId;
-                                if (editorProviderId == null) {
-                                    EditorStateManager editorStateManager = EditorStateManager.getInstance(object.getProject());
-                                    providerId = editorStateManager.getEditorProvider(object.getObjectType());
-                                }
+        if (Failsafe.check(object)) {
+            EditorProviderId providerId = editorProviderId;
+            if (editorProviderId == null) {
+                EditorStateManager editorStateManager = EditorStateManager.getInstance(object.getProject());
+                providerId = editorStateManager.getEditorProvider(object.getObjectType());
+            }
 
-                                if (object.is(DBObjectProperty.SCHEMA_OBJECT)) {
-                                    DBObjectListContainer childObjects = object.getChildObjects();
-                                    if (childObjects != null) childObjects.load();
+            if (object.is(DBObjectProperty.SCHEMA_OBJECT)) {
+                object.initChildren();
+                openSchemaObject((DBSchemaObject) object, providerId, scrollBrowser, focusEditor);
 
-                                    openSchemaObject((DBSchemaObject) object, providerId, scrollBrowser, focusEditor);
-
-                                } else if (object.getParentObject().is(DBObjectProperty.SCHEMA_OBJECT)) {
-                                    DBObjectListContainer childObjects = object.getParentObject().getChildObjects();
-                                    if (childObjects != null) childObjects.load();
-                                    openChildObject(object, providerId, scrollBrowser, focusEditor);
-                                }
-                            }
-                        }));
+            } else {
+                DBObject parentObject = object.getParentObject();
+                if (parentObject.is(DBObjectProperty.SCHEMA_OBJECT)) {
+                    parentObject.initChildren();
+                    openChildObject(object, providerId, scrollBrowser, focusEditor);
+                }
+            }
+        }
     }
 
     private void openSchemaObject(@NotNull DBSchemaObject object, EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {

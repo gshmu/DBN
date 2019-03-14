@@ -19,6 +19,7 @@ public class OpenViewDataAction extends DumbAwareAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        DatabaseFileSystem.getInstance().openEditor(view, EditorProviderId.DATA, true);
+        DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+        databaseFileSystem.connectAndOpenEditor(view, EditorProviderId.DATA, false, true);
     }
 }
