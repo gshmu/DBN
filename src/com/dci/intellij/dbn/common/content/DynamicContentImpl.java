@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
+import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -317,13 +318,18 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     }
 
     public void sortElements(List<T> elements) {
-        java.util.Collections.sort(elements);
+        elements.sort(null);
     }
 
     @Override
     @NotNull
     public List<T> getElements() {
-        if (ThreadMonitor.isBackgroundProcess() || ThreadMonitor.isTimeoutProcess() || getDependencyAdapter().canLoadFast()) {
+        if (getDependencyAdapter().canLoadFast() ||
+                ThreadMonitor.is(
+                        ThreadProperty.BACKGROUND_TASK,
+                        ThreadProperty.BACKGROUND_THREAD,
+                        ThreadProperty.TIMEOUT_PROCESS,
+                        ThreadProperty.CODE_ANNOTATING)) {
             ensure();
         } else{
             loadInBackground();

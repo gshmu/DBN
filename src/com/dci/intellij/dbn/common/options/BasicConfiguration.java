@@ -114,11 +114,7 @@ public abstract class BasicConfiguration<P extends Configuration, E extends Conf
             // Notify only when all changes are set
             Configuration.notifyChanges();
         }
-        onApply();
     }
-
-    @Deprecated
-    protected void onApply() {}
 
     @Override
     public void reset() {
