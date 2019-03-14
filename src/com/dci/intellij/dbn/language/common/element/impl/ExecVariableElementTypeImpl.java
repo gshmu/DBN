@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 
 public class ExecVariableElementTypeImpl extends LeafElementTypeImpl implements ExecVariableElementType {
@@ -25,6 +26,7 @@ public class ExecVariableElementTypeImpl extends LeafElementTypeImpl implements 
         return new ExecVariableElementTypeLookupCache(this);
     }
 
+    @NotNull
     @Override
     public ExecVariableElementTypeParser createParser() {
         return new ExecVariableElementTypeParser(this);

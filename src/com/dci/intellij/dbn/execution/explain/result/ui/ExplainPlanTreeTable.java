@@ -2,8 +2,6 @@ package com.dci.intellij.dbn.execution.explain.result.ui;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
-import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
@@ -142,9 +140,9 @@ public class ExplainPlanTreeTable extends TreeTable implements Disposable{
         return new ExplainPlanTreeTableCellRenderer(this, getTree());
     }
 
-    private final ColoredTableCellRenderer tableCellRenderer = new DBNColoredTableCellRenderer() {
+    private final ColoredTableCellRenderer tableCellRenderer = new ColoredTableCellRenderer() {
         @Override
-        protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
+        protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
             SimpleTextAttributes attributes = selected ?
                     SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES :
                     textAttributes.getPlainData(false, false);

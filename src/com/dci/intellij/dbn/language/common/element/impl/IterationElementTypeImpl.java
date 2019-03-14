@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,7 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
         return new IterationElementTypeLookupCache(this);
     }
 
+    @NotNull
     @Override
     protected IterationElementTypeParser createParser() {
         return new IterationElementTypeParser(this);
