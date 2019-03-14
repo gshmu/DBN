@@ -205,7 +205,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
             if (!isShowing()) {
                 DBDataset dataset = getDataset();
-                DatabaseFileSystem.getInstance().openEditor(dataset, EditorProviderId.DATA, true);
+                DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+                databaseFileSystem.connectAndOpenEditor(dataset, EditorProviderId.DATA, false, true);
             }
             if (cell.getError() != null) {
                 DatasetEditorErrorForm errorForm = new DatasetEditorErrorForm(cell);

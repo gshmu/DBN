@@ -269,7 +269,8 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
             if (element instanceof DBObject) {
                 DBObject object = (DBObject) element;
                 if (object.is(DBObjectProperty.EDITABLE)) {
-                    DatabaseFileSystem.getInstance().openEditor(object, true);
+                    DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+                    databaseFileSystem.connectAndOpenEditor(object, null, false, true);
                 } else {
                     object.navigate(true);
                 }

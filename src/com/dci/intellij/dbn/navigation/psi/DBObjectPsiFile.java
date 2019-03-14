@@ -108,7 +108,8 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
     public void navigate(boolean requestFocus) {
         DBObject object = getObject();
         if (object.is(DBObjectProperty.EDITABLE)) {
-            DatabaseFileSystem.getInstance().openEditor(object, requestFocus);
+            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+            databaseFileSystem.connectAndOpenEditor(object, null, false, requestFocus);
         } else {
             object.navigate(requestFocus);
         }

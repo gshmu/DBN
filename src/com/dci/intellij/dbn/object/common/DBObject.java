@@ -93,6 +93,8 @@ public interface DBObject extends PropertyHolder<DBObjectProperty>, BrowserTreeN
 
     List<DBObjectNavigationList> getNavigationLists();
 
+    void initChildren();
+
     @Nullable
     DBObjectListContainer getChildObjects();
 

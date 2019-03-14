@@ -332,7 +332,8 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                                                     DBSchemaObject object = objectRef.get(project);
                                                     if (object != null) {
                                                         progress.setText2(connectionHandler.getQualifiedName() + " - " + objectRef.getQualifiedNameWithType());
-                                                        databaseFileSystem.openEditor(object, null, false);
+                                                        object.initChildren();
+                                                        databaseFileSystem.openEditor(object, null, false, false);
                                                     }
                                                 }
                                             });

@@ -23,8 +23,8 @@ public class EditObjectDataAction extends DumbAwareAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        DatabaseFileSystem fileSystem = DatabaseFileSystem.getInstance();
         DBSchemaObject object = getObject();
-        fileSystem.openEditor(object, EditorProviderId.DATA, true);
+        DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+        databaseFileSystem.connectAndOpenEditor(object, EditorProviderId.DATA, false, true);
     }
 }

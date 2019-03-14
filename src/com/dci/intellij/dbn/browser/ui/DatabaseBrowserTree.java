@@ -245,10 +245,10 @@ public class DatabaseBrowserTree extends DBNTree {
                 DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
                 if (object.is(DBObjectProperty.EDITABLE)) {
                     DBSchemaObject schemaObject = (DBSchemaObject) object;
-                    databaseFileSystem.openEditor(schemaObject, deliberate);
+                    databaseFileSystem.connectAndOpenEditor(schemaObject, null, false, deliberate);
                     event.consume();
                 } else if (object.is(DBObjectProperty.NAVIGABLE)) {
-                    databaseFileSystem.openEditor(object, deliberate);
+                    databaseFileSystem.connectAndOpenEditor(object, null, false, deliberate);
                     event.consume();
                 } else if (deliberate) {
                     Progress.prompt(getProject(), "Loading object reference", true,
