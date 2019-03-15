@@ -61,7 +61,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                         result = child.getParser().parse(node, child.isOptional(), depth + 1, context);
 
                         if (result.isMatch()) {
-                            matchedTokens = matchedTokens + result.getMatchedTokens();
+                            matchedTokens = matchedTokens + result.matchedTokens;
                             tokenType = builder.getTokenType();
                             matches++;
                         }

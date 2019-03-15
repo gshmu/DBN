@@ -42,18 +42,18 @@ public class QualifiedIdentifierElementTypeParser extends ElementTypeParser<Qual
 
             for (LeafElementType elementType : elementTypes) {
                 ParseResult result = elementType.getParser().parse(node, true, depth + 1, context);
-                if (result.isNoMatch()) break;  else matchedTokens = matchedTokens + result.getMatchedTokens();
+                if (result.isNoMatch()) break;  else matchedTokens = matchedTokens + result.matchedTokens;
 
                 if (elementType != elementTypes[elementTypes.length -1])  {
                     result = separatorToken.getParser().parse(node, true, depth + 1, context);
-                    if (result.isNoMatch()) break; else matchedTokens = matchedTokens + result.getMatchedTokens();
+                    if (result.isNoMatch()) break; else matchedTokens = matchedTokens + result.matchedTokens;
                 }
                 node.incrementIndex(builder.getCurrentOffset());
             }
 
             if (matchedTokens > 0) {
                 if (variant.isIncomplete()) {
-                    Set<TokenType> expected = new THashSet<TokenType>();
+                    Set<TokenType> expected = new THashSet<>();
                     expected.add(separatorToken.getTokenType());
                     ParseBuilderErrorHandler.updateBuilderError(expected, context);
                     return stepOut(node, context, depth, ParseResultType.PARTIAL_MATCH, matchedTokens);
