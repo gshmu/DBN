@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.OneOfElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
-import com.dci.intellij.dbn.language.common.element.parser.AbstractElementTypeParser;
+import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import org.jetbrains.annotations.NotNull;
 
-public class OneOfElementTypeParser extends AbstractElementTypeParser<OneOfElementType> {
+public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> {
     public OneOfElementTypeParser(OneOfElementType elementType) {
         super(elementType);
     }
@@ -23,7 +23,6 @@ public class OneOfElementTypeParser extends AbstractElementTypeParser<OneOfEleme
         logBegin(builder, optional, depth);
         ParsePathNode node = stepIn(parentNode, context);
 
-        OneOfElementType elementType = getElementType();
         elementType.sort();
         TokenType tokenType = builder.getTokenType();
 

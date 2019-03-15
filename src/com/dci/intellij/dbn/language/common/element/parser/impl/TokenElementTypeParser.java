@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
-import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.SimpleTokenType;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
-import com.dci.intellij.dbn.language.common.element.parser.AbstractElementTypeParser;
+import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
@@ -15,18 +14,17 @@ import com.intellij.lang.PsiBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-public class TokenElementTypeParser extends AbstractElementTypeParser<TokenElementType> {
+public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> {
     public TokenElementTypeParser(TokenElementType elementType) {
         super(elementType);
     }
 
     @Override
-    public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
+    public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) {
         ParserBuilder builder = context.getBuilder();
         logBegin(builder, optional, depth);
 
         TokenType tokenType = builder.getTokenType();
-        TokenElementType elementType = getElementType();
         if (tokenType == elementType.getTokenType() || isDummyToken(builder.getTokenText())) {
 
             String text = elementType.getText();

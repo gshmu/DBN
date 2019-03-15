@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 
 import java.util.Set;
 
-public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheBaseIndexed<OneOfElementType> {
+public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheIndexed<OneOfElementType> {
     public OneOfElementTypeLookupCache(OneOfElementType elementType) {
         super(elementType);
     }
@@ -27,7 +27,7 @@ public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheBaseIndex
 
     @Override
     public boolean checkStartsWithIdentifier() {
-        for(ElementTypeRef child : getElementType().getChildren()){
+        for(ElementTypeRef child : elementType.getChildren()){
             if (child.getLookupCache().startsWithIdentifier()) return true;
         }
         return false;
@@ -36,7 +36,7 @@ public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheBaseIndex
     @Override
     public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, Set<LeafElementType> bucket) {
         bucket = super.collectFirstPossibleLeafs(context, bucket);
-        ElementTypeRef[] elementTypeRefs = getElementType().getChildren();
+        ElementTypeRef[] elementTypeRefs = elementType.getChildren();
         for (ElementTypeRef child : elementTypeRefs) {
             if (context.check(child)) {
                 ElementTypeLookupCache lookupCache = child.getElementType().getLookupCache();
@@ -49,7 +49,7 @@ public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheBaseIndex
     @Override
     public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, Set<TokenType> bucket) {
         bucket = super.collectFirstPossibleTokens(context, bucket);
-        ElementTypeRef[] elementTypeRefs = getElementType().getChildren();
+        ElementTypeRef[] elementTypeRefs = elementType.getChildren();
         for (ElementTypeRef child : elementTypeRefs) {
             if (context.check(child)) {
                 ElementTypeLookupCache lookupCache = child.getElementType().getLookupCache();

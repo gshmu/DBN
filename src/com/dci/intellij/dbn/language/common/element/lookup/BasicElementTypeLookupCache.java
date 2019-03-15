@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class BasicElementTypeLookupCache extends ElementTypeLookupCacheBaseIndexed<BasicElementType> {
+public class BasicElementTypeLookupCache extends ElementTypeLookupCacheIndexed<BasicElementType> {
     public BasicElementTypeLookupCache(BasicElementType elementType) {
         super(elementType);
     }

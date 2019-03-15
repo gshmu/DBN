@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementTy
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierVariant;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
-import com.dci.intellij.dbn.language.common.element.parser.AbstractElementTypeParser;
+import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class QualifiedIdentifierElementTypeParser extends AbstractElementTypeParser<QualifiedIdentifierElementType> {
+public class QualifiedIdentifierElementTypeParser extends ElementTypeParser<QualifiedIdentifierElementType> {
     public QualifiedIdentifierElementTypeParser(QualifiedIdentifierElementType elementType) {
         super(elementType);
     }
@@ -33,7 +33,7 @@ public class QualifiedIdentifierElementTypeParser extends AbstractElementTypePar
         logBegin(builder, optional, depth);
         ParsePathNode node = stepIn(parentNode, context);
 
-        TokenElementType separatorToken = getElementType().getSeparatorToken();
+        TokenElementType separatorToken = elementType.getSeparatorToken();
         int matchedTokens = 0;
 
         QualifiedIdentifierVariant variant = getMostProbableParseVariant(builder, node);
@@ -67,7 +67,6 @@ public class QualifiedIdentifierElementTypeParser extends AbstractElementTypePar
     }
 
     private QualifiedIdentifierVariant getMostProbableParseVariant(ParserBuilder builder, ParsePathNode node) {
-        QualifiedIdentifierElementType elementType = getElementType();
         TokenType separatorToken = elementType.getSeparatorToken().getTokenType();
         ElementTypeLookupCache lookupCache = elementType.getLookupCache();
         SharedTokenTypeBundle sharedTokenTypes = getSharedTokenTypes();
@@ -99,7 +98,7 @@ public class QualifiedIdentifierElementTypeParser extends AbstractElementTypePar
 
         QualifiedIdentifierVariant mostProbableVariant = null;
 
-        for (LeafElementType[] elementTypes : getElementType().getVariants()) {
+        for (LeafElementType[] elementTypes : elementType.getVariants()) {
             if (elementTypes.length <= chan.size()) {
                 int matchedTokens = 0;
                 for (int i=0; i<elementTypes.length; i++) {

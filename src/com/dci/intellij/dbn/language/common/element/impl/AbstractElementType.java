@@ -43,26 +43,23 @@ public abstract class AbstractElementType extends IElementType implements Elemen
 
     private int idx;
 
-    private String id;
-    private int hashCode;
+    private final String id;
+    private final int hashCode;
     private String description;
     private Icon icon;
     private Branch branch;
     private FormattingDefinition formatting;
-/*
-    private Latent<ElementTypeLookupCache> lookupCache = Latent.basic(() -> createLookupCache());
-    private Latent<ElementTypeParser> parser = Latent.basic(() -> createParser());
-*/
-    private ElementTypeLookupCache lookupCache = createLookupCache();
-    private ElementTypeParser parser = createParser();
-    private ElementTypeBundle bundle;
-    private ElementType parent;
+
+    private final ElementTypeLookupCache lookupCache = createLookupCache();
+    private final ElementTypeParser parser = createParser();
+    private final ElementTypeBundle bundle;
+    private final ElementType parent;
     private DBObjectType virtualObjectType;
     private ElementTypeAttributeHolder attributes;
 
     protected WrappingDefinition wrapping;
 
-    public AbstractElementType(ElementTypeBundle bundle, ElementType parent, String id, @Nullable String description) {
+    AbstractElementType(ElementTypeBundle bundle, ElementType parent, String id, @Nullable String description) {
         super(id, bundle.getLanguageDialect(), false);
         idx = TokenType.INDEXER.incrementAndGet();
         this.id = id;
@@ -72,16 +69,17 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         this.parent = parent;
     }
 
-    public AbstractElementType(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
+    AbstractElementType(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(id, bundle.getLanguageDialect(), false);
         idx = TokenType.INDEXER.incrementAndGet();
-        this.id = def.getAttributeValue("id");
+        String defId = def.getAttributeValue("id");
         this.hashCode = id.hashCode();
-        if (!id.equals(this.id)) {
-            this.id = id;
-            def.setAttribute("id", this.id);
+        if (!id.equals(defId)) {
+            defId = id;
+            def.setAttribute("id", defId);
             bundle.markIndexesDirty();
         }
+        this.id = defId;
         this.bundle = bundle;
         this.parent = parent;
         if (StringUtil.isNotEmpty(def.getAttributeValue("exit")) && !(parent instanceof SequenceElementType)) {
@@ -90,7 +88,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         loadDefinition(def);
     }
 
-    protected Set<BranchCheck> parseBranchChecks(String definitions) {
+    Set<BranchCheck> parseBranchChecks(String definitions) {
         Set<BranchCheck> branches = null;
         if (definitions != null) {
             branches = new THashSet<BranchCheck>();

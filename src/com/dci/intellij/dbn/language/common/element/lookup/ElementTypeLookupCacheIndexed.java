@@ -13,7 +13,7 @@ import gnu.trove.THashSet;
 
 import java.util.Set;
 
-public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> extends ElementTypeLookupCacheBase<T> {
+public abstract class ElementTypeLookupCacheIndexed<T extends ElementType> extends ElementTypeLookupCache<T> {
 
     private IndexedContainer<LeafElementType> allPossibleLeafs;
     Set<LeafElementType> firstPossibleLeafs;
@@ -24,7 +24,7 @@ public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> e
     private Set<TokenType> firstRequiredTokens;
     private Boolean startsWithIdentifier;
 
-    ElementTypeLookupCacheBaseIndexed(T elementType) {
+    ElementTypeLookupCacheIndexed(T elementType) {
         super(elementType);
         if (!elementType.isLeaf()) {
             allPossibleLeafs = new IndexedContainer<>();
