@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.code.common.style.formatting.IndentDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.SpacingDefinition;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -50,8 +49,12 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     private Icon icon;
     private Branch branch;
     private FormattingDefinition formatting;
+/*
     private Latent<ElementTypeLookupCache> lookupCache = Latent.basic(() -> createLookupCache());
     private Latent<ElementTypeParser> parser = Latent.basic(() -> createParser());
+*/
+    private ElementTypeLookupCache lookupCache = createLookupCache();
+    private ElementTypeParser parser = createParser();
     private ElementTypeBundle bundle;
     private ElementType parent;
     private DBObjectType virtualObjectType;
@@ -228,13 +231,13 @@ public abstract class AbstractElementType extends IElementType implements Elemen
 
     @Override
     public ElementTypeLookupCache getLookupCache() {
-        return lookupCache.get();
+        return lookupCache;
     }
 
     @Override
     @NotNull
     public ElementTypeParser getParser() {
-        return parser.get();
+        return parser;
     }
 
 
