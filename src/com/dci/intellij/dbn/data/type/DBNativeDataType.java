@@ -115,6 +115,14 @@ public class DBNativeDataType implements DynamicContentElement{
                 String objectClass = object == null ? "" : object.getClass().getName();
                 if (object instanceof String && StringUtils.isEmpty((String) object)) {
                     return null;
+                }
+                else if (object instanceof Long && java.util.Date.class.isAssignableFrom(clazz)) {
+                    // fallback for dates stored as milliseconds (sqlite?)
+                    Long longValue = (Long) object;
+                    return
+                        clazz == Date.class ? new Date(longValue) :
+                        clazz == Time.class ? new Time(longValue) :
+                        clazz == Timestamp.class ? new Timestamp(longValue) : null;
                 } else {
                     LOGGER.error("Error resolving result-set value for " + objectClass + " \"" + object + "\". (data type definition " + dataTypeDefinition + ')', e);
                     return object;
