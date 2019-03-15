@@ -20,6 +20,9 @@ import java.util.List;
 class SqliteNativeDataTypes extends DatabaseNativeDataTypes {
     private static final Latent<List<SimpleDateFormat>> DATE_FORMATS = Latent.thread(() -> {
         ArrayList<SimpleDateFormat> dateFormats = new ArrayList<>();
+        dateFormats.add(new SimpleDateFormat("dd.MM.yyyy"));
+        dateFormats.add(new SimpleDateFormat("dd.MM.yyyy hh:mm:ss"));
+        dateFormats.add(new SimpleDateFormat("dd.MM.yyyy hh:mm:ss:SSS"));
         dateFormats.add(new SimpleDateFormat("yyyy-MM-dd"));
         dateFormats.add(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"));
         dateFormats.add(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss:SSS"));
@@ -27,6 +30,9 @@ class SqliteNativeDataTypes extends DatabaseNativeDataTypes {
     });
     private static final Latent<List<SimpleDateFormat>> TIMESTAMP_FORMATS = Latent.thread(() -> {
         ArrayList<SimpleDateFormat> timestampFormats = new ArrayList<>();
+        timestampFormats.add(new SimpleDateFormat("dd.MM.yyyy hh:mm:ss:SSS"));
+        timestampFormats.add(new SimpleDateFormat("dd.MM.yyyy hh:mm:ss"));
+        timestampFormats.add(new SimpleDateFormat("dd.MM.yyyy"));
         timestampFormats.add(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss:SSS"));
         timestampFormats.add(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"));
         timestampFormats.add(new SimpleDateFormat("yyyy-MM-dd"));
