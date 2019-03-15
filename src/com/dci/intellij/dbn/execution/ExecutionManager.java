@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.execution;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -22,11 +21,11 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentFactoryImpl;
+import com.intellij.ui.content.ContentManager;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -58,36 +57,28 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void hideExecutionConsole() {
-        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(getProject());
-        ToolWindow toolWindow = toolWindowManager.getToolWindow(TOOL_WINDOW_ID);
-        if (toolWindow != null) {
-            toolWindow.getContentManager().removeAllContents(false);
-            toolWindow.setAvailable(false, null);
-        }
+        ToolWindow toolWindow = getExecutionConsoleWindow();
+        toolWindow.getContentManager().removeAllContents(false);
+        toolWindow.setAvailable(false, null);
+    }
+
+    public ToolWindow getExecutionConsoleWindow() {
+        Project project = getProject();
+        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
+        return toolWindowManager.getToolWindow(TOOL_WINDOW_ID);
     }
 
     private ToolWindow initExecutionConsole() {
-        Project project = getProject();
-        ToolWindowManager toolWindowManager = ToolWindowManager.getInstance(project);
-        ToolWindow toolWindow = toolWindowManager.getToolWindow(TOOL_WINDOW_ID);
-        if (toolWindow == null) {
-            synchronized (this) {
-                toolWindow = toolWindowManager.getToolWindow(TOOL_WINDOW_ID);
-                if (toolWindow == null) {
-                    toolWindow = toolWindowManager.registerToolWindow(TOOL_WINDOW_ID, true, ToolWindowAnchor.BOTTOM, project, true);
-                    toolWindow.setIcon(Icons.WINDOW_EXECUTION_CONSOLE);
-                    toolWindow.setToHideOnEmptyContent(true);
-                }
-            }
-        }
+        ToolWindow toolWindow = getExecutionConsoleWindow();
 
-        if (toolWindow.getContentManager().getContents().length == 0) {
+        ContentManager contentManager = toolWindow.getContentManager();
+        if (contentManager.getContents().length == 0) {
             synchronized (this) {
-                if (toolWindow.getContentManager().getContents().length == 0) {
+                if (contentManager.getContents().length == 0) {
                     ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
                     ContentFactory contentFactory = new ContentFactoryImpl();
                     Content content = contentFactory.createContent(executionConsoleForm.getComponent(), null, true);
-                    toolWindow.getContentManager().addContent(content);
+                    contentManager.addContent(content);
                     toolWindow.setAvailable(true, null);
                 }
             }
@@ -96,7 +87,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void addExecutionResult(final CompilerResult compilerResult) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             executionConsoleForm.addResult(compilerResult);
@@ -104,7 +95,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void addExecutionResults(final List<CompilerResult> compilerResults) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             executionConsoleForm.addResults(compilerResults);
@@ -112,7 +103,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void addExplainPlanResult(final ExplainPlanResult explainPlanResult) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             executionConsoleForm.addResult(explainPlanResult);
@@ -120,7 +111,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void writeLogOutput(@NotNull final LogOutputContext context, final LogOutput output) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
             if (!context.isClosed()) {
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
@@ -130,7 +121,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void addExecutionResult(@NotNull final StatementExecutionResult executionResult) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             if (executionResult.isLoggingActive()) {
@@ -168,7 +159,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
 
     public void addExecutionResult(final MethodExecutionResult executionResult) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             executionConsoleForm.addResult(executionResult);
@@ -176,7 +167,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void selectExecutionResult(final StatementExecutionResult executionResult) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             executionConsoleForm.selectResult(executionResult);
             showExecutionConsole();
@@ -201,7 +192,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     @NotNull
-    private ExecutionConsoleForm getExecutionConsoleForm() {
+    public ExecutionConsoleForm getExecutionConsoleForm() {
         return executionConsoleForm.get();
     }
 
@@ -214,9 +205,6 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
      *********************************************************/
     @Override
     public void projectOpened() {
-        ToolWindow toolWindow = initExecutionConsole();
-        toolWindow.getContentManager().removeAllContents(false);
-        toolWindow.setAvailable(false, null);
     }
 
     @Override
