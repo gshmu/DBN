@@ -12,8 +12,8 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
+import com.dci.intellij.dbn.language.common.element.path.BasicPathNode;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
-import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ParseBuilderErrorHandler;
 import com.intellij.lang.PsiBuilder;
@@ -28,7 +28,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
 
     @Override
     public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
-        ParserBuilder builder = context.getBuilder();
+        ParserBuilder builder = context.builder;
         logBegin(builder, optional, depth);
         ParsePathNode node = stepIn(parentNode, context);
 
@@ -116,7 +116,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
 
     private int advanceLexerToNextLandmark(ParsePathNode node, ParserContext context) {
         int siblingPosition = node.getCursorPosition();
-        ParserBuilder builder = context.getBuilder();
+        ParserBuilder builder = context.builder;
         PsiBuilder.Marker marker = builder.mark(null);
         Set<TokenType> possibleTokens = elementType.getFirstPossibleTokensFromIndex(context, siblingPosition);
         ParseBuilderErrorHandler.updateBuilderError(possibleTokens, context);
@@ -143,8 +143,8 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
 
     private int getLandmarkIndex(TokenType tokenType, int index, ParsePathNode node) {
         if (tokenType.isParserLandmark()) {
-            PathNode statementPathNode = node.getPathNode(ElementTypeAttribute.STATEMENT);
-            if (statementPathNode != null && statementPathNode.getElementType().getLookupCache().couldStartWithToken(tokenType)) {
+            BasicPathNode statementPathNode = node.getPathNode(ElementTypeAttribute.STATEMENT);
+            if (statementPathNode != null && statementPathNode.elementType.getLookupCache().couldStartWithToken(tokenType)) {
                 return -1;
             }
             ElementTypeRef[] children = elementType.getChildren();
@@ -157,7 +157,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
 
             ParsePathNode parseNode = node;
             while (parseNode != null) {
-                ElementType elementType = parseNode.getElementType();
+                ElementType elementType = parseNode.elementType;
                 if (elementType instanceof SequenceElementType) {
                     SequenceElementType sequenceElementType = (SequenceElementType) elementType;
                     if ( sequenceElementType.containsLandmarkTokenFromIndex(tokenType, parseNode.getCursorPosition() + 1)) {
@@ -169,7 +169,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                         return -1;
                     }
                 }
-                parseNode = parseNode.getParent();
+                parseNode = parseNode.parent;
             }
         }
         return 0;
@@ -195,9 +195,9 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
             }
         }
 
-        ParsePathNode parentNode = node.getParent();
+        ParsePathNode parentNode = node.parent;
         while (parentNode != null) {
-            ElementType elementType = parentNode.getElementType();
+            ElementType elementType = parentNode.elementType;
             if (elementType instanceof SequenceElementType) {
                 parentNode = advanceToLandmark_New(builder, node);
 
@@ -207,7 +207,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                     return parentNode;
                 }
             }
-            parentNode = parentNode == null ? null : parentNode.getParent();
+            parentNode = parentNode == null ? null : parentNode.parent;
         }
 
         return null;

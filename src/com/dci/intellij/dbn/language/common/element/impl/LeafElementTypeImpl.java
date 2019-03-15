@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.language.common.element.WrapperElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
+import com.dci.intellij.dbn.language.common.element.path.BasicPathNode;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -33,11 +34,11 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
 
     private boolean optional;
 
-    public LeafElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
+    LeafElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
     }
 
-    public LeafElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, String description) throws ElementTypeDefinitionException {
+    LeafElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, String description) {
         super(bundle, parent, id, description);
     }
 
@@ -77,10 +78,10 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
         return true;
     }
 
-    public static ElementType getPreviousElement(PathNode pathNode) {
+    public static ElementType getPreviousElement(BasicPathNode pathNode) {
         int position = 0;
         while (pathNode != null) {
-            ElementType elementType = pathNode.getElementType();
+            ElementType elementType = pathNode.elementType;
             if (elementType instanceof SequenceElementType) {
                 SequenceElementType sequenceElementType = (SequenceElementType) elementType;
                 if (position > 0 ) {
@@ -88,7 +89,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                 }
             }
             position = pathNode.getIndexInParent();
-            pathNode = pathNode.getParent();
+            pathNode = pathNode.parent;
         }
         return null;
     }
@@ -224,13 +225,13 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
             }
 
             position = pathNode.getIndexInParent() + 1;
-            pathNode = pathNode.getParent();
+            pathNode = pathNode.parent;
         }
         return false;
     }
 
     public Set<LeafElementType> getNextRequiredLeafs(PathNode pathNode, ParserContext context) {
-        Set<LeafElementType> requiredLeafs = new THashSet<LeafElementType>();
+        Set<LeafElementType> requiredLeafs = new THashSet<>();
         int position = 0;
         while (pathNode != null) {
             ElementType elementType = pathNode.getElementType();

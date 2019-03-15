@@ -15,14 +15,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Set;
 
-public class TokenPsiElement extends LeafPsiElement {
+public class TokenPsiElement extends LeafPsiElement<TokenElementType> {
     public TokenPsiElement(ASTNode astNode, TokenElementType elementType) {
         super(astNode, elementType);
-    }
-
-    @Override
-    public TokenElementType getElementType() {
-        return (TokenElementType) super.getElementType();
     }
 
     @Override
@@ -113,6 +108,6 @@ public class TokenPsiElement extends LeafPsiElement {
     }
 
     public TokenType getTokenType() {
-        return getElementType().getTokenType();
+        return elementType.getTokenType();
     }
 }

@@ -10,13 +10,13 @@ import com.intellij.formatting.Spacing;
 import com.intellij.psi.PsiElement;
 
 public abstract class ClauseAbstractPreset extends CodeStylePresetImpl {
-    public ClauseAbstractPreset(String id, String name) {
+    ClauseAbstractPreset(String id, String name) {
         super(id, name);
     }
 
     @Override
     public boolean accepts(BasePsiElement psiElement) {
-        return psiElement.getElementType().is(ElementTypeAttribute.CLAUSE);
+        return psiElement.elementType.is(ElementTypeAttribute.CLAUSE);
     }
 
     protected Spacing getSpacing(BasePsiElement psiElement, boolean shouldWrap) {

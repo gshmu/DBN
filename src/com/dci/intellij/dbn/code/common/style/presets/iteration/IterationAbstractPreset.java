@@ -10,13 +10,13 @@ import com.intellij.formatting.Spacing;
 import com.intellij.formatting.Wrap;
 
 public abstract class IterationAbstractPreset extends CodeStylePresetImpl {
-    public IterationAbstractPreset(String id, String name) {
+    IterationAbstractPreset(String id, String name) {
         super(id, name);
     }
 
     @Override
     public boolean accepts(BasePsiElement psiElement) {
-        return !psiElement.getElementType().is(ElementTypeAttribute.STATEMENT) &&
+        return !psiElement.elementType.is(ElementTypeAttribute.STATEMENT) &&
                 getParentElementType(psiElement) instanceof IterationElementType;
     }
 

@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Set;
 
-public class NamedPsiElement extends SequencePsiElement {
+public class NamedPsiElement extends SequencePsiElement<NamedElementType> {
     public NamedPsiElement(ASTNode astNode, NamedElementType elementType) {
         super(astNode, elementType);
     }

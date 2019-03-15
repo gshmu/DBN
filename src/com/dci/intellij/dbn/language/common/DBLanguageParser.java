@@ -45,7 +45,7 @@ public abstract class DBLanguageParser implements PsiParser {
     @NotNull
     public ASTNode parse(IElementType rootElementType, PsiBuilder psiBuilder, String parseRootId, double databaseVersion) {
         ParserContext context = new ParserContext(psiBuilder, languageDialect, databaseVersion);
-        ParserBuilder builder = context.getBuilder();
+        ParserBuilder builder = context.builder;
         if (parseRootId == null ) parseRootId = defaultParseRootId;
         builder.setDebugMode(DatabaseNavigator.debugModeEnabled);
         PsiBuilder.Marker marker = builder.mark(null);

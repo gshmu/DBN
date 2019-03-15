@@ -20,11 +20,24 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
     private ElementTypeAttribute attribute;
     private LeafPsiElement lookupIssuer;
 
-    public IdentifierLookupAdapter(@Nullable LeafPsiElement lookupIssuer, @Nullable IdentifierType identifierType, @Nullable IdentifierCategory identifierCategory, @Nullable DBObjectType objectType, CharSequence identifierName) {
+    public IdentifierLookupAdapter(
+            @Nullable LeafPsiElement lookupIssuer,
+            @Nullable IdentifierType identifierType,
+            @Nullable IdentifierCategory identifierCategory,
+            @Nullable DBObjectType objectType,
+            CharSequence identifierName) {
+
         this(lookupIssuer, identifierType, identifierCategory, objectType, identifierName, null);
     }
 
-    public IdentifierLookupAdapter(LeafPsiElement lookupIssuer, @Nullable IdentifierType identifierType, @Nullable IdentifierCategory identifierCategory, @Nullable DBObjectType objectType, CharSequence identifierName, ElementTypeAttribute attribute) {
+    public IdentifierLookupAdapter(
+            @Nullable LeafPsiElement lookupIssuer,
+            @Nullable IdentifierType identifierType,
+            @Nullable IdentifierCategory identifierCategory,
+            @Nullable DBObjectType objectType,
+            CharSequence identifierName,
+            ElementTypeAttribute attribute) {
+
         this.lookupIssuer = lookupIssuer;
         this.identifierType = identifierType;
         this.objectType = objectType;
@@ -55,7 +68,7 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
     }
 
     private boolean matchesType(IdentifierPsiElement identifierPsiElement) {
-        return identifierType == null ||identifierType == identifierPsiElement.getElementType().getIdentifierType();
+        return identifierType == null ||identifierType == identifierPsiElement.elementType.getIdentifierType();
     }
 
     public boolean matchesObjectType(IdentifierPsiElement identifierPsiElement) {
@@ -69,7 +82,7 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
 
     private boolean matchesCategory(IdentifierPsiElement identifierPsiElement) {
         if (identifierCategory == null) return true;
-        IdentifierElementType elementType = identifierPsiElement.getElementType();
+        IdentifierElementType elementType = identifierPsiElement.elementType;
         IdentifierCategory category = elementType.getIdentifierCategory();
         switch (identifierCategory) {
             case ALL: return true;
@@ -80,12 +93,12 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
     }
 
     private boolean matchesAttribute(IdentifierPsiElement identifierPsiElement) {
-        return attribute == null || identifierPsiElement.getElementType().is(attribute);
+        return attribute == null || identifierPsiElement.elementType.is(attribute);
     }
 
     @Override
     public boolean accepts(BasePsiElement element) {
-        ElementType elementType = element.getElementType();
+        ElementType elementType = element.elementType;
         if (elementType instanceof TokenElementType) {
             TokenElementType tokenElementType = (TokenElementType) elementType;
             return tokenElementType.isIdentifier();

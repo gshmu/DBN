@@ -118,7 +118,7 @@ public class ParserBuilder {
     public PsiBuilder.Marker mark(@Nullable ParsePathNode node){
         PsiBuilder.Marker marker = builder.mark();
         if (node != null) {
-            WrappingDefinition wrapping = node.getElementType().getWrapping();
+            WrappingDefinition wrapping = node.elementType.getWrapping();
             if (wrapping != null) {
                 TokenElementType beginElementType = wrapping.getBeginElementType();
                 TokenType beginTokenType = beginElementType.getTokenType();
@@ -149,7 +149,7 @@ public class ParserBuilder {
     public void markerDone(PsiBuilder.Marker marker, ElementType elementType, @Nullable ParsePathNode node) {
         if (marker != null) {
             if (node != null) {
-                WrappingDefinition wrapping = node.getElementType().getWrapping();
+                WrappingDefinition wrapping = node.elementType.getWrapping();
                 if (wrapping != null) {
                     TokenElementType endElementType = wrapping.getEndElementType();
                     TokenType endTokenType = endElementType.getTokenType();

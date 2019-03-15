@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
@@ -15,18 +14,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class QualifiedIdentifierPsiElement extends SequencePsiElement {
+public class QualifiedIdentifierPsiElement extends SequencePsiElement<QualifiedIdentifierElementType> {
     private Latent<List<QualifiedIdentifierVariant>> parseVariants = Latent.mutable(
             () -> this.getElementsCount(),
             () -> this.buildParseVariants());
 
-    public QualifiedIdentifierPsiElement(ASTNode astNode, ElementType elementType) {
+    public QualifiedIdentifierPsiElement(ASTNode astNode, QualifiedIdentifierElementType elementType) {
         super(astNode, elementType);
-    }
-
-    @Override
-    public QualifiedIdentifierElementType getElementType() {
-        return (QualifiedIdentifierElementType) super.getElementType();
     }
 
     public List<QualifiedIdentifierVariant> getParseVariants() {
@@ -54,7 +48,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
         while (child != null) {
             if (child instanceof IdentifierPsiElement) {
                 IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) child;
-                if (identifierPsiElement.getElementType() == identifierElementType) {
+                if (identifierPsiElement.elementType == identifierElementType) {
                     return index;
                 } else {
                     index++;
@@ -85,7 +79,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
 
     private List<QualifiedIdentifierVariant> buildParseVariants() {
         List<QualifiedIdentifierVariant> parseVariants = new ArrayList<>();
-        for (LeafElementType[] elementTypes : getElementType().getVariants()) {
+        for (LeafElementType[] elementTypes : elementType.getVariants()) {
 
             ParseResultType resultType = ParseResultType.FULL_MATCH;
             for (int i=0; i< elementTypes.length; i++) {
@@ -97,7 +91,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
                     break;
                 }
 
-                LeafElementType leafElementType = (LeafElementType) leaf.getElementType();
+                LeafElementType leafElementType = (LeafElementType) leaf.elementType;
                 if (!(leafElementType.isIdentifier() && elementTypes[i].isIdentifier() || leafElementType.isSameAs(elementTypes[i]))) {
                     resultType = i==0 ? ParseResultType.NO_MATCH : ParseResultType.PARTIAL_MATCH;
                     break;
@@ -163,7 +157,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement {
         while (child != null) {
             if (child instanceof LeafPsiElement) {
                 LeafPsiElement leafPsiElement = (LeafPsiElement) child;
-                if (leafPsiElement.getElementType() != getElementType().getSeparatorToken() ) {
+                if (leafPsiElement.elementType != elementType.getSeparatorToken() ) {
                     count++;
                 }
             }

@@ -50,7 +50,7 @@ public abstract class ElementTypeParser<T extends ElementType> {
         }
     }
     public ParsePathNode stepIn(ParsePathNode parentParseNode, ParserContext context) {
-        ParserBuilder builder = context.getBuilder();
+        ParserBuilder builder = context.builder;
         ParsePathNode node = new ParsePathNode(elementType, parentParseNode, builder.getCurrentOffset(), 0);
         PsiBuilder.Marker marker = builder.mark(node);
         node.setElementMarker(marker);
@@ -68,7 +68,7 @@ public abstract class ElementTypeParser<T extends ElementType> {
                 Set<TokenType> nextPossibleTokens = elementType.getLookupCache().getNextPossibleTokens();
                 ParseBuilderErrorHandler.updateBuilderError(nextPossibleTokens, context);
             }
-            ParserBuilder builder = context.getBuilder();
+            ParserBuilder builder = context.builder;
             if (resultType == ParseResultType.NO_MATCH) {
                 builder.markerRollbackTo(marker, node);
             } else {
@@ -88,8 +88,7 @@ public abstract class ElementTypeParser<T extends ElementType> {
                     context.addBranchMarker(node, branch);
                 }
                 if (elementType instanceof LeafElementType) {
-                    LeafElementType leafElementType = (LeafElementType) elementType;
-                    context.setLastResolvedLeaf(leafElementType);
+                    context.lastResolvedLeaf = (LeafElementType) elementType;
                 }
 
                 return ParseResult.createFullMatchResult(matchedTokens);
@@ -112,7 +111,7 @@ public abstract class ElementTypeParser<T extends ElementType> {
             SharedTokenTypeBundle sharedTokenTypes = getElementBundle().getTokenTypeBundle().getSharedTokenTypes();
             SimpleTokenType dot = sharedTokenTypes.getChrDot();
             SimpleTokenType leftParenthesis = sharedTokenTypes.getChrLeftParenthesis();
-            ParserBuilder builder = context.getBuilder();
+            ParserBuilder builder = context.builder;
             if (builder.lookBack(1) == dot || builder.lookAhead(1) == dot) {
                 return true;
             }
@@ -126,12 +125,12 @@ public abstract class ElementTypeParser<T extends ElementType> {
 
             ElementType namedElementType = ElementTypeUtil.getEnclosingNamedElementType(node);
             if (namedElementType != null && namedElementType.getLookupCache().containsToken(tokenType)) {
-                LeafElementType lastResolvedLeaf = context.getLastResolvedLeaf();
+                LeafElementType lastResolvedLeaf = context.lastResolvedLeaf;
                 return lastResolvedLeaf != null && !lastResolvedLeaf.isNextPossibleToken(tokenType, node, context);
             }
 
-            if (context.getLastResolvedLeaf() != null) {
-                if (context.getLastResolvedLeaf().isNextPossibleToken(tokenType, node, context)) {
+            if (context.lastResolvedLeaf != null) {
+                if (context.lastResolvedLeaf.isNextPossibleToken(tokenType, node, context)) {
                     return false;
                 }
             }
@@ -145,7 +144,7 @@ public abstract class ElementTypeParser<T extends ElementType> {
     }
 
     protected boolean shouldParseElement(ElementType elementType, ParsePathNode node, ParserContext context) {
-        ParserBuilder builder = context.getBuilder();
+        ParserBuilder builder = context.builder;
         TokenType tokenType = builder.getTokenType();
 
         return
