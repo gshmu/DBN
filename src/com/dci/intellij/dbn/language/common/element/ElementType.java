@@ -10,7 +10,7 @@ import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
-import com.dci.intellij.dbn.language.common.element.path.PathNode;
+import com.dci.intellij.dbn.language.common.element.path.BasicPathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.lang.ASTNode;
@@ -63,8 +63,14 @@ public interface ElementType extends Indexable, PropertyHolder<ElementTypeAttrib
 
     boolean isWrappingEnd(TokenType tokenType);
 
-    int getIndexInParent(PathNode pathNode);
+    int getIndexInParent(BasicPathNode pathNode);
 
     @Nullable
     Branch getBranch();
+
+    boolean isScopeDemarcation();
+
+    boolean isScopeIsolation();
+
+    TokenType getTokenType();
 }

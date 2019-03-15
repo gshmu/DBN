@@ -114,7 +114,7 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
         if (handlerPsiElement != null) {
             BasePsiElement iterationPsiElement = handlerPsiElement.findFirstPsiElement(IterationElementType.class);
             if (iterationPsiElement != null) {
-                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.getElementType();
+                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.elementType;
                 PsiElement paramPsiElement = iterationPsiElement.getFirstChild();
                 BasePsiElement iteratedPsiElement = null;
                 while (paramPsiElement != null) {
@@ -160,7 +160,7 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                     }
                 }
 
-                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.getElementType();
+                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.elementType;
                 int index = 0;
                 PsiElement paramPsiElement = iterationPsiElement.getFirstChild();
                 while (paramPsiElement != null) {

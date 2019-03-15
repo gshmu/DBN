@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
-import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
@@ -18,8 +17,8 @@ public class IdentifierElementTypeParser extends ElementTypeParser<IdentifierEle
     }
 
     @Override
-    public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
-        ParserBuilder builder = context.getBuilder();
+    public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) {
+        ParserBuilder builder = context.builder;
         logBegin(builder, optional, depth);
         TokenType tokenType = builder.getTokenType();
         if (tokenType != null && !tokenType.isChameleon()){

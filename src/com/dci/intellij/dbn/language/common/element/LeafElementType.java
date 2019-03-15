@@ -12,8 +12,6 @@ import java.util.Set;
 public interface LeafElementType extends ElementType {
     void setTokenType(TokenType tokenType);
 
-    TokenType getTokenType();
-
     void setOptional(boolean optional);
 
     boolean isOptional();

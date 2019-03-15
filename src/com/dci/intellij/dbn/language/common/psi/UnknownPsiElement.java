@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class UnknownPsiElement extends BasePsiElement {
+public class UnknownPsiElement extends BasePsiElement<ElementType> {
     public UnknownPsiElement(ASTNode astNode, ElementType elementType) {
         super(astNode, elementType);
     }
@@ -59,7 +59,7 @@ public class UnknownPsiElement extends BasePsiElement {
 
     @Override
     public String toString() {
-        return getElementType().getDebugName();
+        return elementType.getDebugName();
 
     }
 }

@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.language.common.element.util;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import gnu.trove.THashSet;
 
@@ -12,9 +11,8 @@ import java.util.Set;
 public class ParseBuilderErrorHandler {
     public static void updateBuilderError(Set<TokenType> expectedTokens, ParserContext context) {
         if (expectedTokens != null) {
-            ParserBuilder builder = context.getBuilder();
-            int offset = builder.getCurrentOffset();
-            if (ParseBuilderErrorWatcher.show(offset, context.getTimestamp())) {
+            int offset = context.builder.getCurrentOffset();
+            if (ParseBuilderErrorWatcher.show(offset, context.timestamp)) {
                 Set<String> tokenDescriptions = new THashSet<String>(expectedTokens.size());
                 for (TokenType tokenType : expectedTokens) {
                     if (tokenType.isFunction()) {
@@ -42,7 +40,7 @@ public class ParseBuilderErrorHandler {
                     }
                 }
                 //buffer.append("\n");
-                builder.error(buffer.toString());
+                context.builder.error(buffer.toString());
             }
         }
     }

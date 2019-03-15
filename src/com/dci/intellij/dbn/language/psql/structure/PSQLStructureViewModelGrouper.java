@@ -22,7 +22,7 @@ import java.util.Map;
 public class PSQLStructureViewModelGrouper implements Grouper {
     private ActionPresentation actionPresentation = new ActionPresentationData("Group by Object Type", "", Icons.ACTION_GROUP);
 
-    private static final Collection<Group> EMPTY_GROUPS = new ArrayList<Group>(0);
+    private static final Collection<Group> EMPTY_GROUPS = new ArrayList<>(0);
 
     @Override
     @NotNull
@@ -38,7 +38,7 @@ public class PSQLStructureViewModelGrouper implements Grouper {
                         PSQLStructureViewElement element = (PSQLStructureViewElement) treeElement;
                         if (element.getValue() instanceof BasePsiElement) {
                             BasePsiElement basePsiElement = (BasePsiElement) element.getValue();
-                            if (!basePsiElement.getElementType().is(ElementTypeAttribute.ROOT)) {
+                            if (!basePsiElement.elementType.is(ElementTypeAttribute.ROOT)) {
                                 BasePsiElement subjectPsiElement = basePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
                                 if (subjectPsiElement instanceof IdentifierPsiElement) {
                                     IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) subjectPsiElement;
@@ -50,7 +50,7 @@ public class PSQLStructureViewModelGrouper implements Grouper {
                                         case TYPE_FUNCTION: objectType = DBObjectType.FUNCTION; break;
                                     }
 
-                                    if (groups == null) groups = new EnumMap<DBObjectType, Group>(DBObjectType.class);
+                                    if (groups == null) groups = new EnumMap<>(DBObjectType.class);
                                     PSQLStructureViewModelGroup group = (PSQLStructureViewModelGroup) groups.get(objectType);
                                     if (group == null) {
                                         group = new PSQLStructureViewModelGroup(objectType);

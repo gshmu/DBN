@@ -50,14 +50,14 @@ public class SQLLanguageAnnotator implements Annotator {
                     if (psiElement instanceof NamedPsiElement) {
                         NamedPsiElement namedPsiElement = (NamedPsiElement) psiElement;
                         if (namedPsiElement.hasErrors()) {
-                            holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.getElementType().getDescription());
+                            holder.createErrorAnnotation(namedPsiElement, "Invalid " + namedPsiElement.elementType.getDescription());
                         }
                     }
                 });
     }
 
     private static void annotateToken(@NotNull TokenPsiElement tokenPsiElement, AnnotationHolder holder) {
-        TokenTypeCategory flavor = tokenPsiElement.getElementType().getFlavor();
+        TokenTypeCategory flavor = tokenPsiElement.elementType.getFlavor();
         if (flavor != null) {
             Annotation annotation = holder.createInfoAnnotation(tokenPsiElement, null);
             switch (flavor) {

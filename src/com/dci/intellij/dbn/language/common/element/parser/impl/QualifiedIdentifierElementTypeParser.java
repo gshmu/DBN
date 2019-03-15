@@ -29,7 +29,7 @@ public class QualifiedIdentifierElementTypeParser extends ElementTypeParser<Qual
 
     @Override
     public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
-        ParserBuilder builder = context.getBuilder();
+        ParserBuilder builder = context.builder;
         logBegin(builder, optional, depth);
         ParsePathNode node = stepIn(parentNode, context);
 
@@ -73,7 +73,7 @@ public class QualifiedIdentifierElementTypeParser extends ElementTypeParser<Qual
         TokenType identifier = sharedTokenTypes.getIdentifier();
 
 
-        List<TokenType> chan = new ArrayList<TokenType>();
+        List<TokenType> chan = new ArrayList<>();
         int offset = 0;
         boolean wasSeparator = true;
         TokenType tokenType = builder.lookAhead(offset);

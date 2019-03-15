@@ -23,20 +23,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public abstract class LeafPsiElement extends BasePsiElement implements PsiReference {
+public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiElement<T> implements PsiReference {
 
-    public LeafPsiElement(ASTNode astNode, ElementType elementType) {
+    public LeafPsiElement(ASTNode astNode, T elementType) {
         super(astNode, elementType);
     }
 
     @Override
     public int approximateLength() {
         return getTextLength() + 1;
-    }
-
-    @Override
-    public LeafElementType getElementType() {
-        return (LeafElementType) super.getElementType();
     }
 
     @Override
@@ -161,12 +156,12 @@ public abstract class LeafPsiElement extends BasePsiElement implements PsiRefere
 
     @Override
     public BasePsiElement findPsiElementByAttribute(ElementTypeAttribute attribute) {
-        return getElementType().is(attribute) ? this : null;
+        return elementType.is(attribute) ? this : null;
     }
 
     @Override
     public BasePsiElement findFirstPsiElement(ElementTypeAttribute attribute) {
-        if (this.getElementType().is(attribute)) {
+        if (elementType.is(attribute)) {
             return this;
         }
         return null;
@@ -174,7 +169,7 @@ public abstract class LeafPsiElement extends BasePsiElement implements PsiRefere
 
     @Override
     public BasePsiElement findFirstPsiElement(Class<? extends ElementType> clazz) {
-        if (this.getElementType().getClass().isAssignableFrom(clazz)) {
+        if (elementType.getClass().isAssignableFrom(clazz)) {
             return this;
         }
         return null;

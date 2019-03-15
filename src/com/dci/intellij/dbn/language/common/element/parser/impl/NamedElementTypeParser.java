@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
-import com.dci.intellij.dbn.language.common.element.path.PathNode;
 import org.jetbrains.annotations.NotNull;
 
 public class NamedElementTypeParser extends SequenceElementTypeParser<NamedElementType>{
@@ -16,7 +15,7 @@ public class NamedElementTypeParser extends SequenceElementTypeParser<NamedEleme
 
     @Override
     public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
-        ParserBuilder builder = context.getBuilder();
+        ParserBuilder builder = context.builder;
         if (isRecursive(parentNode, builder.getCurrentOffset(), 2)) {
             return ParseResult.createNoMatchResult();
         }
@@ -25,26 +24,14 @@ public class NamedElementTypeParser extends SequenceElementTypeParser<NamedEleme
 
     protected boolean isRecursive(ParsePathNode parseNode, int builderOffset, int iterations){
         while (parseNode != null &&  iterations > 0) {
-            if (parseNode.getElementType() == elementType &&
+            if (parseNode.elementType == elementType &&
                     parseNode.getStartOffset() == builderOffset) {
                 //return true;
                 iterations--;
             }
-            parseNode = parseNode.getParent();
+            parseNode = parseNode.parent;
         }
         return iterations == 0;
         //return false;
-    }
-
-    private int countRecurences(PathNode node) {
-        PathNode parent = node;
-        int count = 0;
-        while(parent != null) {
-            if (parent.getElementType() == elementType) {
-                count++;
-            }
-            parent = parent.getParent();
-        }
-        return count;
     }
 }
