@@ -39,7 +39,7 @@ public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheIndexed<O
         ElementTypeRef[] elementTypeRefs = elementType.getChildren();
         for (ElementTypeRef child : elementTypeRefs) {
             if (context.check(child)) {
-                ElementTypeLookupCache lookupCache = child.getElementType().getLookupCache();
+                ElementTypeLookupCache lookupCache = child.elementType.getLookupCache();
                 bucket = lookupCache.collectFirstPossibleLeafs(context, bucket);
             }
         }
@@ -52,7 +52,7 @@ public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheIndexed<O
         ElementTypeRef[] elementTypeRefs = elementType.getChildren();
         for (ElementTypeRef child : elementTypeRefs) {
             if (context.check(child)) {
-                ElementTypeLookupCache lookupCache = child.getElementType().getLookupCache();
+                ElementTypeLookupCache lookupCache = child.elementType.getLookupCache();
                 bucket = lookupCache.collectFirstPossibleTokens(context, bucket);
             }
         }

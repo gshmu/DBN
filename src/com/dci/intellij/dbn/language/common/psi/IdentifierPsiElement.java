@@ -543,7 +543,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     }
 
     @Override
-    public boolean isReferenceTo(PsiElement element) {
+    public boolean isReferenceTo(@NotNull PsiElement element) {
         return element != this && ref != null && element == ref.getReferencedElement();
     }
 

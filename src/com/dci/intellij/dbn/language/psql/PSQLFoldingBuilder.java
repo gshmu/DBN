@@ -29,7 +29,7 @@ public class PSQLFoldingBuilder extends DBLanguageFoldingBuilder {
                 BasePsiElement basePsiElement = (BasePsiElement) child;
                 createAttributeFolding(context, basePsiElement);
 
-                if (!context.isFolded() && basePsiElement.is(ElementTypeAttribute.STATEMENT)) {
+                if (!context.folded && basePsiElement.is(ElementTypeAttribute.STATEMENT)) {
                     if (basePsiElement.containsLineBreaks()) {
                         TextRange textRange = null;
 
@@ -54,20 +54,20 @@ public class PSQLFoldingBuilder extends DBLanguageFoldingBuilder {
                         }
 
                         if (textRange.getLength() > 10) {
-                            FoldingDescriptor foldingDescriptor = new FoldingDescriptor(basePsiElement.getNode(), textRange);
+                            FoldingDescriptor foldingDescriptor = new FoldingDescriptor(basePsiElement.node, textRange);
                             context.addDescriptor(foldingDescriptor);
                         }
                     }
                 }
 
-                if (!context.isFolded() && child instanceof TokenPsiElement) {
+                if (!context.folded && child instanceof TokenPsiElement) {
                     TokenPsiElement tokenPsiElement = (TokenPsiElement) child;
                     createLiteralFolding(context, tokenPsiElement);
                 }
 
 
-                if (context.getNestingIndex() < 9) {
-                    createFoldingDescriptors(child, document, descriptors, context.getNestingIndex());
+                if (context.nestingIndex < 9) {
+                    createFoldingDescriptors(child, document, descriptors, context.nestingIndex);
                 }
             }
             child = child.getNextSibling();

@@ -40,13 +40,14 @@ public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiE
     }
 
     public CharSequence getChars() {
-        return getNode().getFirstChildNode().getChars();
+        return node.getFirstChildNode().getChars();
     }
 
     /*********************************************************
      *                       PsiReference                    *
      *********************************************************/
 
+    @NotNull
     @Override
     public PsiElement getElement() {
         return this;
@@ -66,7 +67,7 @@ public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiE
     }
 
     @Override
-    public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+    public PsiElement handleElementRename(@NotNull String newElementName) throws IncorrectOperationException {
         return null;
     }
 
@@ -76,10 +77,11 @@ public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiE
     }
 
     @Override
-    public boolean isReferenceTo(PsiElement element) {
+    public boolean isReferenceTo(@NotNull PsiElement element) {
         return false;
     }
 
+    @NotNull
     @Override
     public TextRange getRangeInElement() {
         return new TextRange(0, getTextLength());
@@ -178,16 +180,6 @@ public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiE
     @Override
     public BasePsiElement findFirstLeafPsiElement() {
         return this;
-    }
-
-    @Override
-    public boolean isScopeDemarcation() {
-        return false;
-    }
-
-    @Override
-    public boolean isScopeIsolation() {
-        return false;
     }
 
     @Override

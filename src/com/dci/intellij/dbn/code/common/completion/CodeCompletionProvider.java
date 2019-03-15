@@ -187,8 +187,8 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
 
         if (nextPossibleLeafs.isEmpty()) {
             LeafElementType elementType = (LeafElementType) element.elementType;
-            PathNode pathNode = new ASTPathNode(element.getNode());
-            ElementLookupContext lookupContext = computeParseBranches(element.getNode(), context.getDatabaseVersion());
+            PathNode pathNode = new ASTPathNode(element.node);
+            ElementLookupContext lookupContext = computeParseBranches(element.node, context.getDatabaseVersion());
             if (!context.isNewLine()) {
                 lookupContext.addBreakOnAttribute(ElementTypeAttribute.STATEMENT);
             }

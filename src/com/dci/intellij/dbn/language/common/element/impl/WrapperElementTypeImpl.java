@@ -117,7 +117,7 @@ public class WrapperElementTypeImpl extends AbstractElementType implements Wrapp
             int index = sequenceElementType.indexOf(this);
 
             ElementTypeRef child = sequenceElementType.getChild(index);
-            if (child.isOptional()) {
+            if (child.optional) {
                 return false;
             }
 
