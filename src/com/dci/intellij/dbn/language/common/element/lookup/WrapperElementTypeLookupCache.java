@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class WrapperElementTypeLookupCache extends ElementTypeLookupCacheBase<WrapperElementType> {
+public class WrapperElementTypeLookupCache extends ElementTypeLookupCache<WrapperElementType> {
 
     public WrapperElementTypeLookupCache(WrapperElementType elementType) {
         super(elementType);
@@ -37,7 +37,6 @@ wrappedTokenLC.couldStartWithLeaf(leaf));
     public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
         bucket = super.collectFirstPossibleLeafs(context, bucket);
         bucket = initBucket(bucket);
-        WrapperElementType elementType = getElementType();
         bucket.add(elementType.getBeginTokenElement());
         return bucket;
     }
@@ -46,7 +45,6 @@ wrappedTokenLC.couldStartWithLeaf(leaf));
     public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
         bucket = super.collectFirstPossibleTokens(context, bucket);
         bucket = initBucket(bucket);
-        WrapperElementType elementType = getElementType();
         bucket.add(elementType.getBeginTokenElement().getTokenType());
         return bucket;
     }

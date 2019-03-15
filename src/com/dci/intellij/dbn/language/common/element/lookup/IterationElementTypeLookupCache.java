@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class IterationElementTypeLookupCache extends ElementTypeLookupCacheBase<IterationElementType> {
+public class IterationElementTypeLookupCache extends ElementTypeLookupCache<IterationElementType> {
     public IterationElementTypeLookupCache(IterationElementType elementType) {
         super(elementType);
     }
@@ -127,14 +127,14 @@ public class IterationElementTypeLookupCache extends ElementTypeLookupCacheBase<
     @Override
     public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
         bucket = super.collectFirstPossibleLeafs(context, bucket);
-        ElementTypeLookupCache lookupCache = getElementType().getIteratedElementType().getLookupCache();
+        ElementTypeLookupCache lookupCache = elementType.getIteratedElementType().getLookupCache();
         return lookupCache.collectFirstPossibleLeafs(context, bucket);
     }
 
     @Override
     public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
         bucket = super.collectFirstPossibleTokens(context, bucket);
-        ElementTypeLookupCache lookupCache = getElementType().getIteratedElementType().getLookupCache();
+        ElementTypeLookupCache lookupCache = elementType.getIteratedElementType().getLookupCache();
         return lookupCache.collectFirstPossibleTokens(context, bucket);
     }
 }

@@ -8,14 +8,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class QualifiedIdentifierElementTypeLookupCache extends ElementTypeLookupCacheBaseIndexed<QualifiedIdentifierElementType> {
+public class QualifiedIdentifierElementTypeLookupCache extends ElementTypeLookupCacheIndexed<QualifiedIdentifierElementType> {
     public QualifiedIdentifierElementTypeLookupCache(QualifiedIdentifierElementType elementType) {
         super(elementType);
     }
 
     @Override
     boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementType source) {
-        for (LeafElementType[] variant : getElementType().getVariants()) {
+        for (LeafElementType[] variant : elementType.getVariants()) {
             if (variant[0] == source) return true;
         }
         return false;
@@ -23,7 +23,7 @@ public class QualifiedIdentifierElementTypeLookupCache extends ElementTypeLookup
 
     @Override
     boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source) {
-        for (LeafElementType[] variant : getElementType().getVariants()) {
+        for (LeafElementType[] variant : elementType.getVariants()) {
             if (variant[0] == source && !variant[0].isOptional()) return true;
         }
         return false;
@@ -31,7 +31,7 @@ public class QualifiedIdentifierElementTypeLookupCache extends ElementTypeLookup
 
     @Override
     public boolean checkStartsWithIdentifier() {
-        for (LeafElementType[] elementTypes : getElementType().getVariants()) {
+        for (LeafElementType[] elementTypes : elementType.getVariants()) {
             if (elementTypes[0].getLookupCache().startsWithIdentifier()) return true;
         }
         return false;
@@ -40,7 +40,7 @@ public class QualifiedIdentifierElementTypeLookupCache extends ElementTypeLookup
     @Override
     public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
         bucket = initBucket(bucket);
-        for (LeafElementType[] elementTypes : getElementType().getVariants()) {
+        for (LeafElementType[] elementTypes : elementType.getVariants()) {
             // variants already consider optional leafs
             bucket.add(elementTypes[0]);
         }
@@ -51,7 +51,7 @@ public class QualifiedIdentifierElementTypeLookupCache extends ElementTypeLookup
     @Override
     public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
         bucket = initBucket(bucket);
-        for (LeafElementType[] elementTypes : getElementType().getVariants()) {
+        for (LeafElementType[] elementTypes : elementType.getVariants()) {
             // variants already consider optional leafs
             bucket.add(elementTypes[0].getTokenType());
         }

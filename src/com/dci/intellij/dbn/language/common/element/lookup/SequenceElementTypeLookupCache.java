@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 
 import java.util.Set;
 
-public class SequenceElementTypeLookupCache<T extends SequenceElementType> extends ElementTypeLookupCacheBaseIndexed<T> {
+public class SequenceElementTypeLookupCache<T extends SequenceElementType> extends ElementTypeLookupCacheIndexed<T> {
 
     public SequenceElementTypeLookupCache(T elementType) {
         super(elementType);
@@ -32,7 +32,7 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
     }
 
     private boolean couldStartWithElement(ElementType elementType) {
-        ElementTypeRef[] children = getElementType().getChildren();
+        ElementTypeRef[] children = this.elementType.getChildren();
         for (ElementTypeRef child : children) {
             if (child.isOptional()) {
                 if (elementType == child.getElementType()) return true;
@@ -44,7 +44,7 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
     }
 
     private boolean shouldStartWithElement(ElementType elementType) {
-        ElementTypeRef[] children = getElementType().getChildren();
+        ElementTypeRef[] children = this.elementType.getChildren();
         for (ElementTypeRef child : children) {
             if (!child.isOptional()) {
                 return child.getElementType() == elementType;
@@ -55,7 +55,7 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
 
     @Override
     public boolean checkStartsWithIdentifier() {
-        ElementTypeRef[] children = getElementType().getChildren();
+        ElementTypeRef[] children = this.elementType.getChildren();
         for (ElementTypeRef child : children) {
             if (child.getLookupCache().startsWithIdentifier()) {
                 return true;
@@ -73,7 +73,6 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
         bucket = super.collectFirstPossibleLeafs(context, bucket);
         bucket = initBucket(bucket);
 
-        T elementType = getElementType();
         ElementTypeRef[] children = elementType.getChildren();
         for (ElementTypeRef child : children) {
             if (context.check(child)) {
@@ -90,7 +89,6 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
         bucket = super.collectFirstPossibleTokens(context, bucket);
         bucket = initBucket(bucket);
 
-        T elementType = getElementType();
         ElementTypeRef[] children = elementType.getChildren();
         for (ElementTypeRef child : children) {
             if (context.check(child)) {

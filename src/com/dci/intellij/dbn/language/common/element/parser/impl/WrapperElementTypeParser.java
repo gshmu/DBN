@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.WrapperElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
-import com.dci.intellij.dbn.language.common.element.parser.AbstractElementTypeParser;
+import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperElementType> {
+public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementType> {
     public WrapperElementTypeParser(WrapperElementType elementType) {
         super(elementType);
     }
@@ -28,7 +28,6 @@ public class WrapperElementTypeParser extends AbstractElementTypeParser<WrapperE
         logBegin(builder, optional, depth);
         ParsePathNode node = stepIn(parentNode, context);
 
-        WrapperElementType elementType = getElementType();
         ElementType wrappedElement = elementType.getWrappedElement();
         TokenElementType beginTokenElement = elementType.getBeginTokenElement();
         TokenElementType endTokenElement = elementType.getEndTokenElement();

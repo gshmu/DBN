@@ -20,7 +20,7 @@ public class TokenElementTypeLookupCache extends LeafElementTypeLookupCache<Toke
     }
 
     protected TokenType getTokenType() {
-        return getElementType().getTokenType();
+        return elementType.getTokenType();
     }
 
     @Override
