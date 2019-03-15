@@ -38,7 +38,7 @@ public abstract class DBLanguageFoldingBuilder implements FoldingBuilder, DumbAw
             TextRange textRange = tokenPsiElement.getTextRange();
             if (textRange.getLength() > 200 && tokenPsiElement.containsLineBreaks()) {
                 FoldingDescriptor foldingDescriptor = new FoldingDescriptor(
-                        tokenPsiElement.getNode(),
+                        tokenPsiElement.node,
                         textRange);
 
                 context.addDescriptor(foldingDescriptor);
@@ -47,11 +47,10 @@ public abstract class DBLanguageFoldingBuilder implements FoldingBuilder, DumbAw
     }
 
     protected static void createCommentFolding(FoldingContext context, PsiComment psiComment) {
-        CharSequence chars = psiComment.getNode().getChars();
+        ASTNode node = psiComment.getNode();
+        CharSequence chars = node.getChars();
         if (StringUtil.startsWith(chars, "/*") && StringUtil.containsLineBreak(chars)) {
-            FoldingDescriptor foldingDescriptor = new FoldingDescriptor(
-                    psiComment.getNode(),
-                    psiComment.getTextRange());
+            FoldingDescriptor foldingDescriptor = new FoldingDescriptor(node, psiComment.getTextRange());
 
             context.addDescriptor(foldingDescriptor);
         }
@@ -75,7 +74,7 @@ public abstract class DBLanguageFoldingBuilder implements FoldingBuilder, DumbAw
                 if (subjectLineNumber < blockEndOffsetLineNumber) {
                     TextRange textRange = new TextRange(subjectEndOffset, blockEndOffset);
 
-                    FoldingDescriptor descriptor = new FoldingDescriptor(basePsiElement.getNode(), textRange);
+                    FoldingDescriptor descriptor = new FoldingDescriptor(basePsiElement.node, textRange);
                     context.addDescriptor(descriptor);
                 }
             }
@@ -85,8 +84,8 @@ public abstract class DBLanguageFoldingBuilder implements FoldingBuilder, DumbAw
     protected static class FoldingContext {
         private Document document;
         private List<FoldingDescriptor> descriptors;
-        boolean folded;
-        int nestingIndex;
+        public boolean folded;
+        public int nestingIndex;
 
         public FoldingContext(List<FoldingDescriptor> descriptors, Document document, int nestingIndex) {
             this.document = document;
@@ -98,14 +97,6 @@ public abstract class DBLanguageFoldingBuilder implements FoldingBuilder, DumbAw
             descriptors.add(descriptor);
             nestingIndex++;
             folded = true;
-        }
-
-        public boolean isFolded() {
-            return folded;
-        }
-
-        public int getNestingIndex() {
-            return nestingIndex;
         }
     }
 }

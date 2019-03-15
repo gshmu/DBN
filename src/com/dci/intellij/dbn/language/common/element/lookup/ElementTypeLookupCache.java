@@ -58,7 +58,7 @@ public abstract class ElementTypeLookupCache<T extends ElementType>/* implements
                     ElementTypeRef child = sequenceElementType.getChild(index);
                     while (child != null) {
                         child.getLookupCache().collectFirstPossibleTokens(nextPossibleTokens);
-                        if (!child.isOptional()) {
+                        if (!child.optional) {
                             parentElementType = null;
                             break;
                         }

@@ -46,7 +46,7 @@ public class TokenPsiElement extends LeafPsiElement<TokenElementType> {
      *                       PsiReference                    *
      *********************************************************/
     @Override
-    public boolean isReferenceTo(PsiElement element) {
+    public boolean isReferenceTo(@NotNull PsiElement element) {
         return true;
     }
 

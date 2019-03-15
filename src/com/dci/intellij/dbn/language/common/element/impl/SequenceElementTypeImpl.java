@@ -123,12 +123,12 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
 
     @Override
     public Set<TokenType> getFirstPossibleTokensFromIndex(ElementLookupContext context, int index) {
-        if (children[index].isOptional()) {
+        if (children[index].optional) {
             Set<TokenType> tokenTypes = new THashSet<TokenType>();
             for (int i=index; i< children.length; i++) {
                 ElementTypeLookupCache lookupCache = children[i].getLookupCache();
                 lookupCache.collectFirstPossibleTokens(context.reset(), tokenTypes);
-                if (!children[i].isOptional()) break;
+                if (!children[i].optional) break;
             }
             return tokenTypes;
         } else {
@@ -144,7 +144,7 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
                 if (children[i].getLookupCache().couldStartWithToken(tokenType)){
                     return true;
                 }
-                if (!children[i].isOptional()) {
+                if (!children[i].optional) {
                     return false;
                 }
             }
@@ -163,7 +163,7 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
         }
         ElementTypeRef child = children[0];
         while (child != null) {
-            ElementType childElementType = child.getElementType();
+            ElementType childElementType = child.elementType;
             if (childElementType == leafElementType || childElementType.getLookupCache().containsLeaf(leafElementType)) {
                 return child.getIndex();
             }
@@ -186,7 +186,7 @@ public class SequenceElementTypeImpl extends AbstractElementType implements Sequ
         if (fromIndex < children.length) {
             ElementTypeRef child = children[fromIndex];
             while (child != null) {
-                if (child.getElementType() == elementType) {
+                if (child.elementType == elementType) {
                     return child.getIndex();
                 }
                 child = child.getNext();

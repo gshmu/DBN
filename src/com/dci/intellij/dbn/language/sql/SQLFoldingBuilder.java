@@ -37,7 +37,7 @@ public class SQLFoldingBuilder extends DBLanguageFoldingBuilder {
                 ExecutablePsiElement executablePsiElement = (ExecutablePsiElement) child;
                 TextRange textRange = executablePsiElement.getTextRange();
                 if (textRange.getLength() > 10) {
-                    ASTNode childNode = executablePsiElement.getNode();
+                    ASTNode childNode = executablePsiElement.node;
                     FoldingDescriptor descriptor = new FoldingDescriptor(childNode, textRange);
                     context.addDescriptor(descriptor);
                     createFoldingDescriptors(executablePsiElement, document, descriptors, 1);
@@ -45,12 +45,12 @@ public class SQLFoldingBuilder extends DBLanguageFoldingBuilder {
             } else if (child instanceof ChameleonPsiElement) {
                 ChameleonPsiElement chameleonPsiElement = (ChameleonPsiElement) child;
                 FoldingDescriptor descriptor = new FoldingDescriptor(
-                        chameleonPsiElement.getNode(),
+                        chameleonPsiElement.node,
                         chameleonPsiElement.getTextRange());
                 context.addDescriptor(descriptor);
 
                 FoldingBuilder foldingBuilder = LanguageFolding.INSTANCE.forLanguage(chameleonPsiElement.getLanguage());
-                FoldingDescriptor[] nestedDescriptors = foldingBuilder.buildFoldRegions(chameleonPsiElement.getNode(), document);
+                FoldingDescriptor[] nestedDescriptors = foldingBuilder.buildFoldRegions(chameleonPsiElement.node, document);
                 descriptors.addAll(Arrays.asList(nestedDescriptors));
 
             } else if (child instanceof TokenPsiElement) {
@@ -60,7 +60,7 @@ public class SQLFoldingBuilder extends DBLanguageFoldingBuilder {
                 BasePsiElement basePsiElement = (BasePsiElement) child;
                 createAttributeFolding(context, basePsiElement);
 
-                if (context.getNestingIndex() < 2) {
+                if (context.nestingIndex < 2) {
                     createFoldingDescriptors(basePsiElement, document, descriptors, 1);
                 }
             }
@@ -77,7 +77,7 @@ public class SQLFoldingBuilder extends DBLanguageFoldingBuilder {
         }
         if (psiElement instanceof BasePsiElement) {
             BasePsiElement basePsiElement = (BasePsiElement) psiElement;
-            Set<IdentifierPsiElement> subjects = new HashSet<IdentifierPsiElement>();
+            Set<IdentifierPsiElement> subjects = new HashSet<>();
             basePsiElement.collectSubjectPsiElements(subjects);
             StringBuilder buffer = new StringBuilder(" ");
             buffer.append(basePsiElement.getSpecificElementType().getDescription());

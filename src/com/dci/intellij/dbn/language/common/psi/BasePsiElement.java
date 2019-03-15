@@ -37,7 +37,7 @@ import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSessionStatementVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.intellij.extapi.psi.ASTDelegatePsiElement;
 import com.intellij.ide.util.EditSourceUtil;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
@@ -56,6 +56,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.tree.SharedImplUtil;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import org.jetbrains.annotations.NotNull;
@@ -65,10 +66,12 @@ import javax.swing.*;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class BasePsiElement<T extends ElementType> extends ASTWrapperPsiElement implements ItemPresentation, FormattingProviderPsiElement {
+public abstract class BasePsiElement<T extends ElementType> extends ASTDelegatePsiElement implements ItemPresentation, FormattingProviderPsiElement {
     public T elementType;
     private DBVirtualObject underlyingObject;
     private FormattingAttributes formattingAttributes;
+
+    public final ASTNode node;
 
     private Latent<BasePsiElement> enclosingScopePsiElement = Latent.weak(() -> findEnclosingScopePsiElement());
 
@@ -78,10 +81,22 @@ public abstract class BasePsiElement<T extends ElementType> extends ASTWrapperPs
         SOFT,
     }
 
-    public BasePsiElement(ASTNode astNode, T elementType) {
-        super(astNode);
+    public BasePsiElement(ASTNode node, T elementType) {
+        this.node = node;
         this.elementType = elementType;
     }
+
+    @Override
+    public PsiElement getParent() {
+        return SharedImplUtil.getParent(node);
+    }
+
+    @Override
+    @NotNull
+    public ASTNode getNode() {
+        return node;
+    }
+
 
     @Override
     public FormattingAttributes getFormattingAttributes() {
@@ -107,18 +122,18 @@ public abstract class BasePsiElement<T extends ElementType> extends ASTWrapperPs
     }
 
     public boolean containsLineBreaks() {
-        return StringUtil.containsLineBreak(getNode().getChars());
+        return StringUtil.containsLineBreak(node.getChars());
     }
 
     @Override
     public PsiElement getFirstChild() {
-        ASTNode firstChildNode = getNode().getFirstChildNode();
+        ASTNode firstChildNode = node.getFirstChildNode();
         return firstChildNode == null ? null : firstChildNode.getPsi();
     }
 
     @Override
     public PsiElement getNextSibling() {
-        ASTNode treeNext = getNode().getTreeNext();
+        ASTNode treeNext = node.getTreeNext();
         return treeNext == null ? null : treeNext.getPsi();
     }
 
@@ -202,13 +217,13 @@ public abstract class BasePsiElement<T extends ElementType> extends ASTWrapperPs
         return hasErrors() ?
                 "[INVALID] " + elementType.getDebugName() :
                 elementType.getDebugName() +
-                        (isScopeDemarcation() ? " SCOPE_DEMARCATION" : "") +
-                        (isScopeIsolation() ? " SCOPE_ISOLATION" : "");
+                        (elementType.isScopeDemarcation() ? " SCOPE_DEMARCATION" : "") +
+                        (elementType.isScopeIsolation() ? " SCOPE_ISOLATION" : "");
     }
 
     @Override
     public void acceptChildren(@NotNull PsiElementVisitor visitor) {
-            final PsiElement psiChild = getFirstChild();
+        PsiElement psiChild = getFirstChild();
         if (psiChild == null) return;
 
         ASTNode child = psiChild.getNode();
@@ -542,7 +557,7 @@ public abstract class BasePsiElement<T extends ElementType> extends ASTWrapperPs
         while (element != null && !(element instanceof PsiFile)) {
             if (element instanceof BasePsiElement) {
                 basePsiElement = (BasePsiElement) element;
-                if (basePsiElement.isScopeIsolation()) {
+                if (basePsiElement.elementType.isScopeIsolation()) {
                     return basePsiElement;
                 }
             }
@@ -560,7 +575,7 @@ public abstract class BasePsiElement<T extends ElementType> extends ASTWrapperPs
             if (element instanceof BasePsiElement) {
                 basePsiElement = (BasePsiElement) element;
                 //return elementType.is(ElementTypeAttribute.SCOPE_DEMARCATION);
-                if (basePsiElement.isScopeDemarcation()) {
+                if (basePsiElement.elementType.isScopeDemarcation()) {
                     return basePsiElement;
                 }
             }
@@ -640,16 +655,8 @@ public abstract class BasePsiElement<T extends ElementType> extends ASTWrapperPs
         return scope == sourceScope || scope.isParentOf(sourceScope);*/
     }
 
-    public boolean isScopeDemarcation() {
-        return elementType.isScopeDemarcation();
-    }
-
-    public boolean isScopeIsolation() {
-        return elementType.isScopeIsolation();
-    }
-    
     public boolean isScopeBoundary() {
-        return isScopeDemarcation() || isScopeIsolation();
+        return elementType.isScopeDemarcation() || elementType.isScopeIsolation();
     }
 
 
