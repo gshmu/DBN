@@ -6,18 +6,19 @@ import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.IterationElementType;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.SequenceElementType;
-import com.dci.intellij.dbn.language.common.element.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
+import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
+import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
+import com.dci.intellij.dbn.language.common.element.impl.SequenceElementType;
+import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public abstract class ElementTypeLookupCache<T extends ElementType>/* implements ElementTypeLookupCache<T>*/ {
+public abstract class ElementTypeLookupCache<T extends ElementTypeBase>/* implements ElementTypeLookupCache<T>*/ {
     private Latent<Set<TokenType>> nextPossibleTokens = Latent.basic(() -> computeNextPossibleTokens());
     public final T elementType;
 
@@ -44,7 +45,7 @@ public abstract class ElementTypeLookupCache<T extends ElementType>/* implements
         return nextPossibleTokens.get();
     }
 
-    Set<TokenType> computeNextPossibleTokens() {
+    private Set<TokenType> computeNextPossibleTokens() {
         THashSet<TokenType> nextPossibleTokens = new THashSet<>();
         ElementType elementType = this.elementType;
         ElementType parentElementType = elementType.getParent();
@@ -67,10 +68,10 @@ public abstract class ElementTypeLookupCache<T extends ElementType>/* implements
                 }
             } else if (parentElementType instanceof IterationElementType) {
                 IterationElementType iteration = (IterationElementType) parentElementType;
-                TokenElementType[] separatorTokens = iteration.getSeparatorTokens();
+                TokenElementType[] separatorTokens = iteration.separatorTokens;
                 if (separatorTokens != null) {
                     for (TokenElementType separatorToken : separatorTokens) {
-                        nextPossibleTokens.add(separatorToken.getTokenType());
+                        nextPossibleTokens.add(separatorToken.tokenType);
                     }
                 }
             }
@@ -115,19 +116,19 @@ public abstract class ElementTypeLookupCache<T extends ElementType>/* implements
         WrappingDefinition wrapping = elementType.getWrapping();
         if (wrapping != null) {
             bucket = initBucket(bucket);
-            bucket.add(wrapping.getBeginElementType().getTokenType());
+            bucket.add(wrapping.getBeginElementType().tokenType);
         }
         return bucket;
     }
 
-    public void registerLeaf(LeafElementType leaf, ElementType source) {
-        ElementType parent = elementType.getParent();
+    public void registerLeaf(LeafElementType leaf, ElementTypeBase source) {
+        ElementTypeBase parent = elementType.getParent();
         if (parent != null) {
-            parent.getLookupCache().registerLeaf(leaf, elementType);
+            parent.lookupCache.registerLeaf(leaf, elementType);
         }
     }
 
-    protected <E> Set<E> initBucket(Set<E> bucket) {
+    <E> Set<E> initBucket(Set<E> bucket) {
         if (bucket == null) bucket = new java.util.HashSet<E>();
         return bucket;
     }

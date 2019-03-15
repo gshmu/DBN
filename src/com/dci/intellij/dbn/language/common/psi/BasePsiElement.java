@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.QuoteDefinition;
 import com.dci.intellij.dbn.language.common.element.ElementType;
+import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
@@ -66,7 +67,7 @@ import javax.swing.*;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class BasePsiElement<T extends ElementType> extends ASTDelegatePsiElement implements ItemPresentation, FormattingProviderPsiElement {
+public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDelegatePsiElement implements ItemPresentation, FormattingProviderPsiElement {
     public T elementType;
     private DBVirtualObject underlyingObject;
     private FormattingAttributes formattingAttributes;

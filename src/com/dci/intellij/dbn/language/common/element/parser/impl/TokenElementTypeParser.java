@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.language.common.element.parser.impl;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.SimpleTokenType;
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
@@ -25,7 +25,7 @@ public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> 
         logBegin(builder, optional, depth);
 
         TokenType tokenType = builder.getTokenType();
-        if (tokenType == elementType.getTokenType() || isDummyToken(builder.getTokenText())) {
+        if (tokenType == elementType.tokenType || isDummyToken(builder.getTokenText())) {
 
             String text = elementType.getText();
             if (StringUtils.isNotEmpty(text) && builder.getTokenText().equalsIgnoreCase(text)) {

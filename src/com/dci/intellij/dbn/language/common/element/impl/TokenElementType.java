@@ -8,12 +8,7 @@ import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.IterationElementType;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
-import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementTypeChain;
-import com.dci.intellij.dbn.language.common.element.WrapperElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.lookup.TokenElementTypeLookupCache;
@@ -33,13 +28,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupItemBuilderProvider, TokenElementType {
+public class TokenElementType extends LeafElementType implements LookupItemBuilderProvider {
+    public static final String SEPARATOR = "SEPARATOR";
+
+
     private TokenLookupItemBuilder lookupItemBuilder = new TokenLookupItemBuilder(this);
     private TokenTypeCategory flavor;
     private List<TokenElementTypeChain> possibleTokenChains;
     private String text;
 
-    public TokenElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
+    public TokenElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
         String typeId = def.getAttributeValue("type-id");
         text = def.getAttributeValue("text");
@@ -55,7 +53,7 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
         setDescription(tokenType.getValue() + " " + getTokenTypeCategory());
     }
 
-    public TokenElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String typeId, String id) throws ElementTypeDefinitionException {
+    public TokenElementType(ElementTypeBundle bundle, ElementTypeBase parent, String typeId, String id) {
         super(bundle, parent, id, (String)null);
         TokenType tokenType = bundle.getTokenTypeBundle().getTokenType(typeId);
         setTokenType(tokenType);
@@ -65,7 +63,6 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
     }
 
     @Nullable
-    @Override
     public String getText() {
         return text;
     }
@@ -83,7 +80,7 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
 
     @Override
     public String getDebugName() {
-        return "token (" + getId() + " - " + getTokenType().getId() + ")";
+        return "token (" + getId() + " - " + tokenType.getId() + ")";
     }
 
     @Override
@@ -92,7 +89,7 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
         if (isIterationSeparator()) {
             if (parent instanceof IterationElementType) {
                 IterationElementType iterationElementType = (IterationElementType) parent;
-                ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
+                ElementTypeLookupCache lookupCache = iterationElementType.iteratedElementType.lookupCache;
                 return lookupCache.collectFirstPossibleLeafs(context.reset());
             } else if (parent instanceof QualifiedIdentifierElementType){
                 return super.getNextPossibleLeafs(pathNode, context);
@@ -101,7 +98,7 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
         if (parent instanceof WrapperElementType) {
             WrapperElementType wrapperElementType = (WrapperElementType) parent;
             if (this.equals(wrapperElementType.getBeginTokenElement())) {
-                ElementTypeLookupCache lookupCache = wrapperElementType.getWrappedElement().getLookupCache();
+                ElementTypeLookupCache lookupCache = wrapperElementType.wrappedElement.lookupCache;
                 return lookupCache.collectFirstPossibleLeafs(context.reset());
             }
         }
@@ -114,7 +111,7 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
         if (isIterationSeparator()) {
             if (getParent() instanceof IterationElementType) {
                 IterationElementType iterationElementType = (IterationElementType) getParent();
-                return iterationElementType.getIteratedElementType().getLookupCache().getFirstRequiredLeafs();
+                return iterationElementType.iteratedElementType.lookupCache.getFirstRequiredLeafs();
             } else if (getParent() instanceof QualifiedIdentifierElementType){
                 return super.getNextRequiredLeafs(pathNode, context);
             }
@@ -140,7 +137,7 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
     public boolean isSameAs(LeafElementType elementType) {
         if (elementType instanceof TokenElementType) {
             TokenElementType token = (TokenElementType) elementType;
-            return token.getTokenType() == getTokenType();
+            return token.tokenType == tokenType;
         }
         return false;
     }
@@ -152,12 +149,11 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
     }
 
     public String toString() {
-        return getTokenType().getId() + " (" + getId() + ")";
+        return tokenType.getId() + " (" + getId() + ")";
     }
 
-    @Override
     public boolean isCharacter() {
-        return getTokenType().isCharacter();
+        return tokenType.isCharacter();
     }
 
     @Override
@@ -165,23 +161,19 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
         return lookupItemBuilder;
     }
 
-    @Override
     public TokenTypeCategory getFlavor() {
         return flavor;
     }
 
-    @Override
     public TokenTypeCategory getTokenTypeCategory() {
-        return flavor == null ? getTokenType().getCategory() : flavor;
+        return flavor == null ? tokenType.getCategory() : flavor;
     }
 
-    @Override
     public List<TokenElementTypeChain> getPossibleTokenChains() {
         if (possibleTokenChains == null) {
             possibleTokenChains = new ArrayList<TokenElementTypeChain>();
             TokenElementTypeChain stump = new TokenElementTypeChain(this);
             buildPossibleChains(this, stump);
-            System.out.printf("");
         }
         return possibleTokenChains;
     }
@@ -193,9 +185,9 @@ public class TokenElementTypeImpl extends LeafElementTypeImpl implements LookupI
             for (LeafElementType nextPossibleLeaf : nextPossibleLeafs) {
                 if (nextPossibleLeaf instanceof TokenElementType) {
                     TokenElementType nextTokenElementType = (TokenElementType) nextPossibleLeaf;
-                    if (nextTokenElementType.getTokenType().isKeyword()) {
+                    if (nextTokenElementType.tokenType.isKeyword()) {
                         TokenElementTypeChain tokenElementTypeChain = chain.createVariant(nextTokenElementType);
-                        if (possibleTokenChains == null) possibleTokenChains = new ArrayList<TokenElementTypeChain>();
+                        if (possibleTokenChains == null) possibleTokenChains = new ArrayList<>();
                         possibleTokenChains.add(tokenElementTypeChain);
                         if (tokenElementTypeChain.getElementTypes().size()<3) {
                             buildPossibleChains(nextTokenElementType, tokenElementTypeChain);

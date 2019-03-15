@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.code.common.completion;
 
 import com.dci.intellij.dbn.code.common.lookup.CodeCompletionLookupItem;
-import com.dci.intellij.dbn.language.common.element.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
 import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.codeInsight.completion.InsertHandler;
@@ -19,7 +19,7 @@ public class BasicInsertHandler implements InsertHandler<CodeCompletionLookupIte
         Object lookupElementObject = lookupElement.getObject();
         if (lookupElementObject instanceof TokenElementType) {
             TokenElementType tokenElementType = (TokenElementType) lookupElementObject;
-            if(tokenElementType.getTokenType().isReservedWord()) {
+            if(tokenElementType.tokenType.isReservedWord()) {
                 Editor editor = insertionContext.getEditor();
                 CaretModel caretModel = editor.getCaretModel();
 

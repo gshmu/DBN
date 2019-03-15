@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
-import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.ExecVariableElementType;
+import com.dci.intellij.dbn.language.common.element.impl.ExecVariableElementType;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
@@ -18,7 +17,7 @@ public class ExecVariableElementTypeParser extends ElementTypeParser<ExecVariabl
     }
 
     @Override
-    public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
+    public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) {
         ParserBuilder builder = context.builder;
         logBegin(builder, optional, depth);
         TokenType tokenType = builder.getTokenType();

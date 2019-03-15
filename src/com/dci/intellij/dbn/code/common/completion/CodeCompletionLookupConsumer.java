@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
-import com.dci.intellij.dbn.language.common.element.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -27,7 +27,7 @@ public class CodeCompletionLookupConsumer implements LookupConsumer {
     private CodeCompletionContext context;
     private boolean addParenthesis;
 
-    public CodeCompletionLookupConsumer(CodeCompletionContext context) {
+    CodeCompletionLookupConsumer(CodeCompletionContext context) {
         this.context = context;
     }
 
@@ -54,7 +54,7 @@ public class CodeCompletionLookupConsumer implements LookupConsumer {
                     CodeCompletionFilterSettings filterSettings = context.getCodeCompletionFilterSettings();
                     TokenTypeCategory tokenTypeCategory = tokenElementType.getTokenTypeCategory();
                     if (tokenTypeCategory == TokenTypeCategory.OBJECT) {
-                        TokenType tokenType = tokenElementType.getTokenType();
+                        TokenType tokenType = tokenElementType.tokenType;
                         DBObjectType objectType = tokenType.getObjectType();
                         if (objectType != null) {
                             if (filterSettings.acceptsRootObject(objectType)) {

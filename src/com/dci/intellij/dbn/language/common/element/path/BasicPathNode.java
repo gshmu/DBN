@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.common.element.path;
 
 import com.dci.intellij.dbn.common.list.ReversedList;
 import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.NamedElementType;
+import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 
 import java.util.ArrayList;
@@ -112,7 +112,7 @@ public class BasicPathNode<T extends BasicPathNode> implements PathNode {
     }
 
     public static PathNode buildPathUp(ElementType elementType) {
-        List<ElementType> path = new ArrayList<ElementType>();
+        List<ElementType> path = new ArrayList<>();
         while (elementType != null) {
             path.add(elementType);
             if (elementType instanceof NamedElementType) break;

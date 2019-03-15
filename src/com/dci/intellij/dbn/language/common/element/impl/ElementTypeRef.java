@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import com.dci.intellij.dbn.common.ChainElement;
-import com.dci.intellij.dbn.language.common.element.ElementType;
+import com.dci.intellij.dbn.common.Chained;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
@@ -9,14 +8,14 @@ import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 
 import java.util.Set;
 
-public class ElementTypeRef extends ChainElement<ElementTypeRef> {
-    public final ElementType parentElementType;
-    public final ElementType elementType;
+public class ElementTypeRef extends Chained<ElementTypeRef> {
+    public final ElementTypeBase parentElementType;
+    public final ElementTypeBase elementType;
     public final boolean optional;
     public final double version;
     private Set<BranchCheck> branchChecks;
 
-    public ElementTypeRef(ElementTypeRef previous, ElementType parentElementType, ElementType elementType, boolean optional, double version, Set<BranchCheck> branchChecks) {
+    public ElementTypeRef(ElementTypeRef previous, ElementTypeBase parentElementType, ElementTypeBase elementType, boolean optional, double version, Set<BranchCheck> branchChecks) {
         super(previous);
         this.parentElementType = parentElementType;
         this.elementType = elementType;
@@ -96,11 +95,11 @@ public class ElementTypeRef extends ChainElement<ElementTypeRef> {
     }
 
     public ElementTypeLookupCache getLookupCache() {
-        return elementType.getLookupCache();
+        return elementType.lookupCache;
     }
 
     public ElementTypeParser getParser() {
-        return elementType.getParser();
+        return elementType.parser;
     }
 
     @Override

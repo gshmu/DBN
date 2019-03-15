@@ -1,11 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
-import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.QualifiedIdentifierElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.QualifiedIdentifierElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
@@ -21,13 +16,13 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-public class QualifiedIdentifierElementTypeImpl extends AbstractElementType implements QualifiedIdentifierElementType {
-    protected TokenElementType separatorToken;
-    private final List<LeafElementType[]> variants = new ArrayList<LeafElementType[]>();
+public class QualifiedIdentifierElementType extends ElementTypeBase {
+    private TokenElementType separatorToken;
+    private final List<LeafElementType[]> variants = new ArrayList<>();
     private Set<DBObjectType> objectTypeCache = EnumSet.noneOf(DBObjectType.class);
-    public int maxLength;
+    private int maxLength;
 
-    public QualifiedIdentifierElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
+    public QualifiedIdentifierElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
         List children = def.getChildren();
         for (Object o : children) {
@@ -44,7 +39,7 @@ public class QualifiedIdentifierElementTypeImpl extends AbstractElementType impl
             variants.addAll(childVariants);
         }
         String separatorId = def.getAttributeValue("separator");
-        separatorToken = new TokenElementTypeImpl(bundle, this, separatorId, TokenElementType.SEPARATOR);
+        separatorToken = new TokenElementType(bundle, this, separatorId, TokenElementType.SEPARATOR);
     }
 
     @Override
@@ -58,13 +53,12 @@ public class QualifiedIdentifierElementTypeImpl extends AbstractElementType impl
         return new QualifiedIdentifierElementTypeParser(this);
     }
 
-    @Override
     public List<LeafElementType[]> getVariants() {
         return variants;
     }
 
     private List<LeafElementType[]> createVariants(Element element) throws ElementTypeDefinitionException {
-        List<LeafElementType[]> variants = new ArrayList<LeafElementType[]>();
+        List<LeafElementType[]> variants = new ArrayList<>();
 
         List children = element.getChildren();
         LeafElementType[] leafElementTypes = new LeafElementType[children.size()];
@@ -135,12 +129,10 @@ public class QualifiedIdentifierElementTypeImpl extends AbstractElementType impl
         return false;
     }
 
-    @Override
     public TokenElementType getSeparatorToken() {
         return separatorToken;
     }
 
-    @Override
     public boolean containsObjectType(DBObjectType objectType) {
         return objectTypeCache.contains(objectType);
     }

@@ -2,12 +2,13 @@ package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.language.common.element.BlockElementType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.IterationElementType;
-import com.dci.intellij.dbn.language.common.element.NamedElementType;
-import com.dci.intellij.dbn.language.common.element.OneOfElementType;
-import com.dci.intellij.dbn.language.common.element.SequenceElementType;
+import com.dci.intellij.dbn.language.common.element.impl.BlockElementType;
+import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
+import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
+import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
+import com.dci.intellij.dbn.language.common.element.impl.OneOfElementType;
+import com.dci.intellij.dbn.language.common.element.impl.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class SequencePsiElement<T extends ElementType> extends BasePsiElement<T> {
+public class SequencePsiElement<T extends ElementTypeBase> extends BasePsiElement<T> {
     public SequencePsiElement(ASTNode astNode, T elementType) {
         super(astNode, elementType);
     }
@@ -79,7 +80,7 @@ public class SequencePsiElement<T extends ElementType> extends BasePsiElement<T>
             int scopeCrossCount) {
 
         if (lookupAdapter.matches(this)) {
-            if (bucket == null) bucket = new THashSet<BasePsiElement>();
+            if (bucket == null) bucket = new THashSet<>();
             bucket.add(this);
 
         }

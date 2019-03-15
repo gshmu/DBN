@@ -1,9 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.ExecVariableElementType;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.ExecVariableElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.ExecVariableElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
@@ -14,9 +11,9 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 
-public class ExecVariableElementTypeImpl extends LeafElementTypeImpl implements ExecVariableElementType {
+public class ExecVariableElementType extends LeafElementType {
 
-    public ExecVariableElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
+    public ExecVariableElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
         setTokenType(bundle.getTokenTypeBundle().getVariable());
     }

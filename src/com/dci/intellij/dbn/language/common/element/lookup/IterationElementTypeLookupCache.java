@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.IterationElementType;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
+import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
+import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,13 +37,12 @@ public class IterationElementTypeLookupCache extends ElementTypeLookupCache<Iter
         return elementType.isSeparator(tokenType) ||
                 elementType.isWrappingBegin(tokenType) ||
                 elementType.isWrappingEnd(tokenType) ||
-                getIteratedElementType().getLookupCache().containsToken(tokenType);
+                elementType.iteratedElementType.lookupCache.containsToken(tokenType);
     }
 
     @Override
     public boolean containsLeaf(LeafElementType leafElementType) {
-        ElementType iteratedElementType = getIteratedElementType();
-        if (iteratedElementType.getLookupCache().containsLeaf(leafElementType)) {
+        if (elementType.iteratedElementType.lookupCache.containsLeaf(leafElementType)) {
             return true;
         }
 
@@ -60,38 +58,35 @@ public class IterationElementTypeLookupCache extends ElementTypeLookupCache<Iter
 
     @Override
     public Set<TokenType> getFirstPossibleTokens() {
-        return  getIteratedElementType().getLookupCache().getFirstPossibleTokens();
+        return  elementType.iteratedElementType.lookupCache.getFirstPossibleTokens();
     }
 
     @Override
     public Set<TokenType> getFirstRequiredTokens() {
-        return getIteratedElementType().getLookupCache().getFirstRequiredTokens();
+        return elementType.iteratedElementType.lookupCache.getFirstRequiredTokens();
     }
 
     @Override
     public boolean couldStartWithLeaf(LeafElementType leafElementType) {
-        return elementType.isWrappingBegin(leafElementType) || getIteratedElementType().getLookupCache().couldStartWithLeaf(leafElementType);
+        return elementType.isWrappingBegin(leafElementType) || elementType.iteratedElementType.lookupCache.couldStartWithLeaf(leafElementType);
     }
 
     @Override
     public boolean shouldStartWithLeaf(LeafElementType leafElementType) {
-        return getIteratedElementType().getLookupCache().shouldStartWithLeaf(leafElementType);
+        return elementType.iteratedElementType.lookupCache.shouldStartWithLeaf(leafElementType);
     }
 
-    private ElementType getIteratedElementType() {
-        return elementType.getIteratedElementType();
-    }
 
     @Override
     public boolean couldStartWithToken(TokenType tokenType) {
         return elementType.isWrappingBegin(tokenType) ||
-                getIteratedElementType().getLookupCache().couldStartWithToken(tokenType);
+                elementType.iteratedElementType.lookupCache.couldStartWithToken(tokenType);
     }
 
     @Override
     public Set<LeafElementType> getFirstPossibleLeafs() {
         Set<LeafElementType> firstPossibleLeafs = initBucket(null);
-        firstPossibleLeafs.addAll(getIteratedElementType().getLookupCache().getFirstPossibleLeafs());
+        firstPossibleLeafs.addAll(elementType.iteratedElementType.lookupCache.getFirstPossibleLeafs());
         WrappingDefinition wrapping = elementType.getWrapping();
         if (wrapping != null) {
             firstPossibleLeafs.add(wrapping.getBeginElementType());
@@ -101,12 +96,12 @@ public class IterationElementTypeLookupCache extends ElementTypeLookupCache<Iter
 
     @Override
     public Set<LeafElementType> getFirstRequiredLeafs() {
-        return getIteratedElementType().getLookupCache().getFirstRequiredLeafs();
+        return elementType.iteratedElementType.lookupCache.getFirstRequiredLeafs();
     }
 
     @Override
     public boolean startsWithIdentifier() {
-        return getIteratedElementType().getLookupCache().startsWithIdentifier();
+        return elementType.iteratedElementType.lookupCache.startsWithIdentifier();
     }
 
     @Override
@@ -116,25 +111,23 @@ public class IterationElementTypeLookupCache extends ElementTypeLookupCache<Iter
 
     @Override
     public boolean isFirstPossibleToken(TokenType tokenType) {
-        return getIteratedElementType().getLookupCache().isFirstPossibleToken(tokenType) || elementType.isWrappingBegin(tokenType);
+        return elementType.iteratedElementType.lookupCache.isFirstPossibleToken(tokenType) || elementType.isWrappingBegin(tokenType);
     }
 
     @Override
     public boolean isFirstRequiredToken(TokenType tokenType) {
-        return getIteratedElementType().getLookupCache().isFirstRequiredToken(tokenType);
+        return elementType.iteratedElementType.lookupCache.isFirstRequiredToken(tokenType);
     }
 
     @Override
     public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
         bucket = super.collectFirstPossibleLeafs(context, bucket);
-        ElementTypeLookupCache lookupCache = elementType.getIteratedElementType().getLookupCache();
-        return lookupCache.collectFirstPossibleLeafs(context, bucket);
+        return elementType.iteratedElementType.lookupCache.collectFirstPossibleLeafs(context, bucket);
     }
 
     @Override
     public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
         bucket = super.collectFirstPossibleTokens(context, bucket);
-        ElementTypeLookupCache lookupCache = elementType.getIteratedElementType().getLookupCache();
-        return lookupCache.collectFirstPossibleTokens(context, bucket);
+        return elementType.iteratedElementType.lookupCache.collectFirstPossibleTokens(context, bucket);
     }
 }

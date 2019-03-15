@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
+import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
+import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
+import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierVariant;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -11,7 +11,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class QualifiedIdentifierPsiElement extends SequencePsiElement<QualifiedIdentifierElementType> {
@@ -116,7 +115,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement<QualifiedI
                 parseVariants.add(new QualifiedIdentifierVariant(elementTypes, resultType == ParseResultType.PARTIAL_MATCH));
             }
         }
-        Collections.sort(parseVariants);
+        parseVariants.sort(null);
         return parseVariants;
     }
 

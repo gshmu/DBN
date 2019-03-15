@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import com.dci.intellij.dbn.language.common.element.BasicElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.lookup.BasicElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.BasicElementTypeParser;
@@ -9,12 +8,12 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-public class BasicElementTypeImpl extends AbstractElementType implements BasicElementType {
+public class BasicElementType extends ElementTypeBase {
 
-    public BasicElementTypeImpl(ElementTypeBundle bundle, String id, String description) {
+    private BasicElementType(ElementTypeBundle bundle, String id, String description) {
         super(bundle, null, id, description);
     }
-    public BasicElementTypeImpl(ElementTypeBundle bundle) {
+    public BasicElementType(ElementTypeBundle bundle) {
         this(bundle, "UNKNOWN", "Unidentified element type.");
     }
 
