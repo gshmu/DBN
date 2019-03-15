@@ -59,7 +59,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
                         }
                         for (TokenElementType separatorToken : separatorTokens) {
                             result = separatorToken.getParser().parse(node, false, depth + 1, context);
-                            matchedTokens = matchedTokens + result.getMatchedTokens();
+                            matchedTokens = matchedTokens + result.matchedTokens;
                             if (result.isMatch()) break;
                         }
 
@@ -114,7 +114,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
                         }
                     } else {
                         builder.markerDrop(partialMatchMarker);
-                        matchedTokens = matchedTokens + result.getMatchedTokens();
+                        matchedTokens = matchedTokens + result.matchedTokens;
                     }
                 }
             }
