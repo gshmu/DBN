@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
-import com.dci.intellij.dbn.language.common.element.parser.AbstractElementTypeParser;
+import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class SequenceElementTypeParser<ET extends SequenceElementType> extends AbstractElementTypeParser<ET> {
+public class SequenceElementTypeParser<ET extends SequenceElementType> extends ElementTypeParser<ET> {
     public SequenceElementTypeParser(ET elementType) {
         super(elementType);
     }
@@ -32,7 +32,6 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
         logBegin(builder, optional, depth);
         ParsePathNode node = stepIn(parentNode, context);
 
-        SequenceElementType elementType = getElementType();
         int matches = 0;
         int matchedTokens = 0;
 
@@ -107,7 +106,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
     }
 
     private boolean ignoreFirstMatch() {
-        ElementTypeRef firstChild = getElementType().getChild(0);
+        ElementTypeRef firstChild = elementType.getChild(0);
         if (firstChild.getElementType() instanceof IdentifierElementType) {
             IdentifierElementType identifierElementType = (IdentifierElementType) firstChild.getElementType();
             return !identifierElementType.isDefinition();
@@ -115,11 +114,10 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
         return false;
     }
 
-    private int advanceLexerToNextLandmark(ParsePathNode node, ParserContext context) throws ParseException {
+    private int advanceLexerToNextLandmark(ParsePathNode node, ParserContext context) {
         int siblingPosition = node.getCursorPosition();
         ParserBuilder builder = context.getBuilder();
         PsiBuilder.Marker marker = builder.mark(null);
-        SequenceElementType elementType = getElementType();
         Set<TokenType> possibleTokens = elementType.getFirstPossibleTokensFromIndex(context, siblingPosition);
         ParseBuilderErrorHandler.updateBuilderError(possibleTokens, context);
 
@@ -143,13 +141,13 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
         return 0;
     }
 
-    protected int getLandmarkIndex(TokenType tokenType, int index, ParsePathNode node) {
+    private int getLandmarkIndex(TokenType tokenType, int index, ParsePathNode node) {
         if (tokenType.isParserLandmark()) {
             PathNode statementPathNode = node.getPathNode(ElementTypeAttribute.STATEMENT);
             if (statementPathNode != null && statementPathNode.getElementType().getLookupCache().couldStartWithToken(tokenType)) {
                 return -1;
             }
-            ElementTypeRef[] children = getElementType().getChildren();
+            ElementTypeRef[] children = elementType.getChildren();
             for (int i=index; i< children.length; i++) {
                 // check children landmarks
                 if (children[i].getLookupCache().couldStartWithToken(tokenType)) {
@@ -178,7 +176,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
     }
 
 
-    protected ParsePathNode advanceToLandmark_New(ParserBuilder builder, ParsePathNode node) {
+    private ParsePathNode advanceToLandmark_New(ParserBuilder builder, ParsePathNode node) {
         TokenType tokenType = builder.getTokenType();
         while (tokenType != null && !tokenType.isParserLandmark()) {
             builder.advanceLexer(node);
@@ -186,7 +184,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
         }
 
         // scan current sequence
-        ElementTypeRef[] children = getElementType().getChildren();
+        ElementTypeRef[] children = elementType.getChildren();
         int siblingIndex = node.getCursorPosition();
         while (siblingIndex < children.length) {
             int builderOffset = builder.getCurrentOffset();
@@ -209,7 +207,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends A
                     return parentNode;
                 }
             }
-            parentNode = parentNode.getParent();
+            parentNode = parentNode == null ? null : parentNode.getParent();
         }
 
         return null;

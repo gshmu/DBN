@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.language.common.element.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.SequenceElementType;
 import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
-import com.dci.intellij.dbn.language.common.element.parser.AbstractElementTypeParser;
+import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class IterationElementTypeParser extends AbstractElementTypeParser<IterationElementType> {
+public class IterationElementTypeParser extends ElementTypeParser<IterationElementType> {
     public IterationElementTypeParser(IterationElementType elementType) {
         super(elementType);
     }
@@ -31,7 +31,6 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
         logBegin(builder, optional, depth);
         ParsePathNode node = stepIn(parentNode, context);
 
-        IterationElementType elementType = getElementType();
         ElementType iteratedElementType = elementType.getIteratedElementType();
         TokenElementType[] separatorTokens = elementType.getSeparatorTokens();
 
@@ -128,7 +127,6 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
 
     private boolean advanceLexerToNextLandmark(ParsePathNode parentNode, boolean lenient, ParserContext context) throws ParseException {
         ParserBuilder builder = context.getBuilder();
-        IterationElementType elementType = getElementType();
 
         PsiBuilder.Marker marker = builder.mark(null);
         ElementType iteratedElementType = elementType.getIteratedElementType();
@@ -183,12 +181,12 @@ public class IterationElementTypeParser extends AbstractElementTypeParser<Iterat
     }
 
     private boolean matchesMinIterations(int iterations) {
-        Integer minIterations = getElementType().getMinIterations();
+        Integer minIterations = elementType.getMinIterations();
         return minIterations == null || minIterations <= iterations;
     }
 
     private boolean matchesIterations(int iterations) {
-        int[]elementsCountVariants = getElementType().getElementsCountVariants();
+        int[]elementsCountVariants = elementType.getElementsCountVariants();
         if (elementsCountVariants != null) {
             for (int elementsCountVariant: elementsCountVariants) {
                 if (elementsCountVariant == iterations) {

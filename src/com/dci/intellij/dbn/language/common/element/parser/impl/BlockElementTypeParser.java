@@ -23,7 +23,7 @@ public class BlockElementTypeParser extends SequenceElementTypeParser<BlockEleme
         if (result.getType() == ParseResultType.NO_MATCH) {
             builder.markerDrop(marker);
         } else {
-            builder.markerDone(marker, getElementType());
+            builder.markerDone(marker, elementType);
         }
         return result.getType() == ParseResultType.NO_MATCH ?
                 ParseResult.createNoMatchResult() :

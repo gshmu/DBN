@@ -16,7 +16,6 @@ public class NamedElementTypeLookupCache extends SequenceElementTypeLookupCache<
     @Override
     protected void registerLeafInParent(LeafElementType leaf) {
         // walk the tree up for all potential parents
-        NamedElementType elementType = getElementType();
         Set<ElementType> parents = elementType.getParents();
         if (parents != null) {
             for (ElementType parentElementType: parents) {
@@ -27,7 +26,6 @@ public class NamedElementTypeLookupCache extends SequenceElementTypeLookupCache<
 
     @Override
     public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, Set<LeafElementType> bucket) {
-        NamedElementType elementType = getElementType();
         if (!context.isScanned(elementType)) {
             context.markScanned(elementType);
             return super.collectFirstPossibleLeafs(context, bucket);
@@ -37,7 +35,6 @@ public class NamedElementTypeLookupCache extends SequenceElementTypeLookupCache<
 
     @Override
     public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, Set<TokenType> bucket) {
-        NamedElementType elementType = getElementType();
         if (!context.isScanned(elementType)) {
             context.markScanned(elementType);
             return super.collectFirstPossibleTokens(context, bucket);

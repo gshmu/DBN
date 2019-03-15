@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public abstract class LeafElementTypeLookupCache<T extends LeafElementType> extends ElementTypeLookupCacheBase<T>  {
+public abstract class LeafElementTypeLookupCache<T extends LeafElementType> extends ElementTypeLookupCache<T> {
     public LeafElementTypeLookupCache(T elementType) {
         super(elementType);
     }
@@ -16,18 +16,18 @@ public abstract class LeafElementTypeLookupCache<T extends LeafElementType> exte
     @Override
     @Deprecated
     public boolean couldStartWithLeaf(LeafElementType leafElementType) {
-        return getElementType() == leafElementType;
+        return elementType == leafElementType;
     }
 
     @Override
     public boolean shouldStartWithLeaf(LeafElementType leafElementType) {
-        return getElementType() == leafElementType;
+        return elementType == leafElementType;
     }
 
     @Override
     public Set<LeafElementType> getFirstPossibleLeafs() {
         HashSet<LeafElementType> leafElementTypes = new HashSet<LeafElementType>(1);
-        leafElementTypes.add(getElementType());
+        leafElementTypes.add(elementType);
         return leafElementTypes;
     }
 
@@ -43,13 +43,13 @@ public abstract class LeafElementTypeLookupCache<T extends LeafElementType> exte
 
     @Override
     public boolean couldStartWithToken(TokenType tokenType) {
-        return getElementType().getTokenType() == tokenType;
+        return elementType.getTokenType() == tokenType;
     }
 
     @Override
     public Set<LeafElementType> collectFirstPossibleLeafs(ElementLookupContext context, @Nullable Set<LeafElementType> bucket) {
         bucket = initBucket(bucket);
-        bucket.add(getElementType());
+        bucket.add(elementType);
         return bucket;
     }
 
@@ -62,7 +62,7 @@ public abstract class LeafElementTypeLookupCache<T extends LeafElementType> exte
 
     @Override
     public boolean containsLeaf(LeafElementType elementType) {
-        return this.getElementType() == elementType;
+        return this.elementType == elementType;
     }
 
     @Override
