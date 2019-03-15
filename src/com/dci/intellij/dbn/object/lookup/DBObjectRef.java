@@ -28,11 +28,11 @@ import java.util.StringTokenizer;
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.PS;
 
 public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>, PersistentStateElement, ConnectionProvider {
-    protected DBObjectRef parent;
-    protected DBObjectType objectType;
-    protected String objectName;
+    public int overload;
+    public DBObjectRef parent;
+    public DBObjectType objectType;
+    public String objectName;
     protected ConnectionId connectionId;
-    protected int overload;
 
     private WeakRef<T> reference;
     private int hashCode = -1;
@@ -124,7 +124,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
                         // last optional "overload" numeric token
                         this.overload = Integer.parseInt(token);
                     } else {
-                        objectType = DBObjectType.forListName(token, objectRef == null ? null : objectRef.getObjectType());
+                        objectType = DBObjectType.forListName(token, objectRef == null ? null : objectRef.objectType);
                     }
                 } else {
                     if (i < tokens.length - 2) {
@@ -267,9 +267,11 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return parent == null ? connectionId : parent.getConnectionId();
     }
 
+/*
     public DBObjectRef getParent() {
         return parent;
     }
+*/
 
     public boolean is(@NotNull T object) {
         return object.getRef().equals(this);
@@ -467,9 +469,11 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return schemaRef == null ? null : schemaRef.objectName;
     }
 
+/*
     public int getOverload() {
         return overload;
     }
+*/
 
     @Override
     public boolean equals(Object o) {
@@ -482,7 +486,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
 
     @Override
     public String toString() {
-        return getObjectName();
+        return objectName;
     }
 
     @Override
@@ -497,10 +501,12 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return hashCode;
     }
 
+/*
     public String getObjectName() {
         return objectName;
     }
 
+*/
     public String getFileName() {
         if (overload == 0) {
             return objectName;
@@ -509,10 +515,12 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         }
     }
 
+/*
     @NotNull
     public DBObjectType getObjectType() {
         return objectType;
     }
+*/
 
     public boolean isOfType(DBObjectType objectType) {
         return this.objectType.matches(objectType);

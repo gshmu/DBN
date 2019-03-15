@@ -13,11 +13,11 @@ public class MethodRefUtil {
 
     public static String getProgramName(DBObjectRef<DBMethod> methodRef) {
         DBObjectRef programRef = methodRef.getParentRef(DBObjectType.PROGRAM);
-        return programRef == null ? null : programRef.getObjectName();
+        return programRef == null ? null : programRef.objectName;
     }
 
     public static DBObjectType getProgramObjectType(DBObjectRef<DBMethod> methodRef) {
         DBObjectRef programRef = methodRef.getParentRef(DBObjectType.PROGRAM);
-        return programRef == null ? null : programRef.getObjectType();
+        return programRef == null ? null : programRef.objectType;
     }
 }

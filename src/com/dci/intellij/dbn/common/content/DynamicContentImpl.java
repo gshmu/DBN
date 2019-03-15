@@ -328,8 +328,8 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
                 ThreadMonitor.is(
                         ThreadProperty.BACKGROUND_TASK,
                         ThreadProperty.BACKGROUND_THREAD,
-                        ThreadProperty.TIMEOUT_PROCESS,
-                        ThreadProperty.CODE_ANNOTATING)) {
+                        ThreadProperty.TIMEOUT_PROCESS/*,
+                        ThreadProperty.CODE_ANNOTATING*/)) {
             ensure();
         } else{
             loadInBackground();

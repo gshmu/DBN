@@ -38,7 +38,7 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
 
     @Override
     protected String getMethodName(MethodExecutionInput executionInput) {
-        return executionInput.getMethodRef().getObjectName();
+        return executionInput.getMethodRef().objectName;
     }
 
     @Override
@@ -108,15 +108,15 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
             ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
             if (connectionHandler != null && connectionHandler.getConnectionId().equals(connectionNode.getConnectionHandlerId()) &&
                 methodRef.getSchemaName().equalsIgnoreCase(schemaNode.getName()) &&
-                methodRef.getObjectName().equalsIgnoreCase(methodNode.getName()) &&
-                methodRef.getOverload() == methodNode.getOverload() ) {
+                methodRef.objectName.equalsIgnoreCase(methodNode.getName()) &&
+                methodRef.overload == methodNode.getOverload() ) {
 
                 DBObjectRef programRef = methodRef.getParentRef(DBObjectType.PROGRAM);
                 if (programNode == null && programRef == null) {
                     return executionInput;
                 } else if (programNode != null && programRef != null){
                     String programName = programNode.getName();
-                    String inputProgramName = programRef.getObjectName();
+                    String inputProgramName = programRef.objectName;
                     if (programName.equalsIgnoreCase(inputProgramName)) {
                         return executionInput;
                     }

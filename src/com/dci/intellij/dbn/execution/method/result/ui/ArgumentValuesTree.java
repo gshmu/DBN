@@ -82,7 +82,7 @@ public class ArgumentValuesTree extends DBNTree{
                     DBObjectRef<DBArgument> argumentRef = (DBObjectRef<DBArgument>) userValue;
                     DBArgument argument = DBObjectRef.get(argumentRef);
                     setIcon(argument == null ? Icons.DBO_ARGUMENT : argument.getIcon());
-                    append(argumentRef.getObjectName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                    append(argumentRef.objectName, SimpleTextAttributes.REGULAR_ATTRIBUTES);
                 }
 
                 if (userValue instanceof ArgumentValue) {

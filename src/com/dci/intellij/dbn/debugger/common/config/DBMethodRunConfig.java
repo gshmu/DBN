@@ -157,7 +157,7 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
             MethodExecutionInput executionInput = getExecutionInput();
             if (executionInput != null) {
                 setGeneratedName(true);
-                String runnerName = executionInput.getMethodRef().getObjectName();
+                String runnerName = executionInput.getMethodRef().objectName;
                 if (getDebuggerType() == DBDebuggerType.JDWP) {
                     runnerName = runnerName + " (JDWP)";
                 }

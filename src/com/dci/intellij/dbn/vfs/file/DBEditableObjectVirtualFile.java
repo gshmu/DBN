@@ -52,7 +52,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
     public DBEditableObjectVirtualFile(Project project, DBObjectRef objectRef) {
         super(project, objectRef);
-        if (objectRef.getObjectType() == DBObjectType.TABLE) {
+        if (objectRef.objectType == DBObjectType.TABLE) {
             databaseSessionId = SessionId.MAIN;
         }
     }
@@ -247,7 +247,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
     public DBContentType getMainContentType() {
         DBObjectRef<DBSchemaObject> objectRef = getObjectRef();
-        DBObjectType objectType = objectRef.getObjectType();
+        DBObjectType objectType = objectRef.objectType;
         DBContentType contentType = objectType.getContentType();
         return
             contentType == DBContentType.CODE ? DBContentType.CODE :
@@ -296,7 +296,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
     @NotNull
     public DBContentType getContentType() {
-        return objectRef.getObjectType().getContentType();
+        return objectRef.objectType.getContentType();
     }
 }
 

@@ -117,7 +117,7 @@ public class ExplainPlanTreeTable extends TreeTable implements Disposable{
                 DBObjectRef objectRef = entry.getObjectRef();
                 SimpleTextAttributes selectedCellAttributes = SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES;
                 if (objectRef != null) {
-                    setIcon(objectRef.getObjectType().getIcon());
+                    setIcon(objectRef.objectType.getIcon());
                     append(objectRef.getPath() + " - ", selected ? selectedCellAttributes : SimpleTextAttributes.REGULAR_ATTRIBUTES);
                 }
 

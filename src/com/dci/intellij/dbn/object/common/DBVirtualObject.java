@@ -328,7 +328,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     @NotNull
     @Override
     public DBObjectType getObjectType() {
-        return objectRef.getObjectType();
+        return objectRef.objectType;
     }
 
     @Override

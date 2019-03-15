@@ -64,7 +64,7 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
     @Override
     @NotNull
     public String getName() {
-        return objectRef.getObjectName();
+        return objectRef.objectName;
     }
 
     @Override

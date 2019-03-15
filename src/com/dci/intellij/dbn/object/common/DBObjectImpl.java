@@ -210,7 +210,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     @Override
     @NotNull
     public String getName() {
-        return objectRef.getObjectName();
+        return objectRef.objectName;
     }
 
     @Override

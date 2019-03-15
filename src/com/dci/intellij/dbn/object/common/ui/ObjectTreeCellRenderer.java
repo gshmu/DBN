@@ -20,10 +20,10 @@ public class ObjectTreeCellRenderer extends ColoredTreeCellRenderer {
             Object userObject = treeNode.getUserObject();
             if (userObject instanceof DBObjectRef) {
                 DBObjectRef objectRef = (DBObjectRef) userObject;
-                append(objectRef.getObjectName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                append(objectRef.objectName, SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
                 DBObject object = DBObjectRef.get(objectRef);
-                setIcon(object == null ? objectRef.getObjectType().getIcon() : object.getOriginalIcon());
+                setIcon(object == null ? objectRef.objectType.getIcon() : object.getOriginalIcon());
 
                 if (object instanceof DBMethod) {
                     DBMethod method = (DBMethod) object;
