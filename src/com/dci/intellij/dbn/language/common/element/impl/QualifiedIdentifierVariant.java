@@ -107,14 +107,14 @@ public class QualifiedIdentifierVariant implements Comparable{
     }
 
     public boolean matchesPsiElement(QualifiedIdentifierPsiElement psiElement) {
-        TokenElementType separatorToken = psiElement.getElementType().getSeparatorToken();
+        TokenElementType separatorToken = psiElement.elementType.getSeparatorToken();
         PsiElement child = psiElement.getFirstChild();
         int index = 0;
         while (child != null) {
             if (child instanceof LeafPsiElement) {
                 LeafPsiElement leafPsiElement = (LeafPsiElement) child;
 
-                if (leafPsiElement.getElementType() == separatorToken){
+                if (leafPsiElement.elementType == separatorToken){
                     index++;
                 } else {
                     if (leafs.length == index) {
@@ -123,7 +123,7 @@ public class QualifiedIdentifierVariant implements Comparable{
                     }
 
                     PsiElement reference = leafPsiElement.resolve();
-                    LeafElementType leafElementType = leafPsiElement.getElementType();
+                    LeafElementType leafElementType = (LeafElementType) leafPsiElement.elementType;
                     if (reference == null) {
                         if (!(leafElementType.isIdentifier() && leafs[index].isIdentifier()) ||
                                 !leafElementType.isSameAs(leafs[index])) {

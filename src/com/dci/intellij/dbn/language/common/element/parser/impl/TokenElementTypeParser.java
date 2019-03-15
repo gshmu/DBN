@@ -21,7 +21,7 @@ public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> 
 
     @Override
     public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) {
-        ParserBuilder builder = context.getBuilder();
+        ParserBuilder builder = context.builder;
         logBegin(builder, optional, depth);
 
         TokenType tokenType = builder.getTokenType();

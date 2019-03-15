@@ -143,9 +143,9 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         PsiElement parent = element.getParent();
         if (parent instanceof QualifiedIdentifierPsiElement) {
             QualifiedIdentifierPsiElement qualifiedIdentifier = (QualifiedIdentifierPsiElement) parent;
-            ElementType separator = qualifiedIdentifier.getElementType().getSeparatorToken();
+            ElementType separator = qualifiedIdentifier.elementType.getSeparatorToken();
 
-            if (element.getElementType() == separator){
+            if (element.elementType == separator){
                 BasePsiElement parentPsiElement = element.getPrevElement();
                 if (parentPsiElement instanceof IdentifierPsiElement) {
                     parentIdentifierPsiElement = (IdentifierPsiElement) parentPsiElement;
@@ -165,7 +165,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                     }
                 }
             }
-        } else if (element.getElementType().getTokenType() == element.getLanguage().getSharedTokenTypes().getChrDot()) {
+        } else if (element.elementType.getTokenType() == element.getLanguage().getSharedTokenTypes().getChrDot()) {
             LeafPsiElement parentPsiElement = element.getPrevLeaf();
             if (parentPsiElement instanceof IdentifierPsiElement) {
                 parentIdentifierPsiElement = (IdentifierPsiElement) parentPsiElement;
@@ -173,8 +173,8 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             }
         } else if (parent instanceof BasePsiElement) {
             BasePsiElement basePsiElement = (BasePsiElement) parent;
-            ElementType elementType = basePsiElement.getElementType();
-            if (elementType.isWrappingBegin(element.getElementType())) {
+            ElementType elementType = basePsiElement.elementType;
+            if (elementType.isWrappingBegin((LeafElementType) element.elementType)) {
                 Set<LeafElementType> firstPossibleLeafs = elementType.getLookupCache().getFirstPossibleLeafs();
                 for (LeafElementType leafElementType : firstPossibleLeafs) {
                     String leafUniqueKey = getLeafUniqueKey(leafElementType);
@@ -186,7 +186,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         }
 
         if (nextPossibleLeafs.isEmpty()) {
-            LeafElementType elementType = element.getElementType();
+            LeafElementType elementType = (LeafElementType) element.elementType;
             PathNode pathNode = new ASTPathNode(element.getNode());
             ElementLookupContext lookupContext = computeParseBranches(element.getNode(), context.getDatabaseVersion());
             if (!context.isNewLine()) {

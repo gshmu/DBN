@@ -24,7 +24,7 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
 
     @Override
     public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
-        ParserBuilder builder = context.getBuilder();
+        ParserBuilder builder = context.builder;
         logBegin(builder, optional, depth);
         ParsePathNode node = stepIn(parentNode, context);
 
@@ -77,13 +77,13 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
     }
 
     private static boolean isParentWrapping(ParsePathNode node, TokenType tokenType) {
-        ParsePathNode parent = node.getParent();
+        ParsePathNode parent = node.parent;
         while (parent != null && parent.getCursorPosition() == 0) {
-            WrappingDefinition parentWrapping = parent.getElementType().getWrapping();
+            WrappingDefinition parentWrapping = parent.elementType.getWrapping();
             if (parentWrapping != null && parentWrapping.getBeginElementType().getTokenType() == tokenType) {
                 return true;
             }
-            parent = parent.getParent();
+            parent = parent.parent;
         }
         return false;
     }

@@ -19,7 +19,7 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
 
     @Override
     public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
-        ParserBuilder builder = context.getBuilder();
+        ParserBuilder builder = context.builder;
         logBegin(builder, optional, depth);
         ParsePathNode node = stepIn(parentNode, context);
 

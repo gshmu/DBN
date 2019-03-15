@@ -8,22 +8,18 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BasicPathNode implements PathNode {
-    private PathNode parent;
-    private ElementType elementType;
+public class BasicPathNode<T extends BasicPathNode> implements PathNode {
+    public T parent;
+    public final ElementType elementType;
 
-    public BasicPathNode(ElementType elementType, PathNode parent) {
+    public BasicPathNode(ElementType elementType, T parent) {
         this.elementType = elementType;
         this.parent = parent;
     }
 
     @Override
-    public PathNode getParent() {
+    public T getParent() {
         return parent;
-    }
-
-    public void setParent(PathNode parent) {
-        this.parent = parent;
     }
 
     @Override
@@ -33,9 +29,9 @@ public class BasicPathNode implements PathNode {
 
     @Override
     public PathNode getRootPathNode() {
-        PathNode pathNode = parent;
+        BasicPathNode pathNode = parent;
         while (pathNode != null) {
-            PathNode parentPathNode = pathNode.getParent();
+            BasicPathNode parentPathNode = pathNode.parent;
             if (parentPathNode == null) {
                 return pathNode;
             }
@@ -44,30 +40,26 @@ public class BasicPathNode implements PathNode {
         return this;
     }
 
-    public PathNode getPathNode(ElementTypeAttribute attribute) {
-        PathNode pathNode = this;
+    public BasicPathNode getPathNode(ElementTypeAttribute attribute) {
+        BasicPathNode pathNode = this;
         while (pathNode != null) {
-            if (pathNode.getElementType().is(attribute)) {
+            if (pathNode.elementType.is(attribute)) {
                 return pathNode;
             }
-            pathNode = pathNode.getParent();
+            pathNode = pathNode.parent;
         }
         return null;
 
     }
 
-    public void setElementType(ElementType elementType) {
-        this.elementType = elementType;
-    }
-
     @Override
     public boolean isRecursive() {
-        PathNode node = this.getParent();
+        BasicPathNode node = this.parent;
         while (node != null) {
-            if (node.getElementType() == elementType) {
+            if (node.elementType == elementType) {
                 return true;
             }
-            node = node.getParent();
+            node = node.parent;
         }
         return false;
     }
@@ -77,12 +69,12 @@ public class BasicPathNode implements PathNode {
         if (this.elementType == elementType) {
             return true;
         }
-        PathNode node = this.getParent();
+        BasicPathNode node = this.parent;
         while (node != null) {
-            if (node.getElementType() == elementType) {
+            if (node.elementType == elementType) {
                 return true;
             }
-            node = node.getParent();
+            node = node.parent;
         }
         return false;
     }
@@ -94,11 +86,11 @@ public class BasicPathNode implements PathNode {
 
     public String toString() {
         StringBuilder buffer = new StringBuilder();
-        PathNode parent = this;
+        BasicPathNode parent = this;
         while (parent != null) {
             buffer.insert(0, '/');
-            buffer.insert(0, parent.getElementType().getId());
-            parent = parent.getParent();
+            buffer.insert(0, parent.elementType.getId());
+            parent = parent.parent;
         }
         return buffer.toString();
     }
@@ -109,12 +101,12 @@ public class BasicPathNode implements PathNode {
     }
 
     public boolean isSiblingOf(ParsePathNode parentNode) {
-        PathNode parent = getParent();
+        BasicPathNode parent = this.parent;
         while (parent != null) {
             if (parent == parentNode) {
                 return true;
             }
-            parent = parent.getParent();
+            parent = parent.parent;
         }
         return false;
     }
@@ -127,7 +119,7 @@ public class BasicPathNode implements PathNode {
             elementType = elementType.getParent();
         }
 
-        PathNode pathNode = null;
+        BasicPathNode pathNode = null;
         ReversedList<ElementType> reversedPath = ReversedList.get(path);
         for (ElementType pathElement : reversedPath) {
             pathNode = new BasicPathNode(pathElement, pathNode);

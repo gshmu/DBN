@@ -14,19 +14,15 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Set;
 
-public class ExecVariablePsiElement extends LeafPsiElement {
+public class ExecVariablePsiElement extends LeafPsiElement<ExecVariableElementType> {
     public ExecVariablePsiElement(ASTNode astNode, ExecVariableElementType elementType) {
         super(astNode, elementType);
     }
 
     @Override
-    public ExecVariableElementType getElementType() {
-        return (ExecVariableElementType) super.getElementType();
-    }
-
-    @Override
     @Nullable
     public BasePsiElement findPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount) {return null;}
+
     @Override
     @Nullable
     public Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, @Nullable Set<BasePsiElement> bucket, int scopeCrossCount) {return bucket;}
@@ -34,10 +30,13 @@ public class ExecVariablePsiElement extends LeafPsiElement {
 
     @Override
     public void collectExecVariablePsiElements(@NotNull Set<ExecVariablePsiElement> bucket) { bucket.add(this);}
+
     @Override
     public void collectSubjectPsiElements(@NotNull Set<IdentifierPsiElement> bucket) {}
+
     @Override
     public NamedPsiElement findNamedPsiElement(String id) {return null;}
+
     @Override
     public BasePsiElement findPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {return null;}
 
@@ -60,7 +59,7 @@ public class ExecVariablePsiElement extends LeafPsiElement {
      *********************************************************/
     @Override
     public String getPresentableText() {
-        return getElementType().getTokenType().getValue();
+        return elementType.getTokenType().getValue();
     }
 
     @Override

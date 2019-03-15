@@ -27,7 +27,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
 
     @Override
     public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
-        ParserBuilder builder = context.getBuilder();
+        ParserBuilder builder = context.builder;
         logBegin(builder, optional, depth);
         ParsePathNode node = stepIn(parentNode, context);
 
@@ -126,7 +126,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
     }
 
     private boolean advanceLexerToNextLandmark(ParsePathNode parentNode, boolean lenient, ParserContext context) throws ParseException {
-        ParserBuilder builder = context.getBuilder();
+        ParserBuilder builder = context.builder;
 
         PsiBuilder.Marker marker = builder.mark(null);
         ElementType iteratedElementType = elementType.getIteratedElementType();
@@ -155,8 +155,8 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
 
                 ParsePathNode parseNode = parentNode;
                 while (parseNode != null) {
-                    if (parseNode.getElementType() instanceof SequenceElementType) {
-                        SequenceElementType sequenceElementType = (SequenceElementType) parseNode.getElementType();
+                    if (parseNode.elementType instanceof SequenceElementType) {
+                        SequenceElementType sequenceElementType = (SequenceElementType) parseNode.elementType;
                         int index = parseNode.getCursorPosition();
                         if (!iteratedElementType.getLookupCache().containsToken(tokenType) && sequenceElementType.containsLandmarkTokenFromIndex(tokenType, index + 1)) {
                             if (advanced || !lenient) {
@@ -168,7 +168,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
                         }
 
                     }
-                    parseNode = parseNode.getParent();
+                    parseNode = parseNode.parent;
                 }
             }
             builder.advanceLexer(parentNode);

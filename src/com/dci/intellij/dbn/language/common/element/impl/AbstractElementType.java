@@ -20,7 +20,7 @@ import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCach
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
-import com.dci.intellij.dbn.language.common.element.path.PathNode;
+import com.dci.intellij.dbn.language.common.element.path.BasicPathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttributeHolder;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
@@ -59,6 +59,9 @@ public abstract class AbstractElementType extends IElementType implements Elemen
 
     protected WrappingDefinition wrapping;
 
+    private boolean scopeDemarcation;
+    private boolean scopeIsolation;
+
     AbstractElementType(ElementTypeBundle bundle, ElementType parent, String id, @Nullable String description) {
         super(id, bundle.getLanguageDialect(), false);
         idx = TokenType.INDEXER.incrementAndGet();
@@ -91,7 +94,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     Set<BranchCheck> parseBranchChecks(String definitions) {
         Set<BranchCheck> branches = null;
         if (definitions != null) {
-            branches = new THashSet<BranchCheck>();
+            branches = new THashSet<>();
             StringTokenizer tokenizer = new StringTokenizer(definitions, " ");
             while (tokenizer.hasMoreTokens()) {
                 String branchDef = tokenizer.nextToken().trim();
@@ -139,6 +142,16 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     @Override
     public void setDefaultFormatting(FormattingDefinition defaultFormatting) {
         formatting = FormattingDefinitionFactory.mergeDefinitions(formatting, defaultFormatting);
+    }
+
+    @Override
+    public boolean isScopeDemarcation() {
+        return scopeDemarcation;
+    }
+
+    @Override
+    public boolean isScopeIsolation() {
+        return scopeIsolation;
     }
 
     protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
@@ -193,9 +206,12 @@ public abstract class AbstractElementType extends IElementType implements Elemen
             }
         }
 
-        if (beginTokenElement != null && endTokenElement != null) {
+        if (beginTokenElement != null) {
             wrapping = new WrappingDefinition(beginTokenElement, endTokenElement);
         }
+
+        scopeDemarcation = is(ElementTypeAttribute.SCOPE_DEMARCATION) || is(ElementTypeAttribute.STATEMENT);
+        scopeIsolation = is(ElementTypeAttribute.SCOPE_ISOLATION);
     }
 
     @Override
@@ -285,10 +301,10 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     }
 
     @Override
-    public int getIndexInParent(PathNode pathNode) {
-        PathNode parentNode = pathNode.getParent();
-        if (parentNode != null && parentNode.getElementType() instanceof SequenceElementType) {
-            SequenceElementType sequenceElementType = (SequenceElementType) parentNode.getElementType();
+    public int getIndexInParent(BasicPathNode pathNode) {
+        BasicPathNode parentNode = pathNode.parent;
+        if (parentNode != null && parentNode.elementType instanceof SequenceElementType) {
+            SequenceElementType sequenceElementType = (SequenceElementType) parentNode.elementType;
             return sequenceElementType.indexOf(this);
         }
         return 0;
@@ -315,5 +331,10 @@ public abstract class AbstractElementType extends IElementType implements Elemen
             LOGGER.warn('[' + getLanguageDialect().getID() + "] Invalid element boolean attribute '" + attributeName + "' (id=" + this.id + "). Expected 'true' or 'false'");
         }
         return false;
+    }
+
+    @Override
+    public TokenType getTokenType() {
+        return null;
     }
 }

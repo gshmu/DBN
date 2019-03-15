@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.QuotePair;
-import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierVariant;
@@ -42,18 +41,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public abstract class IdentifierPsiElement extends LeafPsiElement {
+public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElementType> {
     public IdentifierPsiElement(ASTNode astNode, IdentifierElementType elementType) {
         super(astNode, elementType);
 /*        ref = astNode.getUserData(PsiResolveResult.DATA_KEY);
         if (ref != null) {
             ref.accept(this);
         }*/
-    }
-
-    @Override
-    public IdentifierElementType getElementType() {
-        return (IdentifierElementType) super.getElementType();
     }
 
     @Override
@@ -161,7 +155,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement {
 
     @Override
     public void collectSubjectPsiElements(@NotNull Set<IdentifierPsiElement> bucket) {
-        if (getElementType().is(ElementTypeAttribute.SUBJECT)) {
+        if (elementType.is(ElementTypeAttribute.SUBJECT)) {
             bucket.add(this);
         }
     }
@@ -176,41 +170,41 @@ public abstract class IdentifierPsiElement extends LeafPsiElement {
      * *******************************************************
      */
     public boolean isObject() {
-        return getElementType().isObject();
+        return elementType.isObject();
     }
 
     public boolean isAlias() {
-        return getElementType().isAlias();
+        return elementType.isAlias();
     }
 
     public boolean isVariable() {
-        return getElementType().isVariable();
+        return elementType.isVariable();
     }
 
 
     public boolean isDefinition() {
-        return getElementType().isDefinition();
+        return elementType.isDefinition();
     }
 
 
     public boolean isSubject() {
-        return getElementType().isSubject();
+        return elementType.isSubject();
     }
 
     public boolean isReference() {
-        return getElementType().isReference();
+        return elementType.isReference();
     }
     
     public boolean isReferenceable() {
-        return getElementType().isReferenceable();
+        return elementType.isReferenceable();
     }
 
     public boolean isObjectOfType(DBObjectType objectType) {
-        return getElementType().isObjectOfType(objectType);
+        return elementType.isObjectOfType(objectType);
     }
 
     public boolean isLocalReference() {
-        return getElementType().isLocalReference();
+        return elementType.isLocalReference();
     }
 
     public boolean isQualifiedIdentifierMember() {
@@ -221,11 +215,11 @@ public abstract class IdentifierPsiElement extends LeafPsiElement {
         if (ref != null && ref.getObjectType() != null) {
             return ref.getObjectType();
         }
-        return getElementType().getObjectType();
+        return elementType.getObjectType();
     }
 
     public String getObjectTypeName() {
-        return getElementType().getObjectTypeName();
+        return elementType.getObjectTypeName();
     }
 
     /**
@@ -252,7 +246,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement {
         }
         try {
             isResolvingUnderlyingObject = true;
-            UnderlyingObjectResolver underlyingObjectResolver = getElementType().getUnderlyingObjectResolver();
+            UnderlyingObjectResolver underlyingObjectResolver = elementType.getUnderlyingObjectResolver();
             if (underlyingObjectResolver != null) {
                 DBObject underlyingObject = underlyingObjectResolver.resolve(this);
                 return resolveActualObject(underlyingObject);
@@ -307,7 +301,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement {
 
     @Override
     public BasePsiElement findPsiElementBySubject(ElementTypeAttribute attribute, CharSequence subjectName, DBObjectType subjectType) {
-        if (getElementType().is(attribute) && getElementType().is(ElementTypeAttribute.SUBJECT)) {
+        if (elementType.is(attribute) && elementType.is(ElementTypeAttribute.SUBJECT)) {
             if (subjectType == getObjectType() && StringUtil.equalsIgnoreCase(subjectName, this.getChars())) {
                 return this;
             }
@@ -451,21 +445,21 @@ public abstract class IdentifierPsiElement extends LeafPsiElement {
         return false;
     }
 
-    private boolean updateReference(@Nullable BasePsiElement parent, ElementType elementType, DBObject referenceObject) {
+    private boolean updateReference(@Nullable BasePsiElement parent, IdentifierElementType elementType, DBObject referenceObject) {
         if (isValidReference(referenceObject)) {
             ref.setParent(parent);
             ref.setReferencedElement(DBObjectPsiFacade.getPsiElement(referenceObject));
-            setElementType(elementType);
+            this.elementType = elementType;
             return true;
         }
         return false;
     }
 
-    private boolean updateReference(@Nullable BasePsiElement parent, ElementType elementType, PsiElement referencedElement) {
+    private boolean updateReference(@Nullable BasePsiElement parent, IdentifierElementType elementType, PsiElement referencedElement) {
         if (isValidReference(referencedElement)) {
             ref.setParent(parent);
             ref.setReferencedElement(referencedElement);
-            setElementType(elementType);
+            this.elementType = elementType;
             return true;
         }
         return false;
@@ -539,7 +533,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement {
                     QualifiedIdentifierPsiElement qualifiedIdentifier = (QualifiedIdentifierPsiElement) getParent();
                     resolveWithinQualifiedIdentifierElement(qualifiedIdentifier);
                 } else {
-                    resolveWithScopeParentLookup(getObjectType(), getElementType());
+                    resolveWithScopeParentLookup(getObjectType(), elementType);
                 }
            } finally {
                 ref.postResolve();
@@ -604,7 +598,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement {
     }
 
     public IdentifierType getIdentifierType() {
-        return getElementType().getIdentifierType();
+        return elementType.getIdentifierType();
     }
 
     public List<BasePsiElement> findQualifiedUsages() {
@@ -615,7 +609,9 @@ public abstract class IdentifierPsiElement extends LeafPsiElement {
             Set<BasePsiElement> basePsiElements = identifierLookupAdapter.collectInElement(scopePsiElement, null);
             if (basePsiElements != null) {
                 for (BasePsiElement basePsiElement : basePsiElements) {
-                    QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = basePsiElement.findEnclosingPsiElement(QualifiedIdentifierPsiElement.class);
+                    QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement =
+                            (QualifiedIdentifierPsiElement) basePsiElement.findEnclosingPsiElement(QualifiedIdentifierPsiElement.class);
+
                     if (qualifiedIdentifierPsiElement != null && qualifiedIdentifierPsiElement.getElementsCount() > 1) {
                         qualifiedUsages.add(qualifiedIdentifierPsiElement);
                     }

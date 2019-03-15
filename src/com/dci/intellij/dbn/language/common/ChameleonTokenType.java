@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
-import com.dci.intellij.dbn.language.common.element.path.PathNode;
+import com.dci.intellij.dbn.language.common.element.path.BasicPathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
@@ -132,7 +132,22 @@ public class ChameleonTokenType extends SimpleTokenType implements ElementType {
     }
 
     @Override
-    public int getIndexInParent(PathNode pathNode) {
+    public boolean isScopeDemarcation() {
+        return true;
+    }
+
+    @Override
+    public boolean isScopeIsolation() {
+        return true;
+    }
+
+    @Override
+    public TokenType getTokenType() {
+        return null;
+    }
+
+    @Override
+    public int getIndexInParent(BasicPathNode pathNode) {
         return 0;
     }
 }

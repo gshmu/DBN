@@ -65,8 +65,8 @@ import javax.swing.*;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class BasePsiElement extends ASTWrapperPsiElement implements ItemPresentation, FormattingProviderPsiElement {
-    private ElementType elementType;
+public abstract class BasePsiElement<T extends ElementType> extends ASTWrapperPsiElement implements ItemPresentation, FormattingProviderPsiElement {
+    public T elementType;
     private DBVirtualObject underlyingObject;
     private FormattingAttributes formattingAttributes;
 
@@ -78,7 +78,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         SOFT,
     }
 
-    public BasePsiElement(ASTNode astNode, ElementType elementType) {
+    public BasePsiElement(ASTNode astNode, T elementType) {
         super(astNode);
         this.elementType = elementType;
     }
@@ -110,10 +110,6 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         return StringUtil.containsLineBreak(getNode().getChars());
     }
 
-    public void setElementType(ElementType elementType) {
-        this.elementType = elementType;
-    }
-
     @Override
     public PsiElement getFirstChild() {
         ASTNode firstChildNode = getNode().getFirstChildNode();
@@ -143,7 +139,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
             }
             if (psiElement instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) psiElement;
-                boolean isSameElement = basePsiElement.getElementType() == getElementType();
+                boolean isSameElement = basePsiElement.elementType == elementType;
                 boolean isIdentifier = basePsiElement instanceof IdentifierPsiElement && this instanceof IdentifierPsiElement;
                 if ((isSameElement || isIdentifier) && elementStartOffset == startOffset) {
                     return basePsiElement;
@@ -168,14 +164,10 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     }
 
     public String getReferenceQualifiedName() {
-        return isVirtualObject() ? "virtual " + getElementType().getVirtualObjectType().getName() : "[unknown element]";
+        return isVirtualObject() ? "virtual " + elementType.getVirtualObjectType().getName() : "[unknown element]";
     }
 
     public abstract int approximateLength();
-
-    public ElementType getElementType() {
-        return elementType;
-    }
 
     @NotNull
     public DBLanguagePsiFile getFile() {
@@ -320,7 +312,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     }
 
     public boolean isVirtualObject() {
-        return getElementType().isVirtualObject();
+        return elementType.isVirtualObject();
     }
 
     @Override
@@ -448,8 +440,8 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
 
     public void collectVirtualObjectPsiElements(Set<BasePsiElement> bucket, DBObjectType objectType) {
-        if (getElementType().isVirtualObject()) {
-            DBObjectType virtualObjectType = getElementType().getVirtualObjectType();
+        if (elementType.isVirtualObject()) {
+            DBObjectType virtualObjectType = elementType.getVirtualObjectType();
             if (objectType == virtualObjectType) {
                 bucket.add(this);
             }
@@ -478,7 +470,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         while (element != null && !(element instanceof PsiFile)) {
             if (element instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) element;
-                if (basePsiElement.getElementType().is(attribute)) {
+                if (basePsiElement.elementType.is(attribute)) {
                     return (BasePsiElement) element;
                 }
             }
@@ -493,7 +485,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         while (element != null && !(element instanceof PsiFile)) {
             if (element instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) element;
-                if (basePsiElement.getElementType().getVirtualObjectType() == objectType) {
+                if (basePsiElement.elementType.getVirtualObjectType() == objectType) {
                     return (BasePsiElement) element;
                 }
             }
@@ -509,7 +501,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
             if (element  instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) element;
                 for (ElementTypeAttribute typeAttribute : typeAttributes) {
-                    if (basePsiElement.getElementType().is(typeAttribute)) {
+                    if (basePsiElement.elementType.is(typeAttribute)) {
                         return basePsiElement;
                     }
                 }
@@ -601,13 +593,13 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     }
 
     @Nullable
-    public <T extends BasePsiElement> T findEnclosingPsiElement(Class<T> psiClass) {
+    public <E extends BasePsiElement<?>> E findEnclosingPsiElement(Class<E> psiClass) {
         PsiElement element = getParent();
         while (element != null && !(element instanceof PsiFile)) {
             if (element instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) element;
                 if (psiClass.isAssignableFrom(basePsiElement.getClass())) {
-                    return (T) element;
+                    return (E) element;
                 }
             }
             element = element.getParent();
@@ -621,7 +613,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         while (element != null && !(element instanceof PsiFile)) {
             if (element instanceof NamedPsiElement) {
                 NamedPsiElement namedPsiElement = (NamedPsiElement) element;
-                if (namedPsiElement.getElementType().is(ElementTypeAttribute.ROOT)) {
+                if (namedPsiElement.elementType.is(ElementTypeAttribute.ROOT)) {
                     return namedPsiElement;
                 }
             }
@@ -649,11 +641,11 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
     }
 
     public boolean isScopeDemarcation() {
-        return elementType.is(ElementTypeAttribute.SCOPE_DEMARCATION) || elementType.is(ElementTypeAttribute.STATEMENT);
+        return elementType.isScopeDemarcation();
     }
 
     public boolean isScopeIsolation() {
-        return elementType.is(ElementTypeAttribute.SCOPE_ISOLATION);
+        return elementType.isScopeIsolation();
     }
     
     public boolean isScopeBoundary() {
@@ -675,7 +667,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
         if (elementType.is(ElementTypeAttribute.GENERIC)) {
             BasePsiElement specificElement = findFirstPsiElement(ElementTypeAttribute.SPECIFIC);
             if (specificElement != null) {
-                elementType = specificElement.getElementType();
+                elementType = specificElement.elementType;
             }
         }
         return elementType;
@@ -720,7 +712,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
 
     @NotNull
     public DBLanguageDialect getLanguageDialect() {
-        return getElementType().getLanguageDialect();
+        return elementType.getLanguageDialect();
     }
 
     public abstract boolean matches(@Nullable BasePsiElement basePsiElement, MatchType matchType);
@@ -730,7 +722,7 @@ public abstract class BasePsiElement extends ASTWrapperPsiElement implements Ite
             Synchronized.run(this,
                     () -> getCachedUnderlyingObject() == null,
                     () -> {
-                        DBObjectType virtualObjectType = getElementType().getVirtualObjectType();
+                        DBObjectType virtualObjectType = elementType.getVirtualObjectType();
                         underlyingObject = new DBVirtualObject(virtualObjectType, this);
                     });
         }

@@ -218,6 +218,6 @@ public class StatementExecutionInput extends LocalExecutionInput {
 
     @Override
     public boolean isDatabaseLogProducer() {
-        return executablePsiElement != null && executablePsiElement.getElementType().is(ElementTypeAttribute.DATABASE_LOG_PRODUCER);
+        return executablePsiElement != null && executablePsiElement.elementType.is(ElementTypeAttribute.DATABASE_LOG_PRODUCER);
     }
 }

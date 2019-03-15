@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.language.common.element.path;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.intellij.lang.PsiBuilder;
 
-public class ParsePathNode extends BasicPathNode {
+public class ParsePathNode extends BasicPathNode<ParsePathNode> {
     private int startOffset;
     private int currentOffset;
     private int cursorPosition;
@@ -16,11 +16,6 @@ public class ParsePathNode extends BasicPathNode {
         this.currentOffset = startOffset;
         this.cursorPosition = cursorPosition;
         this.depth = parent == null ? 0 : parent.depth + 1;
-    }
-
-    @Override
-    public ParsePathNode getParent() {
-        return (ParsePathNode) super.getParent();
     }
 
     public int getStartOffset() {
@@ -45,25 +40,25 @@ public class ParsePathNode extends BasicPathNode {
 
     @Override
     public boolean isRecursive() {
-        ParsePathNode parseNode = this.getParent();
+        ParsePathNode parseNode = this.parent;
         while (parseNode != null) {
-            if (parseNode.getElementType() == getElementType() &&
+            if (parseNode.elementType == this.elementType &&
                 parseNode.startOffset == startOffset) {
                 return true;
             }
-            parseNode = parseNode.getParent();
+            parseNode = parseNode.parent;
         }
         return false;
     }
 
     public boolean isRecursive(int currentOffset) {
-        ParsePathNode parseNode = this.getParent();
+        ParsePathNode parseNode = this.parent;
         while (parseNode != null) {
-            if (parseNode.getElementType() == getElementType() &&
+            if (parseNode.elementType == this.elementType &&
                         parseNode.currentOffset == currentOffset) {
                     return true;
                 }
-            parseNode = parseNode.getParent();
+            parseNode = parseNode.parent;
         }
         return false;
     }

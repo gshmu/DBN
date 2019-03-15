@@ -42,7 +42,7 @@ public class FormattingBlock implements Block {
     private PsiElementRef psiElementRef;
     private CodeStyleSettings codeStyleSettings;
     private CodeStyleCustomSettings codeStyleCustomSettings;
-    private static final List<Block> EMPTY_LIST = new ArrayList<Block>(0);
+    private static final List<Block> EMPTY_LIST = new ArrayList<>(0);
     private List<Block> childBlocks;
     private FormattingBlock parentBlock;
     private int index;
@@ -130,8 +130,8 @@ public class FormattingBlock implements Block {
             if (psiElement instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) psiElement;
                 BasePsiElement parentPsiElement = getParentPsiElement(basePsiElement);
-                if (parentPsiElement != null && parentPsiElement.getElementType() instanceof WrapperElementType) {
-                    WrapperElementType wrapperElementType = (WrapperElementType) parentPsiElement.getElementType();
+                if (parentPsiElement != null && parentPsiElement.elementType instanceof WrapperElementType) {
+                    WrapperElementType wrapperElementType = (WrapperElementType) parentPsiElement.elementType;
                     SharedTokenTypeBundle sharedTokenTypes = parentPsiElement.getLanguage().getSharedTokenTypes();
                     if (wrapperElementType.getBeginTokenElement().getTokenType() == sharedTokenTypes.getChrLeftParenthesis()) {
                         //FormattingBlock parentStatementBlock = getParentBlock(this, ElementTypeAttribute.STATEMENT);
@@ -302,7 +302,7 @@ public class FormattingBlock implements Block {
             PsiElement psiElement = block.parentBlock.getPsiElement();
             if (psiElement instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) psiElement;
-                if (basePsiElement.getElementType().is(typeAttribute)) {
+                if (basePsiElement.elementType.is(typeAttribute)) {
                     return block.parentBlock;
                 }
                 return getParentBlock(block.parentBlock, typeAttribute);
@@ -315,7 +315,7 @@ public class FormattingBlock implements Block {
     private static ElementType getParentElementType(PsiElement psiElement) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
         if (parentPsiElement != null) {
-            return parentPsiElement.getElementType();
+            return parentPsiElement.elementType;
         }
         return null;
     }
@@ -336,7 +336,7 @@ public class FormattingBlock implements Block {
                     PsiElement child = psiElement.getFirstChild();
                     while (child != null) {
                         if (!(child instanceof PsiWhiteSpace) /*&& !(child instanceof PsiErrorElement)*/ && child.getTextLength() > 0) {
-                            if (childBlocks == null) childBlocks = new ArrayList<Block>();
+                            if (childBlocks == null) childBlocks = new ArrayList<>();
                             CodeStyleCustomSettings codeStyleCustomSettings = getCodeStyleSettings(child);
                             FormattingBlock childBlock = new FormattingBlock(codeStyleSettings, codeStyleCustomSettings, child, this, index);
                             childBlocks.add(childBlock);

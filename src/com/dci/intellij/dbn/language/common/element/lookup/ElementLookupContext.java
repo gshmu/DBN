@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
-import com.dci.intellij.dbn.language.common.element.path.PathNode;
+import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -55,7 +54,7 @@ public class ElementLookupContext {
         }
     }
 
-    public void addBranchMarker(PathNode pathNode, @NotNull Branch branch) {
+    public void addBranchMarker(ParsePathNode pathNode, @NotNull Branch branch) {
         NamedElementType namedElementType = getNamedElement(pathNode);
         if (namedElementType != null) {
             branchMarkers.put(branch, namedElementType);
@@ -77,20 +76,20 @@ public class ElementLookupContext {
     }
 
     @Nullable
-    private static NamedElementType getNamedElement(@NotNull PathNode pathNode) {
-        pathNode = pathNode.getParent();
+    private static NamedElementType getNamedElement(@NotNull ParsePathNode pathNode) {
+        pathNode = pathNode.parent;
         while (pathNode != null) {
-            ElementType elementType = pathNode.getElementType();
+            ElementType elementType = pathNode.elementType;
             if (elementType instanceof NamedElementType) {
                 return (NamedElementType) elementType;
             }
-            pathNode = pathNode.getParent();
+            pathNode = pathNode.parent;
         }
         return null;
     }
 
-    public void removeBranchMarkers(@NotNull PathNode pathNode) {
-        ElementType elementType = pathNode.getElementType();
+    public void removeBranchMarkers(@NotNull ParsePathNode pathNode) {
+        ElementType elementType = pathNode.elementType;
         if (elementType instanceof NamedElementType) {
             removeBranchMarkers((NamedElementType) elementType);
         }
@@ -98,13 +97,7 @@ public class ElementLookupContext {
 
     public void removeBranchMarkers(NamedElementType elementType) {
         if (branchMarkers.size() > 0 && branchMarkers.containsValue(elementType)) {
-            Iterator<Branch> iterator = branchMarkers.keySet().iterator();
-            while (iterator.hasNext()) {
-                Branch key = iterator.next();
-                if (branchMarkers.get(key) == elementType) {
-                    iterator.remove();
-                }
-            }
+            branchMarkers.keySet().removeIf(key -> branchMarkers.get(key) == elementType);
         }
         branches = branchMarkers.size() == 0 ? null : branchMarkers.keySet();
     }
