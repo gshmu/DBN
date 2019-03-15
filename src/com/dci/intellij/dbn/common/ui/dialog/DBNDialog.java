@@ -21,6 +21,7 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
         super(project, canBeParent);
         setTitle(Constants.DBN_TITLE_PREFIX + title);
         this.project = project;
+        getHelpAction().setEnabled(false);
     }
 
     @NotNull
