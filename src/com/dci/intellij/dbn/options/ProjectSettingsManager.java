@@ -183,7 +183,7 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
 
     @Override
     public void projectOpened() {
-        FileTemplateManager templateManager = FileTemplateManager.getDefaultInstance();
+        FileTemplateManager templateManager = FileTemplateManager.getInstance(getProject());
         FileTemplate sqlTemplate = templateManager.getTemplate("SQL Script");
         if (sqlTemplate == null) {
             templateManager.addTemplate("SQL Script", "sql");
