@@ -401,6 +401,7 @@
         <projectConfigurable provider="com.dci.intellij.dbn.options.ProjectSettingsProvider" bundle="com.dci.intellij.dbn.common.DBNBundle" groupId="tools" dynamic="true" id="DBNavigator.Settings"/>
 
         <toolWindow id="DB Browser" icon="/img/window/DatabaseBrowser.png" anchor="left" factoryClass="com.dci.intellij.dbn.browser.DatabaseBrowserToolWindowFactory"/>
+        <toolWindow id="DB Execution Console" icon="/img/window/ExecutionConsole.png" anchor="bottom" factoryClass="com.dci.intellij.dbn.execution.ExecutionConsoleToolWindowFactory" />
 
         <fileTypeFactory order="last" implementation="com.dci.intellij.dbn.language.sql.SQLFileTypeFactory"/>
         <fileTypeFactory order="last" implementation="com.dci.intellij.dbn.language.psql.PSQLFileTypeFactory"/>
