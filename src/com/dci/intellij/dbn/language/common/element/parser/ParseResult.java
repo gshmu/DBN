@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.language.common.element.parser;
 public class ParseResult{
     private static final ParseResult NO_MATCH = new ParseResult(ParseResultType.NO_MATCH, 0);
 
-    private ParseResultType type;
-    private int matchedTokens;
+    public final ParseResultType type;
+    public final int matchedTokens;
 
     private ParseResult(ParseResultType type, int matchedTokens) {
         this.type = type;
@@ -38,14 +38,6 @@ public class ParseResult{
 
     public boolean isMatch() {
         return  isFullMatch() || isPartialMatch();
-    }
-
-    public ParseResultType getType() {
-        return type;
-    }
-
-    public int getMatchedTokens() {
-        return matchedTokens;
     }
 
     @Override

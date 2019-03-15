@@ -32,7 +32,7 @@ public class OneOfElementTypeParser extends ElementTypeParser<OneOfElementType> 
                 if (context.check(child) && shouldParseElement(child.getElementType(), node, context)) {
                     ParseResult result = child.getParser().parse(node, true, depth + 1, context);
                     if (result.isMatch()) {
-                        return stepOut(node, context, depth, result.getType(), result.getMatchedTokens());
+                        return stepOut(node, context, depth, result.type, result.matchedTokens);
                     }
                 }
             }
