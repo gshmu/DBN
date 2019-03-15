@@ -12,9 +12,9 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -42,14 +42,14 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
         Disposer.register(this, browserTree);
     }
     
-    @NotNull
+    @Nullable
     public ConnectionHandler getConnectionHandler(){
         DatabaseBrowserTree browserTree = getBrowserTree();
         if (browserTree.getModel() instanceof TabbedBrowserTreeModel) {
             TabbedBrowserTreeModel treeModel = (TabbedBrowserTreeModel) browserTree.getModel();
             return treeModel.getConnectionHandler();
         }
-        throw new IncorrectOperationException("Multiple connection tabs can not return one connection.");
+        return null;
     }
 
     @NotNull
