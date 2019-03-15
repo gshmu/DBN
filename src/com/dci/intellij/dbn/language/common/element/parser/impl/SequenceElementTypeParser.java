@@ -46,7 +46,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                 // is end of document
                 if (tokenType == null || tokenType.isChameleon()) {
                     ParseResultType resultType =
-                            child.isOptional() &&(child.isLast() || child.isOptionalFromHere()) ? ParseResultType.FULL_MATCH :
+                            child.optional &&(child.isLast() || child.isOptionalFromHere()) ? ParseResultType.FULL_MATCH :
                             !child.isFirst() && !elementType.isExitIndex(index) ? ParseResultType.PARTIAL_MATCH : ParseResultType.NO_MATCH;
                     return stepOut(node, context, depth, resultType, matchedTokens);
                 }
@@ -55,10 +55,10 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                     ParseResult result = ParseResult.createNoMatchResult();
                     // current token can still be part of the iterated element.
                     //if (elementTypes[i].containsToken(tokenType)) {
-                    if (shouldParseElement(child.getElementType(), node, context)) {
+                    if (shouldParseElement(child.elementType, node, context)) {
 
                         //node = node.createVariant(builder.getCurrentOffset(), i);
-                        result = child.getParser().parse(node, child.isOptional(), depth + 1, context);
+                        result = child.getParser().parse(node, child.optional, depth + 1, context);
 
                         if (result.isMatch()) {
                             matchedTokens = matchedTokens + result.matchedTokens;
@@ -68,7 +68,7 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
                     }
 
                     // not matched and not optional
-                    if (result.isNoMatch() && !child.isOptional()) {
+                    if (result.isNoMatch() && !child.optional) {
                         boolean isWeakMatch = matches < 2 && matchedTokens < 3 && index > 1 && ignoreFirstMatch();
 
                         if (child.isFirst()|| elementType.isExitIndex(index) || isWeakMatch || matches == 0) {
@@ -107,8 +107,8 @@ public class SequenceElementTypeParser<ET extends SequenceElementType> extends E
 
     private boolean ignoreFirstMatch() {
         ElementTypeRef firstChild = elementType.getChild(0);
-        if (firstChild.getElementType() instanceof IdentifierElementType) {
-            IdentifierElementType identifierElementType = (IdentifierElementType) firstChild.getElementType();
+        if (firstChild.elementType instanceof IdentifierElementType) {
+            IdentifierElementType identifierElementType = (IdentifierElementType) firstChild.elementType;
             return !identifierElementType.isDefinition();
         }
         return false;

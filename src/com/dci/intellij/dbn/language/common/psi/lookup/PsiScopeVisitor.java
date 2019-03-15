@@ -8,7 +8,7 @@ public abstract class PsiScopeVisitor<T> {
         BasePsiElement scope = element.getEnclosingScopePsiElement();
         while (scope != null) {
             boolean breakTreeWalk = visitScope(scope);
-            if (breakTreeWalk || scope.isScopeIsolation()) break;
+            if (breakTreeWalk || scope.elementType.isScopeIsolation()) break;
 
             // LOOKUP
             PsiElement parent = scope.getParent();

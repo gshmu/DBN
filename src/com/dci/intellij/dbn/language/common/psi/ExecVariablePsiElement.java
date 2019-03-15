@@ -45,7 +45,7 @@ public class ExecVariablePsiElement extends LeafPsiElement<ExecVariableElementTy
      *                       PsiReference                    *
      *********************************************************/
     @Override
-    public boolean isReferenceTo(PsiElement element) {
+    public boolean isReferenceTo(@NotNull PsiElement element) {
         return false;
     }
 

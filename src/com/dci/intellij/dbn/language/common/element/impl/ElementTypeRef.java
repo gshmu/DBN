@@ -10,10 +10,10 @@ import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import java.util.Set;
 
 public class ElementTypeRef extends ChainElement<ElementTypeRef> {
-    private ElementType parentElementType;
-    private ElementType elementType;
-    private boolean optional;
-    private double version;
+    public final ElementType parentElementType;
+    public final ElementType elementType;
+    public final boolean optional;
+    public final double version;
     private Set<BranchCheck> branchChecks;
 
     public ElementTypeRef(ElementTypeRef previous, ElementType parentElementType, ElementType elementType, boolean optional, double version, Set<BranchCheck> branchChecks) {
@@ -71,19 +71,7 @@ public class ElementTypeRef extends ChainElement<ElementTypeRef> {
         return true;
     }
 
-    public ElementType getParentElementType() {
-        return parentElementType;
-    }
-
-    public ElementType getElementType() {
-        return elementType;
-    }
-
-    public boolean isOptional() {
-        return optional;
-    }
-
-    public boolean isOptionalToHere() {
+    boolean isOptionalToHere() {
         if (getIndex() == 0) return false;
 
         ElementTypeRef previous = getPrevious();
@@ -105,10 +93,6 @@ public class ElementTypeRef extends ChainElement<ElementTypeRef> {
             next = next.getNext();
         }
         return true;
-    }
-
-    public double getVersion() {
-        return version;
     }
 
     public ElementTypeLookupCache getLookupCache() {

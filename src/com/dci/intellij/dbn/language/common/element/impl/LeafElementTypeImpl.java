@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.Set;
 
 public abstract class LeafElementTypeImpl extends AbstractElementType implements LeafElementType {
-    private TokenType tokenType;
+    public TokenType tokenType;
 
     private boolean optional;
 
@@ -85,7 +85,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
             if (elementType instanceof SequenceElementType) {
                 SequenceElementType sequenceElementType = (SequenceElementType) elementType;
                 if (position > 0 ) {
-                    return sequenceElementType.getChild(position-1).getElementType();
+                    return sequenceElementType.getChild(position-1).elementType;
                 }
             }
             position = pathNode.getIndexInParent();
@@ -111,7 +111,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                     while (child != null) {
                         if (context.check(child)) {
                             child.getLookupCache().collectFirstPossibleLeafs(context.reset(), possibleLeafs);
-                            if (!child.isOptional()) {
+                            if (!child.optional) {
                                 pathNode = null;
                                 break;
                             }
@@ -188,7 +188,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                     while (child != null) {
                         ElementTypeLookupCache lookupCache = child.getLookupCache();
                         if (required) {
-                            if (lookupCache.isFirstRequiredToken(tokenType) && !child.isOptional()) {
+                            if (lookupCache.isFirstRequiredToken(tokenType) && !child.optional) {
                                 return true;
                             }
                         } else {
@@ -197,7 +197,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
                             }
                         }
 
-                        if (!child.isOptional() && !child.isOptionalFromHere()) {
+                        if (!child.optional && !child.isOptionalFromHere()) {
                             return false;
                         }
                         child = child.getNext();
@@ -241,7 +241,7 @@ public abstract class LeafElementTypeImpl extends AbstractElementType implements
 
                 ElementTypeRef child = sequenceElementType.getChild(position + 1);
                 while (child != null) {
-                    if (!child.isOptional()) {
+                    if (!child.optional) {
                         ElementTypeLookupCache lookupCache = child.getLookupCache();
                         requiredLeafs.addAll(lookupCache.getFirstRequiredLeafs());
                         pathNode = null;

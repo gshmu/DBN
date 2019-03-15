@@ -5,25 +5,40 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiEl
 import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.intellij.extapi.psi.ASTDelegatePsiElement;
 import com.intellij.formatting.Indent;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.SharedImplUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChameleonPsiElement extends ASTWrapperPsiElement implements ExecutableBundlePsiElement, FormattingProviderPsiElement {
+public class ChameleonPsiElement extends ASTDelegatePsiElement implements ExecutableBundlePsiElement, FormattingProviderPsiElement {
     public static final FormattingAttributes FORMATTING_ATTRIBUTES = new FormattingAttributes(null, Indent.getAbsoluteNoneIndent(), CodeStylePreset.SPACING_MIN_ONE_LINE, null);
 
+    public final ASTNode node;
+    public final ChameleonElementType elementType;
 
-    private ChameleonElementType elementType;
     public ChameleonPsiElement(@NotNull ASTNode node, ChameleonElementType elementType) {
-        super(node);
+        this.node = node;
         this.elementType = elementType;
     }
+
+
+    @Override
+    public PsiElement getParent() {
+        return SharedImplUtil.getParent(node);
+    }
+
+    @Override
+    @NotNull
+    public ASTNode getNode() {
+        return node;
+    }
+
 
     @Override
     public List<ExecutablePsiElement> getExecutablePsiElements() {

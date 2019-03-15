@@ -109,7 +109,7 @@ public class SQLLanguageAnnotator implements Annotator {
             PsiElement reference = objectReference.resolve();
             if (reference == null && objectReference.getResolveTrialsCount() > 3 && checkConnection(objectReference)) {
                 if (!objectReference.getLanguageDialect().getParserTokenTypes().isFunction(objectReference.getText())) {
-                    Annotation annotation = holder.createWarningAnnotation(objectReference.getNode(),
+                    Annotation annotation = holder.createWarningAnnotation(objectReference.node,
                             "Unknown identifier");
                     annotation.setTextAttributes(SQLTextAttributesKeys.UNKNOWN_IDENTIFIER);
                 }
