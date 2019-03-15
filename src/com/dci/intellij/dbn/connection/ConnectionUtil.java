@@ -110,7 +110,7 @@ public class ConnectionUtil {
         }
     }
 
-    @Nullable
+    @NotNull
     public static DBNConnection connect(
             ConnectionSettings connectionSettings,
             @Nullable ConnectionHandlerStatusHolder connectionStatus,

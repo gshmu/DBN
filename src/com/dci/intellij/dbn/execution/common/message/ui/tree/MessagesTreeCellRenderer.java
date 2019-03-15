@@ -76,7 +76,7 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
                 ConnectionHandler connectionHandler;
                 if (object == null) {
                     DBObjectRef<DBSchemaObject> objectRef = compilerMessagesObjectNode.getObjectRef();
-                    icon = objectRef.getObjectType().getIcon();
+                    icon = objectRef.objectType.getIcon();
                     append(objectRef.getPath(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
                     connectionHandler = objectRef.resolveConnectionHandler();
                 } else {

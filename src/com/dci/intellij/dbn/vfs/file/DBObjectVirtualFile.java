@@ -77,7 +77,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     @Override
     public String getPresentablePath() {
         return getConnectionHandler().getName() + File.separatorChar +
-                getObjectRef().getObjectType().getListName() + File.separatorChar +
+                getObjectRef().objectType.getListName() + File.separatorChar +
                 getObjectRef().getQualifiedName();
     }
 
@@ -118,7 +118,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
 
     @Override
     public Icon getIcon() {
-        return objectRef.getObjectType().getIcon();
+        return objectRef.objectType.getIcon();
     }
 
     @Override

@@ -42,7 +42,7 @@ public class DBObjectPsiElement extends DisposableBase implements PsiNamedElemen
     @Nullable
     @Override
     public String getName() {
-        return objectRef.getObjectName();
+        return objectRef.objectName;
     }
 
     @Nullable
@@ -283,6 +283,6 @@ public class DBObjectPsiElement extends DisposableBase implements PsiNamedElemen
     }
 
     public DBObjectType getObjectType() {
-        return objectRef.getObjectType();
+        return objectRef.objectType;
     }
 }

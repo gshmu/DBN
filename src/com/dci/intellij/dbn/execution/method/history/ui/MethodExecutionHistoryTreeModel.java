@@ -108,7 +108,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
         ProgramTreeNode getProgramNode(MethodExecutionInput executionInput) {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
             DBObjectRef programRef = methodRef.getParentRef(DBObjectType.PROGRAM);
-            String programName = programRef.getObjectName();
+            String programName = programRef.objectName;
             if (!isLeaf())
                 for (TreeNode node : getChildren()) {
                     if (node instanceof ProgramTreeNode) {
@@ -136,7 +136,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
 
     }
 
-    protected class ProgramTreeNode extends MethodExecutionHistoryTreeNode {
+    class ProgramTreeNode extends MethodExecutionHistoryTreeNode {
         ProgramTreeNode(MethodExecutionHistoryTreeNode parent, MethodExecutionInput executionInput) {
             super(parent,
                     getNodeType(MethodRefUtil.getProgramObjectType(executionInput.getMethodRef())),
@@ -145,8 +145,8 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
 
         MethodTreeNode getMethodNode(MethodExecutionInput executionInput) {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
-            String methodName = methodRef.getObjectName();
-            int overload = methodRef.getOverload();
+            String methodName = methodRef.objectName;
+            int overload = methodRef.overload;
             if (!isLeaf())
                 for (TreeNode node : getChildren()) {
                     MethodTreeNode methodNode = (MethodTreeNode) node;
@@ -163,13 +163,13 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
 
         MethodTreeNode(MethodExecutionHistoryTreeNode parent, MethodExecutionInput executionInput) {
             super(parent,
-                    getNodeType(executionInput.getMethodRef().getObjectType()),
+                    getNodeType(executionInput.getMethodRef().objectType),
                     getMethodName(executionInput));
             this.executionInput = executionInput;
         }
 
         int getOverload() {
-            return executionInput.getMethodRef().getOverload();
+            return executionInput.getMethodRef().overload;
         }
 
         MethodExecutionInput getExecutionInput() {

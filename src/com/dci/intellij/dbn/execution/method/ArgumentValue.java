@@ -49,8 +49,8 @@ public class ArgumentValue {
     public String getName() {
         return
             attributeRef == null ?
-                    argumentRef.getObjectName() :
-                    argumentRef.getObjectName() + '.' + attributeRef.getObjectName();
+                    argumentRef.objectName :
+                    argumentRef.objectName + '.' + attributeRef.objectName;
     }
 
     public Object getValue() {
@@ -75,7 +75,7 @@ public class ArgumentValue {
     }
 
     public String toString() {
-        return argumentRef.getObjectName() + " = " + getValue();
+        return argumentRef.objectName + " = " + getValue();
     }
 
     public static <T> ArgumentValueHolder<T> createBasicValueHolder(T value) {

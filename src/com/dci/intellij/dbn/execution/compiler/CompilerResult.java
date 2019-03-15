@@ -100,7 +100,7 @@ public class CompilerResult implements Disposable {
     }
 
     DBObjectType getObjectType() {
-        return objectRef.getObjectType();
+        return objectRef.objectType;
     }
 
     public DBObjectRef<DBSchemaObject> getObjectRef() {

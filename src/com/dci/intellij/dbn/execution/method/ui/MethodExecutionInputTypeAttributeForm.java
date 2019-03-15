@@ -138,7 +138,7 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl<MethodExe
 
     @NotNull
     private String getAttributeQualifiedName() {
-        return argumentRef.getObjectName() + '.' + typeAttributeRef.getObjectName();
+        return argumentRef.objectName + '.' + typeAttributeRef.objectName;
     }
 
     public DBArgument getArgument() {

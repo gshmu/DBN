@@ -48,7 +48,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
 
     @Override
     public String getName() {
-        return columnRef.getObjectName();
+        return columnRef.objectName;
     }
 
     @Override

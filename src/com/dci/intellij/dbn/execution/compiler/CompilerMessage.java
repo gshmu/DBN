@@ -157,7 +157,7 @@ public class CompilerMessage extends ConsoleMessage implements Comparable<Compil
     }
 
     public String getObjectName() {
-        return compilerResult.getObjectRef().getObjectName();
+        return compilerResult.getObjectRef().objectName;
     }
 
     @Override
