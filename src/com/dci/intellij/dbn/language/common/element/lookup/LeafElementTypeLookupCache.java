@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
-import com.intellij.util.containers.HashSet;
+import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
+import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.Set;
 
 public abstract class LeafElementTypeLookupCache<T extends LeafElementType> extends ElementTypeLookupCache<T> {
@@ -26,9 +26,7 @@ public abstract class LeafElementTypeLookupCache<T extends LeafElementType> exte
 
     @Override
     public Set<LeafElementType> getFirstPossibleLeafs() {
-        HashSet<LeafElementType> leafElementTypes = new HashSet<LeafElementType>(1);
-        leafElementTypes.add(elementType);
-        return leafElementTypes;
+        return Collections.singleton(elementType);
     }
 
     @Override
@@ -43,7 +41,7 @@ public abstract class LeafElementTypeLookupCache<T extends LeafElementType> exte
 
     @Override
     public boolean couldStartWithToken(TokenType tokenType) {
-        return elementType.getTokenType() == tokenType;
+        return elementType.tokenType == tokenType;
     }
 
     @Override
@@ -66,5 +64,5 @@ public abstract class LeafElementTypeLookupCache<T extends LeafElementType> exte
     }
 
     @Override
-    public void registerLeaf(LeafElementType leaf, ElementType source) {}
+    public void registerLeaf(LeafElementType leaf, ElementTypeBase source) {}
 }

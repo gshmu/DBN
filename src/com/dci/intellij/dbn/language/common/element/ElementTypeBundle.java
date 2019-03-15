@@ -4,17 +4,19 @@ import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
-import com.dci.intellij.dbn.language.common.element.impl.BasicElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.BlockElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.ExecVariableElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.IterationElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.NamedElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.OneOfElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.SequenceElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.TokenElementTypeImpl;
-import com.dci.intellij.dbn.language.common.element.impl.WrapperElementTypeImpl;
+import com.dci.intellij.dbn.language.common.element.impl.BasicElementType;
+import com.dci.intellij.dbn.language.common.element.impl.BlockElementType;
+import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
+import com.dci.intellij.dbn.language.common.element.impl.ExecVariableElementType;
+import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
+import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
+import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
+import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
+import com.dci.intellij.dbn.language.common.element.impl.OneOfElementType;
+import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierElementType;
+import com.dci.intellij.dbn.language.common.element.impl.SequenceElementType;
+import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.impl.WrapperElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
@@ -44,15 +46,15 @@ public class ElementTypeBundle {
     private int idCursor;
 
     private transient Builder builder = new Builder();
-    private final Map<String, NamedElementType> namedElementTypes = new THashMap<String, NamedElementType>();
+    private final Map<String, NamedElementType> namedElementTypes = new THashMap<>();
 
 
     private static class Builder {
-        private Set<LeafElementType> leafElementTypes = new THashSet<LeafElementType>();
-        private Set<WrapperElementType> wrapperElementTypes = new THashSet<WrapperElementType>();
-        private Set<ElementType> wrappedElementTypes = new THashSet<ElementType>();
+        private Set<LeafElementType> leafElementTypes = new THashSet<>();
+        private Set<WrapperElementType> wrapperElementTypes = new THashSet<>();
+        private Set<ElementType> wrappedElementTypes = new THashSet<>();
         //private Set<OneOfElementType> oneOfElementTypes = new THashSet<OneOfElementType>();
-        private Set<ElementType> allElementTypes = new THashSet<ElementType>();
+        private Set<ElementType> allElementTypes = new THashSet<>();
         private boolean rewriteIndexes;
     }
 
@@ -156,31 +158,31 @@ public class ElementTypeBundle {
         return value;
     }
 
-    public ElementType resolveElementDefinition(Element def, String type, ElementType parent) throws ElementTypeDefinitionException {
-        ElementType result;
+    public ElementTypeBase resolveElementDefinition(Element def, String type, ElementTypeBase parent) throws ElementTypeDefinitionException {
+        ElementTypeBase result;
         if (ElementTypeDefinition.SEQUENCE.is(type)){
-            result = new SequenceElementTypeImpl(this, parent, createId(), def);
+            result = new SequenceElementType(this, parent, createId(), def);
             log.debug("Created sequence element definition");
 
         } else if (ElementTypeDefinition.BLOCK.is(type)) {
-            result = new BlockElementTypeImpl(this, parent, createId(), def);
+            result = new BlockElementType(this, parent, createId(), def);
             log.debug("Created iteration element definition");
 
         } else if (ElementTypeDefinition.ITERATION.is(type)) {
-            result = new IterationElementTypeImpl(this, parent, createId(), def);
+            result = new IterationElementType(this, parent, createId(), def);
             log.debug("Created iteration element definition");
 
         } else if (ElementTypeDefinition.ONE_OF.is(type)) {
-            result = new OneOfElementTypeImpl(this, parent, createId(), def);
+            result = new OneOfElementType(this, parent, createId(), def);
             //builder.oneOfElementTypes.add((OneOfElementType) result);
             log.debug("Created one-of element definition");
 
         } else if (ElementTypeDefinition.QUALIFIED_IDENTIFIER.is(type)) {
-            result =  new QualifiedIdentifierElementTypeImpl(this, parent, createId(), def);
+            result =  new QualifiedIdentifierElementType(this, parent, createId(), def);
             log.debug("Created qualified identifier element definition");
 
         } else if (ElementTypeDefinition.WRAPPER.is(type)) {
-            result = new WrapperElementTypeImpl(this, parent, createId(), def);
+            result = new WrapperElementType(this, parent, createId(), def);
             builder.wrapperElementTypes.add((WrapperElementType) result);
             log.debug("Created wrapper element definition");
 
@@ -189,7 +191,7 @@ public class ElementTypeBundle {
             result = getNamedElementType(id, parent);
 
         } else if (ElementTypeDefinition.TOKEN.is(type)) {
-            result = new TokenElementTypeImpl(this, parent, createId(), def);
+            result = new TokenElementType(this, parent, createId(), def);
 
         } else if (
                 ElementTypeDefinition.OBJECT_DEF.is(type) ||
@@ -198,10 +200,10 @@ public class ElementTypeBundle {
                 ElementTypeDefinition.ALIAS_REF.is(type) ||
                 ElementTypeDefinition.VARIABLE_DEF.is(type) ||
                 ElementTypeDefinition.VARIABLE_REF.is(type)) {
-            result = new IdentifierElementTypeImpl(this, parent, createId(), def);
+            result = new IdentifierElementType(this, parent, createId(), def);
 
         } else if (ElementTypeDefinition.EXEC_VARIABLE.is(type)) {
-            result = new ExecVariableElementTypeImpl(this, parent, createId(), def);
+            result = new ExecVariableElementType(this, parent, createId(), def);
 
         }  else {
             throw new ElementTypeDefinitionException("Could not resolve element definition '" + type + '\'');
@@ -238,13 +240,13 @@ public class ElementTypeBundle {
         return elementType;
     }*/
 
-    private NamedElementType getNamedElementType(String id, ElementType parent) {
+    private NamedElementType getNamedElementType(String id, ElementTypeBase parent) {
         NamedElementType elementType = namedElementTypes.get(id);
         if (elementType == null) {
             synchronized (this) {
                 elementType = namedElementTypes.get(id);
                 if (elementType == null) {
-                    elementType = new NamedElementTypeImpl(this, id);
+                    elementType = new NamedElementType(this, id);
                     namedElementTypes.put(id, elementType);
                     builder.allElementTypes.add(elementType);
                     log.debug("Created named element type '" + id + '\'');
@@ -270,12 +272,12 @@ public class ElementTypeBundle {
 
     public BasicElementType getUnknownElementType() {
         if (unknownElementType == null) {
-            unknownElementType = new BasicElementTypeImpl(this);
+            unknownElementType = new BasicElementType(this);
         }
         return unknownElementType;
     }
 
-    public String createId() {
+    private String createId() {
         String id = Integer.toString(idCursor++);
         StringBuilder buffer = new StringBuilder();
         while (buffer.length() + id.length() < 9) {

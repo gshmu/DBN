@@ -3,10 +3,7 @@ package com.dci.intellij.dbn.language.common.element.impl;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.IterationElementType;
-import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.IterationElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.IterationElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
@@ -21,18 +18,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-public class IterationElementTypeImpl extends AbstractElementType implements IterationElementType {
+public class IterationElementType extends ElementTypeBase {
 
-    private ElementType iteratedElementType;
-    private TokenElementType[] separatorTokens;
+    public ElementTypeBase iteratedElementType;
+    public TokenElementType[] separatorTokens;
     private int[] elementsCountVariants;
     private int minIterations;
+
     private Latent<Boolean> followedBySeparator = Latent.basic(() -> {
-        TokenElementType[] separatorTokens = getSeparatorTokens();
         if (separatorTokens != null) {
-            Set<TokenType> nextPossibleTokens = getLookupCache().getNextPossibleTokens();
+            Set<TokenType> nextPossibleTokens = lookupCache.getNextPossibleTokens();
             for (TokenElementType separatorToken : separatorTokens) {
-                if (nextPossibleTokens.contains(separatorToken.getTokenType())) {
+                if (nextPossibleTokens.contains(separatorToken.tokenType)) {
                     return true;
                 }
             }
@@ -40,7 +37,7 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
         return false;
     });
 
-    public IterationElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
+    public IterationElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
     }
 
@@ -62,10 +59,10 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
         String separatorTokenIds = def.getAttributeValue("separator");
         if (separatorTokenIds != null) {
             StringTokenizer tokenizer = new StringTokenizer(separatorTokenIds, ",");
-            List<TokenElementType> separators = new ArrayList<TokenElementType>();
+            List<TokenElementType> separators = new ArrayList<>();
             while (tokenizer.hasMoreTokens()) {
                 String separatorTokenId = tokenizer.nextToken().trim();
-                TokenElementType separatorToken = new TokenElementTypeImpl(bundle, this, separatorTokenId, TokenElementType.SEPARATOR);
+                TokenElementType separatorToken = new TokenElementType(bundle, this, separatorTokenId, TokenElementType.SEPARATOR);
                         //bundle.getTokenElementType(separatorTokenId);
                 separatorToken.setDefaultFormatting(separatorToken.isCharacter() ?
                         FormattingDefinition.NO_SPACE_BEFORE :
@@ -85,7 +82,7 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
 
         String elementsCountDef = def.getAttributeValue("elements-count");
         if (elementsCountDef != null) {
-            List<Integer> variants = new ArrayList<Integer>();
+            List<Integer> variants = new ArrayList<>();
             StringTokenizer tokenizer = new StringTokenizer(elementsCountDef, ",");
             while (tokenizer.hasMoreTokens()) {
                 String token = tokenizer.nextToken();
@@ -128,27 +125,14 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
         return new SequencePsiElement(astNode, this);
     }
 
-    @Override
-    public ElementType getIteratedElementType() {
-        return iteratedElementType;
-    }
-
-    @Override
-    public TokenElementType[] getSeparatorTokens() {
-        return separatorTokens;
-    }
-
-    @Override
     public int[] getElementsCountVariants() {
         return elementsCountVariants;
     }
 
-    @Override
     public Integer getMinIterations() {
         return minIterations;
     }
 
-    @Override
     public boolean isSeparator(TokenElementType tokenElementType) {
         if (separatorTokens != null) {
             for (TokenElementType separatorToken: separatorTokens) {
@@ -158,17 +142,15 @@ public class IterationElementTypeImpl extends AbstractElementType implements Ite
         return false;
     }
 
-    @Override
     public boolean isSeparator(TokenType tokenType) {
         if (separatorTokens != null) {
             for (TokenElementType separatorToken: separatorTokens) {
-                if (separatorToken.getTokenType() == tokenType) return true;
+                if (separatorToken.tokenType == tokenType) return true;
             }
         }
         return false;
     }
 
-    @Override
     public boolean isFollowedBySeparator() {
         return followedBySeparator.get();
     }

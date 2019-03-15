@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.util;
 
 import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.NamedElementType;
+import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 
 public class ElementTypeUtil {

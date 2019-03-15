@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import com.dci.intellij.dbn.language.common.element.TokenElementType;
-
 public class WrappingDefinition {
     private TokenElementType beginElementType;
     private TokenElementType endElementType;
@@ -36,8 +34,8 @@ public class WrappingDefinition {
         if (obj instanceof WrappingDefinition) {
             WrappingDefinition definition = (WrappingDefinition) obj;
             return
-                this.beginElementType.getTokenType().equals(definition.beginElementType.getTokenType()) &&
-                this.endElementType.getTokenType().equals(definition.endElementType.getTokenType());
+                this.beginElementType.tokenType.equals(definition.beginElementType.tokenType) &&
+                this.endElementType.tokenType.equals(definition.endElementType.tokenType);
         }
         return false;
     }

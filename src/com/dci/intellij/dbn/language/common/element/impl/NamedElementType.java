@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.NamedElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.NamedElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -18,14 +16,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class NamedElementTypeImpl extends SequenceElementTypeImpl implements NamedElementType {
+public class NamedElementType extends SequenceElementType {
     private boolean definitionLoaded;
-    private Set<ElementType> parents;
+    private Set<ElementTypeBase> parents;
     private boolean truncateOnExecution;
 
-    public NamedElementTypeImpl(ElementTypeBundle bundle, String id) {
+    public NamedElementType(ElementTypeBundle bundle, String id) {
         super(bundle, null, id);
-        parents = new THashSet<ElementType>();
+        parents = new THashSet<>();
     }
 
     @Override
@@ -56,14 +54,12 @@ public class NamedElementTypeImpl extends SequenceElementTypeImpl implements Nam
         definitionLoaded = true;
     }
 
-    @Override
     public void update(NamedElementType elementType) {
         setDescription(elementType.getDescription());
         children = elementType.getChildren();
         definitionLoaded = true;
     }
 
-    @Override
     public boolean isDefinitionLoaded() {
         return definitionLoaded;
     }
@@ -73,17 +69,14 @@ public class NamedElementTypeImpl extends SequenceElementTypeImpl implements Nam
         return getId().toUpperCase();
     }
 
-    @Override
-    public void addParent(ElementType parent) {
+    public void addParent(ElementTypeBase parent) {
         parents.add(parent);
     }
 
-    @Override
-    public Set<ElementType> getParents() {
+    public Set<ElementTypeBase> getParents() {
         return parents;
     }
 
-    @Override
     public boolean truncateOnExecution() {
         return truncateOnExecution;
     }

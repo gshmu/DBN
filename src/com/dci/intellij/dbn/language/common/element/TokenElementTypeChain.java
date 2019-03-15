@@ -1,10 +1,13 @@
 package com.dci.intellij.dbn.language.common.element;
 
+
+import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class TokenElementTypeChain {
-    private List<TokenElementType> elementTypes = new ArrayList<TokenElementType>();
+    private List<TokenElementType> elementTypes = new ArrayList<>();
     private double version ;
 
     private TokenElementTypeChain(){};

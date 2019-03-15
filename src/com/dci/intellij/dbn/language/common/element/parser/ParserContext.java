@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.common.element.parser;
 
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
+import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementLookupContext;
 import com.intellij.lang.PsiBuilder;
 

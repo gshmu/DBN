@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.language.common.psi;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
+import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;

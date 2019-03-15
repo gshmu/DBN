@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.dci.intellij.dbn.language.common.element.NamedElementType;
+import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
@@ -23,7 +23,7 @@ public class NamedPsiElement extends SequencePsiElement<NamedElementType> {
 
     @Nullable
     public String createSubjectList() {
-        Set<IdentifierPsiElement> subjects = new THashSet<IdentifierPsiElement>();
+        Set<IdentifierPsiElement> subjects = new THashSet<>();
         collectSubjectPsiElements(subjects);
         return subjects.size() > 0 ? NamingUtil.createNamesList(subjects, 3) : null;
     }

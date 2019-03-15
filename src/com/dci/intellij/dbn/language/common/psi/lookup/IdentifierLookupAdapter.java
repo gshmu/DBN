@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.language.common.psi.lookup;
 
 import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
-import com.dci.intellij.dbn.language.common.element.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
+import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierType;

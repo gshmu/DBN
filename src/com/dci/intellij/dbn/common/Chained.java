@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.common;
 
-public class ChainElement<T extends ChainElement<T>> {
+public class Chained<T extends Chained<T>> {
     private T previous;
     private T next;
     private int index = -1;
 
-    public ChainElement(T previous) {
+    public Chained(T previous) {
         this.previous = previous;
         if (previous != null) {
             previous.setNext((T) this);

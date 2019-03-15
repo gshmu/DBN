@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
 import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
+import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -19,12 +19,12 @@ import java.util.Set;
 
 public class ElementLookupContext {
     public static double MAX_DB_VERSION = 9999;
-    private Set<NamedElementType> scannedElements = new THashSet<NamedElementType>();
+    private Set<NamedElementType> scannedElements = new THashSet<>();
     protected Set<Branch> branches;
-    private Map<Branch, NamedElementType> branchMarkers = new HashMap<Branch, NamedElementType>();
-    private Set<ElementTypeAttribute> breakOnAttributes = new HashSet<ElementTypeAttribute>();
+    private Map<Branch, NamedElementType> branchMarkers = new HashMap<>();
+    private Set<ElementTypeAttribute> breakOnAttributes = new HashSet<>();
 
-    protected double databaseVersion = MAX_DB_VERSION;
+    private double databaseVersion = MAX_DB_VERSION;
 
     @Deprecated
     public ElementLookupContext() {}
@@ -108,11 +108,11 @@ public class ElementLookupContext {
         return this;
     }
 
-    public boolean isScanned(NamedElementType elementType) {
+    boolean isScanned(NamedElementType elementType) {
         return scannedElements.contains(elementType);
     }
 
-    public void markScanned(NamedElementType elementType) {
+    void markScanned(NamedElementType elementType) {
         scannedElements.add(elementType);
     }
 

@@ -1,9 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.OneOfElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.OneOfElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.BranchCheck;
 import com.dci.intellij.dbn.language.common.element.parser.impl.OneOfElementTypeParser;
@@ -19,11 +17,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-public class OneOfElementTypeImpl extends AbstractElementType implements OneOfElementType {
+public class OneOfElementType extends ElementTypeBase {
     protected final ElementTypeRef[] children;
     private boolean sortable;
+    private boolean sorted;
 
-    public OneOfElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
+    public OneOfElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
         List children = def.getChildren();
 
@@ -33,7 +32,7 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
         for (int i=0; i<children.size(); i++) {
             Element child = (Element) children.get(i);
             String type = child.getName();
-            ElementType elementType = bundle.resolveElementDefinition(child, type, this);
+            ElementTypeBase elementType = bundle.resolveElementDefinition(child, type, this);
             double version = Double.parseDouble(CommonUtil.nvl(child.getAttributeValue("version"), "0"));
             Set<BranchCheck> branchChecks = parseBranchChecks(child.getAttributeValue("branch-check"));
 
@@ -70,8 +69,6 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
         return new SequencePsiElement(astNode, this);
     }
 
-    boolean sorted;
-    @Override
     public synchronized void sort() {
         if (sortable && ! sorted) {
             Arrays.sort(children, ONE_OF_COMPARATOR);
@@ -79,24 +76,16 @@ public class OneOfElementTypeImpl extends AbstractElementType implements OneOfEl
         }
     }
 
-    private static final Comparator ONE_OF_COMPARATOR = new Comparator() {
-        @Override
-        public int compare(Object o1, Object o2) {
-            ElementTypeRef et1 = (ElementTypeRef) o1;
-            ElementTypeRef et2 = (ElementTypeRef) o2;
-
-            int i1 = et1.getLookupCache().startsWithIdentifier() ? 1 : 2;
-            int i2 = et2.getLookupCache().startsWithIdentifier() ? 1 : 2;
-            return i2-i1;
-        }
+    private static final Comparator<ElementTypeRef> ONE_OF_COMPARATOR = (o1, o2) -> {
+        int i1 = o1.getLookupCache().startsWithIdentifier() ? 1 : 2;
+        int i2 = o2.getLookupCache().startsWithIdentifier() ? 1 : 2;
+        return i2-i1;
     };
 
-    @Override
     public ElementTypeRef[] getChildren() {
         return children;
     }
 
-    @Override
     public ElementTypeRef getFirstChild() {
         return children[0];
     }

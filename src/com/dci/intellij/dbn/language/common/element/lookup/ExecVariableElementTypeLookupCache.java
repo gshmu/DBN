@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.common.element.lookup;
 
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.ExecVariableElementType;
+import com.dci.intellij.dbn.language.common.element.impl.ExecVariableElementType;
 
 import java.util.HashSet;
 import java.util.Set;

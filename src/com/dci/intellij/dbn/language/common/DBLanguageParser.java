@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.language.common;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.NamedElementType;
+import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;

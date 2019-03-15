@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.language.common.element.parser.impl;
 
 import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.OneOfElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
+import com.dci.intellij.dbn.language.common.element.impl.OneOfElementType;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResultType;

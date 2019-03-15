@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
-import com.dci.intellij.dbn.language.common.ParseException;
-import com.dci.intellij.dbn.language.common.element.BasicElementType;
+import com.dci.intellij.dbn.language.common.element.impl.BasicElementType;
 import com.dci.intellij.dbn.language.common.element.parser.ElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
@@ -14,7 +13,7 @@ public class BasicElementTypeParser extends ElementTypeParser<BasicElementType> 
     }
 
     @Override
-    public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) throws ParseException {
+    public ParseResult parse(@NotNull ParsePathNode parentNode, boolean optional, int depth, ParserContext context) {
         return ParseResult.createNoMatchResult();
     }
 }

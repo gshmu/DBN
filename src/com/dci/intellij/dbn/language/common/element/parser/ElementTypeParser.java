@@ -6,10 +6,10 @@ import com.dci.intellij.dbn.language.common.ParseException;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.SimpleTokenType;
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.BlockElementType;
-import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
+import com.dci.intellij.dbn.language.common.element.impl.BlockElementType;
+import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
+import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeLogger;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeUtil;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public abstract class ElementTypeParser<T extends ElementType> {
+public abstract class ElementTypeParser<T extends ElementTypeBase> {
     public final T elementType;
     private ElementTypeLogger logger;
 
@@ -65,7 +65,7 @@ public abstract class ElementTypeParser<T extends ElementType> {
         try {
             marker = marker == null ? node == null ? null : node.getElementMarker() : marker;
             if (resultType == ParseResultType.PARTIAL_MATCH) {
-                Set<TokenType> nextPossibleTokens = elementType.getLookupCache().getNextPossibleTokens();
+                Set<TokenType> nextPossibleTokens = elementType.lookupCache.getNextPossibleTokens();
                 ParseBuilderErrorHandler.updateBuilderError(nextPossibleTokens, context);
             }
             ParserBuilder builder = context.builder;
@@ -123,8 +123,8 @@ public abstract class ElementTypeParser<T extends ElementType> {
                 }
             }
 
-            ElementType namedElementType = ElementTypeUtil.getEnclosingNamedElementType(node);
-            if (namedElementType != null && namedElementType.getLookupCache().containsToken(tokenType)) {
+            ElementTypeBase namedElementType = ElementTypeUtil.getEnclosingNamedElementType(node);
+            if (namedElementType != null && namedElementType.lookupCache.containsToken(tokenType)) {
                 LeafElementType lastResolvedLeaf = context.lastResolvedLeaf;
                 return lastResolvedLeaf != null && !lastResolvedLeaf.isNextPossibleToken(tokenType, node, context);
             }
@@ -143,12 +143,12 @@ public abstract class ElementTypeParser<T extends ElementType> {
         return elementType.getElementBundle();
     }
 
-    protected boolean shouldParseElement(ElementType elementType, ParsePathNode node, ParserContext context) {
+    protected boolean shouldParseElement(ElementTypeBase elementType, ParsePathNode node, ParserContext context) {
         ParserBuilder builder = context.builder;
         TokenType tokenType = builder.getTokenType();
 
         return
-            elementType.getLookupCache().couldStartWithToken(tokenType) ||
+            elementType.lookupCache.couldStartWithToken(tokenType) ||
             isSuppressibleReservedWord(tokenType, node, context) ||
             isDummyToken(builder.getTokenText());
     }

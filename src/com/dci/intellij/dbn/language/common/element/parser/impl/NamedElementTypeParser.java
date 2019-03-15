@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.parser.impl;
 
 import com.dci.intellij.dbn.language.common.ParseException;
-import com.dci.intellij.dbn.language.common.element.NamedElementType;
+import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.parser.ParseResult;
 import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;

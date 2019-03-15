@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.TokenElementType;
-import com.intellij.util.containers.HashSet;
+import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
 
+import java.util.Collections;
 import java.util.Set;
 
 public class TokenElementTypeLookupCache extends LeafElementTypeLookupCache<TokenElementType>{
@@ -20,7 +20,7 @@ public class TokenElementTypeLookupCache extends LeafElementTypeLookupCache<Toke
     }
 
     protected TokenType getTokenType() {
-        return elementType.getTokenType();
+        return elementType.tokenType;
     }
 
     @Override
@@ -30,9 +30,7 @@ public class TokenElementTypeLookupCache extends LeafElementTypeLookupCache<Toke
 
     @Override
     public Set<TokenType> getFirstPossibleTokens() {
-        HashSet<TokenType> tokenTypes = new HashSet<TokenType>(1);
-        tokenTypes.add(getTokenType());
-        return tokenTypes;
+        return Collections.singleton(getTokenType());
     }
 
     @Override

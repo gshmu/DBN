@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
+import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
