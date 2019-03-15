@@ -30,7 +30,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
     private TabbedPane connectionTabs;
     private JPanel mainPanel;
 
-    public TabbedBrowserForm(BrowserToolWindowForm parentComponent) {
+    TabbedBrowserForm(BrowserToolWindowForm parentComponent) {
         super(parentComponent);
         connectionTabs = new TabbedPane(this);
         //connectionTabs.setBackground(GUIUtil.getListBackground());
@@ -52,7 +52,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
             }
 
             @Override
-            public void tabRemoved(TabInfo tabInfo) {
+            public void tabRemoved(@NotNull TabInfo tabInfo) {
             }
 
             @Override
@@ -180,24 +180,28 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
                 Failsafe.lenient(() -> {
                     SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
                     ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
-                    JBColor environmentColor = connectionHandler.getEnvironmentType().getColor();
-                    if (visibilitySettings.getConnectionTabs().value()) {
-                        tabInfo.setTabColor(environmentColor);
-                    } else {
-                        tabInfo.setTabColor(null);
+                    if (connectionHandler != null) {
+                        JBColor environmentColor = connectionHandler.getEnvironmentType().getColor();
+                        if (visibilitySettings.getConnectionTabs().value()) {
+                            tabInfo.setTabColor(environmentColor);
+                        } else {
+                            tabInfo.setTabColor(null);
+                        }
                     }
                 });
             }
         }
     };
 
-    public void refreshTabInfo(ConnectionId connectionId) {
+    void refreshTabInfo(ConnectionId connectionId) {
         for (TabInfo tabInfo : connectionTabs.getTabs()) {
             SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
             ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
-            if (connectionHandler.getConnectionId() == connectionId) {
-                tabInfo.setText(connectionHandler.getName());
-                break;
+            if (connectionHandler != null) {
+                if (connectionHandler.getConnectionId() == connectionId) {
+                    tabInfo.setText(connectionHandler.getName());
+                    break;
+                }
             }
         }
 
