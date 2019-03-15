@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.data.model.basic;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -15,7 +15,7 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class BasicDataModelCell extends PropertyHolderImpl<RecordStatus> implements DataModelCell {
+public class BasicDataModelCell extends DisposablePropertyHolder<RecordStatus> implements DataModelCell {
     protected BasicDataModelRow row;
     protected Object userValue;
     private String formattedUserValue;
@@ -165,16 +165,10 @@ public class BasicDataModelCell extends PropertyHolderImpl<RecordStatus> impleme
     @Override
     public void dispose() {
         if (!isDisposed()) {
-            set(RecordStatus.DISPOSED, true);
+            super.dispose();
             row = null;
             userValue = null;
             formattedUserValue = null;
         }
-    }
-
-
-    @Override
-    public boolean isDisposed() {
-        return is(RecordStatus.DISPOSED);
     }
 }

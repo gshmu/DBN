@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableList;
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
@@ -24,17 +24,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.CHANGING;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DIRTY;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DISPOSED;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADED;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING_IN_BACKGROUND;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.MASTER;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.REFRESHING;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
 
-public abstract class DynamicContentImpl<T extends DynamicContentElement> extends PropertyHolderImpl<DynamicContentStatus> implements DynamicContent<T> {
+public abstract class DynamicContentImpl<T extends DynamicContentElement> extends DisposablePropertyHolder<DynamicContentStatus> implements DynamicContent<T> {
     protected static final List EMPTY_CONTENT = java.util.Collections.unmodifiableList(new ArrayList(0));
     protected static final List EMPTY_DISPOSED_CONTENT = java.util.Collections.unmodifiableList(new ArrayList(0));
     protected static final List EMPTY_UNTOUCHED_CONTENT = java.util.Collections.unmodifiableList(new ArrayList(0));
@@ -394,11 +386,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     }
 
     @Override
-    public boolean isDisposed() {
-        return is(DISPOSED);
-    }
-
-    @Override
     public boolean isEmpty() {
         return size() == 0;
     }
@@ -406,7 +393,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     @Override
     public void dispose() {
         if (!isDisposed()) {
-            set(DISPOSED, true);
+            super.dispose();
             if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
                 if (!dependencyAdapter.isSubContent()) {
                     DisposerUtil.dispose(elements);

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.data.model.basic;
 
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.dci.intellij.dbn.editor.data.model.RecordStatus;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BasicDataModelRow<T extends DataModelCell> extends PropertyHolderImpl<RecordStatus> implements DataModelRow<T> {
+public class BasicDataModelRow<T extends DataModelCell> extends DisposablePropertyHolder<RecordStatus> implements DataModelRow<T> {
     protected BasicDataModel model;
     protected List<T> cells;
     private int index;
@@ -99,14 +99,9 @@ public class BasicDataModelRow<T extends DataModelCell> extends PropertyHolderIm
      ********************************************************/
 
     @Override
-    public boolean isDisposed() {
-        return is(RecordStatus.DISPOSED);
-    }
-
-    @Override
     public void dispose() {
         if (!isDisposed()) {
-            set(RecordStatus.DISPOSED, true);
+            super.dispose();
             DisposerUtil.dispose(cells);
             cells = null;
             model = null;

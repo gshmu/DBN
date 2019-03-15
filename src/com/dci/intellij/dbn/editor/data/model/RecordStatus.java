@@ -12,7 +12,6 @@ public enum RecordStatus implements Property {
     MODIFIED,
 
     DIRTY,
-    DISPOSED,
     ;
 
     private final int index = Property.idx(this);

@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableListImpl;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
-import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
@@ -34,7 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<RecordStatus> implements DataModel<T> {
+public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHolder<RecordStatus> implements DataModel<T> {
     private DataModelHeader<? extends ColumnInfo> header;
     private DataModelState state;
     private Set<TableModelListener> tableModelListeners = new HashSet<>();
@@ -357,7 +357,7 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
     @Override
     public void dispose() {
         if (!isDisposed()) {
-            set(RecordStatus.DISPOSED, true);
+            super.dispose();
             DisposerUtil.dispose(rows);
             tableModelListeners.clear();
             dataModelListeners.clear();
@@ -365,10 +365,5 @@ public class BasicDataModel<T extends DataModelRow> extends PropertyHolderImpl<R
             rows = null;
             project = null;
         }
-    }
-
-    @Override
-    public boolean isDisposed() {
-        return is(RecordStatus.DISPOSED);
     }
 }

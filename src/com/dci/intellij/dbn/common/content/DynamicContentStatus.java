@@ -9,7 +9,6 @@ public enum DynamicContentStatus implements Property {
 
     DIRTY,
     LOADED,
-    DISPOSED,
 
     CHANGING,
     REFRESHING,

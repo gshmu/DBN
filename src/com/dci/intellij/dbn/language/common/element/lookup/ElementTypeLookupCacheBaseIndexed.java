@@ -27,12 +27,12 @@ public abstract class ElementTypeLookupCacheBaseIndexed<T extends ElementType> e
     ElementTypeLookupCacheBaseIndexed(T elementType) {
         super(elementType);
         if (!elementType.isLeaf()) {
-            allPossibleLeafs = new IndexedContainer<LeafElementType>();
-            firstPossibleLeafs = new THashSet<LeafElementType>();
-            firstRequiredLeafs = new THashSet<LeafElementType>();
-            allPossibleTokens = new IndexedContainer<TokenType>();
-            firstPossibleTokens = new THashSet<TokenType>();
-            firstRequiredTokens = new THashSet<TokenType>();
+            allPossibleLeafs = new IndexedContainer<>();
+            firstPossibleLeafs = new THashSet<>();
+            firstRequiredLeafs = new THashSet<>();
+            allPossibleTokens = new IndexedContainer<>();
+            firstPossibleTokens = new THashSet<>();
+            firstRequiredTokens = new THashSet<>();
         }
     }
 
