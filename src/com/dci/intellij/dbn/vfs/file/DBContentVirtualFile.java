@@ -44,11 +44,11 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
         this.contentType = contentType;
 
         DBObjectRef<DBSchemaObject> objectRef = mainDatabaseFile.getObjectRef();
-        this.name = objectRef.getObjectName();
+        this.name = objectRef.objectName;
 
         Project project = ensureProject();
         DDLFileManager ddlFileManager = DDLFileManager.getInstance(project);
-        DDLFileType ddlFileType = ddlFileManager.getDDLFileType(objectRef.getObjectType(), contentType);
+        DDLFileType ddlFileType = ddlFileManager.getDDLFileType(objectRef.objectType, contentType);
         this.fileType = ddlFileType == null ? null : ddlFileType.getLanguageFileType();
     }
 

@@ -89,7 +89,7 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
 
     @Override
     public CharSequence getText(CodeCompletionContext context) {
-        String text = objectRef.getObjectName();
+        String text = objectRef.objectName;
         if (StringUtil.isNotEmptyOrSpaces(text)) {
             DBObject object = getObject();
             if (object instanceof DBVirtualObject && text.contains(CodeCompletionContributor.DUMMY_TOKEN)) {
@@ -135,6 +135,6 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
     @Override
     public Icon getIcon() {
         DBObject object = getObject();
-        return object == null ? objectRef.getObjectType().getIcon() : object.getIcon();
+        return object == null ? objectRef.objectType.getIcon() : object.getIcon();
     }
 }

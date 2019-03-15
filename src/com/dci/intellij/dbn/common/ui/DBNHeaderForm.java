@@ -92,7 +92,7 @@ public class DBNHeaderForm extends DBNFormImpl{
 
         String connectionName = connectionHandler == null ? "UNKNOWN" : connectionHandler.getName();
         objectLabel.setText("[" + connectionName + "] " + objectRef.getQualifiedName());
-        objectLabel.setIcon(objectRef.getObjectType().getIcon());
+        objectLabel.setIcon(objectRef.objectType.getIcon());
         updateBorderAndBackground(objectRef);
     }
 

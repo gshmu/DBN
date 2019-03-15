@@ -259,7 +259,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
         fileLocationTextField.setEnabled(destinationFileRadioButton.isSelected());
         encodingComboBox.setEnabled(destinationFileRadioButton.isSelected() && supportsFileEncoding);
 
-        String fileNameBase = sourceObjectRef == null ? instructions.getBaseName() : sourceObjectRef.getObjectName();
+        String fileNameBase = sourceObjectRef == null ? instructions.getBaseName() : sourceObjectRef.objectName;
         if (fileNameBase != null && processor != null) {
             String fileName = fileNameBase + "." + processor.getFileExtension();
             fileNameTextField.setText(fileName);

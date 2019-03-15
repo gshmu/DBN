@@ -148,7 +148,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
                         if (executionInput != null) {
                             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
                             headerTitle = methodRef.getPath();
-                            headerIcon = methodRef.getObjectType().getIcon();
+                            headerIcon = methodRef.objectType.getIcon();
                             DBMethod method = executionInput.getMethod();
                             if (method != null) {
                                 methodExecutionInputForm = new MethodExecutionInputForm(this, executionInput, false, DBDebuggerType.JDBC);

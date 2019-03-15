@@ -52,7 +52,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
         String connectionIdentifier = selectedConnection == null || selectedConnection instanceof VirtualConnectionHandler ?
                 "All Connections" :
                 selectedConnection.getName();
-        return "Enter database object name (" + connectionIdentifier + (selectedSchema == null ? "" : " / " + selectedSchema.getObjectName()) + ")";
+        return "Enter database object name (" + connectionIdentifier + (selectedSchema == null ? "" : " / " + selectedSchema.objectName) + ")";
     }
 
     @Override

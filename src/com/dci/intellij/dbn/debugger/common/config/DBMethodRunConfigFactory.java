@@ -23,7 +23,7 @@ public abstract class DBMethodRunConfigFactory<T extends DBMethodRunConfigType, 
         } else {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
             DBMethod method = methodRef.get();
-            return method == null ? methodRef.getObjectType().getIcon() : method.getIcon();
+            return method == null ? methodRef.objectType.getIcon() : method.getIcon();
         }
     }
 

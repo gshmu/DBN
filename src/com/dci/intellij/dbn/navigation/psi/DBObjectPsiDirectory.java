@@ -61,7 +61,7 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
     @Override
     @NotNull
     public String getName() {
-        return objectRef.getObjectName();
+        return objectRef.objectName;
     }
 
     @Override

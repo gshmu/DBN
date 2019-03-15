@@ -69,7 +69,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
             @NotNull
             @Override
             public String getTargetName() {
-                return methodRef.getObjectType().getName() + " " + methodRef.getObjectName();
+                return methodRef.objectType.getName() + " " + methodRef.objectName;
             }
 
             @Nullable

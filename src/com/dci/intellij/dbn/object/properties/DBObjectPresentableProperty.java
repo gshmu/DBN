@@ -30,12 +30,12 @@ public class DBObjectPresentableProperty extends PresentableProperty{
 
     @Override
     public String getName() {
-        return name == null ? NamingUtil.capitalize(objectRef.getObjectType().getName()) : name;
+        return name == null ? NamingUtil.capitalize(objectRef.objectType.getName()) : name;
     }
 
     @Override
     public String getValue() {
-        return qualified ? objectRef.getPath() : objectRef.getObjectName();
+        return qualified ? objectRef.getPath() : objectRef.objectName;
     }
 
     @Override

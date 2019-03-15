@@ -217,7 +217,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     }
 
     private List<DDLFileType> getDdlFileTypes(@NotNull DBObjectRef<DBSchemaObject> objectRef) {
-        DBObjectType objectType = objectRef.getObjectType();
+        DBObjectType objectType = objectRef.objectType;
         DDLFileManager ddlFileManager = DDLFileManager.getInstance(getProject());
         return ddlFileManager.getDDLFileTypes(objectType);
     }
