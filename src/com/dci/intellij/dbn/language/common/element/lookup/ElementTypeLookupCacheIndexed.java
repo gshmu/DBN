@@ -4,16 +4,15 @@ import com.dci.intellij.dbn.common.index.IndexedContainer;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
+import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
+import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
+import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import gnu.trove.THashSet;
 
 import java.util.Set;
 
-public abstract class ElementTypeLookupCacheIndexed<T extends ElementType> extends ElementTypeLookupCache<T> {
+public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> extends ElementTypeLookupCache<T> {
 
     private IndexedContainer<LeafElementType> allPossibleLeafs;
     Set<LeafElementType> firstPossibleLeafs;
@@ -57,11 +56,6 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementType> exten
     public boolean isFirstRequiredToken(TokenType tokenType) {
         return firstRequiredTokens.contains(tokenType);
     }
-
-    private ElementTypeBundle getBundle() {
-        return elementType.getElementBundle();
-    }
-
 
     @Override
     public boolean containsToken(TokenType tokenType) {
@@ -110,13 +104,13 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementType> exten
     }
 
     @Override
-    public void registerLeaf(LeafElementType leaf, ElementType source) {
+    public void registerLeaf(LeafElementType leaf, ElementTypeBase source) {
         boolean initAllElements = initAllElements(leaf);
         boolean initAsFirstPossibleLeaf = initAsFirstPossibleLeaf(leaf, source);
         boolean initAsFirstRequiredLeaf = initAsFirstRequiredLeaf(leaf, source);
 
         // register first possible leafs
-        ElementTypeLookupCache lookupCache = leaf.getLookupCache();
+        ElementTypeLookupCache lookupCache = leaf.lookupCache;
         if (initAsFirstPossibleLeaf) {
             firstPossibleLeafs.add(leaf);
             lookupCache.collectFirstPossibleTokens(firstPossibleTokens);
@@ -138,7 +132,7 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementType> exten
                 allPossibleTokens.put(sharedTokenTypes.getIdentifier());
                 allPossibleTokens.put(sharedTokenTypes.getQuotedIdentifier());
             } else {
-                allPossibleTokens.put(leaf.getTokenType());
+                allPossibleTokens.put(leaf.tokenType);
             }
         }
 
@@ -148,8 +142,8 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementType> exten
         }
     }
 
-    abstract boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementType source);
-    abstract boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source);
+    abstract boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementTypeBase source);
+    abstract boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementTypeBase source);
     private boolean initAllElements(LeafElementType leafElementType) {
         return leafElementType != elementType && !allPossibleLeafs.contains(leafElementType);
     }
@@ -172,7 +166,7 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementType> exten
 
     protected abstract boolean checkStartsWithIdentifier();
 
-    protected boolean isWrapperBeginLeaf(LeafElementType leaf) {
+    boolean isWrapperBeginLeaf(LeafElementType leaf) {
         WrappingDefinition wrapping = elementType.getWrapping();
         if (wrapping != null) {
             if (wrapping.getBeginElementType() == leaf) {

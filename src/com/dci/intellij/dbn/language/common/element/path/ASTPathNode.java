@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.path;
 
 import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.SequenceElementType;
+import com.dci.intellij.dbn.language.common.element.impl.SequenceElementType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.FileElement;

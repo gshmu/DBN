@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.SimpleTokenType;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.WrapperElementType;
+import com.dci.intellij.dbn.language.common.element.impl.WrapperElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
@@ -133,7 +133,7 @@ public class FormattingBlock implements Block {
                 if (parentPsiElement != null && parentPsiElement.elementType instanceof WrapperElementType) {
                     WrapperElementType wrapperElementType = (WrapperElementType) parentPsiElement.elementType;
                     SharedTokenTypeBundle sharedTokenTypes = parentPsiElement.getLanguage().getSharedTokenTypes();
-                    if (wrapperElementType.getBeginTokenElement().getTokenType() == sharedTokenTypes.getChrLeftParenthesis()) {
+                    if (wrapperElementType.getBeginTokenElement().tokenType == sharedTokenTypes.getChrLeftParenthesis()) {
                         //FormattingBlock parentStatementBlock = getParentBlock(this, ElementTypeAttribute.STATEMENT);
                         //Indent parentStatementIndent = parentStatementBlock.getIndent();
                         //return Indent.getIndent(Indent.Type.SPACES, -1, false, false);

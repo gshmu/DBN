@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -108,6 +108,6 @@ public class TokenPsiElement extends LeafPsiElement<TokenElementType> {
     }
 
     public TokenType getTokenType() {
-        return elementType.getTokenType();
+        return elementType.tokenType;
     }
 }

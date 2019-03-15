@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.QuotePair;
-import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
+import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
+import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierVariant;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
@@ -144,7 +144,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
             IdentifierLookupAdapter identifierLookupAdapter = (IdentifierLookupAdapter) lookupAdapter;
             if (identifierLookupAdapter.matchesName(this)) {
                 if (lookupAdapter.matches(this)) {
-                    if (bucket == null) bucket = new THashSet<BasePsiElement>();
+                    if (bucket == null) bucket = new THashSet<>();
                     bucket.add(this);
                 }
             }
@@ -602,7 +602,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     }
 
     public List<BasePsiElement> findQualifiedUsages() {
-        List<BasePsiElement> qualifiedUsages= new ArrayList<BasePsiElement>();
+        List<BasePsiElement> qualifiedUsages= new ArrayList<>();
         BasePsiElement scopePsiElement = getEnclosingScopePsiElement();
         if (scopePsiElement != null) {
             IdentifierLookupAdapter identifierLookupAdapter = new IdentifierLookupAdapter(this, null, null, null, getChars());

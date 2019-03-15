@@ -12,9 +12,6 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.SequenceElementType;
-import com.dci.intellij.dbn.language.common.element.TokenElementType;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.lookup.ElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.Branch;
@@ -37,7 +34,7 @@ import javax.swing.*;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-public abstract class AbstractElementType extends IElementType implements ElementType {
+public abstract class ElementTypeBase extends IElementType implements ElementType {
     private static final Logger LOGGER = LoggerFactory.createLogger();
     private static final FormattingDefinition STATEMENT_FORMATTING = new FormattingDefinition(null, IndentDefinition.NORMAL, SpacingDefinition.MIN_LINE_BREAK, null);
 
@@ -50,10 +47,10 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     private Branch branch;
     private FormattingDefinition formatting;
 
-    private final ElementTypeLookupCache lookupCache = createLookupCache();
-    private final ElementTypeParser parser = createParser();
+    public final ElementTypeLookupCache lookupCache = createLookupCache();
+    public final ElementTypeParser parser = createParser();
     private final ElementTypeBundle bundle;
-    private final ElementType parent;
+    private final ElementTypeBase parent;
     private DBObjectType virtualObjectType;
     private ElementTypeAttributeHolder attributes;
 
@@ -62,7 +59,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     private boolean scopeDemarcation;
     private boolean scopeIsolation;
 
-    AbstractElementType(ElementTypeBundle bundle, ElementType parent, String id, @Nullable String description) {
+    ElementTypeBase(@NotNull ElementTypeBundle bundle, ElementTypeBase parent, String id, @Nullable String description) {
         super(id, bundle.getLanguageDialect(), false);
         idx = TokenType.INDEXER.incrementAndGet();
         this.id = id;
@@ -72,7 +69,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         this.parent = parent;
     }
 
-    AbstractElementType(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
+    ElementTypeBase(@NotNull ElementTypeBundle bundle, ElementTypeBase parent, String id, @NotNull Element def) throws ElementTypeDefinitionException {
         super(id, bundle.getLanguageDialect(), false);
         idx = TokenType.INDEXER.incrementAndGet();
         String defId = def.getAttributeValue("id");
@@ -114,24 +111,22 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         return wrapping;
     }
 
-    @Override
     public boolean isWrappingBegin(LeafElementType elementType) {
         return wrapping != null && wrapping.getBeginElementType() == elementType;
     }
 
     @Override
     public boolean isWrappingBegin(TokenType tokenType) {
-        return wrapping != null && wrapping.getBeginElementType().getTokenType() == tokenType;
+        return wrapping != null && wrapping.getBeginElementType().tokenType == tokenType;
     }
 
-    @Override
     public boolean isWrappingEnd(LeafElementType elementType) {
         return wrapping != null && wrapping.getEndElementType() == elementType;
     }
 
     @Override
     public boolean isWrappingEnd(TokenType tokenType) {
-        return wrapping != null && wrapping.getEndElementType().getTokenType() == tokenType;
+        return wrapping != null && wrapping.getEndElementType().tokenType == tokenType;
     }
 
     protected abstract ElementTypeLookupCache createLookupCache();
@@ -180,7 +175,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
         loadWrappingAttributes(def);
     }
 
-    private void loadWrappingAttributes(Element def) throws ElementTypeDefinitionException {
+    private void loadWrappingAttributes(Element def) {
         String templateId = def.getAttributeValue("wrapping-template");
         TokenElementType beginTokenElement = null;
         TokenElementType endTokenElement = null;
@@ -189,15 +184,15 @@ public abstract class AbstractElementType extends IElementType implements Elemen
             String endTokenId = def.getAttributeValue("wrapping-end-token");
 
             if (StringUtil.isNotEmpty(beginTokenId) && StringUtil.isNotEmpty(endTokenId)) {
-                beginTokenElement = new TokenElementTypeImpl(bundle, this, beginTokenId, id);
-                endTokenElement = new TokenElementTypeImpl(bundle, this, endTokenId, id);
+                beginTokenElement = new TokenElementType(bundle, this, beginTokenId, id);
+                endTokenElement = new TokenElementType(bundle, this, endTokenId, id);
             }
         } else {
             TokenPairTemplate template = TokenPairTemplate.valueOf(templateId);
             String beginTokenId = template.getBeginToken();
             String endTokenId = template.getEndToken();
-            beginTokenElement = new TokenElementTypeImpl(bundle, this, beginTokenId, id);
-            endTokenElement = new TokenElementTypeImpl(bundle, this, endTokenId, id);
+            beginTokenElement = new TokenElementType(bundle, this, beginTokenId, id);
+            endTokenElement = new TokenElementType(bundle, this, endTokenId, id);
 
             if (template.isBlock()) {
                 beginTokenElement.setDefaultFormatting(FormattingDefinition.LINE_BREAK_AFTER);
@@ -234,7 +229,7 @@ public abstract class AbstractElementType extends IElementType implements Elemen
     }
 
     @Override
-    public ElementType getParent() {
+    public ElementTypeBase getParent() {
         return parent;
     }
 

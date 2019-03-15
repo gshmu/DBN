@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.OneOfElementType;
+import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeRef;
+import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
+import com.dci.intellij.dbn.language.common.element.impl.OneOfElementType;
 
 import java.util.Set;
 
@@ -14,15 +14,15 @@ public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheIndexed<O
     }
 
     @Override
-    boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementType source) {
+    boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementTypeBase source) {
         boolean notInitialized = !firstPossibleLeafs.contains(leaf);
-        return notInitialized && (isWrapperBeginLeaf(leaf) || source.getLookupCache().couldStartWithLeaf(leaf));
+        return notInitialized && (isWrapperBeginLeaf(leaf) || source.lookupCache.couldStartWithLeaf(leaf));
     }
 
     @Override
-    boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source) {
+    boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementTypeBase source) {
         boolean notInitialized = !firstRequiredLeafs.contains(leaf);
-        return notInitialized && source.getLookupCache().shouldStartWithLeaf(leaf);
+        return notInitialized && source.lookupCache.shouldStartWithLeaf(leaf);
     }
 
     @Override
@@ -39,8 +39,7 @@ public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheIndexed<O
         ElementTypeRef[] elementTypeRefs = elementType.getChildren();
         for (ElementTypeRef child : elementTypeRefs) {
             if (context.check(child)) {
-                ElementTypeLookupCache lookupCache = child.elementType.getLookupCache();
-                bucket = lookupCache.collectFirstPossibleLeafs(context, bucket);
+                bucket = child.elementType.lookupCache.collectFirstPossibleLeafs(context, bucket);
             }
         }
         return bucket;
@@ -52,8 +51,7 @@ public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheIndexed<O
         ElementTypeRef[] elementTypeRefs = elementType.getChildren();
         for (ElementTypeRef child : elementTypeRefs) {
             if (context.check(child)) {
-                ElementTypeLookupCache lookupCache = child.elementType.getLookupCache();
-                bucket = lookupCache.collectFirstPossibleTokens(context, bucket);
+                bucket = child.elementType.lookupCache.collectFirstPossibleTokens(context, bucket);
             }
         }
         return bucket;

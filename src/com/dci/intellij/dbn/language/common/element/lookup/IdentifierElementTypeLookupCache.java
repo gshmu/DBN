@@ -2,9 +2,9 @@ package com.dci.intellij.dbn.language.common.element.lookup;
 
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
-import com.intellij.util.containers.HashSet;
+import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class IdentifierElementTypeLookupCache extends LeafElementTypeLookupCache<IdentifierElementType>{
@@ -31,7 +31,7 @@ public class IdentifierElementTypeLookupCache extends LeafElementTypeLookupCache
         SharedTokenTypeBundle sharedTokenTypes = getSharedTokenTypes();
         TokenType identifier = sharedTokenTypes.getIdentifier();
         TokenType quotedIdentifier = sharedTokenTypes.getQuotedIdentifier();
-        HashSet<TokenType> tokenTypes = new HashSet<TokenType>(2);
+        Set<TokenType> tokenTypes = new HashSet<>(2);
         tokenTypes.add(identifier);
         tokenTypes.add(quotedIdentifier);
         return tokenTypes;

@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
 import com.dci.intellij.dbn.language.common.TokenType;
-import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
-import com.dci.intellij.dbn.language.common.element.QualifiedIdentifierElementType;
+import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
+import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
+import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierElementType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -14,7 +14,7 @@ public class QualifiedIdentifierElementTypeLookupCache extends ElementTypeLookup
     }
 
     @Override
-    boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementType source) {
+    boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementTypeBase source) {
         for (LeafElementType[] variant : elementType.getVariants()) {
             if (variant[0] == source) return true;
         }
@@ -22,7 +22,7 @@ public class QualifiedIdentifierElementTypeLookupCache extends ElementTypeLookup
     }
 
     @Override
-    boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementType source) {
+    boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementTypeBase source) {
         for (LeafElementType[] variant : elementType.getVariants()) {
             if (variant[0] == source && !variant[0].isOptional()) return true;
         }
@@ -32,7 +32,7 @@ public class QualifiedIdentifierElementTypeLookupCache extends ElementTypeLookup
     @Override
     public boolean checkStartsWithIdentifier() {
         for (LeafElementType[] elementTypes : elementType.getVariants()) {
-            if (elementTypes[0].getLookupCache().startsWithIdentifier()) return true;
+            if (elementTypes[0].lookupCache.startsWithIdentifier()) return true;
         }
         return false;
     }
@@ -53,7 +53,7 @@ public class QualifiedIdentifierElementTypeLookupCache extends ElementTypeLookup
         bucket = initBucket(bucket);
         for (LeafElementType[] elementTypes : elementType.getVariants()) {
             // variants already consider optional leafs
-            bucket.add(elementTypes[0].getTokenType());
+            bucket.add(elementTypes[0].tokenType);
         }
 
         return bucket;

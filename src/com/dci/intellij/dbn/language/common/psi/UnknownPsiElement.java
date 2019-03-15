@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.common.psi;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.element.ElementType;
+import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -12,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class UnknownPsiElement extends BasePsiElement<ElementType> {
-    public UnknownPsiElement(ASTNode astNode, ElementType elementType) {
+public class UnknownPsiElement extends BasePsiElement<ElementTypeBase> {
+    public UnknownPsiElement(ASTNode astNode, ElementTypeBase elementType) {
         super(astNode, elementType);
     }
 

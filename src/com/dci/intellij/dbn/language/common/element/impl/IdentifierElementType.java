@@ -2,10 +2,7 @@ package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.SpacingDefinition;
-import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
-import com.dci.intellij.dbn.language.common.element.IdentifierElementType;
-import com.dci.intellij.dbn.language.common.element.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.lookup.IdentifierElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.IdentifierElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -23,7 +20,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 
-public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements IdentifierElementType {
+public class IdentifierElementType extends LeafElementType {
     public static final FormattingDefinition FORMATTING = new FormattingDefinition(null, null, SpacingDefinition.ONE_SPACE, null);
 
     private IdentifierType identifierType;
@@ -34,7 +31,7 @@ public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements Id
     private boolean localReference; // is local reference
 
 
-    public IdentifierElementTypeImpl(ElementTypeBundle bundle, ElementType parent, String id, Element def) throws ElementTypeDefinitionException {
+    public IdentifierElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
         setTokenType(bundle.getTokenTypeBundle().getIdentifier());
     }
@@ -109,77 +106,62 @@ public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements Id
     }
 
     /*********************************************************
-     *                Identifier type acessors               *
+     *                Identifier type accessors               *
      *********************************************************/
 
-    @Override
     public IdentifierType getIdentifierType() {
         return identifierType;
     }
 
-    @Override
     public boolean isObject() {
         return identifierType == IdentifierType.OBJECT;
     }
 
-    @Override
     public boolean isAlias() {
         return identifierType == IdentifierType.ALIAS;
     }
     
-    @Override
     public boolean isVariable() {
         return identifierType == IdentifierType.VARIABLE;
     }
 
-    @Override
     public IdentifierCategory getIdentifierCategory() {
         return identifierCategory;
     }
 
-    @Override
     public boolean isReference() {
         return identifierCategory == IdentifierCategory.REFERENCE;
     }
 
-    @Override
     public boolean isReferenceable() {
         return referenceable;
     }
 
-    @Override
     public boolean isLocalReference() {
         return localReference;
     }
 
-    @Override
     public boolean isDefinition() {
         return identifierCategory == IdentifierCategory.DEFINITION;
     }
 
-    @Override
     public DBObjectType getObjectType() {
         return objectType;
     }
 
-
-    @Override
     public String getObjectTypeName() {
         return objectType.getName();
     }
 
-    @Override
     public String getQualifiedObjectTypeName() {
         return getObjectTypeName() + " " + identifierType.name().toLowerCase();
 
     }
 
-    @Override
     public boolean isObjectOfType(DBObjectType type) {
         return objectType.matches(type);
     }
 
-    @Override
     public boolean isSubject() {
         return is(ElementTypeAttribute.SUBJECT);
     }
@@ -188,9 +170,9 @@ public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements Id
     public boolean isSameAs(LeafElementType elementType) {
         if (elementType instanceof IdentifierElementType) {
             IdentifierElementType identifierElementType = (IdentifierElementType) elementType;
-            return  identifierElementType.getObjectType().matches(objectType) &&
-                    identifierElementType.getIdentifierType() == identifierType &&
-                    identifierElementType.getIdentifierCategory() == identifierCategory;
+            return  identifierElementType.objectType.matches(objectType) &&
+                    identifierElementType.identifierType == identifierType &&
+                    identifierElementType.identifierCategory == identifierCategory;
         }
         return false;
     }
@@ -200,7 +182,6 @@ public class IdentifierElementTypeImpl extends LeafElementTypeImpl implements Id
         return true;
     }
 
-    @Override
     public UnderlyingObjectResolver getUnderlyingObjectResolver() {
         return underlyingObjectResolverId == null ? null : UnderlyingObjectResolver.get(underlyingObjectResolverId);
     }

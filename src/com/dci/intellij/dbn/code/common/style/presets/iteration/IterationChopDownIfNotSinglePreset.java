@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.code.common.style.presets.iteration;
 
 import com.dci.intellij.dbn.language.common.element.ElementType;
-import com.dci.intellij.dbn.language.common.element.IterationElementType;
+import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.formatting.Spacing;
