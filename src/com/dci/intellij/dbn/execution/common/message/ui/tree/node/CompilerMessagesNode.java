@@ -1,6 +1,9 @@
-package com.dci.intellij.dbn.execution.common.message.ui.tree;
+package com.dci.intellij.dbn.execution.common.message.ui.tree.node;
 
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTreeBundleNode;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTreeNode;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTreeRootNode;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -10,13 +13,13 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.TreePath;
 
-public class CompilerMessagesNode extends BundleTreeNode {
-    public CompilerMessagesNode(RootNode parent) {
+public class CompilerMessagesNode extends MessagesTreeBundleNode<MessagesTreeRootNode, CompilerMessagesObjectNode> {
+    public CompilerMessagesNode(MessagesTreeRootNode parent) {
         super(parent);
     }
 
     @Nullable
-    public MessagesTreeNode getChildTreeNode(VirtualFile virtualFile) {
+    private MessagesTreeNode getChildTreeNode(VirtualFile virtualFile) {
         for (MessagesTreeNode messagesTreeNode : getChildren()) {
             VirtualFile nodeVirtualFile = messagesTreeNode.getVirtualFile();
             if (nodeVirtualFile != null && nodeVirtualFile.equals(virtualFile)) {
@@ -45,11 +48,6 @@ public class CompilerMessagesNode extends BundleTreeNode {
         if (objectNode != null) {
             return objectNode.getTreePath(compilerMessage);
         }
-        return null;
-    }
-
-    @Override
-    public VirtualFile getVirtualFile() {
         return null;
     }
 }
