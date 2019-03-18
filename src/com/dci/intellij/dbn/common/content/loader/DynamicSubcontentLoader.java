@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapter;
-import com.dci.intellij.dbn.common.thread.ThreadInfo;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -79,8 +78,8 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> e
         if (dependencyAdapter.isSourceContentReady()) {
             return false;
         } else {
-            ThreadInfo thread = ThreadMonitor.current();
-            if (thread.is(ThreadProperty.CODE_ANNOTATING) || ThreadMonitor.getProcessCount(ThreadProperty.BACKGROUND_TASK) > 5) {
+            //ThreadInfo thread = ThreadMonitor.current();
+            if (/*thread.is(ThreadProperty.CODE_ANNOTATING) || */ThreadMonitor.getProcessCount(ThreadProperty.BACKGROUND_TASK) > 10) {
                 return false;
             } else {
                 return true;
