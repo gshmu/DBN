@@ -1,31 +1,36 @@
-package com.dci.intellij.dbn.execution.common.message.ui.tree;
+package com.dci.intellij.dbn.execution.common.message.ui.tree.node;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTreeBundleNode;
 import com.dci.intellij.dbn.execution.method.MethodExecutionMessage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.TreePath;
 
-public class MethodExecutionMessagesObjectNode extends BundleTreeNode {
+public class MethodExecutionMessagesObjectNode extends MessagesTreeBundleNode<MethodExecutionMessagesNode, MethodExecutionMessageNode> {
     private DBEditableObjectVirtualFile databaseFile;
 
-    public MethodExecutionMessagesObjectNode(MethodExecutionMessagesNode parent, DBEditableObjectVirtualFile databaseFile) {
+    MethodExecutionMessagesObjectNode(@NotNull MethodExecutionMessagesNode parent, @NotNull DBEditableObjectVirtualFile databaseFile) {
         super(parent);
         this.databaseFile = databaseFile;
     }
 
+    @NotNull
     @Override
     public DBEditableObjectVirtualFile getVirtualFile() {
-        return databaseFile;
+        return Failsafe.get(databaseFile);
     }
 
     public DBSchemaObject getObject() {
         return databaseFile.getObject();
     }
 
-    public TreePath addCompilerMessage(MethodExecutionMessage executionMessage) {
+    TreePath addCompilerMessage(MethodExecutionMessage executionMessage) {
         clearChildren();
         MethodExecutionMessageNode messageNode = new MethodExecutionMessageNode(this, executionMessage);
         addChild(messageNode);
@@ -35,11 +40,11 @@ public class MethodExecutionMessagesObjectNode extends BundleTreeNode {
         return treePath;
     }
 
+    @Nullable
     public TreePath getTreePath(MethodExecutionMessage executionMessage) {
-        for (MessagesTreeNode messageNode : getChildren()) {
-            MethodExecutionMessageNode methodExecutionMessageNode = (MethodExecutionMessageNode) messageNode;
-            if (methodExecutionMessageNode.getExecutionMessage() == executionMessage) {
-                return TreeUtil.createTreePath(methodExecutionMessageNode);
+        for (MethodExecutionMessageNode messageNode : getChildren()) {
+            if (messageNode.getMessage() == executionMessage) {
+                return TreeUtil.createTreePath(messageNode);
             }
         }
         return null;

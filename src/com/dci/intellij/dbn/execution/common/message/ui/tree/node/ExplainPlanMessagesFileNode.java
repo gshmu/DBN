@@ -1,27 +1,31 @@
-package com.dci.intellij.dbn.execution.common.message.ui.tree;
+package com.dci.intellij.dbn.execution.common.message.ui.tree.node;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTreeBundleNode;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.TreePath;
 
-public class ExplainPlanMessagesFileNode extends BundleTreeNode {
+public class ExplainPlanMessagesFileNode extends MessagesTreeBundleNode<ExplainPlanMessagesNode, ExplainPlanMessageNode> {
     private VirtualFile virtualFile;
 
-    public ExplainPlanMessagesFileNode(ExplainPlanMessagesNode parent, VirtualFile virtualFile) {
+    ExplainPlanMessagesFileNode(ExplainPlanMessagesNode parent, VirtualFile virtualFile) {
         super(parent);
         this.virtualFile = virtualFile;
     }
 
+    @NotNull
     @Override
     public VirtualFile getVirtualFile() {
-        return virtualFile;
+        return Failsafe.get(virtualFile);
     }
 
-    public TreePath addExplainPlanMessage(ExplainPlanMessage explainPlanMessage) {
+    TreePath addExplainPlanMessage(ExplainPlanMessage explainPlanMessage) {
         ExplainPlanMessageNode explainPlanMessageNode = new ExplainPlanMessageNode(this, explainPlanMessage);
         addChild(explainPlanMessageNode);
         getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
@@ -30,10 +34,9 @@ public class ExplainPlanMessagesFileNode extends BundleTreeNode {
 
     @Nullable
     public TreePath getTreePath(ExplainPlanMessage explainPlanMessage) {
-        for (MessagesTreeNode messageNode : getChildren()) {
-            ExplainPlanMessageNode explainPlanMessageNode = (ExplainPlanMessageNode) messageNode;
-            if (explainPlanMessageNode.getExplainPlanMessage() == explainPlanMessage) {
-                return TreeUtil.createTreePath(explainPlanMessageNode);
+        for (ExplainPlanMessageNode messageNode : getChildren()) {
+            if (messageNode.getMessage() == explainPlanMessage) {
+                return TreeUtil.createTreePath(messageNode);
             }
         }
         return null;

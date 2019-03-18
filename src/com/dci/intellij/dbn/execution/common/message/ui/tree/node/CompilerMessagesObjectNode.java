@@ -1,7 +1,8 @@
-package com.dci.intellij.dbn.execution.common.message.ui.tree;
+package com.dci.intellij.dbn.execution.common.message.ui.tree.node;
 
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTreeBundleNode;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -11,10 +12,10 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.tree.TreePath;
 import java.util.List;
 
-public class CompilerMessagesObjectNode extends BundleTreeNode {
+public class CompilerMessagesObjectNode extends MessagesTreeBundleNode<CompilerMessagesNode, CompilerMessageNode> {
     private DBObjectRef<DBSchemaObject> objectRef;
 
-    public CompilerMessagesObjectNode(CompilerMessagesNode parent, DBObjectRef<DBSchemaObject> objectRef) {
+    CompilerMessagesObjectNode(CompilerMessagesNode parent, DBObjectRef<DBSchemaObject> objectRef) {
         super(parent);
         this.objectRef = objectRef;
     }
@@ -38,11 +39,11 @@ public class CompilerMessagesObjectNode extends BundleTreeNode {
         return objectRef;
     }
 
-    public TreePath addCompilerMessage(CompilerMessage compilerMessage) {
-        List<MessagesTreeNode> children = getChildren();
+    TreePath addCompilerMessage(CompilerMessage compilerMessage) {
+        List<CompilerMessageNode> children = getChildren();
         if (children.size() > 0) {
-            CompilerMessageNode firstChild = (CompilerMessageNode) children.get(0);
-            if (firstChild.getCompilerMessage().getCompilerResult() != compilerMessage.getCompilerResult()) {
+            CompilerMessageNode firstChild = children.get(0);
+            if (firstChild.getMessage().getCompilerResult() != compilerMessage.getCompilerResult()) {
                 clearChildren();
             }
         }
@@ -55,10 +56,9 @@ public class CompilerMessagesObjectNode extends BundleTreeNode {
 
     @Nullable
     public TreePath getTreePath(CompilerMessage compilerMessage) {
-        for (MessagesTreeNode messageNode : getChildren()) {
-            CompilerMessageNode compilerMessageNode = (CompilerMessageNode) messageNode;
-            if (compilerMessageNode.getCompilerMessage() == compilerMessage) {
-                return TreeUtil.createTreePath(compilerMessageNode);
+        for (CompilerMessageNode messageNode : getChildren()) {
+            if (messageNode.getMessage() == compilerMessage) {
+                return TreeUtil.createTreePath(messageNode);
             }
         }
         return null;

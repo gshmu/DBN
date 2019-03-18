@@ -13,6 +13,8 @@ import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.console.SQLConsoleEditor;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.node.CompilerMessageNode;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.node.StatementExecutionMessageNode;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
@@ -73,8 +75,8 @@ public class MessagesTree extends DBNTree implements Disposable {
             TreePath treePath = getPathForRow(i);
             if (!isRowSelected(i)) {
                 Object lastPathComponent = treePath.getLastPathComponent();
-                if (lastPathComponent instanceof MessageTreeNode) {
-                    MessageTreeNode node = (MessageTreeNode) lastPathComponent;
+                if (lastPathComponent instanceof MessagesTreeLeafNode) {
+                    MessagesTreeLeafNode node = (MessagesTreeLeafNode) lastPathComponent;
                     if (!node.isDisposed() && node.getMessage().isNew()) {
                         Rectangle r = getRowBounds(i);
                         g.setColor(MessagesTreeCellRenderer.HIGHLIGHT_BACKGROUND);
@@ -175,7 +177,7 @@ public class MessagesTree extends DBNTree implements Disposable {
     private void navigateToCode(Object object, NavigationInstruction instruction) {
         if (object instanceof StatementExecutionMessageNode) {
             StatementExecutionMessageNode execMessageNode = (StatementExecutionMessageNode) object;
-            StatementExecutionMessage executionMessage = execMessageNode.getExecutionMessage();
+            StatementExecutionMessage executionMessage = execMessageNode.getMessage();
             if (!executionMessage.isOrphan()) {
                 StatementExecutionResult executionResult = executionMessage.getExecutionResult();
                 StatementExecutionProcessor executionProcessor = executionResult.getExecutionProcessor();
@@ -193,7 +195,7 @@ public class MessagesTree extends DBNTree implements Disposable {
         }
         else if (object instanceof CompilerMessageNode) {
             CompilerMessageNode compilerMessageNode = (CompilerMessageNode) object;
-            CompilerMessage compilerMessage = compilerMessageNode.getCompilerMessage();
+            CompilerMessage compilerMessage = compilerMessageNode.getMessage();
 
             CompilerAction compilerAction = compilerMessage.getCompilerResult().getCompilerAction();
             if (compilerAction.isSave() || compilerAction.isCompile() || compilerAction.isBulkCompile()) {
