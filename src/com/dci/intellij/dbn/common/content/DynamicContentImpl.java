@@ -158,20 +158,16 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     @Override
     public final void load() {
         if (shouldLoad()) {
-            synchronized (this) {
-                if (shouldLoad()) {
-                    set(LOADING, true);
-                    try {
-                        performLoad(false);
-                        set(LOADED, true);
-                    } catch (Exception e) {
-                        setElements(EMPTY_CONTENT);
-                        set(DIRTY, true);
-                    } finally {
-                        set(LOADING, false);
-                        updateChangeTimestamp();
-                    }
-                }
+            set(LOADING, true);
+            try {
+                performLoad(false);
+                set(LOADED, true);
+            } catch (Exception e) {
+                setElements(EMPTY_CONTENT);
+                set(DIRTY, true);
+            } finally {
+                set(LOADING, false);
+                updateChangeTimestamp();
             }
         }
     }
@@ -179,26 +175,22 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     @Override
     public final void reload() {
         if (shouldReload()) {
-            synchronized (this) {
-                if (shouldReload()) {
-                    set(LOADING, true);
-                    try {
-                        performLoad(true);
-                        List<T> elements = getAllElements();
-                        CollectionUtil.forEach(elements,
-                                (element) -> {
-                                    checkDisposed();
-                                    element.refresh();
-                                });
-                        set(LOADED, true);
-                    } catch (Exception e) {
-                        setElements(EMPTY_CONTENT);
-                        set(DIRTY, true);
-                    } finally {
-                        set(LOADING, false);
-                        updateChangeTimestamp();
-                    }
-                }
+            set(LOADING, true);
+            try {
+                performLoad(true);
+                List<T> elements = getAllElements();
+                CollectionUtil.forEach(elements,
+                        (element) -> {
+                            checkDisposed();
+                            element.refresh();
+                        });
+                set(LOADED, true);
+            } catch (Exception e) {
+                setElements(EMPTY_CONTENT);
+                set(DIRTY, true);
+            } finally {
+                set(LOADING, false);
+                updateChangeTimestamp();
             }
         }
     }
@@ -217,19 +209,15 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     @Override
     public void refresh() {
         if (shouldRefresh()) {
-            synchronized (this) {
-                if (shouldRefresh()) {
-                    try {
-                        set(REFRESHING, true);
-                        markDirty();
-                        dependencyAdapter.refreshSources();
-                        if (!is(INTERNAL)){
-                            CollectionUtil.forEach(elements, element -> element.refresh());
-                        }
-                    } finally {
-                        set(REFRESHING, false);
-                    }
+            try {
+                set(REFRESHING, true);
+                markDirty();
+                dependencyAdapter.refreshSources();
+                if (!is(INTERNAL)){
+                    CollectionUtil.forEach(elements, element -> element.refresh());
                 }
+            } finally {
+                set(REFRESHING, false);
             }
         }
     }
@@ -237,23 +225,19 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     @Override
     public final void loadInBackground() {
         if (shouldLoadInBackground()) {
-            synchronized (this) {
-                if (shouldLoadInBackground()) {
-                    set(LOADING_IN_BACKGROUND, true);
-                    ConnectionHandler connectionHandler = getConnectionHandler();
-                    String connectionString = " (" + connectionHandler.getName() + ')';
-                    Progress.background(
-                            getProject(),
-                            "Loading data dictionary" + connectionString, false,
-                            (progress) -> {
-                                try{
-                                    ensure();
-                                } finally {
-                                    set(LOADING_IN_BACKGROUND, false);
-                                }
-                            });
-                }
-            }
+            set(LOADING_IN_BACKGROUND, true);
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            String connectionString = " (" + connectionHandler.getName() + ')';
+            Progress.background(
+                    getProject(),
+                    "Loading data dictionary" + connectionString, false,
+                    (progress) -> {
+                        try{
+                            load();
+                        } finally {
+                            set(LOADING_IN_BACKGROUND, false);
+                        }
+                    });
         }
     }
 
