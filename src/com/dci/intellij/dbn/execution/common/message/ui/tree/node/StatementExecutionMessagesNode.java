@@ -1,20 +1,22 @@
-package com.dci.intellij.dbn.execution.common.message.ui.tree;
+package com.dci.intellij.dbn.execution.common.message.ui.tree.node;
 
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTreeBundleNode;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTreeRootNode;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.TreePath;
 
-public class StatementExecutionMessagesNode extends BundleTreeNode {
-    public StatementExecutionMessagesNode(RootNode parent) {
+public class StatementExecutionMessagesNode extends MessagesTreeBundleNode<MessagesTreeRootNode, StatementExecutionMessagesFileNode> {
+    public StatementExecutionMessagesNode(MessagesTreeRootNode parent) {
         super(parent);
     }
 
     @Nullable
-    public MessagesTreeNode getChildTreeNode(VirtualFile virtualFile) {
-        for (MessagesTreeNode messagesTreeNode : getChildren()) {
+    private StatementExecutionMessagesFileNode getChildTreeNode(VirtualFile virtualFile) {
+        for (StatementExecutionMessagesFileNode messagesTreeNode : getChildren()) {
             if (messagesTreeNode.getVirtualFile().equals(virtualFile)) {
                 return messagesTreeNode;
             }
@@ -44,12 +46,6 @@ public class StatementExecutionMessagesNode extends BundleTreeNode {
 
     @Nullable
     private StatementExecutionMessagesFileNode getFileTreeNode(StatementExecutionMessage statementExecutionMessage) {
-        return (StatementExecutionMessagesFileNode) getChildTreeNode(statementExecutionMessage.getVirtualFile());
-    }
-
-
-    @Override
-    public VirtualFile getVirtualFile() {
-        return null;
+        return getChildTreeNode(statementExecutionMessage.getVirtualFile());
     }
 }

@@ -1,24 +1,27 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.node.CompilerMessagesNode;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.node.ExplainPlanMessagesNode;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.node.StatementExecutionMessagesNode;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-public class RootNode extends BundleTreeNode {
-    private MessagesTreeModel messagesTreeModel;
+public class MessagesTreeRootNode extends MessagesTreeBundleNode<MessagesTreeNode, MessagesTreeBundleNode> {
+    private MessagesTreeModel treeModel;
 
-    public RootNode(MessagesTreeModel messagesTreeModel) {
+    MessagesTreeRootNode(MessagesTreeModel treeModel) {
         super(null);
-        this.messagesTreeModel = messagesTreeModel;
+        this.treeModel = treeModel;
     }
 
-    public TreePath addExecutionMessage(StatementExecutionMessage executionMessage) {
+    TreePath addExecutionMessage(StatementExecutionMessage executionMessage) {
         StatementExecutionMessagesNode execMessagesNode = null;
         for (TreeNode treeNode : getChildren()) {
             if (treeNode instanceof StatementExecutionMessagesNode) {
@@ -29,13 +32,13 @@ public class RootNode extends BundleTreeNode {
         if (execMessagesNode == null) {
             execMessagesNode = new StatementExecutionMessagesNode(this);
             addChild(execMessagesNode);
-            messagesTreeModel.notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
+            treeModel.notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
         }
 
         return execMessagesNode.addExecutionMessage(executionMessage);
     }
 
-    public TreePath addExplainPlanMessage(ExplainPlanMessage explainPlanMessage) {
+    TreePath addExplainPlanMessage(ExplainPlanMessage explainPlanMessage) {
         ExplainPlanMessagesNode explainPlanMessagesNode = null;
         for (TreeNode treeNode : getChildren()) {
             if (treeNode instanceof ExplainPlanMessagesNode) {
@@ -46,24 +49,24 @@ public class RootNode extends BundleTreeNode {
         if (explainPlanMessagesNode == null) {
             explainPlanMessagesNode = new ExplainPlanMessagesNode(this);
             addChild(explainPlanMessagesNode);
-            messagesTreeModel.notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
+            treeModel.notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
         }
 
         return explainPlanMessagesNode.addExplainPlanMessage(explainPlanMessage);
     }
 
-    public TreePath addCompilerMessage(CompilerMessage compilerMessage) {
+    TreePath addCompilerMessage(CompilerMessage compilerMessage) {
         CompilerMessagesNode compilerMessagesNode = getCompilerMessagesNode();
         if (compilerMessagesNode == null) {
             compilerMessagesNode = new CompilerMessagesNode(this);
             addChild(compilerMessagesNode);
-            messagesTreeModel.notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
+            treeModel.notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
         }
         return compilerMessagesNode.addCompilerMessage(compilerMessage);
     }
 
     @Nullable
-    public CompilerMessagesNode getCompilerMessagesNode() {
+    private CompilerMessagesNode getCompilerMessagesNode() {
         for (TreeNode treeNode : getChildren()) {
             if (treeNode instanceof CompilerMessagesNode) {
                 return (CompilerMessagesNode) treeNode;
@@ -73,7 +76,7 @@ public class RootNode extends BundleTreeNode {
     }
 
     @Nullable
-    public StatementExecutionMessagesNode getStatementExecutionMessagesNode() {
+    private StatementExecutionMessagesNode getStatementExecutionMessagesNode() {
         for (TreeNode treeNode : getChildren()) {
             if (treeNode instanceof StatementExecutionMessagesNode) {
                 return (StatementExecutionMessagesNode) treeNode;
@@ -103,17 +106,12 @@ public class RootNode extends BundleTreeNode {
 
     @Override
     public MessagesTreeModel getTreeModel() {
-        return messagesTreeModel;
-    }
-
-    @Override
-    public VirtualFile getVirtualFile() {
-        return null;
+        return Failsafe.get(treeModel);
     }
 
     @Override
     public void dispose() {
         super.dispose();
-        messagesTreeModel = null;
+        treeModel = null;
     }
 }

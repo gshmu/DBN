@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.common.message.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTree;
-import com.dci.intellij.dbn.execution.common.message.ui.tree.StatementExecutionMessageNode;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.node.StatementExecutionMessageNode;
 import com.dci.intellij.dbn.execution.common.ui.StatementViewerPopup;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -20,7 +20,7 @@ public class ViewExecutedStatementAction extends ExecutionMessagesAction {
     public void actionPerformed(@NotNull AnActionEvent e) {
         getMessagesTree().grabFocus();
         StatementExecutionMessageNode execMessageNode = (StatementExecutionMessageNode) getMessagesTree().getSelectionPath().getLastPathComponent();
-        StatementExecutionResult executionResult = execMessageNode.getExecutionMessage().getExecutionResult();
+        StatementExecutionResult executionResult = execMessageNode.getMessage().getExecutionResult();
         StatementViewerPopup statementViewer = new StatementViewerPopup(executionResult);
         statementViewer.show((Component) e.getInputEvent().getSource());
     }

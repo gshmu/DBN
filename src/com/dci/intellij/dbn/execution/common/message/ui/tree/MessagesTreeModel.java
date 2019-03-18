@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
+import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,23 +19,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public class MessagesTreeModel implements TreeModel, Disposable {
-    private Set<TreeModelListener> treeModelListeners = new HashSet<TreeModelListener>();
-    private RootNode rootNode = new RootNode(this);
+public class MessagesTreeModel extends DisposableBase implements TreeModel, Disposable {
+    private Set<TreeModelListener> treeModelListeners = new HashSet<>();
+    private MessagesTreeRootNode rootNode = new MessagesTreeRootNode(this);
 
-    public MessagesTreeModel() {
+    MessagesTreeModel() {
         Disposer.register(this, rootNode);
     }
 
-    public TreePath addExecutionMessage(StatementExecutionMessage executionMessage) {
+    TreePath addExecutionMessage(StatementExecutionMessage executionMessage) {
         return rootNode.addExecutionMessage(executionMessage);
     }
 
-    public TreePath addCompilerMessage(CompilerMessage compilerMessage) {
+    TreePath addCompilerMessage(CompilerMessage compilerMessage) {
         return rootNode.addCompilerMessage(compilerMessage);
     }
 
-    public TreePath addExplainPlanMessage(ExplainPlanMessage explainPlanMessage) {
+    TreePath addExplainPlanMessage(ExplainPlanMessage explainPlanMessage) {
         return rootNode.addExplainPlanMessage(explainPlanMessage);
     }
 
@@ -60,7 +61,7 @@ public class MessagesTreeModel implements TreeModel, Disposable {
     @Override
     public void dispose() {
         treeModelListeners.clear();
-        rootNode = new RootNode(this);
+        rootNode = new MessagesTreeRootNode(this);
     }
 
    /*********************************************************
@@ -111,13 +112,13 @@ public class MessagesTreeModel implements TreeModel, Disposable {
         treeModelListeners.remove(treeModelListener);
     }
 
-    public void resetMessagesStatus() {
+    void resetMessagesStatus() {
         resetMessagesStatus(rootNode);
     }
 
     private void resetMessagesStatus(TreeNode node) {
-        if (node instanceof MessageTreeNode) {
-            MessageTreeNode messageTreeNode = (MessageTreeNode) node;
+        if (node instanceof MessagesTreeLeafNode) {
+            MessagesTreeLeafNode messageTreeNode = (MessagesTreeLeafNode) node;
             messageTreeNode.getMessage().setNew(false);
         } else {
             Enumeration<TreeNode> children = node.children();

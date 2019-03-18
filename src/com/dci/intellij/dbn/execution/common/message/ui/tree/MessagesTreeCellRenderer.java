@@ -7,6 +7,15 @@ import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.node.CompilerMessageNode;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.node.CompilerMessagesNode;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.node.CompilerMessagesObjectNode;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.node.ExplainPlanMessageNode;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.node.ExplainPlanMessagesFileNode;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.node.ExplainPlanMessagesNode;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.node.StatementExecutionMessageNode;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.node.StatementExecutionMessagesFileNode;
+import com.dci.intellij.dbn.execution.common.message.ui.tree.node.StatementExecutionMessagesNode;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
@@ -38,17 +47,17 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
             Icon icon = null;
             Color background = null;
             if (value instanceof StatementExecutionMessagesNode) {
-                BundleTreeNode node = (BundleTreeNode) value;
+                MessagesTreeBundleNode node = (MessagesTreeBundleNode) value;
                 append("Statement Execution Messages", SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
                 append(" (" + node.getChildCount() + " files)", SimpleTextAttributes.GRAY_ATTRIBUTES);
             }
             else if (value instanceof ExplainPlanMessagesNode) {
-                BundleTreeNode node = (BundleTreeNode) value;
+                MessagesTreeBundleNode node = (MessagesTreeBundleNode) value;
                 append("Explain Plan Messages", SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
                 append(" (" + node.getChildCount() + " files)", SimpleTextAttributes.GRAY_ATTRIBUTES);
             }
             else if (value instanceof CompilerMessagesNode) {
-                BundleTreeNode node = (BundleTreeNode) value;
+                MessagesTreeBundleNode node = (MessagesTreeBundleNode) value;
                 append("Compiler Messages", SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
                 append(" (" + node.getChildCount() + " objects)", SimpleTextAttributes.GRAY_ATTRIBUTES);
             }
@@ -80,7 +89,9 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
                     append(objectRef.getPath(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
                     connectionHandler = objectRef.resolveConnectionHandler();
                 } else {
-                    icon = object.getIcon();
+                    icon = compilerMessagesObjectNode.hasMessageChildren(MessageType.ERROR) ?
+                            object.getIcon() :
+                            object.getObjectType().getIcon();
                     append(object.getQualifiedName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
                     connectionHandler = object.getConnectionHandler();
                 }
@@ -91,7 +102,7 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
             }
             else if (value instanceof CompilerMessageNode) {
                 CompilerMessageNode node = (CompilerMessageNode) value;
-                CompilerMessage message = node.getCompilerMessage();
+                CompilerMessage message = node.getMessage();
                 boolean highlight = message.isNew() && !selected;
                 SimpleTextAttributes regularAttributes = getRegularAttributes(highlight);
                 SimpleTextAttributes secondaryTextAttributes = getGrayAttributes(highlight);
@@ -113,7 +124,7 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
             }
             else if (value instanceof StatementExecutionMessageNode) {
                 StatementExecutionMessageNode execMessageNode = (StatementExecutionMessageNode) value;
-                StatementExecutionMessage message = execMessageNode.getExecutionMessage();
+                StatementExecutionMessage message = execMessageNode.getMessage();
                 boolean isOrphan = message.isOrphan();
                 boolean highlight = message.isNew() && !selected;
                 SimpleTextAttributes regularAttributes = getRegularAttributes(highlight);
@@ -143,7 +154,7 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
             }
             else if (value instanceof ExplainPlanMessageNode) {
                 ExplainPlanMessageNode explainPlanMessageNode = (ExplainPlanMessageNode) value;
-                ExplainPlanMessage message = explainPlanMessageNode.getExplainPlanMessage();
+                ExplainPlanMessage message = explainPlanMessageNode.getMessage();
 
                 boolean highlight = message.isNew() && !selected;
                 SimpleTextAttributes regularAttributes = getRegularAttributes(highlight);
@@ -165,9 +176,8 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
             }
 
             setIcon(icon);
-            setBackground(selected ? (isFocused() ?
-                    UIUtil.getTreeSelectionBackground() :
-                    UIUtil.getTreeUnfocusedSelectionBackground()) :
+            setBackground(selected ?
+                    UIUtil.getTreeSelectionBackground(isFocused()) :
                     CommonUtil.nvl(background, tree.getBackground()));
         });
     }
