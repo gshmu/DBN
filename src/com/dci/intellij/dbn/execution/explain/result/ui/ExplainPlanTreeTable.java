@@ -26,6 +26,7 @@ import com.intellij.ui.treeStructure.treetable.TreeTable;
 import com.intellij.ui.treeStructure.treetable.TreeTableCellRenderer;
 import com.intellij.ui.treeStructure.treetable.TreeTableModel;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
@@ -176,7 +177,7 @@ public class ExplainPlanTreeTable extends TreeTable implements Disposable{
             int columnIndex = getSelectedColumns()[0];
             ExplainPlanTreeTableModel tableModel = (ExplainPlanTreeTableModel) getTableModel();
             Object value = getValueAt(rowIndex, columnIndex);
-            if (tableModel.isLargeValue(columnIndex) && value instanceof String && StringUtil.isNotEmpty((String) value)) {
+            if (tableModel.isLargeValue(columnIndex) && value instanceof String && StringUtil.isNotEmpty((String) value) && this.isShowing()) {
                 Rectangle cellRect = getCellRect(rowIndex, columnIndex, true);
 
                 TableColumn column = getColumnModel().getColumn(columnIndex);
@@ -192,7 +193,7 @@ public class ExplainPlanTreeTable extends TreeTable implements Disposable{
                 largeValuePopup.addListener(
                         new JBPopupAdapter() {
                             @Override
-                            public void onClosed(LightweightWindowEvent event) {
+                            public void onClosed(@NotNull LightweightWindowEvent event) {
                                 largeValuePopup.cancel();
                                 largeValuePopup = null;
                             }
