@@ -240,7 +240,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
         popup = popupBuilder.createPopup();
         popup.addListener(new JBPopupAdapter() {
             @Override
-            public void onClosed(LightweightWindowEvent event) {
+            public void onClosed(@NotNull LightweightWindowEvent event) {
                 dispose();
             }
         });
