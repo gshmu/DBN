@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.data.model;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
@@ -28,7 +29,6 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
@@ -402,7 +402,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         DatasetEditorModelRow row = getInsertRow();
         if (row != null) {
             if (row.isEmptyData()) {
-                throw new ProcessCanceledException();
+                throw AlreadyDisposedException.INSTANCE;
             }
             try {
                 editorTable.stopCellEditing();
