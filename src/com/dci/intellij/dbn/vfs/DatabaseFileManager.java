@@ -152,7 +152,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
             if (file instanceof DBEditableObjectVirtualFile) {
                 DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
                 DBObjectRef<DBSchemaObject> objectRef = databaseFile.getObjectRef();
-                objectRef.getnn();
+                objectRef.ensure();
             }
         }
 

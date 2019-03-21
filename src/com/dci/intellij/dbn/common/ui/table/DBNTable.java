@@ -144,7 +144,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
 
     @NotNull
     public Project getProject() {
-        return projectRef.getnn();
+        return projectRef.ensure();
     }
 
     protected Object getValueAtMouseLocation() {

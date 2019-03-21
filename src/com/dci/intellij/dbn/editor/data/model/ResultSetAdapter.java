@@ -56,8 +56,8 @@ public abstract class ResultSetAdapter extends ResultSetUtil implements Disposab
     public abstract void setValue(int columnIndex, @NotNull DBDataType dataType, @Nullable Object value) throws SQLException;
 
     @Override
-    public void dispose() {
-        super.dispose();
-        model = null;
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 }

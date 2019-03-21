@@ -46,11 +46,6 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> 
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-    }
-
-    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{

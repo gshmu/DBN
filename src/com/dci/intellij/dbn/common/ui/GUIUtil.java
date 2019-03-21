@@ -10,6 +10,7 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.popup.list.ListPopupImpl;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -219,6 +220,22 @@ public class GUIUtil{
             component.repaint();
             component.requestFocus();
         });
+    }
+
+    public static void dispose(@Nullable Component component) {
+        if (component != null) {
+            Dispatch.conditional(() -> {
+                UIUtil.dispose(component);
+                if (component instanceof Container) {
+                    Container container = (Container) component;
+                    Component[] components = container.getComponents();
+                    for (Component childComponent : components) {
+                        dispose(childComponent);
+                    }
+                    container.removeAll();
+                }
+            });
+        }
     }
 
 }

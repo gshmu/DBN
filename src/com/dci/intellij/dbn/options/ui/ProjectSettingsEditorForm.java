@@ -190,11 +190,9 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
             ConfigurationEditorForm settingsEditor = configuration.getSettingsEditor();
             if (settingsEditor != null) {
                 JComponent component = settingsEditor.getComponent();
-                if (component != null) {
-                    TabInfo tabInfo = getTabInfo(component);
-                    if (tabInfo != null) {
-                        configurationTabs.select(tabInfo, true);
-                    }
+                TabInfo tabInfo = getTabInfo(component);
+                if (tabInfo != null) {
+                    configurationTabs.select(tabInfo, true);
                 }
             }
         }
@@ -217,11 +215,5 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
             return (Configuration) tabInfo.getObject();
         }
         return getConfiguration();
-    }
-
-    @Override
-    public void dispose() {
-        dialog = null;
-        super.dispose();
     }
 }

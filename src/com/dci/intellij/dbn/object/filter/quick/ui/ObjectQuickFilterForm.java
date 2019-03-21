@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.object.filter.quick.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -95,7 +96,6 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
         GUIUtil.repaint(conditionsPanel);
 
         conditionForms.add(conditionForm);
-        Disposer.register(this, conditionForm);
         updateJoinTypeComponents();
 
     }
@@ -155,8 +155,8 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        conditionForms.clear();
+    public void disposeInner() {
+        DisposerUtil.dispose(conditionForms);
+        super.disposeInner();
     }
 }

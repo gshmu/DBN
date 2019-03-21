@@ -155,13 +155,9 @@ public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
+    public void disposeInner() {
         EditorUtil.releaseEditor(editor);
-        editor = null;
-        documentListener = null;
-        //editor = null;
-
+        super.dispose();
     }
 
     @Nullable

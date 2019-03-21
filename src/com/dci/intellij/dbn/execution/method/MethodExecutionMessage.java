@@ -41,12 +41,4 @@ public class MethodExecutionMessage extends ConsoleMessage {
         }
         return contentFile;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        executionProcessor = null;
-        databaseFile = null;
-        contentFile = null;
-    }
 }

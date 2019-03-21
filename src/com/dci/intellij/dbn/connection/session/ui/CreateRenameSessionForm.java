@@ -55,7 +55,7 @@ public class CreateRenameSessionForm extends DBNFormImpl<CreateRenameSessionDial
 
         sessionNameTextField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
-            protected void textChanged(DocumentEvent e) {
+            protected void textChanged(@NotNull DocumentEvent e) {
                 String errorText = null;
                 String text = StringUtil.trim(sessionNameTextField.getText());
 
@@ -102,13 +102,6 @@ public class CreateRenameSessionForm extends DBNFormImpl<CreateRenameSessionDial
     @Override
     public JComponent getComponent() {
         return mainPanel;
-    }
-
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        session = null;
     }
 
 }

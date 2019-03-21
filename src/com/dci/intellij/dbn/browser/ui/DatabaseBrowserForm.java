@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class DatabaseBrowserForm extends DBNFormImpl<DisposableProjectComponent> {
-    protected DatabaseBrowserForm(DisposableProjectComponent parentComponent) {
+    DatabaseBrowserForm(DisposableProjectComponent parentComponent) {
         super(parentComponent);
     }
 
@@ -16,9 +16,4 @@ public abstract class DatabaseBrowserForm extends DBNFormImpl<DisposableProjectC
     public abstract void selectElement(BrowserTreeNode treeNode, boolean focus, boolean scroll);
 
     public abstract void rebuildTree();
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

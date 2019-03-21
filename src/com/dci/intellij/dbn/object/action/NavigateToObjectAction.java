@@ -32,6 +32,6 @@ public class NavigateToObjectAction extends DumbAwareAction {
 
     @Override
     public void actionPerformed(AnActionEvent event) {
-        DBObjectRef.getnn(objectRef).navigate(true);
+        DBObjectRef.ensure(objectRef).navigate(true);
     }
 }

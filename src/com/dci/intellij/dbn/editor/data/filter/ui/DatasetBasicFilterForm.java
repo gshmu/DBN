@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.editor.data.filter.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -285,16 +286,9 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
     }
 
     @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            EditorUtil.releaseEditor(viewer);
-            viewer = null;
-            previewDocument = null;
-            for (DatasetBasicFilterConditionForm conditionForm : conditionForms) {
-                conditionForm.dispose();
-            }
-            conditionForms.clear();
-        }
+    public void disposeInner() {
+        EditorUtil.releaseEditor(viewer);
+        DisposerUtil.dispose(conditionForms);
+        super.disposeInner();
     }
 }

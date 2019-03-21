@@ -54,9 +54,4 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
     public void applyFormChanges(ConnectionFilterSettings configuration) throws ConfigurationException {
         configuration.setHideEmptySchemas(hideEmptySchemasCheckBox.isSelected());
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

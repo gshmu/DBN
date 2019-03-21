@@ -22,8 +22,6 @@ import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,12 +42,9 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
-        connectionsList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                ConnectionHandler connectionHandler = connectionsList.getSelectedValue();
-                showChangesForm(connectionHandler);
-            }
+        connectionsList.addListSelectionListener(e -> {
+            ConnectionHandler connectionHandler = connectionsList.getSelectedValue();
+            showChangesForm(connectionHandler);
         });
         connectionsList.setCellRenderer(new ConnectionListCellRenderer());
         connectionsList.setSelectedIndex(0);
@@ -62,7 +57,7 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
 
     private void updateListModel() {
         checkDisposed();
-        DefaultListModel<ConnectionHandler> model = new DefaultListModel<ConnectionHandler>();
+        DefaultListModel<ConnectionHandler> model = new DefaultListModel<>();
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
         for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
@@ -82,18 +77,11 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
         return mainPanel;
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        transactionListener = null;
-        connectionHandlers = null;
-    }
-
     public List<ConnectionHandler> getConnectionHandlers (){
         return connectionHandlers;
     }
 
-    public void showChangesForm(ConnectionHandler connectionHandler) {
+    private void showChangesForm(ConnectionHandler connectionHandler) {
         detailsPanel.removeAll();
         if (connectionHandler != null) {
             ConnectionId connectionId = connectionHandler.getConnectionId();

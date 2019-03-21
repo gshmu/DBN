@@ -66,7 +66,7 @@ public class ObjectLazyNavigationListAction extends ObjectListShowAction {
 
     @Override
     protected AnAction createObjectAction(DBObject object) {
-        DBObject sourceObject = DBObjectRef.getnn(parentObjectRef);
+        DBObject sourceObject = DBObjectRef.ensure(parentObjectRef);
         return new NavigateToObjectAction(sourceObject, object);
     }
 }

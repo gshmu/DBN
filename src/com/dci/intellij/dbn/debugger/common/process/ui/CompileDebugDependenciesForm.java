@@ -111,8 +111,4 @@ public class CompileDebugDependenciesForm extends DBNFormImpl<CompileDebugDepend
         objectList.clearSelection();
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

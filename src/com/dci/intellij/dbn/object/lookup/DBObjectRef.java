@@ -288,7 +288,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     @NotNull
-    public static <T extends DBObject> T getnn(DBObjectRef<T> objectRef) {
+    public static <T extends DBObject> T ensure(DBObjectRef<T> objectRef) {
         T object = get(objectRef);
         return Failsafe.get(object);
     }
@@ -301,10 +301,10 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return objects;
     }
 
-    public static List<DBObject> getnn(List<DBObjectRef> objectRefs) {
+    public static List<DBObject> ensure(List<DBObjectRef> objectRefs) {
         List<DBObject> objects = new ArrayList<DBObject>(objectRefs.size());
         for (DBObjectRef objectRef : objectRefs) {
-            objects.add(getnn(objectRef));
+            objects.add(ensure(objectRef));
         }
         return objects;
     }
@@ -326,18 +326,9 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     @Nullable
     public T ensure(long timeoutSeconds) {
         return Timeout.call(timeoutSeconds, null, false, () -> get());
-/*
-        try {
-            BackgroundMonitor.startTimeoutProcess();
-            return get();
-        } finally {
-            BackgroundMonitor.endTimeoutProcess();
-        }
-*/
-
     }
 
-    public T getnn(){
+    public T ensure(){
         return Failsafe.get(get());
     }
 

@@ -858,14 +858,12 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     *               DynamicContentElement                    *
     *********************************************************/
     @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            DisposerUtil.dispose(childObjects);
-            DisposerUtil.dispose(childObjectRelations);
-            CollectionUtil.clear(visibleTreeChildren);
-            CollectionUtil.clear(allPossibleTreeChildren);
-        }
+    public void disposeInner() {
+        DisposerUtil.dispose(childObjects);
+        DisposerUtil.dispose(childObjectRelations);
+        CollectionUtil.clear(visibleTreeChildren);
+        CollectionUtil.clear(allPossibleTreeChildren);
+        super.disposeInner();
     }
 
     @Override

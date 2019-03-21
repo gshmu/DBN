@@ -19,7 +19,7 @@ public class ObjectListItemForm extends DBNFormImpl {
     private ObjectListForm parent;
     private ObjectFactoryInputForm inputForm;
 
-    public ObjectListItemForm(ObjectListForm parent, ObjectFactoryInputForm inputForm) {
+    ObjectListItemForm(ObjectListForm parent, ObjectFactoryInputForm inputForm) {
         this.parent = parent;
         this.inputForm = inputForm;
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
@@ -39,26 +39,18 @@ public class ObjectListItemForm extends DBNFormImpl {
         objectDetailsComponent = inputForm.getComponent();
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        parent = null;
-        inputForm = null;
-    }
-
-
     public class RemoveObjectAction extends AnAction {
         RemoveObjectAction() {
             super("Remove " + parent.getObjectType().getName(), null, Icons.ACTION_CLOSE);
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             parent.removeObjectPanel(ObjectListItemForm.this);
         }
     }
 
-    public ObjectFactoryInputForm getObjectDetailsPanel() {
+    ObjectFactoryInputForm getObjectDetailsPanel() {
         return inputForm;
     }
 }

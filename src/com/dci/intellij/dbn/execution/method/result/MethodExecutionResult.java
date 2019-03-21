@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.execution.method.result;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
@@ -23,7 +23,6 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -74,8 +73,6 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
             int maxRecords = settings.getStatementExecutionSettings().getResultSetFetchBlockSize();
             ResultSetDataModel dataModel = new ResultSetDataModel(resultSet, getConnectionHandler(), maxRecords);
             cursorModels.put(DBObjectRef.from(argument), dataModel);
-
-            Disposer.register(this, dataModel);
         }
     }
 
@@ -199,12 +196,10 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
      *                    Disposable                        *
      ********************************************************/
     @Override
-    public void dispose() {
-        super.dispose();
-        resultPanel = null;
-        executionInput = null;
-        CollectionUtil.clear(cursorModels);
-        argumentValues.clear();
+    public void disposeInner() {
+        DisposerUtil.dispose(cursorModels);
+        super.disposeInner();
+        nullify();
     }
 
     /********************************************************

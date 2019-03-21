@@ -45,7 +45,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
     @Override
     @NotNull
     public T getMethod() {
-        return DBObjectRef.getnn(methodRef);
+        return DBObjectRef.ensure(methodRef);
     }
 
     public List<DBArgument> getArguments() {

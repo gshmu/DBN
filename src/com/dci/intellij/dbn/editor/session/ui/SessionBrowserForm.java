@@ -142,15 +142,6 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
         return Failsafe.get(editorTable);
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        sessionBrowser = null;
-        detailsForm = null;
-        editorTable = null;
-        dataSearchComponent = null;
-    }
-
     @NotNull
     public SessionBrowser getSessionBrowser() {
         return Failsafe.get(sessionBrowser);

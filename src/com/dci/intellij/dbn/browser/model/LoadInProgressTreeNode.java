@@ -158,7 +158,7 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
     @NotNull
     @Override
     public String getName() {
-        return null;
+        return "";
     }
 
     @Override
@@ -180,9 +180,9 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
 
 
     @Override
-    public void dispose() {
-        super.dispose();
-        parent = null;
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 
     public class List extends ArrayList<BrowserTreeNode> implements Disposable {

@@ -25,7 +25,7 @@ public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
     @NotNull
     @Override
     protected SelectDDLFileForm createComponent() {
-        DBSchemaObject object = objectRef.getnn();
+        DBSchemaObject object = objectRef.ensure();
         String hint =
                 "Following DDL files are currently attached the selected " + object.getTypeName() + ". " +
                 "Select the files to detach from this object.";
@@ -76,11 +76,5 @@ public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
             fileAttachmentManager.detachDDLFile(virtualFile);
         }
         super.doOKAction();
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        virtualFiles = null;
     }
 }

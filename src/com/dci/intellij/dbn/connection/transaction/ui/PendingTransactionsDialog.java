@@ -118,12 +118,4 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
             }
         }
     };
-
-    @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            transactionListener = null;
-        }
-    }
 }

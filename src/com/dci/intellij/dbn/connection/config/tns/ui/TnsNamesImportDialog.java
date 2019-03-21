@@ -80,9 +80,4 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
     protected void doOKAction() {
         super.doOKAction();
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

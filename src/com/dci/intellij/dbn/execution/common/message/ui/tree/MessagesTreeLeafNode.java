@@ -57,8 +57,8 @@ public abstract class MessagesTreeLeafNode<P extends MessagesTreeNode, M extends
 
 
     @Override
-    public void dispose() {
+    public void disposeInner() {
         super.dispose();
-        message = null;
+        nullify();
     }
 }

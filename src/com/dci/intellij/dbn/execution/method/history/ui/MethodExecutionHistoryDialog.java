@@ -21,7 +21,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     private CloseAction closeAction;
     private boolean editable;
     private boolean debug;
-    private MethodExecutionInput selectedExecutionInput;
+    private transient MethodExecutionInput selectedExecutionInput;
 
     public MethodExecutionHistoryDialog(
             @NotNull Project project,
@@ -176,11 +176,5 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
             if (saveAction != null) saveAction.setEnabled(enabled);
             closeAction.putValue(Action.NAME, enabled ? "Cancel" : "Close");
         }
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        //selectedExecutionInput = null;
     }
 }

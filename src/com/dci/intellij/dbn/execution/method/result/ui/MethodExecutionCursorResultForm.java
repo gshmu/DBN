@@ -157,13 +157,4 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
     public DataProvider getDataProvider() {
         return dataProvider;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        dataSearchComponent = null;
-        resultTable = null;
-    }
-
-
 }

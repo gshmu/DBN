@@ -561,17 +561,4 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
             }
         }
     }
-
-    /*********************************************************
-     *                       Disposable                      *
-     *********************************************************/
-    @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            datasetEditor = null;
-            changedRows.clear();
-            settings = null;
-        }
-    }
 }

@@ -55,10 +55,4 @@ public class RecordViewerDialog extends DBNDialog<RecordViewerForm> {
             doCancelAction();
         }
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        record = null;
-    }
 }

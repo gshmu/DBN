@@ -339,13 +339,6 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
         return error;
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        originalUserValue = null;
-        error = null;
-    }
-
     public void revertChanges() {
         if (is(MODIFIED)) {
             updateUserValue(originalUserValue, false);

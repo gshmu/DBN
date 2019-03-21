@@ -24,7 +24,7 @@ public abstract class AbstractProjectComponent extends SettingsSupport implement
     @Override
     @NotNull
     public Project getProject() {
-        return projectRef.getnn();
+        return projectRef.ensure();
     }
 
     @Override

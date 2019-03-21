@@ -132,23 +132,13 @@ public class BrowserToolWindowForm extends DBNFormImpl {
         return mainPanel;
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        objectPropertiesForm = null;
-        browserForm = null;
-    }
-
     /********************************************************
      *                       Listeners                      *
      ********************************************************/
-    private DisplayModeSettingsListener displayModeSettingsListener = new DisplayModeSettingsListener() {
-        @Override
-        public void displayModeChanged(BrowserDisplayMode displayMode) {
-            if (getDisplayMode() != displayMode) {
-                setDisplayMode(displayMode);
-                rebuild();
-            }
+    private DisplayModeSettingsListener displayModeSettingsListener = displayMode -> {
+        if (getDisplayMode() != displayMode) {
+            setDisplayMode(displayMode);
+            rebuild();
         }
     };
 

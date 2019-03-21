@@ -1,12 +1,19 @@
 package com.dci.intellij.dbn.common.dispose;
 
+import com.dci.intellij.dbn.common.Reference;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.util.ReflectionUtil;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public class DisposerUtil {
@@ -34,24 +41,27 @@ public class DisposerUtil {
         Background.run(() -> dispose(collection));
     }
     
-    public static void dispose(Collection<? extends Disposable> collection) {
+    public static <T extends Disposable> void dispose(Collection<T> collection) {
         if (collection instanceof FiltrableList) {
-            FiltrableList<? extends Disposable> filtrableList = (FiltrableList) collection;
+            FiltrableList<T> filtrableList = (FiltrableList) collection;
             collection = filtrableList.getFullList();
         }
         if (collection != null && collection.size()> 0) {
-            for(Disposable disposable : collection) {
+            Collection<T> disposableCollection = new ArrayList<>(collection);
+            collection.clear();
+            for(Disposable disposable : disposableCollection) {
                 dispose(disposable);
             }
         }
     }
 
-    public static void dispose(Map<?, ? extends Disposable> map) {
+    public static <T extends Disposable> void dispose(Map<?, T> map) {
         if (map != null) {
-            for (Disposable disposable : map.values()) {
+            Collection<T> disposableCollection = new ArrayList<>(map.values());
+            map.clear();
+            for (Disposable disposable : disposableCollection) {
                 dispose(disposable);
             }
-            map.clear();
         }
     }
 
@@ -66,5 +76,39 @@ public class DisposerUtil {
         if (disposable instanceof Disposable) {
             Disposer.register(parent, (Disposable) disposable);
         }
+    }
+
+    public static void nullify(Object object) {
+        List<Field> fields = ReflectionUtil.collectFields(object.getClass());
+        for (Field field : fields) {
+            try {
+                field.setAccessible(true);
+                Object fieldValue = field.get(object);
+                if (fieldValue != null) {
+                    if (fieldValue instanceof Collection<?>) {
+                        Collection collection = (Collection) fieldValue;
+                        collection.clear();
+                    } else if (fieldValue instanceof Map) {
+                        Map map = (Map) fieldValue;
+                        map.clear();
+                    } else {
+                        int modifiers = field.getModifiers();
+                        if (!Modifier.isFinal(modifiers) &&
+                                !Modifier.isStatic(modifiers) &&
+                                !Modifier.isNative(modifiers) &&
+                                !Modifier.isTransient(modifiers) &&
+                                !field.getType().isPrimitive() &&
+                                !WeakReference.class.isAssignableFrom(field.getType()) &&
+                                !Reference.class.isAssignableFrom(field.getType())) {
+                            field.set(object, null);
+                        }
+                    }
+
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 }

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.variables.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -15,7 +16,6 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesCache;
 import com.dci.intellij.dbn.execution.statement.variables.VariableValueProvider;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
@@ -44,7 +44,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
     private StatementExecutionVariable variable;
     private TextFieldWithPopup editorComponent;
 
-    public StatementExecutionVariableValueForm(StatementExecutionInputForm parentComponent, final StatementExecutionVariable variable) {
+    StatementExecutionVariableValueForm(StatementExecutionInputForm parentComponent, final StatementExecutionVariable variable) {
         super(parentComponent);
         this.variable = variable;
         errorLabel.setVisible(false);
@@ -157,8 +157,6 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
         });
 
         textField.setToolTipText("<html>While editing variable value, press <b>Up/Down</b> keys to change data type");
-
-        Disposer.register(this, editorComponent);
     }
 
     void showErrorLabel(String errorText) {
@@ -209,11 +207,10 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
+    public void disposeInner() {
         variable.setPreviewValueProvider(null);
-        variable = null;
-        editorComponent = null;
+        DisposerUtil.dispose(editorComponent);
+        super.disposeInner();
     }
 
     public JComponent getEditorComponent() {

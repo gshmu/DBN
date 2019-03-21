@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.model.basic;
 
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -40,7 +41,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
     private Set<TableModelListener> tableModelListeners = new HashSet<>();
     private Set<DataModelListener> dataModelListeners = new HashSet<>();
     private List<T> rows = new ArrayList<>();
-    private Project project;
+    private ProjectRef projectRef;
     private Filter<T> filter;
     private Latent<Formatter> formatter;
     private boolean isEnvironmentReadonly;
@@ -48,7 +49,11 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
     private RegionalSettingsListener regionalSettingsListener = new RegionalSettingsListener() {
         @Override
         public void settingsChanged() {
-            formatter = Latent.thread(() -> Formatter.getInstance(project).clone());
+            formatter = Latent.thread(() -> {
+                Project project = getProject();
+                Formatter formatter = Formatter.getInstance(project);
+                return formatter.clone();
+            });
         }
     };
 
@@ -56,7 +61,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
     private Latent<DataSearchResult> searchResult = Latent.disposable(this, DataSearchResult::new);
 
     public BasicDataModel(Project project) {
-        this.project = project;
+        this.projectRef = ProjectRef.from(project);
         formatter = Latent.thread(() -> Formatter.getInstance(project).clone());
         EventUtil.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
     }
@@ -92,7 +97,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
     @Override
     @NotNull
     public Project getProject() {
-        return Failsafe.get(project);
+        return projectRef.ensure();
     }
 
     public void setHeader(@NotNull DataModelHeader<? extends ColumnInfo> header) {
@@ -355,15 +360,9 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
      *                    Disposable                        *
      ********************************************************/
     @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            DisposerUtil.dispose(rows);
-            tableModelListeners.clear();
-            dataModelListeners.clear();
-            header = null;
-            rows = null;
-            project = null;
-        }
+    public void disposeInner() {
+        DisposerUtil.dispose(rows);
+        super.disposeInner();
+        nullify();
     }
 }

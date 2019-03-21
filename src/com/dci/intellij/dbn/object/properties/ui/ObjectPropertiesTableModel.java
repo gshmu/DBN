@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ObjectPropertiesTableModel extends DisposableBase implements DBNTableModel {
-    private List<PresentableProperty> presentableProperties = new ArrayList<PresentableProperty>();
+    private List<PresentableProperty> presentableProperties = new ArrayList<>();
 
-    public ObjectPropertiesTableModel() {}
+    ObjectPropertiesTableModel() {}
 
-    public ObjectPropertiesTableModel(List<PresentableProperty> presentableProperties) {
+    ObjectPropertiesTableModel(List<PresentableProperty> presentableProperties) {
         this.presentableProperties = presentableProperties;
     }
 
@@ -47,12 +47,4 @@ public class ObjectPropertiesTableModel extends DisposableBase implements DBNTab
     @Override public void addTableModelListener(TableModelListener l) {}
     @Override public void removeTableModelListener(TableModelListener l) {}
 
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    @Override
-    public void dispose() {
-        super.dispose();
-        presentableProperties.clear();
-    }
 }

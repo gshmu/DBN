@@ -44,10 +44,4 @@ public class DBStatementJdbcRunConfigurationEditorForm extends DBProgramRunConfi
     public void readConfiguration(DBStatementJdbcRunConfig configuration) {
         compileDependenciesCheckBox.setSelected(configuration.isCompileDependencies());
     }
-
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

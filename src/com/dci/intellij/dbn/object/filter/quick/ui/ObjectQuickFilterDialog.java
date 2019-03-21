@@ -61,10 +61,4 @@ public class ObjectQuickFilterDialog extends DBNDialog<ObjectQuickFilterForm> {
     public void doCancelAction() {
         super.doCancelAction();
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        objectList = null;
-    }
 }

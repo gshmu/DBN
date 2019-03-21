@@ -72,11 +72,9 @@ public class PendingTransactionDialogForm extends DBNFormImpl<PendingTransaction
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        executionProcessor = null;
+    public void disposeInner() {
         EditorUtil.releaseEditor(viewer);
-        viewer = null;
+        super.disposeInner();
     }
 
     @Override

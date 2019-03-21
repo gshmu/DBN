@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.data.record.ui;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
@@ -259,11 +260,8 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl<DatasetRecordEdit
     };
 
     @Override
-    public void dispose() {
-        super.dispose();
-        cell = null;
-        editorComponent = null;
-
-
+    public void disposeInner() {
+        DisposerUtil.dispose(editorComponent);
+        super.disposeInner();
     }
 }

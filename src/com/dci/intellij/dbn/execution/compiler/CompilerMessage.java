@@ -144,14 +144,6 @@ public class CompilerMessage extends ConsoleMessage implements Comparable<Compil
         return isEcho;
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        compilerResult = null;
-        databaseFile = null;
-        contentFile = null;
-    }
-
     public Project getProject() {
         return compilerResult.getProject();
     }

@@ -49,10 +49,4 @@ public class MethodExecutionMessagesObjectNode extends MessagesTreeBundleNode<Me
         }
         return null;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        databaseFile = null;
-    }
 }

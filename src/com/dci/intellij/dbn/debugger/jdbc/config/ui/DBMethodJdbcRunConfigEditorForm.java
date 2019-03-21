@@ -23,7 +23,6 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -152,7 +151,6 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
                             DBMethod method = executionInput.getMethod();
                             if (method != null) {
                                 methodExecutionInputForm = new MethodExecutionInputForm(this, executionInput, false, DBDebuggerType.JDBC);
-                                Disposer.register(this, methodExecutionInputForm);
                                 methodArgumentsPanel.add(methodExecutionInputForm.getComponent(), BorderLayout.CENTER);
                                 if (touchForm) methodExecutionInputForm.touch();
                                 headerIcon = method.getOriginalIcon();
@@ -176,8 +174,8 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        methodExecutionInputForm = null;
+    public void disposeInner() {
+        DisposerUtil.dispose(methodExecutionInputForm);
+        super.disposeInner();
     }
 }

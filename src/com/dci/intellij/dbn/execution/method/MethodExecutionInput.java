@@ -297,11 +297,9 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        executionResult = null;
-        argumentValues.clear();
-        inputArgumentValues.clear();
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 
 }

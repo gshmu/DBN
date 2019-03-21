@@ -20,7 +20,7 @@ public class ProjectRef extends WeakRef<Project> {
 
     @Override
     @NotNull
-    public Project getnn() {
+    public Project ensure() {
         return Failsafe.get(get());
     }
 

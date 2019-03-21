@@ -17,11 +17,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.COMMIT;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.DISCONNECT_IDLE;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.KEEP_ALIVE;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.ROLLBACK_IDLE;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
 
 public class IdleConnectionDialog extends DialogWithTimeout {
     private IdleConnectionDialogForm idleConnectionDialogForm;
@@ -143,13 +139,5 @@ public class IdleConnectionDialog extends DialogWithTimeout {
     private DatabaseTransactionManager getTransactionManager() {
         Project project = getProject();
         return DatabaseTransactionManager.getInstance(project);
-    }
-
-    @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            connection = null;
-        }
     }
 }

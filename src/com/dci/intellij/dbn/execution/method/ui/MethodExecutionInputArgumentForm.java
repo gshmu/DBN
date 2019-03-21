@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -231,9 +232,9 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        typeAttributeForms = null;
+    public void disposeInner() {
+        DisposerUtil.dispose(typeAttributeForms);
+        super.disposeInner();
     }
 
     public int getScrollUnitIncrement() {

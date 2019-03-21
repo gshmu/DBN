@@ -26,7 +26,7 @@ public class GenerateSelectStatementAction extends GenerateStatementAction {
     }
 
     public List<DBObject> getSelectedObjects() {
-        return DBObjectRef.getnn(selectedObjectRefs);
+        return DBObjectRef.ensure(selectedObjectRefs);
     }
 
     @Nullable

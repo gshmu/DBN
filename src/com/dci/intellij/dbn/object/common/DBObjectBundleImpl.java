@@ -80,6 +80,8 @@ import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -132,6 +134,10 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                     new DBObjectVirtualFile(getProject(), objectRef));
 
 
+    private Latent<PsiFile> fakeObjectFile = Latent.basic(() -> {
+        PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
+        return psiFileFactory.createFileFromText("object", SQLLanguage.INSTANCE, "");
+    });
 
     public DBObjectBundleImpl(ConnectionHandler connectionHandler, BrowserTreeNode treeParent) {
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
@@ -233,6 +239,11 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Override
     public DBObjectVirtualFile getObjectVirtualFile(DBObjectRef objectRef) {
         return virtualFiles.get(objectRef);
+    }
+
+    @Override
+    public PsiFile getFakeObjectFile() {
+        return fakeObjectFile.get();
     }
 
     @Override
@@ -759,16 +770,11 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            DisposerUtil.disposeInBackground(objectLists);
-            DisposerUtil.disposeInBackground(objectRelationLists);
-            CollectionUtil.clear(visibleTreeChildren);
-            CollectionUtil.clear(allPossibleTreeChildren);
-            CollectionUtil.clear(cachedDataTypes);
-            treeParent = null;
-        }
+    public void disposeInner() {
+        DisposerUtil.disposeInBackground(objectLists);
+        DisposerUtil.disposeInBackground(objectRelationLists);
+        super.disposeInner();
+        nullify();
     }
 
     /*********************************************************

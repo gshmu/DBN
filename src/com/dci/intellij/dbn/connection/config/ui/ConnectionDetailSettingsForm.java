@@ -208,9 +208,4 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
             notifyPresentationChanges();
         }
     };
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

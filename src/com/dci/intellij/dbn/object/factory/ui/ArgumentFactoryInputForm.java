@@ -76,9 +76,4 @@ public class ArgumentFactoryInputForm extends ObjectFactoryInputForm {
     private void createUIComponents() {
         dataTypeEditor = new DataTypeEditor(getConnectionHandler());
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

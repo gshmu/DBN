@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class TnsNamesTableModel extends DisposableBase implements DBNTableModel {
     private TnsName[] tnsNames;
-    private Set<TableModelListener> listeners = new HashSet<TableModelListener>();
+    private Set<TableModelListener> listeners = new HashSet<>();
 
     public TnsNamesTableModel(TnsName[] tnsNames) {
         super();
@@ -84,9 +84,8 @@ public class TnsNamesTableModel extends DisposableBase implements DBNTableModel 
 
 
     @Override
-    public void dispose() {
-        super.dispose();
-        listeners.clear();
-        tnsNames = new TnsName[0];
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 }

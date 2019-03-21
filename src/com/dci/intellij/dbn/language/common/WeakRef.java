@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 
-public class WeakRef<T> extends WeakReference<T>{
+public class WeakRef<T> extends WeakReference<T> {
     protected WeakRef(T referent) {
         super(referent);
     }
@@ -29,7 +29,7 @@ public class WeakRef<T> extends WeakReference<T>{
     }
 
     @NotNull
-    public T getnn() {
+    public T ensure() {
         return Failsafe.get(get());
     }
 

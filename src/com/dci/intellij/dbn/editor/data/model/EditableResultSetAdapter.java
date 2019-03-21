@@ -131,8 +131,8 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        resultSet = null;
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 }

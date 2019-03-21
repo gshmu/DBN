@@ -97,13 +97,4 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
     public JComponent getComponent() {
         return mainPanel;
     }
-
-    @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-        }
-
-
-    }
 }

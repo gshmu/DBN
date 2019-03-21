@@ -96,10 +96,4 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
     public List<DBSchemaObject> getSelection() {
         return selection;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        compileList = null;
-    }
 }

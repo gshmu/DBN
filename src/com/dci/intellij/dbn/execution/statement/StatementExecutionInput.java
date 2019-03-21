@@ -203,12 +203,9 @@ public class StatementExecutionInput extends LocalExecutionInput {
     }
 
     @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            executionProcessor = null;
-            executablePsiElement = null;
-        }
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 
     public String getStatementDescription() {

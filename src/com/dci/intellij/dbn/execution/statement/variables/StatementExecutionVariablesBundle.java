@@ -32,20 +32,11 @@ import java.util.Map;
 import java.util.Set;
 
 public class StatementExecutionVariablesBundle extends DisposableBase implements Disposable{
-    private static final Comparator<StatementExecutionVariable> NAME_LENGTH_COMPARATOR = new Comparator<StatementExecutionVariable>() {
-        @Override
-        public int compare(StatementExecutionVariable o1, StatementExecutionVariable o2) {
-            return o2.getName().length() - o1.getName().length();
-        }
-    };
-    public static final Comparator<StatementExecutionVariable> OFFSET_COMPARATOR = new Comparator<StatementExecutionVariable>() {
-        @Override
-        public int compare(StatementExecutionVariable o1, StatementExecutionVariable o2) {
-            return o1.getOffset() - o2.getOffset();
-        }
-    };
+    private static final Comparator<StatementExecutionVariable> NAME_LENGTH_COMPARATOR = (o1, o2) -> o2.getName().length() - o1.getName().length();
+    public static final Comparator<StatementExecutionVariable> OFFSET_COMPARATOR = (o1, o2) -> o1.getOffset() - o2.getOffset();
+
     private Map<StatementExecutionVariable, String> errorMap;
-    private Set<StatementExecutionVariable> variables = new THashSet<StatementExecutionVariable>();
+    private Set<StatementExecutionVariable> variables = new THashSet<>();
 
     public StatementExecutionVariablesBundle(Set<ExecVariablePsiElement> variablePsiElements) {
         initialize(variablePsiElements);
@@ -107,7 +98,7 @@ public class StatementExecutionVariablesBundle extends DisposableBase implements
             if (basePsiElement instanceof IdentifierPsiElement) {
                 IdentifierPsiElement columnPsiElement = (IdentifierPsiElement) basePsiElement;
                 DBObject object = columnPsiElement.resolveUnderlyingObject();
-                if (object != null && object instanceof DBColumn) {
+                if (object instanceof DBColumn) {
                     DBColumn column = (DBColumn) object;
                     return column.getDataType();
                 }
@@ -193,7 +184,8 @@ public class StatementExecutionVariablesBundle extends DisposableBase implements
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 }

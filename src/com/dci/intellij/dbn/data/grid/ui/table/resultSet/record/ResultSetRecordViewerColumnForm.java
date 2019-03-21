@@ -121,15 +121,4 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
             }
         }
     };
-
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        parentForm = null;
-        cell = null;
-
-    }
-
-
 }

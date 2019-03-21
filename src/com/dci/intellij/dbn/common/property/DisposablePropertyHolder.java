@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.property;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 
 public abstract class DisposablePropertyHolder<T extends Property> extends PropertyHolderImpl<T> implements Disposable {
     private boolean disposed;
@@ -11,9 +12,16 @@ public abstract class DisposablePropertyHolder<T extends Property> extends Prope
     }
 
     @Override
-    public void dispose() {
+    public final void dispose() {
         if (!disposed) {
             disposed = true;
+            disposeInner();
         }
+    }
+
+    public void disposeInner(){}
+
+    protected final void nullify() {
+        DisposerUtil.nullify(this);
     }
 }

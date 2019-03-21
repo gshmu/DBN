@@ -108,10 +108,4 @@ public class MessagesTreeRootNode extends MessagesTreeBundleNode<MessagesTreeNod
     public MessagesTreeModel getTreeModel() {
         return Failsafe.get(treeModel);
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        treeModel = null;
-    }
 }

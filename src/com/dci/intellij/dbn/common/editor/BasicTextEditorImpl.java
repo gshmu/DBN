@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.editor;
 
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.editor.EditorProviderId;
@@ -29,14 +30,17 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
     private String name;
     private EditorProviderId editorProviderId;
     private BasicTextEditorState cachedState;
-    private Project project;
+    private ProjectRef projectRef;
 
     public BasicTextEditorImpl(Project project, T virtualFile, String name, EditorProviderId editorProviderId) {
-        this.project = project;
+        this.projectRef = ProjectRef.from(project);
         this.name = name;
         this.virtualFile = virtualFile;
         this.editorProviderId = editorProviderId;
-        textEditor = (TextEditor) TextEditorProvider.getInstance().createEditor(project, virtualFile);
+
+        TextEditorProvider textEditorProvider = TextEditorProvider.getInstance();
+        textEditor = (TextEditor) textEditorProvider.createEditor(project, virtualFile);
+
         Disposer.register(this, textEditor);
     }
 
@@ -63,7 +67,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
 
     @Override
     public boolean isValid() {
-        return textEditor.isValid();
+        return !isDisposed() && textEditor.isValid();
     }
 
     @Override
@@ -127,7 +131,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
     @Override
     @Nullable
     public JComponent getPreferredFocusedComponent() {
-        return textEditor.getPreferredFocusedComponent();
+        return isDisposed() ? null : textEditor.getPreferredFocusedComponent();
     }
 
     protected BasicTextEditorState createEditorState() {
@@ -165,8 +169,9 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
         //return FailsafeUtil.get(textEditor);
     }
 
+    @NotNull
     public Project getProject() {
-        return project;
+        return projectRef.ensure();
     }
 
     @Override
@@ -176,11 +181,9 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        virtualFile = null;
-        project = null;
-        //textEditor = null;
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 
     @Override

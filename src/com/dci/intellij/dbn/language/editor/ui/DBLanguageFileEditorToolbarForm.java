@@ -42,11 +42,6 @@ public class DBLanguageFileEditorToolbarForm extends DBNFormImpl {
         return mainPanel;
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
-
     public AutoCommitLabel getAutoCommitLabel() {
         return autoCommitLabel;
     }

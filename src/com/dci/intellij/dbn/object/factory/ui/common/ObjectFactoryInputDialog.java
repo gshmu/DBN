@@ -38,10 +38,4 @@ public class ObjectFactoryInputDialog extends DBNDialog<ObjectFactoryInputForm> 
     public void doCancelAction() {
         super.doCancelAction();
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        inputForm = null;
-    }
 }

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
 import com.dci.intellij.dbn.common.Constants;
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
@@ -13,14 +14,14 @@ import javax.swing.*;
 
 public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper implements DisposableProjectComponent{
     private C component;
-    private Project project;
+    private ProjectRef projectRef;
     private boolean disposed;
     private boolean rememberSelection;
 
     protected DBNDialog(Project project, String title, boolean canBeParent) {
         super(project, canBeParent);
         setTitle(Constants.DBN_TITLE_PREFIX + title);
-        this.project = project;
+        projectRef = ProjectRef.from(project);
         getHelpAction().setEnabled(false);
     }
 
@@ -62,7 +63,7 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
     @Override
     @NotNull
     public Project getProject() {
-        return Failsafe.get(project);
+        return projectRef.ensure();
     }
 
     public boolean isRememberSelection() {
@@ -74,15 +75,18 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
     }
 
     @Override
-    public void dispose() {
+    public final void dispose() {
         if (!disposed) {
             disposed = true;
-            DisposerUtil.dispose(component);
-            component = null;
-            project = null;
+            disposeInner();
             super.dispose();
         }
     }
+
+    public void disposeInner(){
+        DisposerUtil.dispose(component);
+        DisposerUtil.nullify(this);
+    };
 
     @Override
     public boolean isDisposed() {

@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
 import com.dci.intellij.dbn.navigation.options.ObjectsLookupSettings;
@@ -33,26 +34,31 @@ import java.util.Set;
 
 public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByNameModel {
     private ProjectRef project;
-    private ConnectionHandler selectedConnection;
+    private ConnectionHandlerRef selectedConnectionRef;
     private DBObjectRef<DBSchema> selectedSchema;
     private ObjectsLookupSettings objectsLookupSettings;
-    private Object[] EMPTY_ARRAY = new Object[0];
-    private String[] EMPTY_STRING_ARRAY = new String[0];
+    private static final Object[] EMPTY_ARRAY = new Object[0];
+    private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 
     public GoToDatabaseObjectModel(@NotNull Project project, @Nullable ConnectionHandler selectedConnection, DBSchema selectedSchema) {
         this.project = ProjectRef.from(project);
-        this.selectedConnection = selectedConnection;
+        this.selectedConnectionRef = ConnectionHandlerRef.from(selectedConnection);
         this.selectedSchema = DBObjectRef.from(selectedSchema);
         objectsLookupSettings = ProjectSettingsManager.getSettings(project).getNavigationSettings().getObjectsLookupSettings();
     }
 
     @Override
     public String getPromptText() {
+        ConnectionHandler selectedConnection = getSelectedConnection();
         String connectionIdentifier = selectedConnection == null || selectedConnection instanceof VirtualConnectionHandler ?
                 "All Connections" :
                 selectedConnection.getName();
         return "Enter database object name (" + connectionIdentifier + (selectedSchema == null ? "" : " / " + selectedSchema.objectName) + ")";
+    }
+
+    private ConnectionHandler getSelectedConnection() {
+        return selectedConnectionRef.get();
     }
 
     @Override
@@ -108,7 +114,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
 
             if (!forceLoad && selectedSchema != null) {
                 // touch the schema for next load
-                selectedSchema.getnn().getChildren();
+                selectedSchema.ensure().getChildren();
             }
             checkDisposed();
             ProgressMonitor.checkCancelled();
@@ -126,7 +132,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
 
     @NotNull
     public Project getProject() {
-        return project.getnn();
+        return project.ensure();
     }
 
     @Override
@@ -145,6 +151,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
     }
 
     private void scanObjectLists(DBObjectListVisitor visitor) {
+        ConnectionHandler selectedConnection = getSelectedConnection();
         if (selectedConnection == null || selectedConnection instanceof VirtualConnectionHandler) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
             List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionHandlers();
@@ -264,7 +271,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
                                     ProgressMonitor.checkCancelled();
 
                                     if (isLookupEnabled && object.getName().equals(objectName)) {
-                                        if (bucket == null) bucket = new ArrayList<DBObject>();
+                                        if (bucket == null) bucket = new ArrayList<>();
                                         bucket.add(object);
                                     }
 
@@ -333,11 +340,5 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
                 }
             } else append(value.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        selectedConnection = null;
     }
 }

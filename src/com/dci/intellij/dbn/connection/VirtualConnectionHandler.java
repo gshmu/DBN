@@ -111,7 +111,7 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Override
     @NotNull
-    public Project getProject() {return projectRef.getnn();}
+    public Project getProject() {return projectRef.ensure();}
 
     @Override
     public boolean isEnabled() {

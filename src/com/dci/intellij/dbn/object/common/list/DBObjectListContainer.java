@@ -209,7 +209,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
 
     @NotNull
     private GenericDatabaseElement getOwner() {
-        return owner.getnn();
+        return owner.ensure();
     }
 
 
@@ -337,10 +337,8 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
     }
 
     @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            DisposerUtil.dispose(objectLists);
-        }
+    public void disposeInner() {
+        super.disposeInner();
+        DisposerUtil.dispose(objectLists);
     }
 }

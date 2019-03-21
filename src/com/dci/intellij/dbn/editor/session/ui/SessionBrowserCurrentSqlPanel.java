@@ -210,13 +210,8 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
     }
 
     @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            EditorUtil.releaseEditor(viewer);
-            viewer = null;
-            virtualFile = null;
-            document = null;
-        }
+    public void disposeInner() {
+        EditorUtil.releaseEditor(viewer);
+        super.disposeInner();
     }
 }

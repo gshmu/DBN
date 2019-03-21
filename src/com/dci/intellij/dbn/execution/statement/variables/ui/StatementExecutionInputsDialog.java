@@ -97,12 +97,4 @@ public class StatementExecutionInputsDialog extends DBNDialog<StatementExecution
     public void setReuseVariables(boolean reuseVariables) {
         this.reuseVariables = reuseVariables;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        executionProcessor = null;
-    }
-
-
 }

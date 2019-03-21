@@ -18,4 +18,10 @@ public abstract class ConsoleMessage extends Message implements Disposable {
     public void setNew(boolean isNew) {
         this.isNew = isNew;
     }
+
+    @Override
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
+    }
 }

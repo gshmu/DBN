@@ -66,10 +66,4 @@ public class DBStatementJdwpRunConfigEditorForm extends DBProgramRunConfiguratio
         fromPortTextField.setText(String.valueOf(configuration.getTcpPortRange().getFrom()));
         toPortTextField.setText(String.valueOf(configuration.getTcpPortRange().getTo()));
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        executionInput = null;
-    }
 }

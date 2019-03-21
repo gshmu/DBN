@@ -19,8 +19,8 @@ public abstract class MessagesTreeNodeBase<P extends MessagesTreeNode, C extends
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
+    public void disposeInner() {
+        super.disposeInner();
         parent = null;
     }
 }

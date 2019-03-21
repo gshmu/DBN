@@ -27,7 +27,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
     private String cachedUser = "";
     private String cachedPassword = "";
 
-    public ConnectionAuthenticationForm(@NotNull ConnectionAuthenticationDialog parentComponent, @Nullable ConnectionHandler connectionHandler) {
+    ConnectionAuthenticationForm(@NotNull ConnectionAuthenticationDialog parentComponent, @Nullable ConnectionHandler connectionHandler) {
         super(parentComponent);
 
         AuthenticationInfo authenticationInfo = parentComponent.getAuthenticationInfo();
@@ -66,7 +66,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
 
         userTextField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
-            protected void textChanged(DocumentEvent e) {
+            protected void textChanged(@NotNull DocumentEvent e) {
                 String user = userTextField.getText();
                 authenticationInfo.setUser(user);
                 parentComponent.updateConnectButton();
@@ -95,7 +95,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
         });
     }
 
-    protected void updateAuthenticationFields() {
+    private void updateAuthenticationFields() {
         boolean isOsAuthentication = osAuthenticationCheckBox.isSelected();
         boolean isEmptyPassword = emptyPasswordCheckBox.isSelected();
         userTextField.setEnabled(!isOsAuthentication);
@@ -133,10 +133,5 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
     @Override
     public JComponent getPreferredFocusedComponent() {
         return StringUtil.isEmpty(userTextField.getText()) ? userTextField : passwordField;
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
     }
 }
