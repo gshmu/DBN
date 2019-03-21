@@ -68,11 +68,4 @@ public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterC
     public ConditionJoinType getJoinType() {
         return joinType;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        parentCondition = null;
-        //condition = null;
-    }
 }

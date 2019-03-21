@@ -100,10 +100,4 @@ public class ObjectNameFilterConditionForm extends DBNFormImpl<ObjectNameFilterC
     public JComponent getComponent() {
         return mainPanel;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        condition = null;
-    }
 }

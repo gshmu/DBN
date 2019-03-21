@@ -90,9 +90,4 @@ public class ConnectionAuthenticationDialog extends DBNDialog<ConnectionAuthenti
     protected void doOKAction() {
         super.doOKAction();
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

@@ -1,11 +1,13 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.data.DatasetEditorError;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
+import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -46,8 +48,9 @@ public class DatasetEditorErrorForm extends DBNFormImpl implements ChangeListene
     }
 
     public void show() {
-        DatasetEditorTable table = cell.getRow().getModel().getEditorTable();
-        Rectangle rectangle = table.getCellRect(cell.getRow().getIndex(), cell.getIndex(), false);
+        DatasetEditorModelRow row = cell.getRow();
+        DatasetEditorTable table = row.getModel().getEditorTable();
+        Rectangle rectangle = table.getCellRect(row.getIndex(), cell.getIndex(), false);
 
         if (table.isShowing()) {
             Point tableLocation = table.getLocationOnScreen();
@@ -76,10 +79,8 @@ public class DatasetEditorErrorForm extends DBNFormImpl implements ChangeListene
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        popup.dispose();
-        popup = null;
-        cell = null;
+    public void disposeInner() {
+        DisposerUtil.dispose(popup);
+        super.disposeInner();
     }
 }

@@ -70,10 +70,4 @@ public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm
     public Action getOKAction() {
         return super.getOKAction();
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        console = null;
-    }
 }

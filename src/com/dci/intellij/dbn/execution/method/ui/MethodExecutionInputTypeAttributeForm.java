@@ -41,7 +41,7 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl<MethodExe
     private DBObjectRef<DBArgument> argumentRef;
     private DBObjectRef<DBTypeAttribute> typeAttributeRef;
 
-    public MethodExecutionInputTypeAttributeForm(MethodExecutionInputArgumentForm parentForm, DBArgument argument, DBTypeAttribute typeAttribute) {
+    MethodExecutionInputTypeAttributeForm(MethodExecutionInputArgumentForm parentForm, DBArgument argument, DBTypeAttribute typeAttribute) {
         super(parentForm);
         this.argumentRef = DBObjectRef.from(argument);
         this.typeAttributeRef = DBObjectRef.from(typeAttribute);
@@ -188,10 +188,5 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl<MethodExe
 
     public void addDocumentListener(DocumentListener documentListener){
         inputTextField.getDocument().addDocumentListener(documentListener);
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
     }
 }

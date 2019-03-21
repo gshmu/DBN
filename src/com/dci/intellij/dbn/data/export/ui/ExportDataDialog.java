@@ -89,9 +89,4 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
                         })
         );
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

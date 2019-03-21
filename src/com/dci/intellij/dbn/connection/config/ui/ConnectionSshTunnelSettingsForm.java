@@ -131,10 +131,4 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
         keyFileField.setText(configuration.getKeyFile());
         keyPassphraseField.setText(configuration.getKeyPassphrase());
     }
-
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

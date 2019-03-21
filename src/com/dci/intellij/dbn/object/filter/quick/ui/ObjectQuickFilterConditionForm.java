@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.ConditionJoinType;
@@ -32,19 +31,16 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
 
     private ObjectQuickFilterCondition condition;
 
-    public ObjectQuickFilterConditionForm(final ObjectQuickFilterForm parentComponent, @NotNull final ObjectQuickFilterCondition condition) {
+    ObjectQuickFilterConditionForm(final ObjectQuickFilterForm parentComponent, @NotNull final ObjectQuickFilterCondition condition) {
         super(parentComponent);
         this.condition = condition;
 
         final ObjectQuickFilter filter = condition.getFilter();
         joinTypeComboBox.setValues(ConditionJoinType.values());
-        joinTypeComboBox.addListener(new ValueSelectorListener<ConditionJoinType>() {
-            @Override
-            public void selectionChanged(ConditionJoinType oldValue, ConditionJoinType newValue) {
-                if (condition.index() == 0) {
-                    filter.setJoinType(newValue);
-                    parentComponent.updateJoinTypeComponents();
-                }
+        joinTypeComboBox.addListener((oldValue, newValue) -> {
+            if (condition.index() == 0) {
+                filter.setJoinType(newValue);
+                parentComponent.updateJoinTypeComponents();
             }
         });
 
@@ -53,16 +49,13 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
         objectNameLabel.setIcon(objectType.getIcon());
         objectNameLabel.setText(objectType.getName().toUpperCase() + " NAME");
 
-        operatorComboBox.setValues(ConditionOperator.values());;
+        operatorComboBox.setValues(ConditionOperator.values());
         patternTextField.setText(condition.getPattern());
         operatorComboBox.setSelectedValue(condition.getOperator());
-        operatorComboBox.addListener(new ValueSelectorListener<ConditionOperator>() {
-            @Override
-            public void selectionChanged(ConditionOperator oldValue, ConditionOperator newValue) {
-                ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
-                quickFilterManager.setLastUsedOperator(newValue);
-                condition.setOperator(newValue);
-            }
+        operatorComboBox.addListener((oldValue, newValue) -> {
+            ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
+            quickFilterManager.setLastUsedOperator(newValue);
+            condition.setOperator(newValue);
         });
 
         patternTextField.setToolTipText("<html>press <b>Up/Down</b> keys to change the operator</html>");
@@ -81,7 +74,7 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
     }
 
-    protected void updateJoinTypeComponent() {
+    void updateJoinTypeComponent() {
         joinTypeComboBox.setSelectedValue(condition.getFilter().getJoinType());
         int conditionsCount = condition.getFilter().getConditions().size();
         joinTypeComboBox.setEnabled(conditionsCount > 1 && condition.index() == 0);
@@ -114,11 +107,5 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
 
     public void setActive(boolean active) {
         getCondition().setActive(active);
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        condition = null;
     }
 }

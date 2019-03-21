@@ -14,7 +14,8 @@ abstract class BasicLatent<T> implements Latent<T> {
                     try {
                         loading = true;
                         loading();
-                        T newValue = getLoader().load();
+                        Loader<T> loader = getLoader();
+                        T newValue = loader == null ? null : loader.load();
                         if (value != newValue) {
                             value = newValue;
                         }

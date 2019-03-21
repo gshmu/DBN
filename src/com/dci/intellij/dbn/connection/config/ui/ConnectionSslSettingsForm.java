@@ -89,9 +89,4 @@ public class ConnectionSslSettingsForm extends ConfigurationEditorForm<Connectio
         clientKeyFile.setText(configuration.getClientKeyFile());
     }
 
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

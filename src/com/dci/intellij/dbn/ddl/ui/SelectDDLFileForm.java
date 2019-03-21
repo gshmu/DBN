@@ -59,9 +59,4 @@ public class SelectDDLFileForm extends DBNFormImpl {
     public JPanel getComponent() {
         return mainPanel;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

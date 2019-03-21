@@ -19,7 +19,7 @@ public class EditObjectCodeAction extends DumbAwareAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        DBSchemaObject schemaObject = DBObjectRef.getnn(objectRef);
+        DBSchemaObject schemaObject = DBObjectRef.ensure(objectRef);
         DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
         databaseFileSystem.connectAndOpenEditor(schemaObject, EditorProviderId.CODE, false, true);
     }

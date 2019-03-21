@@ -21,12 +21,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements BrowserTreeNode {
-    private List<ConnectionBundle> rootChildren;
+    private List<ConnectionBundle> rootChildren = new ArrayList<>();
     private ProjectRef projectRef;
 
-    public SimpleBrowserTreeRoot(@NotNull Project project, ConnectionBundle connectionBundle) {
+    SimpleBrowserTreeRoot(@NotNull Project project, ConnectionBundle connectionBundle) {
         this.projectRef = ProjectRef.from(project);
-        this.rootChildren = new ArrayList<ConnectionBundle>();
         if (connectionBundle != null) {
             this.rootChildren.add(connectionBundle);
         }
@@ -35,7 +34,7 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
     @Override
     @NotNull
     public Project getProject() {
-        return projectRef.getnn();
+        return projectRef.ensure();
     }
 
     @Nullable
@@ -211,11 +210,8 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
      *                       Disposable                      *
      *********************************************************/
     @Override
-    public void dispose() {
-        super.dispose();
-        if (rootChildren != null) {
-            rootChildren.clear();
-            rootChildren = null;
-        }
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 }

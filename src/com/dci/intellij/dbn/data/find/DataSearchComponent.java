@@ -501,10 +501,4 @@ public class DataSearchComponent extends DBNFormImpl implements Disposable, Sele
         return searchableComponent.getTable().getModel().getSearchResult();
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        searchableComponent = null;
-        findModel = null;
-    }
 }

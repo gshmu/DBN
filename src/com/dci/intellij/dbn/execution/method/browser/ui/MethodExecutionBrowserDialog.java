@@ -81,11 +81,4 @@ public class MethodExecutionBrowserDialog extends DBNDialog<MethodExecutionBrows
         }
 
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        objectTreeModel = null;
-    }
-
 }

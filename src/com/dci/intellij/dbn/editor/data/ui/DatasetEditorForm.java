@@ -172,15 +172,6 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         return Failsafe.get(datasetEditorTable);
     }
 
-    @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            datasetEditor = null;
-            datasetEditorTable = null;
-        }
-    }
-
     private ConnectionHandler getConnectionHandler() {
         return getEditorTable().getDataset().getConnectionHandler();
     }

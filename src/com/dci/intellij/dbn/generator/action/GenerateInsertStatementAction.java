@@ -26,7 +26,7 @@ public class GenerateInsertStatementAction extends GenerateStatementAction {
 
     @NotNull
     private DBTable getTable() {
-        return DBObjectRef.getnn(tableRef);
+        return DBObjectRef.ensure(tableRef);
     }
 
     @Nullable

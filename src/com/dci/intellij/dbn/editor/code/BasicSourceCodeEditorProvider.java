@@ -100,7 +100,7 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
 
     public abstract Icon getIcon();
 
-    private static void updateEditorActions(SourceCodeEditor sourceCodeEditor) {
+    private static void updateEditorActions(@NotNull SourceCodeEditor sourceCodeEditor) {
         Editor editor = sourceCodeEditor.getEditor();
         JComponent editorComponent = editor.getComponent();
         SourceCodeEditorActionsPanel actionsPanel = new SourceCodeEditorActionsPanel(sourceCodeEditor);

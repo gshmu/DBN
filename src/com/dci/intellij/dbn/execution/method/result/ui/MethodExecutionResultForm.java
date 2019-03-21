@@ -220,12 +220,6 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         return mainPanel;
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        executionResult = null;
-    }
-
     private void createUIComponents() {
         List<ArgumentValue> inputArgumentValues = executionResult.getExecutionInput().getInputArgumentValues();
         List<ArgumentValue> outputArgumentValues = executionResult.getArgumentValues();

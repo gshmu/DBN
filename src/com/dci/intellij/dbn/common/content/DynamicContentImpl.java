@@ -375,18 +375,16 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     }
 
     @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
-                if (!dependencyAdapter.isSubContent()) {
-                    DisposerUtil.dispose(elements);
-                }
-                elements = EMPTY_DISPOSED_CONTENT;
+    public void disposeInner() {
+        if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
+            if (!dependencyAdapter.isSubContent()) {
+                DisposerUtil.dispose(elements);
             }
-            Disposer.dispose(dependencyAdapter);
-            dependencyAdapter = VoidContentDependencyAdapter.INSTANCE;
-            parent = null;
+            elements = EMPTY_DISPOSED_CONTENT;
         }
+        Disposer.dispose(dependencyAdapter);
+        dependencyAdapter = VoidContentDependencyAdapter.INSTANCE;
+        parent = null;
+        super.disposeInner();
     }
 }

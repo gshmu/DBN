@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection.config.ui;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -24,7 +25,6 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.ListUtil;
 import com.intellij.ui.components.JBList;
@@ -64,7 +64,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     private String currentPanelId;
 
     
-    private Map<String, ConnectionSettingsForm> cachedForms = new HashMap<String, ConnectionSettingsForm>();
+    private Map<String, ConnectionSettingsForm> cachedForms = new HashMap<>();
 
     public JList getList() {
         return connectionsList;
@@ -107,10 +107,10 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     public void applyFormChanges() throws ConfigurationException {
         ConnectionBundleSettings connectionBundleSettings = getConfiguration();
 
-        List<ConnectionSettings> newConnections = new ArrayList<ConnectionSettings>();
+        List<ConnectionSettings> newConnections = new ArrayList<>();
         ConnectionListModel listModel = (ConnectionListModel) connectionsList.getModel();
         for (int i=0; i< listModel.getSize(); i++) {
-            ConnectionSettings connection = (ConnectionSettings) listModel.getElementAt(i);
+            ConnectionSettings connection = listModel.getElementAt(i);
             connection.apply();
             connection.setNew(false);
             newConnections.add(connection);
@@ -125,7 +125,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     public void resetFormChanges() {
         ConnectionListModel listModel = (ConnectionListModel) connectionsList.getModel();
         for (int i=0; i< listModel.getSize(); i++) {
-            ConnectionSettings connectionSettings = (ConnectionSettings) listModel.getElementAt(i);
+            ConnectionSettings connectionSettings = listModel.getElementAt(i);
             connectionSettings.reset();
         }
     }
@@ -134,7 +134,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         if (connectionId != null) {
             ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
             for (int i=0; i<model.size(); i++) {
-                ConnectionSettings connectionSettings = (ConnectionSettings) model.getElementAt(i);
+                ConnectionSettings connectionSettings = model.getElementAt(i);
                 if (connectionSettings.getConnectionId() == connectionId) {
                     connectionsList.setSelectedValue(connectionSettings, true);
                     break;
@@ -160,12 +160,9 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     }
 
     @Override
-    public void dispose() {
-        for (ConnectionSettingsForm settingsForm : cachedForms.values()) {
-            Disposer.dispose(settingsForm);
-        }
-        cachedForms.clear();
-        super.dispose();
+    public void disposeInner() {
+        DisposerUtil.dispose(cachedForms);
+        super.disposeInner();
     }
 
     private void switchSettingsPanel(ConnectionSettings connectionSettings) {
@@ -220,9 +217,8 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             getConfiguration().setModified(true);
             ConnectionSettingsForm settingsEditor = connectionSettings.getSettingsEditor();
             if (settingsEditor != null) {
-                ConnectionSettings duplicate = null;
                 try {
-                    duplicate = settingsEditor.getTemporaryConfig();
+                    ConnectionSettings duplicate = settingsEditor.getTemporaryConfig();
                     duplicate.setNew(true);
                     String name = duplicate.getDatabaseSettings().getName();
                     ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();

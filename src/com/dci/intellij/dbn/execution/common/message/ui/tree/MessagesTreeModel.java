@@ -59,7 +59,7 @@ public class MessagesTreeModel extends DisposableBase implements TreeModel, Disp
     }
 
     @Override
-    public void dispose() {
+    public void disposeInner() {
         treeModelListeners.clear();
         rootNode = new MessagesTreeRootNode(this);
     }

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.environment.options.ui;
 
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentConfigLocalListener;
@@ -9,6 +10,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -16,10 +18,10 @@ import java.awt.*;
 
 public class EnvironmentTypesTableModel extends DBNEditableTableModel {
     private EnvironmentTypeBundle environmentTypes;
-    private Project project;
+    private ProjectRef projectRef;
 
     EnvironmentTypesTableModel(Project project, EnvironmentTypeBundle environmentTypes) {
-        this.project = project;
+        this.projectRef = ProjectRef.from(project);
         this.environmentTypes = new EnvironmentTypeBundle(environmentTypes);
         addTableModelListener(defaultModelListener);
     }
@@ -41,11 +43,17 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
     private TableModelListener defaultModelListener = new TableModelListener() {
         @Override
         public void tableChanged(TableModelEvent e) {
+            Project project = getProject();
             EventUtil.notify(project,
                     EnvironmentConfigLocalListener.TOPIC,
                     (listener) -> listener.settingsChanged(environmentTypes));
         }
-    };    
+    };
+
+    @NotNull
+    public Project getProject() {
+        return projectRef.ensure();
+    }
 
     @Override
     public int getColumnCount() {
@@ -141,7 +149,8 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
      *                    Disposable                        *
      ********************************************************/
     @Override
-    public void dispose() {
-        super.dispose();
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 }

@@ -265,9 +265,4 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
             fileNameTextField.setText(fileName);
         }
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

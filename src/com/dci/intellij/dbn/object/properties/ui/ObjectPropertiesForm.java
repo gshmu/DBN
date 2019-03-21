@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -28,7 +29,7 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
     private JTable objectPropertiesTable;
     private JScrollPane objectPropertiesScrollPane;
     private JPanel closeActionPanel;
-    private DBObject object;
+    private DBObjectRef objectRef;
 
     public ObjectPropertiesForm(DBNForm parentForm) {
         super(parentForm);
@@ -67,12 +68,13 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
     };
 
     public DBObject getObject() {
-        return object;
+        return DBObjectRef.get(objectRef);
     }
 
     public void setObject(@NotNull DBObject object) {
-        if (!object.equals(this.object)) {
-            this.object = object;
+        DBObject localObject = getObject();
+        if (!object.equals(localObject)) {
+            objectRef = DBObjectRef.from(object);
 
             Project project = object.getProject();
             Progress.background(project, "Rendering object properties", false,
@@ -95,12 +97,6 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
                         });
                     });
         }
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        object = null;
     }
 
     private void createUIComponents() {

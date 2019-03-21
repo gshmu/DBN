@@ -73,11 +73,6 @@ public class PropertiesEditorForm extends DBNFormImpl<DBNForm> {
         return mainPanel;
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
-
     public Map<String, String> getProperties() {
         return table.getModel().exportProperties();
     }

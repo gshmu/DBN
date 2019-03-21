@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.Background;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
@@ -148,13 +147,9 @@ public class ObjectDependencyTreeNode extends DisposableBase implements Disposab
     }
 
     @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            DisposerUtil.dispose(dependencies);
-            CollectionUtil.clear(dependencies);
-            model = null;
-            parent = null;
-        }
+    public void disposeInner() {
+        DisposerUtil.dispose(dependencies);
+        super.disposeInner();
+        nullify();
     }
 }

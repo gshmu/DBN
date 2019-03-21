@@ -99,12 +99,9 @@ public class BasicDataModelRow<T extends DataModelCell> extends DisposableProper
      ********************************************************/
 
     @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            DisposerUtil.dispose(cells);
-            cells = null;
-            model = null;
-        }
+    public void disposeInner() {
+        DisposerUtil.dispose(cells);
+        super.disposeInner();
+        nullify();
     }
 }

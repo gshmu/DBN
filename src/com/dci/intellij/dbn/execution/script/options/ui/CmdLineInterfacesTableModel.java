@@ -133,12 +133,4 @@ public class CmdLineInterfacesTableModel extends DBNEditableTableModel {
             }
         }
     }
-
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

@@ -145,7 +145,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     @Override
     @NotNull
     public Project getProject() {
-        return projectRef.getnn();
+        return projectRef.ensure();
     }
 
     @Nullable
@@ -200,10 +200,9 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        connectionHandlers.clear();
-        virtualConnections.clear();
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 
     /*********************************************************

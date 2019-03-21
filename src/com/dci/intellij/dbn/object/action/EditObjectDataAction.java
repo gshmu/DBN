@@ -18,7 +18,7 @@ public class EditObjectDataAction extends DumbAwareAction {
     }
 
     public DBSchemaObject getObject() {
-        return DBObjectRef.getnn(objectRef);
+        return DBObjectRef.ensure(objectRef);
     }
 
     @Override

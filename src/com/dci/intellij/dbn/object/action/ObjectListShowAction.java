@@ -46,7 +46,7 @@ public abstract class ObjectListShowAction extends DumbAwareAction {
 
     @NotNull
     public DBObject getSourceObject() {
-        return DBObjectRef.getnn(sourceObjectRef);
+        return DBObjectRef.ensure(sourceObjectRef);
     }
 
     @Override

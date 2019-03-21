@@ -16,7 +16,7 @@ public class CompilerTypeSelectionForm extends DBNFormImpl<CompilerTypeSelection
     private JCheckBox rememberSelectionCheckBox;
     private JPanel hintPanel;
 
-    public CompilerTypeSelectionForm(final CompilerTypeSelectionDialog parentComponent, @Nullable DBSchemaObject object) {
+    CompilerTypeSelectionForm(final CompilerTypeSelectionDialog parentComponent, @Nullable DBSchemaObject object) {
         super(parentComponent);
         if (object == null) {
             headerPanel.setVisible(false);
@@ -41,8 +41,4 @@ public class CompilerTypeSelectionForm extends DBNFormImpl<CompilerTypeSelection
         return mainPanel;
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

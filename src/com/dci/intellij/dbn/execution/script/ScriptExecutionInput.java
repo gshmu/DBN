@@ -84,8 +84,8 @@ public class ScriptExecutionInput extends RemoteExecutionInput {
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        sourceFile = null;
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 }

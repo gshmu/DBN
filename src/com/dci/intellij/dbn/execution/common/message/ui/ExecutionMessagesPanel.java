@@ -90,10 +90,4 @@ public class ExecutionMessagesPanel extends DBNFormImpl<ExecutionConsoleForm>{
     public MessagesTree getMessagesTree() {
         return Failsafe.get(messagesTree);
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        messagesTree = null;
-    }
 }

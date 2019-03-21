@@ -473,8 +473,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
+    public void disposeInner() {
         psiDirectory = null;
+        super.disposeInner();
     }
 }

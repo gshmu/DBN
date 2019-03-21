@@ -65,11 +65,6 @@ public class CompilerMessagesObjectNode extends MessagesTreeBundleNode<CompilerM
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-    }
-
-    @Override
     public String toString() {
         return objectRef.toString();
     }

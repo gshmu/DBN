@@ -5,13 +5,12 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 
-import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 public class DatabaseFilesTableModel extends DBNEditableTableModel {
     private DatabaseFiles databaseFiles;
 
-    public DatabaseFilesTableModel(DatabaseFiles databaseFiles) {
+    DatabaseFilesTableModel(DatabaseFiles databaseFiles) {
         this.databaseFiles = databaseFiles == null ? new DatabaseFiles(null) : databaseFiles.clone();
         addTableModelListener(defaultModelListener);
     }
@@ -26,11 +25,7 @@ public class DatabaseFilesTableModel extends DBNEditableTableModel {
         return databaseFiles.size();
     }
     
-    TableModelListener defaultModelListener = new TableModelListener() {
-        @Override
-        public void tableChanged(TableModelEvent e) {
-        }
-    };    
+    TableModelListener defaultModelListener = e -> {};
 
     @Override
     public int getColumnCount() {
@@ -103,13 +98,5 @@ public class DatabaseFilesTableModel extends DBNEditableTableModel {
 
     public void validate() {
 
-    }
-
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    @Override
-    public void dispose() {
-        super.dispose();
     }
 }

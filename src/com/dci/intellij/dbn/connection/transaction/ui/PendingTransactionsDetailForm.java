@@ -84,12 +84,6 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
         return mainPanel;
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        transactionListener = null;
-    }
-
     /********************************************************
      *                Transaction Listener                  *
      ********************************************************/

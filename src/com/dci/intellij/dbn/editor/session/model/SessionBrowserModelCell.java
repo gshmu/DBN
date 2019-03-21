@@ -38,14 +38,4 @@ public class SessionBrowserModelCell extends ResultSetDataModelCell implements C
     @Override
     public void stateChanged(ChangeEvent e) {
     }
-
-
-    /*********************************************************
-     *                        ERROR                          *
-     *********************************************************/
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

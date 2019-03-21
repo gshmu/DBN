@@ -14,9 +14,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.COMMIT;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.ROLLBACK;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
 
 public class PendingTransactionsDetailDialog extends DBNDialog<PendingTransactionsDetailForm> {
     private ConnectionHandlerRef connectionHandlerRef;
@@ -104,11 +102,5 @@ public class PendingTransactionsDetailDialog extends DBNDialog<PendingTransactio
     private DatabaseTransactionManager getTransactionManager() {
         Project project = getConnectionHandler().getProject();
         return DatabaseTransactionManager.getInstance(project);
-    }
-
-
-    @Override
-    public void dispose() {
-        super.dispose();
     }
 }

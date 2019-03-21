@@ -596,13 +596,8 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     *                      Disposable                       *
     *********************************************************/
     @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            connectionPool = null;
-            connectionBundle = null;
-            sessionBrowserFile = null;
-            psiDirectory = null;
-        }
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 }

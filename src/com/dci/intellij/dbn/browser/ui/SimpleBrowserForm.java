@@ -6,12 +6,12 @@ import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.browser.options.listener.ObjectDetailSettingsListener;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,11 +23,11 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
     private JScrollPane browserScrollPane;
     private DatabaseBrowserTree browserTree;
 
-    public SimpleBrowserForm(DisposableProjectComponent parentComponent) {
+    SimpleBrowserForm(DisposableProjectComponent parentComponent) {
         this(parentComponent, new SimpleBrowserTreeModel(parentComponent.getProject(), ConnectionManager.getInstance(parentComponent.getProject()).getConnectionBundle()));
     }
 
-    public SimpleBrowserForm(DisposableProjectComponent parentComponent, ConnectionHandler connectionHandler) {
+    SimpleBrowserForm(DisposableProjectComponent parentComponent, ConnectionHandler connectionHandler) {
         this(parentComponent, new TabbedBrowserTreeModel(connectionHandler));
     }
 
@@ -39,7 +39,6 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
         ToolTipManager.sharedInstance().registerComponent(browserTree);
 
         EventUtil.subscribe(getProject(), this, ObjectDetailSettingsListener.TOPIC, objectDetailSettingsListener);
-        Disposer.register(this, browserTree);
     }
     
     @Nullable
@@ -75,9 +74,9 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        browserTree = null;
+    public void disposeInner() {
+        DisposerUtil.dispose(browserTree);
+        super.disposeInner();
     }
 
     /********************************************************

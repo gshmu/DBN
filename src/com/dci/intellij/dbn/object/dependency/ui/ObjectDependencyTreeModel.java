@@ -20,14 +20,14 @@ import java.util.List;
 import java.util.Set;
 
 public class ObjectDependencyTreeModel extends DisposableBase implements TreeModel, Disposable{
-    private Set<TreeModelListener> listeners = new HashSet<TreeModelListener>();
+    private Set<TreeModelListener> listeners = new HashSet<>();
     private ObjectDependencyTreeNode root;
     private ObjectDependencyType dependencyType;
     private ObjectDependencyTree tree;
     private DBObjectRef<DBSchemaObject> objectRef;
 
 
-    public ObjectDependencyTreeModel(DBSchemaObject object, ObjectDependencyType dependencyType) {
+    ObjectDependencyTreeModel(DBSchemaObject object, ObjectDependencyType dependencyType) {
         this.objectRef = DBObjectRef.from(object);
         this.root = new ObjectDependencyTreeNode(this, object);
         this.dependencyType = dependencyType;
@@ -51,7 +51,7 @@ public class ObjectDependencyTreeModel extends DisposableBase implements TreeMod
         return tree.getProject();
     }
 
-    public ObjectDependencyType getDependencyType() {
+    ObjectDependencyType getDependencyType() {
         return dependencyType;
     }
 
@@ -104,11 +104,9 @@ public class ObjectDependencyTreeModel extends DisposableBase implements TreeMod
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        listeners.clear();
-        tree = null;
-        root = null;
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 
     void refreshLoadInProgressNode(ObjectDependencyTreeNode node) {

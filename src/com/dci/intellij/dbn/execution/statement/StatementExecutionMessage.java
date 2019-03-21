@@ -44,10 +44,4 @@ public class StatementExecutionMessage extends ConsoleMessage {
     public void createStatementViewer() {
         
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        executionResult = null;
-    }
 }

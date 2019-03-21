@@ -52,10 +52,4 @@ public class ConnectionInfoDialog extends DBNDialog<ConnectionInfoForm> {
             getCancelAction()
         };
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        connectionInfo = null;
-    }
 }

@@ -52,7 +52,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
 
     @NotNull
     public DBSchemaObject getObject() {
-        return DBObjectRef.getnn(objectRef);
+        return DBObjectRef.ensure(objectRef);
     }
 
     private class SelectAllAction extends AbstractAction {
@@ -101,11 +101,5 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
         }
 
         super.doOKAction();
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        virtualFiles = null;
     }
 }

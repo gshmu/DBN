@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.editor.data;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -84,13 +86,14 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     private StructureViewModel structureViewModel;
     private ConnectionHandlerRef connectionHandlerRef;
     private DataEditorSettings settings;
-    private Project project;
+    private ProjectRef projectRef;
     private String dataLoadError;
 
     private DatasetEditorState editorState = new DatasetEditorState();
 
     public DatasetEditor(DBEditableObjectVirtualFile databaseFile, DBDataset dataset) {
-        this.project = dataset.getProject();
+        Project project = dataset.getProject();
+        this.projectRef = ProjectRef.from(project);
         this.databaseFile = databaseFile;
         this.datasetRef = DBObjectRef.from(dataset);
         this.settings = DataEditorSettings.getInstance(project);
@@ -114,7 +117,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
     @NotNull
     public DBDataset getDataset() {
-        return Failsafe.get(datasetRef.get(project));
+        return Failsafe.get(datasetRef.get(getProject()));
     }
 
     public DataEditorSettings getSettings() {
@@ -152,8 +155,9 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
         return getDataset().getSchemaIdentifier();
     }
 
+    @NotNull
     public Project getProject() {
-        return project;
+        return projectRef.ensure();
     }
 
     @Override
@@ -280,7 +284,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             MessageUtil.showErrorDialog(message, e);
 */
         } finally {
-            EventUtil.notify(project,
+            EventUtil.notify(getProject(),
                     DatasetLoadListener.TOPIC,
                     (listener) -> listener.datasetLoaded(databaseFile));
         }
@@ -291,7 +295,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             ConnectionAction.invoke("loading table data", false, this,
                     (action) -> {
                         setLoading(true);
-                        EventUtil.notify(project,
+                        EventUtil.notify(getProject(),
                                 DatasetLoadListener.TOPIC,
                                 (listener) -> listener.datasetLoading(databaseFile));
 
@@ -341,7 +345,8 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             focusEditor();
             ConnectionHandler connectionHandler = getConnectionHandler();
             DatabaseMessageParserInterface messageParserInterface = connectionHandler.getInterfaceProvider().getMessageParserInterface();
-            DatasetFilterManager filterManager = DatasetFilterManager.getInstance(getProject());
+            Project project = getProject();
+            DatasetFilterManager filterManager = DatasetFilterManager.getInstance(project);
 
             DBDataset dataset = getDataset();
             DatasetFilter filter = filterManager.getActiveFilter(dataset);
@@ -397,7 +402,8 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
 
 
     private void focusEditor() {
-        FileEditorManager.getInstance(project).openFile(databaseFile, true);
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
+        fileEditorManager.openFile(databaseFile, true);
     }
 
     protected void setLoading(boolean loading) {
@@ -568,7 +574,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
                         try {
                             model.postInsertRecord(true, false, true);
                         } catch (SQLException e1) {
-                            MessageUtil.showErrorDialog(project, "Could not create row in " + getDataset().getQualifiedNameWithType() + '.', e1);
+                            MessageUtil.showErrorDialog(getProject(), "Could not create row in " + getDataset().getQualifiedNameWithType() + '.', e1);
                             model.cancelInsert(true);
                         }
                     }
@@ -649,10 +655,18 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     public void dispose() {
         if (!disposed) {
             disposed = true;
+            DisposerUtil.nullify(this);
+/*
             editorForm = null;
             databaseFile = null;
             structureViewModel = null;
+            connectionStatusListener = null;
+            dataGridSettingsChangeListener = null;
+            transactionListener = null;
+            dataProvider = null;
             settings = null;
+*/
+
         }
     }
 }

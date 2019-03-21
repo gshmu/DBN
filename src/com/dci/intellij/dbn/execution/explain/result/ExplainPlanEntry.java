@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.execution.explain.result;
 
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.Disposable;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -14,7 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExplainPlanEntry implements Disposable {
+public class ExplainPlanEntry extends DisposableBase {
     private DBObjectRef objectRef;
     private String operation;
     private String operationOptions;
@@ -162,9 +161,9 @@ public class ExplainPlanEntry implements Disposable {
     }
 
     @Override
-    public void dispose() {
+    public void disposeInner() {
         DisposerUtil.dispose(children);
-        CollectionUtil.clear(children);
-        parent = null;
+        super.disposeInner();
+        nullify();
     }
 }

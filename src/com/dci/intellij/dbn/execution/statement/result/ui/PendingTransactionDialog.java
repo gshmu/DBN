@@ -106,12 +106,4 @@ public class PendingTransactionDialog extends DialogWithTimeout {
         ConnectionUtil.rollbackSilently(connection);
         super.doCancelAction();
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        executionProcessor = null;
-    }
-
-
 }

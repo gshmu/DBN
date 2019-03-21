@@ -22,7 +22,7 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     private DBNConnection connection;
     private Row currentRow;
 
-    public ReadonlyResultSetAdapter(DatasetEditorModel model, DBNResultSet resultSet) throws SQLException {
+    ReadonlyResultSetAdapter(DatasetEditorModel model, DBNResultSet resultSet) {
         super(model);
         this.connection = resultSet.getStatement().getConnection();
     }
@@ -221,17 +221,11 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
         preparedStatement.executeUpdate();
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        connection = null;
-    }
-
     private class Cell {
         private ColumnInfo columnInfo;
         private Object value;
 
-        public Cell(ColumnInfo columnInfo, Object value) {
+        Cell(ColumnInfo columnInfo, Object value) {
             this.columnInfo = columnInfo;
             this.value = value;
         }
@@ -276,24 +270,24 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     }
 
     private class Row {
-        private Set<Cell> keyCells = new HashSet<Cell>();
-        private Set<Cell> changedCells = new HashSet<Cell>();
+        private Set<Cell> keyCells = new HashSet<>();
+        private Set<Cell> changedCells = new HashSet<>();
 
-        public List<Cell> getKeyCells() {
-            return new ArrayList<Cell>(keyCells);
+        List<Cell> getKeyCells() {
+            return new ArrayList<>(keyCells);
         }
 
-        public List<Cell> getChangedCells() {
-            return new ArrayList<Cell>(changedCells);
+        List<Cell> getChangedCells() {
+            return new ArrayList<>(changedCells);
         }
 
-        public void addKeyCell(ColumnInfo columnInfo, Object value) {
+        void addKeyCell(ColumnInfo columnInfo, Object value) {
             Cell cell = new Cell(columnInfo, value);
             keyCells.remove(cell);
             keyCells.add(cell);
         }
 
-        public void addChangedCell(ColumnInfo columnInfo, Object value) {
+        void addChangedCell(ColumnInfo columnInfo, Object value) {
             Cell cell = new Cell(columnInfo, value);
             changedCells.remove(cell);
             changedCells.add(cell);

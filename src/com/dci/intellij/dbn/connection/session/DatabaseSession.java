@@ -99,11 +99,6 @@ public class DatabaseSession extends DisposableBase implements Comparable<Databa
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-    }
-
-    @Override
     public int compareTo(@NotNull DatabaseSession o) {
         if (id == SessionId.MAIN) return -1;
         if (id == SessionId.POOL) {

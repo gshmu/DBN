@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.variables.ui;
 
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -37,7 +38,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionInputsDialog> {
@@ -58,7 +58,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
     private EditorEx viewer;
     private String statementText;
 
-    public StatementExecutionInputForm(
+    StatementExecutionInputForm(
             @NotNull StatementExecutionInputsDialog parentComponent,
             @NotNull StatementExecutionProcessor executionProcessor,
             @NotNull DBDebuggerType debuggerType, boolean isBulkExecution) {
@@ -92,7 +92,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
         StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
         if (executionVariables != null) {
             List<StatementExecutionVariable> variables = new ArrayList<>(executionVariables.getVariables());
-            Collections.sort(variables, StatementExecutionVariablesBundle.OFFSET_COMPARATOR);
+            variables.sort(StatementExecutionVariablesBundle.OFFSET_COMPARATOR);
 
 
             for (StatementExecutionVariable variable: variables) {
@@ -145,12 +145,10 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        variableValueForms.clear();
-        executionProcessor = null;
+    public void disposeInner() {
         EditorUtil.releaseEditor(viewer);
-        viewer = null;
+        DisposerUtil.dispose(variableValueForms);
+        super.disposeInner();
     }
 
     @Override
@@ -168,7 +166,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
         executionOptionsForm.updateExecutionInput();
     }
 
-    protected void updatePreview() {
+    void updatePreview() {
         ConnectionHandler connectionHandler = Failsafe.get(executionProcessor.getConnectionHandler());
         SchemaId currentSchema = executionProcessor.getTargetSchema();
         Project project = connectionHandler.getProject();

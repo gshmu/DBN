@@ -30,9 +30,4 @@ public class SimpleBrowserTreeModel extends BrowserTreeModel {
             notifyListeners(connectionHandler.getObjectBundle(), TreeEventType.NODES_CHANGED);
         }
     };
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

@@ -806,7 +806,8 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
      *                    Disposable                        *
      ********************************************************/
     @Override
-    public void dispose() {
-        super.dispose();
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 }

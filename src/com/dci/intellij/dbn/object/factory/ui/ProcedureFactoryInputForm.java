@@ -14,9 +14,4 @@ public class ProcedureFactoryInputForm extends MethodFactoryInputForm {
     public boolean hasReturnArgument() {
         return false;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

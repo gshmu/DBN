@@ -163,12 +163,8 @@ public class BasicDataModelCell extends DisposablePropertyHolder<RecordStatus> i
     }
 
     @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            row = null;
-            userValue = null;
-            formattedUserValue = null;
-        }
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 }

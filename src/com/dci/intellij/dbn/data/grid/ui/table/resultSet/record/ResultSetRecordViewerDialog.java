@@ -38,10 +38,4 @@ public class ResultSetRecordViewerDialog extends DBNDialog<ResultSetRecordViewer
     protected void doOKAction() {
         super.doOKAction();
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        table = null;
-    }
 }
