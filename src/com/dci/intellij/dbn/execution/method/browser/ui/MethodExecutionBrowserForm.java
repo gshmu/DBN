@@ -124,11 +124,6 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
         return mainPanel;
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
-
     private void createUIComponents() {
         methodsTree = new ObjectTree();
     }

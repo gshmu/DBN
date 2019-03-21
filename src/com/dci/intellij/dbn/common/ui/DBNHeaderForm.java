@@ -137,9 +137,4 @@ public class DBNHeaderForm extends DBNFormImpl{
     public JComponent getComponent() {
         return mainPanel;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

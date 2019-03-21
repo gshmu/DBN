@@ -93,12 +93,9 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
     }
 
     @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            treeModelListeners.clear();
-            root = null;
-        }
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 
     /********************************************************

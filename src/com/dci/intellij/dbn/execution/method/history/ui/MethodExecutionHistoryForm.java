@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -103,9 +104,9 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        executionInputsTree = null;
+    public void disposeInner() {
+        DisposerUtil.dispose(methodExecutionForms);
+        super.disposeInner();
     }
 
     private void showMethodExecutionPanel(MethodExecutionInput executionInput) {

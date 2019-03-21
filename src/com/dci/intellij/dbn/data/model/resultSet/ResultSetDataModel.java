@@ -169,10 +169,8 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
+    public void disposeInner() {
         closeResultSet();
-        resultSet = null;
-        connectionHandler = null;
+        super.disposeInner();
     }
 }

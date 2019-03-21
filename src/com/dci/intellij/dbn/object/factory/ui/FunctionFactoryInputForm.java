@@ -33,9 +33,4 @@ public class FunctionFactoryInputForm extends MethodFactoryInputForm {
     public boolean hasReturnArgument() {
         return true;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

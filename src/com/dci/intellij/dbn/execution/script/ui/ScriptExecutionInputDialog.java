@@ -47,12 +47,4 @@ public class ScriptExecutionInputDialog extends DBNDialog<ScriptExecutionInputFo
     protected void doOKAction() {
         super.doOKAction();
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        executionInput = null;
-    }
-
-
 }

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.common.Referenceable;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.Disposable;
@@ -29,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, ConnectionProvider, Presentable, ConnectionIdProvider {
+public interface ConnectionHandler extends Disposable, EnvironmentTypeProvider, ConnectionProvider, Presentable, ConnectionIdProvider, Referenceable<ConnectionHandlerRef> {
     @NotNull
     Project getProject();
     DBNConnection getTestConnection() throws SQLException;

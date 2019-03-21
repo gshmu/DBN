@@ -20,7 +20,7 @@ public class CompileInvalidObjectsAction extends DumbAwareAction {
 
     @NotNull
     public DBSchema getSchema() {
-        return DBObjectRef.getnn(schemaRef);
+        return DBObjectRef.ensure(schemaRef);
     }
 
     @Override

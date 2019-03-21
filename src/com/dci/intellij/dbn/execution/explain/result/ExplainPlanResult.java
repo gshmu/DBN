@@ -172,11 +172,9 @@ public class ExplainPlanResult extends DisposableBase implements ExecutionResult
      *                    Disposable                   *
      ********************************************************/
     @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            resultForm = null;
-            DisposerUtil.dispose(root);
-        }
+    public void disposeInner() {
+        DisposerUtil.dispose(root);
+        super.disposeInner();
+        nullify();
     }
 }

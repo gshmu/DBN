@@ -51,11 +51,11 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
     @NotNull
     public final Project getProject() {
         if (projectRef != null) {
-            return projectRef.getnn();
+            return projectRef.ensure();
         }
 
         if (parentComponent != null) {
-            return parentComponent.getnn().getProject();
+            return parentComponent.ensure().getProject();
         }
 
         DataContext dataContext = DataManager.getInstance().getDataContext(getComponent());
@@ -67,5 +67,12 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
     @Nullable
     public JComponent getPreferredFocusedComponent() {
         return null;
+    }
+
+    @Override
+    public void disposeInner() {
+        super.disposeInner();
+        GUIUtil.dispose(getComponent());
+        nullify();
     }
 }

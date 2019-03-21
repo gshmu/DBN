@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -35,8 +36,8 @@ import static com.dci.intellij.dbn.connection.transaction.TransactionAction.acti
 
 
 public class ResourceMonitorDetailForm extends DBNFormImpl {
-    private JTable sessionsTable;
-    private JTable transactionsTable;
+    private DBNTable sessionsTable;
+    private DBNTable transactionsTable;
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JPanel sessionsPanel;
@@ -85,8 +86,6 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
 
         EventUtil.subscribe(getProject(), this, TransactionListener.TOPIC, transactionListener);
         EventUtil.subscribe(getProject(), this, SessionManagerListener.TOPIC, sessionManagerListener);
-        DisposerUtil.register(this, sessionsTable);
-        DisposerUtil.register(this, transactionsTable);
     }
 
     private AnActionButton commitAction = new DumbAwareActionButton("Commit", null, Icons.CONNECTION_COMMIT) {
@@ -228,12 +227,6 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         return mainPanel;
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        transactionListener = null;
-    }
-
     /********************************************************
      *                Transaction Listener                  *
      ********************************************************/
@@ -344,5 +337,15 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     @NotNull
     private DatabaseTransactionManager getTransactionManager() {
         return DatabaseTransactionManager.getInstance(getProject());
+    }
+
+
+    @Override
+    public void disposeInner() {
+        DisposerUtil.dispose(sessionsTable);
+        DisposerUtil.dispose(sessionsTableModel);
+        DisposerUtil.dispose(transactionsTable);
+        DisposerUtil.dispose(transactionsTableModel);
+        super.disposeInner();
     }
 }

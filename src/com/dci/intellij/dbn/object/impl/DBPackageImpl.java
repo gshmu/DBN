@@ -252,9 +252,4 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
         return contentType == DBContentType.CODE_SPEC ? SPEC_TIMESTAMP_LOADER :
                contentType == DBContentType.CODE_BODY ? BODY_TIMESTAMP_LOADER : null;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

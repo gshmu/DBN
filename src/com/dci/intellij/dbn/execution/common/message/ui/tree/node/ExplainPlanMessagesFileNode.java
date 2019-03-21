@@ -41,10 +41,4 @@ public class ExplainPlanMessagesFileNode extends MessagesTreeBundleNode<ExplainP
         }
         return null;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        virtualFile = null;
-    }
 }

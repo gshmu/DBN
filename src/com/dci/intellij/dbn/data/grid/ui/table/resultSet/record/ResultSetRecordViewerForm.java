@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
@@ -148,7 +147,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
                 sortingType == ColumnSortingType.BY_INDEX ? indexedComparator : null;
 
         if (comparator != null) {
-            java.util.Collections.sort(columnForms, comparator);
+            columnForms.sort(comparator);
             columnsPanel.removeAll();
             for (ResultSetRecordViewerColumnForm columnForm : columnForms) {
                 columnsPanel.add(columnForm.getComponent());
@@ -158,25 +157,19 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
         }
     }
 
-    private static Comparator<ResultSetRecordViewerColumnForm> alphabeticComparator = new Comparator<ResultSetRecordViewerColumnForm>() {
-        @Override
-        public int compare(ResultSetRecordViewerColumnForm columnPanel1, ResultSetRecordViewerColumnForm columnPanel2) {
-            String name1 = columnPanel1.getCell().getColumnInfo().getName();
-            String name2 = columnPanel2.getCell().getColumnInfo().getName();
-            return name1.compareTo(name2);
-        }
+    private static Comparator<ResultSetRecordViewerColumnForm> alphabeticComparator = (columnPanel1, columnPanel2) -> {
+        String name1 = columnPanel1.getCell().getColumnInfo().getName();
+        String name2 = columnPanel2.getCell().getColumnInfo().getName();
+        return name1.compareTo(name2);
     };
 
-    private static Comparator<ResultSetRecordViewerColumnForm> indexedComparator = new Comparator<ResultSetRecordViewerColumnForm>() {
-        @Override
-        public int compare(ResultSetRecordViewerColumnForm columnPanel1, ResultSetRecordViewerColumnForm columnPanel2) {
-            int index1 = columnPanel1.getCell().getColumnInfo().getColumnIndex();
-            int index2 = columnPanel2.getCell().getColumnInfo().getColumnIndex();
-            return index1-index2;
-        }
+    private static Comparator<ResultSetRecordViewerColumnForm> indexedComparator = (columnPanel1, columnPanel2) -> {
+        int index1 = columnPanel1.getCell().getColumnInfo().getColumnIndex();
+        int index2 = columnPanel2.getCell().getColumnInfo().getColumnIndex();
+        return index1-index2;
     };
 
-    public void focusNextColumnPanel(ResultSetRecordViewerColumnForm source) {
+    void focusNextColumnPanel(ResultSetRecordViewerColumnForm source) {
         int index = columnForms.indexOf(source);
         if (index < columnForms.size() - 1) {
             ResultSetRecordViewerColumnForm columnForm = columnForms.get(index + 1);
@@ -184,7 +177,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
         }
     }
 
-    public void focusPreviousColumnPanel(ResultSetRecordViewerColumnForm source) {
+    void focusPreviousColumnPanel(ResultSetRecordViewerColumnForm source) {
         int index = columnForms.indexOf(source);
         if (index > 0) {
             ResultSetRecordViewerColumnForm columnForm = columnForms.get(index - 1);
@@ -201,14 +194,14 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
         }
 
         @Override
-        public boolean isSelected(AnActionEvent anActionEvent) {
+        public boolean isSelected(@NotNull AnActionEvent e) {
             Project project = getProject();
             ColumnSortingType sortingType = DatasetEditorManager.getInstance(project).getRecordViewColumnSortingType();
             return sortingType == ColumnSortingType.ALPHABETICAL;
         }
 
         @Override
-        public void setSelected(AnActionEvent anActionEvent, boolean selected) {
+        public void setSelected(@NotNull AnActionEvent e, boolean selected) {
             ColumnSortingType sortingType = selected ? ColumnSortingType.ALPHABETICAL : ColumnSortingType.BY_INDEX;
             Project project = getProject();
             DatasetEditorManager.getInstance(project).setRecordViewColumnSortingType(sortingType);
@@ -244,7 +237,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             ResultSetDataModelRow row = getRow();
             int index = row.getIndex();
             if (index > 0) {
@@ -270,7 +263,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             ResultSetDataModelRow row = getRow();
             ResultSetDataModel model = row.getModel();
             if (row.getIndex() < model.getRowCount() -1) {
@@ -319,13 +312,8 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
     }
 
     @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            DisposerUtil.dispose(columnForms);
-            CollectionUtil.clear(columnForms);
-            table = null;
-            row = null;
-        }
+    public void disposeInner() {
+        DisposerUtil.dispose(columnForms);
+        super.disposeInner();
     }
 }

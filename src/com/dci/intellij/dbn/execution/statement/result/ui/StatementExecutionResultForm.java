@@ -197,13 +197,4 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     private void createUIComponents() {
         resultScrollPane = new BasicTableScrollPane();
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        resultTable = null;
-        executionResult = null;
-    }
-
-
 }

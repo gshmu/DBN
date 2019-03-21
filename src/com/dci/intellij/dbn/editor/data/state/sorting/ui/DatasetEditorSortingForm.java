@@ -150,12 +150,9 @@ public class DatasetEditorSortingForm extends DBNFormImpl<DatasetEditorSortingDi
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        for (DatasetSortingColumnForm sortingColumnForm : sortingInstructionForms) {
-            sortingColumnForm.dispose();
-        }
-        sortingInstructionForms.clear();
+    public void disposeInner() {
+        DisposerUtil.dispose(sortingInstructionForms);
+        super.disposeInner();
     }
 
 }

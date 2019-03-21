@@ -153,13 +153,11 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
+    public void disposeInner() {
+        DisposerUtil.dispose(resultPanel);
         DisposerUtil.disposeInBackground(dataModel);
-        dataModel = null;
-        resultPanel = null;
-        dataProvider = null;
-
+        super.disposeInner();
+        nullify();
     }
 
 

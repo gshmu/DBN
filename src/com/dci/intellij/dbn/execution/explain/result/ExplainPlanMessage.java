@@ -23,12 +23,6 @@ public class ExplainPlanMessage extends ConsoleMessage {
         return explainPlanResult.getVirtualFile();
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        explainPlanResult = null;
-    }
-
     @Deprecated
     public void navigateToEditor(boolean requestFocus) {
         //executionResult.getExecutionProcessor().navigateToEditor(requestFocus);

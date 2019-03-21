@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.connection;
 
+import com.dci.intellij.dbn.common.Reference;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ConnectionHandlerRef{
+public class ConnectionHandlerRef implements Reference<ConnectionHandler> {
     private WeakRef<ConnectionHandler> reference;
     private ConnectionId connectionId;
 

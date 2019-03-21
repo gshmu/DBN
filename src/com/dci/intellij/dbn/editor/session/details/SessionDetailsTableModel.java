@@ -105,7 +105,8 @@ public class SessionDetailsTableModel extends DisposableBase implements DBNTable
      ********************************************************/
 
     @Override
-    public void dispose() {
-        super.dispose();
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 }

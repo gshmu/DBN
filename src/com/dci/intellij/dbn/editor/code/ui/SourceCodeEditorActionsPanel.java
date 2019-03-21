@@ -27,7 +27,7 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
 
     private SourceCodeEditor sourceCodeEditor;
 
-    public SourceCodeEditorActionsPanel(SourceCodeEditor sourceCodeEditor) {
+    public SourceCodeEditorActionsPanel(@NotNull SourceCodeEditor sourceCodeEditor) {
         this.sourceCodeEditor = sourceCodeEditor;
         Editor editor = sourceCodeEditor.getEditor();
         Project project = editor.getProject();
@@ -67,11 +67,5 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
     @Override
     public JComponent getComponent() {
         return mainPanel;
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        sourceCodeEditor = null;
     }
 }

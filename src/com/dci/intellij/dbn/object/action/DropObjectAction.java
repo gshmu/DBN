@@ -17,7 +17,7 @@ public class DropObjectAction extends DumbAwareAction {
     }
 
     public DBSchemaObject getObject() {
-        return DBObjectRef.getnn(objectRef);
+        return DBObjectRef.ensure(objectRef);
     }
 
     @Override

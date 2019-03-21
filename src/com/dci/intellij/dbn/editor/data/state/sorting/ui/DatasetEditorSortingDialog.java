@@ -40,10 +40,4 @@ public class DatasetEditorSortingDialog extends DBNDialog<DatasetEditorSortingFo
         datasetEditor.getEditorTable().sort();
         super.doOKAction();
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        datasetEditor = null;
-    }
 }

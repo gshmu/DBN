@@ -37,10 +37,4 @@ public class DatasetRecordEditorDialog extends DBNDialog<DatasetRecordEditorForm
     protected void doOKAction() {
         super.doOKAction();
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        row = null;
-    }
 }

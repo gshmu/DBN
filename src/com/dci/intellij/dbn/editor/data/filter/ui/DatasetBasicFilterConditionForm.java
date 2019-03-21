@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
@@ -17,7 +18,6 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.SimpleTextAttributes;
@@ -111,9 +111,6 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
         valueTextField.setToolTipText("<html>While editing value, <br> " +
                 "press <b>Up/Down</b> keys to change column or <br> " +
                 "press <b>Ctrl-Up/Ctrl-Down</b> keys to change operator</html>");
-
-        Disposer.register(this, editorComponent);
-
     }
 
     @NotNull
@@ -245,10 +242,9 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        editorComponent = null;
-        basicFilterForm = null;
+    public void disposeInner() {
+        DisposerUtil.dispose(editorComponent);
+        super.disposeInner();
     }
 
 

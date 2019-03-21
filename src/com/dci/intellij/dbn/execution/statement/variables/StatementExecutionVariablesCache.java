@@ -24,7 +24,7 @@ public class StatementExecutionVariablesCache implements PersistentStateElement 
     }
 
     public Project getProject() {
-        return projectRef.getnn();
+        return projectRef.ensure();
     }
 
     public Set<StatementExecutionVariable> getVariables(VirtualFile virtualFile) {

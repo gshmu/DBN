@@ -212,9 +212,8 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
      *                    Disposable                        *
      ********************************************************/
     @Override
-    public void dispose() {
-        super.dispose();
-        executionProcessor = null;
-        executionMessage = null;
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 }

@@ -41,10 +41,4 @@ public class StatementExecutionMessagesFileNode extends MessagesTreeBundleNode<S
         }
         return null;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        virtualFile = null;
-    }
 }

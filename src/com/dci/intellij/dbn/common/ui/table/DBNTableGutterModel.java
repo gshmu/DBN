@@ -54,9 +54,8 @@ public class DBNTableGutterModel<T extends DBNTableWithGutterModel> extends Disp
      *                    Disposable                        *
      ********************************************************/
     @Override
-    public void dispose() {
-        super.dispose();
-        listeners.clear();
-        tableModel = null;
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 }

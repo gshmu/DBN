@@ -60,10 +60,8 @@ public class BasicDataModelHeader<T extends ColumnInfo> extends DisposableBase i
      *                    Disposable                        *
      ********************************************************/
     @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-            columnInfos.clear();
-        }
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 }

@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -316,7 +317,7 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
     @NotNull
     @Override
     public String getName() {
-        return null;
+        return "";
     }
 
     @Nullable
@@ -342,6 +343,11 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
 
     @Override
     public String getToolTip() {
+        return null;
+    }
+
+    @Override
+    public PsiFile getFakeObjectFile() {
         return null;
     }
 }

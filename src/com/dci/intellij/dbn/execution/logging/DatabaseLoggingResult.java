@@ -137,9 +137,8 @@ public class DatabaseLoggingResult extends DisposableBase implements ExecutionRe
      *                    Disposable                        *
      ********************************************************/
     @Override
-    public void dispose() {
-        super.dispose();
-        logOutputForm = null;
-        context = null;
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 }

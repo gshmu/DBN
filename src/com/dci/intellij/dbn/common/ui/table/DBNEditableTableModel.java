@@ -44,13 +44,4 @@ public abstract class DBNEditableTableModel extends DisposableBase implements DB
             listModel.get().notifyListeners(listDataEvent);
         }
     }
-
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    @Override
-    public void dispose() {
-        super.dispose();
-        tableModelListeners.clear();
-    }
 }

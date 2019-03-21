@@ -80,11 +80,4 @@ public class DatabaseLoggingResultForm extends DBNFormImpl implements ExecutionR
     public DatabaseLoggingResult getExecutionResult() {
         return loggingResult;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        console = null;
-        loggingResult = null;
-    }
 }

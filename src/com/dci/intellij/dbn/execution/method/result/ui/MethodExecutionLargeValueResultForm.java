@@ -157,9 +157,8 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecu
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
+    public void disposeInner() {
         EditorUtil.releaseEditor(editor);
-        editor = null;
+        super.disposeInner();
     }
 }

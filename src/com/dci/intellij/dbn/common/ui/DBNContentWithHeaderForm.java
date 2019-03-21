@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.ui;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -22,7 +22,6 @@ public abstract class DBNContentWithHeaderForm<T extends DBNDialog> extends DBNF
 
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         contentPanel.add(contentForm.getComponent(), BorderLayout.CENTER);
-        Disposer.register(this, contentForm);
     }
 
     public abstract DBNHeaderForm createHeaderForm();
@@ -44,9 +43,9 @@ public abstract class DBNContentWithHeaderForm<T extends DBNDialog> extends DBNF
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
-        headerForm = null;
-        contentForm = null;
+    public void disposeInner() {
+        DisposerUtil.dispose(headerForm);
+        DisposerUtil.dispose(contentForm);
+        super.disposeInner();
     }
 }

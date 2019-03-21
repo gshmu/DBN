@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.ddl.ui;
 
+import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -13,15 +14,15 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class FileListCellRenderer extends ColoredListCellRenderer<VirtualFile> {
-    private Project project;
+    private ProjectRef projectRef;
 
     FileListCellRenderer(Project project) {
-        this.project = project;
+        this.projectRef = ProjectRef.from(project);
     }
 
     @Override
     protected void customizeCellRenderer(@NotNull JList list, VirtualFile value, int index, boolean selected, boolean hasFocus) {
-
+        Project project = getProject();
         Module module = ModuleUtil.findModuleForFile(value, project);
         if (module == null) {
             append(value.getPath(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
@@ -35,6 +36,11 @@ public class FileListCellRenderer extends ColoredListCellRenderer<VirtualFile> {
         }
 
         setIcon(VirtualFileUtil.getIcon(value));
+    }
+
+    @NotNull
+    private Project getProject() {
+        return projectRef.ensure();
     }
 
     private static VirtualFile getModuleContentRoot(Module module, VirtualFile virtualFile) {

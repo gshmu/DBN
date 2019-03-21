@@ -59,10 +59,4 @@ public class MethodExecutionInputDialog extends DBNDialog<MethodExecutionInputFo
             }
         }
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        executionInput = null;
-    }
 }

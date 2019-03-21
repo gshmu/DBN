@@ -44,11 +44,4 @@ public abstract class ObjectFactoryInputForm<T extends ObjectFactoryInput> exten
     public void setIndex(int index) {
         this.index = index;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        connectionHandler = null;
-        objectType = null;
-    }
 }

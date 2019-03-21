@@ -20,7 +20,16 @@ public abstract class DisposableBase implements Disposable{
     }
 
     @Override
-    public void dispose() {
-        disposed = true;
+    public final void dispose() {
+        if (!disposed) {
+            disposed = true;
+            disposeInner();
+        }
+    }
+
+    public void disposeInner(){};
+
+    protected final void nullify() {
+        DisposerUtil.nullify(this);
     }
 }

@@ -40,11 +40,4 @@ public class ResourceMonitorDialog extends DBNDialog<ResourceMonitorForm> {
     private DatabaseTransactionManager getTransactionManager() {
         return DatabaseTransactionManager.getInstance(getProject());
     }
-
-    @Override
-    public void dispose() {
-        if (!isDisposed()) {
-            super.dispose();
-        }
-    }
 }

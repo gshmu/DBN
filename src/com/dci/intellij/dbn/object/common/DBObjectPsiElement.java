@@ -14,7 +14,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiNamedElement;
@@ -32,7 +31,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class DBObjectPsiElement extends DisposableBase implements PsiNamedElement, NavigationItem {
-    private static PsiFile DUMMY_FILE;
     private DBObjectRef objectRef;
 
     public DBObjectPsiElement(DBObjectRef objectRef) {
@@ -91,14 +89,7 @@ public class DBObjectPsiElement extends DisposableBase implements PsiNamedElemen
 
     @Override
     public PsiFile getContainingFile() throws PsiInvalidElementAccessException {
-        if (DUMMY_FILE == null) {
-            PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
-
-            DUMMY_FILE = psiFileFactory.createFileFromText(
-                    "object", SQLLanguage.INSTANCE, "");
-
-        }
-        return DUMMY_FILE;
+        return getObject().getObjectBundle().getFakeObjectFile();
     }
 
     @Override
@@ -274,7 +265,7 @@ public class DBObjectPsiElement extends DisposableBase implements PsiNamedElemen
 
     @NotNull
     public DBObject getObject() {
-        return DBObjectRef.getnn(objectRef);
+        return DBObjectRef.ensure(objectRef);
     }
 
     @Nullable

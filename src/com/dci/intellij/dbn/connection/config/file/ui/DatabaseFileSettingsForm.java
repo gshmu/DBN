@@ -87,11 +87,6 @@ public class DatabaseFileSettingsForm extends DBNFormImpl<ConnectionDatabaseSett
         return table;
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
-
     public DatabaseFiles getDatabaseFiles() {
         GUIUtil.stopTableCellEditing(table);
         return table.getModel().getDatabaseFiles();

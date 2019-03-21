@@ -123,12 +123,4 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
     public SessionBrowserModelCell getCellAt(int rowIndex, int columnIndex) {
         return (SessionBrowserModelCell) super.getCellAt(rowIndex, columnIndex);
     }
-
-    /*********************************************************
-     *                       Disposable                      *
-     *********************************************************/
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

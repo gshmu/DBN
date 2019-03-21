@@ -42,7 +42,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
 
     @NotNull
     public T getObject() {
-        return DBObjectRef.getnn(objectRef);
+        return DBObjectRef.ensure(objectRef);
     }
 
     @NotNull

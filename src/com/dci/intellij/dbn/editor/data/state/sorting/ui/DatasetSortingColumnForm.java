@@ -31,7 +31,7 @@ public class DatasetSortingColumnForm extends DBNFormImpl<DatasetEditorSortingFo
 
     private SortingInstruction sortingInstruction;
 
-    DatasetSortingColumnForm(final DatasetEditorSortingForm parent, SortingInstruction sortingInstruction) {
+    DatasetSortingColumnForm(DatasetEditorSortingForm parent, @NotNull SortingInstruction sortingInstruction) {
         super(parent);
         this.sortingInstruction = sortingInstruction;
 
@@ -105,10 +105,5 @@ public class DatasetSortingColumnForm extends DBNFormImpl<DatasetEditorSortingFo
 
     public DBDataset getDataset() {
         return ensureParentComponent().getDataset();
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
     }
 }

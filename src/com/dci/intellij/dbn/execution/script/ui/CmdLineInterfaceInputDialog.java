@@ -54,10 +54,4 @@ public class CmdLineInterfaceInputDialog extends DBNDialog<CmdLineInterfaceInput
     protected void doOKAction() {
         super.doOKAction();
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        usedNames = null;
-    }
 }

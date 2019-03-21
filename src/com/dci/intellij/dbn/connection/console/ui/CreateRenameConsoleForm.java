@@ -109,11 +109,4 @@ public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDial
         return mainPanel;
     }
 
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        console = null;
-    }
-
 }

@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.data.record.DatasetRecord;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.DBColumn;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -26,12 +27,12 @@ public class RecordViewerColumnForm extends DBNFormImpl<RecordViewerForm> {
 
     private RegionalSettings regionalSettings;
     private DatasetRecord record;
-    private DBColumn column;
+    private DBObjectRef<DBColumn> columnRef;
 
-    public RecordViewerColumnForm(RecordViewerForm parentForm, DatasetRecord record, DBColumn column) {
+    RecordViewerColumnForm(RecordViewerForm parentForm, DatasetRecord record, DBColumn column) {
         super(parentForm);
         this.record = record;
-        this.column = column;
+        this.columnRef = DBObjectRef.from(column);
         Project project = record.getDataset().getProject();
 
         DBDataType dataType = column.getDataType();
@@ -75,17 +76,18 @@ public class RecordViewerColumnForm extends DBNFormImpl<RecordViewerForm> {
         }
     }
 
+    @NotNull
     public DBColumn getColumn() {
-        return column;
+        return columnRef.ensure();
     }
 
-    protected int[] getMetrics(int[] metrics) {
+    protected int[] getMetrics(@NotNull int[] metrics) {
         return new int[] {
             (int) Math.max(metrics[0], columnLabel.getPreferredSize().getWidth()),
             (int) Math.max(metrics[1], valueFieldPanel.getPreferredSize().getWidth())};
     }
 
-    protected void adjustMetrics(int[] metrics) {
+    protected void adjustMetrics(@NotNull int[] metrics) {
         columnLabel.setPreferredSize(new Dimension(metrics[0], columnLabel.getHeight()));
         valueFieldPanel.setPreferredSize(new Dimension(metrics[1], valueFieldPanel.getHeight()));
     }
@@ -124,14 +126,5 @@ public class RecordViewerColumnForm extends DBNFormImpl<RecordViewerForm> {
             }
         }
     };
-
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        regionalSettings = null;
-        column = null;
-    }
-
 
 }

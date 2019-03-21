@@ -103,12 +103,9 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
     }
 
     @Override
-    public void dispose() {
-        for (ConfigurationEditorForm configurationEditorForm : filterDetailPanels.values()) {
-            configurationEditorForm.dispose();
-        }
-        filterDetailPanels.clear();
-        super.dispose();
+    public void disposeInner() {
+        DisposerUtil.dispose(filterDetailPanels);
+        super.disposeInner();
     }
 
     @Override

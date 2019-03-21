@@ -27,7 +27,7 @@ public class GenerateDDLStatementAction extends GenerateStatementAction {
 
     @NotNull
     public DBObject getObject() {
-        return DBObjectRef.getnn(objectRef);
+        return DBObjectRef.ensure(objectRef);
     }
 
     @Override
