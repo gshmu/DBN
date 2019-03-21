@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.ConnectionSavepoint;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import org.jetbrains.annotations.Nullable;
 
@@ -145,9 +145,9 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
             return result;
         } catch (CancellationException e) {
-            throw new ProcessCanceledException();
+            throw AlreadyDisposedException.INSTANCE;
         } catch (InterruptedException e) {
-            throw new ProcessCanceledException();
+            throw AlreadyDisposedException.INSTANCE;
         } catch (ExecutionException e) {
             Throwable cause = e.getCause();
             if (cause instanceof SQLTimeoutException) {
@@ -164,7 +164,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
     public void handleTimeout() throws SQLTimeoutException {
         if (cancelled) {
-            throw new ProcessCanceledException();
+            throw AlreadyDisposedException.INSTANCE;
         }
         try {
             cancel();
