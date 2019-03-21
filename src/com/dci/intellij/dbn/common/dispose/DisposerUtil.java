@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.common.dispose;
 
 import com.dci.intellij.dbn.common.Reference;
+import com.dci.intellij.dbn.common.constant.Constant;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.intellij.openapi.Disposable;
@@ -16,6 +18,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class DisposerUtil {
@@ -96,6 +99,9 @@ public class DisposerUtil {
                     } else if (fieldValue instanceof Latent){
                         Latent latent = (Latent) fieldValue;
                         latent.reset();
+                    } else if (fieldValue instanceof MapLatent){
+                        MapLatent latent = (MapLatent) fieldValue;
+                        latent.reset();
                     } else {
                         int modifiers = field.getModifiers();
                         Class<?> fieldType = field.getType();
@@ -107,11 +113,14 @@ public class DisposerUtil {
                                 !WeakReference.class.isAssignableFrom(fieldType) &&
                                 !Reference.class.isAssignableFrom(fieldType) &&
                                 !KeyFMap.class.isAssignableFrom(fieldType) &&
+                                !Locale.class.isAssignableFrom(fieldType) &&
                                 !String.class.isAssignableFrom(fieldType) &&
                                 !Number.class.isAssignableFrom(fieldType) &&
                                 !Boolean.class.isAssignableFrom(fieldType) &&
+                                !Constant.class.isAssignableFrom(fieldType) &&
                                 !Enum.class.isAssignableFrom(fieldType)) {
 
+                            System.out.println(fieldValue.getClass().getName());
                             field.set(object, null);
                         }
                     }

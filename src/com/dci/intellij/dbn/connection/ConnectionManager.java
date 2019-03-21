@@ -41,7 +41,6 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
@@ -463,38 +462,38 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             try {
                 List<ConnectionHandler> connectionHandlers = getConnectionHandlers();
                 connectionHandlers.forEach(connectionHandler -> resolveIdleStatus(connectionHandler));
-            } catch (ProcessCanceledException ignore){
             } catch (Exception e){
                 LOGGER.error("Failed to release idle connections", e);
             }
         }
 
         private void resolveIdleStatus(ConnectionHandler connectionHandler) {
-            List<TransactionAction> actions = actions(TransactionAction.DISCONNECT_IDLE);
+            Failsafe.guarded(() -> {
+                List<TransactionAction> actions = actions(TransactionAction.DISCONNECT_IDLE);
 
-            Failsafe.ensure(connectionHandler);
-            DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
-            List<DBNConnection> activeConnections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
+                Failsafe.ensure(connectionHandler);
+                DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
+                List<DBNConnection> activeConnections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
 
-            activeConnections.
-                    stream().
-                    filter(connection -> connection.isIdle() && connection.isNot(ResourceStatus.RESOLVING_TRANSACTION)).
-                    forEach(connection -> {
-                        int idleMinutes = connection.getIdleMinutes();
-                        int idleMinutesToDisconnect = connectionHandler.getSettings().getDetailSettings().getIdleTimeToDisconnect();
-                        if (idleMinutes > idleMinutesToDisconnect) {
-                            if (connection.hasDataChanges()) {
-                                connection.set(ResourceStatus.RESOLVING_TRANSACTION, true);
-                                Dispatch.invokeNonModal(() -> {
-                                    IdleConnectionDialog idleConnectionDialog = new IdleConnectionDialog(connectionHandler, connection);
-                                    idleConnectionDialog.show();
-                                });
-                            } else {
-                                transactionManager.execute(connectionHandler, connection, actions, false, null);
+                activeConnections.
+                        stream().
+                        filter(connection -> connection.isIdle() && connection.isNot(ResourceStatus.RESOLVING_TRANSACTION)).
+                        forEach(connection -> {
+                            int idleMinutes = connection.getIdleMinutes();
+                            int idleMinutesToDisconnect = connectionHandler.getSettings().getDetailSettings().getIdleTimeToDisconnect();
+                            if (idleMinutes > idleMinutesToDisconnect) {
+                                if (connection.hasDataChanges()) {
+                                    connection.set(ResourceStatus.RESOLVING_TRANSACTION, true);
+                                    Dispatch.invokeNonModal(() -> {
+                                        IdleConnectionDialog idleConnectionDialog = new IdleConnectionDialog(connectionHandler, connection);
+                                        idleConnectionDialog.show();
+                                    });
+                                } else {
+                                    transactionManager.execute(connectionHandler, connection, actions, false, null);
+                                }
                             }
-                        }
-                    });
-
+                        });
+            });
         }
     }
 
