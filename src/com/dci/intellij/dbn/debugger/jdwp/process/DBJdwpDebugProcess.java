@@ -63,12 +63,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.BREAKPOINT_SETTING_ALLOWED;
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.DEBUGGER_STOPPING;
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.SESSION_INITIALIZATION_THREW_EXCEPTION;
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.TARGET_EXECUTION_STARTED;
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.TARGET_EXECUTION_TERMINATED;
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.TARGET_EXECUTION_THREW_EXCEPTION;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.*;
 
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaDebugProcess implements DBDebugProcess {
     public static final Key<DBJdwpDebugProcess> KEY = new Key<DBJdwpDebugProcess>("DBNavigator.JdwpDebugProcess");
@@ -130,7 +125,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
 
     @Override
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.getnn();
+        return connectionHandlerRef.ensure();
     }
 
     @Nullable

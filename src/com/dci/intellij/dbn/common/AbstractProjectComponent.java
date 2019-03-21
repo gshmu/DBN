@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.intellij.openapi.application.ApplicationListener;
@@ -11,7 +12,15 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractProjectComponent extends SettingsSupport implements ApplicationListener, ProjectComponent, ProjectManagerListener, Disposable, NotificationSupport {
+public abstract class AbstractProjectComponent extends DisposableBase
+        implements
+        SettingsSupport,
+        ApplicationListener,
+        ProjectComponent,
+        ProjectManagerListener,
+        Disposable,
+        NotificationSupport {
+
     private ProjectRef projectRef;
 
     protected AbstractProjectComponent(Project project) {
@@ -101,24 +110,15 @@ public abstract class AbstractProjectComponent extends SettingsSupport implement
     }
 
 
-    /********************************************* *
-     *                Disposable                   *
-     ***********************************************/
-    private boolean disposed = false;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
-    @Override
-    public void dispose() {
-        disposed = true;
-    }
-
     @Override
     public void disposeComponent() {
         dispose();
+    }
+
+    @Override
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 
     protected void closeProject() {
@@ -127,7 +127,7 @@ public abstract class AbstractProjectComponent extends SettingsSupport implement
 
     @Override
     public void checkDisposed() {
-        Disposable.super.checkDisposed();
+        super.checkDisposed();
         getProject();
     }
 }

@@ -12,6 +12,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoolean;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoolean;
+
 public class ConnectionPropertiesSettings extends BasicProjectConfiguration<ConnectionSettings, ConnectionPropertiesSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
 

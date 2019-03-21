@@ -120,7 +120,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.getnn();
+        return connectionHandlerRef.ensure();
     }
 
     public void setDatabaseSchema(SchemaId currentSchema) {

@@ -407,11 +407,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     public String getComponentName() {
         return COMPONENT_NAME;
     }
-    @Override
-    public void dispose() {
-        super.dispose();
-        mappings.clear();
-    }
+
     /************************************************
      *               VirtualFileListener            *
      ************************************************/

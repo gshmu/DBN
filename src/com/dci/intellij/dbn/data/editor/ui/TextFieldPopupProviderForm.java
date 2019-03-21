@@ -3,7 +3,8 @@ package com.dci.intellij.dbn.data.editor.ui;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.KeyAdapter;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.ide.DataManager;
@@ -23,12 +24,11 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class TextFieldPopupProviderForm extends KeyAdapter implements DBNForm, TextFieldPopupProvider {
+public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements KeyAdapter, TextFieldPopupProvider {
     protected TextFieldWithPopup editorComponent;
     private boolean autoPopup;
     private boolean enabled = true;
@@ -38,6 +38,7 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
     private Set<AnAction> actions = new HashSet<>();
 
     TextFieldPopupProviderForm(TextFieldWithPopup editorComponent, boolean autoPopup, boolean buttonVisible) {
+        super(editorComponent.getProject());
         this.editorComponent = editorComponent;
         this.autoPopup = autoPopup;
         this.buttonVisible = buttonVisible;
@@ -58,12 +59,6 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
 
     public JTextField getTextField() {
         return editorComponent.getTextField();
-    }
-
-    @Override
-    @NotNull
-    public Project getProject() {
-        return editorComponent.getProject();
     }
 
     public JBPopup getPopup() {
@@ -203,26 +198,6 @@ public abstract class TextFieldPopupProviderForm extends KeyAdapter implements D
         return popup != null && popup.isVisible();
     }
 
-
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
-    @Override
-    public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            fileEditorManagerListener = null;
-            editorComponent = null;
-            popup = null;
-        }
-    }
 
     @Nullable
     @Override

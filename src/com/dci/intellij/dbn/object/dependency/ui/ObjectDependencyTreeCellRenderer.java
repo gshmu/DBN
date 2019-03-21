@@ -20,7 +20,7 @@ public class ObjectDependencyTreeCellRenderer extends ColoredTreeCellRenderer {
 
     @Override
     public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-        Failsafe.lenient(() -> {
+        Failsafe.guarded(() -> {
             ObjectDependencyTreeNode node = (ObjectDependencyTreeNode) value;
             DBObject object = node.getObject();
 

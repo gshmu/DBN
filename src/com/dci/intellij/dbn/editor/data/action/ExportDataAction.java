@@ -6,15 +6,16 @@ import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import org.jetbrains.annotations.NotNull;
 
 public class ExportDataAction extends AbstractDataEditorAction {
 
-    public ExportDataAction() {
+    ExportDataAction() {
         super("Export Data", Icons.DATA_EXPORT);
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
 
         if (datasetEditor != null) {
@@ -25,7 +26,7 @@ public class ExportDataAction extends AbstractDataEditorAction {
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
 
         Presentation presentation = e.getPresentation();

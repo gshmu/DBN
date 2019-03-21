@@ -525,7 +525,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.getnn();
+        return connectionHandlerRef.ensure();
     }
 
     @Nullable

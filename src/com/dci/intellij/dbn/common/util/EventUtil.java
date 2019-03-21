@@ -43,7 +43,7 @@ public class EventUtil {
         if (Failsafe.check(project) && /*!project.isDefault() &&*/ project != Failsafe.DUMMY_PROJECT) {
             MessageBus messageBus = project.getMessageBus();
             T publisher = messageBus.syncPublisher(topic);
-            Failsafe.lenient(() -> callback.run(publisher));
+            Failsafe.guarded(() -> callback.run(publisher));
         }
     }
 }

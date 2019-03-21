@@ -199,7 +199,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
     @Nullable
     public ConnectionHandler getConnectionHandler(@NotNull VirtualFile virtualFile) {
-        return Failsafe.lenient(null, () -> {
+        return Failsafe.guarded(null, () -> {
             Project project = getProject();
             if (virtualFile instanceof LightVirtualFile) {
                 ConnectionHandlerRef connectionHandlerRef = virtualFile.getUserData(CONNECTION_HANDLER);
@@ -781,7 +781,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             if (file != null) {
                 Project project = getProject();
                 DatabaseSessionManager sessionManager = DatabaseSessionManager.getInstance(project);
-                ConnectionHandler connectionHandler = connectionHandlerRef.getnn();
+                ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
                 sessionManager.showCreateSessionDialog(
                         connectionHandler,
                         (session) -> {

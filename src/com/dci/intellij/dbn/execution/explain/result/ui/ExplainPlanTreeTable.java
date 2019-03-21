@@ -111,7 +111,7 @@ public class ExplainPlanTreeTable extends TreeTable implements Disposable{
 
         @Override
         public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-            Failsafe.lenient(() -> {
+            Failsafe.guarded(() -> {
                 ExplainPlanEntry entry = (ExplainPlanEntry) value;
 
                 DBObjectRef objectRef = entry.getObjectRef();

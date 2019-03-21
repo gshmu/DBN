@@ -24,7 +24,7 @@ public class ConnectionHandlerRef implements Reference<ConnectionHandler> {
     }
 
     @NotNull
-    public ConnectionHandler getnn() {
+    public ConnectionHandler ensure() {
         ConnectionHandler connectionHandler = get();
         return Failsafe.get(connectionHandler);
     }
@@ -50,8 +50,8 @@ public class ConnectionHandlerRef implements Reference<ConnectionHandler> {
     }
 
     @NotNull
-    public static ConnectionHandler getnn(@NotNull ConnectionHandlerRef connectionHandlerRef) {
-        return Failsafe.get(connectionHandlerRef).getnn();
+    public static ConnectionHandler ensure(@NotNull ConnectionHandlerRef connectionHandlerRef) {
+        return Failsafe.get(connectionHandlerRef).ensure();
     }
 
     public boolean isValid() {

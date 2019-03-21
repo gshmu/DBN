@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.data.export;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import org.jdom.Element;
@@ -8,7 +7,9 @@ import org.jdom.Element;
 import java.io.File;
 import java.nio.charset.Charset;
 
-public class DataExportInstructions extends SettingsSupport implements PersistentStateElement, Cloneable {
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+
+public class DataExportInstructions implements PersistentStateElement, Cloneable {
     private boolean createHeader = true;
     private boolean quoteValuesContainingSeparator = true;
     private boolean quoteAllValues = false;

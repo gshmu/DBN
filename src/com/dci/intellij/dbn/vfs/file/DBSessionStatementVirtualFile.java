@@ -175,9 +175,4 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
     public String getExtension() {
         return "sql";
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

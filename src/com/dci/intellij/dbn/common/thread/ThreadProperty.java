@@ -10,7 +10,8 @@ public enum ThreadProperty implements Property{
     CANCELABLE_PROCESS,
     BACKGROUND_THREAD,
     BACKGROUND_TASK,
-    MODAL_TASK
+    MODAL_TASK,
+    FAILSAFE
 ;
 
     private final int index = Property.idx(this);

@@ -45,7 +45,7 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
     @Override
     protected ExportDataForm createComponent() {
         DBObject sourceObject = DBObjectRef.get(sourceObjectRef);
-        ConnectionHandler connectionHandler = connectionHandlerRef.getnn();
+        ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
         DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());
         DataExportInstructions instructions = exportManager.getExportInstructions();
         boolean hasSelection = table.getSelectedRowCount() > 1 || table.getSelectedColumnCount() > 1;
@@ -54,7 +54,7 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.getnn();
+        return connectionHandlerRef.ensure();
     }
 
     @NotNull

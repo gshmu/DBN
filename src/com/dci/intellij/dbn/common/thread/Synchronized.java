@@ -17,7 +17,7 @@ public interface Synchronized {
     }
 
     static void sync(@NotNull String syncKey, Runnable runnable) {
-        Failsafe.lenient(() -> {
+        Failsafe.guarded(() -> {
             try {
                 Object syncObject = SYNC_OBJECT_PROVIDER.get(syncKey);
                 synchronized (syncObject) {

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn;
 
 import com.dci.intellij.dbn.common.Constants;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.init.DatabaseNavigatorInitializer;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
@@ -21,11 +20,14 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoolean;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoolean;
+
 @State(
     name = DatabaseNavigator.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class DatabaseNavigator extends SettingsSupport implements ApplicationComponent, PersistentStateComponent<Element> {
+public class DatabaseNavigator implements ApplicationComponent, PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Application.Settings";
     public static final String STORAGE_FILE = "dbnavigator.xml";
 

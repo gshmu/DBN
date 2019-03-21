@@ -226,6 +226,7 @@ public class GUIUtil{
         if (component != null) {
             Dispatch.conditional(() -> {
                 UIUtil.dispose(component);
+                removeListeners(component);
                 if (component instanceof Container) {
                     Container container = (Container) component;
                     Component[] components = container.getComponents();

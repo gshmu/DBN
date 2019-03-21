@@ -196,7 +196,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     @Override
     @NotNull
     public FileType getFileType() {
-        return Failsafe.lenient(SQLFileType.INSTANCE, () -> {
+        return Failsafe.guarded(SQLFileType.INSTANCE, () -> {
             DBSchemaObject object = getObject();
             DDLFileManager ddlFileManager = DDLFileManager.getInstance(object.getProject());
             DDLFileType type =  ddlFileManager.getDDLFileType(object.getObjectType(), getMainContentType());
@@ -265,9 +265,9 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
+    public void disposeInner() {
         contentFiles.set(EMPTY_CONTENT_FILES);
+        super.disposeInner();
     }
 
 

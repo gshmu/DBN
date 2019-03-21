@@ -6,6 +6,8 @@ import com.dci.intellij.dbn.connection.config.ui.ConnectionSslSettingsForm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+
 public class ConnectionSslSettings extends BasicProjectConfiguration<ConnectionSettings, ConnectionSslSettingsForm> {
     private boolean active = false;
     private String certificateAuthorityFile;

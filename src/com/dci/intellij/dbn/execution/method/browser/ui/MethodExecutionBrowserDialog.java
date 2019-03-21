@@ -15,7 +15,7 @@ import java.awt.event.ActionEvent;
 
 public class MethodExecutionBrowserDialog extends DBNDialog<MethodExecutionBrowserForm> implements Disposable {
     private SelectAction selectAction;
-    private DBObjectRef<DBMethod> methodRef;
+    private DBObjectRef<DBMethod> methodRef;  // TODO dialog result - Disposable.nullify(...)
     private ObjectTreeModel objectTreeModel;
     private boolean debug;
 
@@ -33,11 +33,6 @@ public class MethodExecutionBrowserDialog extends DBNDialog<MethodExecutionBrows
     @Override
     protected MethodExecutionBrowserForm createComponent() {
         return new MethodExecutionBrowserForm(this, objectTreeModel, debug);
-    }
-
-    @Override
-    public void show() {
-        super.show();
     }
 
     @Override

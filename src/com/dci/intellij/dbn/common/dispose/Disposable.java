@@ -6,6 +6,8 @@ public interface Disposable extends com.intellij.openapi.Disposable {
     @Override
     void dispose();
 
+    default void disposeInner() {}
+
     default void checkDisposed() {
         if (isDisposed()) throw AlreadyDisposedException.INSTANCE;
     }

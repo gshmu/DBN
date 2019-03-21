@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,12 +13,12 @@ import javax.swing.*;
 
 public class ConnectionAuthenticationDialog extends DBNDialog<ConnectionAuthenticationForm> {
     private boolean rememberCredentials;
-    private AuthenticationInfo authenticationInfo;
+    private WeakRef<AuthenticationInfo> authenticationInfo; // TODO dialog result - Disposable.nullify(...)
     private ConnectionHandlerRef connectionHandlerRef;
 
     public ConnectionAuthenticationDialog(Project project, @Nullable ConnectionHandler connectionHandler, @NotNull AuthenticationInfo authenticationInfo) {
         super(project, "Enter password", true);
-        this.authenticationInfo = authenticationInfo;
+        this.authenticationInfo = WeakRef.from(authenticationInfo);
         setModal(true);
         setResizable(false);
         connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
@@ -70,11 +71,11 @@ public class ConnectionAuthenticationDialog extends DBNDialog<ConnectionAuthenti
     }
 
     public AuthenticationInfo getAuthenticationInfo() {
-        return authenticationInfo;
+        return WeakRef.get(authenticationInfo);
     }
 
     public void updateConnectButton() {
-        getOKAction().setEnabled(authenticationInfo.isProvided());
+        getOKAction().setEnabled(getAuthenticationInfo().isProvided());
     }
 
     @Override

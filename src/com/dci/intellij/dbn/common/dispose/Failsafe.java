@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.common.dispose;
 
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
+import com.dci.intellij.dbn.common.thread.ThreadMonitor;
+import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.intellij.mock.MockProject;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -86,26 +88,40 @@ public class Failsafe {
         return true;
     }
 
-    public static <T, E extends Throwable> T lenient(T defaultValue, ThrowableCallable<T, E> callable) throws E{
-        try {
-            return callable.call();
-        } catch (ProcessCanceledException e) {
-            return defaultValue;
-        }
+    public static <T, E extends Throwable> T guarded(T defaultValue, ThrowableCallable<T, E> callable) throws E{
+        return ThreadMonitor.wrap(
+                ThreadProperty.FAILSAFE,
+                () -> {
+                    try {
+                        return callable.call();
+                    } catch (ProcessCanceledException e) {
+                        return defaultValue;
+                    }
+                });
     }
 
-    public static <E extends Throwable> void lenient(ThrowableRunnable<E> runnable) throws E {
-        try {
-            runnable.run();
-        } catch (ProcessCanceledException ignore) {}
+    public static <E extends Throwable> void guarded(ThrowableRunnable<E> runnable) throws E {
+        ThreadMonitor.wrap(
+                ThreadProperty.FAILSAFE,
+                () -> {
+                    try {
+                        runnable.run();
+                    } catch (ProcessCanceledException ignore) {
+
+                    }
+                });
     }
 
-    public static void lenient(Runnable runnable, Runnable cancel){
-        try {
-            runnable.run();
-        } catch (ProcessCanceledException ignore) {
-            cancel.run();
-        }
+    public static void guarded(Runnable runnable, Runnable cancel){
+        ThreadMonitor.wrap(
+                ThreadProperty.FAILSAFE,
+                () -> {
+                    try {
+                        runnable.run();
+                    } catch (ProcessCanceledException ignore) {
+                        cancel.run();
+                    }
+                });
     }
 
     public static void run (@Nullable Runnable runnable) {

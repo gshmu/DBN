@@ -392,11 +392,4 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     public String getComponentName() {
         return COMPONENT_NAME;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        activeProcesses.clear();
-    }
-
 }

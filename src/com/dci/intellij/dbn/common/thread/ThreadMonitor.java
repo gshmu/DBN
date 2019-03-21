@@ -31,14 +31,15 @@ public class ThreadMonitor {
             ThrowableRunnable<E> runnable) throws E {
 
         ThreadInfo threadInfo = current();
+        boolean originalProperty = threadInfo.is(threadProperty);
         AtomicInteger processCounter = getProcessCounter(threadProperty);
         try {
             processCounter.incrementAndGet();
             threadInfo.set(threadProperty, true);
             threadInfo.merge(invoker);
-            Failsafe.lenient(runnable);
+            Failsafe.guarded(runnable);
         } finally {
-            threadInfo.set(threadProperty, false);
+            threadInfo.set(threadProperty, originalProperty);
             processCounter.decrementAndGet();
             threadInfo.unmerge(invoker);
         }
@@ -51,14 +52,15 @@ public class ThreadMonitor {
             ThrowableCallable<T, E> callable) throws E{
 
         ThreadInfo threadInfo = current();
+        boolean originalProperty = threadInfo.is(threadProperty);
         AtomicInteger processCounter = getProcessCounter(threadProperty);
         try {
             processCounter.incrementAndGet();
             threadInfo.set(threadProperty, true);
             threadInfo.merge(invoker);
-            return Failsafe.lenient(defaultValue, callable);
+            return Failsafe.guarded(defaultValue, callable);
         } finally {
-            threadInfo.set(threadProperty, false);
+            threadInfo.set(threadProperty, originalProperty);
             threadInfo.unmerge(invoker);
             processCounter.decrementAndGet();
         }
@@ -73,6 +75,8 @@ public class ThreadMonitor {
         }
         return false;
     }
+
+
     public static boolean isBackgroundProcess() {
         // default false
         ThreadInfo threadInfo = current();
@@ -87,11 +91,39 @@ public class ThreadMonitor {
         return current().is(ThreadProperty.TIMEOUT_PROCESS);
     }
 
+    public static boolean isFailsafe() {
+        return current().is(ThreadProperty.FAILSAFE);
+    }
+
     public static int getProcessCount(ThreadProperty property) {
         return getProcessCounter(property).intValue();
     }
 
     private static AtomicInteger getProcessCounter(ThreadProperty property) {
         return PROCESS_COUNTERS.computeIfAbsent(property, property1 -> new AtomicInteger(0));
+    }
+
+    public static <E extends Throwable> void wrap(@NotNull ThreadProperty threadProperty, ThrowableRunnable<E> runnable) throws E {
+        ThreadInfo threadInfo = ThreadMonitor.current();
+        boolean original = threadInfo.is(threadProperty);
+        try {
+            threadInfo.set(threadProperty, true);
+            runnable.run();
+        }
+        finally {
+            threadInfo.set(threadProperty, original);
+        }
+    }
+
+    public static <R, E extends Throwable> R wrap(@NotNull ThreadProperty threadProperty, ThrowableCallable<R, E> callable) throws E {
+        ThreadInfo threadInfo = ThreadMonitor.current();
+        boolean original = threadInfo.is(threadProperty);
+        try {
+            threadInfo.set(threadProperty, true);
+            return callable.call();
+        }
+        finally {
+            threadInfo.set(threadProperty, original);
+        }
     }
 }

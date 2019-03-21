@@ -17,6 +17,6 @@ public class RefreshObjectsStatusAction extends DumbAwareAction {
 
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
-        connectionHandlerRef.getnn().getObjectBundle().refreshObjectsStatus(null);
+        connectionHandlerRef.ensure().getObjectBundle().refreshObjectsStatus(null);
     }
 }

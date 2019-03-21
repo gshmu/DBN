@@ -96,7 +96,7 @@ public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDial
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.getnn();
+        return connectionHandlerRef.ensure();
     }
 
     public DBConsoleVirtualFile getConsole() {

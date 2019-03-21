@@ -30,7 +30,7 @@ public abstract class LoadInProgressRegistry<T extends Disposable> extends Dispo
         @Override
         public void run() {
             for (T node : nodes) {
-                Failsafe.lenient(
+                Failsafe.guarded(
                         () -> {
                             if (node.isDisposed()) {
                                 nodes.remove(node);

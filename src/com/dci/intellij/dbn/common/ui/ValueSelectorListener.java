@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.common.ui;
 
-public interface ValueSelectorListener<T> {
+import java.util.EventListener;
+
+public interface ValueSelectorListener<T> extends EventListener {
     void selectionChanged(T oldValue, T newValue);
 }

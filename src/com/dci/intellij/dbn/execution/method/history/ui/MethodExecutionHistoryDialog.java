@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +22,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     private CloseAction closeAction;
     private boolean editable;
     private boolean debug;
-    private transient MethodExecutionInput selectedExecutionInput;
+    private WeakRef<MethodExecutionInput> selectedExecutionInput;  // TODO dialog result - Disposable.nullify(...)
 
     public MethodExecutionHistoryDialog(
             @NotNull Project project,
@@ -30,7 +31,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
             boolean debug) {
 
         super(project, "Method execution history", true);
-        this.selectedExecutionInput = executionInput;
+        this.selectedExecutionInput = WeakRef.from(executionInput);
         this.editable = editable;
         this.debug = debug;
         setModal(true);
@@ -43,7 +44,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     @NotNull
     @Override
     protected MethodExecutionHistoryForm createComponent() {
-        return new MethodExecutionHistoryForm(this, selectedExecutionInput, debug);
+        return new MethodExecutionHistoryForm(this, WeakRef.get(selectedExecutionInput), debug);
     }
 
     @Override
@@ -79,11 +80,12 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     }
 
     public void setSelectedExecutionInput(MethodExecutionInput selectedExecutionInput) {
-        this.selectedExecutionInput = selectedExecutionInput;
+        this.selectedExecutionInput = WeakRef.from(selectedExecutionInput);
     }
 
+    @Nullable
     public MethodExecutionInput getSelectedExecutionInput() {
-        return selectedExecutionInput;
+        return WeakRef.get(selectedExecutionInput);
     }
 
     /**********************************************************

@@ -45,7 +45,7 @@ public class IdleConnectionDialog extends DialogWithTimeout {
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.getnn();
+        return connectionHandlerRef.ensure();
     }
 
     @Override

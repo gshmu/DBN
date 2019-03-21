@@ -39,7 +39,7 @@ public class PendingTransactionsDetailDialog extends DBNDialog<PendingTransactio
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.getnn();
+        return connectionHandlerRef.ensure();
     }
 
     @Override

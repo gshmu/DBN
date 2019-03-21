@@ -16,7 +16,7 @@ import java.util.List;
 class FilterSettingsTreeCellRenderer extends ColoredTreeCellRenderer{
     @Override
     public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-        Failsafe.lenient(() -> {
+        Failsafe.guarded(() -> {
             if (value instanceof ObjectNameFilter) {
                 ObjectNameFilter condition = (ObjectNameFilter) value;
                 append(condition.getObjectType().getName().toUpperCase(), SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);

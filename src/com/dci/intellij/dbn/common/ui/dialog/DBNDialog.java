@@ -34,6 +34,11 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
     }
 
     @Override
+    public void show() {
+        super.show();
+    }
+
+    @Override
     @NotNull
     protected final JComponent createCenterPanel() {
         return getComponent().getComponent();

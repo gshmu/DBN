@@ -12,6 +12,6 @@ public abstract class DBDebugProcessStarter extends XDebugProcessStarter {
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.getnn();
+        return connectionHandlerRef.ensure();
     }
 }

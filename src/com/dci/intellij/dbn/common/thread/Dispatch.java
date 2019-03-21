@@ -15,7 +15,7 @@ public interface Dispatch {
     static void conditional(Runnable runnable) {
         Application application = ApplicationManager.getApplication();
         if (application.isDispatchThread()) {
-            Failsafe.lenient(() -> runnable.run());
+            Failsafe.guarded(() -> runnable.run());
         } else {
             invoke(null, runnable);
         }
@@ -25,7 +25,7 @@ public interface Dispatch {
         Application application = ApplicationManager.getApplication();
         modalityState = CommonUtil.nvl(modalityState, application.getDefaultModalityState());
         application.invokeLater(
-                () -> Failsafe.lenient(
+                () -> Failsafe.guarded(
                         () -> runnable.run()),
                 modalityState/*, ModalityState.NON_MODAL*/);
     }
