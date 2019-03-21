@@ -31,6 +31,10 @@ public class MapLatent<K, V> extends DisposableBase {
         return value;
     }
 
+    public void reset() {
+        map.clear();
+    }
+
     @Override
     public void disposeInner() {
         map.clear();
