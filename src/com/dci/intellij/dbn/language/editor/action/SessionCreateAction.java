@@ -27,7 +27,7 @@ public class SessionCreateAction extends DumbAwareAction {
         Editor editor = getEditor(e);
         if (editor != null) {
             final DatabaseSessionManager sessionManager = DatabaseSessionManager.getInstance(project);
-            ConnectionHandler connectionHandler = connectionHandlerRef.getnn();
+            ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
             sessionManager.showCreateSessionDialog(
                     connectionHandler,
                     (session) -> {

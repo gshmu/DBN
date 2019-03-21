@@ -1,11 +1,13 @@
 package com.dci.intellij.dbn.common.dispose;
 
 import com.dci.intellij.dbn.common.Reference;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ReflectionUtil;
+import com.intellij.util.keyFMap.KeyFMap;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
@@ -25,7 +27,7 @@ public class DisposerUtil {
 
     public static void dispose(@Nullable Disposable disposable) {
         if (disposable != null) {
-            Failsafe.lenient(() -> Disposer.dispose(disposable));
+            Failsafe.guarded(() -> Disposer.dispose(disposable));
         }
     }
 
@@ -91,15 +93,25 @@ public class DisposerUtil {
                     } else if (fieldValue instanceof Map) {
                         Map map = (Map) fieldValue;
                         map.clear();
+                    } else if (fieldValue instanceof Latent){
+                        Latent latent = (Latent) fieldValue;
+                        latent.reset();
                     } else {
                         int modifiers = field.getModifiers();
+                        Class<?> fieldType = field.getType();
                         if (!Modifier.isFinal(modifiers) &&
                                 !Modifier.isStatic(modifiers) &&
                                 !Modifier.isNative(modifiers) &&
                                 !Modifier.isTransient(modifiers) &&
-                                !field.getType().isPrimitive() &&
-                                !WeakReference.class.isAssignableFrom(field.getType()) &&
-                                !Reference.class.isAssignableFrom(field.getType())) {
+                                !fieldType.isPrimitive() &&
+                                !WeakReference.class.isAssignableFrom(fieldType) &&
+                                !Reference.class.isAssignableFrom(fieldType) &&
+                                !KeyFMap.class.isAssignableFrom(fieldType) &&
+                                !String.class.isAssignableFrom(fieldType) &&
+                                !Number.class.isAssignableFrom(fieldType) &&
+                                !Boolean.class.isAssignableFrom(fieldType) &&
+                                !Enum.class.isAssignableFrom(fieldType)) {
+
                             field.set(object, null);
                         }
                     }

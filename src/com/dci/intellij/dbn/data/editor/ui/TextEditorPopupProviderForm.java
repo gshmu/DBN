@@ -219,10 +219,4 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
             hidePopup();
         }
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
-
 }

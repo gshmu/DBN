@@ -312,7 +312,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         }
     }
 
-    public void importTnsNames(List<TnsName> tnsNames) {
+    public void importTnsNames(TnsName[] tnsNames) {
         ConnectionBundleSettings configuration = getConfiguration();
         ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
         int index = connectionsList.getModel().getSize();

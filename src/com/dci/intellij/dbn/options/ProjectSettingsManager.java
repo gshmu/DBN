@@ -35,8 +35,6 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 
 @State(
@@ -153,7 +151,7 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
         }
     }
 
-    public void createConnections(List<TnsName> tnsNames) {
+    public void createConnections(TnsName[] tnsNames) {
         Project project = getProject();
         ProjectSettingsDialog settingsDialog = new ProjectSettingsDialog(project);
         ConnectionBundleSettingsForm settingsEditor = settingsDialog.getProjectSettings().getConnectionSettings().getSettingsEditor();

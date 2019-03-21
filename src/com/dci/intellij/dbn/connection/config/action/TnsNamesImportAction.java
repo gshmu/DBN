@@ -13,7 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import java.io.File;
 
 public class TnsNamesImportAction extends ConnectionSettingsAction{
-    public TnsNamesImportAction() {
+    TnsNamesImportAction() {
         super("Import TNS Names", null);
     }
 

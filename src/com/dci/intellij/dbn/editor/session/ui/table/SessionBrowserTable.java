@@ -208,15 +208,4 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
             popupMenu.show(eventSource, event.getX(), event.getY());
         }
     }
-
-
-    /********************************************************
-     *                     Disposable                       *
-     ********************************************************/
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        sessionBrowser = null;
-    }
 }

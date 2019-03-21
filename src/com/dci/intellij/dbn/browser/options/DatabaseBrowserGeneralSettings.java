@@ -7,6 +7,9 @@ import com.dci.intellij.dbn.common.options.setting.IntegerSetting;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getEnum;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setEnum;
+
 public class DatabaseBrowserGeneralSettings
         extends BasicProjectConfiguration<DatabaseBrowserSettings, DatabaseBrowserGeneralSettingsForm> {
 

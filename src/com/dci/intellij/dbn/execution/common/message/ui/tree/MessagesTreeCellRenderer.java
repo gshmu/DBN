@@ -39,7 +39,7 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
 
     @Override
     public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-        Failsafe.lenient(() -> {
+        Failsafe.guarded(() -> {
             if (value instanceof Disposable) {
                 Disposable disposable = (Disposable) value;
                 if (disposable.isDisposed()) return;;

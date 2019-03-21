@@ -26,7 +26,7 @@ public class DBBreakpointUpdaterFileEditorListener implements FileEditorManagerL
     public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
         if (file instanceof DBEditableObjectVirtualFile) {
             DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
-            Failsafe.lenient(() -> {
+            Failsafe.guarded(() -> {
                 XDebuggerManager debuggerManager = XDebuggerManager.getInstance(source.getProject());
                 XBreakpointManagerImpl breakpointManager = (XBreakpointManagerImpl) debuggerManager.getBreakpointManager();
                 for (XBreakpoint breakpoint : breakpointManager.getAllBreakpoints()) {

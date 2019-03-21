@@ -30,7 +30,7 @@ public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHead
     @NotNull
     @Override
     protected DBNContentWithHeaderForm<ConnectionFilterSettingsDialog> createComponent() {
-        final ConnectionHandler connectionHandler = connectionHandlerRef.getnn();
+        ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
         return new DBNContentWithHeaderForm<ConnectionFilterSettingsDialog>(this) {
             @Override
             public DBNHeaderForm createHeaderForm() {

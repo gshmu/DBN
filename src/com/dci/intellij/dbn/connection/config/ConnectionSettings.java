@@ -10,6 +10,8 @@ import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBooleanAttribute;
+
 public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionBundleSettings, ConnectionSettingsForm>
         implements ConnectionRef, ConnectionIdProvider, Cloneable {
 

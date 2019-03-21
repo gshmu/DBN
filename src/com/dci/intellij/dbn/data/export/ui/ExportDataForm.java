@@ -149,7 +149,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.getnn();
+        return connectionHandlerRef.ensure();
     }
 
     @NotNull

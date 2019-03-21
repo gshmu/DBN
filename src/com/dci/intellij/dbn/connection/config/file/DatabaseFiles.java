@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection.config.file;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import org.jdom.Element;
@@ -9,7 +8,9 @@ import org.jdom.Element;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseFiles extends SettingsSupport implements PersistentConfiguration, Cloneable<DatabaseFiles> {
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setStringAttribute;
+
+public class DatabaseFiles implements PersistentConfiguration, Cloneable<DatabaseFiles> {
     private List<DatabaseFile> files = new ArrayList<DatabaseFile>();
 
     public DatabaseFiles() {

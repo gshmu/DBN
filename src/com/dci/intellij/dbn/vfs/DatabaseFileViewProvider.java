@@ -48,7 +48,7 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
         if (language instanceof DBLanguage || language instanceof DBLanguageDialect) {
             VirtualFile virtualFile = getVirtualFile();
             if (virtualFile instanceof DBObjectVirtualFile) {
-                return Failsafe.lenient(null, () -> {
+                return Failsafe.guarded(null, () -> {
                     DBObjectVirtualFile objectFile = (DBObjectVirtualFile) virtualFile;
                     DBObject object = objectFile.getObject();
                     return DBObjectPsiFacade.getPsiFile(object);

@@ -70,7 +70,7 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.getnn();
+        return connectionHandlerRef.ensure();
     }
 
     @NotNull

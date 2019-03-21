@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.object.filter.name.ui;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.name.CompoundFilterCondition;
@@ -13,14 +14,14 @@ import javax.swing.*;
 
 public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterConditionForm> {
     private CompoundFilterCondition parentCondition;
-    private SimpleNameFilterCondition condition;
+    private WeakRef<SimpleNameFilterCondition> condition;  // TODO dialog result - Disposable.nullify(...)
     private ConditionJoinType joinType;
     private DBObjectType objectType;
     private ObjectNameFilterConditionForm.Operation operation;
 
     public ObjectNameFilterConditionDialog(Project project, CompoundFilterCondition parentCondition, SimpleNameFilterCondition condition, DBObjectType objectType, ObjectNameFilterConditionForm.Operation operation) {
         super(project, getTitle(operation), true);
-        this.condition = condition;
+        this.condition = WeakRef.from(condition);
         this.parentCondition = parentCondition;
         this.objectType = objectType;
         this.operation = operation;
@@ -38,7 +39,7 @@ public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterC
     @NotNull
     @Override
     protected ObjectNameFilterConditionForm createComponent() {
-        return new ObjectNameFilterConditionForm(this, parentCondition, condition,  objectType, operation);
+        return new ObjectNameFilterConditionForm(this, parentCondition, getCondition(),  objectType, operation);
     }
 
     @Nullable
@@ -51,7 +52,7 @@ public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterC
     @Override
     public void doOKAction() {
         ObjectNameFilterConditionForm component = getComponent();
-        condition = component.getCondition();
+        condition = WeakRef.from(component.getCondition());
         joinType = component.getJoinType();
         super.doOKAction();
     }
@@ -62,7 +63,7 @@ public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterC
     }
 
     public SimpleNameFilterCondition getCondition() {
-        return condition;
+        return WeakRef.get(condition);
     }
 
     public ConditionJoinType getJoinType() {

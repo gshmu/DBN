@@ -40,11 +40,7 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.LATEST;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MERGED;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.OUTDATED;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.REFRESHING;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
 
 public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, ConnectionProvider, DocumentListener {
 
@@ -100,10 +96,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     @Nullable
     public DBLanguagePsiFile getPsiFile() {
         Project project = getProject();
-        if (project != null) {
-            return (DBLanguagePsiFile) PsiUtil.getPsiFile(project, this);
-        }
-        return null;
+        return (DBLanguagePsiFile) PsiUtil.getPsiFile(project, this);
     }
 
     public void refreshContentState() {
@@ -296,8 +289,8 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
+    public void disposeInner() {
+        super.disposeInner();
         originalContent = new SourceCodeContent();
         localContent = new SourceCodeContent();
     }

@@ -174,12 +174,5 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
     public String getExtension() {
         return null;
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        objectList = null;
-    }
-
 }
 

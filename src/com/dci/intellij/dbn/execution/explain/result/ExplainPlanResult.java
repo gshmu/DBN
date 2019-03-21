@@ -95,7 +95,7 @@ public class ExplainPlanResult extends DisposableBase implements ExecutionResult
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return ConnectionHandlerRef.getnn(connectionHandlerRef);
+        return ConnectionHandlerRef.ensure(connectionHandlerRef);
     }
 
     public SchemaId getCurrentSchema() {

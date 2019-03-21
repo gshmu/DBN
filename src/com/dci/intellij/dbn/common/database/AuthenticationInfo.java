@@ -12,6 +12,8 @@ import com.dci.intellij.dbn.connection.config.PasswordUtil;
 import com.dci.intellij.dbn.credentials.DatabaseCredentialManager;
 import org.jdom.Element;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+
 public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSettings, ConfigurationEditorForm> implements Cloneable<AuthenticationInfo>{
     @Deprecated // TODO move to keychain
     private static final String OLD_PWD_ATTRIBUTE = "password";

@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.Presentable;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
 import com.dci.intellij.dbn.debugger.common.config.ui.CompileDebugDependenciesDialog;
@@ -12,6 +13,7 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -95,12 +97,9 @@ public class CompileDebugDependenciesForm extends DBNFormImpl<CompileDebugDepend
         return mainPanel;
     }
 
-    public List<DBSchemaObject> getSelection() {
-        List<DBSchemaObject> objects = new ArrayList<DBSchemaObject>();
-        for (Object o : objectList.getSelectedValues()) {
-            objects.add((DBSchemaObject) o);
-        }
-        return objects;
+    public List<DBObjectRef> getSelection() {
+        List<DBSchemaObject> selectedValuesList = objectList.getSelectedValuesList();
+        return CollectionUtil.map(selectedValuesList, o -> o.getRef());
     }
 
     public void selectAll() {

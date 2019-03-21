@@ -34,7 +34,7 @@ public class LogOutputContext {
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.getnn();
+        return connectionHandlerRef.ensure();
     }
 
     @Nullable

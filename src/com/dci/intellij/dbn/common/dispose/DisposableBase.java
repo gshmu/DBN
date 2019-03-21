@@ -27,8 +27,6 @@ public abstract class DisposableBase implements Disposable{
         }
     }
 
-    public void disposeInner(){};
-
     protected final void nullify() {
         DisposerUtil.nullify(this);
     }

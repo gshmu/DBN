@@ -226,7 +226,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         public void run() {
             if (openFiles.size() > 0) {
                 Read.run(() ->
-                        Failsafe.lenient(null, () -> {
+                        Failsafe.guarded(null, () -> {
                             Project project = getProject();
                             if (!project.isDisposed()) {
                                 List<SessionBrowser> sessionBrowsers = new ArrayList<>();
@@ -298,13 +298,11 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     };
 
     @Override
-    public void dispose() {
-        super.dispose();
+    public void disposeInner() {
         if (timestampUpdater != null) {
             timestampUpdater.cancel();
             timestampUpdater.purge();
         }
-        openFiles.clear();
     }
 
 

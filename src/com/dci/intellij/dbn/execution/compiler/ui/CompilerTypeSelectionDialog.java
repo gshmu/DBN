@@ -13,7 +13,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class CompilerTypeSelectionDialog extends DBNDialog<CompilerTypeSelectionForm> {
-    private CompileType selection;
+    private CompileType selection;  // TODO dialog result - Disposable.nullify(...)
     private DBObjectRef<DBSchemaObject> objectRef;
 
     public CompilerTypeSelectionDialog(Project project, @Nullable DBSchemaObject object) {

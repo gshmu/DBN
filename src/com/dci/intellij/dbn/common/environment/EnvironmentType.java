@@ -16,7 +16,10 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-public class EnvironmentType extends SettingsSupport implements Cloneable<EnvironmentType>, PersistentConfiguration, Presentable {
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBooleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
+
+public class EnvironmentType implements Cloneable<EnvironmentType>, PersistentConfiguration, Presentable, SettingsSupport {
 
     private static final Color DEFAULT_REGULAR_COLOR = Color.LIGHT_GRAY;
     private static final Color DEFAULT_DARK_COLOR = Color.DARK_GRAY;

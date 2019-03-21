@@ -329,14 +329,6 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         return true;
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        regionalSettings = null;
-        dataGridSettings = null;
-        tableGutter = null;
-    }
-
     public Rectangle getCellRect(DataModelCell cell) {
         int rowIndex = convertRowIndexToView(cell.getRow().getIndex());
         int columnIndex = convertColumnIndexToView(cell.getIndex());

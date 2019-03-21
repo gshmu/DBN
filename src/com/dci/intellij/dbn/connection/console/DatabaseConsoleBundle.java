@@ -42,7 +42,7 @@ public class DatabaseConsoleBundle extends DisposableBase {
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.getnn();
+        return connectionHandlerRef.ensure();
     }
 
     @NotNull

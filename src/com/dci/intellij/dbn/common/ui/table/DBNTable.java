@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -44,8 +45,6 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
 
     @Override
     public void setModel(@NotNull TableModel dataModel) {
-        DBNTableModel tableModel = (DBNTableModel) dataModel;
-        Disposer.register(this, tableModel);
         super.setModel(dataModel);
     }
 
@@ -92,8 +91,6 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
                 }
             });
         }
-
-        Disposer.register(this, tableModel);
     }
 
     protected void adjustRowHeight(int padding) {
@@ -355,19 +352,25 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     private boolean disposed;
 
     @Override
-    public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            GUIUtil.removeListeners(this);
-            listenerList = new EventListenerList();
-            columnModel = new DefaultTableColumnModel();
-            selectionModel = new DefaultListSelectionModel();
-            tableHeader = null;
-        }
-    }
-
-    @Override
     public boolean isDisposed() {
         return disposed;
     }
+
+    @Override
+    public final void dispose() {
+        if (!disposed) {
+            disposed = true;
+            disposeInner();
+        }
+    }
+
+    public void disposeInner(){
+        DisposerUtil.dispose(getModel());
+        GUIUtil.dispose(this);
+        GUIUtil.removeListeners(this);
+        DisposerUtil.nullify(this);
+        listenerList = new EventListenerList();
+        columnModel = new DefaultTableColumnModel();
+        selectionModel = new DefaultListSelectionModel();
+    };
 }

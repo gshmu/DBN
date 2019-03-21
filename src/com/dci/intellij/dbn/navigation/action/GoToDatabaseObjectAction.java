@@ -148,7 +148,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
         }
 
         public ConnectionHandler getConnectionHandler() {
-            return connectionHandlerRef.getnn();
+            return connectionHandlerRef.ensure();
         }
 
         @Override

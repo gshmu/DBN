@@ -108,7 +108,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
     @Override
     @NotNull
     public String[] getNames(boolean checkBoxState) {
-        return Failsafe.lenient(EMPTY_STRING_ARRAY, () -> {
+        return Failsafe.guarded(EMPTY_STRING_ARRAY, () -> {
             boolean databaseLoadActive = objectsLookupSettings.getForceDatabaseLoad().value();
             boolean forceLoad = checkBoxState && databaseLoadActive;
 
@@ -138,7 +138,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
     @Override
     @NotNull
     public Object[] getElementsByName(String name, boolean checkBoxState, String pattern) {
-        return Failsafe.lenient(new Object[0], () -> {
+        return Failsafe.guarded(new Object[0], () -> {
             boolean forceLoad = checkBoxState && objectsLookupSettings.getForceDatabaseLoad().value();
             checkDisposed();
             ProgressMonitor.checkCancelled();
