@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.data.model;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.connection.transaction.ConnectionSavepoint;
@@ -7,7 +8,6 @@ import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -162,7 +162,7 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     private void executeInsert() throws SQLException {
         List<Cell> changedCells = currentRow.getChangedCells();
         if (changedCells.size() == 0) {
-            throw new ProcessCanceledException();
+            throw AlreadyDisposedException.INSTANCE;
         }
 
         StringBuilder buffer = new StringBuilder();

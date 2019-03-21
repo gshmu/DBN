@@ -247,14 +247,12 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                                     () -> executeScript(sourceFile)));
                 }
             }.start();
+        } catch (ProcessCanceledException e) {
+            //executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Script execution cancelled by user", false));
         } catch (Exception e) {
-            if (e instanceof ProcessCanceledException) {
-                //executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Script execution cancelled by user", false));
-            } else {
-                executionManager.writeLogOutput(outputContext, LogOutput.createErrOutput(e.getMessage()));
-                executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Script execution finished with errors", false));
-                throw e;
-            }
+            executionManager.writeLogOutput(outputContext, LogOutput.createErrOutput(e.getMessage()));
+            executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Script execution finished with errors", false));
+            throw e;
         } finally {
             context.set(EXECUTING, false);
             outputContext.finish();

@@ -59,8 +59,7 @@ public final class StatementExecutionQueue extends DisposableBase{
                                     context.set(EXECUTING, true);
                                     StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
                                     statementExecutionManager.process(processor);
-                                } catch (ProcessCanceledException ignore) {
-                                }
+                                } catch (ProcessCanceledException ignore) {}
 
                                 if (progress.isCanceled()) {
                                     cancelExecution();
