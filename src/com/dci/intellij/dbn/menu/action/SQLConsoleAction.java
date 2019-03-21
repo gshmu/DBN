@@ -113,7 +113,7 @@ public class SQLConsoleAction extends DumbAwareAction {
         @NotNull
         @Override
         public AnAction[] getChildren(AnActionEvent e) {
-            ConnectionHandler connectionHandler = connectionHandlerRef.getnn();
+            ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
             List<AnAction> actions = new ArrayList<>();
             Collection<DBConsoleVirtualFile> consoles = connectionHandler.getConsoleBundle().getConsoles();
             for (DBConsoleVirtualFile console : consoles) {
@@ -149,7 +149,7 @@ public class SQLConsoleAction extends DumbAwareAction {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             if (consoleVirtualFile == null) {
-                ConnectionHandler connectionHandler = connectionHandlerRef.getnn();
+                ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
                 DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(connectionHandler.getProject());
                 databaseConsoleManager.showCreateConsoleDialog(connectionHandler, consoleType);
             } else {

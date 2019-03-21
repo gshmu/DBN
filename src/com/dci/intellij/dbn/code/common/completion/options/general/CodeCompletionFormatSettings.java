@@ -6,6 +6,9 @@ import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoolean;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoolean;
+
 public class CodeCompletionFormatSettings extends BasicConfiguration<CodeCompletionSettings, CodeCompletionFormatSettingsForm> {
     private boolean enforceCodeStyleCase = true;
 

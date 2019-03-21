@@ -50,7 +50,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
     }
 
     public void visitLists(DBObjectListVisitor visitor, boolean visitInternal) {
-        Failsafe.lenient(() -> {
+        Failsafe.guarded(() -> {
             if (objectLists != null) {
                 checkDisposed(visitor);
                 for (DBObjectList<DBObject> objectList : objectLists.values()) {

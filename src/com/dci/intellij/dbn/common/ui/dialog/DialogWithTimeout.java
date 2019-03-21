@@ -36,7 +36,7 @@ public abstract class DialogWithTimeout extends DBNDialog<DialogWithTimeoutForm>
     private class TimeoutTask extends TimerTask {
         @Override
         public void run() {
-            Failsafe.lenient(() -> {
+            Failsafe.guarded(() -> {
                 if (secondsLeft > 0) {
                     secondsLeft = secondsLeft -1;
                     getComponent().updateTimeLeft(secondsLeft);

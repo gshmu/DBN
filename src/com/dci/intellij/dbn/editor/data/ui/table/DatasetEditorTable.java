@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.data.ui.table;
 
+import com.dci.intellij.dbn.common.dispose.DisposerUtil;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -41,7 +42,6 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.awt.RelativePoint;
 import org.jetbrains.annotations.NotNull;
 
@@ -89,9 +89,6 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         ActionUtil.registerDataProvider(this, dataProvider, false);
         ActionUtil.registerDataProvider(getTableHeader(), dataProvider, false);
 */
-
-        Disposer.register(this, cellEditorFactory);
-        Disposer.register(this, tableMouseListener);
     }
 
     @Override
@@ -548,10 +545,9 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
      ********************************************************/
 
     @Override
-    public void dispose() {
-        super.dispose();
-        datasetEditor = null;
-        removeMouseListener(tableMouseListener);
-        tableMouseListener = null;
+    public void disposeInner() {
+        DisposerUtil.dispose(cellEditorFactory);
+        DisposerUtil.dispose(tableMouseListener);
+        super.disposeInner();
     }
 }

@@ -47,7 +47,7 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
 
         @Override
         public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-            Failsafe.lenient(() -> {
+            Failsafe.guarded(() -> {
                 if (value instanceof LoadInProgressTreeNode) {
                     LoadInProgressTreeNode loadInProgressTreeNode = (LoadInProgressTreeNode) value;
                     setIcon(loadInProgressTreeNode.getIcon(0));

@@ -24,6 +24,6 @@ public abstract class AbstractConnectionToggleAction extends ToggleAction {
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.getnn();
+        return connectionHandlerRef.ensure();
     }
 }

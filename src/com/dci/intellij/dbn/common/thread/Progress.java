@@ -16,7 +16,7 @@ public interface Progress {
 
 
     static void background(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
-        Failsafe.lenient(() -> {
+        Failsafe.guarded(() -> {
             ThreadInfo invoker = ThreadMonitor.current();
             Task task = new Task.Backgroundable(Failsafe.get(project), title, cancellable, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
                 @Override
@@ -32,7 +32,7 @@ public interface Progress {
     }
 
     static void prompt(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
-        Failsafe.lenient(() -> {
+        Failsafe.guarded(() -> {
             ThreadInfo invoker = ThreadMonitor.current();
             Task task = new Task.Backgroundable(Failsafe.get(project), title, cancellable, PerformInBackgroundOption.DEAF) {
                 @Override
@@ -48,7 +48,7 @@ public interface Progress {
     }
 
     static void modal(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
-        Failsafe.lenient(() -> {
+        Failsafe.guarded(() -> {
             ThreadInfo invoker = ThreadMonitor.current();
             Task task = new Task.Modal(Failsafe.get(project), title, cancellable) {
                 @Override

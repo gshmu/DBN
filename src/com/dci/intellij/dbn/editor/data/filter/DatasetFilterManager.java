@@ -171,11 +171,6 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
     public String getComponentName() {
         return COMPONENT_NAME;
     }
-    @Override
-    public void dispose() {
-        super.dispose();
-        filters.clear();
-    }
 
     /****************************************
      *       PersistentStateComponent       *

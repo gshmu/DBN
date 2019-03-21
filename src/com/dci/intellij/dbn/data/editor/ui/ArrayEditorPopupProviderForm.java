@@ -276,10 +276,4 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
             list.removeRow();
         }
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
-
 }

@@ -14,6 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getEnumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setEnumAttribute;
+
 public class DDLFileExtensionSettings extends BasicProjectConfiguration<DDLFileSettings, DDLFileExtensionSettingsForm> {
 
     private List<DDLFileType> fileTypes = new ArrayList<DDLFileType>();

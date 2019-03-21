@@ -14,7 +14,7 @@ public class ConnectionPresentableProperty extends PresentableProperty{
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.getnn();
+        return connectionHandlerRef.ensure();
     }
 
     @Override

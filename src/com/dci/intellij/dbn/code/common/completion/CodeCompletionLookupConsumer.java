@@ -34,7 +34,7 @@ public class CodeCompletionLookupConsumer implements LookupConsumer {
     @Override
     public void consume(Object object) throws ConsumerStoppedException {
         check();
-        Failsafe.lenient(() -> {
+        Failsafe.guarded(() -> {
             LookupItemBuilder lookupItemBuilder = null;
             DBLanguage language = context.getLanguage();
             if (object instanceof DBObject) {

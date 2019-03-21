@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.object.common.list;
 
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectRelationType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -7,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 
-public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObject> implements DBObjectRelation<S, T> {
+public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObject> extends DisposableBase implements DBObjectRelation<S, T> {
 
     private DBObjectRelationType objectRelationType;
     private DBObjectRef<S> sourceObject;
@@ -66,12 +67,9 @@ public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObjec
     }
 
     @Override
-    public void dispose() {
-    }
-
-    @Override
-    public boolean isDisposed() {
-        return getSourceObject() == null || getTargetObject() == null;
+    public void disposeInner() {
+        super.disposeInner();
+        nullify();
     }
 
     @Override

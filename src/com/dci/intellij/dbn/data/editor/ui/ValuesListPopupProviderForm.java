@@ -295,10 +295,4 @@ public class ValuesListPopupProviderForm extends TextFieldPopupProviderForm {
             elements.clear();
         }
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
-
 }

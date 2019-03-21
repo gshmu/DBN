@@ -63,7 +63,7 @@ public class ArgumentValuesTree extends DBNTree{
     class CellRenderer extends ColoredTreeCellRenderer {
         @Override
         public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-            Failsafe.lenient(() -> {
+            Failsafe.guarded(() -> {
                 ArgumentValuesTreeNode treeNode = (ArgumentValuesTreeNode) value;
                 Object userValue = treeNode.getUserValue();
                 if (userValue instanceof DBMethod) {

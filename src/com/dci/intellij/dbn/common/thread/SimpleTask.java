@@ -19,7 +19,7 @@ public abstract class SimpleTask<T> extends AbstractTask<T>{
     @Override
     public void run() {
         trace(this);
-        Failsafe.lenient(() -> {
+        Failsafe.guarded(() -> {
             if (canExecute()) {
                 execute();
             } else {

@@ -9,7 +9,7 @@ public interface Write {
         Dispatch.conditional(() -> {
             Application application = ApplicationManager.getApplication();
             application.runWriteAction(
-                    () -> Failsafe.lenient(() -> runnable.run()));
+                    () -> Failsafe.guarded(() -> runnable.run()));
         });
     }
 }

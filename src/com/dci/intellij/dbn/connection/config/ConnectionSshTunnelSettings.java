@@ -8,6 +8,8 @@ import com.dci.intellij.dbn.connection.ssh.SshAuthType;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+
 public class ConnectionSshTunnelSettings extends BasicProjectConfiguration<ConnectionSettings, ConnectionSshTunnelSettingsForm> {
     @Deprecated // TODO move to keychain
     private static final String OLD_PWD_ATTRIBUTE = "proxy-password";

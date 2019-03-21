@@ -5,13 +5,14 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionManager;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
 public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm> {
     private ConnectionHandlerRef connectionHandlerRef;
-    private DatabaseSession session;
+    private WeakRef<DatabaseSession> sessionRef;  // TODO dialog result - Disposable.nullify(...)
 
     public CreateRenameSessionDialog(@NotNull ConnectionHandler connectionHandler) {
         super(connectionHandler.getProject(), "Create session", true);
@@ -23,7 +24,7 @@ public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm
     public CreateRenameSessionDialog(ConnectionHandler connectionHandler, @NotNull DatabaseSession session) {
         super(connectionHandler.getProject(), "Rename session", true);
         connectionHandlerRef = connectionHandler.getRef();
-        this.session = session;
+        this.sessionRef = WeakRef.from(session);
         getOKAction().putValue(Action.NAME, "Rename");
         init();
     }
@@ -31,8 +32,8 @@ public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm
     @NotNull
     @Override
     protected CreateRenameSessionForm createComponent() {
-        ConnectionHandler connectionHandler = connectionHandlerRef.getnn();
-        return new CreateRenameSessionForm(this, connectionHandler, session);
+        ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
+        return new CreateRenameSessionForm(this, connectionHandler, getSession());
     }
 
     @Override
@@ -48,20 +49,21 @@ public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm
     protected void doOKAction() {
         CreateRenameSessionForm component = getComponent();
         DatabaseSessionManager databaseSessionManager = DatabaseSessionManager.getInstance(getProject());
-        if (session == null) {
-            session = databaseSessionManager.createSession(
+        if (sessionRef == null) {
+            DatabaseSession session = databaseSessionManager.createSession(
                     component.getConnectionHandler(),
                     component.getSessionName());
+            sessionRef = WeakRef.from(session);
             component.setSession(session);
 
         } else {
-            databaseSessionManager.renameSession(session, component.getSessionName());
+            databaseSessionManager.renameSession(getSession(), component.getSessionName());
         }
         super.doOKAction();
     }
 
     public DatabaseSession getSession() {
-        return session;
+        return WeakRef.get(sessionRef);
     }
 
     @Override

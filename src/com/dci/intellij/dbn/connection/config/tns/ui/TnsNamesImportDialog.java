@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.config.tns.ui;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.config.tns.TnsName;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,10 +10,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.List;
 
 public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
-    private List<TnsName> tnsNames;
+    private WeakRef<TnsName[]> tnsNames;  // TODO dialog result - Disposable.nullify(...)
     private ImportAllAction importAllAction = new ImportAllAction();
     private ImportSelectedAction importSelectedAction = new ImportSelectedAction();
     private File file;
@@ -30,16 +30,16 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
         return new TnsNamesImportForm(this, file);
     }
 
-    public AbstractAction getImportSelectedAction() {
+    AbstractAction getImportSelectedAction() {
         return importSelectedAction;
     }
 
-    public AbstractAction getImportAllAction() {
+    AbstractAction getImportAllAction() {
         return importAllAction;
     }
 
-    public List<TnsName> getTnsNames() {
-        return tnsNames;
+    public TnsName[] getTnsNames() {
+        return WeakRef.get(tnsNames);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            tnsNames = getComponent().getAllTnsNames();
+            tnsNames = WeakRef.from(getComponent().getAllTnsNames());
             doOKAction();
         }
     }
@@ -71,7 +71,7 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            tnsNames = getComponent().getSelectedTnsNames();
+            tnsNames = WeakRef.from(getComponent().getSelectedTnsNames());
             doOKAction();
         }
     }

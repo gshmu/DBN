@@ -8,8 +8,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBooleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
+
 public abstract class CodeStyleCaseSettings extends BasicConfiguration<CodeStyleCustomSettings, CodeStyleCaseSettingsForm> {
-    private List<CodeStyleCaseOption> options = new ArrayList<CodeStyleCaseOption>();
+    private List<CodeStyleCaseOption> options = new ArrayList<>();
     private boolean enabled = true;
 
     public CodeStyleCaseSettings(CodeStyleCustomSettings parent) {

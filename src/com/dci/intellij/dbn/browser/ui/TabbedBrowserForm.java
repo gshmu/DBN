@@ -176,7 +176,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
             Project project = getProject();
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
             for (TabInfo tabInfo : connectionTabs.getTabs()) {
-                Failsafe.lenient(() -> {
+                Failsafe.guarded(() -> {
                     SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
                     ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
                     if (connectionHandler != null) {

@@ -287,12 +287,12 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
      *********************************************************/
     @Override
     public int getRowCount() {
-        return Failsafe.lenient(0, () -> getRows().size());
+        return Failsafe.guarded(0, () -> getRows().size());
     }
 
     @Override
     public int getColumnCount() {
-        return Failsafe.lenient(0, () -> getHeader().getColumnCount());
+        return Failsafe.guarded(0, () -> getHeader().getColumnCount());
     }
 
     @Override

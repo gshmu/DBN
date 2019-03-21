@@ -15,8 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public abstract class BasicConfiguration<P extends Configuration, E extends ConfigurationEditorForm>
-        extends SettingsSupport
-        implements Configuration<P, E> {
+        implements Configuration<P, E>, SettingsSupport {
 
     private transient E configurationEditorForm;
 

@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.Charset;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+
 public class ConnectionDetailSettings extends BasicProjectConfiguration<ConnectionSettings, ConnectionDetailSettingsForm> {
     private Charset charset = Charset.forName("UTF-8");
     private EnvironmentTypeId environmentTypeId = EnvironmentTypeId.DEFAULT;

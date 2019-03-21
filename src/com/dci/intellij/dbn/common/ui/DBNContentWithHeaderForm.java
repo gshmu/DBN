@@ -15,7 +15,7 @@ public abstract class DBNContentWithHeaderForm<T extends DBNDialog> extends DBNF
     private DBNHeaderForm headerForm;
     private DBNForm contentForm;
 
-    public DBNContentWithHeaderForm(@NotNull T parentComponent) {
+    protected DBNContentWithHeaderForm(@NotNull T parentComponent) {
         super(parentComponent);
         headerForm = createHeaderForm();
         contentForm = createContentForm();

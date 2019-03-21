@@ -226,11 +226,6 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         return COMPONENT_NAME;
     }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
-
     @Nullable
     public ExecutionResult getSelectedExecutionResult() {
         return executionConsoleForm.loaded() ? getExecutionConsoleForm().getSelectedExecutionResult() : null;

@@ -218,7 +218,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     };
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.getnn();
+        return connectionHandlerRef.ensure();
     }
 
     @NotNull

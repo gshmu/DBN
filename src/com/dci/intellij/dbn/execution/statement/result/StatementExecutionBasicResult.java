@@ -150,7 +150,7 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.getnn();
+        return connectionHandlerRef.ensure();
     }
 
     @Nullable

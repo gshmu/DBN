@@ -557,9 +557,4 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
             return component;
         }
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-    }
 }

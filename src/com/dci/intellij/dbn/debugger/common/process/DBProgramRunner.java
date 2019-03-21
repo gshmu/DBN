@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
 import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.Executor;
@@ -169,18 +170,19 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             DBRunConfig runConfiguration = (DBRunConfig) environment.getRunProfile();
             CompileDebugDependenciesDialog dependenciesDialog = new CompileDebugDependenciesDialog(runConfiguration, dependencies);
             dependenciesDialog.show();
-            List<DBSchemaObject> selectedDependencies =  dependenciesDialog.getSelection();
+            DBObjectRef<DBSchemaObject>[] selectedDependencies =  dependenciesDialog.getSelection();
 
             if (dependenciesDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE){
-                if (selectedDependencies.size() > 0) {
+                if (selectedDependencies.length > 0) {
 
                     Progress.prompt(project, "Compiling dependencies", true,
                             (progress) -> {
                                 DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
-                                for (DBSchemaObject schemaObject : selectedDependencies) {
+                                for (DBObjectRef<DBSchemaObject> objectRef : selectedDependencies) {
+                                    DBSchemaObject schemaObject = objectRef.ensure();
                                     Progress.check(progress);
 
-                                    progress.setText("Compiling " + schemaObject.getQualifiedNameWithType());
+                                    progress.setText("Compiling " + objectRef.getQualifiedNameWithType());
                                     DBContentType contentType = schemaObject.getContentType();
                                     CompilerAction compilerAction = new CompilerAction(CompilerActionSource.BULK_COMPILE, contentType);
                                     compilerManager.compileObject(schemaObject, CompileType.DEBUG, compilerAction);
