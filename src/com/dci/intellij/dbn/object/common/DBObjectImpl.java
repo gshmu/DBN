@@ -864,6 +864,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         CollectionUtil.clear(visibleTreeChildren);
         CollectionUtil.clear(allPossibleTreeChildren);
         super.disposeInner();
+        nullify();
     }
 
     @Override
