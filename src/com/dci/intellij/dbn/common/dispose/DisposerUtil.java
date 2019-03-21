@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.dispose;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.Reference;
 import com.dci.intellij.dbn.common.constant.Constant;
 import com.dci.intellij.dbn.common.latent.Latent;
@@ -7,6 +8,7 @@ import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.keyFMap.KeyFMap;
@@ -22,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class DisposerUtil {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     public static void disposeInBackground(final Disposable disposable) {
         Background.run(() -> dispose(disposable));
@@ -110,15 +113,15 @@ public class DisposerUtil {
                                 !Modifier.isNative(modifiers) &&
                                 !Modifier.isTransient(modifiers) &&
                                 !fieldType.isPrimitive() &&
-                                !WeakReference.class.isAssignableFrom(fieldType) &&
-                                !Reference.class.isAssignableFrom(fieldType) &&
-                                !KeyFMap.class.isAssignableFrom(fieldType) &&
-                                !Locale.class.isAssignableFrom(fieldType) &&
-                                !String.class.isAssignableFrom(fieldType) &&
-                                !Number.class.isAssignableFrom(fieldType) &&
-                                !Boolean.class.isAssignableFrom(fieldType) &&
-                                !Constant.class.isAssignableFrom(fieldType) &&
-                                !Enum.class.isAssignableFrom(fieldType)) {
+                                !(fieldValue instanceof WeakReference) &&
+                                !(fieldValue instanceof Reference) &&
+                                !(fieldValue instanceof KeyFMap) &&
+                                !(fieldValue instanceof Locale) &&
+                                !(fieldValue instanceof String) &&
+                                !(fieldValue instanceof Number) &&
+                                !(fieldValue instanceof Boolean) &&
+                                !(fieldValue instanceof Constant) &&
+                                !(fieldValue instanceof Enum)) {
 
                             System.out.println(fieldValue.getClass().getName());
                             field.set(object, null);
@@ -126,8 +129,9 @@ public class DisposerUtil {
                     }
 
                 }
+            } catch (UnsupportedOperationException ignore) {
             } catch (Throwable e) {
-                e.printStackTrace();
+                LOGGER.error("Failed to nullify field", e);
             }
         }
 
