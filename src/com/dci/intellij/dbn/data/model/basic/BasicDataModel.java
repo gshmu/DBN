@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.model.basic;
 
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
@@ -22,7 +22,6 @@ import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.dci.intellij.dbn.data.model.DataModelState;
 import com.dci.intellij.dbn.editor.data.model.RecordStatus;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,8 +102,8 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
     public void setHeader(@NotNull DataModelHeader<? extends ColumnInfo> header) {
         DataModelHeader oldHeader = this.header;
         this.header = header;
-        Disposer.register(this, header);
-        DisposerUtil.dispose(oldHeader);
+        com.intellij.openapi.util.Disposer.register(this, header);
+        Disposer.dispose(oldHeader);
     }
 
     @Override
@@ -192,7 +191,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
         updateRowIndexes(index);
         getState().setRowCount(getRowCount());
 
-        Disposer.dispose(row);
+        com.intellij.openapi.util.Disposer.dispose(row);
     }
 
     @Nullable
@@ -361,7 +360,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
      ********************************************************/
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(rows);
+        Disposer.dispose(rows);
         super.disposeInner();
         nullify();
     }

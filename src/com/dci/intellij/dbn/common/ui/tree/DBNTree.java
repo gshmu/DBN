@@ -1,34 +1,41 @@
 package com.dci.intellij.dbn.common.ui.tree;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
-public class DBNTree extends Tree implements Disposable {
-
+public class DBNTree extends Tree implements RegisteredDisposable {
+    private ProjectRef projectRef;
     public static final DefaultTreeCellRenderer DEFAULT_CELL_RENDERER = new DefaultTreeCellRenderer();
 
-    public DBNTree() {
+    public DBNTree(@NotNull Project project) {
+        projectRef = ProjectRef.from(project);
         setTransferHandler(new DBNTreeTransferHandler());
     }
 
-    public DBNTree(TreeModel treemodel) {
+    public DBNTree(@NotNull Project project, TreeModel treemodel) {
         super(treemodel);
+        projectRef = ProjectRef.from(project);
         setTransferHandler(new DBNTreeTransferHandler());
         setFont(UIUtil.getLabelFont());
-
-        DisposerUtil.register(this, treemodel);
     }
 
     public DBNTree(TreeNode root) {
         super(root);
         setTransferHandler(new DBNTreeTransferHandler());
+    }
+
+    @NotNull
+    public final Project getProject() {
+        return projectRef.ensure();
     }
 
     /********************************************************
@@ -37,18 +44,23 @@ public class DBNTree extends Tree implements Disposable {
     private boolean disposed;
 
     @Override
-    public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            GUIUtil.removeListeners(this);
-            //setModel(null);
-            getUI().uninstallUI(this);
-            setSelectionModel(null);
-
-        }
+    public boolean isDisposed() {
+        return disposed;
     }
 
     @Override
-    public boolean isDisposed() {
-        return disposed;
-    }}
+    public final void dispose() {
+        if (!disposed) {
+            disposed = true;
+            disposeInner();
+        }
+    }
+
+    public void disposeInner(){
+        getUI().uninstallUI(this);
+        Disposer.dispose(getModel());
+        Disposer.dispose(this);
+        Disposer.nullify(this);
+        setSelectionModel(null);
+    }
+}

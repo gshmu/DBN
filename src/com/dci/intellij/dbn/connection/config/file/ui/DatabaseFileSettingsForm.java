@@ -1,15 +1,11 @@
 package com.dci.intellij.dbn.connection.config.file.ui;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.AnActionButton;
-import com.intellij.ui.AnActionButtonRunnable;
-import com.intellij.ui.AnActionButtonUpdater;
 import com.intellij.ui.ToolbarDecorator;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,49 +23,15 @@ public class DatabaseFileSettingsForm extends DBNFormImpl<ConnectionDatabaseSett
         Disposer.register(this, table);
 
         ToolbarDecorator decorator = ToolbarDecorator.createDecorator(table);
-        decorator.setAddAction(new AnActionButtonRunnable() {
-            @Override
-            public void run(AnActionButton anActionButton) {
-                table.insertRow();
-            }
-        });
-        decorator.setRemoveAction(new AnActionButtonRunnable() {
-            @Override
-            public void run(AnActionButton anActionButton) {
-                table.removeRow();
-            }
-        });
-        decorator.setRemoveActionUpdater(new AnActionButtonUpdater() {
-            @Override
-            public boolean isEnabled(AnActionEvent e) {
-                return table.getSelectedRow() != 0;
-            }
-        });
-        decorator.setMoveUpAction(new AnActionButtonRunnable() {
-            @Override
-            public void run(AnActionButton anActionButton) {
-                table.moveRowUp();
-            }
-        });
-
-        decorator.setMoveUpActionUpdater(new AnActionButtonUpdater() {
-            @Override
-            public boolean isEnabled(AnActionEvent e) {
-                return table.getSelectedRow() > 1;
-            }
-        });
-        decorator.setMoveDownAction(new AnActionButtonRunnable() {
-            @Override
-            public void run(AnActionButton anActionButton) {
-                table.moveRowDown();
-            }
-        });
-        decorator.setMoveDownActionUpdater(new AnActionButtonUpdater() {
-            @Override
-            public boolean isEnabled(AnActionEvent e) {
-                int selectedRow = table.getSelectedRow();
-                return selectedRow != 0 && selectedRow < table.getModel().getRowCount() -1;
-            }
+        decorator.setAddAction(anActionButton -> table.insertRow());
+        decorator.setRemoveAction(anActionButton -> table.removeRow());
+        decorator.setRemoveActionUpdater(e -> table.getSelectedRow() != 0);
+        decorator.setMoveUpAction(anActionButton -> table.moveRowUp());
+        decorator.setMoveUpActionUpdater(e -> table.getSelectedRow() > 1);
+        decorator.setMoveDownAction(anActionButton -> table.moveRowDown());
+        decorator.setMoveDownActionUpdater(e -> {
+            int selectedRow = table.getSelectedRow();
+            return selectedRow != 0 && selectedRow < table.getModel().getRowCount() -1;
         });
         decorator.setPreferredSize(new Dimension(-1, 300));
         JPanel panel = decorator.createPanel();

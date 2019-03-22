@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.ui.table;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -546,8 +546,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(cellEditorFactory);
-        DisposerUtil.dispose(tableMouseListener);
+        Disposer.dispose(cellEditorFactory);
+        Disposer.dispose(tableMouseListener);
         super.disposeInner();
     }
 }

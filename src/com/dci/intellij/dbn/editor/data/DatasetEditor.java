@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -57,7 +57,6 @@ import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -108,7 +107,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
             load(true, true, false);
         }
 */
-        Disposer.register(this, editorForm);
+        com.intellij.openapi.util.Disposer.register(this, editorForm);
 
         EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
         EventUtil.subscribe(project, this, ConnectionStatusListener.TOPIC, connectionStatusListener);
@@ -655,7 +654,7 @@ public class DatasetEditor extends UserDataHolderBase implements FileEditor, Fil
     public void dispose() {
         if (!disposed) {
             disposed = true;
-            DisposerUtil.nullify(this);
+            Disposer.nullify(this);
 /*
             editorForm = null;
             databaseFile = null;

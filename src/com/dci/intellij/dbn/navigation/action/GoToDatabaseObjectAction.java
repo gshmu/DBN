@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.navigation.action;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.ClipboardUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -280,7 +280,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
         @Override
         public void onClose() {
             removeActionLock();
-            DisposerUtil.dispose(model);
+            Disposer.dispose(model);
             latestUsedText = popup.getEnteredText();
             popup = null;
         }

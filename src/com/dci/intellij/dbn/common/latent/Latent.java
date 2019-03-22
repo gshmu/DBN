@@ -1,9 +1,11 @@
 package com.dci.intellij.dbn.common.latent;
 
+import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.intellij.openapi.Disposable;
 
 public interface Latent<T> {
     T get();
+    T value();
     void set(T value);
     void reset();
     boolean loaded();
@@ -17,7 +19,7 @@ public interface Latent<T> {
         };
     }
 
-    static <T extends Disposable, P extends Disposable> DisposableLatent<T, P> disposable(P parent, Loader<T> loader) {
+    static <T extends Disposable, P extends RegisteredDisposable> DisposableLatent<T, P> disposable(P parent, Loader<T> loader) {
         return new DisposableLatent<T, P>(parent) {
             @Override
             public Loader<T> getLoader() {

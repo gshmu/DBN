@@ -6,7 +6,8 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNodeBase;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableList;
@@ -20,7 +21,6 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +28,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTreeNode, Disposable {
+public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTreeNode, RegisteredDisposable {
 
     private static final Filter<ConnectionHandler> ACTIVE_CONNECTIONS_FILTER =
             connectionHandler -> connectionHandler != null && connectionHandler.isEnabled();
@@ -201,8 +201,8 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
 
     @Override
     public void disposeInner() {
+        Disposer.nullify(this);
         super.disposeInner();
-        nullify();
     }
 
     /*********************************************************

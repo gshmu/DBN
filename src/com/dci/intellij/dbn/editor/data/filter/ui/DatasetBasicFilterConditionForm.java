@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
@@ -42,8 +42,8 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
     private DBNComboBox<DBColumn> columnSelector;
     private DBNComboBox<ConditionOperator> operatorSelector;
 
-    private DatasetBasicFilterForm basicFilterForm;
     private TextFieldWithPopup editorComponent;
+    private DatasetBasicFilterForm filterForm;
     private DBObjectRef<DBDataset> datasetRef;
 
     public DatasetBasicFilterConditionForm(DBDataset dataset, DatasetBasicFilterCondition condition) {
@@ -74,8 +74,8 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
                 GenericDataType selectedDataType = newValue.getDataType().getGenericDataType();
                 editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, selectedDataType == GenericDataType.DATE_TIME);
             }
-            if (basicFilterForm != null) {
-                basicFilterForm.updateNameAndPreview();
+            if (filterForm != null) {
+                filterForm.updateNameAndPreview();
             }
             operatorSelector.reloadValues();
         });
@@ -84,8 +84,8 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
         operatorSelector.setValueLoader(this::loadOperators);
         operatorSelector.setSelectedValue(condition.getOperator());
         operatorSelector.addListener((oldValue, newValue) -> {
-            if (basicFilterForm != null) {
-                basicFilterForm.updateNameAndPreview();
+            if (filterForm != null) {
+                filterForm.updateNameAndPreview();
                 updateValueTextField();
             }
         });
@@ -143,13 +143,16 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
 
     private class DocumentListener extends DocumentAdapter{
         @Override
-        protected void textChanged(DocumentEvent e) {
-            basicFilterForm.updateNameAndPreview();
+        protected void textChanged(@NotNull DocumentEvent e) {
+            if (filterForm != null) {
+                filterForm.updateNameAndPreview();
+            }
         }
     }
 
     public void setBasicFilterPanel(DatasetBasicFilterForm basicFilterForm) {
-        this.basicFilterForm = basicFilterForm;
+        Disposer.dispose(filterForm);
+        filterForm = basicFilterForm;
     }
 
     @Nullable
@@ -172,7 +175,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
     public DatasetBasicFilterCondition createCondition() {
         DBColumn selectedColumn = getSelectedColumn();
         return new DatasetBasicFilterCondition(
-                basicFilterForm.getConfiguration(),
+                filterForm.getConfiguration(),
                 selectedColumn == null ? null : selectedColumn.getName(),
                 editorComponent.getText(), getSelectedOperator(),
                 active);
@@ -193,8 +196,8 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
         columnSelector.setEnabled(active);
         operatorSelector.setEnabled(active);
         editorComponent.getTextField().setEnabled(active);
-        if (basicFilterForm != null) {
-            basicFilterForm.updateNameAndPreview();
+        if (filterForm != null) {
+            filterForm.updateNameAndPreview();
         }
     }
 
@@ -243,7 +246,8 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
 
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(editorComponent);
+        Disposer.dispose(editorComponent);
+        Disposer.dispose(filterForm);
         super.disposeInner();
     }
 

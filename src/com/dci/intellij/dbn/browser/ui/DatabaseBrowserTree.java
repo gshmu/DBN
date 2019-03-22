@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.Background;
@@ -33,8 +34,6 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.tree.TreeUtil;
 
 import javax.swing.*;
@@ -55,8 +54,10 @@ public class DatabaseBrowserTree extends DBNTree {
     private JPopupMenu popupMenu;
     private TreeNavigationHistory navigationHistory = new TreeNavigationHistory();
 
+    private DatabaseBrowserTreeSpeedSearch speedSearch;
+
     public DatabaseBrowserTree(BrowserTreeModel treeModel) {
-        super(treeModel);
+        super(treeModel.getProject(), treeModel);
 
         addKeyListener(keyListener);
         addMouseListener(mouseListener);
@@ -69,15 +70,7 @@ public class DatabaseBrowserTree extends DBNTree {
         DatabaseBrowserTreeCellRenderer browserTreeCellRenderer = new DatabaseBrowserTreeCellRenderer(treeModel.getProject());
         setCellRenderer(browserTreeCellRenderer);
         //setExpandedState(DatabaseBrowserUtils.createTreePath(treeModel.getRoot()), false);
-
-        DatabaseBrowserTreeSpeedSearch speedSearch = new DatabaseBrowserTreeSpeedSearch(this);
-
-        Disposer.register(this, speedSearch);
-        Disposer.register(this, navigationHistory);
-    }
-
-    public Project getProject() {
-        return getModel().getProject();
+        speedSearch = new DatabaseBrowserTreeSpeedSearch(this);
     }
 
     @Override
@@ -388,13 +381,9 @@ public class DatabaseBrowserTree extends DBNTree {
      *                    Disposable                        *
      ********************************************************/
     @Override
-    public void dispose() {
-        super.dispose();
-        targetSelection = null;
-        treeSelectionListener = null;
-        mouseListener = null;
-        keyListener = null;
-        treeModelListener = null;
+    public void disposeInner() {
+        Disposer.dispose(speedSearch, navigationHistory);
+        super.disposeInner();
         setModel(new SimpleBrowserTreeModel());
     }
 }

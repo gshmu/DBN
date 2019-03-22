@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.explain.result.ui;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -9,7 +10,6 @@ import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -64,9 +64,10 @@ public class ExplainPlanResultForm extends DBNFormImpl implements ExecutionResul
     }
 
     @Override
-    public void setExecutionResult(ExecutionResult executionResult) {
+    public void setExecutionResult(@NotNull ExecutionResult executionResult) {
     }
 
+    @NotNull
     @Override
     public ExecutionResult getExecutionResult() {
         return explainPlanResult;

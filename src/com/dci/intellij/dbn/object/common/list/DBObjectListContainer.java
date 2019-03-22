@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.common.content.dependency.MultipleContentDependencyA
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapterImpl;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -339,6 +339,6 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
     @Override
     public void disposeInner() {
         super.disposeInner();
-        DisposerUtil.dispose(objectLists);
+        Disposer.dispose(objectLists);
     }
 }

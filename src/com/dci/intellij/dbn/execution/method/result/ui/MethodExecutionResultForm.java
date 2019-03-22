@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -21,7 +21,6 @@ import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.tabs.TabInfo;
@@ -62,23 +61,21 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         TreeUtil.expand(argumentValuesTree, 2);
         ActionUtil.registerDataProvider(mainPanel, executionResult);
-
-        Disposer.register(this, outputTabs);
-        Disposer.register(this, executionResult);
     }
 
     @Override
-    public void setExecutionResult(MethodExecutionResult executionResult) {
+    public void setExecutionResult(@NotNull MethodExecutionResult executionResult) {
         if (this.executionResult != executionResult) {
             MethodExecutionResult oldExecutionResult = this.executionResult;
             this.executionResult = executionResult;
             ActionUtil.registerDataProvider(mainPanel, executionResult);
             rebuild();
 
-            DisposerUtil.dispose(oldExecutionResult);
+            Disposer.dispose(oldExecutionResult);
         }
     }
 
+    @NotNull
     @Override
     public MethodExecutionResult getExecutionResult() {
         return executionResult;
@@ -128,7 +125,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
             outputConsole.writeToConsole(context, LogOutput.createStdOutput(logOutput));
         }
         outputConsole.writeToConsole(context, LogOutput.createSysOutput(context, " - Method execution finished\n\n", false));
-        Disposer.register(this, outputConsole);
+        com.intellij.openapi.util.Disposer.register(this, outputConsole);
 
         TabInfo outputTabInfo = new TabInfo(outputConsole.getComponent());
         outputTabInfo.setText(outputConsole.getTitle());
@@ -224,5 +221,12 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         List<ArgumentValue> inputArgumentValues = executionResult.getExecutionInput().getInputArgumentValues();
         List<ArgumentValue> outputArgumentValues = executionResult.getArgumentValues();
         argumentValuesTree = new ArgumentValuesTree(this, inputArgumentValues, outputArgumentValues);
+    }
+
+    @Override
+    public void disposeInner() {
+        Disposer.dispose(executionResult);
+        Disposer.dispose(outputTabs);
+        super.disposeInner();
     }
 }

@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.common;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.intellij.openapi.application.ApplicationListener;
@@ -18,7 +19,7 @@ public abstract class AbstractProjectComponent extends DisposableBase
         ApplicationListener,
         ProjectComponent,
         ProjectManagerListener,
-        Disposable,
+        RegisteredDisposable,
         NotificationSupport {
 
     private ProjectRef projectRef;
@@ -117,8 +118,8 @@ public abstract class AbstractProjectComponent extends DisposableBase
 
     @Override
     public void disposeInner() {
+        Disposer.nullify(this);
         super.disposeInner();
-        nullify();
     }
 
     protected void closeProject() {

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -88,7 +88,7 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
 
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(uncommittedChangeForms);
+        Disposer.dispose(uncommittedChangeForms);
         super.disposeInner();
     }
 

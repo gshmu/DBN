@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.session;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -29,7 +29,6 @@ import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.UserDataHolderBase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +52,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     public SessionBrowser(DBSessionBrowserVirtualFile sessionBrowserFile) {
         this.sessionBrowserFile = sessionBrowserFile;
         editorForm = new SessionBrowserForm(this);
-        Disposer.register(this, editorForm);
+        com.intellij.openapi.util.Disposer.register(this, editorForm);
         loadSessions(true);
     }
 
@@ -128,7 +127,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
                 newModel.setState(state);
                 editorTable.setModel(newModel);
                 refreshTable();
-                DisposerUtil.dispose(oldModel);
+                Disposer.dispose(oldModel);
             });
         }
     }

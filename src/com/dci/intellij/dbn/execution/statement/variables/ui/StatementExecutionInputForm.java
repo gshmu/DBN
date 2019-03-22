@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.variables.ui;
 
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -147,7 +147,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
     @Override
     public void disposeInner() {
         EditorUtil.releaseEditor(viewer);
-        DisposerUtil.dispose(variableValueForms);
+        Disposer.dispose(variableValueForms);
         super.disposeInner();
     }
 
