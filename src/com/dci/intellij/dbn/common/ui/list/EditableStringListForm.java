@@ -1,10 +1,8 @@
 package com.dci.intellij.dbn.common.ui.list;
 
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.AnActionButton;
-import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.ToolbarDecorator;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,30 +27,10 @@ public class EditableStringListForm extends DBNFormImpl<DisposableProjectCompone
         super(parentComponent);
         editableStringList = new EditableStringList(null, elements, sorted, false);
         ToolbarDecorator decorator = ToolbarDecorator.createDecorator(editableStringList);
-        decorator.setAddAction(new AnActionButtonRunnable() {
-            @Override
-            public void run(AnActionButton anActionButton) {
-                editableStringList.insertRow();
-            }
-        });
-        decorator.setRemoveAction(new AnActionButtonRunnable() {
-            @Override
-            public void run(AnActionButton anActionButton) {
-                editableStringList.removeRow();
-            }
-        });
-        decorator.setMoveUpAction(new AnActionButtonRunnable() {
-            @Override
-            public void run(AnActionButton anActionButton) {
-                editableStringList.moveRowUp();
-            }
-        });
-        decorator.setMoveDownAction(new AnActionButtonRunnable() {
-            @Override
-            public void run(AnActionButton anActionButton) {
-                editableStringList.moveRowDown();
-            }
-        });
+        decorator.setAddAction(anActionButton -> editableStringList.insertRow());
+        decorator.setRemoveAction(anActionButton -> editableStringList.removeRow());
+        decorator.setMoveUpAction(anActionButton -> editableStringList.moveRowUp());
+        decorator.setMoveDownAction(anActionButton -> editableStringList.moveRowDown());
         titleLabel.setText(title);
         //decorator.setPreferredSize(new Dimension(200, 300));
         JPanel editableListPanel = decorator.createPanel();

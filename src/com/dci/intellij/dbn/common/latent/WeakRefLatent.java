@@ -36,4 +36,9 @@ abstract class WeakRefLatent<T> implements Latent<T>{
         valueRef = null;
         loaded = false;
     }
+
+    @Override
+    public T value() {
+        return WeakRef.get(valueRef);
+    }
 }

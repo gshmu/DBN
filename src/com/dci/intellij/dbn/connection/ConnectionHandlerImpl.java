@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -597,7 +598,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     *********************************************************/
     @Override
     public void disposeInner() {
+        Disposer.nullify(this);
         super.disposeInner();
-        nullify();
     }
 }

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.state.sorting.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -137,7 +137,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl<DatasetEditorSortingDi
         sortingInstructionsPanel.remove(sortingInstructionForm.getComponent());
         sortingInstructionForms.remove(sortingInstructionForm);
         updateIndexes();
-        DisposerUtil.dispose(sortingInstructionForm);
+        Disposer.dispose(sortingInstructionForm);
 
         GUIUtil.repaint(sortingInstructionsPanel);
     }
@@ -151,7 +151,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl<DatasetEditorSortingDi
 
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(sortingInstructionForms);
+        Disposer.dispose(sortingInstructionForms);
         super.disposeInner();
     }
 

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 
 public abstract class MessagesTreeNodeBase<P extends MessagesTreeNode, C extends MessagesTreeNode>
         extends DisposableBase
@@ -20,7 +21,7 @@ public abstract class MessagesTreeNodeBase<P extends MessagesTreeNode, C extends
 
     @Override
     public void disposeInner() {
+        Disposer.nullify(this);
         super.disposeInner();
-        parent = null;
     }
 }

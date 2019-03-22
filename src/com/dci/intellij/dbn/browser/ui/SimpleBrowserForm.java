@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.browser.options.listener.ObjectDetailSettingsListener;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -75,7 +75,7 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
 
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(browserTree);
+        Disposer.dispose(browserTree);
         super.disposeInner();
     }
 

@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class ArgumentValuesTreeModel implements TreeModel {
     private ArgumentValuesTreeNode root;
-    public ArgumentValuesTreeModel(DBMethod method, List<ArgumentValue> inputArgumentValues, List<ArgumentValue> outputArgumentValues) {
+    ArgumentValuesTreeModel(DBMethod method, List<ArgumentValue> inputArgumentValues, List<ArgumentValue> outputArgumentValues) {
         root = new ArgumentValuesTreeNode(null, method);
         ArgumentValuesTreeNode inputNode = new ArgumentValuesTreeNode(root, "Input");
         ArgumentValuesTreeNode outputNode = new ArgumentValuesTreeNode(root, "Output");

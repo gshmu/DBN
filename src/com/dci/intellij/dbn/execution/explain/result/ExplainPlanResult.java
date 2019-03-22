@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.explain.result;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
@@ -173,8 +173,8 @@ public class ExplainPlanResult extends DisposableBase implements ExecutionResult
      ********************************************************/
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(root);
+        Disposer.dispose(root);
+        Disposer.nullify(this);
         super.disposeInner();
-        nullify();
     }
 }

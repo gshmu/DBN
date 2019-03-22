@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.method.result;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -197,9 +197,9 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
      ********************************************************/
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(cursorModels);
+        Disposer.dispose(cursorModels);
+        Disposer.nullify(this);
         super.disposeInner();
-        nullify();
     }
 
     /********************************************************

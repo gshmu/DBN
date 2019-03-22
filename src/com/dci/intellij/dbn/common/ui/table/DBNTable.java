@@ -2,12 +2,10 @@ package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.UIUtil;
@@ -276,7 +274,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
         if (tableGutter == null) {
             tableGutter = createTableGutter();
             if (tableGutter != null) {
-                Disposer.register(this, tableGutter);
+                com.intellij.openapi.util.Disposer.register(this, tableGutter);
             }
         }
         return tableGutter;
@@ -365,12 +363,12 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     }
 
     public void disposeInner(){
-        DisposerUtil.dispose(getModel());
-        GUIUtil.dispose(this);
-        GUIUtil.removeListeners(this);
-        DisposerUtil.nullify(this);
-        listenerList = new EventListenerList();
-        columnModel = new DefaultTableColumnModel();
-        selectionModel = new DefaultListSelectionModel();
-    };
+        Disposer.dispose(getModel());
+        Disposer.dispose(this);
+        Disposer.nullify(this, false, () -> {
+            listenerList = new EventListenerList();
+            columnModel = new DefaultTableColumnModel();
+            selectionModel = new DefaultListSelectionModel();
+        });
+    }
 }

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
@@ -30,7 +30,6 @@ import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -119,12 +118,12 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         super.setResultSet(resultSet);
 
         // instructions the adapter
-        DisposerUtil.dispose(resultSetAdapter);
+        Disposer.dispose(resultSetAdapter);
         ConnectionHandler connectionHandler = getConnectionHandler();
         resultSetAdapter = DatabaseFeature.UPDATABLE_RESULT_SETS.isSupported(connectionHandler) ?
                     new EditableResultSetAdapter(this, resultSet) :
                     new ReadonlyResultSetAdapter(this, resultSet);
-        Disposer.register(DatasetEditorModel.this, resultSetAdapter);
+        com.intellij.openapi.util.Disposer.register(DatasetEditorModel.this, resultSetAdapter);
     }
 
     @NotNull

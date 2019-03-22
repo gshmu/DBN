@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -29,7 +30,6 @@ import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -136,16 +136,14 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                         contentType.isData() ? new DBDatasetVirtualFile(this, contentType) : null;
                 if (virtualFile != null) {
                     contentFiles.add(virtualFile);
-                    Disposer.register(this, virtualFile);
                 }
             }
         } else {
             DBContentVirtualFile virtualFile =
                     objectContentType.isCode() ? new DBSourceCodeVirtualFile(this, objectContentType) :
-                            objectContentType.isData() ? new DBDatasetVirtualFile(this, objectContentType) : null;
+                    objectContentType.isData() ? new DBDatasetVirtualFile(this, objectContentType) : null;
             if (virtualFile != null) {
                 contentFiles.add(virtualFile);
-                Disposer.register(this, virtualFile);
             }
         }
         return contentFiles;
@@ -266,6 +264,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
     @Override
     public void disposeInner() {
+        Disposer.dispose(contentFiles.value());
         contentFiles.set(EMPTY_CONTENT_FILES);
         super.disposeInner();
     }

@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -857,15 +857,6 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     /*********************************************************
     *               DynamicContentElement                    *
     *********************************************************/
-    @Override
-    public void disposeInner() {
-        DisposerUtil.dispose(childObjects);
-        DisposerUtil.dispose(childObjectRelations);
-        CollectionUtil.clear(visibleTreeChildren);
-        CollectionUtil.clear(allPossibleTreeChildren);
-        super.disposeInner();
-        nullify();
-    }
 
     @Override
     public String getDescription() {
@@ -898,5 +889,14 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     @Override
     public boolean canNavigateToSource() {
         return false;
+    }
+
+    @Override
+    public void disposeInner() {
+        Disposer.dispose(childObjects);
+        Disposer.dispose(childObjectRelations);
+        Disposer.nullify(this);
+        super.disposeInner();
+
     }
 }

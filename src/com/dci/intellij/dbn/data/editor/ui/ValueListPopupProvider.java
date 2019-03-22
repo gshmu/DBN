@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -20,7 +20,6 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -177,7 +176,7 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
     public void hidePopup() {
         if (popup != null) {
             if (popup.isVisible()) popup.cancel();
-            Disposer.dispose(popup);
+            com.intellij.openapi.util.Disposer.dispose(popup);
         }
     }
 
@@ -208,7 +207,7 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
 
     @Override
     public void dispose() {
-        DisposerUtil.dispose(popup);
+        Disposer.dispose(popup);
     }
 
     private class ValueSelectAction extends AnAction {

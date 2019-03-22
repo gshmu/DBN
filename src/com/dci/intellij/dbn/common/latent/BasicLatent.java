@@ -50,6 +50,11 @@ abstract class BasicLatent<T> implements Latent<T> {
         loaded = true;
     }
 
+    @Override
+    public T value() {
+        return value;
+    }
+
     public void reset() {
         value = null;
         loaded = false;

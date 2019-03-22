@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.ui;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
@@ -71,8 +72,8 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
 
     @Override
     public void disposeInner() {
+        Disposer.dispose(getComponent());
+        Disposer.nullify(true);
         super.disposeInner();
-        GUIUtil.dispose(getComponent());
-        nullify();
     }
 }

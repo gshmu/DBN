@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.dialog.DialogWithTimeout;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -29,7 +29,7 @@ public class IdleConnectionDialog extends DialogWithTimeout {
         this.connectionHandlerRef = connectionHandler.getRef();
         this.connection = connection;
         idleConnectionDialogForm = new IdleConnectionDialogForm(connectionHandler, connection, 5);
-        DisposerUtil.register(this, idleConnectionDialogForm);
+        Disposer.register(this, idleConnectionDialogForm);
         setModal(false);
         init();
     }

@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.execution.logging.ui;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -14,7 +16,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.Constraints;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -55,12 +56,7 @@ public class DatabaseLoggingResultForm extends DBNFormImpl implements ExecutionR
         }
 
 
-        Disposer.register(this, console);
         ActionUtil.registerDataProvider(mainPanel, loggingResult);
-    }
-
-    public DatabaseLoggingResult getLoggingResult() {
-        return loggingResult;
     }
 
     public DatabaseLoggingResultConsole getConsole() {
@@ -74,10 +70,18 @@ public class DatabaseLoggingResultForm extends DBNFormImpl implements ExecutionR
     }
 
     @Override
-    public void setExecutionResult(DatabaseLoggingResult executionResult) {}
+    public void setExecutionResult(@NotNull DatabaseLoggingResult executionResult) {}
 
+    @NotNull
     @Override
     public DatabaseLoggingResult getExecutionResult() {
-        return loggingResult;
+        return Failsafe.ensure(loggingResult);
+    }
+
+    @Override
+    public void disposeInner() {
+        Disposer.dispose(console);
+        Disposer.dispose(loggingResult);
+        super.disposeInner();
     }
 }

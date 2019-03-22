@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.browser.ui;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
@@ -98,7 +98,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
                 mainPanel.add(this.connectionTabs, BorderLayout.CENTER);
             }
         }
-        DisposerUtil.dispose(oldConnectionTabs);
+        Disposer.dispose(oldConnectionTabs);
     }
 
     @Nullable
@@ -162,7 +162,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
 
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(connectionTabs);
+        Disposer.dispose(connectionTabs);
         super.disposeInner();
     }
 

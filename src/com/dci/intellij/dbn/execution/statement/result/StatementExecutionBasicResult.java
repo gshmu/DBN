@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.statement.result;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -17,7 +18,6 @@ import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -213,7 +213,7 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
      ********************************************************/
     @Override
     public void disposeInner() {
+        Disposer.nullify(this);
         super.disposeInner();
-        nullify();
     }
 }

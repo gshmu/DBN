@@ -13,7 +13,7 @@ public class EnvironmentTypeBundle implements Iterable<EnvironmentType>, Cloneab
     private List<EnvironmentType> environmentTypes = new ArrayList<>();
     public static EnvironmentTypeBundle DEFAULT = new EnvironmentTypeBundle();
 
-    public EnvironmentTypeBundle() {
+    private EnvironmentTypeBundle() {
         List<EnvironmentType> environmentTypes = Arrays.asList(
                 EnvironmentType.DEVELOPMENT,
                 EnvironmentType.INTEGRATION,

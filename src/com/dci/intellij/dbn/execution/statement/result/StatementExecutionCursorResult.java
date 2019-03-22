@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.result;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -154,10 +154,8 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
 
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(resultPanel);
-        DisposerUtil.disposeInBackground(dataModel);
+        Disposer.disposeInBackground(resultPanel, dataModel);
         super.disposeInner();
-        nullify();
     }
 
 

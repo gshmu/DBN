@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.browser.model;
 
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.LoadInProgressIcon;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -181,8 +182,8 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
 
     @Override
     public void disposeInner() {
+        Disposer.nullify(this);
         super.disposeInner();
-        nullify();
     }
 
     public class List extends ArrayList<BrowserTreeNode> implements Disposable {

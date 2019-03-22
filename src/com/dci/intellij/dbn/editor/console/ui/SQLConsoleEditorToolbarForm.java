@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.console.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -40,7 +40,7 @@ public class SQLConsoleEditorToolbarForm extends DBNFormImpl {
 
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(autoCommitLabel);
+        Disposer.dispose(autoCommitLabel);
         super.disposeInner();
     }
 }

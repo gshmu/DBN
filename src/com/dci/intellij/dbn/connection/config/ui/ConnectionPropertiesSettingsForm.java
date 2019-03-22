@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.properties.ui.PropertiesEditorForm;
@@ -79,7 +79,7 @@ public class ConnectionPropertiesSettingsForm extends ConfigurationEditorForm<Co
 
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(propertiesEditorForm);
+        Disposer.dispose(propertiesEditorForm);
         super.disposeInner();
     }
 }

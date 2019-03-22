@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -82,8 +83,8 @@ public class ResourceMonitorTransactionsTableModel extends DisposableBase implem
      ********************************************************/
     @Override
     public void disposeInner() {
+        Disposer.nullify(this);
         super.disposeInner();
-        nullify();
     }
 
 }

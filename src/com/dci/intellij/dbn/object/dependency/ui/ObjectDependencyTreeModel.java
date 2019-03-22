@@ -3,14 +3,15 @@ package com.dci.intellij.dbn.object.dependency.ui;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
@@ -31,8 +32,6 @@ public class ObjectDependencyTreeModel extends DisposableBase implements TreeMod
         this.objectRef = DBObjectRef.from(object);
         this.root = new ObjectDependencyTreeNode(this, object);
         this.dependencyType = dependencyType;
-
-        Disposer.register(this, root);
     }
 
     public DBSchemaObject getObject() {
@@ -47,6 +46,7 @@ public class ObjectDependencyTreeModel extends DisposableBase implements TreeMod
         return tree;
     }
 
+    @Nullable
     public Project getProject() {
         return tree.getProject();
     }
@@ -105,8 +105,9 @@ public class ObjectDependencyTreeModel extends DisposableBase implements TreeMod
 
     @Override
     public void disposeInner() {
+        Disposer.dispose(root);
+        Disposer.nullify(this);
         super.disposeInner();
-        nullify();
     }
 
     void refreshLoadInProgressNode(ObjectDependencyTreeNode node) {

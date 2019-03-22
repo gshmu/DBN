@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.BrowserDisplayMode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.browser.options.listener.DisplayModeSettingsListener;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -19,7 +19,6 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.properties.ui.ObjectPropertiesForm;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -74,8 +73,8 @@ public class BrowserToolWindowForm extends DBNFormImpl {
 
         browserPanel.add(this.browserForm.getComponent(), BorderLayout.CENTER);
         GUIUtil.repaint(browserPanel);
-        Disposer.register(this, this.browserForm);
-        DisposerUtil.disposeInBackground(oldBrowserForm);
+        com.intellij.openapi.util.Disposer.register(this, this.browserForm);
+        Disposer.disposeInBackground(oldBrowserForm);
     }
 
     public DatabaseBrowserTree getBrowserTree(ConnectionHandler connectionHandler) {

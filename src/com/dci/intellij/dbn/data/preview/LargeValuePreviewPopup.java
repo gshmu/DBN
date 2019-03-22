@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.data.preview;
 
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.table.TableUtil;
@@ -255,7 +255,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
             LargeObjectValue largeObjectValue = (LargeObjectValue) userValue;
             largeObjectValue.release();
         }
-        DisposerUtil.dispose(popup);
+        Disposer.dispose(popup);
         super.disposeInner();
     }
 

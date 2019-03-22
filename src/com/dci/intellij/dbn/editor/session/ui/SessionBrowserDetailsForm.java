@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.session.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
@@ -10,7 +11,6 @@ import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.details.SessionDetailsTable;
 import com.dci.intellij.dbn.editor.session.details.SessionDetailsTableModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBSplitter;
 import com.intellij.ui.components.JBScrollPane;

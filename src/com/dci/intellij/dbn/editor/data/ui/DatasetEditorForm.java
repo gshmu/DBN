@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -27,7 +27,6 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -88,8 +87,8 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
             ActionUtil.registerDataProvider(mainPanel, datasetEditor);
 
-            Disposer.register(this, autoCommitLabel);
-            Disposer.register(this, datasetEditorTable);
+            com.intellij.openapi.util.Disposer.register(this, autoCommitLabel);
+            com.intellij.openapi.util.Disposer.register(this, datasetEditorTable);
         } catch (SQLException e) {
             MessageUtil.showErrorDialog(
                     getProject(),
@@ -107,7 +106,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         DatasetEditorTable oldEditorTable = getEditorTable();
         DatasetEditor datasetEditor = getDatasetEditor();
         datasetEditorTable = new DatasetEditorTable(datasetEditor);
-        Disposer.register(this, datasetEditorTable);
+        com.intellij.openapi.util.Disposer.register(this, datasetEditorTable);
 
 
         DataGridSettings dataGridSettings = DataGridSettings.getInstance(getProject());
@@ -138,7 +137,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
                 datasetEditorTable.initTableGutter();
                 datasetEditorTable.updateBackground(false);
 
-                DisposerUtil.disposeInBackground(oldEditorTable);
+                Disposer.disposeInBackground(oldEditorTable);
             });
         }
     }

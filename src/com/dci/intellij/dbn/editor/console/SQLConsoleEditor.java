@@ -8,7 +8,7 @@ import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 
 public class SQLConsoleEditor extends BasicTextEditorImpl<DBConsoleVirtualFile> implements TextEditor {
-    public SQLConsoleEditor(Project project, DBConsoleVirtualFile sqlConsoleFile, String name, EditorProviderId editorProviderId) {
+    SQLConsoleEditor(Project project, DBConsoleVirtualFile sqlConsoleFile, String name, EditorProviderId editorProviderId) {
         super(project, sqlConsoleFile, name, editorProviderId);
     }
 

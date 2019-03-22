@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -179,7 +179,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
                 false,
                 false,
                 () -> {
-                    DisposerUtil.dispose(popup);
+                    Disposer.dispose(popup);
                     popup = null;
 
                     innerPanel.setBorder(defaultBorder);

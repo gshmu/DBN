@@ -1,12 +1,14 @@
 package com.dci.intellij.dbn.browser.ui;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.intellij.openapi.Disposable;
 import com.intellij.ui.SpeedSearchBase;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.TreeModelEvent;
@@ -19,7 +21,7 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
     private static final Object[] EMPTY_ARRAY = new Object[0];
     private Object[] elements = null;
 
-    public DatabaseBrowserTreeSpeedSearch(DatabaseBrowserTree tree) {
+    DatabaseBrowserTreeSpeedSearch(DatabaseBrowserTree tree) {
         super(tree);
         getComponent().getModel().addTreeModelListener(treeModelListener);
     }
@@ -46,10 +48,11 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
         return null;
     }
 
+    @NotNull
     @Override
     protected Object[] getAllElements() {
         if (elements == null) {
-            List<BrowserTreeNode> nodes = new ArrayList<BrowserTreeNode>();
+            List<BrowserTreeNode> nodes = new ArrayList<>();
             BrowserTreeNode root = getComponent().getModel().getRoot();
             loadElements(nodes, root);
             this.elements = nodes.toArray();
@@ -100,7 +103,7 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
 */
     }
 
-    TreeModelListener treeModelListener = new TreeModelListener() {
+    private TreeModelListener treeModelListener = new TreeModelListener() {
 
         @Override
         public void treeNodesChanged(TreeModelEvent e) {
@@ -126,7 +129,7 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
     @Override
     public void dispose() {
         getComponent().getModel().removeTreeModelListener(treeModelListener);
+        Disposer.nullify(this);
         elements = EMPTY_ARRAY;
-        treeModelListener = null;
     }
 }

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,7 +56,7 @@ public class DBNTableGutterModel<T extends DBNTableWithGutterModel> extends Disp
      ********************************************************/
     @Override
     public void disposeInner() {
+        Disposer.nullify(this);
         super.disposeInner();
-        nullify();
     }
 }

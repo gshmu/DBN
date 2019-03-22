@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -18,7 +19,6 @@ import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;

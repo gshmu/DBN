@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -80,7 +80,7 @@ public class DatasetEditorErrorForm extends DBNFormImpl implements ChangeListene
 
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(popup);
+        Disposer.dispose(popup);
         super.disposeInner();
     }
 }

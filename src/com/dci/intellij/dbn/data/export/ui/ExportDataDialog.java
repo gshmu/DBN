@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.export.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
@@ -37,7 +37,7 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
         this.table = table;
         this.connectionHandlerRef = connectionHandler.getRef();
         this.sourceObjectRef = DBObjectRef.from(sourceObject);
-        DisposerUtil.register(this, table);
+        Disposer.register(this, table);
         init();
     }
 

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,8 +44,8 @@ public abstract class DBNContentWithHeaderForm<T extends DBNDialog> extends DBNF
 
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(headerForm);
-        DisposerUtil.dispose(contentForm);
+        Disposer.dispose(headerForm);
+        Disposer.dispose(contentForm);
         super.disposeInner();
     }
 }

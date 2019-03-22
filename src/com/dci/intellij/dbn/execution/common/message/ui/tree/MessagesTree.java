@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
@@ -35,7 +36,6 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
 
@@ -51,11 +51,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class MessagesTree extends DBNTree implements Disposable {
-    private Project project;
     private boolean ignoreSelectionEvent = false;
     public MessagesTree(Project project) {
-        super(new MessagesTreeModel());
-        this.project = project;
+        super(project, new MessagesTreeModel());
         setCellRenderer(new MessagesTreeCellRenderer());
         addTreeSelectionListener(treeSelectionListener);
         addMouseListener(mouseListener);
@@ -184,7 +182,7 @@ public class MessagesTree extends DBNTree implements Disposable {
                 EditorProviderId editorProviderId = executionProcessor.getEditorProviderId();
                 VirtualFile virtualFile = executionProcessor.getVirtualFile();
                 FileEditor fileEditor = executionProcessor.getFileEditor();
-                fileEditor = EditorUtil.selectEditor(project, fileEditor, virtualFile, editorProviderId, instruction);
+                fileEditor = EditorUtil.selectEditor(getProject(), fileEditor, virtualFile, editorProviderId, instruction);
                 if (fileEditor != null) {
                     ExecutablePsiElement cachedExecutable = executionProcessor.getCachedExecutable();
                     if (cachedExecutable != null) {
@@ -237,7 +235,7 @@ public class MessagesTree extends DBNTree implements Disposable {
         CompilerAction compilerAction = compilerMessage.getCompilerResult().getCompilerAction();
         FileEditor fileEditor = compilerAction.getFileEditor();
         EditorProviderId editorProviderId = compilerAction.getEditorProviderId();
-        fileEditor = EditorUtil.selectEditor(project, fileEditor, virtualFile, editorProviderId, instruction);
+        fileEditor = EditorUtil.selectEditor(getProject(), fileEditor, virtualFile, editorProviderId, instruction);
 
         navigateInFileEditor(fileEditor, compilerMessage, instruction);
     }
@@ -282,6 +280,7 @@ public class MessagesTree extends DBNTree implements Disposable {
                         case CODE_BODY: editorProviderId = EditorProviderId.CODE_BODY; break;
                     }
                 }
+                Project project = getProject();
                 objectFileEditor = EditorUtil.selectEditor(project, objectFileEditor, databaseFile, editorProviderId, instruction);
 
                 if (objectFileEditor instanceof SourceCodeEditor) {
@@ -332,7 +331,7 @@ public class MessagesTree extends DBNTree implements Disposable {
 
 
     private FileEditorManager getFileEditorManager() {
-        return FileEditorManager.getInstance(project);
+        return FileEditorManager.getInstance(getProject());
     }
 
     /*********************************************************
@@ -379,9 +378,4 @@ public class MessagesTree extends DBNTree implements Disposable {
         }
     };
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        project = null;
-    }
 }

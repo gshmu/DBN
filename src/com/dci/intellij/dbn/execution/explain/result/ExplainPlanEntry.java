@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.explain.result;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -162,8 +162,8 @@ public class ExplainPlanEntry extends DisposableBase {
 
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(children);
+        Disposer.dispose(children);
+        Disposer.nullify(this);
         super.disposeInner();
-        nullify();
     }
 }

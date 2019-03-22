@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.statement;
 
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -99,7 +100,7 @@ public final class StatementExecutionQueue extends DisposableBase{
 
     @Override
     public void disposeInner() {
+        Disposer.nullify(this);
         super.disposeInner();
-        nullify();
     }
 }

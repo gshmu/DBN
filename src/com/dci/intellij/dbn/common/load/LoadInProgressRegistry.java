@@ -2,8 +2,9 @@ package com.dci.intellij.dbn.common.load;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 
 import java.util.List;
@@ -13,8 +14,8 @@ import java.util.TimerTask;
 public abstract class LoadInProgressRegistry<T extends Disposable> extends DisposableBase implements Disposable{
     private final List<T> nodes = CollectionUtil.createConcurrentList();
 
-    private LoadInProgressRegistry(Disposable parentDisposable) {
-        DisposerUtil.register(parentDisposable, this);
+    private LoadInProgressRegistry(RegisteredDisposable parentDisposable) {
+        Disposer.register(parentDisposable, this);
     }
 
     public void register(T node) {
@@ -52,7 +53,7 @@ public abstract class LoadInProgressRegistry<T extends Disposable> extends Dispo
 
     protected abstract void notify(T node);
 
-    public static <T extends Disposable> LoadInProgressRegistry<T> create(Disposable parentDisposable, Notifier<T> notifier) {
+    public static <T extends Disposable> LoadInProgressRegistry<T> create(RegisteredDisposable parentDisposable, Notifier<T> notifier) {
         return new LoadInProgressRegistry<T>(parentDisposable) {
             @Override
             protected void notify(T node) {
@@ -68,7 +69,7 @@ public abstract class LoadInProgressRegistry<T extends Disposable> extends Dispo
 
     @Override
     public void disposeInner() {
+        Disposer.nullify(this);
         super.disposeInner();
-        nullify();
     }
 }
