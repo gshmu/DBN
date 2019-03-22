@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.script;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.ExecutionContext;
@@ -85,7 +86,7 @@ public class ScriptExecutionInput extends RemoteExecutionInput {
 
     @Override
     public void disposeInner() {
+        Disposer.nullify(this);
         super.disposeInner();
-        nullify();
     }
 }

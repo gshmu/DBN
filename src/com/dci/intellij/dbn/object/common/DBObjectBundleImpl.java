@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MapLatent;
@@ -171,11 +171,6 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
         objectLists.compact();
         objectRelationLists.compact();
-
-        DisposerUtil.register(this, sqlLookupItemBuilders);
-        DisposerUtil.register(this, psqlLookupItemBuilders);
-        DisposerUtil.register(this, objectPsiFacades);
-        DisposerUtil.register(this, virtualFiles);
 
         Project project = connectionHandler.getProject();
         EventUtil.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
@@ -771,10 +766,15 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     public void disposeInner() {
-        DisposerUtil.disposeInBackground(objectLists);
-        DisposerUtil.disposeInBackground(objectRelationLists);
+        Disposer.disposeInBackground(
+                objectLists,
+                objectRelationLists,
+                sqlLookupItemBuilders,
+                psqlLookupItemBuilders,
+                objectPsiFacades,
+                virtualFiles);
+        Disposer.nullify(this);
         super.disposeInner();
-        nullify();
     }
 
     /*********************************************************

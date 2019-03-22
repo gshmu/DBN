@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -206,14 +206,14 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
             List<PsiFile> cachedPsiFiles = cachedViewProvider.getCachedPsiFiles();
             for (PsiFile cachedPsiFile: cachedPsiFiles) {
                 if (cachedPsiFile instanceof DBLanguagePsiFile) {
-                    DisposerUtil.dispose((DBLanguagePsiFile) cachedPsiFile);
+                    Disposer.dispose((DBLanguagePsiFile) cachedPsiFile);
                 }
             }
 
             setCachedViewProvider(null);
         }
         putUserData(FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY, null);
-        DisposerUtil.nullify(this);
+        Disposer.nullify(this);
     }
 
     @Override

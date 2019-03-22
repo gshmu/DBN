@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoadException;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -297,7 +296,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
             notifyChangeListeners();
         }
         if (is(MASTER)) {
-            DisposerUtil.disposeInBackground(oldElements);
+            Disposer.disposeInBackground(oldElements);
         }
     }
 
@@ -378,7 +377,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     public void disposeInner() {
         if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
             if (!dependencyAdapter.isSubContent()) {
-                DisposerUtil.dispose(elements);
+                Disposer.dispose(elements);
             }
             elements = EMPTY_DISPOSED_CONTENT;
         }

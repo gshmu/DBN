@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -299,7 +299,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
             ResourceMonitorSessionsTableModel oldTableModel = sessionsTableModel;
             sessionsTableModel = new ResourceMonitorSessionsTableModel(connectionHandler);
             sessionsTable.setModel(sessionsTableModel);
-            DisposerUtil.dispose(oldTableModel);
+            Disposer.dispose(oldTableModel);
         });
     }
 
@@ -316,7 +316,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
             rollbackButton.setEnabled(transactional);
             DatabaseSession session = getSelectedSession();
             openTransactionsLabel.setText(session == null ? "Open Transactions" : "Open Transactions (" + session.getName() + ")");
-            DisposerUtil.dispose(oldTableModel);
+            Disposer.dispose(oldTableModel);
         });
     }
 
@@ -342,10 +342,10 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
 
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(sessionsTable);
-        DisposerUtil.dispose(sessionsTableModel);
-        DisposerUtil.dispose(transactionsTable);
-        DisposerUtil.dispose(transactionsTableModel);
+        Disposer.dispose(sessionsTable);
+        Disposer.dispose(sessionsTableModel);
+        Disposer.dispose(transactionsTable);
+        Disposer.dispose(transactionsTableModel);
         super.disposeInner();
     }
 }

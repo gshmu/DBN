@@ -2,12 +2,12 @@ package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.TreeModelListener;
@@ -24,7 +24,7 @@ public class MessagesTreeModel extends DisposableBase implements TreeModel, Disp
     private MessagesTreeRootNode rootNode = new MessagesTreeRootNode(this);
 
     MessagesTreeModel() {
-        Disposer.register(this, rootNode);
+
     }
 
     TreePath addExecutionMessage(StatementExecutionMessage executionMessage) {
@@ -60,6 +60,7 @@ public class MessagesTreeModel extends DisposableBase implements TreeModel, Disp
 
     @Override
     public void disposeInner() {
+        Disposer.dispose(rootNode);
         treeModelListeners.clear();
         rootNode = new MessagesTreeRootNode(this);
     }

@@ -24,17 +24,22 @@ import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.util.List;
 
-public class ArgumentValuesTree extends DBNTree{
+class ArgumentValuesTree extends DBNTree{
     private MethodExecutionResultForm parentForm;
 
-    public ArgumentValuesTree(MethodExecutionResultForm parentForm, List<ArgumentValue> inputArgumentValues, List<ArgumentValue> outputArgumentValues) {
-        super(new ArgumentValuesTreeModel(parentForm.getMethod(), inputArgumentValues, outputArgumentValues));
+    ArgumentValuesTree(MethodExecutionResultForm parentForm, List<ArgumentValue> inputArgumentValues, List<ArgumentValue> outputArgumentValues) {
+        super(parentForm.getProject(), createModel(parentForm, inputArgumentValues, outputArgumentValues));
         this.parentForm = parentForm;
         setCellRenderer(new CellRenderer());
         Color bgColor = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA).getBgColor();
         setBackground(bgColor == null ? UIUtil.getTableBackground() : bgColor);
 
         addMouseListener(mouseAdapter);
+    }
+
+    @NotNull
+    private static ArgumentValuesTreeModel createModel(MethodExecutionResultForm parentForm, List<ArgumentValue> inputArgumentValues, List<ArgumentValue> outputArgumentValues) {
+        return new ArgumentValuesTreeModel(parentForm.getMethod(), inputArgumentValues, outputArgumentValues);
     }
 
     private final MouseAdapter mouseAdapter = new MouseAdapter() {

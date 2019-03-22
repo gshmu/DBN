@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -25,7 +25,6 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBSplitter;
 import org.jetbrains.annotations.NotNull;
@@ -96,7 +95,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
         MethodExecutionHistory executionHistory = getExecutionHistory();
         boolean group = executionHistory.isGroupEntries();
         executionInputsTree = new MethodExecutionHistoryTree(getParentComponent(), group, debug);
-        Disposer.register(this, (Disposable) executionInputsTree);
+        com.intellij.openapi.util.Disposer.register(this, (Disposable) executionInputsTree);
     }
 
     public MethodExecutionHistoryTree getTree() {
@@ -105,7 +104,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
 
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(methodExecutionForms);
+        Disposer.dispose(methodExecutionForms);
         super.disposeInner();
     }
 

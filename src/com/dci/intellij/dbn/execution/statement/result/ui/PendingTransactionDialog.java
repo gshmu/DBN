@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.result.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.dialog.DialogWithTimeout;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionUtil;
@@ -28,7 +28,7 @@ public class PendingTransactionDialog extends DialogWithTimeout {
         commitAction = new CommitAction();
         rollbackAction = new RollbackAction();
         transactionForm = new PendingTransactionDialogForm(this, executionProcessor);
-        DisposerUtil.register(this, transactionForm);
+        Disposer.register(this, transactionForm);
         setModal(false);
         init();
     }

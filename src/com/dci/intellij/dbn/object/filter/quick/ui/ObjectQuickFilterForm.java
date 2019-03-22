@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.filter.quick.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -19,7 +19,6 @@ import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterCondition;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
@@ -106,7 +105,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
             if (conditionForm.getCondition() == condition) {
                 conditionForms.remove(conditionForm);
                 conditionsPanel.remove(conditionForm.getComponent());
-                Disposer.dispose(conditionForm);
+                com.intellij.openapi.util.Disposer.dispose(conditionForm);
 
                 break;
             }
@@ -156,7 +155,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
 
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(conditionForms);
+        Disposer.dispose(conditionForms);
         super.disposeInner();
     }
 }

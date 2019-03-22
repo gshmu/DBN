@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -66,7 +66,7 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
 
         }
         EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
-        DisposerUtil.register(this, changesTable);
+        Disposer.register(this, changesTable);
     }
 
     public ConnectionHandler getConnectionHandler() {
@@ -104,7 +104,7 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
             changesTable.setModel(tableModel);
             commitButton.setEnabled(false);
             rollbackButton.setEnabled(false);
-            DisposerUtil.dispose(oldTableModel);
+            Disposer.dispose(oldTableModel);
         });
     }
 }

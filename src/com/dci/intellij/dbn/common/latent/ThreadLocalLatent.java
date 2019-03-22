@@ -31,4 +31,9 @@ abstract class ThreadLocalLatent<T> implements Latent<T>{
         }
         return value;
     }
+
+    @Override
+    public T value() {
+        return value.get();
+    }
 }

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.statement;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -137,7 +137,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
 
     public void setExecutionVariables(StatementExecutionVariablesBundle executionVariables) {
         if (this.executionVariables != null) {
-            DisposerUtil.dispose(this.executionVariables);
+            Disposer.dispose(this.executionVariables);
         }
         this.executionVariables = executionVariables;
     }
@@ -204,8 +204,8 @@ public class StatementExecutionInput extends LocalExecutionInput {
 
     @Override
     public void disposeInner() {
+        Disposer.nullify(this);
         super.disposeInner();
-        nullify();
     }
 
     public String getStatementDescription() {

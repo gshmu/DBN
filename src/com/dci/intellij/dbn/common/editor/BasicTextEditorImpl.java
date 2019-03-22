@@ -2,9 +2,11 @@ package com.dci.intellij.dbn.common.editor;
 
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
+import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.EditorProviderId;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.openapi.editor.Editor;
@@ -24,9 +26,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.beans.PropertyChangeListener;
 
-public abstract class BasicTextEditorImpl<T extends VirtualFile> extends DisposableBase implements BasicTextEditor<T>{
+public abstract class BasicTextEditorImpl<T extends VirtualFile> extends DisposableBase implements BasicTextEditor<T>, RegisteredDisposable {
     protected TextEditor textEditor;
-    private T virtualFile;
+    private WeakRef<T> virtualFileRef;
     private String name;
     private EditorProviderId editorProviderId;
     private BasicTextEditorState cachedState;
@@ -35,7 +37,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
     public BasicTextEditorImpl(Project project, T virtualFile, String name, EditorProviderId editorProviderId) {
         this.projectRef = ProjectRef.from(project);
         this.name = name;
-        this.virtualFile = virtualFile;
+        this.virtualFileRef = WeakRef.from(virtualFile);
         this.editorProviderId = editorProviderId;
 
         TextEditorProvider textEditorProvider = TextEditorProvider.getInstance();
@@ -45,7 +47,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
     @Override
     @NotNull
     public T getVirtualFile() {
-        return Failsafe.get(virtualFile);
+        return virtualFileRef.ensure();
     }
 
     @Override
@@ -163,7 +165,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
 
     @NotNull
     public TextEditor getTextEditor() {
-        return Failsafe.get(textEditor);
+        return textEditor;
     }
 
     @NotNull
@@ -179,13 +181,14 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
 
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(textEditor);
+        EditorUtil.releaseEditor(textEditor.getEditor());
+        Disposer.dispose(textEditor);
         super.disposeInner();
-        nullify();
     }
 
     @Override
     public String toString() {
+        T virtualFile = virtualFileRef.get();
         return virtualFile == null ? super.toString() : virtualFile.getPath();
     }
 }

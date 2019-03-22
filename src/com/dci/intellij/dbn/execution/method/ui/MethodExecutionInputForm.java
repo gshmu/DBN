@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -177,7 +177,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
 
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(argumentForms);
+        Disposer.dispose(argumentForms);
         super.disposeInner();
     }
 }

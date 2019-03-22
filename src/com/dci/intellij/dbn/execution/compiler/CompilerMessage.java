@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.compiler;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
@@ -7,7 +8,6 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
@@ -27,16 +27,12 @@ public class CompilerMessage extends ConsoleMessage implements Comparable<Compil
         super(type, text);
         this.compilerResult = compilerResult;
         this.contentType = contentType;
-
-        Disposer.register(this, compilerResult);
     }
 
     public CompilerMessage(CompilerResult compilerResult, DBContentType contentType, String text) {
         super(MessageType.INFO, text);
         this.compilerResult = compilerResult;
         this.contentType = contentType;
-
-        Disposer.register(this, compilerResult);
     }
 
     public CompilerMessage(CompilerResult compilerResult, ResultSet resultSet) throws SQLException {
@@ -63,8 +59,6 @@ public class CompilerMessage extends ConsoleMessage implements Comparable<Compil
 
         subjectIdentifier = extractIdentifier(text, '\'');
         if (subjectIdentifier == null) subjectIdentifier = extractIdentifier(text, '"');
-
-        Disposer.register(this, compilerResult);
     }
 
     public String getSubjectIdentifier() {
@@ -158,5 +152,11 @@ public class CompilerMessage extends ConsoleMessage implements Comparable<Compil
             return line - that.line;
         }
         return that.getType().compareTo(this.getType());
+    }
+
+    @Override
+    public void disposeInner() {
+        Disposer.dispose(compilerResult);
+        super.disposeInner();
     }
 }

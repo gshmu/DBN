@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.common.ui.tab;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.util.ActionCallback;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBEditorTabs;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +50,7 @@ public class TabbedPane extends JBEditorTabs implements com.dci.intellij.dbn.com
         Object object = info.getObject();
         if (object instanceof Disposable) {
             Disposable disposable = (Disposable) object;
-            Disposer.register(this, disposable);
+            com.intellij.openapi.util.Disposer.register(this, disposable);
         }
     }
 
@@ -61,8 +60,8 @@ public class TabbedPane extends JBEditorTabs implements com.dci.intellij.dbn.com
         Object object = tabInfo.getObject();
         ActionCallback actionCallback = super.removeTab(tabInfo);
         if (object instanceof Disposable) {
-            final Disposable disposable = (Disposable) object;
-            DisposerUtil.disposeInBackground(disposable);
+            Disposable disposable = (Disposable) object;
+            Disposer.dispose(disposable);
             tabInfo.setObject(null);
         }
         return actionCallback;

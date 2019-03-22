@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.message.MessageCallback;
@@ -43,7 +43,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
@@ -88,7 +87,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     private ConnectionManager(Project project) {
         super(project);
         connectionBundle = new ConnectionBundle(project);
-        Disposer.register(this, connectionBundle);
+        com.intellij.openapi.util.Disposer.register(this, connectionBundle);
     }
 
     @Override
@@ -107,7 +106,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             idleConnectionCleaner.purge();
         }
         ConnectionBundle connectionBundle = getConnectionBundle();
-        Disposer.dispose(connectionBundle);
+        com.intellij.openapi.util.Disposer.dispose(connectionBundle);
         super.disposeInner();
     }
 
@@ -515,7 +514,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 Background.run(() -> {
                     connectionHandlers.forEach(connectionHandler -> {
                         connectionHandler.getConnectionPool().closeConnections();
-                        DisposerUtil.dispose(connectionHandler);
+                        Disposer.dispose(connectionHandler);
                     });
                 });
             });

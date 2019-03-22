@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.object.common.list;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectRelationType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -68,8 +69,8 @@ public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObjec
 
     @Override
     public void disposeInner() {
+        Disposer.nullify(this);
         super.disposeInner();
-        nullify();
     }
 
     @Override

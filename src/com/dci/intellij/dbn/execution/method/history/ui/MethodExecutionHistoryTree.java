@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.tree.TreeUtil;
@@ -14,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeSelectionModel;
 import java.util.Collections;
 import java.util.List;
@@ -24,9 +24,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     private boolean debug;
 
     MethodExecutionHistoryTree(MethodExecutionHistoryDialog dialog, boolean grouped, boolean debug) {
-        super(grouped ?
-                new MethodExecutionHistoryGroupedTreeModel(Collections.emptyList(), debug) :
-                new MethodExecutionHistorySimpleTreeModel(Collections.emptyList(), debug));
+        super(dialog.getProject(), createTreeModel(grouped, debug));
         this.dialog = dialog;
         this.grouped = grouped;
         this.debug = debug;
@@ -37,8 +35,11 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
         getModel().addTreeModelListener(treeModelListener);
     }
 
-    public Project getProject() {
-        return dialog.getProject();
+    @NotNull
+    private static TreeModel createTreeModel(boolean grouped, boolean debug) {
+        return grouped ?
+                new MethodExecutionHistoryGroupedTreeModel(Collections.emptyList(), debug) :
+                new MethodExecutionHistorySimpleTreeModel(Collections.emptyList(), debug);
     }
 
     @Override
@@ -77,12 +78,6 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
             return methodNode.getExecutionInput();
         }
         return null;
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        dialog = null;
     }
 
     private class TreeCellRenderer extends ColoredTreeCellRenderer {

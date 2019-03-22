@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -104,7 +104,7 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
 
     @Override
     public void disposeInner() {
-        DisposerUtil.dispose(filterDetailPanels);
+        Disposer.dispose(filterDetailPanels);
         super.disposeInner();
     }
 
@@ -134,7 +134,7 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
 
                     configurationEditorForm = filter.ensureSettingsEditor();
                     filterDetailPanels.put(id, configurationEditorForm);
-                    DisposerUtil.register(this, configurationEditorForm);
+                    Disposer.register(this, configurationEditorForm);
                 }
                 cardLayout.show(filterDetailsPanel, id);
                 configurationEditorForm.focus();

@@ -20,7 +20,6 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.ide.util.gotoByName.ChooseByNameModel;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import gnu.trove.THashSet;
@@ -120,7 +119,6 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
             ProgressMonitor.checkCancelled();
 
             ObjectNamesCollector collector = new ObjectNamesCollector(forceLoad);
-            Disposer.register(this, collector);
             scanObjectLists(collector);
 
             Set<String> bucket = collector.getBucket();
@@ -144,7 +142,6 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
             ProgressMonitor.checkCancelled();
 
             ObjectCollector collector = new ObjectCollector(name, forceLoad);
-            Disposer.register(Failsafe.get(this), collector);
             scanObjectLists(collector);
             return collector.getBucket() == null ? EMPTY_ARRAY : collector.getBucket().toArray();
         });

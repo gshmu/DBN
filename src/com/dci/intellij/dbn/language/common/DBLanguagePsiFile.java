@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -412,7 +412,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         if (!disposed) {
             disposed = true;
             disposeInner();
-            DisposerUtil.nullify(this);
+            Disposer.nullify(this);
         }
     }
 

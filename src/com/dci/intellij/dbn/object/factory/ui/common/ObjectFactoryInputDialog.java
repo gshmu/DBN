@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.object.factory.ui.common;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.object.factory.DatabaseObjectFactory;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
 public class ObjectFactoryInputDialog extends DBNDialog<ObjectFactoryInputForm> {

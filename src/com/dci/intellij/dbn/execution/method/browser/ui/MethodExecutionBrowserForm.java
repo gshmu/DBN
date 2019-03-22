@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.method.browser.ui;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -20,7 +21,6 @@ import com.dci.intellij.dbn.object.common.ui.ObjectTree;
 import com.dci.intellij.dbn.object.common.ui.ObjectTreeModel;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -34,8 +34,6 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
     private JPanel actionsPanel;
     private JPanel mainPanel;
     private DBNTree methodsTree;
-
-    private MethodBrowserSettings settings;
 
     MethodExecutionBrowserForm(MethodExecutionBrowserDialog parentComponent, ObjectTreeModel model, boolean debug) {
         super(parentComponent);
@@ -125,6 +123,6 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
     }
 
     private void createUIComponents() {
-        methodsTree = new ObjectTree();
+        methodsTree = new ObjectTree(getProject());
     }
 }

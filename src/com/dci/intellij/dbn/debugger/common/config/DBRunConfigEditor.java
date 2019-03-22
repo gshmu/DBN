@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.debugger.common.config;
 
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.debugger.common.config.ui.DBProgramRunConfigurationEditorForm;
 import com.dci.intellij.dbn.execution.ExecutionInput;
@@ -33,7 +33,7 @@ public abstract class DBRunConfigEditor<T extends DBRunConfig, F extends DBProgr
 
     @Override
     protected void disposeEditor() {
-        DisposerUtil.dispose(configurationEditorForm);
+        Disposer.dispose(configurationEditorForm);
         configurationEditorForm = null;
     }
 

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -14,7 +15,6 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,7 +30,7 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.EventObject;
 
-public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor implements TableCellEditor, Disposable {
+public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor implements TableCellEditor, RegisteredDisposable {
     private WeakRef<DataEditorComponent> editorComponent;
     private WeakRef<DatasetEditorTable> table;
     private WeakRef<DatasetEditorModelCell> cell;

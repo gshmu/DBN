@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.common.dispose;
 
-import com.intellij.openapi.util.Disposer;
-
 public abstract class DisposableBase implements Disposable{
     private boolean disposed;
 
@@ -10,7 +8,7 @@ public abstract class DisposableBase implements Disposable{
 
     public DisposableBase(Disposable parent) {
         if (parent != null) {
-            Disposer.register(parent, this);
+            com.intellij.openapi.util.Disposer.register(parent, this);
         }
     }
 
@@ -25,9 +23,5 @@ public abstract class DisposableBase implements Disposable{
             disposed = true;
             disposeInner();
         }
-    }
-
-    protected final void nullify() {
-        DisposerUtil.nullify(this);
     }
 }

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.variables.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposerUtil;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -209,7 +209,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
     @Override
     public void disposeInner() {
         variable.setPreviewValueProvider(null);
-        DisposerUtil.dispose(editorComponent);
+        Disposer.dispose(editorComponent);
         super.disposeInner();
     }
 

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
 import com.dci.intellij.dbn.common.Colors;
-import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.intellij.ui.RoundedLineBorder;
 import com.intellij.util.ui.JBUI;
 
@@ -10,7 +10,7 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import java.awt.*;
 
-public interface DataEditorComponent extends Disposable{
+public interface DataEditorComponent extends RegisteredDisposable {
     Border BUTTON_OUTSIDE_BORDER = JBUI.Borders.empty(1);
     Border BUTTON_INSIDE_BORDER = JBUI.Borders.empty(0, 8);
     RoundedLineBorder BUTTON_LINE_BORDER = new RoundedLineBorder(Colors.BUTTON_BORDER_COLOR, 4);
