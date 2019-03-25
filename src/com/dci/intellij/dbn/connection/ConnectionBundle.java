@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
@@ -28,6 +29,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Nullifiable
 public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTreeNode, RegisteredDisposable {
 
     private static final Filter<ConnectionHandler> ACTIVE_CONNECTIONS_FILTER =
@@ -197,12 +199,6 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
 
     public List<ConnectionHandler> getAllConnectionHandlers() {
         return connectionHandlers.getFullList();
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.nullify(this);
-        super.disposeInner();
     }
 
     /*********************************************************

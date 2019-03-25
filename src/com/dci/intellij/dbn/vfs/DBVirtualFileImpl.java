@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Nullifiable
 public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtualFile, Presentable, VirtualFilePathWrapper {
     private static AtomicInteger ID_STORE = new AtomicInteger(0);
     private int documentHashCode;
@@ -180,8 +182,20 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
 
     @Override
     public boolean isValid() {
-        return !isDisposed() && getProject() != null;
+        return !isDisposed();
     }
+
+    @Override
+    public void setCachedViewProvider(@Nullable DatabaseFileViewProvider viewProvider) {
+        putUserData(DatabaseFileViewProvider.CACHED_VIEW_PROVIDER, viewProvider);
+    }
+
+    @Override
+    @Nullable
+    public DatabaseFileViewProvider getCachedViewProvider() {
+        return getUserData(DatabaseFileViewProvider.CACHED_VIEW_PROVIDER);
+    }
+
 
     private boolean disposed;
 
@@ -191,11 +205,8 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     }
 
     @Override
-    public final void dispose() {
-        if (!disposed) {
-            disposed = true;
-            disposeInner();
-        }
+    public final void markDisposed() {
+        disposed = true;
     }
 
     @Override
@@ -213,17 +224,7 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
             setCachedViewProvider(null);
         }
         putUserData(FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY, null);
-        Disposer.nullify(this);
+        DBVirtualFile.super.disposeInner();
     }
 
-    @Override
-    public void setCachedViewProvider(@Nullable DatabaseFileViewProvider viewProvider) {
-        putUserData(DatabaseFileViewProvider.CACHED_VIEW_PROVIDER, viewProvider);
-    }
-
-    @Override
-    @Nullable
-    public DatabaseFileViewProvider getCachedViewProvider() {
-        return getUserData(DatabaseFileViewProvider.CACHED_VIEW_PROVIDER);
-    }
 }

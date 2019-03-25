@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
@@ -35,7 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class VirtualConnectionHandler implements ConnectionHandler {
+public class VirtualConnectionHandler extends DisposableBase implements ConnectionHandler {
     private ConnectionId id;
     private String name;
     private DatabaseType databaseType;
@@ -139,9 +140,6 @@ public class VirtualConnectionHandler implements ConnectionHandler {
 
     @Override public boolean isConnected() {return false;}
     @Override public boolean isConnected(SessionId sessionId) {return false;}
-    @Override public boolean isDisposed() {
-        return false;
-    }
 
     public Map<String, String> getProperties() {return properties;}
 
@@ -331,6 +329,4 @@ public class VirtualConnectionHandler implements ConnectionHandler {
     public StatementExecutionQueue getExecutionQueue(SessionId sessionId) {
         throw new UnsupportedOperationException();
     }
-
-    public void dispose() {}
 }

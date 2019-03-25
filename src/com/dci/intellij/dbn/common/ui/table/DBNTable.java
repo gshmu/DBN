@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
@@ -30,6 +31,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+@Nullifiable
 public class DBNTable<T extends DBNTableModel> extends JTable implements Disposable{
     private static final int MAX_COLUMN_WIDTH = 300;
     private static final int MIN_COLUMN_WIDTH = 10;
@@ -82,8 +84,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     if (scrollTimer != null) {
-                        scrollTimer.cancel();
-                        scrollTimer.purge();
+                        Disposer.dispose(scrollTimer);
                         scrollTimer = null;
                     }
                 }
@@ -355,20 +356,16 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     }
 
     @Override
-    public final void dispose() {
-        if (!disposed) {
-            disposed = true;
-            disposeInner();
-        }
+    public void markDisposed() {
+        disposed = true;
     }
 
     public void disposeInner(){
         Disposer.dispose(getModel());
-        Disposer.dispose(this);
-        Disposer.nullify(this, false, () -> {
-            listenerList = new EventListenerList();
-            columnModel = new DefaultTableColumnModel();
-            selectionModel = new DefaultListSelectionModel();
-        });
+        listenerList = new EventListenerList();
+        columnModel = new DefaultTableColumnModel();
+        selectionModel = new DefaultListSelectionModel();
+        Disposable.super.disposeInner();
+
     }
 }

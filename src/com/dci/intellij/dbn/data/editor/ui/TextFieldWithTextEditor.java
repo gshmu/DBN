@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
@@ -12,6 +14,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.text.Document;
@@ -24,20 +27,22 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+@Nullifiable
 public class TextFieldWithTextEditor extends JPanel implements DataEditorComponent, TextEditorAdapter {
     private JTextField textField;
     private JLabel button;
 
     private UserValueHolder userValueHolder;
-    private Project project;
+    private ProjectRef projectRef;
     private String displayValue;
 
-    public TextFieldWithTextEditor(Project project) {
+    public TextFieldWithTextEditor(@NotNull Project project) {
         this(project, null);
     }
-    public TextFieldWithTextEditor(Project project, String displayValue) {
+
+    public TextFieldWithTextEditor(@NotNull Project project, String displayValue) {
         super(new BorderLayout(2, 0));
-        this.project = project;
+        this.projectRef = ProjectRef.from(project);
         this.displayValue = displayValue;
         setBounds(0, 0, 0, 0);
 
@@ -135,7 +140,12 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
     }
 
     public void openEditor() {
-        TextEditorDialog.show(project, this);
+        TextEditorDialog.show(getProject(), this);
+    }
+
+    @NotNull
+    public Project getProject() {
+        return projectRef.ensure();
     }
 
     /********************************************************
@@ -192,11 +202,7 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
     }
 
     @Override
-    public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            userValueHolder = null;
-            project = null;
-        }
+    public void markDisposed() {
+        disposed = true;
     }
 }

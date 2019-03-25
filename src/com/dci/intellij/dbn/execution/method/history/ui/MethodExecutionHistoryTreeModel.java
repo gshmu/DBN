@@ -194,9 +194,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
     }
 
     @Override
-    public void dispose() {
-        if (!disposed) {
-            disposed = true;
-        }
+    public void markDisposed() {
+        disposed = true;
     }
 }

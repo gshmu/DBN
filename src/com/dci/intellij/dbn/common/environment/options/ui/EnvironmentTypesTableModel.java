@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.environment.options.ui;
 
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentConfigLocalListener;
@@ -17,6 +17,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.*;
 
+@Nullifiable
 public class EnvironmentTypesTableModel extends DBNEditableTableModel {
     private EnvironmentTypeBundle environmentTypes;
     private ProjectRef projectRef;
@@ -144,14 +145,5 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
                 throw new ConfigurationException("Please provide names for all environment types.");
             }
         }
-    }
-
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    @Override
-    public void disposeInner() {
-        Disposer.nullify(this);
-        super.disposeInner();
     }
 }

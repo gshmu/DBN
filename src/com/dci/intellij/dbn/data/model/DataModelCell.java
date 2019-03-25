@@ -14,7 +14,4 @@ public interface DataModelCell extends Disposable, UserValueHolder {
 
     @NotNull
     DataModelRow getRow();
-
-    @Override
-    boolean isDisposed();
 }

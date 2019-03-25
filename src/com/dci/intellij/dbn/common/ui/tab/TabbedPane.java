@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.ui.tab;
 
+import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.ui.tabs.TabInfo;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class TabbedPane extends JBEditorTabs implements com.dci.intellij.dbn.common.dispose.Disposable{
+public class TabbedPane extends JBEditorTabs implements Disposable{
     public TabbedPane(@NotNull Disposable disposable) {
         super(null, ActionManager.getInstance(), null, disposable);
     }
@@ -67,10 +67,12 @@ public class TabbedPane extends JBEditorTabs implements com.dci.intellij.dbn.com
         return actionCallback;
     }
 
-
+    @Override
+    public void markDisposed() {}
 
     @Override
     public void dispose() {
         Dispatch.invoke(() -> TabbedPane.super.dispose());
+        Disposable.super.disposeInner();
     }
 }

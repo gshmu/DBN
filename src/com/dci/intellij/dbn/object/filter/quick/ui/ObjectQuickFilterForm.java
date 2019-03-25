@@ -105,7 +105,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
             if (conditionForm.getCondition() == condition) {
                 conditionForms.remove(conditionForm);
                 conditionsPanel.remove(conditionForm.getComponent());
-                com.intellij.openapi.util.Disposer.dispose(conditionForm);
+                Disposer.dispose(conditionForm);
 
                 break;
             }

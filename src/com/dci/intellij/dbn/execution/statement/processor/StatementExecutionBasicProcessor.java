@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.execution.statement.processor;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
@@ -79,6 +79,7 @@ import java.util.concurrent.TimeUnit;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
 
+@Nullifiable
 public class StatementExecutionBasicProcessor extends DisposableBase implements StatementExecutionProcessor {
     private PsiFileRef<DBLanguagePsiFile> psiFileRef;
     private PsiElementRef<ExecutablePsiElement> cachedExecutableRef;
@@ -801,14 +802,5 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         }
 
         return 0;
-    }
-
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    @Override
-    public void disposeInner() {
-        Disposer.nullify(this);
-        super.disposeInner();
     }
 }

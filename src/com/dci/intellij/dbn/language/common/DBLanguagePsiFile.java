@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -65,6 +65,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Set;
 
+@Nullifiable
 public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConnectionMappingProvider, PresentableConnectionProvider, Disposable {
     private Language language;
     private DBLanguageFileType fileType;
@@ -408,16 +409,13 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     }
 
     @Override
-    public final void dispose() {
-        if (!disposed) {
-            disposed = true;
-            disposeInner();
-            Disposer.nullify(this);
-        }
+    public void markDisposed() {
+        disposed = true;
     }
 
     @Override
     public void disposeInner() {
+        Disposable.super.disposeInner();
         // TODO memory cleanup
         //markInvalidated();
 /*

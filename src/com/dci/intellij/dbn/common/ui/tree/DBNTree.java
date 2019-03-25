@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.ui.tree;
 
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.treeStructure.Tree;
@@ -12,6 +13,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
+@Nullifiable
 public class DBNTree extends Tree implements RegisteredDisposable {
     private ProjectRef projectRef;
     public static final DefaultTreeCellRenderer DEFAULT_CELL_RENDERER = new DefaultTreeCellRenderer();
@@ -49,18 +51,14 @@ public class DBNTree extends Tree implements RegisteredDisposable {
     }
 
     @Override
-    public final void dispose() {
-        if (!disposed) {
-            disposed = true;
-            disposeInner();
-        }
+    public void markDisposed() {
+        disposed = true;
     }
 
     public void disposeInner(){
         getUI().uninstallUI(this);
         Disposer.dispose(getModel());
-        Disposer.dispose(this);
-        Disposer.nullify(this);
         setSelectionModel(null);
+        RegisteredDisposable.super.disposeInner();
     }
 }

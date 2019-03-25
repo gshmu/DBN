@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -23,7 +24,7 @@ import static com.dci.intellij.dbn.connection.transaction.TransactionAction.acti
 
 
 public class PendingTransactionsDetailForm extends DBNFormImpl {
-    private JTable changesTable;
+    private DBNTable changesTable;
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JScrollPane changesTableScrollPane;

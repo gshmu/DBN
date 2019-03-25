@@ -342,10 +342,12 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
 
     @Override
     public void disposeInner() {
-        Disposer.dispose(sessionsTable);
-        Disposer.dispose(sessionsTableModel);
-        Disposer.dispose(transactionsTable);
-        Disposer.dispose(transactionsTableModel);
+        Disposer.dispose(
+                sessionsTable,
+                sessionsTableModel,
+                transactionsTable,
+                transactionsTableModel);
+
         super.disposeInner();
     }
 }

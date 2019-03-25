@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
@@ -35,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Nullifiable
 public class MethodExecutionResult extends DisposableBase implements ExecutionResult, Disposable {
     private MethodExecutionInput executionInput;
     private MethodExecutionResultForm resultPanel;
@@ -194,11 +196,10 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
 
     /********************************************************
      *                    Disposable                        *
-     ********************************************************/
+     *******************************************************  */
     @Override
     public void disposeInner() {
         Disposer.dispose(cursorModels);
-        Disposer.nullify(this);
         super.disposeInner();
     }
 
@@ -207,7 +208,7 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
      ********************************************************/
     public DataProvider dataProvider = new DataProvider() {
         @Override
-        public Object getData(@NonNls String dataId) {
+        public Object getData(@NotNull @NonNls String dataId) {
             if (DBNDataKeys.METHOD_EXECUTION_RESULT.is(dataId)) {
                 return MethodExecutionResult.this;
             }

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.data.model.basic;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.list.FiltrableList;
@@ -34,6 +35,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Nullifiable
 public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHolder<RecordStatus> implements DataModel<T> {
     private DataModelHeader<? extends ColumnInfo> header;
     private DataModelState state;
@@ -57,7 +59,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
     };
 
     private Latent<BasicDataGutterModel> listModel = Latent.disposable(this, () -> new BasicDataGutterModel(BasicDataModel.this));
-    private Latent<DataSearchResult> searchResult = Latent.disposable(this, DataSearchResult::new);
+    private Latent<DataSearchResult> searchResult = Latent.disposable(this, () -> new DataSearchResult());
 
     public BasicDataModel(Project project) {
         this.projectRef = ProjectRef.from(project);
@@ -191,7 +193,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
         updateRowIndexes(index);
         getState().setRowCount(getRowCount());
 
-        com.intellij.openapi.util.Disposer.dispose(row);
+        Disposer.dispose(row);
     }
 
     @Nullable
@@ -357,11 +359,10 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
 
     /********************************************************
      *                    Disposable                        *
-     ********************************************************/
+     *******************************************************  */
     @Override
     public void disposeInner() {
         Disposer.dispose(rows);
         super.disposeInner();
-        nullify();
     }
 }
