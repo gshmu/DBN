@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.model.basic;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
@@ -15,6 +16,7 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
+@Nullifiable
 public class BasicDataModelCell extends DisposablePropertyHolder<RecordStatus> implements DataModelCell {
     protected BasicDataModelRow row;
     protected Object userValue;
@@ -160,11 +162,5 @@ public class BasicDataModelCell extends DisposablePropertyHolder<RecordStatus> i
     public int hashCode() {
         BasicDataModelRow row = getRow();
         return index + row.getIndex() + this.row.getModel().hashCode();
-    }
-
-    @Override
-    public void disposeInner() {
-        super.disposeInner();
-        nullify();
     }
 }

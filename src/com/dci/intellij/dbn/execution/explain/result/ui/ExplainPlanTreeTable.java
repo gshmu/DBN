@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.explain.result.ui;
 
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -42,6 +43,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.math.BigDecimal;
 
+@Nullifiable
 public class ExplainPlanTreeTable extends TreeTable implements RegisteredDisposable {
     private static final int MAX_TREE_COLUMN_WIDTH = 900;
     private static final int MAX_COLUMN_WIDTH = 250;
@@ -259,6 +261,9 @@ public class ExplainPlanTreeTable extends TreeTable implements RegisteredDisposa
 
     }
 
+    /********************************************************
+     *                    Disposable                        *
+     ********************************************************/
     private boolean disposed;
 
     @Override
@@ -267,7 +272,13 @@ public class ExplainPlanTreeTable extends TreeTable implements RegisteredDisposa
     }
 
     @Override
-    public void dispose() {
+    public void markDisposed() {
         disposed = true;
+    }
+
+    @Override
+    public void disposeInner() {
+        Disposer.dispose(largeValuePopup);
+        RegisteredDisposable.super.disposeInner();
     }
 }

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ResultSetUtil;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 
+@Nullifiable
 public abstract class ResultSetAdapter extends ResultSetUtil implements Disposable {
     private boolean useSavePoints;
     private boolean insertMode;
@@ -55,10 +56,4 @@ public abstract class ResultSetAdapter extends ResultSetUtil implements Disposab
     public abstract void setValue(int columnIndex, @NotNull ValueAdapter valueAdapter, @Nullable Object value) throws SQLException;
 
     public abstract void setValue(int columnIndex, @NotNull DBDataType dataType, @Nullable Object value) throws SQLException;
-
-    @Override
-    public void disposeInner() {
-        Disposer.nullify(this);
-        super.disposeInner();
-    }
 }

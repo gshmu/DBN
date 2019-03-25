@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.latent;
 
+
 import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.intellij.openapi.Disposable;
 

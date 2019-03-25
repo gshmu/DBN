@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection.session;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -18,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Nullifiable
 public class DatabaseSessionBundle extends DisposableBase implements Disposable{
     private ConnectionHandlerRef connectionHandlerRef;
     private DatabaseSession mainSession;
@@ -125,17 +127,16 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
         Disposer.dispose(session);
     }
 
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(sessions);
-        Disposer.nullify(this);
-        super.disposeInner();
-    }
-
     void renameSession(String oldName, String newName) {
         DatabaseSession session = getSession(oldName);
         if (session != null) {
             session.setName(newName);
         }
+    }
+
+    @Override
+    public void disposeInner() {
+        Disposer.dispose(sessions);
+        super.disposeInner();
     }
 }

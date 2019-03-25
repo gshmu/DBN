@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.explain.result;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObjectType;
@@ -13,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Nullifiable
 public class ExplainPlanEntry extends DisposableBase {
     private DBObjectRef objectRef;
     private String operation;
@@ -163,7 +165,6 @@ public class ExplainPlanEntry extends DisposableBase {
     @Override
     public void disposeInner() {
         Disposer.dispose(children);
-        Disposer.nullify(this);
         super.disposeInner();
     }
 }

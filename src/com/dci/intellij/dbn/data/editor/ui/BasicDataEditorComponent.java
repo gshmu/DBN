@@ -40,10 +40,12 @@ public class BasicDataEditorComponent extends JTextField implements DataEditorCo
     }
 
     @Override
-    public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            userValueHolder = null;
-        }
+    public void markDisposed() {
+        disposed = true;
+    }
+
+    @Override
+    public void disposeInner() {
+        userValueHolder = null;
     }
 }

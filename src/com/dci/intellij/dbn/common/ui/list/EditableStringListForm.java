@@ -37,7 +37,6 @@ public class EditableStringListForm extends DBNFormImpl<DisposableProjectCompone
         Container parent = editableStringList.getParent();
         parent.setBackground(editableStringList.getBackground());
         this.listPanel.add(editableListPanel, BorderLayout.CENTER);
-        Disposer.register(this, editableStringList);
     }
 
     @NotNull
@@ -52,5 +51,11 @@ public class EditableStringListForm extends DBNFormImpl<DisposableProjectCompone
 
     public void setStringValues(Collection<String> stringValues) {
         editableStringList.setStringValues(stringValues);
+    }
+
+    @Override
+    public void disposeInner() {
+        Disposer.dispose(editableStringList);
+        super.disposeInner();
     }
 }

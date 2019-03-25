@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -34,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Nullifiable
 public class ExplainPlanResult extends DisposableBase implements ExecutionResult, DataProviderSupplier {
     private String planId;
     private Date timestamp;
@@ -170,11 +172,10 @@ public class ExplainPlanResult extends DisposableBase implements ExecutionResult
 
     /********************************************************
      *                    Disposable                   *
-     ********************************************************/
+     *******************************************************  */
     @Override
     public void disposeInner() {
         Disposer.dispose(root);
-        Disposer.nullify(this);
         super.disposeInner();
     }
 }

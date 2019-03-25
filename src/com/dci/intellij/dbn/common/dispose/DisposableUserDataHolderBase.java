@@ -1,14 +1,15 @@
 package com.dci.intellij.dbn.common.dispose;
 
+import com.intellij.openapi.util.UserDataHolderBase;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class DisposableBase implements Disposable{
+public abstract class DisposableUserDataHolderBase extends UserDataHolderBase implements Disposable{
     private boolean disposed;
 
-    public DisposableBase() {
+    public DisposableUserDataHolderBase() {
     }
 
-    public DisposableBase(@Nullable RegisteredDisposable parent) {
+    public DisposableUserDataHolderBase(@Nullable RegisteredDisposable parent) {
         if (parent != null) {
             Disposer.register(parent, this);
         }

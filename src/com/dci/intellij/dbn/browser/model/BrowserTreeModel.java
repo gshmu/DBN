@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
@@ -17,6 +18,7 @@ import javax.swing.tree.TreePath;
 import java.util.HashSet;
 import java.util.Set;
 
+@Nullifiable
 public abstract class BrowserTreeModel extends DisposableBase implements TreeModel, RegisteredDisposable {
 
     private Set<TreeModelListener> treeModelListeners = new HashSet<>();
@@ -42,7 +44,7 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
         treeModelListeners.remove(listener);
     }
 
-    public void notifyListeners(final BrowserTreeNode treeNode, final TreeEventType eventType) {
+    public void notifyListeners(BrowserTreeNode treeNode, final TreeEventType eventType) {
         if (Failsafe.check(this) && Failsafe.check(treeNode)) {
             TreePath treePath = DatabaseBrowserUtils.createTreePath(treeNode);
             TreeUtil.notifyTreeModelListeners(this, treeModelListeners, treePath, eventType);
@@ -95,7 +97,7 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
 
     @Override
     public void disposeInner() {
-        Disposer.nullify(this);
+        Disposer.dispose(root);
         super.disposeInner();
     }
 

@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.editor.session.details;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.TableModelListener;
 
+@Nullifiable
 public class SessionDetailsTableModel extends DisposableBase implements DBNTableModel {
     private String sessionId = "";
     private String user = "";
@@ -99,15 +100,5 @@ public class SessionDetailsTableModel extends DisposableBase implements DBNTable
     @Override
     public void removeTableModelListener(TableModelListener l) {
 
-    }
-
-    /********************************************************
-     *                     Disposable                       *
-     ********************************************************/
-
-    @Override
-    public void disposeInner() {
-        Disposer.nullify(this);
-        super.disposeInner();
     }
 }

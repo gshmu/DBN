@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MapLatent;
@@ -96,6 +97,7 @@ import java.util.Set;
 import static com.dci.intellij.dbn.object.common.DBObjectRelationType.*;
 import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 
+@Nullifiable
 public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport {
     private ConnectionHandlerRef connectionHandlerRef;
     private BrowserTreeNode treeParent;
@@ -773,7 +775,6 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                 psqlLookupItemBuilders,
                 objectPsiFacades,
                 virtualFiles);
-        Disposer.nullify(this);
         super.disposeInner();
     }
 

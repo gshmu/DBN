@@ -13,6 +13,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -22,9 +23,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
 
 public class Disposer {
     private static MapLatent<Class, List<Field>> CLASS_FIELDS = MapLatent.create(clazz -> ReflectionUtil.collectFields(clazz));
+    private static MapLatent<Class, Nullifiable> NULLIFIABLE = MapLatent.create(clazz -> (Nullifiable) clazz.getAnnotation(Nullifiable.class));
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
@@ -41,14 +44,23 @@ public class Disposer {
     }
 
     private static void dispose(@Nullable Object object) {
-        if (object instanceof Disposable) {
-            Disposable disposable = (Disposable) object;
-            dispose(disposable);
+        if (object != null) {
+            if (object instanceof Disposable) {
+                Disposable disposable = (Disposable) object;
+                dispose(disposable);
+            }
+            if (object instanceof Component) {
+                Component component = (Component) object;
+                dispose(component);
+            }
+
         }
-        if (object instanceof Component) {
-            Component component = (Component) object;
-            dispose(component);
-        }
+
+    }
+
+    static boolean isNullifiable(@NotNull Object object) {
+        Nullifiable nullifiable = NULLIFIABLE.get(object.getClass());
+        return nullifiable != null;
     }
 
     private static void dispose(@Nullable Disposable disposable) {
@@ -92,27 +104,15 @@ public class Disposer {
         }
     }
 
-    public static void register(RegisteredDisposable parent, Object disposable) {
-        if (disposable instanceof Disposable) {
-            com.intellij.openapi.util.Disposer.register(parent, (Disposable) disposable);
-        }
+    public static void register(RegisteredDisposable parent, Disposable disposable) {
+        com.intellij.openapi.util.Disposer.register(parent, disposable);
     }
 
     public static void nullify(Object object) {
-        nullify(object, false, null);
+        nullify(object, null);
     }
 
-    public static void nullify(Object object, boolean background) {
-        nullify(object, background, null);
-    }
-
-    public static void nullify(Object object, boolean background, @Nullable Runnable callback) {
-        if (background)
-            Background.run(() -> nullify(object, callback)); else
-            nullify(object, callback);
-    }
-
-    private static void nullify(Object object, @Nullable Runnable callback) {
+    public static void nullify(Object object, @Nullable Runnable callback) {
         try {
             List<Field> fields = CLASS_FIELDS.get(object.getClass());
             for (Field field : fields) {
@@ -166,10 +166,17 @@ public class Disposer {
                 UIUtil.dispose(component);
                 if (component instanceof Container) {
                     Container container = (Container) component;
-                    dispose(container.getComponents());
+                    dispose((Object[]) container.getComponents());
                     container.removeAll();
                 }
             });
         }
     }
+
+    public static void dispose(@Nullable Timer timer) {
+        if (timer != null) {
+            timer.cancel();
+            timer.purge();
+        }
+   }
 }

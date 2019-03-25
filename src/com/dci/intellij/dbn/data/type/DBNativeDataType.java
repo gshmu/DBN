@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.data.type;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
@@ -19,18 +20,13 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 
-public class DBNativeDataType implements DynamicContentElement{
+public class DBNativeDataType extends DisposableBase implements DynamicContentElement{
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private DataTypeDefinition dataTypeDefinition;
 
     public DBNativeDataType(DataTypeDefinition dataTypeDefinition) {
         this.dataTypeDefinition = dataTypeDefinition;
-    }
-
-    @Override
-    public boolean isDisposed() {
-        return false;
     }
 
     @NotNull
@@ -249,11 +245,6 @@ public class DBNativeDataType implements DynamicContentElement{
 
     @Override
     public void refresh() {
-
-    }
-
-    @Override
-    public void dispose() {
 
     }
 

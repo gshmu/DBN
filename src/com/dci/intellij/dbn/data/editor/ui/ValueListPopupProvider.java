@@ -176,7 +176,7 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
     public void hidePopup() {
         if (popup != null) {
             if (popup.isVisible()) popup.cancel();
-            com.intellij.openapi.util.Disposer.dispose(popup);
+            Disposer.dispose(popup);
         }
     }
 

@@ -542,12 +542,13 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     /********************************************************
      *                     Disposable                       *
-     ********************************************************/
+     *******************************************************  */
 
     @Override
     public void disposeInner() {
-        Disposer.dispose(cellEditorFactory);
-        Disposer.dispose(tableMouseListener);
+        Disposer.dispose(
+                cellEditorFactory,
+                tableMouseListener);
         super.disposeInner();
     }
 }

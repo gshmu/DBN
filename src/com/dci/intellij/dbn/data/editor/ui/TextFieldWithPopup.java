@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.data.editor.ui;
 
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.project.Project;
@@ -25,6 +26,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+@Nullifiable
 public class TextFieldWithPopup<T extends JComponent> extends JPanel implements DataEditorComponent {
     private JTextField textField;
     private JPanel buttonsPanel;
@@ -353,11 +355,7 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
     }
 
     @Override
-    public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            userValueHolder = null;
-            parentComponent = null;
-        }
+    public void markDisposed() {
+        disposed = true;
     }
 }

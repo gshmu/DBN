@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.config.tns.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.connection.config.tns.TnsName;
 
@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+@Nullifiable
 public class TnsNamesTableModel extends DisposableBase implements DBNTableModel {
     private TnsName[] tnsNames;
     private Set<TableModelListener> listeners = new HashSet<>();
@@ -81,12 +82,5 @@ public class TnsNamesTableModel extends DisposableBase implements DBNTableModel 
     @Override
     public void removeTableModelListener(TableModelListener l) {
         listeners.remove(l);
-    }
-
-
-    @Override
-    public void disposeInner() {
-        Disposer.nullify(this);
-        super.disposeInner();
     }
 }

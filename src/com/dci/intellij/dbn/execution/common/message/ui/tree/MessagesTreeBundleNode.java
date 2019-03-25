@@ -81,7 +81,7 @@ public abstract class MessagesTreeBundleNode<P extends MessagesTreeNode, C exten
 
     /*********************************************************
      *                      Disposable                       *
-     *********************************************************/
+     ********************************************************  */
     @Override
     public void disposeInner() {
         Disposer.dispose(children);

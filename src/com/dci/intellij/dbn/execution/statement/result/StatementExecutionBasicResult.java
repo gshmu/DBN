@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+@Nullifiable
 public class StatementExecutionBasicResult extends DisposableBase implements StatementExecutionResult{
     private String resultName;
     private StatementExecutionMessage executionMessage;
@@ -208,12 +210,4 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
         return null;
     }
 
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    @Override
-    public void disposeInner() {
-        Disposer.nullify(this);
-        super.disposeInner();
-    }
 }

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.data.model.basic;
 
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Nullifiable
 public class BasicDataModelRow<T extends DataModelCell> extends DisposablePropertyHolder<RecordStatus> implements DataModelRow<T> {
     protected BasicDataModel model;
     protected List<T> cells;
@@ -94,14 +96,9 @@ public class BasicDataModelRow<T extends DataModelCell> extends DisposableProper
         return getModel().getProject();
     }
 
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-
     @Override
     public void disposeInner() {
         Disposer.dispose(cells);
         super.disposeInner();
-        nullify();
     }
 }
