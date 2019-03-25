@@ -438,7 +438,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
                         if (objects == null) {
                             objects = new HashSet<DBObject>();
                         }
-                        objects.add(objectPsiElement.getObject());
+                        objects.add(objectPsiElement.ensureObject());
                     }
                 }
             }

@@ -68,7 +68,7 @@ public class SQLConsoleAction extends DumbAwareAction {
                     true,
                     null,
                     actionGroup.getChildrenCount(),
-                    action -> {
+                    preselect -> {
 /*
                         SelectConsoleAction selectConnectionAction = (SelectConsoleAction) action;
                         return latestSelection == selectConnectionAction.connectionHandler;

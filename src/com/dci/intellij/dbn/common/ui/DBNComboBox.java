@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.latent.Loader;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
@@ -120,14 +119,13 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
                 false,
                 false,
                 () -> {
-                    Disposer.dispose(popup);
                     popup = null;
                     GUIUtil.repaintAndFocus(DBNComboBox.this);
                 },
                 10,
-                anAction -> {
-                    if (anAction instanceof DBNComboBox.SelectValueAction) {
-                        SelectValueAction action = (SelectValueAction) anAction;
+                preselect -> {
+                    if (preselect instanceof DBNComboBox.SelectValueAction) {
+                        SelectValueAction action = (SelectValueAction) preselect;
                         return action.value.equals(getSelectedValue());
                     }
                     return false;

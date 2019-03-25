@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -46,7 +47,7 @@ public class DBObjectPsiElement extends DisposableBase implements PsiNamedElemen
     @Nullable
     @Override
     public ItemPresentation getPresentation() {
-        return getObject().getPresentation();
+        return ensureObject().getPresentation();
     }
 
     /*********************************************************
@@ -89,7 +90,7 @@ public class DBObjectPsiElement extends DisposableBase implements PsiNamedElemen
 
     @Override
     public PsiFile getContainingFile() throws PsiInvalidElementAccessException {
-        return getObject().getObjectBundle().getFakeObjectFile();
+        return ensureObject().getObjectBundle().getFakeObjectFile();
     }
 
     @Override
@@ -157,7 +158,8 @@ public class DBObjectPsiElement extends DisposableBase implements PsiNamedElemen
 
     @Override
     public boolean isValid() {
-        return DBObjectRef.get(objectRef) != null;
+        DBObject object = getObject();
+        return Failsafe.check(object) && Failsafe.check(object.getParentObject());
     }
 
     @Override
@@ -208,7 +210,7 @@ public class DBObjectPsiElement extends DisposableBase implements PsiNamedElemen
     @NotNull
     @Override
     public Project getProject() throws PsiInvalidElementAccessException {
-        return getObject().getProject();
+        return ensureObject().getProject();
     }
 
     @Override
@@ -245,7 +247,7 @@ public class DBObjectPsiElement extends DisposableBase implements PsiNamedElemen
 
     @Override
     public void navigate(boolean requestFocus) {
-        getObject().navigate(requestFocus);
+        ensureObject().navigate(requestFocus);
     }
 
     @Override
@@ -260,16 +262,16 @@ public class DBObjectPsiElement extends DisposableBase implements PsiNamedElemen
 
     @Override
     public Icon getIcon(int flags) {
-        return getObject().getIcon();
+        return ensureObject().getIcon();
     }
 
     @NotNull
-    public DBObject getObject() {
+    public DBObject ensureObject() {
         return DBObjectRef.ensure(objectRef);
     }
 
     @Nullable
-    public DBObject getObjectLenient() {
+    public DBObject getObject() {
         return DBObjectRef.get(objectRef);
     }
 

@@ -36,7 +36,6 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
-import com.intellij.openapi.util.Condition;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -87,18 +86,15 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
                             true,
                             null,
                             actionGroup.getChildrenCount(),
-                            new Condition<AnAction>() {
-                                @Override
-                                public boolean value(AnAction action) {
-                                    if (action instanceof SelectConnectionAction) {
-                                        SelectConnectionAction selectConnectionAction = (SelectConnectionAction) action;
-                                        return latestConnectionId == selectConnectionAction.getConnectionHandler().getConnectionId();
-                                    } else if (action instanceof SelectSchemaAction) {
-                                        SelectSchemaAction selectSchemaAction = (SelectSchemaAction) action;
-                                        return latestSchemaName.equals(selectSchemaAction.getSchema().getName());
-                                    }
-                                    return false;
+                            preselect -> {
+                                if (preselect instanceof SelectConnectionAction) {
+                                    SelectConnectionAction selectConnectionAction = (SelectConnectionAction) preselect;
+                                    return latestConnectionId == selectConnectionAction.getConnectionHandler().getConnectionId();
+                                } else if (preselect instanceof SelectSchemaAction) {
+                                    SelectSchemaAction selectSchemaAction = (SelectSchemaAction) preselect;
+                                    return latestSchemaName.equals(selectSchemaAction.getSchema().getName());
                                 }
+                                return false;
                             });
 
 /*                    if (popupBuilder instanceof ListPopupImpl) {
