@@ -43,7 +43,7 @@ public class CodeCompletionLookupConsumer implements LookupConsumer {
             }
             else if (object instanceof DBObjectPsiElement) {
                 DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) object;
-                lookupItemBuilder = objectPsiElement.getObject().getLookupItemBuilder(language);
+                lookupItemBuilder = objectPsiElement.ensureObject().getLookupItemBuilder(language);
 
             } else if (object instanceof TokenElementType) {
                 TokenElementType tokenElementType = (TokenElementType) object;

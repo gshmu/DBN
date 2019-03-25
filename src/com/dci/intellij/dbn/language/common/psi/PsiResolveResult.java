@@ -119,7 +119,7 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
                 return true;
             } else if (referencedElement instanceof DBObjectPsiElement) {
                 DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) referencedElement;
-                return objectPsiElement.getObject().getParentObject() != parent.resolveUnderlyingObject();
+                return !objectPsiElement.isValid() || objectPsiElement.ensureObject().getParentObject() != parent.resolveUnderlyingObject();
             }
         } else {
             return element != null && element.isPrecededByDot();

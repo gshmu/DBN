@@ -43,7 +43,7 @@ public class AliasObjectResolver extends UnderlyingObjectResolver{
                 PsiElement underlyingPsiElement = aliasedPsiElement.resolve();
                 if (underlyingPsiElement instanceof DBObjectPsiElement) {
                     DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) underlyingPsiElement;
-                    return objectPsiElement.getObject();
+                    return objectPsiElement.ensureObject();
                 }
 
                 if (underlyingPsiElement instanceof IdentifierPsiElement && underlyingPsiElement != identifierPsiElement) {
