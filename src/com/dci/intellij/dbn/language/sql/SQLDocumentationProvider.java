@@ -18,7 +18,7 @@ public class SQLDocumentationProvider implements DocumentationProvider {
     private String getQuickNavigateInfo(PsiElement element) {
         if (element instanceof DBObjectPsiElement) {
             DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) element;
-            return objectPsiElement.getObject().getNavigationTooltipText();
+            return objectPsiElement.ensureObject().getNavigationTooltipText();
         } else if (element instanceof IdentifierPsiElement) {
             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) element;
              if (identifierPsiElement.isAlias()) {
