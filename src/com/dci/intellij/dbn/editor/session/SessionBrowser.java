@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.session;
 
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.DisposableUserDataHolderBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -29,7 +29,6 @@ import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.UserDataHolderBase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +40,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class SessionBrowser extends UserDataHolderBase implements FileEditor, Disposable, ConnectionProvider, DataProviderSupplier {
+public class SessionBrowser extends DisposableUserDataHolderBase implements FileEditor, ConnectionProvider, DataProviderSupplier {
     private DBSessionBrowserVirtualFile sessionBrowserFile;
     private SessionBrowserForm editorForm;
     private boolean preventLoading = false;
@@ -52,7 +51,6 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     public SessionBrowser(DBSessionBrowserVirtualFile sessionBrowserFile) {
         this.sessionBrowserFile = sessionBrowserFile;
         editorForm = new SessionBrowserForm(this);
-        com.intellij.openapi.util.Disposer.register(this, editorForm);
         loadSessions(true);
     }
 
@@ -200,7 +198,7 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     @Override
     @NotNull
     public JComponent getComponent() {
-        return disposed ? new JPanel() : editorForm.getComponent();
+        return isDisposed() ? new JPanel() : editorForm.getComponent();
     }
 
     @Override
@@ -337,11 +335,8 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
     }
 
     private void stopRefreshTimer() {
-        if (refreshTimer != null) {
-            refreshTimer.cancel();
-            refreshTimer.purge();
-            refreshTimer = null;
-        }
+        Disposer.dispose(refreshTimer);
+        refreshTimer = null;
     }
 
     String getModelError() {
@@ -413,23 +408,12 @@ public class SessionBrowser extends UserDataHolderBase implements FileEditor, Di
         return dataProvider;
     }
 
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    private boolean disposed;
 
     @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
-    @Override
-    public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            stopRefreshTimer();
-            editorForm = null;
-        }
+    public void disposeInner() {
+        stopRefreshTimer();
+        Disposer.dispose(editorForm);
+        super.disposeInner();
     }
 }
 

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.common.list;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectRelationType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 
+@Nullifiable
 public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObject> extends DisposableBase implements DBObjectRelation<S, T> {
 
     private DBObjectRelationType objectRelationType;
@@ -65,12 +66,6 @@ public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObjec
     @Override
     public String getDescription() {
         return null;
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.nullify(this);
-        super.disposeInner();
     }
 
     @Override

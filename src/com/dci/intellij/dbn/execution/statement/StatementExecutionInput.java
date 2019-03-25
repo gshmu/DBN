@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.statement;
 
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -29,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+@Nullifiable
 public class StatementExecutionInput extends LocalExecutionInput {
     private StatementExecutionProcessor executionProcessor;
     private StatementExecutionVariablesBundle executionVariables;
@@ -200,12 +202,6 @@ public class StatementExecutionInput extends LocalExecutionInput {
 
     public void setBulkExecution(boolean isBulkExecution) {
         this.bulkExecution = isBulkExecution;
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.nullify(this);
-        super.disposeInner();
     }
 
     public String getStatementDescription() {

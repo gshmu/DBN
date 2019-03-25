@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.console;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -15,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Nullifiable
 public class DatabaseConsoleBundle extends DisposableBase {
     private ConnectionHandlerRef connectionHandlerRef;
 
@@ -90,7 +92,6 @@ public class DatabaseConsoleBundle extends DisposableBase {
     @Override
     public void disposeInner() {
         Disposer.dispose(consoles);
-        Disposer.nullify(this);
         super.disposeInner();
     }
 

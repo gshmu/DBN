@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -20,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Nullifiable
 public class ObjectDependencyTreeModel extends DisposableBase implements TreeModel, Disposable{
     private Set<TreeModelListener> listeners = new HashSet<>();
     private ObjectDependencyTreeNode root;
@@ -106,7 +108,6 @@ public class ObjectDependencyTreeModel extends DisposableBase implements TreeMod
     @Override
     public void disposeInner() {
         Disposer.dispose(root);
-        Disposer.nullify(this);
         super.disposeInner();
     }
 

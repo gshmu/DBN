@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.statement.variables;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Nullifiable
 public class StatementExecutionVariablesBundle extends DisposableBase implements Disposable{
     private static final Comparator<StatementExecutionVariable> NAME_LENGTH_COMPARATOR = (o1, o2) -> o2.getName().length() - o1.getName().length();
     public static final Comparator<StatementExecutionVariable> OFFSET_COMPARATOR = (o1, o2) -> o1.getOffset() - o2.getOffset();
@@ -182,11 +183,5 @@ public class StatementExecutionVariablesBundle extends DisposableBase implements
 
     public String getError(StatementExecutionVariable variable) {
         return errorMap == null ? null : errorMap.get(variable);
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.nullify(this);
-        super.disposeInner();
     }
 }

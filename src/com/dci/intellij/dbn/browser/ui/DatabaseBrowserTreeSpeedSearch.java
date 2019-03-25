@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.browser.ui;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
-import com.intellij.openapi.Disposable;
 import com.intellij.ui.SpeedSearchBase;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,6 +17,7 @@ import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
 
+@Nullifiable
 public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> implements Disposable {
     private static final Object[] EMPTY_ARRAY = new Object[0];
     private Object[] elements = null;
@@ -126,10 +127,22 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
         }
     };
 
+    private boolean disposed;
+
     @Override
-    public void dispose() {
+    public final boolean isDisposed() {
+        return disposed;
+    }
+
+    @Override
+    public final void markDisposed() {
+        disposed = true;
+    }
+
+    @Override
+    public void disposeInner() {
         getComponent().getModel().removeTreeModelListener(treeModelListener);
-        Disposer.nullify(this);
         elements = EMPTY_ARRAY;
+        Disposable.super.disposeInner();
     }
 }

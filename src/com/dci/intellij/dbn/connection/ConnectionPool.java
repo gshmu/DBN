@@ -326,8 +326,8 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
 
     @Override
     public void disposeInner() {
-        super.disposeInner();
         closeConnections();
+        super.disposeInner();
     }
 
     public boolean isConnected(SessionId sessionId) {

@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.language.common.WeakRef;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+@Nullifiable
 public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends DisposableBase implements DBNForm, NotificationSupport {
     private ProjectRef projectRef;
     private WeakRef<P> parentComponent;
@@ -73,7 +75,6 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
     @Override
     public void disposeInner() {
         Disposer.dispose(getComponent());
-        Disposer.nullify(true);
         super.disposeInner();
     }
 }

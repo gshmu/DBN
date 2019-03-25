@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+@Nullifiable
 public abstract class LoadInProgressRegistry<T extends Disposable> extends DisposableBase implements Disposable{
     private final List<T> nodes = CollectionUtil.createConcurrentList();
 
@@ -65,11 +67,5 @@ public abstract class LoadInProgressRegistry<T extends Disposable> extends Dispo
     @FunctionalInterface
     public interface Notifier<T extends Disposable> {
         void notify(T node);
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.nullify(this);
-        super.disposeInner();
     }
 }

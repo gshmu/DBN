@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
@@ -13,6 +13,7 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
 import org.jetbrains.annotations.NotNull;
 
+@Nullifiable
 public abstract class AbstractProjectComponent extends DisposableBase
         implements
         SettingsSupport,
@@ -114,12 +115,6 @@ public abstract class AbstractProjectComponent extends DisposableBase
     @Override
     public void disposeComponent() {
         dispose();
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.nullify(this);
-        super.disposeInner();
     }
 
     protected void closeProject() {

@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.Background;
@@ -69,6 +70,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Nullifiable
 public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObject, ToolTipProvider {
     private static final List<DBObject> EMPTY_OBJECT_LIST = java.util.Collections.unmodifiableList(new ArrayList<>(0));
     public static final List<BrowserTreeNode> EMPTY_TREE_NODE_LIST = java.util.Collections.unmodifiableList(new ArrayList<BrowserTreeNode>(0));
@@ -895,7 +897,6 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
     public void disposeInner() {
         Disposer.dispose(childObjects);
         Disposer.dispose(childObjectRelations);
-        Disposer.nullify(this);
         super.disposeInner();
 
     }

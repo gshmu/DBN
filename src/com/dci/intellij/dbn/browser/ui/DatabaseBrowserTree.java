@@ -379,10 +379,12 @@ public class DatabaseBrowserTree extends DBNTree {
 
     /********************************************************
      *                    Disposable                        *
-     ********************************************************/
+     *******************************************************  */
     @Override
     public void disposeInner() {
-        Disposer.dispose(speedSearch, navigationHistory);
+        Disposer.dispose(
+                speedSearch,
+                navigationHistory);
         super.disposeInner();
         setModel(new SimpleBrowserTreeModel());
     }

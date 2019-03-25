@@ -214,10 +214,12 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
     }
 
     @Override
-    public void dispose() {
-        if (!disposed) {
-            disposed = true;
-            settings = null;
-        }
+    public void markDisposed() {
+        disposed = true;
+    }
+
+    @Override
+    public void disposeInner() {
+        settings = null;
     }
 }

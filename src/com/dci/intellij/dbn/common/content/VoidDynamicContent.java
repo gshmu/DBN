@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.VoidDynamicContentLoader;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.property.Property;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VoidDynamicContent implements DynamicContent{
+public class VoidDynamicContent extends DisposableBase implements DynamicContent{
     private List elements = new ArrayList();
 
     public static final VoidDynamicContent INSTANCE = new VoidDynamicContent();
@@ -77,11 +78,6 @@ public class VoidDynamicContent implements DynamicContent{
 
     @Override
     public boolean isDirty() {
-        return false;
-    }
-
-    @Override
-    public boolean isDisposed() {
         return false;
     }
 
@@ -172,11 +168,6 @@ public class VoidDynamicContent implements DynamicContent{
     @Override
     public String getName() {
         return "Empty Content";
-    }
-
-    @Override
-    public void dispose() {
-
     }
 
     @Override

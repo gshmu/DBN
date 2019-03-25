@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.TableModelListener;
 
+@Nullifiable
 public class ResourceMonitorTransactionsTableModel extends DisposableBase implements DBNTableModel {
     private ConnectionHandlerRef connectionHandlerRef;
     private DBNConnection connection;
@@ -73,18 +74,10 @@ public class ResourceMonitorTransactionsTableModel extends DisposableBase implem
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
+
     @Override
     public void addTableModelListener(TableModelListener l) {}
+
     @Override
     public void removeTableModelListener(TableModelListener l) {}
-
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    @Override
-    public void disposeInner() {
-        Disposer.nullify(this);
-        super.disposeInner();
-    }
-
 }

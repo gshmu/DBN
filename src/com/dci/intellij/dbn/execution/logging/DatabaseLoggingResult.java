@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+@Nullifiable
 public class DatabaseLoggingResult extends DisposableBase implements ExecutionResult {
     private LogOutputContext context;
     private DatabaseLoggingResultForm logOutputForm;
@@ -131,14 +133,5 @@ public class DatabaseLoggingResult extends DisposableBase implements ExecutionRe
     @Nullable
     public DataProvider getDataProvider() {
         return dataProvider;
-    }
-
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    @Override
-    public void disposeInner() {
-        Disposer.nullify(this);
-        super.disposeInner();
     }
 }

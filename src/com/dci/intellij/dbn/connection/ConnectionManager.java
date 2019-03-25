@@ -87,7 +87,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     private ConnectionManager(Project project) {
         super(project);
         connectionBundle = new ConnectionBundle(project);
-        com.intellij.openapi.util.Disposer.register(this, connectionBundle);
+        Disposer.register(this, connectionBundle);
     }
 
     @Override
@@ -101,12 +101,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     @Override
     public void disposeInner() {
-        if (idleConnectionCleaner != null) {
-            idleConnectionCleaner.cancel();
-            idleConnectionCleaner.purge();
-        }
-        ConnectionBundle connectionBundle = getConnectionBundle();
-        com.intellij.openapi.util.Disposer.dispose(connectionBundle);
+        Disposer.dispose(idleConnectionCleaner);
         super.disposeInner();
     }
 

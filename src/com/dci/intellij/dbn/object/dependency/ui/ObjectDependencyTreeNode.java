@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Nullifiable
 public class ObjectDependencyTreeNode extends DisposableBase implements Disposable {
     private DBObjectRef<DBObject> objectRef;
     private List<ObjectDependencyTreeNode> dependencies;
@@ -149,7 +151,6 @@ public class ObjectDependencyTreeNode extends DisposableBase implements Disposab
     @Override
     public void disposeInner() {
         Disposer.dispose(dependencies);
-        Disposer.nullify(this);
         super.disposeInner();
     }
 }

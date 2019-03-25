@@ -52,14 +52,20 @@ public abstract class DBNTableGutter<T extends DBNTableWithGutter> extends JList
     }
 
 
+
+
     @Override
     public boolean isDisposed() {
         return disposed;
     }
 
     @Override
-    public void dispose() {
+    public void markDisposed() {
         disposed = true;
+    }
+
+    @Override
+    public void disposeInner() {
         table = null;
     }
 }
