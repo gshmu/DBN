@@ -17,7 +17,7 @@ public class BasicDependencyAdapter implements ContentDependencyAdapter {
     }
 
     @Override
-    public boolean areSourcesDirty() {
+    public boolean areDependenciesDirty() {
         return false;
     }
 

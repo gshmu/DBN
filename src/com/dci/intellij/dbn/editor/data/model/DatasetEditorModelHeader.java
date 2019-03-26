@@ -16,7 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class DatasetEditorModelHeader extends ResultSetDataModelHeader<DatasetEditorColumnInfo> {
-    public DatasetEditorModelHeader(DatasetEditor datasetEditor, @Nullable ResultSet resultSet) throws SQLException {
+    DatasetEditorModelHeader(DatasetEditor datasetEditor, @Nullable ResultSet resultSet) throws SQLException {
         DBDataset dataset = datasetEditor.getDataset();
 
         List<String> columnNames = resultSet == null ? null : ResultSetUtil.getColumnNames(resultSet);

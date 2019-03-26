@@ -33,7 +33,7 @@ public class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter impl
     }
 
     @Override
-    public boolean areSourcesDirty() {
+    public boolean areDependenciesDirty() {
         return contentDependency.isDirty();
     }
 
