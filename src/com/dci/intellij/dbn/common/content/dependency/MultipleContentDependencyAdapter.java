@@ -34,7 +34,7 @@ public class MultipleContentDependencyAdapter extends BasicDependencyAdapter imp
     }
 
     @Override
-    public boolean areSourcesDirty() {
+    public boolean areDependenciesDirty() {
         if (dependencies != null) {
             for (ContentDependency dependency : dependencies) {
                 if (dependency.isDirty()) {

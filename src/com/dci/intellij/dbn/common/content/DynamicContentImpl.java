@@ -135,7 +135,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
             return dependencyAdapter.canConnect(connectionHandler);
         }
 
-        if (isDirty()) {
+        if (isDirty() || dependencyAdapter.areDependenciesDirty()) {
             return dependencyAdapter.canLoad(connectionHandler);
         }
 
