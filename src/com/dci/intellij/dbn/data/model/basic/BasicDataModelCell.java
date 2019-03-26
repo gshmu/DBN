@@ -64,7 +64,7 @@ public class BasicDataModelCell extends DisposablePropertyHolder<RecordStatus> i
     @Override
     @NotNull
     public BasicDataModelRow getRow() {
-        return Failsafe.get(row);
+        return Failsafe.nn(row);
     }
 
     @Override

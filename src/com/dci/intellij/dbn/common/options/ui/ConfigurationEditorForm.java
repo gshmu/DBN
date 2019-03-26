@@ -41,7 +41,7 @@ public abstract class ConfigurationEditorForm<E extends BasicConfiguration> exte
     }
 
     public final E getConfiguration() {
-        return Failsafe.get(configuration);
+        return Failsafe.nn(configuration);
     }
 
     public abstract void applyFormChanges() throws ConfigurationException;

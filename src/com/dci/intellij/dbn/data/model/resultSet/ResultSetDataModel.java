@@ -43,7 +43,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
 
     @NotNull
     protected DBNResultSet getResultSet() {
-        return Failsafe.get(resultSet);
+        return Failsafe.nn(resultSet);
     }
 
     @NotNull
@@ -150,7 +150,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return Failsafe.get(connectionHandler);
+        return Failsafe.nn(connectionHandler);
     }
 
     @Override

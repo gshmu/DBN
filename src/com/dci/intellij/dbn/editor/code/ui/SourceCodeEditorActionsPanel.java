@@ -60,7 +60,7 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
     };
 
     public SourceCodeEditor getSourceCodeEditor() {
-        return Failsafe.get(sourceCodeEditor);
+        return Failsafe.nn(sourceCodeEditor);
     }
 
     @NotNull

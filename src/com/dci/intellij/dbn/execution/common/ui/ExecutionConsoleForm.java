@@ -88,7 +88,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
             Disposer.register(this, resultTabs);
             return resultTabs;
         }
-        return Failsafe.get(resultTabs);
+        return Failsafe.nn(resultTabs);
     }
 
     public int getTabCount() {

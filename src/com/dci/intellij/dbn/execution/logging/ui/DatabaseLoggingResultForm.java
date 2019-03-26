@@ -75,7 +75,7 @@ public class DatabaseLoggingResultForm extends DBNFormImpl implements ExecutionR
     @NotNull
     @Override
     public DatabaseLoggingResult getExecutionResult() {
-        return Failsafe.ensure(loggingResult);
+        return Failsafe.nd(loggingResult);
     }
 
     @Override

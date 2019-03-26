@@ -10,13 +10,12 @@ abstract class DisposableLatent<T extends Disposable, P extends RegisteredDispos
 
     DisposableLatent(P parent) {
         super();
-        this.parent = Failsafe.ensure(parent);
+        this.parent = Failsafe.nd(parent);
     }
 
     @Override
     protected boolean shouldLoad() {
-        Failsafe.ensure(parent);
-        return super.shouldLoad();
+        return Failsafe.check(parent) && super.shouldLoad();
     }
 
     @Override

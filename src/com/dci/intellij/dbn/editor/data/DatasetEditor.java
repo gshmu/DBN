@@ -121,7 +121,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
 
     @NotNull
     public DBDataset getDataset() {
-        return Failsafe.get(datasetRef.get(getProject()));
+        return Failsafe.nn(datasetRef.get(getProject()));
     }
 
     public DataEditorSettings getSettings() {
@@ -135,7 +135,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
 
     @NotNull
     public DatasetEditorForm getEditorForm() {
-        return Failsafe.get(editorForm);
+        return Failsafe.nn(editorForm);
     }
 
     public void showSearchHeader() {

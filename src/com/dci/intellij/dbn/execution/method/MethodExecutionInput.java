@@ -54,7 +54,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         this.targetSchemaId = method.getSchemaIdentifier();
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {
-            ConnectionHandler connectionHandler = Failsafe.get(method.getConnectionHandler());
+            ConnectionHandler connectionHandler = Failsafe.nn(method.getConnectionHandler());
             getOptions().set(ExecutionOption.ENABLE_LOGGING, connectionHandler.isLoggingEnabled());
         }
     }

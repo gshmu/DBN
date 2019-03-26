@@ -55,7 +55,7 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
         this.executionInput = executionInput;
         this.debuggerType = debuggerType;
 
-        ConnectionHandler connectionHandler = Failsafe.get(executionInput.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(executionInput.getConnectionHandler());
 
         if (isSchemaSelectionAllowed()) {
             //ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, new SetExecutionSchemaComboBoxAction(executionInput));
@@ -176,12 +176,12 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
     }
 
     public LocalExecutionInput getExecutionInput() {
-        return Failsafe.get(executionInput);
+        return Failsafe.nn(executionInput);
     }
 
     public ConnectionHandler getConnectionHandler() {
         ConnectionHandler connectionHandler = getExecutionInput().getConnectionHandler();
-        return Failsafe.get(connectionHandler);
+        return Failsafe.nn(connectionHandler);
     }
 
     private ActionListener actionListener = e -> {

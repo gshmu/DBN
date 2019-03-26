@@ -24,6 +24,6 @@ public class PsiElementRef<T extends PsiElement> extends WeakRef<T>{
     @Override
     @NotNull
     public T ensure() {
-        return Failsafe.get(get());
+        return Failsafe.nn(get());
     }
 }

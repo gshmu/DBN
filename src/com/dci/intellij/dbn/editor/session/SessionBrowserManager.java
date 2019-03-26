@@ -129,7 +129,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     }
 
     public void interruptSessions(@NotNull SessionBrowser sessionBrowser, Map<Object, Object> sessionIds, SessionInterruptionType type) {
-        ConnectionHandler connectionHandler = Failsafe.get(sessionBrowser.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(sessionBrowser.getConnectionHandler());
         if (DatabaseFeature.SESSION_INTERRUPTION_TIMING.isSupported(connectionHandler)) {
 
             SessionBrowserSettings sessionBrowserSettings = getSessionBrowserSettings();
@@ -160,7 +160,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         Project project = getProject();
         Progress.prompt(project, taskAction, true,
                 (progress) -> {
-                    ConnectionHandler connectionHandler = Failsafe.get(sessionBrowser.getConnectionHandler());
+                    ConnectionHandler connectionHandler = Failsafe.nn(sessionBrowser.getConnectionHandler());
                     DBNConnection connection = null;
                     try {
                         connection = connectionHandler.getPoolConnection(true);

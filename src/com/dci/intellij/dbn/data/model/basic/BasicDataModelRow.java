@@ -37,13 +37,13 @@ public class BasicDataModelRow<T extends DataModelCell> extends DisposableProper
     @Override
     @NotNull
     public BasicDataModel getModel() {
-        return Failsafe.get(model);
+        return Failsafe.nn(model);
     }
 
     @Override
     public List<T> getCells() {
-        Failsafe.ensure(this);
-        return Failsafe.get(cells);
+        Failsafe.nd(this);
+        return Failsafe.nn(cells);
     }
 
 

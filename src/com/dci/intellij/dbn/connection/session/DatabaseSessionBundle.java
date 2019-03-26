@@ -81,7 +81,7 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
 
     @NotNull
     public DatabaseSession getMainSession() {
-        return Failsafe.get(mainSession);
+        return Failsafe.nn(mainSession);
     }
 
     public DatabaseSession getPoolSession() {

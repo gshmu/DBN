@@ -44,7 +44,7 @@ public class DatabaseLoggingResult extends DisposableBase implements ExecutionRe
 
     @NotNull
     public LogOutputContext getContext() {
-        return Failsafe.get(context);
+        return Failsafe.nn(context);
     }
 
     @Override

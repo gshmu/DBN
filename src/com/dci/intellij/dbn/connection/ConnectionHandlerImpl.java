@@ -182,7 +182,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @Override
     @NotNull
     public ConnectionBundle getConnectionBundle() {
-        return Failsafe.get(connectionBundle);
+        return Failsafe.nn(connectionBundle);
     }
 
     @Override
@@ -487,7 +487,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @Override
     @NotNull
     public ConnectionPool getConnectionPool() {
-        return Failsafe.get(connectionPool);
+        return Failsafe.nn(connectionPool);
     }
 
     @Override

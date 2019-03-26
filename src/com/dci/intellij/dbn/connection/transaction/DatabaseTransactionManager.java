@@ -89,7 +89,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         for (TransactionAction action : actions) {
             executeAction(connectionHandler, connection, project, action);
         }
-        Failsafe.run(callback);
+        Failsafe.guarded(() -> { if (callback != null) callback.run();});
     }
 
     private void executeAction(

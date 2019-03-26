@@ -21,7 +21,7 @@ public class ProjectRef extends WeakRef<Project> {
     @Override
     @NotNull
     public Project ensure() {
-        return Failsafe.get(get());
+        return Failsafe.nn(get());
     }
 
 

@@ -465,7 +465,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             Failsafe.guarded(() -> {
                 List<TransactionAction> actions = actions(TransactionAction.DISCONNECT_IDLE);
 
-                Failsafe.ensure(connectionHandler);
+                Failsafe.nd(connectionHandler);
                 DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(getProject());
                 List<DBNConnection> activeConnections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
 

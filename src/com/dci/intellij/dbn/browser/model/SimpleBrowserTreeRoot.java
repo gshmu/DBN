@@ -74,7 +74,7 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
 
     @Override
     public List<ConnectionBundle> getChildren() {
-        return Failsafe.get(rootChildren);
+        return Failsafe.nn(rootChildren);
     }
 
     @Override

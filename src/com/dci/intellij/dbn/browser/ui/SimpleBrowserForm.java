@@ -60,7 +60,7 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
     @Override
     @NotNull
     public DatabaseBrowserTree getBrowserTree() {
-        return Failsafe.get(browserTree);
+        return Failsafe.nn(browserTree);
     }
 
     @Override

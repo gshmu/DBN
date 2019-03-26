@@ -151,7 +151,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
 
     @NotNull
     public DBNConnection getTargetConnection() {
-        return Failsafe.get(targetConnection);
+        return Failsafe.nn(targetConnection);
     }
 
     @NotNull

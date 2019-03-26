@@ -94,7 +94,7 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
 
     @NotNull
     protected ObjectQuickFilterCondition getCondition() {
-        return Failsafe.get(condition);
+        return Failsafe.nn(condition);
     }
 
     public void remove() {

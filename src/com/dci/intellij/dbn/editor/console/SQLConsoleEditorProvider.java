@@ -45,7 +45,7 @@ public class SQLConsoleEditorProvider extends BasicTextEditorProvider implements
     @Override
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-        Failsafe.ensure(project);
+        Failsafe.nn(project);
         DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) file;
         SQLConsoleEditor editor = new SQLConsoleEditor(project, consoleVirtualFile, "SQL Console", getEditorProviderId());
         SQLConsoleEditorToolbarForm toolbarForm = new SQLConsoleEditorToolbarForm(project, editor);

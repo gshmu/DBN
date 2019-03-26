@@ -46,17 +46,17 @@ public final class DBObjectPsiFacade extends DisposableBase {
     }
 
     public static PsiDirectory getPsiDirectory(@Nullable DBObject object) {
-        return object == null ? null : Failsafe.get(object).getPsiFacade().getPsiDirectory();
+        return object == null ? null : Failsafe.nn(object).getPsiFacade().getPsiDirectory();
     }
 
     @Nullable
     public static PsiElement getPsiElement(@Nullable DBObject object) {
-        return object == null ? null : Failsafe.get(object).getPsiFacade().getPsiElement();
+        return object == null ? null : Failsafe.nn(object).getPsiFacade().getPsiElement();
     }
 
     @Nullable
     public static PsiFile getPsiFile(@Nullable DBObject object) {
-        return object == null ? null : Failsafe.get(object).getPsiFacade().getPsiFile();
+        return object == null ? null : Failsafe.nn(object).getPsiFacade().getPsiFile();
     }
 
 }

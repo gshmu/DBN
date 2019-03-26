@@ -18,7 +18,7 @@ public abstract class MessagesTreeLeafNode<P extends MessagesTreeNode, M extends
 
     @NotNull
     public final M getMessage() {
-        return Failsafe.get(message);
+        return Failsafe.nn(message);
     }
 
     /*********************************************************

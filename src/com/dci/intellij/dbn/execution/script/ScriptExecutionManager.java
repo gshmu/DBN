@@ -134,7 +134,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     private void doExecuteScript(final ScriptExecutionInput input) throws Exception {
         ExecutionContext context = input.getExecutionContext();
         context.set(EXECUTING, true);
-        ConnectionHandler connectionHandler = Failsafe.get(input.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(input.getConnectionHandler());
         final VirtualFile sourceFile = input.getSourceFile();
         activeProcesses.put(sourceFile, null);
 
@@ -149,7 +149,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
             new CancellableDatabaseCall<Object>(connectionHandler, null, timeout, TimeUnit.SECONDS) {
                 @Override
                 public Object execute() throws Exception {
-                    ConnectionHandler connectionHandler = Failsafe.get(input.getConnectionHandler());
+                    ConnectionHandler connectionHandler = Failsafe.nn(input.getConnectionHandler());
                     SchemaId schema = input.getSchema();
 
                     String content = new String(sourceFile.contentsToByteArray());

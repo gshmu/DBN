@@ -71,7 +71,7 @@ public class DatasetCustomFilter extends DatasetFilterImpl {
     @Override
     @NotNull
     public ConfigurationEditorForm createConfigurationEditor() {
-        DBDataset dataset = Failsafe.get(lookupDataset());
+        DBDataset dataset = Failsafe.nn(lookupDataset());
         return new DatasetCustomFilterForm(dataset, this);
     }
 

@@ -18,7 +18,7 @@ public class ObjectHierarchyPanel2 extends JPanel {
         this.setLayout(new BorderLayout());
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        ConnectionHandler connectionHandler = Failsafe.get(object.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(object.getConnectionHandler());
         JLabel connectionLabel = new JLabel(
                 connectionHandler.getName(),
                 connectionHandler.getIcon(),

@@ -221,7 +221,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             sourceCodeFile.set(SAVING, true);
             Project project = getProject();
             try {
-                Document document = Failsafe.get(DocumentUtil.getDocument(sourceCodeFile));
+                Document document = Failsafe.nn(DocumentUtil.getDocument(sourceCodeFile));
                 DocumentUtil.saveDocument(document);
 
                 DBLanguagePsiFile psiFile = sourceCodeFile.getPsiFile();

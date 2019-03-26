@@ -66,7 +66,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     @Override
     @NotNull
     public GenericDatabaseElement getParentElement() {
-        return Failsafe.get(parent);
+        return Failsafe.nn(parent);
     }
 
     public ConnectionId getConnectionId() {
@@ -76,7 +76,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return Failsafe.get(getParentElement().getConnectionHandler());
+        return Failsafe.nn(getParentElement().getConnectionHandler());
     }
 
     @Override

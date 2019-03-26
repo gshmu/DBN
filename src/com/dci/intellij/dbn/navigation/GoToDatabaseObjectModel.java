@@ -330,7 +330,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
                 DBObject object = (DBObject) value;
                 setIcon(object.getIcon());
                 append(object.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-                ConnectionHandler connectionHandler = Failsafe.get(object.getConnectionHandler());
+                ConnectionHandler connectionHandler = Failsafe.nn(object.getConnectionHandler());
                 append(" [" + connectionHandler.getName() + "]", SimpleTextAttributes.GRAY_ATTRIBUTES);
                 if (object.getParentObject() != null) {
                     append(" - " + object.getParentObject().getQualifiedName(), SimpleTextAttributes.GRAY_ATTRIBUTES);

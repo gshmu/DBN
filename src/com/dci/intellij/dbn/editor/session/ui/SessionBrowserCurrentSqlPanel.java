@@ -80,7 +80,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
 
     @NotNull
     public DBSessionStatementVirtualFile getVirtualFile() {
-        return Failsafe.get(virtualFile);
+        return Failsafe.nn(virtualFile);
     }
 
     void loadCurrentStatement() {
@@ -126,7 +126,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
 
     @NotNull
     private ConnectionHandler getConnectionHandler() {
-        return Failsafe.get(sessionBrowser.getConnectionHandler());
+        return Failsafe.nn(sessionBrowser.getConnectionHandler());
     }
 
     public DBLanguagePsiFile getPsiFile() {

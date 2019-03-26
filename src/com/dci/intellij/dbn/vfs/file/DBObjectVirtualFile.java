@@ -54,7 +54,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return Failsafe.get(objectRef.getConnectionHandler());
+        return Failsafe.nn(objectRef.getConnectionHandler());
     }
 
     @Nullable

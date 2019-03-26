@@ -30,7 +30,7 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
 
     @Override
     public DBNConnection getConnection() {
-        return Failsafe.get(connection.get());
+        return Failsafe.nn(connection.get());
     }
 
 

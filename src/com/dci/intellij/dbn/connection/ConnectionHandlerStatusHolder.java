@@ -99,7 +99,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
                 @Override
                 protected void statusChanged() {
                     if (true || getResource().isNot(ConnectionHandlerStatus.LOADING)) {
-                        ConnectionHandler connectionHandler = Failsafe.get(getConnectionHandler());
+                        ConnectionHandler connectionHandler = Failsafe.nn(getConnectionHandler());
                         Project project = connectionHandler.getProject();
                         EventUtil.notify(project,
                                 ConnectionLoadListener.TOPIC,

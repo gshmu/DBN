@@ -168,7 +168,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Override
     @NotNull
     public DBLanguagePsiFile getPsiFile() {
-        return Failsafe.get(psiFileRef.get());
+        return Failsafe.nn(psiFileRef.get());
     }
 
     @Override
@@ -342,7 +342,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             DBNConnection connection = context.getConnection();
             if (connection != null && connection.isPoolConnection()) {
                 ConnectionUtil.cancel(context.getStatement());
-                ConnectionHandler connectionHandler = Failsafe.get(getConnectionHandler());
+                ConnectionHandler connectionHandler = Failsafe.nn(getConnectionHandler());
                 connectionHandler.freePoolConnection(connection);
             }
             context.reset();
@@ -641,7 +641,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Override
     @NotNull
     public ConnectionHandler getTargetConnection() {
-        return Failsafe.get(getConnectionHandler());
+        return Failsafe.nn(getConnectionHandler());
     }
 
     @Override

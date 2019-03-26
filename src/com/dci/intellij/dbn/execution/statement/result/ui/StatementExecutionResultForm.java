@@ -91,7 +91,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     @Override
     @NotNull
     public StatementExecutionCursorResult getExecutionResult() {
-        return Failsafe.get(executionResult);
+        return Failsafe.nn(executionResult);
     }
 
     public void reloadTableModel() {
@@ -111,7 +111,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
 
     @NotNull
     public ResultSetTable getResultTable() {
-        return Failsafe.get(resultTable);
+        return Failsafe.nn(resultTable);
     }
 
     public void updateVisibleComponents() {

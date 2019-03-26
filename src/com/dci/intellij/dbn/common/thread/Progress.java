@@ -18,7 +18,7 @@ public interface Progress {
     static void background(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
         Failsafe.guarded(() -> {
             ThreadInfo invoker = ThreadMonitor.current();
-            Task task = new Task.Backgroundable(Failsafe.get(project), title, cancellable, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
+            Task task = new Task.Backgroundable(Failsafe.nn(project), title, cancellable, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
@@ -34,7 +34,7 @@ public interface Progress {
     static void prompt(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
         Failsafe.guarded(() -> {
             ThreadInfo invoker = ThreadMonitor.current();
-            Task task = new Task.Backgroundable(Failsafe.get(project), title, cancellable, PerformInBackgroundOption.DEAF) {
+            Task task = new Task.Backgroundable(Failsafe.nn(project), title, cancellable, PerformInBackgroundOption.DEAF) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
@@ -50,7 +50,7 @@ public interface Progress {
     static void modal(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
         Failsafe.guarded(() -> {
             ThreadInfo invoker = ThreadMonitor.current();
-            Task task = new Task.Modal(Failsafe.get(project), title, cancellable) {
+            Task task = new Task.Modal(Failsafe.nn(project), title, cancellable) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(

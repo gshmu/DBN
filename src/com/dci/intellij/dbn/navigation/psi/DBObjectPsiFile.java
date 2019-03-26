@@ -50,7 +50,7 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
 
     @NotNull
     public DBObject getObject() {
-        return Failsafe.get(objectRef.get());
+        return Failsafe.nn(objectRef.get());
     }
 
     @Override
