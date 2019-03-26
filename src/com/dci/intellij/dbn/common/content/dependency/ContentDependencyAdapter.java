@@ -13,7 +13,7 @@ public interface ContentDependencyAdapter extends Disposable {
      */
     boolean canLoad(ConnectionHandler connectionHandler);
 
-    boolean areSourcesDirty();
+    boolean areDependenciesDirty();
 
     void refreshSources();
 
