@@ -30,7 +30,7 @@ public class DisconnectSessionsAction extends AbstractSessionBrowserAction {
         boolean visible = false;
         boolean enabled = false;
         if (sessionBrowser != null) {
-            ConnectionHandler connectionHandler = Failsafe.get(sessionBrowser.getConnectionHandler());
+            ConnectionHandler connectionHandler = Failsafe.nn(sessionBrowser.getConnectionHandler());
             visible = DatabaseFeature.SESSION_DISCONNECT.isSupported(connectionHandler);
             SessionBrowserTable editorTable = sessionBrowser.getEditorTable();
             enabled = editorTable.getSelectedRows().length > 0;

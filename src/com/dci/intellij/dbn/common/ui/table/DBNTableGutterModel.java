@@ -23,7 +23,7 @@ public class DBNTableGutterModel<T extends DBNTableWithGutterModel> extends Disp
 
     @NotNull
     public T getTableModel() {
-        return Failsafe.get(tableModel);
+        return Failsafe.nn(tableModel);
     }
 
     @Override

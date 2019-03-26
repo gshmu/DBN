@@ -66,7 +66,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
 
     @NotNull
     private ConnectionHandler getConnectionHandler() {
-        return Failsafe.get(sessionBrowser.getConnectionHandler());
+        return Failsafe.nn(sessionBrowser.getConnectionHandler());
     }
 
     private class ReloadSessionsAction extends DumbAwareAction {

@@ -64,7 +64,7 @@ public abstract class BasicConfiguration<P extends Configuration, E extends Conf
 
     @NotNull
     public final E ensureSettingsEditor() {
-        return Failsafe.get(configurationEditorForm);
+        return Failsafe.nn(configurationEditorForm);
     }
 
 

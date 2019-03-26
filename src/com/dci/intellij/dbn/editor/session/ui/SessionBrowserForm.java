@@ -121,6 +121,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     }
 
     public void refreshLoadTimestamp() {
+        Failsafe.nd(this);
         boolean visible = !loadingLabel.isVisible();
         if (visible) {
             SessionBrowserModel model = getEditorTable().getModel();
@@ -139,12 +140,12 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
 
     @NotNull
     public SessionBrowserTable getEditorTable() {
-        return Failsafe.get(editorTable);
+        return Failsafe.nn(editorTable);
     }
 
     @NotNull
     public SessionBrowser getSessionBrowser() {
-        return Failsafe.get(sessionBrowser);
+        return Failsafe.nn(sessionBrowser);
     }
 
     @NotNull

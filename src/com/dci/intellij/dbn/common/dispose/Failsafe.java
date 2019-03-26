@@ -17,36 +17,17 @@ public class Failsafe {
     private static final VirtualFile DUMMY_VIRTUAL_FILE = new LightVirtualFile();
     public static final Project DUMMY_PROJECT = new MockProject(ApplicationManager.getApplication().getPicoContainer(), ApplicationManager.getApplication());
 
-    public static @NotNull <T extends Disposable> T get(@Nullable T disposable) {
-        if (disposable == null) {
-            throw AlreadyDisposedException.INSTANCE;
-        } else if (disposable.isDisposed()) {
-            if (ApplicationManager.getApplication().isDispatchThread()) {
-                return disposable;
-            }
-            throw AlreadyDisposedException.INSTANCE;
-        }
-        return disposable;
-    }
-
-    public static @NotNull <T> T get(@Nullable T object) {
+    public static @NotNull <T> T nn(@Nullable T object) {
         if (object == null) {
             throw AlreadyDisposedException.INSTANCE;
         }
         return object;
     }
 
-    public static @NotNull Project get(@Nullable Project project) {
-        if (project == null) {
-            throw AlreadyDisposedException.INSTANCE;
-        }
-        return project;
-    }
-
     public static <T> T getComponent(@NotNull Project project, @NotNull Class<T> interfaceClass) {
-        project = ensure(project);
+        project = nd(project);
         T component = project.getComponent(interfaceClass);
-        return get(component);
+        return nn(component);
     }
 
 
@@ -56,7 +37,7 @@ public class Failsafe {
     }
 
     @NotNull
-    public static <T> T ensure(T object) {
+    public static <T> T nd(@Nullable T object) {
         if (!check(object)) {
             throw AlreadyDisposedException.INSTANCE;
         }
@@ -71,6 +52,7 @@ public class Failsafe {
         }
         return true;
     }
+
     public static boolean check(Object object) {
         if (object == null) {
             return false;
@@ -122,11 +104,5 @@ public class Failsafe {
                         cancel.run();
                     }
                 });
-    }
-
-    public static void run (@Nullable Runnable runnable) {
-        try {
-            if (runnable != null) runnable.run();
-        } catch (ProcessCanceledException ignore) {}
     }
 }

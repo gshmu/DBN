@@ -155,7 +155,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
     @NotNull
     public DatasetEditor getDatasetEditor() {
-        return Failsafe.get(datasetEditor);
+        return Failsafe.nn(datasetEditor);
     }
 
     public void showLoadingHint() {
@@ -168,7 +168,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
     @NotNull
     public DatasetEditorTable getEditorTable() {
-        return Failsafe.get(datasetEditorTable);
+        return Failsafe.nn(datasetEditorTable);
     }
 
     private ConnectionHandler getConnectionHandler() {

@@ -22,7 +22,7 @@ public class CreateObjectAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         DBObjectList objectList = getObjectList();
-        DBSchema schema = Failsafe.get((DBSchema) objectList.getParentElement());
+        DBSchema schema = Failsafe.nn((DBSchema) objectList.getParentElement());
         Project project = schema.getProject();
         DatabaseObjectFactory factory = DatabaseObjectFactory.getInstance(project);
         factory.openFactoryInputDialog(schema, objectList.getObjectType());
@@ -30,6 +30,6 @@ public class CreateObjectAction extends AnAction {
 
     @NotNull
     public DBObjectList getObjectList() {
-        return Failsafe.get(WeakRef.get(objectList));
+        return Failsafe.nn(WeakRef.get(objectList));
     }
 }

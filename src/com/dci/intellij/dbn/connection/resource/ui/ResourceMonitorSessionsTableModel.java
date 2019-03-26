@@ -34,7 +34,7 @@ public class ResourceMonitorSessionsTableModel extends DisposableBase implements
 
     @NotNull
     public List<DatabaseSession> getSessions() {
-        return Failsafe.get(sessions);
+        return Failsafe.nn(sessions);
     }
 
     @Override

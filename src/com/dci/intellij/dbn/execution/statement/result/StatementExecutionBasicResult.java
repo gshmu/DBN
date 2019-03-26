@@ -47,7 +47,7 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
         this.resultName = resultName;
         this.executionProcessor = executionProcessor;
         this.updateCount = updateCount;
-        this.connectionHandlerRef = Failsafe.get(executionProcessor.getConnectionHandler()).getRef();
+        this.connectionHandlerRef = Failsafe.nn(executionProcessor.getConnectionHandler()).getRef();
         this.databaseSchema = executionProcessor.getTargetSchema();
     }
 
@@ -70,7 +70,7 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
     @Override
     @NotNull
     public StatementExecutionProcessor getExecutionProcessor() {
-        return Failsafe.get(executionProcessor);
+        return Failsafe.nn(executionProcessor);
     }
 
     @Override

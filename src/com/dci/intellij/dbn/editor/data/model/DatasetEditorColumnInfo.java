@@ -43,7 +43,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
 
     @NotNull
     public DBColumn getColumn() {
-        return Failsafe.get(DBObjectRef.get(columnRef));
+        return Failsafe.nn(DBObjectRef.get(columnRef));
     }
 
     @Override

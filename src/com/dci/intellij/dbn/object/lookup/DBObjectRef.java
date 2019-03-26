@@ -290,7 +290,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     @NotNull
     public static <T extends DBObject> T ensure(DBObjectRef<T> objectRef) {
         T object = get(objectRef);
-        return Failsafe.get(object);
+        return Failsafe.nn(object);
     }
 
     public static List<DBObject> get(List<DBObjectRef> objectRefs) {
@@ -329,7 +329,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     public T ensure(){
-        return Failsafe.get(get());
+        return Failsafe.nn(get());
     }
 
     @Nullable

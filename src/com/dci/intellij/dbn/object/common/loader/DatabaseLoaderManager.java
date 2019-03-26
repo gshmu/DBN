@@ -28,7 +28,7 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
                 connectionHandler -> Dispatch.invokeNonModal(() -> {
 
                     checkDisposed();
-                    Failsafe.ensure(project);
+                    Failsafe.nn(project);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                     FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
                     VirtualFile[] openFiles = fileEditorManager.getOpenFiles();

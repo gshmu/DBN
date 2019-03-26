@@ -39,14 +39,14 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBP
         this.datasetRef = DBObjectRef.from(dataset);
         this.content = content;
         name = dataset.getName();
-        ConnectionHandler connectionHandler = Failsafe.get(getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(getConnectionHandler());
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
         putUserData(PARSE_ROOT_ID_KEY, "subquery");
     }
 
     @Override
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
-        ConnectionHandler connectionHandler = Failsafe.get(getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(getConnectionHandler());
         DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
         return languageDialect == null ? null : fileViewProvider.initializePsiFile(languageDialect);
     }
@@ -70,7 +70,7 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBP
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return Failsafe.get(datasetRef.resolveConnectionHandler());
+        return Failsafe.nn(datasetRef.resolveConnectionHandler());
     }
 
     @Nullable

@@ -494,7 +494,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
         if (StringUtil.isNotEmpty(ownerName) && StringUtil.isNotEmpty(programName)) {
             ConnectionHandler connectionHandler = getConnectionHandler();
             DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
-            DBSchema schema = Failsafe.get(objectBundle.getSchema(ownerName));
+            DBSchema schema = Failsafe.nn(objectBundle.getSchema(ownerName));
             DBSchemaObject schemaObject = schema.getProgram(programName);
             if (schemaObject == null) schemaObject = schema.getMethod(programName, 0); // overload 0 is assuming debug is only supported in oracle (no schema method overloading)
             return schemaObject;

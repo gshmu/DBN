@@ -61,7 +61,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
 
     @NotNull
     public SessionBrowserForm getEditorForm() {
-        return Failsafe.get(editorForm);
+        return Failsafe.nn(editorForm);
     }
 
     public void showSearchHeader() {
@@ -147,7 +147,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
     }
 
     void refreshLoadTimestamp() {
-        if (editorForm != null) {
+        if (Failsafe.check(editorForm)) {
             editorForm.refreshLoadTimestamp();
         }
     }
@@ -192,7 +192,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
     }
 
     public Project getProject() {
-        return Failsafe.get(sessionBrowserFile.getProject());
+        return Failsafe.nn(sessionBrowserFile.getProject());
     }
 
     @Override

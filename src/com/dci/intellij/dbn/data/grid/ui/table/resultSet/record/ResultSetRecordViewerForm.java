@@ -308,7 +308,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
 
     @NotNull
     public ResultSetDataModelRow getRow() {
-        return Failsafe.get(row);
+        return Failsafe.nn(row);
     }
 
     @Override

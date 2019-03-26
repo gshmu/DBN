@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.browser.model;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
@@ -45,7 +44,7 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
     }
 
     public void notifyListeners(BrowserTreeNode treeNode, final TreeEventType eventType) {
-        if (Failsafe.check(this) && Failsafe.check(treeNode)) {
+        if (Failsafe.check(this, treeNode)) {
             TreePath treePath = DatabaseBrowserUtils.createTreePath(treeNode);
             TreeUtil.notifyTreeModelListeners(this, treeModelListeners, treePath, eventType);
         }
@@ -63,7 +62,7 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
      ***************************************/
     @Override
     public BrowserTreeNode getRoot() {
-        return Failsafe.get(root);
+        return Failsafe.nn(root);
     }
 
     @Override
@@ -97,7 +96,6 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
 
     @Override
     public void disposeInner() {
-        Disposer.dispose(root);
         super.disposeInner();
     }
 

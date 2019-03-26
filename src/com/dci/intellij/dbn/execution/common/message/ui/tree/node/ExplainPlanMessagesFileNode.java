@@ -22,7 +22,7 @@ public class ExplainPlanMessagesFileNode extends MessagesTreeBundleNode<ExplainP
     @NotNull
     @Override
     public VirtualFile getVirtualFile() {
-        return Failsafe.get(virtualFile);
+        return Failsafe.nn(virtualFile);
     }
 
     TreePath addExplainPlanMessage(ExplainPlanMessage explainPlanMessage) {

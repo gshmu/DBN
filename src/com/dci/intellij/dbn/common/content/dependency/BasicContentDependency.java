@@ -16,7 +16,7 @@ public class BasicContentDependency extends ContentDependency {
     @NotNull
     @Override
     public DynamicContent getSourceContent() {
-        return Failsafe.get(sourceContent);
+        return Failsafe.nn(sourceContent);
     }
 
     @Override

@@ -10,7 +10,7 @@ public abstract class DBNColoredTableCellRenderer extends ColoredTableCellRender
     @Override
     protected final void customizeCellRenderer(JTable table, @Nullable Object value, boolean selected, boolean hasFocus, int row, int column) {
         DBNTable dbnTable = (DBNTable) table;
-        Failsafe.run(() -> customizeCellRenderer(dbnTable, value, selected, hasFocus, row, column));
+        Failsafe.guarded(() -> customizeCellRenderer(dbnTable, value, selected, hasFocus, row, column));
     }
 
     protected abstract void customizeCellRenderer(DBNTable table, @Nullable Object value, boolean selected, boolean hasFocus, int row, int column);

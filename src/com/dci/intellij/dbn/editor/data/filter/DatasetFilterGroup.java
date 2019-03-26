@@ -193,7 +193,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
             if (schema != null) {
                 String name = datasetName.substring(index + 1);
                 DBDataset dataset = schema.getDataset(name);
-                return Failsafe.get(dataset);
+                return Failsafe.nn(dataset);
             }
         }
         throw AlreadyDisposedException.INSTANCE;

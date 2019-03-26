@@ -23,7 +23,7 @@ public class MethodExecutionMessagesObjectNode extends MessagesTreeBundleNode<Me
     @NotNull
     @Override
     public DBEditableObjectVirtualFile getVirtualFile() {
-        return Failsafe.get(databaseFile);
+        return Failsafe.nn(databaseFile);
     }
 
     public DBSchemaObject getObject() {

@@ -133,7 +133,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
     @NotNull
     @Override
     public ResultSetTable getTable() {
-        return Failsafe.get(resultTable);
+        return Failsafe.nn(resultTable);
     }
 
     /********************************************************

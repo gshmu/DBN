@@ -48,7 +48,7 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
     @NotNull
     public DBObject getObject() {
         DBObject object = objectRef.get();
-        return Failsafe.get(object);
+        return Failsafe.nn(object);
     }
 
     @Override

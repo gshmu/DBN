@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
@@ -262,7 +263,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     public List<DBSchema> getSchemas() {
-        return schemas.getAllElements();
+        return Failsafe.nn(schemas).getAllElements();
     }
 
     @Override
@@ -328,7 +329,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Override
     @Nullable
     public DBSchema getSchema(String name) {
-        return schemas.getObject(name);
+        return Failsafe.nn(schemas).getObject(name);
     }
 
     @Override
@@ -720,7 +721,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     public DBObjectListContainer getObjectListContainer() {
-        return objectLists;
+        return Failsafe.nn(objectLists);
     }
 
     @Override

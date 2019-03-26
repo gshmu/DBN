@@ -22,7 +22,7 @@ public class StatementExecutionMessagesFileNode extends MessagesTreeBundleNode<S
     @NotNull
     @Override
     public VirtualFile getVirtualFile() {
-        return Failsafe.get(virtualFile);
+        return Failsafe.nn(virtualFile);
     }
 
     TreePath addExecutionMessage(StatementExecutionMessage executionMessage) {

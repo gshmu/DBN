@@ -113,7 +113,7 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
                     DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
                     DBSchemaObject editableObject = editableObjectFile.getObject();
                     DDLFileEditor ddlFileEditor = (DDLFileEditor) fileEditor;
-                    VirtualFile ddlVirtualFile = Failsafe.get(ddlFileEditor.getVirtualFile());
+                    VirtualFile ddlVirtualFile = Failsafe.nn(ddlFileEditor.getVirtualFile());
                     return createPanel(ddlVirtualFile, editableObject);
                 }
                 return null;

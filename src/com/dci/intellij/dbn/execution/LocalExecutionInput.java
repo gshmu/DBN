@@ -24,7 +24,7 @@ public abstract class LocalExecutionInput extends ExecutionInput{
         ConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler != null) {
             if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
-                connectionHandler = Failsafe.get(connectionHandler);
+                connectionHandler = Failsafe.nn(connectionHandler);
                 options.set(ENABLE_LOGGING, connectionHandler.isLoggingEnabled());
             }
         }

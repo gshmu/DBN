@@ -95,7 +95,7 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
     @NotNull
     default DatabaseMetadataInterface getMetadataInterface() {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        return Failsafe.get(connectionHandler).getInterfaceProvider().getMetadataInterface();
+        return Failsafe.nn(connectionHandler).getInterfaceProvider().getMetadataInterface();
     }
 
     void loadInBackground();

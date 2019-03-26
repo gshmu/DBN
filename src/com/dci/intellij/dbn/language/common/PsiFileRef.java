@@ -39,6 +39,6 @@ public class PsiFileRef<T extends PsiFile>{
 
     @NotNull
     public T ensure() {
-        return Failsafe.get(get());
+        return Failsafe.nn(get());
     }
 }

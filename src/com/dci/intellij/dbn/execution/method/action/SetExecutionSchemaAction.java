@@ -18,7 +18,7 @@ public class SetExecutionSchemaAction extends AnObjectAction<DBSchema> {
 
     @NotNull
     public DBSchema getSchema() {
-        return Failsafe.get(getObject());
+        return Failsafe.nn(getObject());
     }
 
     @Override

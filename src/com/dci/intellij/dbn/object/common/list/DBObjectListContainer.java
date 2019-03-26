@@ -66,8 +66,8 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
     }
 
     private void checkDisposed(DBObjectListVisitor visitor) {
-        Failsafe.ensure(this);
-        Failsafe.ensure(visitor);
+        Failsafe.nd(this);
+        Failsafe.nd(visitor);
     }
 
     @NotNull
@@ -338,7 +338,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
 
     @Override
     public void disposeInner() {
-        super.disposeInner();
         Disposer.dispose(objectLists);
+        super.disposeInner();
     }
 }

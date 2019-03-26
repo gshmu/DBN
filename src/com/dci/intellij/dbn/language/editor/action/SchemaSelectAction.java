@@ -26,7 +26,7 @@ public class SchemaSelectAction extends AnObjectAction<DBSchema> {
 
     @NotNull
     public DBSchema getSchema() {
-        return Failsafe.get(getObject());
+        return Failsafe.nn(getObject());
     }
 
 

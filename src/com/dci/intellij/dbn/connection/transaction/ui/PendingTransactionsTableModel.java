@@ -36,7 +36,7 @@ public class PendingTransactionsTableModel extends DisposableBase implements DBN
 
     @NotNull
     public List<DBNConnection> getConnections() {
-        return Failsafe.get(connections);
+        return Failsafe.nn(connections);
     }
 
     @Override

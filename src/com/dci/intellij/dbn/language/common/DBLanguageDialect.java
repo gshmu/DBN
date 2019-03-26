@@ -55,7 +55,7 @@ public abstract class DBLanguageDialect extends Language implements DBFileElemen
     @Override
     @NotNull
     public DBLanguage getBaseLanguage() {
-        return Failsafe.get((DBLanguage) super.getBaseLanguage());
+        return Failsafe.nn((DBLanguage) super.getBaseLanguage());
     }
 
     public SharedTokenTypeBundle getSharedTokenTypes() {

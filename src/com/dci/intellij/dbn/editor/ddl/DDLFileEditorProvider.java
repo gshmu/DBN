@@ -45,7 +45,7 @@ public abstract class DDLFileEditorProvider extends BasicTextEditorProvider impl
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
         DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
-        List<VirtualFile> ddlFiles = Failsafe.get(databaseFile.getAttachedDDLFiles());
+        List<VirtualFile> ddlFiles = Failsafe.nn(databaseFile.getAttachedDDLFiles());
         VirtualFile virtualFile = ddlFiles.get(index);
 
         BasicTextEditor textEditor = new DDLFileEditor(project, virtualFile, getEditorProviderId());

@@ -191,7 +191,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
         while (parent != null && !(parent instanceof DBLanguagePsiFile)) {
             parent = parent.getParent();
         }
-        return Failsafe.get((DBLanguagePsiFile) parent);
+        return Failsafe.nn((DBLanguagePsiFile) parent);
     }
 
     @Nullable

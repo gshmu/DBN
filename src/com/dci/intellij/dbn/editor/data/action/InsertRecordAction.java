@@ -19,7 +19,7 @@ public class InsertRecordAction extends AbstractDataEditorAction {
     public void actionPerformed(AnActionEvent e) {
         DatasetEditor datasetEditor = getDatasetEditor(e);
         if (datasetEditor != null) {
-            Failsafe.get(datasetEditor).insertRecord();
+            Failsafe.nn(datasetEditor).insertRecord();
         }
     }
 
