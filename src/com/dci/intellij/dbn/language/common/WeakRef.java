@@ -30,7 +30,7 @@ public class WeakRef<T> extends WeakReference<T> {
 
     @NotNull
     public T ensure() {
-        return Failsafe.get(get());
+        return Failsafe.nn(get());
     }
 
     @Override

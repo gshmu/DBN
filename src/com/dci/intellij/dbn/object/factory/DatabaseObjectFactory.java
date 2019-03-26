@@ -95,10 +95,10 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
                 DBNConnection connection = connectionHandler.getMainConnection(SchemaId.from(schema));
                 connectionHandler.getInterfaceProvider().getDDLInterface().createMethod(methodFactoryInput, connection);
                 DBObjectType objectType = methodFactoryInput.isFunction() ? DBObjectType.FUNCTION : DBObjectType.PROCEDURE;
-                Failsafe.get(schema.getChildObjectList(objectType)).reload();
+                Failsafe.nn(schema.getChildObjectList(objectType)).reload();
 
                 DBMethod method = (DBMethod) schema.getChildObject(objectType, factoryInput.getObjectName(), false);
-                Failsafe.get(method.getChildObjectList(DBObjectType.ARGUMENT)).reload();
+                Failsafe.nn(method.getChildObjectList(DBObjectType.ARGUMENT)).reload();
 
                 DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
                 databaseFileSystem.connectAndOpenEditor(method, null, false, true);

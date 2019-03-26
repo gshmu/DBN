@@ -179,7 +179,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
 
         @NotNull
         public DBSchema getSchema() {
-            return Failsafe.get(getObject());
+            return Failsafe.nn(getObject());
         }
 
 

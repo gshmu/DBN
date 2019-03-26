@@ -202,7 +202,7 @@ public class ObjectDependencyTree extends DBNTree{
 
     void setDependencyType(ObjectDependencyType dependencyType) {
         ObjectDependencyTreeModel oldModel = getModel();
-        Project project = Failsafe.get(oldModel.getProject());
+        Project project = Failsafe.nn(oldModel.getProject());
         ObjectDependencyManager dependencyManager = ObjectDependencyManager.getInstance(project);
         dependencyManager.setLastUserDependencyType(dependencyType);
 
@@ -226,7 +226,7 @@ public class ObjectDependencyTree extends DBNTree{
 
     @Override
     public void disposeInner() {
-        Disposer.dispose(selectionHistory, speedSearch);
+        Disposer.dispose(selectionHistory, speedSearch, getModel());
         super.disposeInner();
     }
 }

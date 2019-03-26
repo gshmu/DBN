@@ -72,7 +72,7 @@ public class ExplainPlanResult extends DisposableBase implements ExecutionResult
 
     public ExplainPlanResult(ExecutablePsiElement executablePsiElement, String errorMessage) {
         DBLanguagePsiFile psiFile = executablePsiElement.getFile();
-        ConnectionHandler connectionHandler = Failsafe.get(psiFile.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(psiFile.getConnectionHandler());
         connectionHandlerRef = connectionHandler.getRef();
         currentSchema = psiFile.getSchemaId();
         virtualFile = psiFile.getVirtualFile();

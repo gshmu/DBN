@@ -40,7 +40,7 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
         super(sessionBrowser.getProject());
         this.sessionBrowser = WeakRef.from(sessionBrowser);
         this.content = content;
-        ConnectionHandler connectionHandler = Failsafe.get(sessionBrowser.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(sessionBrowser.getConnectionHandler());
         name = connectionHandler.getName();
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
         //putUserData(PARSE_ROOT_ID_KEY, "subquery");
@@ -48,7 +48,7 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
 
     @Override
     public PsiFile initializePsiFile(DatabaseFileViewProvider fileViewProvider, Language language) {
-        ConnectionHandler connectionHandler = Failsafe.get(getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(getConnectionHandler());
         DBLanguageDialect languageDialect = connectionHandler.resolveLanguageDialect(language);
         return languageDialect == null ? null : fileViewProvider.initializePsiFile(languageDialect);
     }
@@ -73,7 +73,7 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
         ConnectionHandler connectionHandler = getSessionBrowser().getConnectionHandler();
-        return Failsafe.get(connectionHandler);
+        return Failsafe.nn(connectionHandler);
     }
 
     @Nullable

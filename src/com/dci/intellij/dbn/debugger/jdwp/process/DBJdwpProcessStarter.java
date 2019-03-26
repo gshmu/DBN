@@ -68,7 +68,7 @@ public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
         Range<Integer> portRange = jdwpRunConfig.getTcpPortRange();
         int freePort = findFreePort(portRange.getFrom(), portRange.getTo());
         RemoteConnection remoteConnection = new RemoteConnection(true, "localhost", Integer.toString(freePort), true);
-        RunProfileState state = Failsafe.get(runProfile.getState(executor, environment));
+        RunProfileState state = Failsafe.nn(runProfile.getState(executor, environment));
 
         DebugEnvironment debugEnvironment = new DefaultDebugEnvironment(environment, state, remoteConnection, true);
         DebuggerManagerEx debuggerManagerEx = DebuggerManagerEx.getInstanceEx(session.getProject());

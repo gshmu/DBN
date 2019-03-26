@@ -52,7 +52,7 @@ public class DBDebugUtil {
     public static void openEditor(VirtualFile virtualFile) {
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
             DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
-            Project project = Failsafe.get(databaseFile.getProject());
+            Project project = Failsafe.nn(databaseFile.getProject());
             SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
             sourceCodeManager.ensureSourcesLoaded(databaseFile.getObject(), false);
 

@@ -53,7 +53,7 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
     @Override
     @NotNull
     public BrowserTreeNode getParent() {
-        return Failsafe.get(parent);
+        return Failsafe.nn(parent);
     }
 
     @Override
@@ -110,7 +110,7 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return Failsafe.get(getParent().getConnectionHandler());
+        return Failsafe.nn(getParent().getConnectionHandler());
     }
 
     @Override

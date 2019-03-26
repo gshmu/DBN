@@ -225,7 +225,7 @@ public class EditorUtil {
     }
 
     public static void setEditorsReadonly(DBContentVirtualFile contentFile, final boolean readonly) {
-        final Project project = Failsafe.get(contentFile.getProject());
+        final Project project = Failsafe.nn(contentFile.getProject());
 
         if (contentFile instanceof DBSourceCodeVirtualFile) {
             DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;

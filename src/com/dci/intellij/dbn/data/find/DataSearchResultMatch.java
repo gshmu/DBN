@@ -16,7 +16,7 @@ public class DataSearchResultMatch {
     }
 
     public DataModelCell getCell() {
-        return Failsafe.get(cell.get());
+        return Failsafe.nn(cell.get());
     }
 
     public int getStartOffset() {

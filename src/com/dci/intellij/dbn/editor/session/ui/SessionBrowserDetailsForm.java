@@ -78,7 +78,7 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
 
     @NotNull
     private ConnectionHandler getConnectionHandler() {
-        return Failsafe.get(sessionBrowser.getConnectionHandler());
+        return Failsafe.nn(sessionBrowser.getConnectionHandler());
     }
 
     public void update(@Nullable final SessionBrowserModelRow selectedRow) {

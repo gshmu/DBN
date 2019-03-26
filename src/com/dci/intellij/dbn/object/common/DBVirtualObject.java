@@ -295,7 +295,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        BasePsiElement underlyingPsiElement = Failsafe.ensure(getUnderlyingPsiElement());
+        BasePsiElement underlyingPsiElement = Failsafe.nd(getUnderlyingPsiElement());
         DBLanguagePsiFile file = underlyingPsiElement.getFile();
         ConnectionHandler connectionHandler = file.getConnectionHandler();
         if (connectionHandler == null) {
@@ -317,7 +317,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     @Override
     @NotNull
     public Project getProject() {
-        PsiElement underlyingPsiElement = Failsafe.ensure(getUnderlyingPsiElement());
+        PsiElement underlyingPsiElement = Failsafe.nd(getUnderlyingPsiElement());
         if (underlyingPsiElement.isValid()) {
             return underlyingPsiElement.getProject();
         }
@@ -390,7 +390,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     @NotNull
     private BasePsiElement getRelevantPsiElement() {
         BasePsiElement basePsiElement = PsiElementRef.get(relevantPsiElement);
-        return Failsafe.get(basePsiElement);
+        return Failsafe.nn(basePsiElement);
     }
 
     @Override

@@ -372,7 +372,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
                     ListUtil.BASIC_TO_STRING_ASPECT,
                     "Select DDL file type",
                     ListSelectionModel.SINGLE_SELECTION);
-            JList list = Failsafe.ensure((JList) fileTypeDialog.getPreferredFocusedComponent());
+            JList list = Failsafe.nd((JList) fileTypeDialog.getPreferredFocusedComponent());
             list.setCellRenderer(new DDLFileNameListCellRenderer());
             fileTypeDialog.show();
             Object[] selectedFileTypes = fileTypeDialog.getSelection();

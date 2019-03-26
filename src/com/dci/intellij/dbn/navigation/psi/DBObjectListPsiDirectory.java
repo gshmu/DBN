@@ -55,7 +55,7 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
     @Override
     @NotNull
     public DBObjectListVirtualFile getVirtualFile() {
-        return Failsafe.get(virtualFile);
+        return Failsafe.nn(virtualFile);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
     @NotNull
     public Project getProject() throws PsiInvalidElementAccessException {
         Project project = getVirtualFile().getProject();
-        return Failsafe.get(project);
+        return Failsafe.nn(project);
     }
 
     @Override

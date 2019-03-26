@@ -128,7 +128,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
 
     @NotNull
     ResultSetAdapter getResultSetAdapter() {
-        return Failsafe.get(resultSetAdapter);
+        return Failsafe.nn(resultSetAdapter);
     }
 
     private int computeRowCount() {
@@ -143,7 +143,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
     }
 
     public DataEditorSettings getSettings() {
-        return Failsafe.get(settings);
+        return Failsafe.nn(settings);
     }
 
     private DBNResultSet loadResultSet(boolean useCurrentFilter, AtomicReference<DBNStatement> statementRef) throws SQLException {
@@ -268,12 +268,12 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
 
     @NotNull
     public DBDataset getDataset() {
-        return Failsafe.get(DBObjectRef.get(datasetRef));
+        return Failsafe.nn(DBObjectRef.get(datasetRef));
     }
 
     @NotNull
     public DatasetEditor getDatasetEditor() {
-        return Failsafe.get(datasetEditor);
+        return Failsafe.nn(datasetEditor);
     }
 
     @NotNull

@@ -54,7 +54,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
         this.executableStatementText = executableStatementText;
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(connectionHandler)) {
-            connectionHandler = Failsafe.get(connectionHandler);
+            connectionHandler = Failsafe.nn(connectionHandler);
             getOptions().set(ExecutionOption.ENABLE_LOGGING, connectionHandler.isLoggingEnabled());
         }
     }

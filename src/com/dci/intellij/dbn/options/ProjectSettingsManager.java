@@ -73,7 +73,7 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
     }
 
     public ProjectSettings getProjectSettings() {
-        return Failsafe.ensure(projectSettings);
+        return Failsafe.nd(projectSettings);
     }
 
     public GeneralProjectSettings getGeneralSettings() {

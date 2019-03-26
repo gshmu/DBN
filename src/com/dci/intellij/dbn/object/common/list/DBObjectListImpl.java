@@ -227,7 +227,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @NotNull
     public Project getProject() {
         GenericDatabaseElement parent = getParentElement();
-        return Failsafe.get(parent.getProject());
+        return Failsafe.nn(parent.getProject());
     }
 
     @Override
@@ -240,7 +240,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
         if (psiDirectory == null) {
             synchronized (this) {
                 if (psiDirectory == null) {
-                    Failsafe.ensure(this);
+                    Failsafe.nd(this);
                     psiDirectory = new DBObjectListPsiDirectory(this);
                 }
             }

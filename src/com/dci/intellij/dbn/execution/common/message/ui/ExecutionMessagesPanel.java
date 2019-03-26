@@ -88,6 +88,6 @@ public class ExecutionMessagesPanel extends DBNFormImpl<ExecutionConsoleForm>{
 
     @NotNull
     public MessagesTree getMessagesTree() {
-        return Failsafe.get(messagesTree);
+        return Failsafe.nn(messagesTree);
     }
 }

@@ -36,7 +36,7 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
             databaseFile = (DBEditableObjectVirtualFile) file;
         }
 
-        DBSourceCodeVirtualFile sourceCodeFile = Failsafe.get(getSourceCodeFile(databaseFile));
+        DBSourceCodeVirtualFile sourceCodeFile = Failsafe.nn(getSourceCodeFile(databaseFile));
         boolean isMainEditor = sourceCodeFile.getContentType() == databaseFile.getMainContentType();
 
         String editorName = getName();

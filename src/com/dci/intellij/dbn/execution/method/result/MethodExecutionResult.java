@@ -120,7 +120,7 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
 
     @NotNull
     public MethodExecutionInput getExecutionInput() {
-        return Failsafe.get(executionInput);
+        return Failsafe.nn(executionInput);
     }
 
     public ExecutionContext getExecutionContext() {
@@ -129,7 +129,7 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
 
     @NotNull
     public DBMethod getMethod() {
-        return Failsafe.get(getExecutionInput().getMethod());
+        return Failsafe.nn(getExecutionInput().getMethod());
     }
 
 

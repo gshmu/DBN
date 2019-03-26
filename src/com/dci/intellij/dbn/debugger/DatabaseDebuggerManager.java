@@ -194,7 +194,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
     @NotNull
     private RunnerAndConfigurationSettings getDefaultConfig(DBRunConfigType configurationType, DBDebuggerType debuggerType){
-        return Failsafe.get(getDefaultConfig(configurationType, debuggerType, true));
+        return Failsafe.nn(getDefaultConfig(configurationType, debuggerType, true));
     }
 
     @Nullable

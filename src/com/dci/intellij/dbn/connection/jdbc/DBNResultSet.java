@@ -41,11 +41,11 @@ public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, C
 
     @Override
     public DBNStatement getStatement() {
-        return Failsafe.get(statement.get());
+        return Failsafe.nn(statement.get());
     }
 
     public DBNConnection getConnection() {
-        return Failsafe.get(connection == null ? getStatement().getConnection() : connection.get());
+        return Failsafe.nn(connection == null ? getStatement().getConnection() : connection.get());
     }
 
     @Override

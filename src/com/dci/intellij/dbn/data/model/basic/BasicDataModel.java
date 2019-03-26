@@ -111,7 +111,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
     @Override
     @NotNull
     public DataModelHeader<? extends ColumnInfo> getHeader() {
-        return Failsafe.get(header);
+        return Failsafe.nn(header);
     }
 
     @Override
@@ -163,8 +163,8 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
     @NotNull
     @Override
     public List<T> getRows() {
-        Failsafe.ensure(this);
-        return Failsafe.get(rows);
+        Failsafe.nd(this);
+        return Failsafe.nn(rows);
     }
 
     public void setRows(List<T> rows) {

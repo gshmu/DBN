@@ -47,7 +47,7 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
 
     @NotNull
     public P ensureParentComponent() {
-        return Failsafe.get(getParentComponent());
+        return Failsafe.nn(getParentComponent());
     }
 
     @Override
@@ -63,7 +63,7 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
 
         DataContext dataContext = DataManager.getInstance().getDataContext(getComponent());
         Project project = PlatformDataKeys.PROJECT.getData(dataContext);
-        return Failsafe.get(project);
+        return Failsafe.nn(project);
     }
 
     @Override

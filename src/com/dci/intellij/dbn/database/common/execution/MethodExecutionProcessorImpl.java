@@ -162,7 +162,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
     @NotNull
     private ConnectionHandler getConnectionHandler() {
-        return Failsafe.get(getMethod().getConnectionHandler());
+        return Failsafe.nn(getMethod().getConnectionHandler());
     }
 
     protected boolean isQuery() {

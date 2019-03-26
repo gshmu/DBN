@@ -79,7 +79,7 @@ public class ActionUtil {
 
     @NotNull
     public static Project ensureProject(AnActionEvent e) {
-        return Failsafe.get(e.getData(PlatformDataKeys.PROJECT));
+        return Failsafe.nn(e.getData(PlatformDataKeys.PROJECT));
     }
 
     public static <T extends ProjectComponent> T getComponent(AnActionEvent e, Class<T> componentClass) {

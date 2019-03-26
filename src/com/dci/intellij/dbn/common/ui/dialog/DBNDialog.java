@@ -32,7 +32,7 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
         if (component == null && !isDisposed()) {
             component = createComponent();
         }
-        return Failsafe.get(component);
+        return Failsafe.nn(component);
     }
 
     @Override

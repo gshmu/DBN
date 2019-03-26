@@ -59,8 +59,16 @@ public class Disposer {
     }
 
     static boolean isNullifiable(@NotNull Object object) {
-        Nullifiable nullifiable = NULLIFIABLE.get(object.getClass());
-        return nullifiable != null;
+        Class<?> objectType = object.getClass();
+        while (objectType != Object.class) {
+            Nullifiable nullifiable = NULLIFIABLE.get(objectType);
+            if (nullifiable != null) {
+                return true;
+            }
+            objectType = objectType.getSuperclass();
+        }
+
+        return false;
     }
 
     private static void dispose(@Nullable Disposable disposable) {

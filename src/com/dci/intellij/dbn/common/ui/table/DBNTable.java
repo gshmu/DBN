@@ -108,7 +108,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Disposa
     @Override
     @NotNull
     public T getModel() {
-        return Failsafe.get((T) super.getModel());
+        return Failsafe.nn((T) super.getModel());
     }
 
     private void calculateScrollDistance() {

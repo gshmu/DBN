@@ -14,7 +14,7 @@ import java.util.List;
 public class DatasetEditorUtils {
     public static List<String> loadDistinctColumnValues(@NotNull DBColumn column) {
         List<String> list = new ArrayList<String>();
-        ConnectionHandler connectionHandler = Failsafe.get(column.getConnectionHandler());
+        ConnectionHandler connectionHandler = Failsafe.nn(column.getConnectionHandler());
         DBNConnection connection = null;
         ResultSet resultSet = null;
         try {

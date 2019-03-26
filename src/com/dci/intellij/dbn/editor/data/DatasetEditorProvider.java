@@ -44,7 +44,7 @@ public class DatasetEditorProvider implements FileEditorProvider, ApplicationCom
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
         DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
         DBDatasetVirtualFile datasetFile = (DBDatasetVirtualFile) databaseFile.getContentFile(DBContentType.DATA);
-        datasetFile = Failsafe.get(datasetFile);
+        datasetFile = Failsafe.nn(datasetFile);
         DBDataset dataset = datasetFile.getObject();
         return new DatasetEditor(databaseFile, dataset);
     }
