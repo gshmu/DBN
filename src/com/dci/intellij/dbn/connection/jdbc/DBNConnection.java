@@ -358,9 +358,4 @@ public class DBNConnection extends DBNConnectionBase {
     public boolean hasDataChanges() {
         return dataChanges != null && !dataChanges.isEmpty();
     }
-
-    @Override
-    public String toString() {
-        return type + " - " + super.toString() + "";
-    }
 }

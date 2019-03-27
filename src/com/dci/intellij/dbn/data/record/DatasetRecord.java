@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.data.record;
 
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNPreparedStatement;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
@@ -91,8 +91,8 @@ public class DatasetRecord implements Disposable {
                 connection.updateLastAccess();
             }
         }  finally {
-            ConnectionUtil.close(resultSet);
-            ConnectionUtil.close(statement);
+            ResourceUtil.close(resultSet);
+            ResourceUtil.close(statement);
             connectionHandler.freePoolConnection(connection);
         }
 
