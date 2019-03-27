@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.data;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.object.DBColumn;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +32,7 @@ public class DatasetEditorUtils {
             e.printStackTrace();
 
         } finally {
-            ConnectionUtil.close(resultSet);
+            ResourceUtil.close(resultSet);
             connectionHandler.freePoolConnection(connection);
         }
 

@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusHolder;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.IncrementalStatusAdapter;
 import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
@@ -125,7 +125,7 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
                     }
                 }
             } finally {
-                ConnectionUtil.close(resultSet);
+                ResourceUtil.close(resultSet);
                 connection.set(ResourceStatus.ACTIVE, false);
                 connectionHandler.freePoolConnection(connection);
             }

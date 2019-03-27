@@ -27,8 +27,8 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -548,7 +548,7 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
             ddl = statement.getString(1);
             ddl = ddl == null ? null : ddl.trim();
         } finally{
-            ConnectionUtil.close(statement);
+            ResourceUtil.close(statement);
             connectionHandler.freePoolConnection(connection);
         }
         return ddl;

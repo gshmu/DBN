@@ -24,7 +24,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
-public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, Closeable {
+public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, CloseableResource {
     private WeakRef<DBNStatement> statement;
     private WeakRef<DBNConnection> connection;
 

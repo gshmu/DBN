@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -80,9 +80,9 @@ public class ExplainPlanManager extends AbstractProjectComponent {
                                     } catch (SQLException e) {
                                         explainPlanResult = new ExplainPlanResult(executable, e.getMessage());
                                     } finally {
-                                        ConnectionUtil.close(resultSet);
-                                        ConnectionUtil.close(statement);
-                                        ConnectionUtil.rollbackSilently(connection);
+                                        ResourceUtil.close(resultSet);
+                                        ResourceUtil.close(statement);
+                                        ResourceUtil.rollbackSilently(connection);
                                         connectionHandler.freePoolConnection(connection);
                                     }
 

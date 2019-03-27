@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database.common.util;
 
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,13 +8,13 @@ import java.sql.SQLException;
 public abstract class ResultSetReader {
     public ResultSetReader(ResultSet resultSet) throws SQLException {
         try {
-            if (resultSet != null && !ConnectionUtil.isClosed(resultSet)) {
+            if (resultSet != null && !ResourceUtil.isClosed(resultSet)) {
                 while (resultSet.next()) {
                     processRow(resultSet);
                 }
             }
         } finally {
-            ConnectionUtil.close(resultSet);
+            ResourceUtil.close(resultSet);
         }
     }
 

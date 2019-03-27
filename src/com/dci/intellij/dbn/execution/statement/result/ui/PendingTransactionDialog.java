@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.dialog.DialogWithTimeout;
 import com.dci.intellij.dbn.common.util.TimeUtil;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ public class PendingTransactionDialog extends DialogWithTimeout {
     @Override
     public void doDefaultAction() {
         DBNConnection connection = getConnection();
-        ConnectionUtil.rollbackSilently(connection);
+        ResourceUtil.rollbackSilently(connection);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class PendingTransactionDialog extends DialogWithTimeout {
         public void actionPerformed(ActionEvent e) {
             try {
                 DBNConnection connection = getConnection();
-                ConnectionUtil.commitSilently(connection);
+                ResourceUtil.commitSilently(connection);
             } finally {
                 executionProcessor.getExecutionContext().set(PROMPTED, false);
                 executionProcessor.postExecute();
@@ -91,7 +91,7 @@ public class PendingTransactionDialog extends DialogWithTimeout {
         public void actionPerformed(ActionEvent e) {
             try {
                 DBNConnection connection = getConnection();
-                ConnectionUtil.rollbackSilently(connection);
+                ResourceUtil.rollbackSilently(connection);
             } finally {
                 executionProcessor.getExecutionContext().set(PROMPTED, false);
                 executionProcessor.postExecute();
@@ -103,7 +103,7 @@ public class PendingTransactionDialog extends DialogWithTimeout {
     @Override
     public void doCancelAction() {
         DBNConnection connection = getConnection();
-        ConnectionUtil.rollbackSilently(connection);
+        ResourceUtil.rollbackSilently(connection);
         super.doCancelAction();
     }
 }

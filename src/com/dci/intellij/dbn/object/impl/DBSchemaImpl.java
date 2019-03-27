@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -453,7 +453,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                 }
             }
             finally {
-                ConnectionUtil.close(resultSet);
+                ResourceUtil.close(resultSet);
             }
 
             try {
@@ -480,7 +480,7 @@ public class DBSchemaImpl extends DBObjectImpl implements DBSchema {
                     }
                 }
             } finally {
-                ConnectionUtil.close(resultSet);
+                ResourceUtil.close(resultSet);
             }
 
         } finally {

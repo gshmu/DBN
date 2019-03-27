@@ -31,7 +31,7 @@ public class DatabaseInterfaceProviderFactory {
                 DBNConnection testConnection = null;
                 try {
                     testConnection = connectionHandler.getTestConnection();
-                    databaseType = ConnectionUtil.getDatabaseType(testConnection);
+                    databaseType = ResourceUtil.getDatabaseType(testConnection);
                     databaseSettings.setDatabaseType(databaseType);
                 } catch (SQLException e) {
                     if (databaseSettings.getDatabaseType() == null) {
@@ -39,7 +39,7 @@ public class DatabaseInterfaceProviderFactory {
                     }
                     throw e;
                 } finally {
-                    ConnectionUtil.close(testConnection);
+                    ResourceUtil.close(testConnection);
                 }
             }
         }

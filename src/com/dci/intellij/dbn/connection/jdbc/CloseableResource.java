@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection.jdbc;
 
 import java.sql.SQLException;
 
-public interface Closeable extends AutoCloseable, Resource{
+public interface CloseableResource extends AutoCloseable, Resource{
     boolean isClosed() throws SQLException;
 
     boolean isClosedInner() throws SQLException;

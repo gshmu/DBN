@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection.transaction;
 
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import org.jetbrains.annotations.Nullable;
@@ -21,14 +21,14 @@ public interface ConnectionSavepoint<T>{
             return callable.call();
         } else {
             synchronized (connection) {
-                Savepoint savepoint = ConnectionUtil.createSavepoint(connection);
+                Savepoint savepoint = ResourceUtil.createSavepoint(connection);
                 try {
                     return callable.call();
                 } catch (SQLException e) {
-                    ConnectionUtil.rollbackSilently(connection, savepoint);
+                    ResourceUtil.rollbackSilently(connection, savepoint);
                     throw e;
                 } finally {
-                    ConnectionUtil.releaseSavepoint(connection, savepoint);
+                    ResourceUtil.releaseSavepoint(connection, savepoint);
                 }
             }
         }
@@ -44,14 +44,14 @@ public interface ConnectionSavepoint<T>{
             runnable.run();
         } else {
             synchronized (connection) {
-                Savepoint savepoint = ConnectionUtil.createSavepoint(connection);
+                Savepoint savepoint = ResourceUtil.createSavepoint(connection);
                 try {
                     runnable.run();
                 } catch (SQLException e) {
-                    ConnectionUtil.rollbackSilently(connection, savepoint);
+                    ResourceUtil.rollbackSilently(connection, savepoint);
                     throw e;
                 } finally {
-                    ConnectionUtil.releaseSavepoint(connection, savepoint);
+                    ResourceUtil.releaseSavepoint(connection, savepoint);
 
                 }
             }

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.common.loader;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.diagnostic.Logger;
@@ -41,7 +41,7 @@ public abstract class DBSourceCodeLoader {
 
             return StringUtil.removeCharacter(sourceCode.toString(), '\r');
         } finally {
-            ConnectionUtil.close(resultSet);
+            ResourceUtil.close(resultSet);
             connectionHandler.freePoolConnection(connection);
         }
     }

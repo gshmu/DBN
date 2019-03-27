@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
-abstract class DBNConnectionBase extends DBNResource<Connection> implements Connection, Closeable {
+abstract class DBNConnectionBase extends DBNResource<Connection> implements Connection, CloseableResource {
     public DBNConnectionBase(Connection inner) {
         super(inner, ResourceType.CONNECTION);
     }

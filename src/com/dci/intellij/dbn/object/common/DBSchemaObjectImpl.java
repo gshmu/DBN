@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -32,16 +32,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.DBObjectType.INCOMING_DEPENDENCY;
-import static com.dci.intellij.dbn.object.common.DBObjectType.OUTGOING_DEPENDENCY;
-import static com.dci.intellij.dbn.object.common.DBObjectType.PACKAGE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.PACKAGE_BODY;
-import static com.dci.intellij.dbn.object.common.DBObjectType.TYPE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.TYPE_BODY;
-import static com.dci.intellij.dbn.object.common.DBObjectType.get;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.EDITABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.REFERENCEABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
+import static com.dci.intellij.dbn.object.common.DBObjectType.*;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 
 public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchemaObject {
@@ -180,7 +172,7 @@ public abstract class DBSchemaObjectImpl extends DBObjectImpl implements DBSchem
             }
 
         } finally {
-            ConnectionUtil.close(resultSet);
+            ResourceUtil.close(resultSet);
             connectionHandler.freePoolConnection(connection);
         }
         return schemas;
