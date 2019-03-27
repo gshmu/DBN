@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection.jdbc;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.diagnostic.Logger;
 
@@ -14,7 +14,7 @@ import java.sql.Statement;
 
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
 
-public class DBNStatement<T extends Statement> extends DBNResource<T> implements Statement, Closeable, Cancellable {
+public class DBNStatement<T extends Statement> extends DBNResource<T> implements Statement, CloseableResource, CancellableResource {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     protected SQLException exception;
@@ -99,7 +99,7 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
                 connection.set(ACTIVE, true);
                 return execute();
             } catch (SQLException e) {
-                ConnectionUtil.close(DBNStatement.this);
+                ResourceUtil.close(DBNStatement.this);
                 exception = e;
                 throw exception;
             } finally {

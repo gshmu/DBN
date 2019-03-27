@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.common.util.Traceable;
 import com.intellij.openapi.diagnostic.Logger;
@@ -13,8 +14,8 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
     protected T inner;
     private ResourceType type;
 
-    private ResourceStatusAdapter<Closeable> closed;
-    private ResourceStatusAdapter<Cancellable> cancelled;
+    private ResourceStatusAdapter<CloseableResource> closed;
+    private ResourceStatusAdapter<CancellableResource> cancelled;
 
     protected Traceable traceable = new Traceable();
 
@@ -27,9 +28,9 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
         this.inner = inner;
         this.type = type;
 
-        if (this instanceof Closeable) {
-            final Closeable closeable = (Closeable) this;
-            closed = new ResourceStatusAdapterImpl<Closeable>(closeable,
+        if (this instanceof CloseableResource) {
+            final CloseableResource closeable = (CloseableResource) this;
+            closed = new ResourceStatusAdapterImpl<CloseableResource>(closeable,
                     ResourceStatus.CLOSED,
                     ResourceStatus.CLOSED_SETTING,
                     ResourceStatus.CLOSED_CHECKING,
@@ -48,9 +49,9 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
             };
         }
 
-        if (this instanceof Cancellable) {
-            final Cancellable cancellable = (Cancellable) this;
-            cancelled = new ResourceStatusAdapterImpl<Cancellable>(cancellable,
+        if (this instanceof CancellableResource) {
+            final CancellableResource cancellable = (CancellableResource) this;
+            cancelled = new ResourceStatusAdapterImpl<CancellableResource>(cancellable,
                     ResourceStatus.CANCELLED,
                     ResourceStatus.CANCELLED_SETTING,
                     ResourceStatus.CANCELLED_CHECKING,
@@ -70,6 +71,12 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
 
             };
         }
+    }
+
+    @Override
+    public String toString() {
+        String suffix = super.toString();
+        return StringUtil.isEmpty(suffix) ? type.name() : type + " - " + suffix + "";
     }
 
     @Override

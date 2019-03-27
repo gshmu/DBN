@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection.transaction;
 
 import com.dci.intellij.dbn.common.constant.Constant;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.intellij.notification.NotificationType;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +20,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             NotificationType.INFORMATION, "Connection \"{0}\" committed",
             NotificationType.ERROR, "Error committing connection \"{0}\". Details: {1}",
             false,
-            (connectionHandler, connection) -> ConnectionUtil.commit(connection)),
+            (connectionHandler, connection) -> ResourceUtil.commit(connection)),
 
     ROLLBACK(
             "Transaction",
@@ -28,7 +28,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             NotificationType.INFORMATION, "Connection \"{0}\" rolled back.",
             NotificationType.ERROR, "Error rolling back connection \"{0}\". Details: {1}",
             false,
-            (connectionHandler, connection) -> ConnectionUtil.rollback(connection)),
+            (connectionHandler, connection) -> ResourceUtil.rollback(connection)),
 
     ROLLBACK_IDLE(
             "Transaction",
@@ -36,7 +36,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             NotificationType.INFORMATION, "Connection \"{0}\" rolled back.",
             NotificationType.ERROR, "Error rolling back connection \"{0}\". Details: {1}",
             false,
-            (connectionHandler, connection) -> ConnectionUtil.rollback(connection)),
+            (connectionHandler, connection) -> ResourceUtil.rollback(connection)),
 
     DISCONNECT(
             "Session",

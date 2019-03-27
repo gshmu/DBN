@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
@@ -79,7 +79,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
         final List<T> oldRows = getRows();
         List<T> newRows = reset ? new ArrayList<>(oldRows.size()) : new ArrayList<>(oldRows);
 
-        if (resultSet == null || ConnectionUtil.isClosed(resultSet)) {
+        if (resultSet == null || ResourceUtil.isClosed(resultSet)) {
             resultSetExhausted = true;
         } else {
             DBNConnection connection = resultSet.getConnection();
@@ -145,7 +145,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
     }
 
     public void closeResultSet() {
-        ConnectionUtil.close(resultSet);
+        ResourceUtil.close(resultSet);
     }
 
     @NotNull

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.database.common.statement;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.intellij.openapi.diagnostic.Logger;
@@ -128,17 +128,17 @@ public class StatementExecutionProcessor {
                                     resultSet = statement.getResultSet();
                                     return resultSet;
                                 } catch (SQLException e) {
-                                    ConnectionUtil.close(statement);
+                                    ResourceUtil.close(statement);
                                     return null;
                                 }
                             } else {
-                                ConnectionUtil.close(statement);
+                                ResourceUtil.close(statement);
                                 return null;
                             }
                         }
                     } catch (SQLException exception) {
                         executionSuccessful = false;
-                        ConnectionUtil.close(statement);
+                        ResourceUtil.close(statement);
                         if (DatabaseNavigator.debugModeEnabled) LOGGER.info("[DBN-ERROR] Error executing statement: " + statementText + "\nCause: " + exception.getMessage());
                         if (interfaceProvider.getMessageParserInterface().isModelException(exception)) {
                             statementDefinition.setDisabled(true);
@@ -148,19 +148,19 @@ public class StatementExecutionProcessor {
                         }
                         throw exception;
                     } catch (Exception exception) {
-                        ConnectionUtil.close(statement);
+                        ResourceUtil.close(statement);
                         throw exception;
                     } finally {
                         statementDefinition.updateExecutionStatus(executionSuccessful);
                         if (resultSet == null) {
-                            ConnectionUtil.close(statement);
+                            ResourceUtil.close(statement);
                         }
                     }
                 }
 
                 @Override
                 protected void handleTimeout() {
-                    ConnectionUtil.close(statement);
+                    ResourceUtil.close(statement);
                 }
             }.start();
         } else {
@@ -211,13 +211,13 @@ public class StatementExecutionProcessor {
 
                     throw exception;
                 } finally {
-                    ConnectionUtil.close(statement);
+                    ResourceUtil.close(statement);
                 }
             }
 
             @Override
             protected void handleTimeout() {
-                ConnectionUtil.close(statement);
+                ResourceUtil.close(statement);
             }
         }.start();
     }
@@ -259,14 +259,14 @@ public class StatementExecutionProcessor {
 
                     throw exception;
                 } finally {
-                    ConnectionUtil.close(statement);
+                    ResourceUtil.close(statement);
                 }
                 return null;
             }
 
             @Override
             protected void handleTimeout() {
-                ConnectionUtil.close(statement);
+                ResourceUtil.close(statement);
             }
         }.start();
     }
@@ -307,13 +307,13 @@ public class StatementExecutionProcessor {
 
                     throw exception;
                 } finally {
-                    ConnectionUtil.close(statement);
+                    ResourceUtil.close(statement);
                 }
             }
 
             @Override
             protected void handleTimeout() {
-                ConnectionUtil.close(statement);
+                ResourceUtil.close(statement);
             }
         }.start();
     }

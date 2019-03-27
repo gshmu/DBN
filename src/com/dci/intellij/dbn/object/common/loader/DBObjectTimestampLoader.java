@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.common.loader;
 
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.intellij.openapi.diagnostic.Logger;
@@ -34,7 +34,7 @@ public class DBObjectTimestampLoader{
 
             return resultSet.next() ? resultSet.getTimestamp(1) : null;
         }  finally {
-            ConnectionUtil.close(resultSet);
+            ResourceUtil.close(resultSet);
             connectionHandler.freePoolConnection(connection);
         }
     }

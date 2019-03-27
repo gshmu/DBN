@@ -28,10 +28,10 @@ import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.sql.Savepoint;
 
-public class ConnectionUtil {
+public class ResourceUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    public static boolean isClosed(final ResultSet resultSet) throws SQLException {
+    public static boolean isClosed(ResultSet resultSet) throws SQLException {
         try {
             return resultSet.isClosed();
         } catch (AbstractMethodError e) {
@@ -39,13 +39,16 @@ public class ConnectionUtil {
             return false;
         }
     }
-    public static void cancel(final DBNStatement statement) {
+    public static void cancel(DBNStatement statement) {
         if (statement != null) {
             try {
+                long start = System.currentTimeMillis();
+                LOGGER.info("Cancelling statement (" + statement + ")");
                 statement.cancel();
+                LOGGER.info("Successfully cancelled statement (" + statement + ") - " + (System.currentTimeMillis() - start) + "ms");
             } catch (SQLRecoverableException ignore) {
             } catch (Throwable e) {
-                LOGGER.warn("Error cancelling statement: " + e.getMessage());
+                LOGGER.warn("Failed to cancel statement (" + statement + "): " + e.getMessage());
             } finally {
                 close(statement);
             }
@@ -55,10 +58,13 @@ public class ConnectionUtil {
     public static <T extends AutoCloseable> void close(T resource) {
         if (resource != null) {
             try {
+                long start = System.currentTimeMillis();
+                LOGGER.info("Closing resource (" + resource + ")");
                 resource.close();
+                LOGGER.info("Successfully closed resource (" + resource + ") - " + (System.currentTimeMillis() - start) + "ms");
             } catch (SQLRecoverableException ignore) {
             } catch (Throwable e) {
-                LOGGER.warn("Failed to close resource", e);
+                LOGGER.warn("Failed to close resource (" + resource + ")", e);
             }
         }
     }

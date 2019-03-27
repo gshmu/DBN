@@ -159,11 +159,11 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     }
 
     public void showLoadingHint() {
-        Dispatch.invokeNonModal(() -> loadingDataPanel.setVisible(true));
+        Dispatch.invokeNonModal(() -> Failsafe.nn(loadingDataPanel).setVisible(true));
     }
 
     public void hideLoadingHint() {
-        Dispatch.invokeNonModal(() -> loadingDataPanel.setVisible(false));
+        Dispatch.invokeNonModal(() -> Failsafe.nn(loadingDataPanel).setVisible(false));
     }
 
     @NotNull

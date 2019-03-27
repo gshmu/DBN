@@ -222,8 +222,8 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         Progress.modal(project, "Connecting to " + connectionName, false,
                 (progress) -> {
                     try {
-                        DBNConnection connection = ConnectionUtil.connect(connectionSettings, null, authentication, SessionId.TEST, false, null);
-                        ConnectionUtil.close(connection);
+                        DBNConnection connection = ResourceUtil.connect(connectionSettings, null, authentication, SessionId.TEST, false, null);
+                        ResourceUtil.close(connection);
                         databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
                         if (showMessageDialog) {
                             showSuccessfulConnectionMessage(project, connectionName);
@@ -247,10 +247,10 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
             ensureAuthenticationProvided(databaseSettings, (authenticationInfo) ->
                     Progress.modal(project, "Connecting to " + connectionName, false, (progress) -> {
                         try {
-                            DBNConnection connection = ConnectionUtil.connect(connectionSettings, null, authenticationInfo, SessionId.TEST, false, null);
+                            DBNConnection connection = ResourceUtil.connect(connectionSettings, null, authenticationInfo, SessionId.TEST, false, null);
                             if (connection != null) {
                                 ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
-                                ConnectionUtil.close(connection);
+                                ResourceUtil.close(connection);
                                 showConnectionInfoDialog(connectionInfo, connectionName, environmentType);
                             } // TODO else??
                         } catch (Exception e) {

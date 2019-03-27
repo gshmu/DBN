@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -71,7 +71,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         DBNConnection connection = connectionHandler.getConnection(targetSessionId, targetSchemaId);
 
         if (targetSessionId == SessionId.POOL) {
-            ConnectionUtil.setAutoCommit(connection, false);
+            ResourceUtil.setAutoCommit(connection, false);
         }
 
         execute(executionInput, connection, debuggerType);
@@ -120,7 +120,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
                 @Override
                 public void cancel() throws Exception {
-                    ConnectionUtil.cancel(statement);
+                    ResourceUtil.cancel(statement);
                 }
             }.start();
 
@@ -136,7 +136,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
             if (targetSessionId != SessionId.POOL) connection.notifyDataChanges(method.getVirtualFile());
         } catch (SQLException e) {
-            ConnectionUtil.cancel(context.getStatement());
+            ResourceUtil.cancel(context.getStatement());
             throw e;
         } finally {
             if (loggingEnabled) {
@@ -144,15 +144,15 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
             }
 
             if (options.is(ExecutionOption.COMMIT_AFTER_EXECUTION)) {
-                ConnectionUtil.commit(connection);
+                ResourceUtil.commit(connection);
             } else {
                 if (targetSessionId == SessionId.POOL) {
-                    ConnectionUtil.rollback(connection);
+                    ResourceUtil.rollback(connection);
                 }
             }
 
             if (connection.isDebugConnection()) {
-                ConnectionUtil.close(connection);
+                ResourceUtil.close(connection);
 
             } else if (connection.isPoolConnection()) {
                 connectionHandler.freePoolConnection(connection);

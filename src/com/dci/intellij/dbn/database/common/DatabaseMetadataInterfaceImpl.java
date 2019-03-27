@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.database.common;
 
 import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
@@ -486,7 +486,7 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
         } catch (SQLException e) {
             return false;
         } finally {
-            ConnectionUtil.close(resultSet);
+            ResourceUtil.close(resultSet);
         }
         return true;
     }
@@ -502,7 +502,7 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
         } catch (SQLException e) {
             return isValid(connection);
         } finally {
-            ConnectionUtil.close(resultSet);
+            ResourceUtil.close(resultSet);
         }
     }
 }

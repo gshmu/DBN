@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection.jdbc;
 
 import java.sql.SQLException;
 
-public interface Cancellable extends Resource {
+public interface CancellableResource extends Resource {
     boolean isCancelled() throws SQLException;
 
     boolean isCancelledInner() throws SQLException;

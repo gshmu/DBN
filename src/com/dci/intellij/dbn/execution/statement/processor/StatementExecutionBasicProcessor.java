@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -299,7 +299,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                         notifyDataManipulationChanges(context);
                     }
                 } catch (SQLException e) {
-                    ConnectionUtil.cancel(context.getStatement());
+                    ResourceUtil.cancel(context.getStatement());
                     if (context.isNot(CANCELLED)) {
                         executionException = e;
                         executionResult = createErrorExecutionResult(e.getMessage());
@@ -341,7 +341,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
             DBNConnection connection = context.getConnection();
             if (connection != null && connection.isPoolConnection()) {
-                ConnectionUtil.cancel(context.getStatement());
+                ResourceUtil.cancel(context.getStatement());
                 ConnectionHandler connectionHandler = Failsafe.nn(getConnectionHandler());
                 connectionHandler.freePoolConnection(connection);
             }
@@ -423,7 +423,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
             public void cancel(){
                 try {
                     context.set(CANCELLED, true);
-                    ConnectionUtil.cancel(statement);
+                    ResourceUtil.cancel(statement);
                 } finally {
                     databaseCall = null;
                 }
@@ -549,7 +549,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @NotNull
     protected StatementExecutionResult createExecutionResult(DBNStatement statement, final StatementExecutionInput executionInput) throws SQLException {
         StatementExecutionBasicResult executionResult = new StatementExecutionBasicResult(this, getResultName(), statement.getUpdateCount());
-        ConnectionUtil.close(statement);
+        ResourceUtil.close(statement);
         attachDdlExecutionInfo(executionInput, executionResult);
         return executionResult;
     }

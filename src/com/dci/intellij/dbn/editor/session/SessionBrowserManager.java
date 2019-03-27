@@ -14,7 +14,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionUtil;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -98,7 +98,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
             return model;
 
         } finally {
-            ConnectionUtil.close(resultSet);
+            ResourceUtil.close(resultSet);
             connectionHandler.freePoolConnection(connection);
         }
     }
@@ -122,7 +122,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         } catch (SQLException e) {
             sendWarningNotification("Session Browser", "Could not load current session SQL. Cause: {0}", e.getMessage());
         } finally {
-            ConnectionUtil.close(resultSet);
+            ResourceUtil.close(resultSet);
             connectionHandler.freePoolConnection(connection);
         }
         return "";
