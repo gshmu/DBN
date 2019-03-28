@@ -45,7 +45,7 @@ public class ResourceUtil {
                 long start = System.currentTimeMillis();
                 LOGGER.info("Cancelling statement (" + statement + ")");
                 statement.cancel();
-                LOGGER.info("Successfully cancelled statement (" + statement + ") - " + (System.currentTimeMillis() - start) + "ms");
+                LOGGER.info("Done cancelling statement (" + statement + ") - " + (System.currentTimeMillis() - start) + "ms");
             } catch (SQLRecoverableException ignore) {
             } catch (Throwable e) {
                 LOGGER.warn("Failed to cancel statement (" + statement + "): " + e.getMessage());
@@ -61,7 +61,7 @@ public class ResourceUtil {
                 long start = System.currentTimeMillis();
                 LOGGER.info("Closing resource (" + resource + ")");
                 resource.close();
-                LOGGER.info("Successfully closed resource (" + resource + ") - " + (System.currentTimeMillis() - start) + "ms");
+                LOGGER.info("Done closing resource (" + resource + ") - " + (System.currentTimeMillis() - start) + "ms");
             } catch (SQLRecoverableException ignore) {
             } catch (Throwable e) {
                 LOGGER.warn("Failed to close resource (" + resource + ")", e);
