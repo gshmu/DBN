@@ -87,8 +87,8 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
             ActionUtil.registerDataProvider(mainPanel, datasetEditor);
 
-            com.intellij.openapi.util.Disposer.register(this, autoCommitLabel);
-            com.intellij.openapi.util.Disposer.register(this, datasetEditorTable);
+            Disposer.register(this, autoCommitLabel);
+            Disposer.register(this, datasetEditorTable);
         } catch (SQLException e) {
             MessageUtil.showErrorDialog(
                     getProject(),
@@ -106,7 +106,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         DatasetEditorTable oldEditorTable = getEditorTable();
         DatasetEditor datasetEditor = getDatasetEditor();
         datasetEditorTable = new DatasetEditorTable(datasetEditor);
-        com.intellij.openapi.util.Disposer.register(this, datasetEditorTable);
+        Disposer.register(this, datasetEditorTable);
 
 
         DataGridSettings dataGridSettings = DataGridSettings.getInstance(getProject());

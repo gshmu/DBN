@@ -95,7 +95,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
         MethodExecutionHistory executionHistory = getExecutionHistory();
         boolean group = executionHistory.isGroupEntries();
         executionInputsTree = new MethodExecutionHistoryTree(getParentComponent(), group, debug);
-        com.intellij.openapi.util.Disposer.register(this, (Disposable) executionInputsTree);
+        Disposer.register(this, (Disposable) executionInputsTree);
     }
 
     public MethodExecutionHistoryTree getTree() {

@@ -5,8 +5,10 @@ import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposableUserDataHolderBase;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -76,7 +78,8 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
         FileEditor,
         FileConnectionMappingProvider,
         ConnectionProvider,
-        DataProviderSupplier {
+        DataProviderSupplier,
+        RegisteredDisposable {
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
@@ -112,7 +115,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
             load(true, true, false);
         }
 */
-        com.intellij.openapi.util.Disposer.register(this, editorForm);
+        Disposer.register(this, editorForm);
 
         EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
         EventUtil.subscribe(project, this, ConnectionStatusListener.TOPIC, connectionStatusListener);

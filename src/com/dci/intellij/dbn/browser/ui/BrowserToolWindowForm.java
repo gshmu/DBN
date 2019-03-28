@@ -73,7 +73,7 @@ public class BrowserToolWindowForm extends DBNFormImpl {
 
         browserPanel.add(this.browserForm.getComponent(), BorderLayout.CENTER);
         GUIUtil.repaint(browserPanel);
-        com.intellij.openapi.util.Disposer.register(this, this.browserForm);
+        Disposer.register(this, this.browserForm);
         Disposer.disposeInBackground(oldBrowserForm);
     }
 

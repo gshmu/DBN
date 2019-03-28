@@ -73,8 +73,8 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
         resultScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
         ActionUtil.registerDataProvider(mainPanel, executionResult);
 
-        com.intellij.openapi.util.Disposer.register(this, executionResult);
-        com.intellij.openapi.util.Disposer.register(this, resultTable);
+        Disposer.register(this, executionResult);
+        Disposer.register(this, resultTable);
     }
 
     @Override
