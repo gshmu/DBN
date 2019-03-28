@@ -40,7 +40,6 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
 
     public DBConnectionPsiDirectory(ConnectionHandler connectionHandler) {
         virtualFile = new DBConnectionVirtualFile(connectionHandler);
-        com.intellij.openapi.util.Disposer.register(this, virtualFile);
     }
 
     @Override

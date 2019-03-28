@@ -123,7 +123,7 @@ public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow
         resultSetAdapter = DatabaseFeature.UPDATABLE_RESULT_SETS.isSupported(connectionHandler) ?
                     new EditableResultSetAdapter(this, resultSet) :
                     new ReadonlyResultSetAdapter(this, resultSet);
-        com.intellij.openapi.util.Disposer.register(DatasetEditorModel.this, resultSetAdapter);
+        Disposer.register(this, resultSetAdapter);
     }
 
     @NotNull
