@@ -113,7 +113,9 @@ public class Disposer {
     }
 
     public static void register(RegisteredDisposable parent, Disposable disposable) {
-        com.intellij.openapi.util.Disposer.register(parent, disposable);
+        if (Failsafe.check(parent)) {
+            com.intellij.openapi.util.Disposer.register(parent, disposable);
+        }
     }
 
     public static void nullify(Object object) {

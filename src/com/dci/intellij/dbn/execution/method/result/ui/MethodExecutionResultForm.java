@@ -125,7 +125,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
             outputConsole.writeToConsole(context, LogOutput.createStdOutput(logOutput));
         }
         outputConsole.writeToConsole(context, LogOutput.createSysOutput(context, " - Method execution finished\n\n", false));
-        com.intellij.openapi.util.Disposer.register(this, outputConsole);
+        Disposer.register(this, outputConsole);
 
         TabInfo outputTabInfo = new TabInfo(outputConsole.getComponent());
         outputTabInfo.setText(outputConsole.getTitle());

@@ -9,7 +9,7 @@ public abstract class DisposableBase implements Disposable{
     }
 
     public DisposableBase(@Nullable RegisteredDisposable parent) {
-        if (parent != null) {
+        if (Failsafe.check(parent)) {
             Disposer.register(parent, this);
         }
     }

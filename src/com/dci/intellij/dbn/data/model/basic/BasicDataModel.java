@@ -104,7 +104,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
     public void setHeader(@NotNull DataModelHeader<? extends ColumnInfo> header) {
         DataModelHeader oldHeader = this.header;
         this.header = header;
-        com.intellij.openapi.util.Disposer.register(this, header);
+        Disposer.register(this, header);
         Disposer.dispose(oldHeader);
     }
 
