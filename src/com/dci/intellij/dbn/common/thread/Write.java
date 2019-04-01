@@ -6,7 +6,7 @@ import com.intellij.openapi.application.ApplicationManager;
 
 public interface Write {
     static void run(Runnable runnable) {
-        Dispatch.conditional(() -> {
+        Dispatch.invoke(() -> {
             Application application = ApplicationManager.getApplication();
             application.runWriteAction(
                     () -> Failsafe.guarded(() -> runnable.run()));
