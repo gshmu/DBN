@@ -2,11 +2,13 @@ package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -31,7 +33,7 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     protected String path;
     protected String url;
     private ProjectRef projectRef;
-    private DatabaseFileSystem fileSystem = DatabaseFileSystem.getInstance();
+    private WeakRef<DatabaseFileSystem> fileSystem = WeakRef.from(DatabaseFileSystem.getInstance());
 
     public DBVirtualFileImpl(@NotNull Project project) {
         //id = ID_STORE.getAndIncrement();
@@ -68,7 +70,7 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     @NotNull
     @Override
     public DatabaseFileSystem getFileSystem() {
-        return fileSystem;
+        return Failsafe.nn(WeakRef.get(fileSystem));
     }
 
     @Override
