@@ -27,7 +27,9 @@ import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
 
 public class DatasetEditorModelCell extends ResultSetDataModelCell implements ChangeListener {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -203,29 +205,35 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     }
 
     public void edit() {
-        int index = getEditorTable().convertColumnIndexToView(getIndex());
-        if (index > 0) {
-            DatasetEditorTable table = getEditorTable();
-            table.editCellAt(getRow().getIndex(), index);
-        }
+        Dispatch.invoke(() -> {
+            int index = getEditorTable().convertColumnIndexToView(getIndex());
+            if (index > 0) {
+                DatasetEditorTable table = getEditorTable();
+                table.editCellAt(getRow().getIndex(), index);
+            }
+        });
     }
 
     public void editPrevious() {
-        int index = getEditorTable().convertColumnIndexToView(getIndex());
-        if (index > 0) {
-            DatasetEditorTable table = getEditorTable();
-            DatasetEditorModelRow row = getRow();
-            table.editCellAt(row.getIndex(), index -1);
-        }
+        Dispatch.invoke(() -> {
+            int index = getEditorTable().convertColumnIndexToView(getIndex());
+            if (index > 0) {
+                DatasetEditorTable table = getEditorTable();
+                DatasetEditorModelRow row = getRow();
+                table.editCellAt(row.getIndex(), index -1);
+            }
+        });
     }
 
     public void editNext(){
-        int index = getEditorTable().convertColumnIndexToView(getIndex());
-        DatasetEditorModelRow row = getRow();
-        if (index < row.getCells().size()-1) {
-            DatasetEditorTable table = getEditorTable();
-            table.editCellAt(row.getIndex(), index + 1);
-        }
+        Dispatch.invoke(() -> {
+            int index = getEditorTable().convertColumnIndexToView(getIndex());
+            DatasetEditorModelRow row = getRow();
+            if (index < row.getCells().size()-1) {
+                DatasetEditorTable table = getEditorTable();
+                table.editCellAt(row.getIndex(), index + 1);
+            }
+        });
     }
 
     @Override
