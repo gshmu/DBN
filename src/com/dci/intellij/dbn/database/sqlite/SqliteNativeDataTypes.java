@@ -40,10 +40,10 @@ class SqliteNativeDataTypes extends DatabaseNativeDataTypes {
     });
 
     {
-        createNumericDefinition("INT", Integer.class, Types.INTEGER);
-        createNumericDefinition("INT2", Integer.class, Types.INTEGER);
-        createNumericDefinition("INT8", Integer.class, Types.INTEGER);
-        createNumericDefinition("INTEGER", Integer.class, Types.INTEGER);
+        createNumericDefinition("INT", Long.class, Types.INTEGER);
+        createNumericDefinition("INT2", Long.class, Types.INTEGER);
+        createNumericDefinition("INT8", Long.class, Types.INTEGER);
+        createNumericDefinition("INTEGER", Long.class, Types.INTEGER);
         createNumericDefinition("TINYINT", Integer.class, Types.TINYINT);
         createNumericDefinition("SMALLINT", Integer.class, Types.SMALLINT);
         createNumericDefinition("MEDIUMINT", Integer.class, Types.INTEGER);
