@@ -205,7 +205,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     }
 
     public void edit() {
-        Dispatch.invoke(() -> {
+        Dispatch.conditional(() -> {
             int index = getEditorTable().convertColumnIndexToView(getIndex());
             if (index > 0) {
                 DatasetEditorTable table = getEditorTable();
@@ -215,7 +215,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     }
 
     public void editPrevious() {
-        Dispatch.invoke(() -> {
+        Dispatch.conditional(() -> {
             int index = getEditorTable().convertColumnIndexToView(getIndex());
             if (index > 0) {
                 DatasetEditorTable table = getEditorTable();
@@ -226,7 +226,7 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     }
 
     public void editNext(){
-        Dispatch.invoke(() -> {
+        Dispatch.conditional(() -> {
             int index = getEditorTable().convertColumnIndexToView(getIndex());
             DatasetEditorModelRow row = getRow();
             if (index < row.getCells().size()-1) {
