@@ -12,7 +12,6 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,20 +32,11 @@ import java.util.jar.JarFile;
 public class DatabaseDriverManager implements ApplicationComponent {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private static Map<DatabaseType, Map<String, String>> INTERNAL_LIB_MAP = new HashMap<>();
+    private static Map<DatabaseType, String> INTERNAL_LIB_MAP = new HashMap<>();
     static {
-        HashMap<String, String> mysql = new HashMap<>();
-        //mysql.put("1.", "mysql-connector-java-5.1.35-bin.jar");
-        mysql.put("1.", "mysql-connector-java-8.0.15.jar");
-        INTERNAL_LIB_MAP.put(DatabaseType.MYSQL, mysql);
-
-        HashMap<String, String> sqlite = new HashMap<>();
-        sqlite.put("1.", "sqlite-jdbc-3.23.1.jar");
-        INTERNAL_LIB_MAP.put(DatabaseType.SQLITE, sqlite);
-
-        HashMap<String, String> postgres = new HashMap<>();
-        postgres.put("1.", "postgresql-42.2.5.jar");
-        INTERNAL_LIB_MAP.put(DatabaseType.POSTGRES, postgres);
+        INTERNAL_LIB_MAP.put(DatabaseType.MYSQL, "mysql-connector-java-8.0.15.jar");
+        INTERNAL_LIB_MAP.put(DatabaseType.SQLITE, "sqlite-jdbc-3.23.1.jar");
+        INTERNAL_LIB_MAP.put(DatabaseType.POSTGRES, "postgresql-42.2.5.jar");
     }
 
 
@@ -157,20 +147,16 @@ public class DatabaseDriverManager implements ApplicationComponent {
     }
 
     public String getInternalDriverLibrary(DatabaseType databaseType) throws Exception{
-        Map<String, String> libMap = INTERNAL_LIB_MAP.get(databaseType);
-        if (libMap != null) {
-            String javaVersion = SystemProperties.getJavaVersion();
-            LOGGER.info(javaVersion);
-            for (String version : libMap.keySet()) {
-                if (javaVersion.startsWith(version)) {
-                    String libFile = libMap.get(version);
-                    ClassLoader classLoader = getClass().getClassLoader();
-                    URL url = classLoader.getResource("/" + libFile);
-                    return url == null ? null : new File(url.toURI()).getPath();
-                }
-            }
+        String driverLibrary = INTERNAL_LIB_MAP.get(databaseType);
+        LOGGER.info("Loading driver library " + driverLibrary);
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL url = classLoader.getResource("/" + driverLibrary);
+        if (url == null) {
+            LOGGER.warn("Failed to load driver library " + driverLibrary);
+        } else {
+            LOGGER.info("Loaded driver file " + url.getPath());
         }
-        return null;
+        return url == null ? null : new File(url.toURI()).getPath();
     }
 
     public Driver getDriver(String libraryName, String className) throws Exception {
