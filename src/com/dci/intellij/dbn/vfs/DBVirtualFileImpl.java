@@ -33,12 +33,13 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     protected String path;
     protected String url;
     private ProjectRef projectRef;
-    private WeakRef<DatabaseFileSystem> fileSystem = WeakRef.from(DatabaseFileSystem.getInstance());
+    private WeakRef<DatabaseFileSystem> fileSystem;
 
     public DBVirtualFileImpl(@NotNull Project project) {
         //id = ID_STORE.getAndIncrement();
         id = DummyFileIdGenerator.next();
         projectRef = ProjectRef.from(project);
+        fileSystem = WeakRef.from(DatabaseFileSystem.getInstance());
     }
 
 
