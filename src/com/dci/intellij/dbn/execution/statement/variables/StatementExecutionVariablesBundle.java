@@ -25,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +33,8 @@ import java.util.Set;
 
 @Nullifiable
 public class StatementExecutionVariablesBundle extends DisposableBase implements Disposable{
-    private static final Comparator<StatementExecutionVariable> NAME_LENGTH_COMPARATOR = (o1, o2) -> o2.getName().length() - o1.getName().length();
+    public static final Comparator<StatementExecutionVariable> NAME_COMPARATOR = (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName());
+    public static final Comparator<StatementExecutionVariable> NAME_LENGTH_COMPARATOR = (o1, o2) -> o2.getName().length() - o1.getName().length();
     public static final Comparator<StatementExecutionVariable> OFFSET_COMPARATOR = (o1, o2) -> o1.getOffset() - o2.getOffset();
 
     private Map<StatementExecutionVariable, String> errorMap;
@@ -126,7 +126,7 @@ public class StatementExecutionVariablesBundle extends DisposableBase implements
     public String prepareStatementText(@NotNull ConnectionHandler connectionHandler, String statementText, boolean forPreview) {
         errorMap = null;
         List<StatementExecutionVariable> variables = new ArrayList<StatementExecutionVariable>(this.variables);
-        Collections.sort(variables, NAME_LENGTH_COMPARATOR);
+        variables.sort(NAME_LENGTH_COMPARATOR);
         Formatter formatter = Formatter.getInstance(connectionHandler.getProject());
         for (StatementExecutionVariable variable : variables) {
             VariableValueProvider previewValueProvider = variable.getPreviewValueProvider();
