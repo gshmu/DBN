@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsAdapter;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
@@ -64,23 +63,27 @@ public class BrowserToolWindowForm extends DBNFormImpl {
 
     public void rebuild() {
         displayMode = DatabaseBrowserSettings.getInstance(getProject()).getGeneralSettings().getDisplayMode();
-        browserPanel.removeAll();
         DatabaseBrowserForm oldBrowserForm = this.browserForm;
+        TabbedBrowserForm previousTabbedForm =
+                oldBrowserForm instanceof TabbedBrowserForm ?
+                (TabbedBrowserForm) oldBrowserForm : null;
+
         this.browserForm =
-                displayMode == BrowserDisplayMode.TABBED ? new TabbedBrowserForm(this) :
+                displayMode == BrowserDisplayMode.TABBED ? new TabbedBrowserForm(this, previousTabbedForm) :
                 displayMode == BrowserDisplayMode.SIMPLE ? new SimpleBrowserForm(this) : null;
 
 
+        browserPanel.removeAll();
         browserPanel.add(this.browserForm.getComponent(), BorderLayout.CENTER);
         GUIUtil.repaint(browserPanel);
         Disposer.register(this, this.browserForm);
         Disposer.disposeInBackground(oldBrowserForm);
     }
 
-    public DatabaseBrowserTree getBrowserTree(ConnectionHandler connectionHandler) {
+    public DatabaseBrowserTree getBrowserTree(ConnectionId connectionId) {
         if (browserForm instanceof TabbedBrowserForm) {
             TabbedBrowserForm tabbedBrowserForm = (TabbedBrowserForm) browserForm;
-            return tabbedBrowserForm.getBrowserTree(connectionHandler);
+            return tabbedBrowserForm.getBrowserTree(connectionId);
         }
 
         if (browserForm instanceof SimpleBrowserForm) {

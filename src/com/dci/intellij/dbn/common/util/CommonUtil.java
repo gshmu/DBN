@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jdom.Document;
 import org.jdom.adapters.XML4JDOMAdapter;
@@ -51,6 +52,11 @@ public class CommonUtil {
     public static double getProgressPercentage(int is, int should) {
         BigDecimal fraction = new BigDecimal(is).divide(new BigDecimal(should), 6, BigDecimal.ROUND_HALF_UP);
         return fraction.doubleValue();
+    }
+
+    @NotNull
+    public static <T, E extends Throwable> T nvl(@Nullable T value, @NotNull ThrowableCallable<T, E> defaultValue) throws E {
+        return value == null ? defaultValue.call() : value;
     }
 
     @NotNull

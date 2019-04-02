@@ -45,6 +45,10 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
         return parentComponent == null ? null : parentComponent.get();
     }
 
+    public void setParentComponent(P parentComponent) {
+        this.parentComponent = WeakRef.from(parentComponent);
+    }
+
     @NotNull
     public P ensureParentComponent() {
         return Failsafe.nn(getParentComponent());
