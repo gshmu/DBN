@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.browser;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +35,7 @@ public class DatabaseBrowserUtils {
                 treeNode = treeNode.getParent();
             }
             return new TreePath(path);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException|ProcessCanceledException e) {
             // workaround for TreePath "Path elements must be non-null"
             return null;
         }
