@@ -75,7 +75,7 @@ public class BasicDataModelRow<T extends DataModelCell> extends DisposableProper
     @Override
     public T getCellAtIndex(int index) {
         List<T> cells = getCells();
-        return cells.size()> index ? cells.get(index) : null;
+        return cells.size() > index ? cells.get(index) : null;
     }
 
     @Override

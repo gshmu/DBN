@@ -103,7 +103,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
 
     @Nullable
     private SimpleBrowserForm getBrowserForm(ConnectionHandler connectionHandler) {
-        for (TabInfo tabInfo : connectionTabs.getTabs()) {
+        for (TabInfo tabInfo : getConnectionTabs().getTabs()) {
             SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
             if (browserForm.getConnectionHandler() == connectionHandler) {
                 return browserForm;
@@ -132,7 +132,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
 
     @Nullable
     public DatabaseBrowserTree getActiveBrowserTree() {
-        TabInfo tabInfo = connectionTabs.getSelectedInfo();
+        TabInfo tabInfo = getConnectionTabs().getSelectedInfo();
         if (tabInfo != null) {
             SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
             return browserForm.getBrowserTree();
@@ -145,7 +145,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         ConnectionHandler connectionHandler = treeNode.getConnectionHandler();
         SimpleBrowserForm browserForm = getBrowserForm(connectionHandler);
         if (browserForm != null) {
-            connectionTabs.select(browserForm.getComponent(), focus);
+            getConnectionTabs().select(browserForm.getComponent(), focus);
             if (scroll) {
                 browserForm.selectElement(treeNode, focus, true);
             }
@@ -154,7 +154,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
 
     @Override
     public void rebuildTree() {
-        for (TabInfo tabInfo : connectionTabs.getTabs()) {
+        for (TabInfo tabInfo : getConnectionTabs().getTabs()) {
             SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
             browserForm.rebuildTree();
         }
@@ -166,6 +166,10 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         super.disposeInner();
     }
 
+    @NotNull
+    public TabbedPane getConnectionTabs() {
+        return Failsafe.nn(connectionTabs);
+    }
 
     /********************************************************
      *                       Listeners                      *
@@ -175,7 +179,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         public void configurationChanged() {
             Project project = getProject();
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
-            for (TabInfo tabInfo : connectionTabs.getTabs()) {
+            for (TabInfo tabInfo : getConnectionTabs().getTabs()) {
                 Failsafe.guarded(() -> {
                     SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
                     ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
