@@ -249,9 +249,9 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
     }
 
     void removeConditionPanel(DatasetBasicFilterConditionForm conditionForm) {
-        conditionForm.setBasicFilterPanel(null);
         conditionForms.remove(conditionForm);
         conditionsPanel.remove(conditionForm.getComponent());
+        Disposer.dispose(conditionForm);
         GUIUtil.repaint(conditionsPanel);
         updateNameAndPreview();
     }

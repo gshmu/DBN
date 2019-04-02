@@ -4,12 +4,15 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.NamedComponent;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.ui.UIUtil;
@@ -150,7 +153,10 @@ public class Disposer {
                                     !Modifier.isTransient(modifiers) &&
                                     (fieldValue instanceof Disposable ||
                                      fieldValue instanceof Component ||
+                                     fieldValue instanceof Editor ||
+                                     fieldValue instanceof Document ||
                                      fieldValue instanceof VirtualFile ||
+                                     fieldValue instanceof Configuration ||
                                      fieldValue instanceof AutoCloseable ||
                                      fieldValue instanceof NamedComponent)) {
 
