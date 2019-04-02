@@ -81,14 +81,14 @@ public class ThreadMonitor {
         // default false
         ThreadInfo threadInfo = current();
         return
-            threadInfo.is(ThreadProperty.BACKGROUND_THREAD) ||
-            threadInfo.is(ThreadProperty.BACKGROUND_TASK) ||
-            threadInfo.is(ThreadProperty.MODAL_TASK);
+            threadInfo.is(ThreadProperty.BACKGROUND) ||
+            threadInfo.is(ThreadProperty.PROGRESS) ||
+            threadInfo.is(ThreadProperty.MODAL);
     }
 
     public static boolean isTimeoutProcess() {
         // default false
-        return current().is(ThreadProperty.TIMEOUT_PROCESS);
+        return current().is(ThreadProperty.TIMEOUT);
     }
 
     public static boolean isFailsafe() {

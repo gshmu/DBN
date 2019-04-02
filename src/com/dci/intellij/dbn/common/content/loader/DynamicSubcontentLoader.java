@@ -79,7 +79,7 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> e
             return false;
         } else {
             //ThreadInfo thread = ThreadMonitor.current();
-            if (/*thread.is(ThreadProperty.CODE_ANNOTATING) || */ThreadMonitor.getProcessCount(ThreadProperty.BACKGROUND_TASK) > 10) {
+            if (/*thread.is(ThreadProperty.CODE_ANNOTATING) || */ThreadMonitor.getProcessCount(ThreadProperty.PROGRESS) > 10) {
                 return false;
             } else {
                 return true;
