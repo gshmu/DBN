@@ -92,7 +92,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
         StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
         if (executionVariables != null) {
             List<StatementExecutionVariable> variables = new ArrayList<>(executionVariables.getVariables());
-            variables.sort(StatementExecutionVariablesBundle.OFFSET_COMPARATOR);
+            variables.sort(StatementExecutionVariablesBundle.NAME_COMPARATOR);
 
 
             for (StatementExecutionVariable variable: variables) {
