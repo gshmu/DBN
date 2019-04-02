@@ -25,7 +25,7 @@ public interface Timeout {
                         try {
                             return ThreadMonitor.call(
                                     invoker,
-                                    ThreadProperty.TIMEOUT_PROCESS,
+                                    ThreadProperty.TIMEOUT,
                                     defaultValue,
                                     callable);
                         } catch (Throwable e) {
@@ -56,7 +56,7 @@ public interface Timeout {
                         try {
                             ThreadMonitor.run(
                                     invoker,
-                                    ThreadProperty.TIMEOUT_PROCESS,
+                                    ThreadProperty.TIMEOUT,
                                     runnable);
                         } catch (Throwable e) {
                             LOGGER.error("Timeout operation failed.", e);

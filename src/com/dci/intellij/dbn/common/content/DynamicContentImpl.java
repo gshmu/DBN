@@ -309,9 +309,9 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     public List<T> getElements() {
         if (getDependencyAdapter().canLoadFast() ||
                 ThreadMonitor.is(
-                        ThreadProperty.BACKGROUND_TASK,
-                        ThreadProperty.BACKGROUND_THREAD,
-                        ThreadProperty.TIMEOUT_PROCESS/*,
+                        ThreadProperty.PROGRESS,
+                        ThreadProperty.BACKGROUND,
+                        ThreadProperty.TIMEOUT/*,
                         ThreadProperty.CODE_ANNOTATING*/)) {
             ensure();
         } else{
