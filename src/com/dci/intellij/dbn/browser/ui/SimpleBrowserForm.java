@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +42,12 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
         EventUtil.subscribe(getProject(), this, ObjectDetailSettingsListener.TOPIC, objectDetailSettingsListener);
     }
     
+    @Nullable
+    public ConnectionId getConnectionId(){
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        return connectionHandler == null ? null : connectionHandler.getConnectionId();
+    }
+
     @Nullable
     public ConnectionHandler getConnectionHandler(){
         DatabaseBrowserTree browserTree = getBrowserTree();

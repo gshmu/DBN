@@ -58,9 +58,13 @@ public class TabbedPane extends JBEditorTabs implements RegisteredDisposable {
     @NotNull
     @Override
     public ActionCallback removeTab(TabInfo tabInfo) {
+        return removeTab(tabInfo, true);
+    }
+
+    public ActionCallback removeTab(TabInfo tabInfo, boolean disposeComponent) {
         Object object = tabInfo.getObject();
         ActionCallback actionCallback = super.removeTab(tabInfo);
-        if (object instanceof Disposable) {
+        if (disposeComponent && object instanceof Disposable) {
             Disposable disposable = (Disposable) object;
             Disposer.dispose(disposable);
             tabInfo.setObject(null);
