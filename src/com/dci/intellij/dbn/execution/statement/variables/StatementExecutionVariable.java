@@ -25,7 +25,7 @@ public class StatementExecutionVariable extends VariableValueProvider implements
     public StatementExecutionVariable(StatementExecutionVariable source) {
         dataType = source.dataType;
         name = source.name;
-        valueHistory = new MostRecentStack<String>(source.getValueHistory());
+        valueHistory = new MostRecentStack<>(source.getValueHistory());
     }
 
     public StatementExecutionVariable(ExecVariablePsiElement variablePsiElement) {

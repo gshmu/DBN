@@ -63,8 +63,8 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
         StatementExecutionProcessor executionProcessor = parentComponent.getExecutionProcessor();
         Project project = executionProcessor.getProject();
         StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
-        final StatementExecutionVariablesCache variablesCache = executionManager.getVariablesCache();
-        final VirtualFile virtualFile = executionProcessor.getVirtualFile();
+        StatementExecutionVariablesCache variablesCache = executionManager.getVariablesCache();
+        VirtualFile virtualFile = executionProcessor.getVirtualFile();
 
         editorComponent = new TextFieldWithPopup(project);
         editorComponent.createCalendarPopup(false);
@@ -77,7 +77,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
             @Override
             public List<String> getValues() {
                 List<String> values = new ArrayList<>();
-                final Set<StatementExecutionVariable> variables = variablesCache.getVariables(virtualFile);
+                Set<StatementExecutionVariable> variables = variablesCache.getVariables(virtualFile);
                 for (StatementExecutionVariable executionVariable : variables) {
                     if (executionVariable.getName().equals(variable.getName())) {
                         Iterable<String> valueHistory = executionVariable.getValueHistory();
@@ -116,6 +116,8 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
                         textField.setForeground(UIUtil.getTextFieldForeground());
                     }
                 });
+                dataTypeComboBox.setSelectedValue(cachedVariable.getDataType());
+                useNullCheckBox.setSelected(cachedVariable.useNull());
             }
         } else {
             textField.setText(value);
