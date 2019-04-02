@@ -247,7 +247,6 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
     @Override
     public void disposeInner() {
         Disposer.dispose(editorComponent);
-        Disposer.dispose(filterForm);
         super.disposeInner();
     }
 
