@@ -183,9 +183,11 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
     public static void scrollToSelectedElement(ConnectionHandler connectionHandler) {
         if (Failsafe.check(connectionHandler)) {
-            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(connectionHandler.getProject());
+            Project project = connectionHandler.getProject();
+            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
             BrowserToolWindowForm toolWindowForm = browserManager.getToolWindowForm();
-            DatabaseBrowserTree browserTree = toolWindowForm.getBrowserTree(connectionHandler);
+            ConnectionId connectionId = connectionHandler.getConnectionId();
+            DatabaseBrowserTree browserTree = toolWindowForm.getBrowserTree(connectionId);
             if (browserTree != null && browserTree.getTargetSelection() != null) {
                 Dispatch.invokeNonModal(() -> browserTree.scrollToSelectedElement());
             }
