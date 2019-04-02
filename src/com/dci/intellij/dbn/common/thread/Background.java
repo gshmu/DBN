@@ -16,7 +16,7 @@ public interface Background {
             try {
                 ThreadMonitor.run(
                         threadInfo,
-                        ThreadProperty.BACKGROUND_THREAD,
+                        ThreadProperty.BACKGROUND,
                         runnable);
             } catch (Throwable e) {
                 LOGGER.error("Error executing background task", e);

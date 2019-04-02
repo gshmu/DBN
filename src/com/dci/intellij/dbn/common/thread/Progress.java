@@ -23,7 +23,7 @@ public interface Progress {
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
                             invoker,
-                            ThreadProperty.BACKGROUND_TASK,
+                            ThreadProperty.PROGRESS,
                             () -> runnable.run(indicator));
                 }
             };
@@ -39,7 +39,7 @@ public interface Progress {
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
                             invoker,
-                            ThreadProperty.BACKGROUND_TASK,
+                            ThreadProperty.PROGRESS,
                             () -> runnable.run(indicator));
                 }
             };
@@ -55,7 +55,7 @@ public interface Progress {
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
                             invoker,
-                            ThreadProperty.MODAL_TASK,
+                            ThreadProperty.MODAL,
                             () -> runnable.run(indicator));
 
                 }

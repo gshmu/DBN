@@ -57,7 +57,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
     public T call() throws Exception {
         return ThreadMonitor.call(
                 invoker,
-                ThreadProperty.CANCELABLE_PROCESS,
+                ThreadProperty.CANCELABLE,
                 null,
                 () -> {
                     if (createSavepoint) {
