@@ -207,7 +207,8 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
 
     @Nullable
     public DataModelCell getCellAt(int rowIndex, int columnIndex) {
-        return getRows().get(rowIndex).getCellAtIndex(columnIndex);
+        T row = getRowAtIndex(rowIndex);
+        return row == null ? null : row.getCellAtIndex(columnIndex);
     }
 
     @Override
@@ -314,9 +315,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         // model may be reloading when this is called, hence
-        // IndexOutOfBoundsException is thrown if the range is not checked
-        List<T> rows = getRows();
-        return rows.size() > rowIndex && columnIndex > -1 ? rows.get(rowIndex).getCellAtIndex(columnIndex) : null;
+        return getCellAt(rowIndex, columnIndex);
     }
 
     @Override
