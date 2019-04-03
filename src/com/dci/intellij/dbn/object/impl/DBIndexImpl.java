@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.DBObjectType.COLUMN;
@@ -71,7 +72,7 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
 
     @Override
     public List<DBColumn> getColumns() {
-        return columns.getObjects();
+        return columns == null ? Collections.emptyList() : columns.getObjects();
     }
 
     @Override
@@ -84,9 +85,9 @@ public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
         List<DBObjectNavigationList> objectNavigationLists = super.createNavigationLists();
 
         if (columns != null && columns.size() > 0) {
-            objectNavigationLists.add(new DBObjectNavigationListImpl<DBColumn>("Columns", columns.getObjects()));
+            objectNavigationLists.add(new DBObjectNavigationListImpl<>("Columns", columns.getObjects()));
         }
-        objectNavigationLists.add(new DBObjectNavigationListImpl<DBDataset>("Dataset", getDataset()));
+        objectNavigationLists.add(new DBObjectNavigationListImpl<>("Dataset", getDataset()));
 
         return objectNavigationLists;
     }

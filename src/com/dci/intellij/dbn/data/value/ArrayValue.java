@@ -34,9 +34,9 @@ public class ArrayValue extends ValueAdapter<List<String>>{
         if (array != null) {
             ResultSet arrayResultSet = array.getResultSet();
             while (arrayResultSet.next()) {
-                if (values == null) values = new ArrayList<String>();
+                if (values == null) values = new ArrayList<>();
                 Object object = arrayResultSet.getObject(2);
-                values.add(object.toString());
+                values.add(object == null ? null : object.toString());
             }
             arrayResultSet.close();
         }
