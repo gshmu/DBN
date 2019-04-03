@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.intellij.codeInsight.folding.impl.ElementSignatureProvider;
 import com.intellij.openapi.util.TextRange;
@@ -33,32 +34,44 @@ public class DBLanguageElementSignatureProvider implements ElementSignatureProvi
     public PsiElement restoreBySignature(@NotNull PsiFile psifile, @NotNull String signature, @Nullable StringBuilder processingInfoStorage) {
         if (psifile instanceof DBLanguagePsiFile) {
             StringTokenizer tokenizer = new StringTokenizer(signature, "#");
-            String id = tokenizer.nextToken();
-            int startOffset = Integer.parseInt(tokenizer.nextToken());
-            int endOffset = Integer.parseInt(tokenizer.nextToken());
+            String id = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : null;
+            String startOffsetToken = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : null;
+            String endOffsetToken = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : null;
 
-            PsiElement psiElement = psifile.findElementAt(startOffset);
-            if (psiElement instanceof PsiComment) {
-                if (id.equals("comment") && endOffset == startOffset + psiElement.getTextLength()) {
-                    return psiElement;
-                }
-            }
+            if (StringUtil.isNotEmptyOrSpaces(id) &&
+                    StringUtil.isNotEmptyOrSpaces(startOffsetToken) &&
+                    StringUtil.isNotEmptyOrSpaces(endOffsetToken) &&
+                    StringUtil.isInteger(startOffsetToken) &&
+                    StringUtil.isInteger(endOffsetToken)) {
 
-            while (psiElement != null && !(psiElement instanceof PsiFile)) {
-                int elementStartOffset = psiElement.getTextOffset();
-                int elementEndOffset = elementStartOffset + psiElement.getTextLength();
-                if (elementStartOffset < startOffset || elementEndOffset > endOffset) {
-                    break;
-                }
-                if (psiElement instanceof BasePsiElement) {
-                    BasePsiElement basePsiElement = (BasePsiElement) psiElement;
-                    if (basePsiElement.elementType.getId().equals(id) &&
-                            elementStartOffset == startOffset &&
-                            elementEndOffset == endOffset) {
-                        return basePsiElement;
+
+                int startOffset = Integer.parseInt(startOffsetToken);
+                int endOffset = Integer.parseInt(endOffsetToken);
+
+                PsiElement psiElement = psifile.findElementAt(startOffset);
+                if (psiElement instanceof PsiComment) {
+                    if (id.equals("comment") && endOffset == startOffset + psiElement.getTextLength()) {
+                        return psiElement;
                     }
                 }
-                psiElement = psiElement.getParent();
+
+                while (psiElement != null && !(psiElement instanceof PsiFile)) {
+                    int elementStartOffset = psiElement.getTextOffset();
+                    int elementEndOffset = elementStartOffset + psiElement.getTextLength();
+                    if (elementStartOffset < startOffset || elementEndOffset > endOffset) {
+                        break;
+                    }
+                    if (psiElement instanceof BasePsiElement) {
+                        BasePsiElement basePsiElement = (BasePsiElement) psiElement;
+                        if (basePsiElement.elementType.getId().equals(id) &&
+                                elementStartOffset == startOffset &&
+                                elementEndOffset == endOffset) {
+                            return basePsiElement;
+                        }
+                    }
+                    psiElement = psiElement.getParent();
+                }
+
             }
         }
         return null;
