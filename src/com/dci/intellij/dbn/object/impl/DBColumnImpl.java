@@ -35,6 +35,7 @@ import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.DBObjectType.*;
@@ -181,12 +182,12 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
 
     @Override
     public List<DBIndex> getIndexes() {
-        return indexes.getObjects();
+        return indexes == null ? Collections.emptyList() : indexes.getObjects();
     }
 
     @Override
     public List<DBConstraint> getConstraints() {
-        return constraints.getObjects();
+        return constraints == null ? Collections.emptyList() : constraints.getObjects();
     }
 
     @Override
@@ -227,7 +228,7 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
     public DBColumn getForeignKeyColumn() {
         for (DBConstraint constraint : getConstraints()) {
             if (constraint.isForeignKey()) {
-                Integer position = getConstraintPosition(constraint);
+                int position = getConstraintPosition(constraint);
                 DBConstraint foreignKeyConstraint = constraint.getForeignKeyConstraint();
                 if (foreignKeyConstraint != null) {
                     return foreignKeyConstraint.getColumnForPosition(position);
@@ -251,9 +252,8 @@ public class DBColumnImpl extends DBObjectImpl implements DBColumn {
                 DBObjectListContainer childObjects = schema.getChildObjects();
                 if (childObjects != null) {
                     DBObjectList internalColumns = childObjects.getInternalObjectList(COLUMN);
-                    List<DBColumn> columns = null;
                     if (internalColumns != null) {
-                        columns = (List<DBColumn>) internalColumns.getObjects();
+                        List<DBColumn> columns = (List<DBColumn>) internalColumns.getObjects();
                         for (DBColumn column : columns){
                             if (this.equals(column.getForeignKeyColumn())) {
                                 list.add(column);
