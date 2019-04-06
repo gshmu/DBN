@@ -130,7 +130,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
                 if (executionResult instanceof StatementExecutionResult) {
                     StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
                     StatementExecutionProcessor executionProcessor = statementExecutionResult.getExecutionProcessor();
-                    if (executionProcessor.getPsiFile().equals(file)) {
+                    if (Failsafe.check(executionProcessor) && executionProcessor.getPsiFile().equals(file)) {
                         Icon icon = executionProcessor.isDirty() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
                         tabInfo.setIcon(icon);
                     }

@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.1.1321.0</version>
+    <version>3.1.1345.0</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -28,7 +28,7 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.1.1321</b>
+            <li><b>3.1.1345</b>
             <ul>
                 <li>Fixed issue with built-in driver libraries
                 <li>Memory cleanup strategy redesign
