@@ -66,7 +66,8 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     private BooleanSetting autoscrollToEditor   = new BooleanSetting("autoscroll-to-editor", false);
     private BooleanSetting showObjectProperties = new BooleanSetting("show-object-properties", true);
     public static final ThreadLocal<Boolean> AUTOSCROLL_FROM_EDITOR = new ThreadLocal<>();
-    private Latent<BrowserToolWindowForm> toolWindowForm = Latent.disposable(this, () -> new BrowserToolWindowForm(getProject()));
+    private Latent<BrowserToolWindowForm> toolWindowForm =
+            Latent.disposable(this, () -> new BrowserToolWindowForm(getProject()));
 
     private DatabaseBrowserManager(Project project) {
         super(project);
@@ -124,7 +125,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     }
 
     public void navigateToElement(@Nullable BrowserTreeNode treeNode, boolean focus, boolean scroll) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
             ToolWindow toolWindow = getBrowserToolWindow();
 
             toolWindow.show(null);
@@ -141,7 +142,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
     private void navigateToElement(@Nullable BrowserTreeNode treeNode, boolean scroll) {
         if (treeNode != null) {
-            Dispatch.invokeNonModal(() -> {
+            Dispatch.invoke(() -> {
                 DatabaseBrowserForm browserForm = getBrowserForm();
                 browserForm.selectElement(treeNode, false, scroll);
             });
@@ -182,16 +183,16 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     }
 
     public static void scrollToSelectedElement(ConnectionHandler connectionHandler) {
-        if (Failsafe.check(connectionHandler)) {
+        Dispatch.invoke(() -> {
             Project project = connectionHandler.getProject();
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
             BrowserToolWindowForm toolWindowForm = browserManager.getToolWindowForm();
             ConnectionId connectionId = connectionHandler.getConnectionId();
             DatabaseBrowserTree browserTree = toolWindowForm.getBrowserTree(connectionId);
             if (browserTree != null && browserTree.getTargetSelection() != null) {
-                Dispatch.invokeNonModal(() -> browserTree.scrollToSelectedElement());
+                browserTree.scrollToSelectedElement();
             }
-        }
+        });
     }
 
     public boolean isTabbedMode() {
