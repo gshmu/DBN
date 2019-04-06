@@ -35,6 +35,7 @@ import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.DBObjectType.COLUMN;
@@ -150,7 +151,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
 
     @Override
     public List<DBColumn> getColumns() {
-        return columns.getObjects();
+        return columns == null ? Collections.emptyList() : columns.getObjects();
     }
 
     @Override
