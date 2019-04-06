@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.generator.action;
 import com.dci.intellij.dbn.common.thread.Command;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -62,19 +61,19 @@ public abstract class GenerateStatementAction extends DumbAwareAction implements
         Command.run(
                 editor.getProject(),
                 "Extract statement",
-                () -> Write.run(
-                        () -> {
-                            String statement = generatorResult.getStatement();
-                            PsiUtil.moveCaretOutsideExecutable(editor);
-                            int offset = EditorModificationUtil.insertStringAtCaret(editor, statement + "\n\n", false, true);
-                            offset = offset - statement.length() - 2;
-                        /*editor.getMarkupModel().addRangeHighlighter(offset, offset + statement.length(),
-                                HighlighterLayer.SELECTION,
-                                EditorColorsManager.getInstance().getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES),
-                                HighlighterTargetArea.EXACT_RANGE);*/
-                            editor.getSelectionModel().setSelection(offset, offset + statement.length());
-                            editor.getCaretModel().moveToOffset(offset);
-                        }));
+                () -> {
+                    String statement = generatorResult.getStatement();
+                    PsiUtil.moveCaretOutsideExecutable(editor);
+                    int offset = EditorModificationUtil.insertStringAtCaret(editor, statement + "\n\n", false, true);
+                    offset = offset - statement.length() - 2;
+                    /*editor.getMarkupModel().addRangeHighlighter(offset, offset + statement.length(),
+                            HighlighterLayer.SELECTION,
+                            EditorColorsManager.getInstance().getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES),
+                            HighlighterTargetArea.EXACT_RANGE);*/
+                    editor.getSelectionModel().setSelection(offset, offset + statement.length());
+                    editor.getCaretModel().moveToOffset(offset);
+
+                });
     }
 
     protected abstract StatementGeneratorResult generateStatement(Project project);

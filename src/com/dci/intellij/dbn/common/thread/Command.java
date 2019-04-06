@@ -5,6 +5,10 @@ import com.intellij.openapi.project.Project;
 
 public interface Command {
     static void run(Project project, String commandName, Runnable command) {
-        CommandProcessor.getInstance().executeCommand(project, command, commandName, null);
+        Write.run(() -> {
+            CommandProcessor commandProcessor = CommandProcessor.getInstance();
+            commandProcessor.executeCommand(project, command, commandName, null);
+        });
+
     }
 }
