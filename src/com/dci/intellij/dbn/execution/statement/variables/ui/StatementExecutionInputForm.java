@@ -51,6 +51,8 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
     private JPanel splitPreviewPanel;
     private JPanel previewPanel;
     private JPanel splitPanel;
+    private JSplitPane splitPane;
+    private JScrollPane variablesScrollPane;
 
     private StatementExecutionProcessor executionProcessor;
     private List<StatementExecutionVariableValueForm> variableValueForms = new ArrayList<>();
@@ -107,6 +109,10 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
                     }
                 });
             }
+            splitPane.setDividerLocation((int)variablesPanel.getPreferredSize().getHeight());
+            Dimension preferredSize = variablesScrollPane.getPreferredSize();
+            preferredSize.setSize(preferredSize.getWidth() + 20, preferredSize.getHeight());
+            variablesScrollPane.setPreferredSize(preferredSize);
 
             int[] metrics = new int[]{0, 0};
             for (StatementExecutionVariableValueForm variableValueForm : variableValueForms) {
