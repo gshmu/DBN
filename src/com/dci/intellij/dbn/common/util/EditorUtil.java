@@ -215,24 +215,23 @@ public class EditorUtil {
         editor.setViewer(readonly);
         EditorColorsScheme scheme = editor.getColorsScheme();
         Color defaultBackground = scheme.getDefaultBackground();
-        Dispatch.invokeNonModal(
-                () -> {
-                    editor.setBackgroundColor(readonly ? GUIUtil.adjustColor(defaultBackground, -0.03) : defaultBackground);
-                    scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
-                            GUIUtil.adjustColor(defaultBackground, -0.03) :
-                            EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR));
-                });
+        Dispatch.invoke(() -> {
+            editor.setBackgroundColor(readonly ? GUIUtil.adjustColor(defaultBackground, -0.03) : defaultBackground);
+            scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
+                    GUIUtil.adjustColor(defaultBackground, -0.03) :
+                    EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR));
+        });
     }
 
     public static void setEditorsReadonly(DBContentVirtualFile contentFile, final boolean readonly) {
-        final Project project = Failsafe.nn(contentFile.getProject());
+        Project project = Failsafe.nn(contentFile.getProject());
 
         if (contentFile instanceof DBSourceCodeVirtualFile) {
             DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) contentFile;
             Read.run(() -> {
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                 FileEditor[] allEditors = fileEditorManager.getAllEditors();
-                Dispatch.invokeNonModal(() -> {
+                Dispatch.invoke(() -> {
                     for (FileEditor fileEditor : allEditors) {
                         if (fileEditor instanceof SourceCodeEditor) {
                             SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
@@ -346,13 +345,14 @@ public class EditorUtil {
             focusEditor(editor);
         }
     }
-    public static void focusEditor(@Nullable final Editor editor) {
-        Dispatch.invokeNonModal(() -> {
-            if (editor != null) {
+    public static void focusEditor(@Nullable Editor editor) {
+        if (editor != null) {
+            Dispatch.invoke(() -> {
                 Project project = editor.getProject();
-                IdeFocusManager.getInstance(project).requestFocus(editor.getContentComponent(), true);
-            }
-        });
+                IdeFocusManager ideFocusManager = IdeFocusManager.getInstance(project);
+                ideFocusManager.requestFocus(editor.getContentComponent(), true);
+            });
+        }
     }
 
     public static VirtualFile getSelectedFile(Project project) {

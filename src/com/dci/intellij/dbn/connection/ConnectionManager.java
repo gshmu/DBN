@@ -60,7 +60,10 @@ import java.util.stream.Collectors;
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
-import static com.dci.intellij.dbn.common.util.MessageUtil.*;
+import static com.dci.intellij.dbn.common.util.MessageUtil.options;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showErrorDialog;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showInfoDialog;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
 
 @State(
@@ -330,7 +333,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     }
 
     public static void showConnectionInfoDialog(ConnectionHandler connectionHandler) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
             ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(connectionHandler);
             infoDialog.setModal(true);
             infoDialog.show();
@@ -338,7 +341,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     }
 
     private static void showConnectionInfoDialog(ConnectionInfo connectionInfo, String connectionName, EnvironmentType environmentType) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
             ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(null, connectionInfo, connectionName, environmentType);
             infoDialog.setModal(true);
             infoDialog.show();

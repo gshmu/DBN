@@ -39,7 +39,7 @@ public abstract class BasicTextEditorProvider implements FileEditorProvider, App
     }
 
     protected void updateTabIcon(final DBEditableObjectVirtualFile databaseFile, final BasicTextEditor textEditor, final Icon icon) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
             Project project = Failsafe.nn(databaseFile.getProject());
             EditorUtil.setEditorIcon(project, databaseFile, textEditor, icon);
         });
