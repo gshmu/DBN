@@ -40,7 +40,8 @@ public abstract class DataExportProcessor {
     public void export(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler)
             throws DataExportException, InterruptedException {
         try {
-            if (model.getColumnCount() == 0 || model.getRowCount() == 0) {
+            if ((model.getColumnCount() == 0 || model.getRowCount() == 0) &&
+                    instructions.getScope() == DataExportInstructions.Scope.SELECTION) {
                 throw new DataExportException("No content selected for export. Uncheck the Scope \"Selection\" if you want to export the entire content.");
             }
             String fileName = adjustFileName(instructions.getFileName());
