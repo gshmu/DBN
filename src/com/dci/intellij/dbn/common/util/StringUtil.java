@@ -80,22 +80,26 @@ public class StringUtil extends com.intellij.openapi.util.text.StringUtil {
 
 
 
-    public static boolean isInteger(String string) {
+    public static boolean isInteger(@Nullable String string) {
         try {
-            Integer.parseInt(string);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+            if (isNotEmptyOrSpaces(string)) {
+                Integer.parseInt(string);
+                return true;
+            }
+        } catch (NumberFormatException ignore) {}
+
+        return false;
+
     }
 
-    public static boolean isNumber(String token) {
+    public static boolean isNumber(@Nullable String string) {
         try {
-            Double.parseDouble(token);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+            if (isNotEmptyOrSpaces(string)) {
+                Double.parseDouble(string);
+                return true;
+            }
+        } catch (NumberFormatException ignore) {}
+        return false;
     }
 
     public static boolean isWord(String name) {
