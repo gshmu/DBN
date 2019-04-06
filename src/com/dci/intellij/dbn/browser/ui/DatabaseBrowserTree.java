@@ -150,7 +150,7 @@ public class DatabaseBrowserTree extends DBNTree {
     }
 
     private void selectPath(TreePath treePath) {
-        Dispatch.invokeNonModal(() -> TreeUtil.selectPath(DatabaseBrowserTree.this, treePath, true));
+        Dispatch.invoke(() -> TreeUtil.selectPath(DatabaseBrowserTree.this, treePath, true));
     }
 
 
@@ -249,7 +249,7 @@ public class DatabaseBrowserTree extends DBNTree {
                                 DBObject navigationObject = object.getDefaultNavigationObject();
                                 if (navigationObject != null) {
                                     Progress.check(progress);
-                                    Dispatch.invokeNonModal(() -> navigationObject.navigate(true));
+                                    Dispatch.invoke(() -> navigationObject.navigate(true));
                                 }
                             });
                 }

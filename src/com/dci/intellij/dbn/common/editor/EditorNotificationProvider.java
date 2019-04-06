@@ -16,7 +16,7 @@ public abstract class EditorNotificationProvider<T extends EditorNotificationPan
     }
 
     public void updateEditorNotification(@Nullable DBContentVirtualFile databaseContentFile) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
             Project project = getProject();
             EditorNotifications notifications = EditorNotifications.getInstance(project);
             if (databaseContentFile ==  null) {
