@@ -44,7 +44,6 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
     private JPanel mainPanel;
     private JPanel variablesPanel;
     private JPanel previewPanel;
-    private JPanel headerSeparatorPanel;
     private JPanel executionOptionsPanel;
     private JPanel headerPanel;
     private JPanel debuggerVersionPanel;
@@ -67,8 +66,6 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
         this.statementText = executionProcessor.getExecutionInput().getExecutableStatementText();
 
         variablesPanel.setLayout(new BoxLayout(variablesPanel, BoxLayout.Y_AXIS));
-        headerSeparatorPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
-        headerSeparatorPanel.setVisible(false);
 
         ConnectionHandler connectionHandler = executionProcessor.getConnectionHandler();
         if (debuggerType.isDebug()) {
@@ -116,11 +113,11 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
                 variableValueForm.adjustMetrics(metrics);
             }
         } else {
-            headerSeparatorPanel.setVisible(false);
+            //headerSeparatorPanel.setVisible(false);
         }
 
         executionOptionsForm = new ExecutionOptionsForm(this, executionProcessor.getExecutionInput(), debuggerType);
-        this.executionOptionsPanel.add(executionOptionsForm.getComponent());
+        executionOptionsPanel.add(executionOptionsForm.getComponent());
 
         updatePreview();
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
