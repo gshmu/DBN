@@ -65,6 +65,6 @@ public class SessionBrowserNotificationProvider extends EditorNotifications.Prov
 
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return projectRef.nn();
     }
 }

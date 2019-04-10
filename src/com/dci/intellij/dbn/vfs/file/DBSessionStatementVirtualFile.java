@@ -55,7 +55,7 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
 
     @NotNull
     public SessionBrowser getSessionBrowser() {
-        return sessionBrowser.ensure();
+        return sessionBrowser.nn();
     }
 
     @Override

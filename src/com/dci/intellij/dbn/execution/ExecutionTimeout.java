@@ -37,7 +37,7 @@ public class ExecutionTimeout {
     }
 
     private int getSettingsExecutionTimeout() {
-        Project project = projectRef.ensure();
+        Project project = projectRef.nn();
         ExecutionEngineSettings executionEngineSettings = ExecutionEngineSettings.getInstance(project);
         ExecutionTimeoutSettings timeoutSettings = executionEngineSettings.getExecutionTimeoutSettings(executionTarget);
         return debug ?

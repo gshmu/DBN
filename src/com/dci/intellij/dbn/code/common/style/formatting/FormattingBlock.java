@@ -413,7 +413,7 @@ public class FormattingBlock implements Block {
 
     @NotNull
     public PsiElement getPsiElement() {
-        return psiElementRef.ensure();
+        return psiElementRef.nn();
     }
 
     private Block getPreviousBlockInParent() {

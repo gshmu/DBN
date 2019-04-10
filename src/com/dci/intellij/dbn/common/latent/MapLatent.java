@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.latent;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -16,6 +17,22 @@ public class MapLatent<K, V> extends DisposableBase {
     public static <K, V> MapLatent<K, V> create(MapLoader<K, V> loader) {
         return new MapLatent<>(loader);
     }
+
+    @Nullable
+    public V value(K key) {
+        return map.get(key);
+    }
+
+    @Nullable
+    public V remove(K key) {
+        return map.remove(key);
+    }
+
+    @Nullable
+    public void put(K key, V value) {
+        map.put(key, value);
+    }
+
 
     public V get(K key) {
         V value = map.get(key);

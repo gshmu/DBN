@@ -29,7 +29,6 @@ import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.dci.intellij.dbn.execution.logging.LogOutput;
 import com.dci.intellij.dbn.execution.logging.LogOutputContext;
-import com.dci.intellij.dbn.execution.logging.ui.DatabaseLoggingResultForm;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
@@ -73,7 +72,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         EventUtil.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
     }
 
-    public TabbedPane getResultTabs() {
+    private TabbedPane getResultTabs() {
         if (!isDisposed() && !Failsafe.check(resultTabs)) {
             resultTabs = new TabbedPane(this);
             mainPanel.removeAll();
@@ -91,7 +90,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         return Failsafe.nn(resultTabs);
     }
 
-    public int getTabCount() {
+    private int getTabCount() {
         return getResultTabs().getTabCount();
     }
 
@@ -349,8 +348,13 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
         executionMessagesPanel.reset();
         if (getTabCount() == 0) {
-            ExecutionManager.getInstance(getProject()).hideExecutionConsole();
+            getExecutionManager().hideExecutionConsole();
         }
+    }
+
+    @NotNull
+    public ExecutionManager getExecutionManager() {
+        return ExecutionManager.getInstance(getProject());
     }
 
     private boolean isMessagesTabVisible() {
@@ -391,11 +395,12 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         boolean messagesTabVisible = isMessagesTabVisible();
 
         DatabaseLoggingResult logOutput = new DatabaseLoggingResult(context);
-        DatabaseLoggingResultForm form = logOutput.getForm(true);
-        if (form != null) {
-            JComponent component = form.getComponent();
+        ExecutionManager executionManager = getExecutionManager();
+        ExecutionResultForm resultForm = executionManager.ensureResultForm(logOutput);
+        if (Failsafe.check(resultForm)) {
+            JComponent component = resultForm.getComponent();
             TabInfo tabInfo = new TabInfo(component);
-            tabInfo.setObject(form);
+            tabInfo.setObject(resultForm);
             tabInfo.setText(logOutput.getName());
             tabInfo.setIcon(emptyOutput || selectTab ?
                     Icons.EXEC_LOG_OUTPUT_CONSOLE :
@@ -430,8 +435,9 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         }
     }
 
-    public void addResultTab(ExecutionResult executionResult) {
-        ExecutionResultForm resultForm = executionResult.getForm(true);
+    private void addResultTab(ExecutionResult executionResult) {
+        ExecutionManager executionManager = getExecutionManager();
+        ExecutionResultForm resultForm = executionManager.ensureResultForm(executionResult);
         if (Failsafe.check(resultForm)) {
             JComponent component = resultForm.getComponent();
             TabInfo tabInfo = new TabInfo(component);
@@ -449,8 +455,8 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         }
     }
 
-    public boolean containsResultTab(ExecutionResult executionProcessor) {
-        ExecutionResultForm resultForm = executionProcessor.getForm(false);
+    private boolean containsResultTab(ExecutionResult executionResult) {
+        ExecutionResultForm resultForm = getExecutionResultForm(executionResult);
         if (resultForm != null) {
             Component component = resultForm.getComponent();
             return containsResultTab(component);
@@ -462,7 +468,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         try {
             TabbedPane resultTabs = getResultTabs();
             canScrollToSource = false;
-            ExecutionResultForm resultForm = executionResult.getForm(false);
+            ExecutionResultForm resultForm = getExecutionResultForm(executionResult);
             if (resultForm != null) {
                 try {
                     TabInfo tabInfo = resultTabs.findInfo(resultForm.getComponent());
@@ -479,7 +485,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
                     }
                 } finally {
                     if (getTabCount() == 0) {
-                        ExecutionManager.getInstance(getProject()).hideExecutionConsole();
+                        getExecutionManager().hideExecutionConsole();
                     }
                 }
             }
@@ -490,26 +496,27 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
     public <T extends ExecutionResult> void selectResultTab(T executionResult) {
         TabbedPane resultTabs = getResultTabs();
-        ExecutionResultForm resultForm = executionResult.getForm(false);
-        if (resultForm != null) {
-            resultForm.setExecutionResult(executionResult);
-            resultForm = executionResult.getForm(false);
-            if (resultForm != null) {
-                JComponent component = resultForm.getComponent();
-                TabInfo tabInfo = resultTabs.findInfo(component);
-                if (tabInfo != null) {
-                    tabInfo.setText(executionResult.getName());
-                    tabInfo.setIcon(executionResult.getIcon());
-                    selectResultTab(tabInfo);
-                }
+        ExecutionResultForm resultForm = getExecutionResultForm(executionResult);
 
+        if (resultForm != null) {
+            JComponent component = resultForm.getComponent();
+            TabInfo tabInfo = resultTabs.findInfo(component);
+            if (tabInfo != null) {
+                tabInfo.setText(executionResult.getName());
+                tabInfo.setIcon(executionResult.getIcon());
+                selectResultTab(tabInfo);
             }
         }
     }
 
+    private ExecutionResultForm getExecutionResultForm(ExecutionResult executionResult) {
+        ExecutionManager executionManager = getExecutionManager();
+        return executionManager.getResultForm(executionResult);
+    }
+
     public void closeExecutionResults(List<ConnectionId> connectionIds) {
         TabbedPane resultTabs = getResultTabs();
-        List<TabInfo> tabs = new ArrayList<TabInfo>(resultTabs.getTabs());
+        List<TabInfo> tabs = new ArrayList<>(resultTabs.getTabs());
         for (TabInfo tabInfo : tabs) {
             ExecutionResult executionResult = getExecutionResult(tabInfo);
             if (executionResult != null && connectionIds.contains(executionResult.getConnectionId())) {

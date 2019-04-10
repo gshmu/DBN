@@ -54,7 +54,7 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
 
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return projectRef.nn();
     }
 
     @Override

@@ -98,7 +98,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
     @Override
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return projectRef.nn();
     }
 
     public void setHeader(@NotNull DataModelHeader<? extends ColumnInfo> header) {

@@ -10,12 +10,12 @@ import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionContext;
+import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionOption;
 import com.dci.intellij.dbn.execution.ExecutionOptions;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.LocalExecutionInput;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
-import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionResultForm;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
@@ -36,8 +36,8 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     private DBObjectRef<DBMethod> methodRef;
     private Set<MethodExecutionArgumentValue> argumentValues = new THashSet<>();
 
-    private transient MethodExecutionResult executionResult;
-    private transient List<ArgumentValue> inputArgumentValues = new ArrayList<>();
+    private MethodExecutionResult executionResult;
+    private List<ArgumentValue> inputArgumentValues = new ArrayList<>();
 
     public MethodExecutionInput(Project project) {
         super(project, ExecutionTarget.METHOD);
@@ -60,8 +60,10 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     }
 
     public ExecutionContext initExecution(DBDebuggerType debuggerType) {
-        MethodExecutionResultForm resultForm = executionResult == null ? null : executionResult.getForm(false);
-        executionResult = new MethodExecutionResult(this, resultForm, debuggerType);
+        MethodExecutionResult oldExecutionResult = this.executionResult;
+        this.executionResult = new MethodExecutionResult(this, debuggerType);
+        ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
+        executionManager.reuseResultForm(oldExecutionResult, this.executionResult);
         return initExecutionContext();
     }
 
@@ -222,6 +224,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         return argumentValues;
     }
 
+    @Nullable
     public MethodExecutionResult getExecutionResult() {
         return executionResult;
     }

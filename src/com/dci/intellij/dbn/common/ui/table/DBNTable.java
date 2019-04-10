@@ -140,7 +140,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Registe
 
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return projectRef.nn();
     }
 
     protected Object getValueAtMouseLocation() {

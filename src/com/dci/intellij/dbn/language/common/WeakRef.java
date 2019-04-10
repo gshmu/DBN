@@ -29,7 +29,7 @@ public class WeakRef<T> extends WeakReference<T> {
     }
 
     @NotNull
-    public T ensure() {
+    public T nn() {
         return Failsafe.nn(get());
     }
 
