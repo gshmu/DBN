@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.execution.method.result.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -11,7 +10,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
-import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
+import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultFormBase;
 import com.dci.intellij.dbn.execution.logging.LogOutput;
 import com.dci.intellij.dbn.execution.logging.LogOutputContext;
 import com.dci.intellij.dbn.execution.logging.ui.DatabaseLoggingResultConsole;
@@ -20,9 +19,9 @@ import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.project.Project;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.IdeBorderFactory;
+import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +30,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionResultForm<MethodExecutionResult> {
+public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExecutionResult> {
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel statusPanel;
@@ -41,14 +40,18 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
     private JTree argumentValuesTree;
     private JPanel argumentValuesPanel;
     private JPanel executionResultPanel;
+    private JBScrollPane argumentValuesScrollPane;
     private TabbedPane outputTabs;
 
 
-    private MethodExecutionResult executionResult;
+    public MethodExecutionResultForm(@NotNull MethodExecutionResult executionResult) {
+        super(executionResult);
+        List<ArgumentValue> inputArgumentValues = executionResult.getExecutionInput().getInputArgumentValues();
+        List<ArgumentValue> outputArgumentValues = executionResult.getArgumentValues();
+        argumentValuesTree = new ArgumentValuesTree(this, inputArgumentValues, outputArgumentValues);
+        argumentValuesScrollPane.getViewport().add(argumentValuesTree);
 
-    public MethodExecutionResultForm(Project project, MethodExecutionResult executionResult) {
-        super(project);
-        this.executionResult = executionResult;
+
         outputTabs = new TabbedPane(this);
         createActionsPanel();
         updateOutputTabs();
@@ -65,28 +68,20 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
 
     @Override
     public void setExecutionResult(@NotNull MethodExecutionResult executionResult) {
-        if (this.executionResult != executionResult) {
-            MethodExecutionResult oldExecutionResult = this.executionResult;
-            this.executionResult = executionResult;
+        if (getExecutionResult() != executionResult) {
+            replaceExecutionResult(executionResult);
             ActionUtil.registerDataProvider(mainPanel, executionResult);
             rebuild();
-
-            Disposer.dispose(oldExecutionResult);
         }
     }
 
-    @NotNull
-    @Override
-    public MethodExecutionResult getExecutionResult() {
-        return executionResult;
-    }
-
     public DBMethod getMethod() {
+        MethodExecutionResult executionResult = getExecutionResult();
         return executionResult.getMethod();
     }
 
     public void rebuild() {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
             updateArgumentValueTree();
             updateOutputTabs();
             updateStatusBarLabels();
@@ -94,6 +89,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
     }
 
     private void updateArgumentValueTree() {
+        MethodExecutionResult executionResult = getExecutionResult();
         List<ArgumentValue> inputArgumentValues = executionResult.getExecutionInput().getInputArgumentValues();
         List<ArgumentValue> outputArgumentValues = executionResult.getArgumentValues();
 
@@ -105,6 +101,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
 
     private void updateOutputTabs() {
         outputTabs.removeAllTabs();
+        MethodExecutionResult executionResult = getExecutionResult();
         String logOutput = executionResult.getLogOutput();
         String logConsoleName = "Output";
         ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
@@ -192,6 +189,7 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
     }
 
     private void updateStatusBarLabels() {
+        MethodExecutionResult executionResult = getExecutionResult();
         SessionId sessionId = executionResult.getExecutionInput().getTargetSessionId();
         String connectionType =
                 sessionId == SessionId.MAIN ? " (main)" :
@@ -217,15 +215,8 @@ public class MethodExecutionResultForm extends DBNFormImpl implements ExecutionR
         return mainPanel;
     }
 
-    private void createUIComponents() {
-        List<ArgumentValue> inputArgumentValues = executionResult.getExecutionInput().getInputArgumentValues();
-        List<ArgumentValue> outputArgumentValues = executionResult.getArgumentValues();
-        argumentValuesTree = new ArgumentValuesTree(this, inputArgumentValues, outputArgumentValues);
-    }
-
     @Override
     public void disposeInner() {
-        Disposer.dispose(executionResult);
         Disposer.dispose(outputTabs);
         super.disposeInner();
     }

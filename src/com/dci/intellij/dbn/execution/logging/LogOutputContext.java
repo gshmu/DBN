@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,8 +18,8 @@ public class LogOutputContext {
         CLOSED      // cancelled completely (console closed)
     }
     private ConnectionHandlerRef connectionHandlerRef;
-    private VirtualFile sourceFile;
-    private Process process;
+    private WeakRef<VirtualFile> sourceFile;
+    private WeakRef<Process> process;
     private Status status = Status.NEW;
     private boolean hideEmptyLines = false;
 
@@ -28,8 +29,8 @@ public class LogOutputContext {
 
     public LogOutputContext(@NotNull ConnectionHandler connectionHandler, @Nullable VirtualFile sourceFile, @Nullable Process process) {
         this.connectionHandlerRef = connectionHandler.getRef();
-        this.sourceFile = sourceFile;
-        this.process = process;
+        this.sourceFile = WeakRef.from(sourceFile);
+        this.process = WeakRef.from(process);
     }
 
     @NotNull
@@ -39,19 +40,20 @@ public class LogOutputContext {
 
     @Nullable
     public VirtualFile getSourceFile() {
-        return sourceFile;
+        return WeakRef.get(sourceFile);
     }
 
     @Nullable
     public Process getProcess() {
-        return process;
+        return WeakRef.get(process);
     }
 
     public void setProcess(Process process) {
-        this.process = process;
+        this.process = WeakRef.from(process);
     }
 
     public boolean isProcessAlive() {
+        Process process = getProcess();
         if (process != null) {
             try {
                 process.exitValue();
@@ -114,9 +116,9 @@ public class LogOutputContext {
 
 
     private void destroyProcess() {
+        Process process = getProcess();
         if (process != null) {
             process.destroy();
-            process = null;
         }
     }
 

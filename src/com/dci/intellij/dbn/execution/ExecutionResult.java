@@ -12,10 +12,17 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public interface ExecutionResult extends Disposable, DataProviderSupplier {
+public interface ExecutionResult<F extends ExecutionResultForm> extends Disposable, DataProviderSupplier {
 
     @Nullable
-    ExecutionResultForm getForm(boolean create);
+    F createForm();
+
+    @Nullable
+    default F getForm() {
+        Project project = getProject();
+        ExecutionManager executionManager = ExecutionManager.getInstance(project);
+        return (F) executionManager.getResultForm(this);
+    }
 
     @NotNull
     String getName();

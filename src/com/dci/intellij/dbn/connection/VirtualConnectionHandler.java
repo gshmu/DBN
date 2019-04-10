@@ -112,7 +112,7 @@ public class VirtualConnectionHandler extends DisposableBase implements Connecti
 
     @Override
     @NotNull
-    public Project getProject() {return projectRef.ensure();}
+    public Project getProject() {return projectRef.nn();}
 
     @Override
     public boolean isEnabled() {

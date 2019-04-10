@@ -41,7 +41,7 @@ public final class StatementExecutionQueue extends DisposableBase{
 
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return projectRef.nn();
     }
 
 

@@ -58,11 +58,11 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
     @NotNull
     public final Project getProject() {
         if (projectRef != null) {
-            return projectRef.ensure();
+            return projectRef.nn();
         }
 
         if (parentComponent != null) {
-            return parentComponent.ensure().getProject();
+            return parentComponent.nn().getProject();
         }
 
         DataContext dataContext = DataManager.getInstance().getDataContext(getComponent());

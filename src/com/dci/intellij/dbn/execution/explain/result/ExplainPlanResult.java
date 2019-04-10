@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.execution.explain.result;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
@@ -13,7 +12,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ResultSetUtil;
 import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.execution.ExecutionResult;
+import com.dci.intellij.dbn.execution.ExecutionResultBase;
 import com.dci.intellij.dbn.execution.explain.result.ui.ExplainPlanResultForm;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -36,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 @Nullifiable
-public class ExplainPlanResult extends DisposableBase implements ExecutionResult, DataProviderSupplier {
+public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm> implements DataProviderSupplier {
     private String planId;
     private Date timestamp;
     private ExplainPlanEntry root;
@@ -46,7 +45,6 @@ public class ExplainPlanResult extends DisposableBase implements ExecutionResult
     private String resultName;
     private String errorMessage;
     private VirtualFile virtualFile;
-    private ExplainPlanResultForm resultForm;
 
     public ExplainPlanResult(ExecutablePsiElement executablePsiElement, ResultSet resultSet) throws SQLException {
         this(executablePsiElement, (String) null);
@@ -124,12 +122,10 @@ public class ExplainPlanResult extends DisposableBase implements ExecutionResult
         return getConnectionHandler().getProject();
     }
 
+    @Nullable
     @Override
-    public ExplainPlanResultForm getForm(boolean create) {
-        if (resultForm == null && create) {
-            resultForm = new ExplainPlanResultForm(this);
-        }
-        return resultForm;
+    public ExplainPlanResultForm createForm() {
+        return new ExplainPlanResultForm(this);
     }
 
     @Override

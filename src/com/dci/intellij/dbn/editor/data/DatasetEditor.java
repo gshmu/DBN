@@ -164,7 +164,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
 
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return projectRef.nn();
     }
 
     @Override
