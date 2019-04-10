@@ -77,13 +77,13 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     @Override
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return projectRef.nn();
     }
 
     @Override
     @NotNull
     public Project ensureProject() {
-        return projectRef.ensure();
+        return projectRef.nn();
     }
 
 

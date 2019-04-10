@@ -34,7 +34,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
 
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return projectRef.nn();
     }
 
     public List<MethodExecutionInput> getExecutionInputs() {

@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.execution.explain.result.ui;
 
 import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
-import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
+import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultFormBase;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
@@ -16,17 +15,15 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class ExplainPlanResultForm extends DBNFormImpl implements ExecutionResultForm{
+public class ExplainPlanResultForm extends ExecutionResultFormBase<ExplainPlanResult> {
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JScrollPane resultScrollPane;
     private ExplainPlanTreeTable explainPlanTreeTable;
     private JPanel resultPanel;
-    private ExplainPlanResult explainPlanResult;
 
-    public ExplainPlanResultForm(final ExplainPlanResult explainPlanResult) {
-        super(explainPlanResult.getProject());
-        this.explainPlanResult = explainPlanResult;
+    public ExplainPlanResultForm(@NotNull ExplainPlanResult explainPlanResult) {
+        super(explainPlanResult);
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", false, "DBNavigator.ActionGroup.ExplainPlanResult");
         actionToolbar.setTargetComponent(actionsPanel);
 
@@ -52,25 +49,16 @@ public class ExplainPlanResultForm extends DBNFormImpl implements ExecutionResul
     }
 
     public void show() {
-        Project project = explainPlanResult.getProject();
+        ExecutionResult executionResult = getExecutionResult();
+        Project project = executionResult.getProject();
         ExecutionManager executionManager = ExecutionManager.getInstance(project);
-        executionManager.selectResultTab(explainPlanResult);
+        executionManager.selectResultTab(executionResult);
     }
 
     @NotNull
     @Override
     public JPanel getComponent() {
         return mainPanel;
-    }
-
-    @Override
-    public void setExecutionResult(@NotNull ExecutionResult executionResult) {
-    }
-
-    @NotNull
-    @Override
-    public ExecutionResult getExecutionResult() {
-        return explainPlanResult;
     }
 
     public void collapseAllNodes() {

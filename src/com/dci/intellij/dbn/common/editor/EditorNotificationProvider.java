@@ -29,6 +29,6 @@ public abstract class EditorNotificationProvider<T extends EditorNotificationPan
 
     @NotNull
     protected Project getProject() {
-        return projectRef.ensure();
+        return projectRef.nn();
     }
 }

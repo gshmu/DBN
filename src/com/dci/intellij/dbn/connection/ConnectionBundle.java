@@ -147,7 +147,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     @Override
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return projectRef.nn();
     }
 
     @Nullable

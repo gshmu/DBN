@@ -145,7 +145,7 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
 
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return projectRef.nn();
     }
 
     /********************************************************

@@ -67,14 +67,14 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
     }
 
     public DatasetEditorTable getTable() {
-        return table.ensure();
+        return table.nn();
     }
 
 
 
     @NotNull
     public DataEditorComponent getEditorComponent() {
-        return editorComponent.ensure();
+        return editorComponent.nn();
     }
 
     public void setCell(@Nullable DatasetEditorModelCell cell) {

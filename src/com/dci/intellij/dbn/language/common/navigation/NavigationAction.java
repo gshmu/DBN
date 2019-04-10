@@ -29,7 +29,7 @@ public abstract class NavigationAction extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        BasePsiElement navigationElement = this.navigationElement.ensure();
+        BasePsiElement navigationElement = this.navigationElement.nn();
         DBObject parentObject = getParentObject();
         if (parentObject != null) {
             SourceCodeManager codeEditorManager = SourceCodeManager.getInstance(parentObject.getProject());

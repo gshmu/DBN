@@ -138,6 +138,6 @@ public class DDLMappedNotificationProvider extends EditorNotifications.Provider<
 
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return projectRef.nn();
     }
 }

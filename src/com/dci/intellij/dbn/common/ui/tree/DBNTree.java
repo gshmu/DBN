@@ -37,7 +37,7 @@ public class DBNTree extends Tree implements RegisteredDisposable {
 
     @NotNull
     public final Project getProject() {
-        return projectRef.ensure();
+        return projectRef.nn();
     }
 
     /********************************************************
