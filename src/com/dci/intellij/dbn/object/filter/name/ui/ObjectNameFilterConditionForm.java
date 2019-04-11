@@ -97,7 +97,7 @@ public class ObjectNameFilterConditionForm extends DBNFormImpl<ObjectNameFilterC
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 }

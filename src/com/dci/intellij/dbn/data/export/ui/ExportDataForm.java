@@ -154,7 +154,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

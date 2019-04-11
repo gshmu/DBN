@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.logging.ui;
 
 import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultFormBase;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
@@ -49,9 +48,6 @@ public class DatabaseLoggingResultForm extends ExecutionResultFormBase<DatabaseL
             actionsPanel.add(actionToolbar.getComponent());
             actionToolbar.setTargetComponent(console.getToolbarContextComponent());
         }
-
-
-        ActionUtil.registerDataProvider(mainPanel, loggingResult);
     }
 
     public DatabaseLoggingResultConsole getConsole() {
@@ -60,7 +56,7 @@ public class DatabaseLoggingResultForm extends ExecutionResultFormBase<DatabaseL
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

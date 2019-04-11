@@ -93,7 +93,7 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
     
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
     

@@ -39,7 +39,7 @@ public class CodeCompletionFiltersSettingsForm extends CompositeConfigurationEdi
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 }

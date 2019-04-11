@@ -29,7 +29,7 @@ public class CodeEditorGeneralSettingsForm extends ConfigurationEditorForm<CodeE
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

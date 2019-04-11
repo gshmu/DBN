@@ -175,7 +175,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

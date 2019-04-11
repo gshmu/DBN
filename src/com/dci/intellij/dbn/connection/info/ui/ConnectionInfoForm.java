@@ -182,7 +182,7 @@ public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 }

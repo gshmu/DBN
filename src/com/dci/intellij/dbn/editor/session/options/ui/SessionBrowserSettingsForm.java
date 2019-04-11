@@ -37,7 +37,7 @@ public class SessionBrowserSettingsForm extends ConfigurationEditorForm<SessionB
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

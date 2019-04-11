@@ -140,7 +140,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

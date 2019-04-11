@@ -24,7 +24,7 @@ public class DataGridGeneralSettingsForm extends ConfigurationEditorForm<DataGri
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

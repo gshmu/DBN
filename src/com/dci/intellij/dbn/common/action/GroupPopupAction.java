@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.common.action;
 
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.DataProviderSupplier;
+import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -41,16 +41,16 @@ public abstract class GroupPopupAction extends DumbAwareAction {
                         true, null, 10);
 
                 //Project project = (Project) e.getDataContext().getData(DataConstants.PROJECT);
-                DataProviderSupplier dataProvider = getDataProviderSupplier(e);
+                DataProvider dataProvider = getDataProvider(e);
                 if (dataProvider != null) {
-                    ActionUtil.registerDataProvider(popup.getContent(), dataProvider);
+                    DataManager.registerDataProvider(popup.getContent(), dataProvider);
                 }
                 showBelowComponent(popup, component);
             }
         }
     }
 
-    public DataProviderSupplier getDataProviderSupplier(AnActionEvent e) {
+    public DataProvider getDataProvider(AnActionEvent e) {
         return null;
     }
 

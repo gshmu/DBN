@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.dci.intellij.dbn.data.find.SearchableDataComponent;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableScrollPane;
@@ -17,18 +16,17 @@ import com.dci.intellij.dbn.data.record.RecordViewInfo;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecutionResultForm> implements SearchableDataComponent, DataProviderSupplier {
+public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecutionResultForm> implements SearchableDataComponent {
     private JPanel actionsPanel;
     private JScrollPane resultScrollPane;
     private JPanel mainPanel;
@@ -42,7 +40,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
     private Latent<DataSearchComponent> dataSearchComponent = Latent.disposable(this, () -> {
         DataSearchComponent dataSearchComponent = new DataSearchComponent(MethodExecutionCursorResultForm.this);
         searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
-        ActionUtil.registerDataProvider(dataSearchComponent.getSearchField(), executionResult);
+        DataManager.registerDataProvider(dataSearchComponent.getSearchField(), this);
         return dataSearchComponent;
     });
 
@@ -71,7 +69,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.MethodExecutionCursorResult");
         actionToolbar.setTargetComponent(actionsPanel);
         actionsPanel.add(actionToolbar.getComponent());
-        ActionUtil.registerDataProvider(mainPanel, this);
+        DataManager.registerDataProvider(actionToolbar.getComponent(), this);
 
         Disposer.register(this, resultTable);
     }
@@ -82,7 +80,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 
@@ -139,22 +137,15 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
     /********************************************************
      *                    Data Provider                     *
      ********************************************************/
-    public DataProvider dataProvider = new DataProvider() {
-        @Override
-        public Object getData(@NonNls String dataId) {
-            if (DBNDataKeys.METHOD_EXECUTION_CURSOR_RESULT_FORM.is(dataId)) {
-                return MethodExecutionCursorResultForm.this;
-            }
-            if (DBNDataKeys.METHOD_EXECUTION_ARGUMENT.is(dataId)) {
-                return DBObjectRef.get(argumentRef);
-            }
-            return null;
-        }
-    };
-
-    @Override
     @Nullable
-    public DataProvider getDataProvider() {
-        return dataProvider;
+    @Override
+    public Object getData(@NotNull String dataId) {
+        if (DBNDataKeys.METHOD_EXECUTION_CURSOR_RESULT_FORM.is(dataId)) {
+            return MethodExecutionCursorResultForm.this;
+        }
+        if (DBNDataKeys.METHOD_EXECUTION_ARGUMENT.is(dataId)) {
+            return DBObjectRef.get(argumentRef);
+        }
+        return null;
     }
 }

@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class ExecutionResultFormBase<T extends ExecutionResult> extends DBNFormImpl implements ExecutionResultForm<T>{
     private T executionResult;
@@ -30,8 +31,21 @@ public abstract class ExecutionResultFormBase<T extends ExecutionResult> extends
         if (this.executionResult != executionResult) {
             T oldExecutionResult = this.executionResult;
             this.executionResult = executionResult;
+            rebuildForm();
             Disposer.disposeInBackground(oldExecutionResult);
         }
+    }
+
+    protected void rebuildForm(){}
+
+    @Nullable
+    @Override
+    public Object getData(@NotNull String dataId) {
+        Object data = super.getData(dataId);
+        if (data == null) {
+            data = getExecutionResult().getData(dataId);
+        }
+        return data;
     }
 
     @Override

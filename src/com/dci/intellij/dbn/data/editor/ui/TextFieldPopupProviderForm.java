@@ -124,7 +124,7 @@ public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements 
         if (!e.isConsumed()) {
             for (AnAction action : actions) {
                 if (KeyUtil.match(action.getShortcutSet().getShortcuts(), e)) {
-                    DataContext dataContext = DataManager.getInstance().getDataContext(getComponent());
+                    DataContext dataContext = DataManager.getInstance().getDataContext(this.getComponent());
                     ActionManager actionManager = ActionManager.getInstance();
                     AnActionEvent actionEvent = new AnActionEvent(null, dataContext, "", action.getTemplatePresentation(), actionManager, 2);
                     action.actionPerformed(actionEvent);

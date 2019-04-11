@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
+import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
@@ -27,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.beans.PropertyChangeListener;
 
-public abstract class BasicTextEditorImpl<T extends VirtualFile> extends DisposableBase implements BasicTextEditor<T>, RegisteredDisposable {
+public abstract class BasicTextEditorImpl<T extends VirtualFile> extends DisposableBase implements BasicTextEditor<T>, RegisteredDisposable, DataProvider {
     protected TextEditor textEditor;
     private WeakRef<T> virtualFileRef;
     private String name;
@@ -191,5 +192,11 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
     public String toString() {
         T virtualFile = virtualFileRef.get();
         return virtualFile == null ? super.toString() : virtualFile.getPath();
+    }
+
+    @Nullable
+    @Override
+    public Object getData(@NotNull String dataId) {
+        return null;
     }
 }
