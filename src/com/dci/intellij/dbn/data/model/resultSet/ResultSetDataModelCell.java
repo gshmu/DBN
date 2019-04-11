@@ -10,8 +10,12 @@ import java.sql.SQLException;
 
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
 
-public class ResultSetDataModelCell extends SortableDataModelCell {
-    public ResultSetDataModelCell(ResultSetDataModelRow row, ResultSet resultSet, ResultSetColumnInfo columnInfo) throws SQLException {
+public class ResultSetDataModelCell<
+        R extends ResultSetDataModelRow<M, ? extends ResultSetDataModelCell<R, M>>,
+        M extends ResultSetDataModel<R, ? extends ResultSetDataModelCell<R, M>>>
+        extends SortableDataModelCell<R, M> {
+
+    public ResultSetDataModelCell(R row, ResultSet resultSet, ResultSetColumnInfo columnInfo) throws SQLException {
         super(row, null, columnInfo.getColumnIndex());
         DBDataType dataType = columnInfo.getDataType();
         if (!getRow().getModel().is(INSERTING)) {
@@ -20,14 +24,19 @@ public class ResultSetDataModelCell extends SortableDataModelCell {
         }
     }
 
-    protected DBNConnection getConnection() {
-        return getRow().getModel().getResultSet().getConnection();
+    @NotNull
+    @Override
+    public M getModel() {
+        return super.getModel();
     }
-
 
     @NotNull
     @Override
-    public ResultSetDataModelRow getRow() {
-        return (ResultSetDataModelRow) super.getRow();
+    public R getRow() {
+        return super.getRow();
+    }
+
+    protected DBNConnection getConnection() {
+        return getRow().getModel().getResultSet().getConnection();
     }
 }

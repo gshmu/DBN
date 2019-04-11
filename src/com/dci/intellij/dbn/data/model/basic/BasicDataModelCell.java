@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.data.model.basic;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
@@ -12,20 +11,26 @@ import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ArrayValue;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.editor.data.model.RecordStatus;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 @Nullifiable
-public class BasicDataModelCell extends DisposablePropertyHolder<RecordStatus> implements DataModelCell {
-    protected BasicDataModelRow row;
+public class BasicDataModelCell<
+        R extends BasicDataModelRow<M, ? extends BasicDataModelCell<R, M>>,
+        M extends BasicDataModel<R, ? extends BasicDataModelCell<R, M>>>
+        extends DisposablePropertyHolder<RecordStatus>
+        implements DataModelCell<R, M> {
+
+    protected WeakRef<R> row;
     protected Object userValue;
     private String formattedUserValue;
     protected int index;
 
-    public BasicDataModelCell(Object userValue, BasicDataModelRow row, int index) {
+    public BasicDataModelCell(Object userValue, R row, int index) {
         this.userValue = userValue;
-        this.row = row;
+        this.row = WeakRef.from(row);
         this.index = index;
     }
 
@@ -63,8 +68,8 @@ public class BasicDataModelCell extends DisposablePropertyHolder<RecordStatus> i
 
     @Override
     @NotNull
-    public BasicDataModelRow getRow() {
-        return Failsafe.nn(row);
+    public R getRow() {
+        return row.nn();
     }
 
     @Override
@@ -101,7 +106,7 @@ public class BasicDataModelCell extends DisposablePropertyHolder<RecordStatus> i
 
     @NotNull
     @Override
-    public BasicDataModel getModel() {
+    public M getModel() {
         return getRow().getModel();
     }
 

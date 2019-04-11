@@ -4,10 +4,26 @@ import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.basic.BasicDataModelCell;
 import org.jetbrains.annotations.NotNull;
 
-public class SortableDataModelCell extends BasicDataModelCell implements Comparable {
+public class SortableDataModelCell<
+        R extends SortableDataModelRow<M, ? extends SortableDataModelCell<R, M>>,
+        M extends SortableDataModel<R, ? extends SortableDataModelCell<R, M>>>
+        extends BasicDataModelCell<R, M>
+        implements Comparable {
 
-    public SortableDataModelCell(SortableDataModelRow row, Object userValue, int index) {
+    public SortableDataModelCell(R row, Object userValue, int index) {
         super(userValue, row, index);
+    }
+
+    @NotNull
+    @Override
+    public M getModel() {
+        return super.getModel();
+    }
+
+    @NotNull
+    @Override
+    public R getRow() {
+        return super.getRow();
     }
 
     @Override
@@ -29,11 +45,5 @@ public class SortableDataModelCell extends BasicDataModelCell implements Compara
             return local.getClass().equals(typeClass) ? 1 :
                    remote.getClass().equals(typeClass) ? -1 : 0;
         }
-    }
-
-    @Override
-    @NotNull
-    public SortableDataModel getModel() {
-        return (SortableDataModel) getRow().getModel();
     }
 }
