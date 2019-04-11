@@ -31,7 +31,7 @@ public class BasicDataModelRow<T extends DataModelCell> extends DisposableProper
     }
 
     protected void addCell(T cell) {
-        getCells().add(cell);
+        cells.add(cell);
     }
 
     @Override
@@ -42,19 +42,15 @@ public class BasicDataModelRow<T extends DataModelCell> extends DisposableProper
 
     @Override
     public List<T> getCells() {
-        Failsafe.nd(this);
-        return Failsafe.nn(cells);
+        return cells;
     }
 
 
     @Override
     public final T getCell(String columnName) {
-        List<T> cells = getCells();
-        if (cells != null) {
-            for (T cell : cells) {
-                if (cell.getColumnInfo().getName().equals(columnName)) {
-                    return cell;
-                }
+        for (T cell : cells) {
+            if (cell.getColumnInfo().getName().equals(columnName)) {
+                return cell;
             }
         }
         return null;
@@ -74,7 +70,6 @@ public class BasicDataModelRow<T extends DataModelCell> extends DisposableProper
     @Nullable
     @Override
     public T getCellAtIndex(int index) {
-        List<T> cells = getCells();
         return cells.size() > index ? cells.get(index) : null;
     }
 
@@ -89,7 +84,7 @@ public class BasicDataModelRow<T extends DataModelCell> extends DisposableProper
     }
 
     public int indexOf(T cell) {
-        return getCells().indexOf(cell);
+        return cells.indexOf(cell);
     }
 
     public Project getProject() {
