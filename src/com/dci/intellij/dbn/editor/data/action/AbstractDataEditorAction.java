@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.action;
 
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -24,7 +24,7 @@ public abstract class AbstractDataEditorAction extends DumbAwareAction {
 
     @Nullable
     public static DatasetEditor getDatasetEditor(DataContext dataContext) {
-        DatasetEditor datasetEditor = DBNDataKeys.DATASET_EDITOR.getData(dataContext);
+        DatasetEditor datasetEditor = DataKeys.DATASET_EDITOR.getData(dataContext);
         if (datasetEditor == null) {
             FileEditor fileEditor = PlatformDataKeys.FILE_EDITOR.getData(dataContext);
             if (fileEditor instanceof DatasetEditor) {
@@ -37,7 +37,7 @@ public abstract class AbstractDataEditorAction extends DumbAwareAction {
 
     @Nullable
     public static DatasetEditor getDatasetEditor(AnActionEvent e) {
-        DatasetEditor datasetEditor = e.getData((DBNDataKeys.DATASET_EDITOR));
+        DatasetEditor datasetEditor = e.getData((DataKeys.DATASET_EDITOR));
         if (datasetEditor == null) {
             FileEditor fileEditor = ActionUtil.getFileEditor(e);
             if (fileEditor instanceof DatasetEditor) {

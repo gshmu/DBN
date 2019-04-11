@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection.console;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.UserDataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -206,7 +206,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                     String consoleText = SettingsSupport.readCdata(consoleElement);
 
                     DBConsoleVirtualFile consoleVirtualFile = consoleBundle.getConsole(consoleName, consoleType, true);
-                    consoleVirtualFile.putUserData(DBNDataKeys.CONSOLE_TEXT, consoleText);
+                    consoleVirtualFile.putUserData(UserDataKeys.CONSOLE_TEXT, consoleText);
                     //consoleVirtualFile.setText(consoleText);
                     consoleVirtualFile.setDatabaseSchemaName(schema);
                     consoleVirtualFile.setDatabaseSession(databaseSession);
@@ -220,8 +220,8 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         for (ConnectionHandler connectionHandler : connectionManager.getConnectionHandlers()) {
             for (DBConsoleVirtualFile consoleVirtualFile : connectionHandler.getConsoleBundle().getConsoles()) {
-                String text = consoleVirtualFile.getUserData(DBNDataKeys.CONSOLE_TEXT);
-                consoleVirtualFile.putUserData(DBNDataKeys.CONSOLE_TEXT, null);
+                String text = consoleVirtualFile.getUserData(UserDataKeys.CONSOLE_TEXT);
+                consoleVirtualFile.putUserData(UserDataKeys.CONSOLE_TEXT, null);
                 consoleVirtualFile.setText(text);
             }
         }

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.logging.action;
 
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -14,7 +14,7 @@ public abstract class AbstractDatabaseLogOutputAction extends DumbAwareAction {
     }
 
     public static DatabaseLoggingResult getDatabaseLogOutput(AnActionEvent e) {
-        return e.getData(DBNDataKeys.DATABASE_LOG_OUTPUT);
+        return e.getData(DataKeys.DATABASE_LOG_OUTPUT);
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.data;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposableUserDataHolderBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
@@ -636,7 +636,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
     @Nullable
     @Override
     public Object getData(@NotNull String dataId) {
-        if (DBNDataKeys.DATASET_EDITOR.is(dataId)) {
+        if (DataKeys.DATASET_EDITOR.is(dataId)) {
             return DatasetEditor.this;
         }
         return null;

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.explain.result;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
@@ -150,7 +150,7 @@ public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm
     @Nullable
     @Override
     public Object getData(@NotNull String dataId) {
-        if (DBNDataKeys.EXPLAIN_PLAN_RESULT.is(dataId)) {
+        if (DataKeys.EXPLAIN_PLAN_RESULT.is(dataId)) {
             return ExplainPlanResult.this;
         }
         return null;
