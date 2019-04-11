@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -47,13 +46,6 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     private Latent<ExecutionConsoleForm> executionConsoleForm =
             Latent.basic(() -> {
                 ExecutionConsoleForm form = new ExecutionConsoleForm(getProject());
-                Disposer.register(this, form);
-                return form;
-            });
-
-    private MapLatent<ExecutionResult, ExecutionResultForm> executionResultForms =
-            MapLatent.create(executionResult -> {
-                ExecutionResultForm form = executionResult.createForm();
                 Disposer.register(this, form);
                 return form;
             });
@@ -102,28 +94,8 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     @Nullable
-    public ExecutionResultForm getResultForm(ExecutionResult executionResult) {
-        return executionResultForms.value(executionResult);
-    }
-
-    @Nullable
-    public ExecutionResultForm ensureResultForm(ExecutionResult executionResult) {
-        return executionResultForms.get(executionResult);
-    }
-
-    public void releaseResultForm(ExecutionResult executionResult) {
-        ExecutionResultForm form = executionResultForms.remove(executionResult);
-        if (form != null) {
-            Disposer.disposeInBackground(form);
-        }
-    }
-
-    public <T extends ExecutionResult> void reuseResultForm(T previousExecutionResult, T executionResult) {
-        ExecutionResultForm<T> form = executionResultForms.remove(previousExecutionResult);
-        if (form != null) {
-            form.replaceExecutionResult(executionResult);
-            executionResultForms.put(executionResult, form);
-        }
+    ExecutionResultForm getExecutionResultForm(ExecutionResult executionResult) {
+        return getExecutionConsoleForm().getExecutionResultForm(executionResult);
     }
 
     public void addExecutionResult(@NotNull CompilerResult compilerResult) {
@@ -198,7 +170,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
 
-    public void addExecutionResult(final MethodExecutionResult executionResult) {
+    public void addExecutionResult(MethodExecutionResult executionResult) {
         Dispatch.invoke(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();

@@ -21,7 +21,7 @@ public interface ExecutionResult<F extends ExecutionResultForm> extends Disposab
     default F getForm() {
         Project project = getProject();
         ExecutionManager executionManager = ExecutionManager.getInstance(project);
-        return (F) executionManager.getResultForm(this);
+        return (F) executionManager.getExecutionResultForm(this);
     }
 
     @NotNull
@@ -38,4 +38,8 @@ public interface ExecutionResult<F extends ExecutionResultForm> extends Disposab
     ConnectionHandler getConnectionHandler();
 
     PsiFile createPreviewFile();
+
+    ExecutionResult<F> getPrevious();
+
+    void setPrevious(ExecutionResult<F> previous);
 }

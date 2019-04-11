@@ -47,7 +47,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
         return dataSearchComponent;
     });
 
-    public StatementExecutionResultForm(final StatementExecutionCursorResult executionResult) {
+    public StatementExecutionResultForm(StatementExecutionCursorResult executionResult) {
         super(executionResult);
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", false, "DBNavigator.ActionGroup.StatementExecutionResult");
         actionToolbar.setTargetComponent(actionsPanel);
@@ -73,13 +73,6 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
 
         Disposer.register(this, executionResult);
         Disposer.register(this, resultTable);
-    }
-
-    @Override
-    public void setExecutionResult(@NotNull StatementExecutionCursorResult executionResult) {
-        if (getExecutionResult() != executionResult) {
-            replaceExecutionResult(executionResult);
-        }
     }
 
     public void rebuildForm() {
