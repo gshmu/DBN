@@ -6,21 +6,25 @@ import com.dci.intellij.dbn.data.sorting.SortingState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SortableDataModelRow<T extends SortableDataModelCell> extends BasicDataModelRow<T> implements Comparable {
+public class SortableDataModelRow<
+        M extends SortableDataModel<? extends SortableDataModelRow<M, C>, C>,
+        C extends SortableDataModelCell<? extends SortableDataModelRow<M, C>, M>>
+        extends BasicDataModelRow<M, C>
+        implements Comparable {
 
-    protected SortableDataModelRow(SortableDataModel model) {
+    protected SortableDataModelRow(M model) {
         super(model);
     }
 
     @NotNull
     @Override
-    public SortableDataModel getModel() {
-        return (SortableDataModel) super.getModel();
+    public M getModel() {
+        return super.getModel();
     }
 
     @Nullable
     @Override
-    public T getCellAtIndex(int index) {
+    public C getCellAtIndex(int index) {
         return super.getCellAtIndex(index);
     }
 

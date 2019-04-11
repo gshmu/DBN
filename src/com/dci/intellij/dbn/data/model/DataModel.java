@@ -9,28 +9,29 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface DataModel<T extends DataModelRow> extends DBNTableWithGutterModel {
+public interface DataModel<
+        R extends DataModelRow<? extends DataModel<R, C>, C>,
+        C extends DataModelCell<R, ? extends DataModel<R, C>>>
+        extends DBNTableWithGutterModel {
+
     boolean isReadonly();
 
     Project getProject();
 
-    void setFilter(Filter<T> filter);
+    void setFilter(Filter<R> filter);
 
     @Nullable
-    Filter<T> getFilter();
+    Filter<R> getFilter();
 
     @NotNull
-    List<T> getRows();
+    List<R> getRows();
 
-    int indexOfRow(T row);
+    int indexOfRow(R row);
 
     @Nullable
-    T getRowAtIndex(int index);
+    R getRowAtIndex(int index);
 
     DataModelHeader getHeader();
-
-    @Override
-    int getColumnCount();
 
     ColumnInfo getColumnInfo(int columnIndex);
 

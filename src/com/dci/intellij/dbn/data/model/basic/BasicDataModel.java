@@ -36,14 +36,19 @@ import java.util.List;
 import java.util.Set;
 
 @Nullifiable
-public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHolder<RecordStatus> implements DataModel<T> {
+public class BasicDataModel<
+        R extends DataModelRow<? extends BasicDataModel<R, C>, C>,
+        C extends DataModelCell<R, ? extends BasicDataModel<R, C>>>
+        extends DisposablePropertyHolder<RecordStatus>
+        implements DataModel<R,C> {
+
     private DataModelHeader<? extends ColumnInfo> header;
     private DataModelState state;
     private Set<TableModelListener> tableModelListeners = new HashSet<>();
     private Set<DataModelListener> dataModelListeners = new HashSet<>();
-    private List<T> rows = new ArrayList<>();
+    private List<R> rows = new ArrayList<>();
     private ProjectRef projectRef;
-    private Filter<T> filter;
+    private Filter<R> filter;
     private Latent<Formatter> formatter;
     private boolean isEnvironmentReadonly;
 
@@ -129,18 +134,18 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
     }
 
     @Override
-    public void setFilter(Filter<T> filter) {
-        List<T> rows = getRows();
+    public void setFilter(Filter<R> filter) {
+        List<R> rows = getRows();
         if (filter == null) {
             if (rows instanceof FiltrableList) {
-                FiltrableList<T> filtrableList = (FiltrableList<T>) rows;
+                FiltrableList<R> filtrableList = (FiltrableList<R>) rows;
                 this.rows = filtrableList.getFullList();
             }
         }
         else {
-            FiltrableListImpl<T> filtrableList;
+            FiltrableListImpl<R> filtrableList;
             if (rows instanceof FiltrableList) {
-                filtrableList = (FiltrableListImpl<T>) rows;
+                filtrableList = (FiltrableListImpl<R>) rows;
             } else {
                 filtrableList = new FiltrableListImpl<>(rows);
                 this.rows = filtrableList;
@@ -152,7 +157,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
 
     @Nullable
     @Override
-    public Filter<T> getFilter() {
+    public Filter<R> getFilter() {
         return filter;
     }
 
@@ -162,11 +167,11 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
 
     @NotNull
     @Override
-    public List<T> getRows() {
+    public List<R> getRows() {
         return Failsafe.nn(rows);
     }
 
-    public void setRows(List<T> rows) {
+    public void setRows(List<R> rows) {
         if (filter != null) {
             this.rows = new FiltrableListImpl<>(rows, filter);
         } else {
@@ -176,12 +181,12 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
         getState().setRowCount(getRowCount());
     }
 
-    public void addRow(T row) {
+    public void addRow(R row) {
         getRows().add(row);
         getState().setRowCount(getRowCount());
     }
 
-    protected void addRowAtIndex(int index, T row) {
+    protected void addRowAtIndex(int index, R row) {
         getRows().add(index, row);
         updateRowIndexes(index);
         getState().setRowCount(getRowCount());
@@ -197,16 +202,16 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
 
     @Nullable
     @Override
-    public T getRowAtIndex(int index) {
+    public R getRowAtIndex(int index) {
         // model may be reloading when this is called, hence
         // IndexOutOfBoundsException is thrown if the range is not checked
-        List<T> rows = getRows();
+        List<R> rows = getRows();
         return index > -1 && rows.size() > index ? rows.get(index) : null;
     }
 
     @Nullable
-    public DataModelCell getCellAt(int rowIndex, int columnIndex) {
-        T row = getRowAtIndex(rowIndex);
+    public C getCellAt(int rowIndex, int columnIndex) {
+        R row = getRowAtIndex(rowIndex);
         return row == null ? null : row.getCellAtIndex(columnIndex);
     }
 
@@ -216,7 +221,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
     }
 
     @Override
-    public int indexOfRow(T row) {
+    public int indexOfRow(R row) {
         return getRows().indexOf(row);
     }
 
@@ -224,7 +229,7 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
         updateRowIndexes(getRows(), startIndex);
     }
 
-    protected void updateRowIndexes(List<T> rows, int startIndex) {
+    protected void updateRowIndexes(List<R> rows, int startIndex) {
         for (int i=startIndex; i<rows.size();i++) {
             rows.get(i).setIndex(i);
         }

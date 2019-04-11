@@ -27,11 +27,12 @@ import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTED;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
-public class DatasetEditorModelCell extends ResultSetDataModelCell implements ChangeListener {
+public class DatasetEditorModelCell
+        extends ResultSetDataModelCell<DatasetEditorModelRow, DatasetEditorModel>
+        implements ChangeListener {
+
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private Object originalUserValue;
@@ -239,13 +240,13 @@ public class DatasetEditorModelCell extends ResultSetDataModelCell implements Ch
     @Override
     @NotNull
     public DatasetEditorModelRow getRow() {
-        return (DatasetEditorModelRow) super.getRow();
+        return super.getRow();
     }
 
     @NotNull
     @Override
     public DatasetEditorModel getModel() {
-        return (DatasetEditorModel) super.getModel();
+        return super.getModel();
     }
 
     void setOriginalUserValue(Object value) {

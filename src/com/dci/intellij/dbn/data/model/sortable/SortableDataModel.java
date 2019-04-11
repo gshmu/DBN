@@ -16,7 +16,11 @@ import java.util.Comparator;
 import java.util.List;
 
 
-public class SortableDataModel<T extends SortableDataModelRow> extends BasicDataModel<T> {
+public class SortableDataModel<
+        R extends SortableDataModelRow<? extends SortableDataModel<R, C>, C>,
+        C extends SortableDataModelCell<R, ? extends SortableDataModel<R, C>>>
+        extends BasicDataModel<R, C> {
+
     private boolean sortingNullsFirst;
 
     protected SortableDataModel(Project project) {
@@ -43,7 +47,7 @@ public class SortableDataModel<T extends SortableDataModelRow> extends BasicData
         return new SortableDataModelState();
     }
 
-    protected boolean updateSortingState(int columnIndex, SortDirection direction, boolean keepExisting) {
+    private boolean updateSortingState(int columnIndex, SortDirection direction, boolean keepExisting) {
         SortingState sortingState = getSortingState();
         String columnName = getColumnName(columnIndex);
         int maxSortingColumns = getSortingSettings().getMaxSortingColumns();
@@ -65,9 +69,9 @@ public class SortableDataModel<T extends SortableDataModelRow> extends BasicData
         sort(getRows());
     }
 
-    protected void sort(List<T> rows) {
+    protected void sort(List<R> rows) {
         if (rows instanceof FiltrableList) {
-            FiltrableList<T> filtrableList = (FiltrableList<T>) rows;
+            FiltrableList<R> filtrableList = (FiltrableList<R>) rows;
             rows = filtrableList.getFullList();
         }
         if (getSortingState().isValid()) {
