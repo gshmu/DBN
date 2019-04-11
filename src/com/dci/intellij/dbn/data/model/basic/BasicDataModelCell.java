@@ -139,28 +139,4 @@ public class BasicDataModelCell extends DisposablePropertyHolder<RecordStatus> i
     public Formatter getFormatter() {
         return getModel().getFormatter();
     }
-
-    /*
-    public boolean equals(Object obj) {
-        DataModelCell remoteCell = (DataModelCell) obj;
-        return CommonUtil.safeEqual(getUserValue(), remoteCell.getUserValue());
-    }
-*/
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!isDisposed() && obj instanceof BasicDataModelCell) {
-            BasicDataModelCell cell = (BasicDataModelCell) obj;
-            return cell.index == index &&
-                    cell.getRow().getIndex() == getRow().getIndex() &&
-                    cell.getModel() == getModel();
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        BasicDataModelRow row = getRow();
-        return index + row.getIndex() + this.row.getModel().hashCode();
-    }
 }

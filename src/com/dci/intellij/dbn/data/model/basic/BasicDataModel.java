@@ -163,7 +163,6 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
     @NotNull
     @Override
     public List<T> getRows() {
-        Failsafe.nd(this);
         return Failsafe.nn(rows);
     }
 
@@ -289,12 +288,12 @@ public class BasicDataModel<T extends DataModelRow> extends DisposablePropertyHo
      *********************************************************/
     @Override
     public int getRowCount() {
-        return Failsafe.guarded(0, () -> getRows().size());
+        return rows.size();
     }
 
     @Override
     public int getColumnCount() {
-        return Failsafe.guarded(0, () -> getHeader().getColumnCount());
+        return header == null ? 0 : header.getColumnCount();
     }
 
     @Override

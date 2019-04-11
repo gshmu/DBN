@@ -133,7 +133,7 @@ public class Disposer {
                 try {
                     field.setAccessible(true);
                     Object fieldValue = field.get(object);
-                    if (fieldValue != null) {
+                    if ( fieldValue != null) {
                         if (fieldValue instanceof Collection<?>) {
                             Collection collection = (Collection) fieldValue;
                             collection.clear();
@@ -152,8 +152,8 @@ public class Disposer {
                                     !Modifier.isStatic(modifiers) &&
                                     !Modifier.isNative(modifiers) &&
                                     !Modifier.isTransient(modifiers) &&
-                                    (fieldValue instanceof Disposable ||
-                                     fieldValue instanceof Component ||
+                                    (//fieldValue instanceof Disposable ||
+                                     //fieldValue instanceof Component ||
                                      fieldValue instanceof Editor ||
                                      fieldValue instanceof Document ||
                                      fieldValue instanceof VirtualFile ||
