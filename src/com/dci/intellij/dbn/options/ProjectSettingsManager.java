@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.UserDataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -174,7 +174,7 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
     @Override
     public void loadState(@NotNull Element element) {
         projectSettings.readConfiguration(element);
-        getProject().putUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED, true);
+        getProject().putUserData(UserDataKeys.PROJECT_SETTINGS_LOADED, true);
     }
 
     @Override
@@ -221,7 +221,7 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
 
     public void importDefaultSettings(final boolean isNewProject) {
         final Project project = getProject();
-        Boolean settingsLoaded = project.getUserData(DBNDataKeys.PROJECT_SETTINGS_LOADED);
+        Boolean settingsLoaded = project.getUserData(UserDataKeys.PROJECT_SETTINGS_LOADED);
         if (settingsLoaded == null || !settingsLoaded || !isNewProject) {
             String message = isNewProject ?
                     "Do you want to import the default project settings into project \"" + project.getName() + "\"?":

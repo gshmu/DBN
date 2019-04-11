@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.session;
 
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposableUserDataHolderBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
@@ -398,7 +398,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
     @Nullable
     @Override
     public Object getData(@NotNull String dataId) {
-        if (DBNDataKeys.SESSION_BROWSER.is(dataId)) {
+        if (DataKeys.SESSION_BROWSER.is(dataId)) {
             return SessionBrowser.this;
         }
         return null;

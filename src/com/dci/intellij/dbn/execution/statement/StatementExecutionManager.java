@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.statement;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.UserDataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -163,7 +163,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     private List<StatementExecutionProcessor> getExecutionProcessors(@NotNull FileEditor textEditor) {
         return UserDataUtil.ensure(
                 textEditor,
-                DBNDataKeys.STATEMENT_EXECUTION_PROCESSORS,
+                UserDataKeys.STATEMENT_EXECUTION_PROCESSORS,
                 () -> CollectionUtil.createConcurrentList());
     }
 

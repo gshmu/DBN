@@ -44,7 +44,7 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
         JComponent component = ensureComponent();
         if (!registeredDataProvider) {
             registeredDataProvider = true;
-            DataManager.registerDataProvider(getComponent(), this);
+            DataManager.registerDataProvider(component, this);
         }
         return component;
     }

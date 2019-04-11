@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -346,7 +346,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     @Nullable
     @Override
     public Object getData(@NotNull String dataId) {
-        if (DBNDataKeys.CONNECTION_BUNDLE_SETTINGS.is(dataId)) {
+        if (DataKeys.CONNECTION_BUNDLE_SETTINGS.is(dataId)) {
             return ConnectionBundleSettingsForm.this;
         }
         return null;

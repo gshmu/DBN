@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.logging;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -117,7 +117,7 @@ public class DatabaseLoggingResult extends ExecutionResultBase<DatabaseLoggingRe
     @Nullable
     @Override
     public Object getData(@NotNull String dataId) {
-        if (DBNDataKeys.DATABASE_LOG_OUTPUT.is(dataId)) {
+        if (DataKeys.DATABASE_LOG_OUTPUT.is(dataId)) {
             return DatabaseLoggingResult.this;
         }
         return null;

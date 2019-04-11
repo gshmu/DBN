@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.browser.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -34,7 +34,7 @@ public class NewConnectionDropdownAction extends GroupPopupAction {
 
     @Override
     public DataProvider getDataProvider(AnActionEvent e) {
-        return e.getData((DBNDataKeys.CONNECTION_BUNDLE_SETTINGS));
+        return e.getData((DataKeys.CONNECTION_BUNDLE_SETTINGS));
     }
 
     @Override

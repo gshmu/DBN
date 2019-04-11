@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.method.result.action;
 
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionCursorResultForm;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -23,12 +23,12 @@ public abstract class MethodExecutionCursorResultAction extends DumbAwareAction 
 
     @Nullable
     protected MethodExecutionCursorResultForm getCursorResultForm(AnActionEvent e) {
-        return e.getData(DBNDataKeys.METHOD_EXECUTION_CURSOR_RESULT_FORM);
+        return e.getData(DataKeys.METHOD_EXECUTION_CURSOR_RESULT_FORM);
     }
 
     @Nullable
     public DBArgument getMethodArgument(AnActionEvent e) {
-        return e.getData(DBNDataKeys.METHOD_EXECUTION_ARGUMENT);
+        return e.getData(DataKeys.METHOD_EXECUTION_ARGUMENT);
     }
 
     @Override
