@@ -23,7 +23,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorModelCell> implements PropertyHolder<RecordStatus>{
+public class DatasetEditorModelRow
+        extends ResultSetDataModelRow<DatasetEditorModel, DatasetEditorModelCell>
+        implements PropertyHolder<RecordStatus>{
+
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     public DatasetEditorModelRow(DatasetEditorModel model, ResultSet resultSet, int resultSetRowIndex) throws SQLException {
@@ -33,7 +36,7 @@ public class DatasetEditorModelRow extends ResultSetDataModelRow<DatasetEditorMo
     @NotNull
     @Override
     public DatasetEditorModel getModel() {
-        return (DatasetEditorModel) super.getModel();
+        return super.getModel();
     }
 
     @Nullable
