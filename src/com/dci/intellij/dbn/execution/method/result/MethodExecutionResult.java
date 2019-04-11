@@ -21,10 +21,8 @@ import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -196,19 +194,12 @@ public class MethodExecutionResult extends ExecutionResultBase<MethodExecutionRe
     /********************************************************
      *                    Data Provider                     *
      ********************************************************/
-    public DataProvider dataProvider = new DataProvider() {
-        @Override
-        public Object getData(@NotNull @NonNls String dataId) {
-            if (DBNDataKeys.METHOD_EXECUTION_RESULT.is(dataId)) {
-                return MethodExecutionResult.this;
-            }
-            return null;
-        }
-    };
-
-    @Override
     @Nullable
-    public DataProvider getDataProvider() {
-        return dataProvider;
+    @Override
+    public Object getData(@NotNull String dataId) {
+        if (DBNDataKeys.METHOD_EXECUTION_RESULT.is(dataId)) {
+            return MethodExecutionResult.this;
+        }
+        return null;
     }
 }

@@ -13,11 +13,9 @@ import com.dci.intellij.dbn.execution.logging.ui.DatabaseLoggingResultConsole;
 import com.dci.intellij.dbn.execution.logging.ui.DatabaseLoggingResultForm;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
-import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -116,19 +114,12 @@ public class DatabaseLoggingResult extends ExecutionResultBase<DatabaseLoggingRe
     /********************************************************
      *                    Data Provider                     *
      ********************************************************/
-    public DataProvider dataProvider = new DataProvider() {
-        @Override
-        public Object getData(@NonNls String dataId) {
-            if (DBNDataKeys.DATABASE_LOG_OUTPUT.is(dataId)) {
-                return DatabaseLoggingResult.this;
-            }
-            return null;
-        }
-    };
-
-    @Override
     @Nullable
-    public DataProvider getDataProvider() {
-        return dataProvider;
+    @Override
+    public Object getData(@NotNull String dataId) {
+        if (DBNDataKeys.DATABASE_LOG_OUTPUT.is(dataId)) {
+            return DatabaseLoggingResult.this;
+        }
+        return null;
     }
 }

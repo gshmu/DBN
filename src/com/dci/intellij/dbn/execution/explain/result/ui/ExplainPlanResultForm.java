@@ -41,7 +41,6 @@ public class ExplainPlanResultForm extends ExecutionResultFormBase<ExplainPlanRe
 
         Disposer.register(this, explainPlanResult);
         Disposer.register(this, explainPlanTreeTable);
-        ActionUtil.registerDataProvider(mainPanel, explainPlanResult);
     }
 
     public ExplainPlanTreeTable getExplainPlanTreeTable() {
@@ -57,7 +56,7 @@ public class ExplainPlanResultForm extends ExecutionResultFormBase<ExplainPlanRe
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.data.record.RecordViewInfo;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultFormBase;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
+import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.IdeBorderFactory;
@@ -42,7 +43,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
     private Latent<DataSearchComponent> dataSearchComponent = Latent.disposable(this, () -> {
         DataSearchComponent dataSearchComponent = new DataSearchComponent(StatementExecutionResultForm.this);
         searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
-        ActionUtil.registerDataProvider(dataSearchComponent.getSearchField(), getExecutionResult());
+        DataManager.registerDataProvider(dataSearchComponent.getSearchField(), this);
         return dataSearchComponent;
     });
 
@@ -69,7 +70,6 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
         JPanel panel = new JPanel();
         panel.setBorder(UIUtil.getTableHeaderCellBorder());
         resultScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
-        ActionUtil.registerDataProvider(mainPanel, executionResult);
 
         Disposer.register(this, executionResult);
         Disposer.register(this, resultTable);
@@ -79,22 +79,19 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
     public void setExecutionResult(@NotNull StatementExecutionCursorResult executionResult) {
         if (getExecutionResult() != executionResult) {
             replaceExecutionResult(executionResult);
-            reloadTableModel();
         }
     }
 
-    public void reloadTableModel() {
+    public void rebuildForm() {
         Dispatch.invoke(() -> {
             StatementExecutionCursorResult executionResult = getExecutionResult();
             JScrollBar horizontalScrollBar = resultScrollPane.getHorizontalScrollBar();
             int horizontalScrolling = horizontalScrollBar.getValue();
-            ResultSetTable oldResultTable = resultTable;
-            resultTable = new ResultSetTable<>(executionResult.getTableModel(), true, recordViewInfo);
+            resultTable = Disposer.replace(resultTable, new ResultSetTable<>(executionResult.getTableModel(), true, recordViewInfo));
             resultScrollPane.setViewportView(resultTable);
             resultTable.initTableGutter();
             resultTable.setName(getExecutionResult().getName());
             horizontalScrollBar.setValue(horizontalScrolling);
-            Disposer.disposeInBackground(oldResultTable);
         });
     }
 
@@ -128,7 +125,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

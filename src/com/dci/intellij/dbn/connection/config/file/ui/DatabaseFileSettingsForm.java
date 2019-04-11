@@ -41,7 +41,7 @@ public class DatabaseFileSettingsForm extends DBNFormImpl<ConnectionDatabaseSett
     
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

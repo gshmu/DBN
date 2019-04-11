@@ -80,7 +80,7 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

@@ -81,7 +81,7 @@ public class ConnectionAuthenticationSettingsForm extends DBNFormImpl<Connection
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 }

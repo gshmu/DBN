@@ -63,15 +63,12 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
         executionResultPanel.setSize(800, -1);
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         TreeUtil.expand(argumentValuesTree, 2);
-        ActionUtil.registerDataProvider(mainPanel, executionResult);
     }
 
     @Override
     public void setExecutionResult(@NotNull MethodExecutionResult executionResult) {
         if (getExecutionResult() != executionResult) {
             replaceExecutionResult(executionResult);
-            ActionUtil.registerDataProvider(mainPanel, executionResult);
-            rebuild();
         }
     }
 
@@ -80,7 +77,7 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
         return executionResult.getMethod();
     }
 
-    public void rebuild() {
+    public void rebuildForm() {
         Dispatch.invoke(() -> {
             updateArgumentValueTree();
             updateOutputTabs();
@@ -211,7 +208,7 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

@@ -100,7 +100,7 @@ public class CreateRenameSessionForm extends DBNFormImpl<CreateRenameSessionDial
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

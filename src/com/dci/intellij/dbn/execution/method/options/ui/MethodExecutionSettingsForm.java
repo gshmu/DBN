@@ -26,7 +26,7 @@ public class MethodExecutionSettingsForm extends ConfigurationEditorForm<MethodE
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

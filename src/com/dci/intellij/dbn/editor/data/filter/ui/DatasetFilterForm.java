@@ -84,7 +84,7 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

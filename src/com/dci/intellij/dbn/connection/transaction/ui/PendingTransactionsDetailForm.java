@@ -81,7 +81,7 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

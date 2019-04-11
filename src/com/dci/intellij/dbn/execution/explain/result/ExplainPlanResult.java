@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -18,11 +17,9 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
-import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 @Nullifiable
-public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm> implements DataProviderSupplier {
+public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm> {
     private String planId;
     private Date timestamp;
     private ExplainPlanEntry root;
@@ -150,20 +147,13 @@ public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm
     /********************************************************
      *                    Data Provider                     *
      ********************************************************/
-    public DataProvider dataProvider = new DataProvider() {
-        @Override
-        public Object getData(@NonNls String dataId) {
-            if (DBNDataKeys.EXPLAIN_PLAN_RESULT.is(dataId)) {
-                return ExplainPlanResult.this;
-            }
-            return null;
-        }
-    };
-
-    @Override
     @Nullable
-    public DataProvider getDataProvider() {
-        return dataProvider;
+    @Override
+    public Object getData(@NotNull String dataId) {
+        if (DBNDataKeys.EXPLAIN_PLAN_RESULT.is(dataId)) {
+            return ExplainPlanResult.this;
+        }
+        return null;
     }
 
     /********************************************************

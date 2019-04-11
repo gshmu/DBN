@@ -52,7 +52,7 @@ public class ConnectionSshTunnelSettingsForm extends ConfigurationEditorForm<Con
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 
