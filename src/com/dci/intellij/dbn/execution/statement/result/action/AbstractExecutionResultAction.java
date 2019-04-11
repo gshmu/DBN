@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.result.action;
 
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
@@ -20,7 +20,7 @@ public abstract class AbstractExecutionResultAction extends DumbAwareAction {
 
     @Nullable
     public StatementExecutionCursorResult getExecutionResult(AnActionEvent e) {
-        StatementExecutionCursorResult result = e.getData(DBNDataKeys.STATEMENT_EXECUTION_CURSOR_RESULT);
+        StatementExecutionCursorResult result = e.getData(DataKeys.STATEMENT_EXECUTION_CURSOR_RESULT);
         if (result == null) {
             Project project = e.getProject();
             if (project != null) {

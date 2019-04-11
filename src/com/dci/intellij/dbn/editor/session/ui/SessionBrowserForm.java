@@ -219,7 +219,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     public Object getData(@NotNull String dataId) {
         Object data = super.getData(dataId);
         if (data == null) {
-            getSessionBrowser().getData(dataId);
+            data = getSessionBrowser().getData(dataId);
         }
         return data;
     }

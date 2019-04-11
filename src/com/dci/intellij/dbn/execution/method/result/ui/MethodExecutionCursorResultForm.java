@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
@@ -140,10 +140,10 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
     @Nullable
     @Override
     public Object getData(@NotNull String dataId) {
-        if (DBNDataKeys.METHOD_EXECUTION_CURSOR_RESULT_FORM.is(dataId)) {
+        if (DataKeys.METHOD_EXECUTION_CURSOR_RESULT_FORM.is(dataId)) {
             return MethodExecutionCursorResultForm.this;
         }
-        if (DBNDataKeys.METHOD_EXECUTION_ARGUMENT.is(dataId)) {
+        if (DataKeys.METHOD_EXECUTION_ARGUMENT.is(dataId)) {
             return DBObjectRef.get(argumentRef);
         }
         return null;

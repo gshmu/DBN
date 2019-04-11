@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.result;
 
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -171,7 +171,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     @Nullable
     @Override
     public Object getData(@NotNull String dataId) {
-        if (DBNDataKeys.STATEMENT_EXECUTION_CURSOR_RESULT.is(dataId)) {
+        if (DataKeys.STATEMENT_EXECUTION_CURSOR_RESULT.is(dataId)) {
             return StatementExecutionCursorResult.this;
         }
         return null;
