@@ -44,7 +44,6 @@ public class MethodExecutionResult extends ExecutionResultBase<MethodExecutionRe
 
     public MethodExecutionResult(MethodExecutionInput executionInput, DBDebuggerType debuggerType) {
         this.executionInput = WeakRef.from(executionInput);
-        executionInput.setExecutionResult(this);
         this.debuggerType = debuggerType;
     }
 

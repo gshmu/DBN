@@ -23,14 +23,10 @@ public abstract class ExecutionResultFormBase<T extends ExecutionResult> extends
 
     @Override
     public void setExecutionResult(@NotNull T executionResult) {
-        this.executionResult = executionResult;
-    }
-
-    @Override
-    public final void replaceExecutionResult(@NotNull T executionResult) {
         if (this.executionResult != executionResult) {
             T oldExecutionResult = this.executionResult;
             this.executionResult = executionResult;
+            this.executionResult.setPrevious(null);
             rebuildForm();
             Disposer.disposeInBackground(oldExecutionResult);
         }

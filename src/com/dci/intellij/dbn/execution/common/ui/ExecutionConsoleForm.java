@@ -395,8 +395,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         boolean messagesTabVisible = isMessagesTabVisible();
 
         DatabaseLoggingResult logOutput = new DatabaseLoggingResult(context);
-        ExecutionManager executionManager = getExecutionManager();
-        ExecutionResultForm resultForm = executionManager.ensureResultForm(logOutput);
+        ExecutionResultForm resultForm = ensureResultForm(logOutput);
         if (Failsafe.check(resultForm)) {
             JComponent component = resultForm.getComponent();
             TabInfo tabInfo = new TabInfo(component);
@@ -421,23 +420,35 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     }
 
     /*********************************************************
-     *                  Statement executions                 *
+     *           Statement / method executions               *
      *********************************************************/
-    public void showResultTab(ExecutionResult executionResult) {
+    private void showResultTab(ExecutionResult executionResult) {
         if (executionResult instanceof ExplainPlanResult) {
             addResultTab(executionResult);
         } else {
-            if (containsResultTab(executionResult)) {
-                selectResultTab(executionResult);
+            ExecutionResult previousExecutionResult = executionResult.getPrevious();
+
+            ExecutionResultForm executionResultForm = null;
+            if (previousExecutionResult == null) {
+                executionResultForm = getExecutionResultForm(executionResult);
+                if (executionResultForm != null) {
+                    selectResultTab(executionResult);
+                }
             } else {
+                executionResultForm = getExecutionResultForm(previousExecutionResult);
+                if (executionResultForm != null) {
+                    executionResultForm.setExecutionResult(executionResult);
+                }
+            }
+
+            if (executionResultForm == null) {
                 addResultTab(executionResult);
             }
         }
     }
 
     private void addResultTab(ExecutionResult executionResult) {
-        ExecutionManager executionManager = getExecutionManager();
-        ExecutionResultForm resultForm = executionManager.ensureResultForm(executionResult);
+        ExecutionResultForm resultForm = ensureResultForm(executionResult);
         if (Failsafe.check(resultForm)) {
             JComponent component = resultForm.getComponent();
             TabInfo tabInfo = new TabInfo(component);
@@ -453,15 +464,6 @@ public class ExecutionConsoleForm extends DBNFormImpl{
             getResultTabs().addTab(tabInfo);
             selectResultTab(tabInfo);
         }
-    }
-
-    private boolean containsResultTab(ExecutionResult executionResult) {
-        ExecutionResultForm resultForm = getExecutionResultForm(executionResult);
-        if (resultForm != null) {
-            Component component = resultForm.getComponent();
-            return containsResultTab(component);
-        }
-        return false;
     }
 
     public void removeResultTab(ExecutionResult executionResult) {
@@ -509,20 +511,33 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         }
     }
 
-    private ExecutionResultForm getExecutionResultForm(ExecutionResult executionResult) {
-        ExecutionManager executionManager = getExecutionManager();
-        return executionManager.getResultForm(executionResult);
-    }
-
     public void closeExecutionResults(List<ConnectionId> connectionIds) {
-        TabbedPane resultTabs = getResultTabs();
-        List<TabInfo> tabs = new ArrayList<>(resultTabs.getTabs());
+        List<TabInfo> tabs = getExecutionResultTabs();
         for (TabInfo tabInfo : tabs) {
             ExecutionResult executionResult = getExecutionResult(tabInfo);
             if (executionResult != null && connectionIds.contains(executionResult.getConnectionId())) {
                 removeTab(tabInfo);
             }
         }
+    }
+
+    @NotNull
+    private ArrayList<TabInfo> getExecutionResultTabs() {
+        return new ArrayList<>(resultTabs.getTabs());
+    }
+
+    @Nullable
+    private ExecutionResultForm ensureResultForm(ExecutionResult executionResult) {
+        ExecutionResultForm executionResultForm = getExecutionResultForm(executionResult);
+        if (executionResultForm == null) {
+            synchronized (this) {
+                executionResultForm = getExecutionResultForm(executionResult);
+                if (executionResultForm == null) {
+                    executionResultForm = executionResult.createForm();
+                }
+            }
+        }
+        return executionResultForm;
     }
 
 
@@ -548,5 +563,17 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         } finally {
             canScrollToSource = true;
         }
+    }
+
+    @Nullable
+    public ExecutionResultForm getExecutionResultForm(ExecutionResult executionResult) {
+        ArrayList<TabInfo> tabs = getExecutionResultTabs();
+        for (TabInfo tabInfo : tabs) {
+            ExecutionResultForm executionResultForm = (ExecutionResultForm) tabInfo.getObject();
+            if (executionResultForm != null && executionResultForm.getExecutionResult() == executionResult) {
+                return executionResultForm;
+            }
+        }
+        return null;
     }
 }

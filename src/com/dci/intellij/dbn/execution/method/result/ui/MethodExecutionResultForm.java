@@ -65,13 +65,6 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
         TreeUtil.expand(argumentValuesTree, 2);
     }
 
-    @Override
-    public void setExecutionResult(@NotNull MethodExecutionResult executionResult) {
-        if (getExecutionResult() != executionResult) {
-            replaceExecutionResult(executionResult);
-        }
-    }
-
     public DBMethod getMethod() {
         MethodExecutionResult executionResult = getExecutionResult();
         return executionResult.getMethod();
@@ -128,7 +121,8 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
         outputTabs.addTab(outputTabInfo);
 
         boolean isFirst = true;
-        for (ArgumentValue argumentValue : executionResult.getArgumentValues()) {
+        List<ArgumentValue> argumentValues = executionResult.getArgumentValues();
+        for (ArgumentValue argumentValue : argumentValues) {
             DBArgument argument = argumentValue.getArgument();
             if (argument != null) {
                 if (argumentValue.isCursor()) {
@@ -157,8 +151,13 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
                         outputTabs.select(tabInfo, false);
                         isFirst = false;
                     }
+                } else {
+                    System.out.println();
                 }
+            } else {
+                System.out.println();
             }
+
         }
 
         GUIUtil.repaint(outputTabs);
