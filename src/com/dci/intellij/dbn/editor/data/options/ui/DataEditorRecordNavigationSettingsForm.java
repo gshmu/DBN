@@ -30,7 +30,7 @@ public class DataEditorRecordNavigationSettingsForm extends ConfigurationEditorF
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

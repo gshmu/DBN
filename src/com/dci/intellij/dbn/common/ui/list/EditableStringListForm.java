@@ -41,7 +41,7 @@ public class EditableStringListForm extends DBNFormImpl<DisposableProjectCompone
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return component;
     }
 

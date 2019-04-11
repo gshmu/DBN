@@ -203,7 +203,8 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Registe
 
             // rows
             T model = getModel();
-            for (int rowIndex =0; rowIndex < model.getRowCount(); rowIndex++) {
+            int rowCount = model.getRowCount();
+            for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
                 if (preferredWidth > MAX_COLUMN_WIDTH) {
                     break;
                 }

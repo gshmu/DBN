@@ -118,7 +118,7 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

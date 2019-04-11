@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionResultForm;
-import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -204,11 +203,4 @@ public class StatementExecutionBasicResult extends ExecutionResultBase<Statement
     public void setLoggingActive(boolean loggingActive) {
         this.loggingActive = loggingActive;
     }
-
-    @Nullable
-    @Override
-    public DataProvider getDataProvider() {
-        return null;
-    }
-
 }

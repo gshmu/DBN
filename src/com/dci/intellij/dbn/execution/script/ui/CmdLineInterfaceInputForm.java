@@ -76,7 +76,7 @@ public class CmdLineInterfaceInputForm extends DBNFormImpl<CmdLineInterfaceInput
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 }

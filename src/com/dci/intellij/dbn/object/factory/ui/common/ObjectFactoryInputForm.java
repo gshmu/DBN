@@ -23,7 +23,7 @@ public abstract class ObjectFactoryInputForm<T extends ObjectFactoryInput> exten
 
     @NotNull
     @Override
-    public abstract JPanel getComponent();
+    public abstract JPanel ensureComponent();
 
     public ConnectionHandler getConnectionHandler() {
         return connectionHandler;

@@ -178,7 +178,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

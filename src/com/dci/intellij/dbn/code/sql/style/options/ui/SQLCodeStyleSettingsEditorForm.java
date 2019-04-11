@@ -25,7 +25,7 @@ public class SQLCodeStyleSettingsEditorForm extends CompositeConfigurationEditor
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 }

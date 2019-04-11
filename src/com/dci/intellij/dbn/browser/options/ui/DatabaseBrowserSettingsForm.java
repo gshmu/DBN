@@ -25,7 +25,7 @@ public class DatabaseBrowserSettingsForm extends CompositeConfigurationEditorFor
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 }

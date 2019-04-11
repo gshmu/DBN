@@ -4,10 +4,10 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DBNDataKeys;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.Presentation;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,7 +33,7 @@ public class NewConnectionDropdownAction extends GroupPopupAction {
     }
 
     @Override
-    public DataProviderSupplier getDataProviderSupplier(AnActionEvent e) {
+    public DataProvider getDataProvider(AnActionEvent e) {
         return e.getData((DBNDataKeys.CONNECTION_BUNDLE_SETTINGS));
     }
 

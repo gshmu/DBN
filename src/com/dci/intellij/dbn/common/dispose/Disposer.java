@@ -35,7 +35,8 @@ public class Disposer {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     public static void disposeInBackground(Object ... disposable) {
-        Background.run(() -> dispose((Object[]) disposable));
+        // trigger background in dispatch thread
+        Dispatch.invoke(() ->Background.run(() -> dispose((Object[]) disposable)));
     }
 
     public static void dispose(@Nullable Object ... objects) {
@@ -194,5 +195,10 @@ public class Disposer {
             timer.cancel();
             timer.purge();
         }
-   }
+    }
+
+    public static <T> T replace(T oldElement, T disposable) {
+        Disposer.disposeInBackground(oldElement);
+        return disposable;
+    }
 }

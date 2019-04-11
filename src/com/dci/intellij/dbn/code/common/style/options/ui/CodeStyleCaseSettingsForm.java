@@ -74,7 +74,7 @@ public class CodeStyleCaseSettingsForm extends ConfigurationEditorForm<CodeStyle
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

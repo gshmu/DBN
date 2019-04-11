@@ -30,7 +30,7 @@ public class DataGridSortingSettingsForm extends ConfigurationEditorForm<DataGri
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

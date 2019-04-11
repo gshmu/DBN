@@ -18,9 +18,7 @@ import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettin
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCursorProcessor;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionResultForm;
-import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -99,7 +97,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         if (Failsafe.check(resultForm)) {
             int rowCount = Math.max(dataModel == null ? 0 : dataModel.getRowCount() + 1, 100);
             dataModel = new ResultSetDataModel(resultSet, getConnectionHandler(), rowCount);
-            resultForm.reloadTableModel();
+            resultForm.rebuildForm();
             resultForm.updateVisibleComponents();
         }
     }
@@ -170,20 +168,12 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     /********************************************************
      *                    Data Provider                     *
      ********************************************************/
-    public DataProvider dataProvider = new DataProvider() {
-        @Override
-        public Object getData(@NonNls String dataId) {
-            if (DBNDataKeys.STATEMENT_EXECUTION_CURSOR_RESULT.is(dataId)) {
-                return StatementExecutionCursorResult.this;
-            }
-            return null;
-        }
-    };
-
-    @Override
     @Nullable
-    public DataProvider getDataProvider() {
-        return dataProvider;
+    @Override
+    public Object getData(@NotNull String dataId) {
+        if (DBNDataKeys.STATEMENT_EXECUTION_CURSOR_RESULT.is(dataId)) {
+            return StatementExecutionCursorResult.this;
+        }
+        return null;
     }
-
 }

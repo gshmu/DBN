@@ -20,7 +20,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.awt.*;
 
 public class ActionUtil {
@@ -104,10 +103,16 @@ public class ActionUtil {
         return DataManager.getInstance().getDataContext(component);
     }
 
-    public static void registerDataProvider(JComponent component, DataProviderSupplier dataProviderSupplier) {
-        DataProvider dataProvider = dataProviderSupplier.getDataProvider();
-        if (dataProvider != null) {
-            DataManager.registerDataProvider(component, dataProvider);
+    @Nullable
+    public static Object getData(String dataId, DataProvider ... dataProviders) {
+        for (DataProvider dataProvider : dataProviders) {
+            if (dataProvider != null) {
+                Object data = dataProvider.getData(dataId);
+                if (data != null) {
+                    return data;
+                }
+            }
         }
+        return null;
     }
 }

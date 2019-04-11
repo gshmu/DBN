@@ -47,7 +47,7 @@ public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettin
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

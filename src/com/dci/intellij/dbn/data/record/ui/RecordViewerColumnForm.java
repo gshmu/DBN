@@ -56,7 +56,7 @@ public class RecordViewerColumnForm extends DBNFormImpl<RecordViewerForm> {
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

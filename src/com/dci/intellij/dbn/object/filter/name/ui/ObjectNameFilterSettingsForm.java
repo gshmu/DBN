@@ -127,7 +127,7 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

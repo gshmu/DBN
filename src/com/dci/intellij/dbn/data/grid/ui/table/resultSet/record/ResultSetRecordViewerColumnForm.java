@@ -53,7 +53,7 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

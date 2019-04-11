@@ -44,7 +44,7 @@ public class DataEditorQualifiedEditorSettingsForm extends ConfigurationEditorFo
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 }
