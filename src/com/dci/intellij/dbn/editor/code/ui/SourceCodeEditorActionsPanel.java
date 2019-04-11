@@ -14,6 +14,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -67,5 +68,15 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
     @Override
     public JPanel ensureComponent() {
         return mainPanel;
+    }
+
+    @Nullable
+    @Override
+    public Object getData(@NotNull String dataId) {
+        Object data = super.getData(dataId);
+        if (data == null) {
+            return getSourceCodeEditor().getData(dataId);
+        }
+        return data;
     }
 }

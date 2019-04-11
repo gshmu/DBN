@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionContext;
-import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionOption;
 import com.dci.intellij.dbn.execution.ExecutionOptions;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
@@ -60,10 +59,9 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     }
 
     public ExecutionContext initExecution(DBDebuggerType debuggerType) {
-        MethodExecutionResult oldExecutionResult = this.executionResult;
-        this.executionResult = new MethodExecutionResult(this, debuggerType);
-        ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
-        executionManager.reuseResultForm(oldExecutionResult, this.executionResult);
+        MethodExecutionResult executionResult = new MethodExecutionResult(this, debuggerType);
+        executionResult.setPrevious(this.executionResult);
+        this.executionResult = executionResult;
         return initExecutionContext();
     }
 

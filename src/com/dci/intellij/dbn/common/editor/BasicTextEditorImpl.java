@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
+import com.intellij.ide.DataManager;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.editor.Editor;
@@ -44,6 +45,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
 
         TextEditorProvider textEditorProvider = TextEditorProvider.getInstance();
         textEditor = (TextEditor) textEditorProvider.createEditor(project, virtualFile);
+        DataManager.registerDataProvider(textEditor.getComponent(), this);
     }
 
     @Override

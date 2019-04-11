@@ -8,6 +8,4 @@ public interface ExecutionResultForm<E extends ExecutionResult> extends DBNForm 
     @NotNull E getExecutionResult();
 
     void setExecutionResult(@NotNull E executionResult);
-
-    void replaceExecutionResult(@NotNull E executionResult);
 }

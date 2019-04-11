@@ -145,12 +145,15 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
         Boolean result = Timeout.call(5, is(subject), true, () -> {
             try {
                 return checkInner();
+            } catch (SQLException e) {
+                exception.set(e);
+                return terminalStatus == null ? value() : terminalStatus;
             } catch (AbstractMethodError e) {
                 // not implemented (??) TODO suggest using built in drivers
                 LOGGER.warn("Functionality not supported by jdbc driver", e);
                 return value();
-            } catch (SQLException e) {
-                exception.set(e);
+            } catch (RuntimeException t){
+                LOGGER.warn("Failed to invoke jdbc utility", t);
                 return terminalStatus == null ? value() : terminalStatus;
             }
         });

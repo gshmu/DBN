@@ -6,10 +6,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class ExecutionResultBase<F extends ExecutionResultForm> extends DisposableBase implements ExecutionResult<F> {
+    private ExecutionResult<F> previous;
+
     @Override
     public void disposeInner() {
-        ExecutionManager executionManager = ExecutionManager.getInstance(getProject());
-        executionManager.releaseResultForm(this);
         super.disposeInner();
     }
 
@@ -17,5 +17,15 @@ public abstract class ExecutionResultBase<F extends ExecutionResultForm> extends
     @Override
     public Object getData(@NotNull String dataId) {
         return null;
+    }
+
+    @Override
+    public ExecutionResult<F> getPrevious() {
+        return previous;
+    }
+
+    @Override
+    public void setPrevious(ExecutionResult<F> previous) {
+        this.previous = previous;
     }
 }
