@@ -42,7 +42,7 @@ public class BasicDataModelRow<
     @Override
     @NotNull
     public M getModel() {
-        return model.nn();
+        return model.ensure();
     }
 
     @Override

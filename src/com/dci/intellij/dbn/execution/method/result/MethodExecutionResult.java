@@ -112,7 +112,7 @@ public class MethodExecutionResult extends ExecutionResultBase<MethodExecutionRe
 
     @NotNull
     public MethodExecutionInput getExecutionInput() {
-        return executionInput.nn();
+        return executionInput.ensure();
     }
 
     public ExecutionContext getExecutionContext() {

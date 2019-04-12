@@ -24,7 +24,7 @@ public abstract class CompositeProjectConfiguration<P extends ProjectConfigurati
     @Override
     public Project getProject() {
         P parent = getParent();
-        return parent == null ? projectRef.nn() : parent.getProject();
+        return parent == null ? projectRef.ensure() : parent.getProject();
     }
 
 }

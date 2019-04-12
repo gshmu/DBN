@@ -71,7 +71,7 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
 
     @NotNull
     public DBEditableObjectVirtualFile getMainDatabaseFile() {
-        return mainDatabaseFile.nn();
+        return mainDatabaseFile.ensure();
     }
 
     public DBContentType getContentType() {

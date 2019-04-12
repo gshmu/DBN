@@ -141,7 +141,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
 
     @NotNull
     public Project getProject() {
-        return projectRef.nn();
+        return projectRef.ensure();
     }
 
     protected Object getValueAtMouseLocation() {

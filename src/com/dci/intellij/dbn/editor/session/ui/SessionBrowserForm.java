@@ -106,7 +106,8 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     }
 
     public void showLoadingHint() {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
+            Failsafe.nd(this);
             loadingLabel.setVisible(true);
             loadingIconPanel.setVisible(true);
             loadTimestampLabel.setVisible(false);
@@ -115,7 +116,8 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     }
 
     public void hideLoadingHint() {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
+            Failsafe.nd(this);
             loadingLabel.setVisible(false);
             loadingIconPanel.setVisible(false);
             refreshLoadTimestamp();
@@ -123,7 +125,6 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     }
 
     public void refreshLoadTimestamp() {
-        Failsafe.nd(this);
         boolean visible = !loadingLabel.isVisible();
         if (visible) {
             SessionBrowserModel model = getEditorTable().getModel();
