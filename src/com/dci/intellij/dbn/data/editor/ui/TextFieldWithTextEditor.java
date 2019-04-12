@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.data.editor.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
@@ -185,9 +186,11 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
     public void afterUpdate() {
         Object userValue = userValueHolder.getUserValue();
         if (userValue instanceof String && StringUtil.isEmpty(displayValue)) {
-            String text = (String) userValue;
-            setEditable(text.length() < 1000 && text.indexOf('\n') == -1);
-            setText(text);
+            Dispatch.invoke(() -> {
+                String text = (String) userValue;
+                setEditable(text.length() < 1000 && text.indexOf('\n') == -1);
+                setText(text);
+            });
         }
     }
 
