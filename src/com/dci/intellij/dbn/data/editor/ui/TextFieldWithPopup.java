@@ -83,7 +83,7 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
 
     @NotNull
     public Project getProject() {
-        return projectRef.nn();
+        return projectRef.ensure();
     }
 
     @Nullable

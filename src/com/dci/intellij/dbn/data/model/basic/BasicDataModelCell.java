@@ -69,7 +69,7 @@ public class BasicDataModelCell<
     @Override
     @NotNull
     public R getRow() {
-        return row.nn();
+        return row.ensure();
     }
 
     @Override

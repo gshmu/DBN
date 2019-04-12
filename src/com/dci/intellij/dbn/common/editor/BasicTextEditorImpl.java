@@ -51,7 +51,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
     @Override
     @NotNull
     public T getVirtualFile() {
-        return virtualFileRef.nn();
+        return virtualFileRef.ensure();
     }
 
     @Override
@@ -174,7 +174,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
 
     @NotNull
     public Project getProject() {
-        return projectRef.nn();
+        return projectRef.ensure();
     }
 
     @Override

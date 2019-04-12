@@ -40,7 +40,7 @@ public class FileListCellRenderer extends ColoredListCellRenderer<VirtualFile> {
 
     @NotNull
     private Project getProject() {
-        return projectRef.nn();
+        return projectRef.ensure();
     }
 
     private static VirtualFile getModuleContentRoot(Module module, VirtualFile virtualFile) {

@@ -27,6 +27,6 @@ public class ProjectSettingsProvider extends ConfigurableProvider{
 
     @NotNull
     public Project getProject() {
-        return projectRef.nn();
+        return projectRef.ensure();
     }
 }

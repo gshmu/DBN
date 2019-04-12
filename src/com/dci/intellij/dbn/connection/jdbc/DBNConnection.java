@@ -222,7 +222,7 @@ public class DBNConnection extends DBNConnectionBase {
 
     @NotNull
     public Project getProject() {
-        return projectRef.nn();
+        return projectRef.ensure();
     }
 
     public String getName() {
