@@ -56,7 +56,7 @@ public abstract class ExecutionInput extends DisposableBase implements Disposabl
 
     @NotNull
     public final Project getProject() {
-        return projectRef.nn();
+        return projectRef.ensure();
     }
 
     @Nullable

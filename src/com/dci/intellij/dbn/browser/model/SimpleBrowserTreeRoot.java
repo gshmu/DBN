@@ -36,7 +36,7 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
     @Override
     @NotNull
     public Project getProject() {
-        return projectRef.nn();
+        return projectRef.ensure();
     }
 
     @Nullable

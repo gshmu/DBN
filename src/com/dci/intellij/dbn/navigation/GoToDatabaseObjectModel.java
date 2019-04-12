@@ -130,7 +130,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
 
     @NotNull
     public Project getProject() {
-        return project.nn();
+        return project.ensure();
     }
 
     @Override

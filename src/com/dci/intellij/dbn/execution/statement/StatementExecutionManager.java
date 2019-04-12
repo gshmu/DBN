@@ -115,22 +115,24 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
         @Override
         public void transactionCompleted(@NotNull Document document, @NotNull PsiFile file) {
-            Project project = file.getProject();
-            VirtualFile virtualFile = file.getVirtualFile();
-            if (virtualFile.isInLocalFileSystem()) {
-                List<FileEditor> scriptFileEditors = EditorUtil.getScriptFileEditors(project, virtualFile);
-                for (FileEditor scriptFileEditor : scriptFileEditors) {
-                    refreshEditorExecutionProcessors(scriptFileEditor);
-                }
-            } else {
-                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                FileEditor[] fileEditors = fileEditorManager.getAllEditors(virtualFile);
-                for (FileEditor fileEditor : fileEditors) {
-                    if (fileEditor instanceof DDLFileEditor || fileEditor instanceof SQLConsoleEditor) {
-                        refreshEditorExecutionProcessors(fileEditor);
+            Failsafe.guarded(() -> {
+                Project project = file.getProject();
+                VirtualFile virtualFile = file.getVirtualFile();
+                if (virtualFile.isInLocalFileSystem()) {
+                    List<FileEditor> scriptFileEditors = EditorUtil.getScriptFileEditors(project, virtualFile);
+                    for (FileEditor scriptFileEditor : scriptFileEditors) {
+                        refreshEditorExecutionProcessors(scriptFileEditor);
+                    }
+                } else {
+                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                    FileEditor[] fileEditors = fileEditorManager.getAllEditors(virtualFile);
+                    for (FileEditor fileEditor : fileEditors) {
+                        if (fileEditor instanceof DDLFileEditor || fileEditor instanceof SQLConsoleEditor) {
+                            refreshEditorExecutionProcessors(fileEditor);
+                        }
                     }
                 }
-            }
+            });
         }
     };
 
@@ -281,7 +283,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         }
     }
 
-    public void executeStatementAtCursor(FileEditor fileEditor) {
+    public void executeStatementAtCursor(@NotNull FileEditor fileEditor) {
         Editor editor = EditorUtil.getEditor(fileEditor);
         if (editor != null) {
             StatementExecutionProcessor executionProcessor = getExecutionProcessorAtCursor(fileEditor);
@@ -396,12 +398,12 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     @Nullable
-    private StatementExecutionProcessor getExecutionProcessorAtCursor(FileEditor fileEditor) {
+    private StatementExecutionProcessor getExecutionProcessorAtCursor(@NotNull FileEditor fileEditor) {
         Editor editor = EditorUtil.getEditor(fileEditor);
         if (editor != null) {
             DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
             String selection = editor.getSelectionModel().getSelectedText();
-            if (selection != null) {
+            if (selection != null && file != null) {
                 return new StatementExecutionCursorProcessor(fileEditor, file, selection, RESULT_SEQUENCE.incrementAndGet());
             }
 
@@ -413,7 +415,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         return null;
     }
 
-    private List<StatementExecutionProcessor> getExecutionProcessorsFromOffset(FileEditor fileEditor, int offset) {
+    private List<StatementExecutionProcessor> getExecutionProcessorsFromOffset(@NotNull FileEditor fileEditor, int offset) {
         List<StatementExecutionProcessor> executionProcessors = new ArrayList<>();
         Editor editor = EditorUtil.getEditor(fileEditor);
 
@@ -448,7 +450,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     @Nullable
-    public StatementExecutionProcessor getExecutionProcessor(FileEditor fileEditor, ExecutablePsiElement executablePsiElement, boolean create) {
+    public StatementExecutionProcessor getExecutionProcessor(@NotNull FileEditor fileEditor, @NotNull ExecutablePsiElement executablePsiElement, boolean create) {
         List<StatementExecutionProcessor> executionProcessors = getExecutionProcessors(fileEditor);
         for (StatementExecutionProcessor executionProcessor : executionProcessors) {
             if (executablePsiElement == executionProcessor.getCachedExecutable()) {
@@ -459,7 +461,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         return create ? createExecutionProcessor(fileEditor, executionProcessors, executablePsiElement) : null;
     }
 
-    private StatementExecutionProcessor createExecutionProcessor(FileEditor fileEditor, List<StatementExecutionProcessor> executionProcessors, ExecutablePsiElement executablePsiElement) {
+    private StatementExecutionProcessor createExecutionProcessor(@NotNull FileEditor fileEditor, List<StatementExecutionProcessor> executionProcessors, @NotNull ExecutablePsiElement executablePsiElement) {
         StatementExecutionBasicProcessor executionProcessor =
                 executablePsiElement.isQuery() ?
                         new StatementExecutionCursorProcessor(fileEditor, executablePsiElement, RESULT_SEQUENCE.incrementAndGet()) :

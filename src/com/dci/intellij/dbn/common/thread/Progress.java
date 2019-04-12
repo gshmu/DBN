@@ -67,7 +67,7 @@ public interface Progress {
     static void start(Task task) {
         Application application = ApplicationManager.getApplication();
         application.invokeLater(() -> {
-            if (!task.getProject().isDisposed()) {
+            if (Failsafe.check(task)) {
                 ProgressManager progressManager = ProgressManager.getInstance();
                 progressManager.run(task);
             }

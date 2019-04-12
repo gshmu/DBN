@@ -26,7 +26,8 @@ public class ExecuteStatementEditorAction extends AnAction {
         if (editor != null) {
             FileEditor fileEditor = EditorUtil.getFileEditor(editor);
             if (fileEditor != null) {
-                StatementExecutionManager.getInstance(project).executeStatementAtCursor(fileEditor);
+                StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
+                executionManager.executeStatementAtCursor(fileEditor);
             }
         }
     }

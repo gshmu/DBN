@@ -70,7 +70,7 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
     @Override
     @NotNull
     public Project getProject() {
-        return projectRef.nn();
+        return projectRef.ensure();
     }
 
     public boolean isRememberSelection() {

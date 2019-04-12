@@ -16,11 +16,11 @@ import java.sql.SQLException;
 
 public class StatementExecutionCursorProcessor extends StatementExecutionBasicProcessor {
 
-    public StatementExecutionCursorProcessor(FileEditor fileEditor, ExecutablePsiElement psiElement, int index) {
+    public StatementExecutionCursorProcessor(@NotNull FileEditor fileEditor, @NotNull ExecutablePsiElement psiElement, int index) {
         super(fileEditor, psiElement, index);
     }
 
-    public StatementExecutionCursorProcessor(FileEditor fileEditor, DBLanguagePsiFile file, String sqlStatement, int index) {
+    public StatementExecutionCursorProcessor(@NotNull FileEditor fileEditor, @NotNull DBLanguagePsiFile file, String sqlStatement, int index) {
         super(fileEditor, file, sqlStatement,  index);
     }
 

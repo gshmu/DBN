@@ -103,7 +103,7 @@ public class BasicDataModel<
     @Override
     @NotNull
     public Project getProject() {
-        return projectRef.nn();
+        return projectRef.ensure();
     }
 
     public void setHeader(@NotNull DataModelHeader<? extends ColumnInfo> header) {

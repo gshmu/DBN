@@ -209,7 +209,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
 
     @NotNull
     private GenericDatabaseElement getOwner() {
-        return owner.nn();
+        return owner.ensure();
     }
 
 

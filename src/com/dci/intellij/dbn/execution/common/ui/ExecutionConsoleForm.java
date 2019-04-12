@@ -123,23 +123,25 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
         @Override
         public void transactionCompleted(@NotNull Document document, @NotNull PsiFile file) {
-            TabbedPane resultTabs = getResultTabs();
-            for (TabInfo tabInfo : resultTabs.getTabs()) {
-                ExecutionResult executionResult = getExecutionResult(tabInfo);
-                if (executionResult instanceof StatementExecutionResult) {
-                    StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
-                    StatementExecutionProcessor executionProcessor = statementExecutionResult.getExecutionProcessor();
-                    if (Failsafe.check(executionProcessor) && executionProcessor.getPsiFile().equals(file)) {
-                        Icon icon = executionProcessor.isDirty() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
-                        tabInfo.setIcon(icon);
+            Failsafe.guarded(() -> {
+                TabbedPane resultTabs = getResultTabs();
+                for (TabInfo tabInfo : resultTabs.getTabs()) {
+                    ExecutionResult executionResult = getExecutionResult(tabInfo);
+                    if (executionResult instanceof StatementExecutionResult) {
+                        StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
+                        StatementExecutionProcessor executionProcessor = statementExecutionResult.getExecutionProcessor();
+                        if (Failsafe.check(executionProcessor) && executionProcessor.getPsiFile().equals(file)) {
+                            Icon icon = executionProcessor.isDirty() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
+                            tabInfo.setIcon(icon);
+                        }
+                    }
+
+                    if (executionMessagesPanel.loaded()) {
+                        JComponent messagePanelComponent = getMessagesPanel().getComponent();
+                        GUIUtil.repaint(messagePanelComponent);
                     }
                 }
-
-                if (executionMessagesPanel.loaded()) {
-                    JComponent messagePanelComponent = getMessagesPanel().getComponent();
-                    GUIUtil.repaint(messagePanelComponent);
-                }
-            }
+            });
         }
     };
 
