@@ -19,6 +19,6 @@ public class SimulateSlowDatabaseAction extends ToggleAction {
     @Override
     public void update(@NotNull AnActionEvent e) {
         super.update(e);
-        e.getPresentation().setVisible(DatabaseNavigator.developerModeEnabled);
+        e.getPresentation().setVisible(DatabaseNavigator.DEVELOPER);
     }
 }

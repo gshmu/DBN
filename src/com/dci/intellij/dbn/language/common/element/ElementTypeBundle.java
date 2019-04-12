@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.element;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -37,7 +38,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class ElementTypeBundle {
-    private final Logger log = Logger.getInstance(getClass().getName());
+    private static final Logger LOGGER = LoggerFactory.createLogger();
     private TokenTypeBundle tokenTypeBundle;
     private BasicElementType unknownElementType;
     private NamedElementType rootElementType;
@@ -134,7 +135,7 @@ public class ElementTypeBundle {
     private void createNamedElementType(Element def) throws ElementTypeDefinitionException {
         String id = determineMandatoryAttribute(def, "id", "Invalid definition of named element type.");
         String languageId = def.getAttributeValue("language");
-        log.debug("Updating complex element definition '" + id + '\'');
+        LOGGER.debug("Updating complex element definition '" + id + '\'');
         NamedElementType elementType = getNamedElementType(id, null);
         elementType.loadDefinition(def);
         if (elementType.is(ElementTypeAttribute.ROOT)) {
@@ -162,29 +163,29 @@ public class ElementTypeBundle {
         ElementTypeBase result;
         if (ElementTypeDefinition.SEQUENCE.is(type)){
             result = new SequenceElementType(this, parent, createId(), def);
-            log.debug("Created sequence element definition");
+            LOGGER.debug("Created sequence element definition");
 
         } else if (ElementTypeDefinition.BLOCK.is(type)) {
             result = new BlockElementType(this, parent, createId(), def);
-            log.debug("Created iteration element definition");
+            LOGGER.debug("Created iteration element definition");
 
         } else if (ElementTypeDefinition.ITERATION.is(type)) {
             result = new IterationElementType(this, parent, createId(), def);
-            log.debug("Created iteration element definition");
+            LOGGER.debug("Created iteration element definition");
 
         } else if (ElementTypeDefinition.ONE_OF.is(type)) {
             result = new OneOfElementType(this, parent, createId(), def);
             //builder.oneOfElementTypes.add((OneOfElementType) result);
-            log.debug("Created one-of element definition");
+            LOGGER.debug("Created one-of element definition");
 
         } else if (ElementTypeDefinition.QUALIFIED_IDENTIFIER.is(type)) {
             result =  new QualifiedIdentifierElementType(this, parent, createId(), def);
-            log.debug("Created qualified identifier element definition");
+            LOGGER.debug("Created qualified identifier element definition");
 
         } else if (ElementTypeDefinition.WRAPPER.is(type)) {
             result = new WrapperElementType(this, parent, createId(), def);
             builder.wrapperElementTypes.add((WrapperElementType) result);
-            log.debug("Created wrapper element definition");
+            LOGGER.debug("Created wrapper element definition");
 
         } else if (ElementTypeDefinition.ELEMENT.is(type)) {
             String id = determineMandatoryAttribute(def, "ref-id", "Invalid reference to element.");
@@ -249,7 +250,7 @@ public class ElementTypeBundle {
                     elementType = new NamedElementType(this, id);
                     namedElementTypes.put(id, elementType);
                     builder.allElementTypes.add(elementType);
-                    log.debug("Created named element type '" + id + '\'');
+                    LOGGER.debug("Created named element type '" + id + '\'');
                 }
             }
         }

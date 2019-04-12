@@ -50,15 +50,15 @@ public class GeneralProjectSettingsForm extends CompositeConfigurationEditorForm
 
     @Override
     public void applyFormChanges() {
-        DatabaseNavigator.debugModeEnabled = enableDebugCheckBox.isSelected();
-        DatabaseNavigator.developerModeEnabled = enableDeveloperCheckBox.isSelected();
+        DatabaseNavigator.DEBUG = enableDebugCheckBox.isSelected();
+        DatabaseNavigator.DEVELOPER = enableDeveloperCheckBox.isSelected();
     }
 
     @Override
     public void resetFormChanges() {
-        enableDebugCheckBox.setSelected(DatabaseNavigator.debugModeEnabled);
+        enableDebugCheckBox.setSelected(DatabaseNavigator.DEBUG);
         debugInfoLabel.setVisible(enableDebugCheckBox.isSelected());
-        enableDeveloperCheckBox.setSelected(DatabaseNavigator.developerModeEnabled);
+        enableDeveloperCheckBox.setSelected(DatabaseNavigator.DEVELOPER);
         developerInfoLabel.setVisible(enableDeveloperCheckBox.isSelected());
     }
 }
