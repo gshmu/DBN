@@ -17,7 +17,7 @@ public class DevTestConnectionAction extends AbstractConnectionAction{
 
     @Override
     public void update(AnActionEvent e) {
-        e.getPresentation().setVisible(DatabaseNavigator.developerModeEnabled);
+        e.getPresentation().setVisible(DatabaseNavigator.DEVELOPER);
         super.update(e);
     }
 }

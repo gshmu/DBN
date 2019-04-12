@@ -45,9 +45,9 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
         return COMPONENT_NAME;
     }
 
-    public static boolean debugModeEnabled = false;
-    public static boolean developerModeEnabled = false;
-    public static boolean slowDatabaseModeEnabled = false;
+    public static boolean DEBUG = false;
+    public static boolean SLOW = false;
+    public static boolean DEVELOPER = false;
 
     private boolean showPluginConflictDialog;
     private String repositoryPluginVersion;
@@ -76,11 +76,11 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
     }
 
     public boolean isSlowDatabaseModeEnabled() {
-        return developerModeEnabled && slowDatabaseModeEnabled;
+        return DEVELOPER && SLOW;
     }
 
     public void setSlowDatabaseModeEnabled(boolean slowDatabaseModeEnabled) {
-        this.slowDatabaseModeEnabled = slowDatabaseModeEnabled;
+        this.SLOW = slowDatabaseModeEnabled;
     }
 
     @Override
@@ -111,16 +111,16 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
     @Override
     public Element getState() {
         Element element = new Element("state");
-        setBoolean(element, "enable-debug-mode", debugModeEnabled);
-        setBoolean(element, "enable-developer-mode", developerModeEnabled);
+        setBoolean(element, "enable-debug-mode", DEBUG);
+        setBoolean(element, "enable-developer-mode", DEVELOPER);
         setBoolean(element, "show-plugin-conflict-dialog", showPluginConflictDialog);
         return element;
     }
 
     @Override
     public void loadState(@NotNull Element element) {
-        debugModeEnabled = getBoolean(element, "enable-debug-mode", false);
-        developerModeEnabled = getBoolean(element, "enable-developer-mode", false);
+        DEBUG = getBoolean(element, "enable-debug-mode", false);
+        DEVELOPER = getBoolean(element, "enable-developer-mode", false);
         showPluginConflictDialog = getBoolean(element, "show-plugin-conflict-dialog", true);
     }
 
