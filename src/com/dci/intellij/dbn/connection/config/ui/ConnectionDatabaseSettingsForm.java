@@ -274,7 +274,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         databaseInfo.setDatabase(databaseTextField.getText());
         databaseInfo.setUrl(urlTextField.getText());
         databaseInfo.setUrlType(urlType);
-        databaseInfo.setFiles(databaseFileSettingsForm.getDatabaseFiles());
+        databaseInfo.setFiles(urlType == DatabaseUrlType.FILE ? databaseFileSettingsForm.getDatabaseFiles() : null);
 
         AuthenticationInfo authenticationInfo = configuration.getAuthenticationInfo();
         String oldUserName = authenticationInfo.getUser();
@@ -306,14 +306,15 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         boolean nameChanged = !nameTextField.getText().equals(configuration.getName());
 
         DatabaseInfo databaseInfo = configuration.getDatabaseInfo();
+        DatabaseUrlType urlType = getSelection(urlTypeComboBox);
         boolean settingsChanged =
                 //!connectionConfig.getProperties().equals(propertiesEditorForm.getProperties()) ||
                 !CommonUtil.safeEqual(configuration.getDriverLibrary(), driverLibraryTextField.getText()) ||
                 !CommonUtil.safeEqual(databaseInfo.getHost(), hostTextField.getText()) ||
                 !CommonUtil.safeEqual(databaseInfo.getPort(), portTextField.getText()) ||
                 !CommonUtil.safeEqual(databaseInfo.getDatabase(), databaseTextField.getText()) ||
-                !CommonUtil.safeEqual(databaseInfo.getUrlType(), getSelection(urlTypeComboBox)) ||
-                !CommonUtil.safeEqual(databaseInfo.getFiles(), databaseFileSettingsForm.getDatabaseFiles()) ||
+                !CommonUtil.safeEqual(databaseInfo.getUrlType(), urlType) ||
+                !CommonUtil.safeEqual(databaseInfo.getFiles(), urlType == DatabaseUrlType.FILE ? databaseFileSettingsForm.getDatabaseFiles() : null) ||
                 !CommonUtil.safeEqual(configuration.getAuthenticationInfo().getUser(), authenticationSettingsForm.getUserTextField().getText());
 
 

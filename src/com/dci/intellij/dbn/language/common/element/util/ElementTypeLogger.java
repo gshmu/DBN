@@ -21,7 +21,7 @@ public class ElementTypeLogger {
 
     public void logBegin(ParserBuilder builder, boolean optional, int depth) {
         // GTK enable disable debug
-        if (DatabaseNavigator.debugModeEnabled) {
+        if (DatabaseNavigator.DEBUG) {
             StringBuilder buffer = new StringBuilder();
             for (int i = 0; i < depth; i++) buffer.append('\t');
             buffer.append('"').append(elementType.getId()).append("\" [");
@@ -36,7 +36,7 @@ public class ElementTypeLogger {
     }
 
     public void logEnd(ParseResultType resultType, int depth) {
-        if (DatabaseNavigator.debugModeEnabled) {
+        if (DatabaseNavigator.DEBUG) {
             StringBuilder buffer = new StringBuilder();
             if (!elementType.isLeaf()) {
                 for (int i = 0; i < depth; i++) buffer.append('\t');

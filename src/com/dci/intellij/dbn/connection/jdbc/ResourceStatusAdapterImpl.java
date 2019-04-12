@@ -174,7 +174,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
 
         SQLException exception = Timeout.call(10, null, daemon, () -> {
             try {
-                if (DatabaseNavigator.debugModeEnabled)
+                if (DatabaseNavigator.DEBUG)
                     LOGGER.info("Started changing " + resourceType + " resource " + subject + " status to " + value);
 
                 changeInner(value);
@@ -186,7 +186,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
             } finally {
                 set(changing, false);
 
-                if (DatabaseNavigator.debugModeEnabled)
+                if (DatabaseNavigator.DEBUG)
                     LOGGER.info("Done changing " + resourceType + " resource " + subject + " status to " + value);
             }
             return null;
