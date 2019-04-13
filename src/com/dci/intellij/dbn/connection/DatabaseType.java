@@ -9,7 +9,7 @@ import javax.swing.*;
 
 public enum DatabaseType implements Presentable {
     ORACLE   ("ORACLE",   "Oracle",     Icons.DB_ORACLE,     Icons.DB_ORACLE_LARGE,     "oracle.jdbc.driver.OracleDriver", true, DatabaseUrlPattern.ORACLE_SID, DatabaseUrlPattern.ORACLE_SERVICE),
-    MYSQL    ("MYSQL",    "MySQL",      Icons.DB_MYSQL,      Icons.DB_MYSQL_LARGE,      "com.mysql.jdbc.Driver", true, DatabaseUrlPattern.MYSQL),
+    MYSQL    ("MYSQL",    "MySQL",      Icons.DB_MYSQL,      Icons.DB_MYSQL_LARGE,      "com.mysql.cj.jdbc.Driver", true, DatabaseUrlPattern.MYSQL),
     POSTGRES ("POSTGRES", "PostgreSQL", Icons.DB_POSTGRESQL, Icons.DB_POSTGRESQL_LARGE, "org.postgresql.Driver", true, DatabaseUrlPattern.POSTGRES),
     SQLITE   ("SQLITE",   "SQLite",     Icons.DB_SQLITE,     Icons.DB_SQLITE_LARGE,     "org.sqlite.JDBC",       false, DatabaseUrlPattern.SQLITE),
     UNKNOWN  ("UNKNOWN",  "Unknown",    null,                null,                      "java.sql.Driver",       true, DatabaseUrlPattern.UNKNOWN);
