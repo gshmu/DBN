@@ -21,7 +21,7 @@ public class DatabaseBrowserFilterSettingsForm extends CompositeConfigurationEdi
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 }

@@ -68,7 +68,7 @@ public class ObjectsLookupSettingsForm extends ConfigurationEditorForm<ObjectsLo
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

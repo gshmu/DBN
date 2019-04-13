@@ -51,7 +51,7 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
     }
 
     private DebugInfo preLoadContent(DynamicContent dynamicContent) {
-        if (DatabaseNavigator.debugModeEnabled) {
+        if (DatabaseNavigator.DEBUG) {
             DebugInfo debugInfo = new DebugInfo();
             LOGGER.info(
                     "[DBN-INFO] Loading " + dynamicContent.getContentDescription() +

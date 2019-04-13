@@ -24,12 +24,14 @@ import com.dci.intellij.dbn.editor.data.state.column.DatasetColumnState;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
 import com.dci.intellij.dbn.object.DBDataset;
+import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.table.TableColumn;
@@ -55,7 +57,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     private Latent<DataSearchComponent> dataSearchComponent = Latent.disposable(this, () -> {
         DataSearchComponent dataSearchComponent = new DataSearchComponent(DatasetEditorForm.this);
         searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
-        ActionUtil.registerDataProvider(dataSearchComponent.getSearchField(), getDatasetEditor());
+        DataManager.registerDataProvider(dataSearchComponent.getSearchField(), this);
         return dataSearchComponent;
     });
 
@@ -84,8 +86,6 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
             ActionToolbar loadingActionToolbar = ActionUtil.createActionToolbar("", true, new CancelLoadingAction());
             actionToolbar.setTargetComponent(actionsPanel);
             loadingActionPanel.add(loadingActionToolbar.getComponent(), BorderLayout.CENTER);
-
-            ActionUtil.registerDataProvider(mainPanel, datasetEditor);
 
             Disposer.register(this, autoCommitLabel);
             Disposer.register(this, datasetEditorTable);
@@ -144,7 +144,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 
@@ -252,5 +252,16 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
         public void update(@NotNull AnActionEvent e) {
             e.getPresentation().setEnabled(!getEditorTable().getModel().isLoadCancelled());
         }
+    }
+
+
+    @Nullable
+    @Override
+    public Object getData(@NotNull String dataId) {
+        Object data = super.getData(dataId);
+        if (data == null) {
+            data = getDatasetEditor().getData(dataId);
+        }
+        return data;
     }
 }

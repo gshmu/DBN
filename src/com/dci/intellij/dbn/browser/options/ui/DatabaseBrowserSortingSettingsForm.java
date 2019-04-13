@@ -57,7 +57,7 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

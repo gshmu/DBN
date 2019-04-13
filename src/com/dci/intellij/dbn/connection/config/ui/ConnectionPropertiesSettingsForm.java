@@ -39,7 +39,7 @@ public class ConnectionPropertiesSettingsForm extends ConfigurationEditorForm<Co
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

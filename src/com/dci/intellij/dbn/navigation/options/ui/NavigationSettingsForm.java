@@ -18,7 +18,7 @@ public class NavigationSettingsForm extends CompositeConfigurationEditorForm<Nav
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 }

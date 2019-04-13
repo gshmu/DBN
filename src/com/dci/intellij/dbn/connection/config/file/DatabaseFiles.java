@@ -99,12 +99,27 @@ public class DatabaseFiles implements PersistentConfiguration, Cloneable<Databas
 
         DatabaseFiles that = (DatabaseFiles) o;
 
-        return files.equals(that.files);
+        if (files.size() != that.files.size()) {
+            return false;
+        }
+        for (int i = 0; i < files.size(); i++) {
+            DatabaseFile thisFile = this.files.get(i);
+            DatabaseFile thatFile = that.files.get(i);
+            if (!thisFile.equals(thatFile)) {
+                return false;
+            }
+        }
+
+        return true;
 
     }
 
     @Override
     public int hashCode() {
-        return files.hashCode();
+        int result = 0;
+        for (DatabaseFile file : files) {
+            result = 31 * result + file.hashCode();
+        }
+        return result;
     }
 }

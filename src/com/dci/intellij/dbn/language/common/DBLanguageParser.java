@@ -47,7 +47,7 @@ public abstract class DBLanguageParser implements PsiParser {
         ParserContext context = new ParserContext(psiBuilder, languageDialect, databaseVersion);
         ParserBuilder builder = context.builder;
         if (parseRootId == null ) parseRootId = defaultParseRootId;
-        builder.setDebugMode(DatabaseNavigator.debugModeEnabled);
+        builder.setDebugMode(DatabaseNavigator.DEBUG);
         PsiBuilder.Marker marker = builder.mark(null);
         NamedElementType root =  elementTypes.getNamedElementType(parseRootId);
         if (root == null) {

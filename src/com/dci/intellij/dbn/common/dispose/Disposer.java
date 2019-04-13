@@ -35,7 +35,8 @@ public class Disposer {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     public static void disposeInBackground(Object ... disposable) {
-        Background.run(() -> dispose((Object[]) disposable));
+        // trigger background in dispatch thread
+        Dispatch.invoke(() ->Background.run(() -> dispose((Object[]) disposable)));
     }
 
     public static void dispose(@Nullable Object ... objects) {
@@ -132,7 +133,7 @@ public class Disposer {
                 try {
                     field.setAccessible(true);
                     Object fieldValue = field.get(object);
-                    if (fieldValue != null) {
+                    if ( fieldValue != null) {
                         if (fieldValue instanceof Collection<?>) {
                             Collection collection = (Collection) fieldValue;
                             collection.clear();
@@ -151,8 +152,8 @@ public class Disposer {
                                     !Modifier.isStatic(modifiers) &&
                                     !Modifier.isNative(modifiers) &&
                                     !Modifier.isTransient(modifiers) &&
-                                    (fieldValue instanceof Disposable ||
-                                     fieldValue instanceof Component ||
+                                    (//fieldValue instanceof Disposable ||
+                                     //fieldValue instanceof Component ||
                                      fieldValue instanceof Editor ||
                                      fieldValue instanceof Document ||
                                      fieldValue instanceof VirtualFile ||
@@ -194,5 +195,10 @@ public class Disposer {
             timer.cancel();
             timer.purge();
         }
-   }
+    }
+
+    public static <T> T replace(T oldElement, T disposable) {
+        Disposer.disposeInBackground(oldElement);
+        return disposable;
+    }
 }

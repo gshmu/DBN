@@ -164,7 +164,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 }

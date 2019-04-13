@@ -259,10 +259,11 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
 
     /*************************************************
      *                  SettingsEditor               *
-     *************************************************/
+     ************************************************
+     * @return*/
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

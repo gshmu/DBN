@@ -37,7 +37,7 @@ public class CompilerTypeSelectionForm extends DBNFormImpl<CompilerTypeSelection
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

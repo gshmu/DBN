@@ -39,13 +39,13 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
     }
 
     public void logBegin(ParserBuilder builder, boolean optional, int depth) {
-        if (DatabaseNavigator.debugModeEnabled) {
+        if (DatabaseNavigator.DEBUG) {
             getLogger().logBegin(builder, optional, depth);
         }
     }
 
     public void logEnd(ParseResultType resultType, int depth) {
-        if (DatabaseNavigator.debugModeEnabled) {
+        if (DatabaseNavigator.DEBUG) {
             getLogger().logEnd(resultType, depth);
         }
     }

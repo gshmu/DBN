@@ -23,9 +23,11 @@ import javax.swing.*;
 public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends DisposableBase implements DBNForm, NotificationSupport {
     private ProjectRef projectRef;
     private WeakRef<P> parentComponent;
+    private boolean registeredDataProvider;
 
     public DBNFormImpl() {
     }
+
 
     public DBNFormImpl(@NotNull P parentComponent) {
         super(parentComponent);
@@ -35,6 +37,19 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
     public DBNFormImpl(Project project) {
         this.projectRef = ProjectRef.from(project);
     }
+
+    @NotNull
+    @Override
+    public final JComponent getComponent() {
+        JComponent component = ensureComponent();
+        if (!registeredDataProvider) {
+            registeredDataProvider = true;
+            DataManager.registerDataProvider(component, this);
+        }
+        return component;
+    }
+
+    protected abstract JComponent ensureComponent();
 
     public EnvironmentSettings getEnvironmentSettings(Project project) {
         return GeneralProjectSettings.getInstance(project).getEnvironmentSettings();
@@ -70,6 +85,12 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
         return Failsafe.nn(project);
     }
 
+    @Nullable
+    @Override
+    public Object getData(@NotNull String dataId) {
+        return null;
+    }
+
     @Override
     @Nullable
     public JComponent getPreferredFocusedComponent() {
@@ -78,7 +99,9 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
 
     @Override
     public void disposeInner() {
-        Disposer.dispose(getComponent());
+        JComponent component = getComponent();
+        DataManager.removeDataProvider(component);
+        Disposer.dispose(component);
         super.disposeInner();
     }
 }

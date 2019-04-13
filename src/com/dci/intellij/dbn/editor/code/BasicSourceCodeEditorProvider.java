@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeEditorActionsPanel;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
+import com.intellij.ide.DataManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -104,6 +105,7 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
         Editor editor = sourceCodeEditor.getEditor();
         JComponent editorComponent = editor.getComponent();
         SourceCodeEditorActionsPanel actionsPanel = new SourceCodeEditorActionsPanel(sourceCodeEditor);
+        DataManager.registerDataProvider(actionsPanel.getComponent(), sourceCodeEditor);
         //FileEditorManager.getInstance(editor.getProject()).addTopComponent(fileEditor, actionToolbar.getComponent());
         editorComponent.getParent().add(actionsPanel.getComponent(), BorderLayout.NORTH);
         Disposer.register(sourceCodeEditor, actionsPanel);

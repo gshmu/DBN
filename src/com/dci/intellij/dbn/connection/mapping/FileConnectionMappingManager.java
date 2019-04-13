@@ -69,9 +69,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.action.DBNDataKeys.CONNECTION_HANDLER;
-import static com.dci.intellij.dbn.common.action.DBNDataKeys.DATABASE_SCHEMA;
-import static com.dci.intellij.dbn.common.action.DBNDataKeys.DATABASE_SESSION;
+import static com.dci.intellij.dbn.common.action.UserDataKeys.*;
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.common.util.MessageUtil.options;
 import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;

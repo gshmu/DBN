@@ -147,7 +147,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

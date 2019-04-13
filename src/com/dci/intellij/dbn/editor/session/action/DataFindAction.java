@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.session.action;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class DataFindAction extends AbstractSessionBrowserAction {
     public DataFindAction() {
@@ -10,7 +11,7 @@ public class DataFindAction extends AbstractSessionBrowserAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         SessionBrowser sessionBrowser = getSessionBrowser(e);
         if (sessionBrowser != null) {
             sessionBrowser.showSearchHeader();
@@ -18,7 +19,7 @@ public class DataFindAction extends AbstractSessionBrowserAction {
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         SessionBrowser sessionBrowser = getSessionBrowser(e);
         e.getPresentation().setEnabled(sessionBrowser != null);
         e.getPresentation().setText("Find...");

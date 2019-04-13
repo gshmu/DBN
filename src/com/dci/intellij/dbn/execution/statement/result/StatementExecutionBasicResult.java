@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.result;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
@@ -11,13 +10,13 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.ExecutionContext;
+import com.dci.intellij.dbn.execution.ExecutionResultBase;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
-import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
-import com.intellij.openapi.actionSystem.DataProvider;
+import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionResultForm;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 @Nullifiable
-public class StatementExecutionBasicResult extends DisposableBase implements StatementExecutionResult{
+public class StatementExecutionBasicResult extends ExecutionResultBase<StatementExecutionResultForm> implements StatementExecutionResult{
     private String resultName;
     private StatementExecutionMessage executionMessage;
     private StatementExecutionStatus executionStatus;
@@ -160,8 +159,9 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
         return databaseSchema;
     }
 
+    @Nullable
     @Override
-    public ExecutionResultForm getForm(boolean create) {
+    public StatementExecutionResultForm createForm() {
         return null;
     }
 
@@ -203,11 +203,4 @@ public class StatementExecutionBasicResult extends DisposableBase implements Sta
     public void setLoggingActive(boolean loggingActive) {
         this.loggingActive = loggingActive;
     }
-
-    @Nullable
-    @Override
-    public DataProvider getDataProvider() {
-        return null;
-    }
-
 }

@@ -90,7 +90,7 @@ public class AboutComponent extends DBNFormImpl{
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

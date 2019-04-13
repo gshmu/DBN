@@ -132,7 +132,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

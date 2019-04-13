@@ -2,12 +2,14 @@ package com.dci.intellij.dbn.execution;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionConsoleForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
@@ -41,7 +43,12 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     public static final String COMPONENT_NAME = "DBNavigator.Project.ExecutionManager";
 
     public static final String TOOL_WINDOW_ID = "DB Execution Console";
-    private Latent<ExecutionConsoleForm> executionConsoleForm = Latent.disposable(this, () -> new ExecutionConsoleForm(getProject()));
+    private Latent<ExecutionConsoleForm> executionConsoleForm =
+            Latent.basic(() -> {
+                ExecutionConsoleForm form = new ExecutionConsoleForm(getProject());
+                Disposer.register(this, form);
+                return form;
+            });
 
     private ExecutionManager(Project project) {
         super(project);
@@ -86,7 +93,12 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         return toolWindow;
     }
 
-    public void addExecutionResult(final CompilerResult compilerResult) {
+    @Nullable
+    ExecutionResultForm getExecutionResultForm(ExecutionResult executionResult) {
+        return getExecutionConsoleForm().getExecutionResultForm(executionResult);
+    }
+
+    public void addExecutionResult(@NotNull CompilerResult compilerResult) {
         Dispatch.invoke(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
@@ -94,7 +106,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         });
     }
 
-    public void addExecutionResults(final List<CompilerResult> compilerResults) {
+    public void addExecutionResults(List<CompilerResult> compilerResults) {
         Dispatch.invoke(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
@@ -102,7 +114,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         });
     }
 
-    public void addExplainPlanResult(final ExplainPlanResult explainPlanResult) {
+    public void addExplainPlanResult(@NotNull ExplainPlanResult explainPlanResult) {
         Dispatch.invoke(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
@@ -110,7 +122,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         });
     }
 
-    public void writeLogOutput(@NotNull final LogOutputContext context, final LogOutput output) {
+    public void writeLogOutput(@NotNull LogOutputContext context, LogOutput output) {
         Dispatch.invoke(() -> {
             if (!context.isClosed()) {
                 showExecutionConsole();
@@ -120,7 +132,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         });
     }
 
-    public void addExecutionResult(@NotNull final StatementExecutionResult executionResult) {
+    public void addExecutionResult(@NotNull StatementExecutionResult executionResult) {
         Dispatch.invoke(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
@@ -158,7 +170,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
 
-    public void addExecutionResult(final MethodExecutionResult executionResult) {
+    public void addExecutionResult(MethodExecutionResult executionResult) {
         Dispatch.invoke(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();

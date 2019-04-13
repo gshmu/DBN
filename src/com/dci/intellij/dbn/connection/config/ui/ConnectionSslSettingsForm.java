@@ -41,7 +41,7 @@ public class ConnectionSslSettingsForm extends ConfigurationEditorForm<Connectio
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

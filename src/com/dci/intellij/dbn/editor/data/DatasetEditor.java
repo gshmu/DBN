@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.data;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposableUserDataHolderBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -78,7 +77,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
         FileEditor,
         FileConnectionMappingProvider,
         ConnectionProvider,
-        DataProviderSupplier,
+        DataProvider,
         RegisteredDisposable {
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -620,23 +619,6 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
             visible -> loadData(COL_VISIBILITY_STATUS_CHANGE_LOAD_INSTRUCTIONS);
 
 
-
-    /*******************************************************
-     *                   Data Provider                     *
-     *******************************************************/
-    public DataProvider dataProvider = dataId -> {
-        if (DBNDataKeys.DATASET_EDITOR.is(dataId)) {
-            return DatasetEditor.this;
-        }
-        return null;
-    };
-
-    @Override
-    @Nullable
-    public DataProvider getDataProvider() {
-        return dataProvider;
-    }
-
     String getDataLoadError() {
         return dataLoadError;
     }
@@ -646,5 +628,17 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
         DatasetColumnSetup columnSetup = editorState.getColumnSetup();
         columnSetup.init(columnNames, getDataset());
         return columnSetup.getColumnStates();
+    }
+
+    /*******************************************************
+     *                   Data Provider                     *
+     *******************************************************/
+    @Nullable
+    @Override
+    public Object getData(@NotNull String dataId) {
+        if (DataKeys.DATASET_EDITOR.is(dataId)) {
+            return DatasetEditor.this;
+        }
+        return null;
     }
 }

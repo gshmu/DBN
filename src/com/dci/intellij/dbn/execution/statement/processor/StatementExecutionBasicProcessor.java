@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -63,7 +62,6 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -105,7 +103,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
 
 
-    public StatementExecutionBasicProcessor(FileEditor fileEditor, ExecutablePsiElement psiElement, int index) {
+    public StatementExecutionBasicProcessor(@NotNull FileEditor fileEditor, @NotNull ExecutablePsiElement psiElement, int index) {
         this.fileEditorRef = WeakRef.from(fileEditor);
         this.psiFileRef = PsiFileRef.from(psiElement.getFile());
 
@@ -115,7 +113,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         initEditorProviderId(fileEditor);
     }
 
-    StatementExecutionBasicProcessor(FileEditor fileEditor, DBLanguagePsiFile psiFile, String sqlStatement, int index) {
+    StatementExecutionBasicProcessor(@NotNull FileEditor fileEditor, @NotNull DBLanguagePsiFile psiFile, String sqlStatement, int index) {
         this.fileEditorRef = WeakRef.from(fileEditor);
         this.psiFileRef = PsiFileRef.from(psiFile);
         this.index = index;
@@ -168,7 +166,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Override
     @NotNull
     public DBLanguagePsiFile getPsiFile() {
-        return Failsafe.nn(psiFileRef.get());
+        return psiFileRef.ensure();
     }
 
     @Override
@@ -178,14 +176,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     @Override
     public FileEditor getFileEditor() {
-        FileEditor fileEditor = this.fileEditorRef == null ? null : this.fileEditorRef.get();
-        if (fileEditor != null) {
-            Editor editor = EditorUtil.getEditor(fileEditor);
-            if (editor != null && editor.isDisposed()) {
-                this.fileEditorRef = null;
-            }
-        }
-        return fileEditor;
+        return fileEditorRef.get();
     }
 
     @Override
