@@ -25,7 +25,7 @@ public class DatatEditorValueListPopupSettingsForm extends ConfigurationEditorFo
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

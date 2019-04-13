@@ -58,7 +58,7 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

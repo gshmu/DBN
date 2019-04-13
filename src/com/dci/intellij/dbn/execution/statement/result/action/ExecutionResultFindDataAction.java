@@ -16,7 +16,7 @@ public class ExecutionResultFindDataAction extends AbstractExecutionResultAction
     public void actionPerformed(@NotNull AnActionEvent e) {
         StatementExecutionCursorResult executionResult = getExecutionResult(e);
         if (Failsafe.check(executionResult)) {
-            StatementExecutionResultForm resultForm = executionResult.getForm(false);
+            StatementExecutionResultForm resultForm = executionResult.getForm();
             if (Failsafe.check(resultForm)) {
                 resultForm.showSearchHeader();
             }

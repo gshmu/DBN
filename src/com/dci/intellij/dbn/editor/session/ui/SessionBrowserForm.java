@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
+import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBSplitter;
@@ -25,6 +26,7 @@ import com.intellij.util.text.DateFormatUtil;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
@@ -46,7 +48,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     private Latent<DataSearchComponent> dataSearchComponent = Latent.disposable(this, () -> {
         DataSearchComponent dataSearchComponent = new DataSearchComponent(SessionBrowserForm.this);
         searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
-        ActionUtil.registerDataProvider(dataSearchComponent.getSearchField(), getSessionBrowser());
+        DataManager.registerDataProvider(dataSearchComponent.getSearchField(), this);
         return dataSearchComponent;
     });
 
@@ -81,7 +83,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
             loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);
             hideLoadingHint();
 
-            ActionUtil.registerDataProvider(actionsPanel, sessionBrowser);
+            DataManager.registerDataProvider(actionsPanel, this);
 
             Disposer.register(this, editorTable);
             Disposer.register(this, detailsForm);
@@ -95,7 +97,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 
@@ -104,7 +106,8 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     }
 
     public void showLoadingHint() {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
+            Failsafe.nd(this);
             loadingLabel.setVisible(true);
             loadingIconPanel.setVisible(true);
             loadTimestampLabel.setVisible(false);
@@ -113,7 +116,8 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     }
 
     public void hideLoadingHint() {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
+            Failsafe.nd(this);
             loadingLabel.setVisible(false);
             loadingIconPanel.setVisible(false);
             refreshLoadTimestamp();
@@ -121,7 +125,6 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     }
 
     public void refreshLoadTimestamp() {
-        Failsafe.nd(this);
         boolean visible = !loadingLabel.isVisible();
         if (visible) {
             SessionBrowserModel model = getEditorTable().getModel();
@@ -210,5 +213,21 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
 
     private void createUIComponents() {
         editorTableScrollPane = new BasicTableScrollPane();
+    }
+
+    @Nullable
+    @Override
+    public Object getData(@NotNull String dataId) {
+        Object data = super.getData(dataId);
+        if (data == null) {
+            data = getSessionBrowser().getData(dataId);
+        }
+        return data;
+    }
+
+    @Override
+    public void disposeInner() {
+        DataManager.removeDataProvider(actionsPanel);
+        super.disposeInner();
     }
 }

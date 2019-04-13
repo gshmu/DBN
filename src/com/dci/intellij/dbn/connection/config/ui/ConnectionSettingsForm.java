@@ -221,7 +221,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

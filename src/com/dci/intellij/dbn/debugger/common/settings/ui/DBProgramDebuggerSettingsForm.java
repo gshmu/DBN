@@ -10,7 +10,7 @@ public class DBProgramDebuggerSettingsForm extends DBNFormImpl {
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 }

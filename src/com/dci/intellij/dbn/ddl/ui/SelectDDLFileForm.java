@@ -56,7 +56,7 @@ public class SelectDDLFileForm extends DBNFormImpl {
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 }

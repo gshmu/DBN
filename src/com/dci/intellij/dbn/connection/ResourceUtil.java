@@ -28,6 +28,8 @@ import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.sql.Savepoint;
 
+import static com.dci.intellij.dbn.DatabaseNavigator.DEBUG;
+
 public class ResourceUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
@@ -43,9 +45,9 @@ public class ResourceUtil {
         if (statement != null) {
             try {
                 long start = System.currentTimeMillis();
-                LOGGER.info("Cancelling statement (" + statement + ")");
+                if (DEBUG) LOGGER.debug("Cancelling statement (" + statement + ")");
                 statement.cancel();
-                LOGGER.info("Done cancelling statement (" + statement + ") - " + (System.currentTimeMillis() - start) + "ms");
+                if (DEBUG) LOGGER.debug("Done cancelling statement (" + statement + ") - " + (System.currentTimeMillis() - start) + "ms");
             } catch (SQLRecoverableException ignore) {
             } catch (Throwable e) {
                 LOGGER.warn("Failed to cancel statement (" + statement + "): " + e.getMessage());
@@ -59,9 +61,9 @@ public class ResourceUtil {
         if (resource != null) {
             try {
                 long start = System.currentTimeMillis();
-                LOGGER.info("Closing resource (" + resource + ")");
+                if (DEBUG) LOGGER.debug("Closing resource (" + resource + ")");
                 resource.close();
-                LOGGER.info("Done closing resource (" + resource + ") - " + (System.currentTimeMillis() - start) + "ms");
+                if (DEBUG) LOGGER.debug("Done closing resource (" + resource + ") - " + (System.currentTimeMillis() - start) + "ms");
             } catch (SQLRecoverableException ignore) {
             } catch (Throwable e) {
                 LOGGER.warn("Failed to close resource (" + resource + ")", e);

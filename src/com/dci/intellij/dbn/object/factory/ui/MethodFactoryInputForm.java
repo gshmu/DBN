@@ -100,7 +100,7 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
         ConnectionHandler connectionHandler = getConnectionHandler();
         boolean enforceInArguments = hasReturnArgument() && !DatabaseFeature.FUNCTION_OUT_ARGUMENTS.isSupported(connectionHandler);
         argumentListPanel = new ArgumentFactoryInputListForm(this, connectionHandler, enforceInArguments);
-        argumentListComponent = argumentListPanel.getComponent();
+        argumentListComponent = (JPanel) argumentListPanel.getComponent();
         returnArgumentDataTypeEditor = new DataTypeEditor(getConnectionHandler());
     }
 
@@ -111,7 +111,7 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 }

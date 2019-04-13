@@ -56,7 +56,7 @@ public class CodeCompletionSortingSettingsForm extends ConfigurationEditorForm<C
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

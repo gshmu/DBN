@@ -36,7 +36,7 @@ public class DBStatementJdwpRunConfigEditorForm extends DBProgramRunConfiguratio
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

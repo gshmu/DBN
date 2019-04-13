@@ -16,8 +16,8 @@ public class ExplainPlanResultExpandAllAction extends AbstractExplainPlanResultA
     public void actionPerformed(@NotNull AnActionEvent e) {
         ExplainPlanResult explainPlanResult = getExplainPlanResult(e);
         if (Failsafe.check(explainPlanResult)) {
-            ExplainPlanResultForm resultForm = explainPlanResult.getForm(false);
-            if (resultForm != null) {
+            ExplainPlanResultForm resultForm = explainPlanResult.getForm();
+            if (Failsafe.check(resultForm)) {
                 resultForm.expandAllNodes();
             }
         }

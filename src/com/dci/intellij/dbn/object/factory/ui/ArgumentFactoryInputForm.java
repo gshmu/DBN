@@ -69,7 +69,7 @@ public class ArgumentFactoryInputForm extends ObjectFactoryInputForm {
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

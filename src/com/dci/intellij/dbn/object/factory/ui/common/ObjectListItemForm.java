@@ -31,12 +31,12 @@ public class ObjectListItemForm extends DBNFormImpl {
 
     @NotNull
     @Override
-    public JPanel getComponent(){
+    public JPanel ensureComponent(){
         return mainPanel;
     }
 
     private void createUIComponents() {
-        objectDetailsComponent = inputForm.getComponent();
+        objectDetailsComponent = (JPanel) inputForm.getComponent();
     }
 
     public class RemoveObjectAction extends AnAction {

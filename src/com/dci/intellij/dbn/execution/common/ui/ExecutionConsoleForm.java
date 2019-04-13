@@ -29,7 +29,6 @@ import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.dci.intellij.dbn.execution.logging.LogOutput;
 import com.dci.intellij.dbn.execution.logging.LogOutputContext;
-import com.dci.intellij.dbn.execution.logging.ui.DatabaseLoggingResultForm;
 import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
@@ -73,7 +72,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         EventUtil.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
     }
 
-    public TabbedPane getResultTabs() {
+    private TabbedPane getResultTabs() {
         if (!isDisposed() && !Failsafe.check(resultTabs)) {
             resultTabs = new TabbedPane(this);
             mainPanel.removeAll();
@@ -91,7 +90,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         return Failsafe.nn(resultTabs);
     }
 
-    public int getTabCount() {
+    private int getTabCount() {
         return getResultTabs().getTabCount();
     }
 
@@ -124,23 +123,25 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
         @Override
         public void transactionCompleted(@NotNull Document document, @NotNull PsiFile file) {
-            TabbedPane resultTabs = getResultTabs();
-            for (TabInfo tabInfo : resultTabs.getTabs()) {
-                ExecutionResult executionResult = getExecutionResult(tabInfo);
-                if (executionResult instanceof StatementExecutionResult) {
-                    StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
-                    StatementExecutionProcessor executionProcessor = statementExecutionResult.getExecutionProcessor();
-                    if (Failsafe.check(executionProcessor) && executionProcessor.getPsiFile().equals(file)) {
-                        Icon icon = executionProcessor.isDirty() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
-                        tabInfo.setIcon(icon);
+            Failsafe.guarded(() -> {
+                TabbedPane resultTabs = getResultTabs();
+                for (TabInfo tabInfo : resultTabs.getTabs()) {
+                    ExecutionResult executionResult = getExecutionResult(tabInfo);
+                    if (executionResult instanceof StatementExecutionResult) {
+                        StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
+                        StatementExecutionProcessor executionProcessor = statementExecutionResult.getExecutionProcessor();
+                        if (Failsafe.check(executionProcessor) && executionProcessor.getPsiFile().equals(file)) {
+                            Icon icon = executionProcessor.isDirty() ? Icons.STMT_EXEC_RESULTSET_ORPHAN : Icons.STMT_EXEC_RESULTSET;
+                            tabInfo.setIcon(icon);
+                        }
+                    }
+
+                    if (executionMessagesPanel.loaded()) {
+                        JComponent messagePanelComponent = getMessagesPanel().getComponent();
+                        GUIUtil.repaint(messagePanelComponent);
                     }
                 }
-
-                if (executionMessagesPanel.loaded()) {
-                    JComponent messagePanelComponent = getMessagesPanel().getComponent();
-                    GUIUtil.repaint(messagePanelComponent);
-                }
-            }
+            });
         }
     };
 
@@ -201,7 +202,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JComponent ensureComponent() {
         return getResultTabs();
     }
 
@@ -349,8 +350,13 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
         executionMessagesPanel.reset();
         if (getTabCount() == 0) {
-            ExecutionManager.getInstance(getProject()).hideExecutionConsole();
+            getExecutionManager().hideExecutionConsole();
         }
+    }
+
+    @NotNull
+    public ExecutionManager getExecutionManager() {
+        return ExecutionManager.getInstance(getProject());
     }
 
     private boolean isMessagesTabVisible() {
@@ -391,11 +397,11 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         boolean messagesTabVisible = isMessagesTabVisible();
 
         DatabaseLoggingResult logOutput = new DatabaseLoggingResult(context);
-        DatabaseLoggingResultForm form = logOutput.getForm(true);
-        if (form != null) {
-            JComponent component = form.getComponent();
+        ExecutionResultForm resultForm = ensureResultForm(logOutput);
+        if (Failsafe.check(resultForm)) {
+            JComponent component = resultForm.getComponent();
             TabInfo tabInfo = new TabInfo(component);
-            tabInfo.setObject(form);
+            tabInfo.setObject(resultForm);
             tabInfo.setText(logOutput.getName());
             tabInfo.setIcon(emptyOutput || selectTab ?
                     Icons.EXEC_LOG_OUTPUT_CONSOLE :
@@ -416,22 +422,35 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     }
 
     /*********************************************************
-     *                  Statement executions                 *
+     *           Statement / method executions               *
      *********************************************************/
-    public void showResultTab(ExecutionResult executionResult) {
+    private void showResultTab(ExecutionResult executionResult) {
         if (executionResult instanceof ExplainPlanResult) {
             addResultTab(executionResult);
         } else {
-            if (containsResultTab(executionResult)) {
-                selectResultTab(executionResult);
+            ExecutionResult previousExecutionResult = executionResult.getPrevious();
+
+            ExecutionResultForm executionResultForm = null;
+            if (previousExecutionResult == null) {
+                executionResultForm = getExecutionResultForm(executionResult);
+                if (executionResultForm != null) {
+                    selectResultTab(executionResult);
+                }
             } else {
+                executionResultForm = getExecutionResultForm(previousExecutionResult);
+                if (executionResultForm != null) {
+                    executionResultForm.setExecutionResult(executionResult);
+                }
+            }
+
+            if (executionResultForm == null) {
                 addResultTab(executionResult);
             }
         }
     }
 
-    public void addResultTab(ExecutionResult executionResult) {
-        ExecutionResultForm resultForm = executionResult.getForm(true);
+    private void addResultTab(ExecutionResult executionResult) {
+        ExecutionResultForm resultForm = ensureResultForm(executionResult);
         if (Failsafe.check(resultForm)) {
             JComponent component = resultForm.getComponent();
             TabInfo tabInfo = new TabInfo(component);
@@ -449,20 +468,11 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         }
     }
 
-    public boolean containsResultTab(ExecutionResult executionProcessor) {
-        ExecutionResultForm resultForm = executionProcessor.getForm(false);
-        if (resultForm != null) {
-            Component component = resultForm.getComponent();
-            return containsResultTab(component);
-        }
-        return false;
-    }
-
     public void removeResultTab(ExecutionResult executionResult) {
         try {
             TabbedPane resultTabs = getResultTabs();
             canScrollToSource = false;
-            ExecutionResultForm resultForm = executionResult.getForm(false);
+            ExecutionResultForm resultForm = getExecutionResultForm(executionResult);
             if (resultForm != null) {
                 try {
                     TabInfo tabInfo = resultTabs.findInfo(resultForm.getComponent());
@@ -479,7 +489,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
                     }
                 } finally {
                     if (getTabCount() == 0) {
-                        ExecutionManager.getInstance(getProject()).hideExecutionConsole();
+                        getExecutionManager().hideExecutionConsole();
                     }
                 }
             }
@@ -490,32 +500,46 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
     public <T extends ExecutionResult> void selectResultTab(T executionResult) {
         TabbedPane resultTabs = getResultTabs();
-        ExecutionResultForm resultForm = executionResult.getForm(false);
-        if (resultForm != null) {
-            resultForm.setExecutionResult(executionResult);
-            resultForm = executionResult.getForm(false);
-            if (resultForm != null) {
-                JComponent component = resultForm.getComponent();
-                TabInfo tabInfo = resultTabs.findInfo(component);
-                if (tabInfo != null) {
-                    tabInfo.setText(executionResult.getName());
-                    tabInfo.setIcon(executionResult.getIcon());
-                    selectResultTab(tabInfo);
-                }
+        ExecutionResultForm resultForm = getExecutionResultForm(executionResult);
 
+        if (resultForm != null) {
+            JComponent component = resultForm.getComponent();
+            TabInfo tabInfo = resultTabs.findInfo(component);
+            if (tabInfo != null) {
+                tabInfo.setText(executionResult.getName());
+                tabInfo.setIcon(executionResult.getIcon());
+                selectResultTab(tabInfo);
             }
         }
     }
 
     public void closeExecutionResults(List<ConnectionId> connectionIds) {
-        TabbedPane resultTabs = getResultTabs();
-        List<TabInfo> tabs = new ArrayList<TabInfo>(resultTabs.getTabs());
+        List<TabInfo> tabs = getExecutionResultTabs();
         for (TabInfo tabInfo : tabs) {
             ExecutionResult executionResult = getExecutionResult(tabInfo);
             if (executionResult != null && connectionIds.contains(executionResult.getConnectionId())) {
                 removeTab(tabInfo);
             }
         }
+    }
+
+    @NotNull
+    private ArrayList<TabInfo> getExecutionResultTabs() {
+        return new ArrayList<>(resultTabs.getTabs());
+    }
+
+    @Nullable
+    private ExecutionResultForm ensureResultForm(ExecutionResult executionResult) {
+        ExecutionResultForm executionResultForm = getExecutionResultForm(executionResult);
+        if (executionResultForm == null) {
+            synchronized (this) {
+                executionResultForm = getExecutionResultForm(executionResult);
+                if (executionResultForm == null) {
+                    executionResultForm = executionResult.createForm();
+                }
+            }
+        }
+        return executionResultForm;
     }
 
 
@@ -541,5 +565,17 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         } finally {
             canScrollToSource = true;
         }
+    }
+
+    @Nullable
+    public ExecutionResultForm getExecutionResultForm(ExecutionResult executionResult) {
+        ArrayList<TabInfo> tabs = getExecutionResultTabs();
+        for (TabInfo tabInfo : tabs) {
+            ExecutionResultForm executionResultForm = (ExecutionResultForm) tabInfo.getObject();
+            if (executionResultForm != null && executionResultForm.getExecutionResult() == executionResult) {
+                return executionResultForm;
+            }
+        }
+        return null;
     }
 }

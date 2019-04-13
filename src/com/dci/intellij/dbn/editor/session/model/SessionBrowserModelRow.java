@@ -11,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class SessionBrowserModelRow extends ResultSetDataModelRow<SessionBrowserModelCell> {
+public class SessionBrowserModelRow
+        extends ResultSetDataModelRow<SessionBrowserModel, SessionBrowserModelCell> {
 
     public SessionBrowserModelRow(SessionBrowserModel model, ResultSet resultSet, int resultSetRowIndex) throws SQLException {
         super(model, resultSet, resultSetRowIndex);
@@ -19,14 +20,14 @@ public class SessionBrowserModelRow extends ResultSetDataModelRow<SessionBrowser
 
     @NotNull
     @Override
-    public SessionBrowserModel getModel() {
-        return (SessionBrowserModel) super.getModel();
+    protected SessionBrowserModelCell createCell(ResultSet resultSet, ColumnInfo columnInfo) throws SQLException {
+        return new SessionBrowserModelCell(this, resultSet, (ResultSetColumnInfo) columnInfo);
     }
 
     @NotNull
     @Override
-    protected SessionBrowserModelCell createCell(ResultSet resultSet, ColumnInfo columnInfo) throws SQLException {
-        return new SessionBrowserModelCell(this, resultSet, (ResultSetColumnInfo) columnInfo);
+    public SessionBrowserModel getModel() {
+        return super.getModel();
     }
 
     public String getUser() {

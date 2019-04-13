@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.session.action;
 
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -22,7 +22,7 @@ public abstract class AbstractSessionBrowserAction extends DumbAwareAction {
 
     @Nullable
     public static SessionBrowser getSessionBrowser(AnActionEvent e) {
-        SessionBrowser sessionBrowser = e.getData((DBNDataKeys.SESSION_BROWSER));
+        SessionBrowser sessionBrowser = e.getData((DataKeys.SESSION_BROWSER));
         if (sessionBrowser == null) {
             FileEditor fileEditor = getFileEditor(e);
             if (fileEditor instanceof SessionBrowser) {

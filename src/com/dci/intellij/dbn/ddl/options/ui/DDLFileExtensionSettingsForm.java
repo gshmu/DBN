@@ -75,7 +75,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.config.action;
 
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -15,6 +15,6 @@ public abstract class ConnectionSettingsAction extends DumbAwareAction{
 
     @Nullable
     ConnectionBundleSettingsForm getSettingsForm(AnActionEvent e) {
-        return e.getData((DBNDataKeys.CONNECTION_BUNDLE_SETTINGS));
+        return e.getData((DataKeys.CONNECTION_BUNDLE_SETTINGS));
     }
 }

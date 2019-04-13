@@ -96,7 +96,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
                 loggingEnabled = loggingManager.enableLogger(connectionHandler, connection);
             }
 
-            final DBNPreparedStatement statement = isQuery() ?
+            DBNPreparedStatement statement = isQuery() ?
                     connection.prepareStatement(command) :
                     connection.prepareCall(command);
 

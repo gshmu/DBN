@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.method.result;
 
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
@@ -11,21 +10,19 @@ import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionContext;
-import com.dci.intellij.dbn.execution.ExecutionResult;
+import com.dci.intellij.dbn.execution.ExecutionResultBase;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.method.ArgumentValue;
 import com.dci.intellij.dbn.execution.method.ArgumentValueHolder;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionResultForm;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,20 +34,17 @@ import java.util.List;
 import java.util.Map;
 
 @Nullifiable
-public class MethodExecutionResult extends DisposableBase implements ExecutionResult, Disposable {
-    private MethodExecutionInput executionInput;
-    private MethodExecutionResultForm resultPanel;
+public class MethodExecutionResult extends ExecutionResultBase<MethodExecutionResultForm> {
+    private WeakRef<MethodExecutionInput> executionInput;
     private List<ArgumentValue> argumentValues = new ArrayList<>();
     private Map<DBObjectRef<DBArgument>, ResultSetDataModel> cursorModels;
     private DBDebuggerType debuggerType;
     private String logOutput;
     private int executionDuration;
 
-    public MethodExecutionResult(MethodExecutionInput executionInput, MethodExecutionResultForm resultPanel, DBDebuggerType debuggerType) {
-        this.executionInput = executionInput;
-        executionInput.setExecutionResult(this);
+    public MethodExecutionResult(MethodExecutionInput executionInput, DBDebuggerType debuggerType) {
+        this.executionInput = WeakRef.from(executionInput);
         this.debuggerType = debuggerType;
-        this.resultPanel = resultPanel;
     }
 
     public int getExecutionDuration() {
@@ -98,13 +92,11 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
         return null;
     }
 
-    @Override
+
     @Nullable
-    public MethodExecutionResultForm getForm(boolean create) {
-        if (resultPanel == null && create) {
-            resultPanel = new MethodExecutionResultForm(getProject(), this);
-        }
-        return Failsafe.check(resultPanel) ? resultPanel : null;
+    @Override
+    public MethodExecutionResultForm createForm() {
+        return new MethodExecutionResultForm(this);
     }
 
     @Override
@@ -120,7 +112,7 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
 
     @NotNull
     public MethodExecutionInput getExecutionInput() {
-        return Failsafe.nn(executionInput);
+        return executionInput.ensure();
     }
 
     public ExecutionContext getExecutionContext() {
@@ -173,11 +165,6 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
         return false;
     }
 
-
-    public void setResultPanel(MethodExecutionResultForm resultPanel) {
-        this.resultPanel = resultPanel;
-    }
-
     public DBDebuggerType getDebuggerType() {
         return debuggerType;
     }
@@ -206,19 +193,12 @@ public class MethodExecutionResult extends DisposableBase implements ExecutionRe
     /********************************************************
      *                    Data Provider                     *
      ********************************************************/
-    public DataProvider dataProvider = new DataProvider() {
-        @Override
-        public Object getData(@NotNull @NonNls String dataId) {
-            if (DBNDataKeys.METHOD_EXECUTION_RESULT.is(dataId)) {
-                return MethodExecutionResult.this;
-            }
-            return null;
-        }
-    };
-
-    @Override
     @Nullable
-    public DataProvider getDataProvider() {
-        return dataProvider;
+    @Override
+    public Object getData(@NotNull String dataId) {
+        if (DataKeys.METHOD_EXECUTION_RESULT.is(dataId)) {
+            return MethodExecutionResult.this;
+        }
+        return null;
     }
 }

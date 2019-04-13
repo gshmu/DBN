@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.editor.session;
 
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposableUserDataHolderBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -40,7 +39,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class SessionBrowser extends DisposableUserDataHolderBase implements FileEditor, ConnectionProvider, DataProviderSupplier {
+public class SessionBrowser extends DisposableUserDataHolderBase implements FileEditor, ConnectionProvider, DataProvider {
     private DBSessionBrowserVirtualFile sessionBrowserFile;
     private SessionBrowserForm editorForm;
     private boolean preventLoading = false;
@@ -395,19 +394,15 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
     /*******************************************************
      *                   Data Provider                     *
      *******************************************************/
-    public DataProvider dataProvider = dataId -> {
-        if (DBNDataKeys.SESSION_BROWSER.is(dataId)) {
+
+    @Nullable
+    @Override
+    public Object getData(@NotNull String dataId) {
+        if (DataKeys.SESSION_BROWSER.is(dataId)) {
             return SessionBrowser.this;
         }
         return null;
-    };
-
-    @Override
-    @Nullable
-    public DataProvider getDataProvider() {
-        return dataProvider;
     }
-
 
     @Override
     public void disposeInner() {
