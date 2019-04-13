@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.console;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.console.ui.SQLConsoleEditorToolbarForm;
@@ -45,7 +44,6 @@ public class SQLConsoleEditorProvider extends BasicTextEditorProvider implements
     @Override
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
-        Failsafe.nn(project);
         DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) file;
         SQLConsoleEditor editor = new SQLConsoleEditor(project, consoleVirtualFile, "SQL Console", getEditorProviderId());
         SQLConsoleEditorToolbarForm toolbarForm = new SQLConsoleEditorToolbarForm(project, editor);

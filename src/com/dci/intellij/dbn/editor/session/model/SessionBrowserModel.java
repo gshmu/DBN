@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelRow>{
+public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelRow, SessionBrowserModelCell>{
     private long timestamp = System.currentTimeMillis();
     private String loadError;
 

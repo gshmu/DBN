@@ -64,7 +64,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

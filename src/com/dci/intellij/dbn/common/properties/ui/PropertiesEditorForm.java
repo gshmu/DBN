@@ -69,7 +69,7 @@ public class PropertiesEditorForm extends DBNFormImpl<DBNForm> {
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

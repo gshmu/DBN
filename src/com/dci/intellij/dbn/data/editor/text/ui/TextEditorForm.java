@@ -50,7 +50,7 @@ public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

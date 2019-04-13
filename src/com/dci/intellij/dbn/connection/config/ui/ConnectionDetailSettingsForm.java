@@ -116,7 +116,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

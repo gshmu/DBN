@@ -18,7 +18,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResultSetDataModel<T extends ResultSetDataModelRow> extends SortableDataModel<T> {
+public class ResultSetDataModel<
+        R extends ResultSetDataModelRow<? extends ResultSetDataModel<R, C>, C>,
+        C extends ResultSetDataModelCell<R, ? extends ResultSetDataModel<R, C>>>
+        extends SortableDataModel<R, C> {
+
     private DBNResultSet resultSet;
     private ConnectionHandler connectionHandler;
     private boolean resultSetExhausted = false;
@@ -37,8 +41,8 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
         Disposer.register(connectionHandler, this);
     }
 
-    protected T createRow(int resultSetRowIndex) throws SQLException {
-        return (T) new ResultSetDataModelRow(this, getResultSet(), resultSetRowIndex);
+    protected R createRow(int resultSetRowIndex) throws SQLException {
+        return (R) new ResultSetDataModelRow(this, getResultSet(), resultSetRowIndex);
     }
 
     @NotNull
@@ -56,11 +60,11 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
     }
 
     @Nullable
-    public T getRowAtResultSetIndex(int index) {
+    public R getRowAtResultSetIndex(int index) {
         // model may be reloading when this is called, hence
         // IndexOutOfBoundsException is thrown if the range is not checked
-        List<T> rows = getRows();
-        for (T row : rows) {
+        List<R> rows = getRows();
+        for (R row : rows) {
             if (row.getResultSetRowIndex() == index) {
                 return row;
             }
@@ -76,8 +80,8 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
         int initialIndex = reset ? 0 : originalRowCount;
         int count = 0;
 
-        final List<T> oldRows = getRows();
-        List<T> newRows = reset ? new ArrayList<>(oldRows.size()) : new ArrayList<>(oldRows);
+        final List<R> oldRows = getRows();
+        List<R> newRows = reset ? new ArrayList<>(oldRows.size()) : new ArrayList<>(oldRows);
 
         if (resultSet == null || ResourceUtil.isClosed(resultSet)) {
             resultSetExhausted = true;
@@ -90,7 +94,7 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
                     checkDisposed();
                     if (resultSet != null && resultSet.next()) {
                         count++;
-                        T row = createRow(initialIndex + count);
+                        R row = createRow(initialIndex + count);
                         newRows.add(row);
                     } else {
                         resultSetExhausted = true;
@@ -123,16 +127,16 @@ public class ResultSetDataModel<T extends ResultSetDataModelRow> extends Sortabl
         return newRowCount;
     }
 
-    private void disposeRows(final List<T> oldRows) {
+    private void disposeRows(final List<R> oldRows) {
         Background.run(() -> {
             // dispose old content
-            for (T row : oldRows) {
+            for (R row : oldRows) {
                 disposeRow(row);
             }
         });
     }
 
-    protected void disposeRow(T row) {
+    protected void disposeRow(R row) {
         Disposer.dispose(row);
     }
 

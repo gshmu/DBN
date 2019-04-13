@@ -111,7 +111,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

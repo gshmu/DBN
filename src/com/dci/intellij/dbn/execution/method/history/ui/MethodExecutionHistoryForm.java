@@ -82,7 +82,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

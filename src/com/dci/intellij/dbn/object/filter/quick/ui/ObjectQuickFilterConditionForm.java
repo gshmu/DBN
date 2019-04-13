@@ -88,7 +88,7 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

@@ -215,7 +215,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

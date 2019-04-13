@@ -32,7 +32,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 @Nullifiable
-public class DBNTable<T extends DBNTableModel> extends JTable implements RegisteredDisposable {
+public abstract class DBNTable<T extends DBNTableModel> extends JTable implements RegisteredDisposable {
     private static final int MAX_COLUMN_WIDTH = 300;
     private static final int MIN_COLUMN_WIDTH = 10;
     private static final Color GRID_COLOR = new JBColor(new Color(0xE6E6E6), Color.DARK_GRAY);
@@ -51,6 +51,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Registe
     public DBNTable(T tableModel, boolean showHeader) {
         this(null, tableModel, showHeader);
     }
+
     public DBNTable(Project project, T tableModel, boolean showHeader) {
         super(tableModel);
         projectRef = ProjectRef.from(project);
@@ -203,7 +204,8 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Registe
 
             // rows
             T model = getModel();
-            for (int rowIndex =0; rowIndex < model.getRowCount(); rowIndex++) {
+            int rowCount = model.getRowCount();
+            for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
                 if (preferredWidth > MAX_COLUMN_WIDTH) {
                     break;
                 }
@@ -361,7 +363,7 @@ public class DBNTable<T extends DBNTableModel> extends JTable implements Registe
     }
 
     public void disposeInner(){
-        Disposer.dispose(getModel());
+        Disposer.disposeInBackground(getModel());
         listenerList = new EventListenerList();
         columnModel = new DefaultTableColumnModel();
         selectionModel = new DefaultListSelectionModel();

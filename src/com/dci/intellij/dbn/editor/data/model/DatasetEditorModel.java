@@ -45,7 +45,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
-public class DatasetEditorModel extends ResultSetDataModel<DatasetEditorModelRow> implements ListSelectionListener {
+public class DatasetEditorModel
+        extends ResultSetDataModel<DatasetEditorModelRow, DatasetEditorModelCell>
+        implements ListSelectionListener {
+
     private boolean isResultSetUpdatable;
     private DatasetEditor datasetEditor;
     private DataEditorSettings settings;

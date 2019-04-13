@@ -30,7 +30,7 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

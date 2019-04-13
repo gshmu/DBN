@@ -91,7 +91,7 @@ public class DatasetSortingColumnForm extends DBNFormImpl<DatasetEditorSortingFo
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

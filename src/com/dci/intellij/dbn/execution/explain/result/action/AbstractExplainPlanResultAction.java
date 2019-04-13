@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.explain.result.action;
 
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
@@ -17,7 +17,7 @@ public abstract class AbstractExplainPlanResultAction extends DumbAwareAction {
     }
 
     public static ExplainPlanResult getExplainPlanResult(AnActionEvent e) {
-        ExplainPlanResult result = e.getData(DBNDataKeys.EXPLAIN_PLAN_RESULT);
+        ExplainPlanResult result = e.getData(DataKeys.EXPLAIN_PLAN_RESULT);
         if (result == null) {
             Project project = e.getProject();
             if (project != null) {

@@ -32,7 +32,7 @@ public class CodeEditorConfirmationSettingsForm extends ConfigurationEditorForm<
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

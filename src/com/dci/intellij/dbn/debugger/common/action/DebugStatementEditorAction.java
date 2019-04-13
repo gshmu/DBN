@@ -54,11 +54,13 @@ public class DebugStatementEditorAction extends AnAction {
 
             if (executablePsiElement != null && executablePsiElement.is(ElementTypeAttribute.DEBUGGABLE)) {
                 FileEditor fileEditor = EditorUtil.getFileEditor(editor);
-                StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
-                StatementExecutionProcessor executionProcessor = statementExecutionManager.getExecutionProcessor(fileEditor, executablePsiElement, true);
-                if (executionProcessor != null) {
-                    DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
-                    debuggerManager.startStatementDebugger(executionProcessor);
+                if (fileEditor != null) {
+                    StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
+                    StatementExecutionProcessor executionProcessor = statementExecutionManager.getExecutionProcessor(fileEditor, executablePsiElement, true);
+                    if (executionProcessor != null) {
+                        DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
+                        debuggerManager.startStatementDebugger(executionProcessor);
+                    }
                 }
             }
         }

@@ -30,7 +30,7 @@ public class DataEditorSettingsForm extends CompositeConfigurationEditorForm<Dat
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 }

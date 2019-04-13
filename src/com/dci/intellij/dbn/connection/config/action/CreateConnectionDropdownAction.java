@@ -1,14 +1,15 @@
 package com.dci.intellij.dbn.connection.config.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.DataProviderSupplier;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.Presentation;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -33,8 +34,8 @@ public class CreateConnectionDropdownAction extends GroupPopupAction {
     }
 
     @Override
-    public DataProviderSupplier getDataProviderSupplier(AnActionEvent e) {
-        return e.getData((DBNDataKeys.CONNECTION_BUNDLE_SETTINGS));
+    public DataProvider getDataProvider(AnActionEvent e) {
+        return e.getData((DataKeys.CONNECTION_BUNDLE_SETTINGS));
     }
 
     @Override
@@ -43,10 +44,10 @@ public class CreateConnectionDropdownAction extends GroupPopupAction {
     }
 
     @Override
-    public void update(AnActionEvent e) {
-        DataProviderSupplier dataProviderSupplier = getDataProviderSupplier(e);
+    public void update(@NotNull AnActionEvent e) {
+        DataProvider dataProvider = getDataProvider(e);
         Presentation presentation = e.getPresentation();
-        presentation.setEnabled(dataProviderSupplier != null);
+        presentation.setEnabled(dataProvider != null);
         presentation.setText("New Connection");
     }
 }

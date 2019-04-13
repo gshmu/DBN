@@ -145,12 +145,15 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
         Boolean result = Timeout.call(5, is(subject), true, () -> {
             try {
                 return checkInner();
+            } catch (SQLException e) {
+                exception.set(e);
+                return terminalStatus == null ? value() : terminalStatus;
             } catch (AbstractMethodError e) {
                 // not implemented (??) TODO suggest using built in drivers
                 LOGGER.warn("Functionality not supported by jdbc driver", e);
                 return value();
-            } catch (SQLException e) {
-                exception.set(e);
+            } catch (RuntimeException t){
+                LOGGER.warn("Failed to invoke jdbc utility", t);
                 return terminalStatus == null ? value() : terminalStatus;
             }
         });
@@ -171,7 +174,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
 
         SQLException exception = Timeout.call(10, null, daemon, () -> {
             try {
-                if (DatabaseNavigator.debugModeEnabled)
+                if (DatabaseNavigator.DEBUG)
                     LOGGER.info("Started changing " + resourceType + " resource " + subject + " status to " + value);
 
                 changeInner(value);
@@ -183,7 +186,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
             } finally {
                 set(changing, false);
 
-                if (DatabaseNavigator.debugModeEnabled)
+                if (DatabaseNavigator.DEBUG)
                     LOGGER.info("Done changing " + resourceType + " resource " + subject + " status to " + value);
             }
             return null;

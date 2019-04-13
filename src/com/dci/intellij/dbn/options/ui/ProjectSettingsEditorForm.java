@@ -171,7 +171,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

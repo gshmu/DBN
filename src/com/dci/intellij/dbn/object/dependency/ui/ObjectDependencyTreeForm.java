@@ -91,7 +91,7 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
 
     @NotNull
     @Override
-    public JComponent getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

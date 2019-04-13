@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -18,8 +17,9 @@ import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.data.record.RecordViewInfo;
 import com.dci.intellij.dbn.execution.ExecutionManager;
-import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
+import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultFormBase;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
+import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.IdeBorderFactory;
@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-public class StatementExecutionResultForm extends DBNFormImpl implements ExecutionResultForm<StatementExecutionCursorResult>, SearchableDataComponent {
+public class StatementExecutionResultForm extends ExecutionResultFormBase<StatementExecutionCursorResult> implements SearchableDataComponent {
     private JScrollPane resultScrollPane;
     private JPanel mainPanel;
     private JPanel actionsPanel;
@@ -38,18 +38,17 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     private JPanel resultPanel;
     private JLabel statusLabel;
     private ResultSetTable<ResultSetDataModel> resultTable;
-    private StatementExecutionCursorResult executionResult;
     private RecordViewInfo recordViewInfo;
 
     private Latent<DataSearchComponent> dataSearchComponent = Latent.disposable(this, () -> {
         DataSearchComponent dataSearchComponent = new DataSearchComponent(StatementExecutionResultForm.this);
         searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
-        ActionUtil.registerDataProvider(dataSearchComponent.getSearchField(), executionResult);
+        DataManager.registerDataProvider(dataSearchComponent.getSearchField(), this);
         return dataSearchComponent;
     });
 
-    public StatementExecutionResultForm(final StatementExecutionCursorResult executionResult) {
-        this.executionResult = executionResult;
+    public StatementExecutionResultForm(StatementExecutionCursorResult executionResult) {
+        super(executionResult);
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", false, "DBNavigator.ActionGroup.StatementExecutionResult");
         actionToolbar.setTargetComponent(actionsPanel);
 
@@ -71,41 +70,21 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
         JPanel panel = new JPanel();
         panel.setBorder(UIUtil.getTableHeaderCellBorder());
         resultScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
-        ActionUtil.registerDataProvider(mainPanel, executionResult);
 
         Disposer.register(this, executionResult);
         Disposer.register(this, resultTable);
     }
 
-    @Override
-    public void setExecutionResult(@NotNull StatementExecutionCursorResult executionResult) {
-        if (this.executionResult != executionResult) {
-            StatementExecutionCursorResult oldExecutionResult = this.executionResult;
-            this.executionResult = executionResult;
-            reloadTableModel();
-
-            Disposer.dispose(oldExecutionResult);
-        }
-    }
-
-    @Override
-    @NotNull
-    public StatementExecutionCursorResult getExecutionResult() {
-        return Failsafe.nn(executionResult);
-    }
-
-    public void reloadTableModel() {
-        Dispatch.invokeNonModal(() -> {
+    public void rebuildForm() {
+        Dispatch.invoke(() -> {
             StatementExecutionCursorResult executionResult = getExecutionResult();
             JScrollBar horizontalScrollBar = resultScrollPane.getHorizontalScrollBar();
             int horizontalScrolling = horizontalScrollBar.getValue();
-            ResultSetTable oldResultTable = resultTable;
-            resultTable = new ResultSetTable<>(executionResult.getTableModel(), true, recordViewInfo);
+            resultTable = Disposer.replace(resultTable, new ResultSetTable<>(executionResult.getTableModel(), true, recordViewInfo));
             resultScrollPane.setViewportView(resultTable);
             resultTable.initTableGutter();
-            resultTable.setName(StatementExecutionResultForm.this.executionResult.getName());
+            resultTable.setName(getExecutionResult().getName());
             horizontalScrollBar.setValue(horizontalScrolling);
-            Disposer.disposeInBackground(oldResultTable);
         });
     }
 
@@ -115,7 +94,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
     }
 
     public void updateVisibleComponents() {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.invoke(() -> {
             StatementExecutionCursorResult executionResult = getExecutionResult();
             ResultSetDataModel dataModel = executionResult.getTableModel();
             ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
@@ -139,7 +118,7 @@ public class StatementExecutionResultForm extends DBNFormImpl implements Executi
 
     @NotNull
     @Override
-    public JPanel getComponent() {
+    public JPanel ensureComponent() {
         return mainPanel;
     }
 

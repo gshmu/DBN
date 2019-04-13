@@ -6,22 +6,26 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface DataModelRow<T extends DataModelCell> extends Disposable {
-    List<T> getCells();
+public interface DataModelRow<
+        M extends DataModel<? extends DataModelRow<M, C>, C>,
+        C extends DataModelCell<? extends DataModelRow<M, C>, M>>
+        extends Disposable {
+
+    List<C> getCells();
 
     @Nullable
-    T getCell(String columnName);
+    C getCell(String columnName);
 
     @Nullable
     Object getCellValue(String columnName);
 
     @Nullable
-    T getCellAtIndex(int index);
+    C getCellAtIndex(int index);
 
     int getIndex();
 
     void setIndex(int index);
 
     @NotNull
-    DataModel getModel();
+    M getModel();
 }

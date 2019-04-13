@@ -88,9 +88,7 @@ public class Failsafe {
                 () -> {
                     try {
                         runnable.run();
-                    } catch (ProcessCanceledException ignore) {
-
-                    }
+                    } catch (ProcessCanceledException ignore) {}
                 });
     }
 

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.session.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.action.DBNDataKeys;
+import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.intellij.ide.DataManager;
@@ -67,7 +67,7 @@ public class TimedReloadComboBoxAction extends DBNComboBoxAction implements Dumb
     @Nullable
     public static SessionBrowser getSessionBrowser(JComponent component) {
         DataContext dataContext = DataManager.getInstance().getDataContext(component);
-        SessionBrowser sessionBrowser = DBNDataKeys.SESSION_BROWSER.getData(dataContext);
+        SessionBrowser sessionBrowser = DataKeys.SESSION_BROWSER.getData(dataContext);
         if (sessionBrowser == null) {
             FileEditor fileEditor = PlatformDataKeys.FILE_EDITOR.getData(dataContext);
             if (fileEditor instanceof SessionBrowser) {
@@ -79,7 +79,7 @@ public class TimedReloadComboBoxAction extends DBNComboBoxAction implements Dumb
 
     @Nullable
     public static SessionBrowser getSessionBrowser(AnActionEvent e) {
-        SessionBrowser sessionBrowser = e.getData((DBNDataKeys.SESSION_BROWSER));
+        SessionBrowser sessionBrowser = e.getData((DataKeys.SESSION_BROWSER));
         if (sessionBrowser == null) {
             FileEditor fileEditor = getFileEditor(e);
             if (fileEditor instanceof SessionBrowser) {
