@@ -525,7 +525,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
     @NotNull
     private ArrayList<TabInfo> getExecutionResultTabs() {
-        return new ArrayList<>(resultTabs.getTabs());
+        return new ArrayList<>(getResultTabs().getTabs());
     }
 
     @Nullable
