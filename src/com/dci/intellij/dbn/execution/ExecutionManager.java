@@ -209,7 +209,8 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void closeExecutionResults(List<ConnectionId> connectionIds){
-        getExecutionConsoleForm().closeExecutionResults(connectionIds);
+        ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
+        executionConsoleForm.closeExecutionResults(connectionIds);
     }
 
     /*********************************************************
