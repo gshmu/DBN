@@ -91,10 +91,6 @@ public class ThreadMonitor {
         return current().is(ThreadProperty.TIMEOUT);
     }
 
-    public static boolean isFailsafe() {
-        return current().is(ThreadProperty.FAILSAFE);
-    }
-
     public static int getProcessCount(ThreadProperty property) {
         return getProcessCounter(property).intValue();
     }
