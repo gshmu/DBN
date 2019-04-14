@@ -515,17 +515,19 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
     public void closeExecutionResults(List<ConnectionId> connectionIds) {
         List<TabInfo> tabs = getExecutionResultTabs();
-        for (TabInfo tabInfo : tabs) {
-            ExecutionResult executionResult = getExecutionResult(tabInfo);
-            if (executionResult != null && connectionIds.contains(executionResult.getConnectionId())) {
-                removeTab(tabInfo);
+        if (tabs != null) {
+            for (TabInfo tabInfo : tabs) {
+                ExecutionResult executionResult = getExecutionResult(tabInfo);
+                if (executionResult != null && connectionIds.contains(executionResult.getConnectionId())) {
+                    removeTab(tabInfo);
+                }
             }
         }
     }
 
-    @NotNull
+    @Nullable
     private ArrayList<TabInfo> getExecutionResultTabs() {
-        return new ArrayList<>(getResultTabs().getTabs());
+        return Failsafe.check(resultTabs) ? new ArrayList<>(resultTabs.getTabs()) : null;
     }
 
     @Nullable
@@ -570,10 +572,12 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     @Nullable
     public ExecutionResultForm getExecutionResultForm(ExecutionResult executionResult) {
         ArrayList<TabInfo> tabs = getExecutionResultTabs();
-        for (TabInfo tabInfo : tabs) {
-            ExecutionResultForm executionResultForm = (ExecutionResultForm) tabInfo.getObject();
-            if (executionResultForm != null && executionResultForm.getExecutionResult() == executionResult) {
-                return executionResultForm;
+        if (tabs != null) {
+            for (TabInfo tabInfo : tabs) {
+                ExecutionResultForm executionResultForm = (ExecutionResultForm) tabInfo.getObject();
+                if (executionResultForm != null && executionResultForm.getExecutionResult() == executionResult) {
+                    return executionResultForm;
+                }
             }
         }
         return null;
