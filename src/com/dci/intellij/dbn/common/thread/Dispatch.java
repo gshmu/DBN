@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.common.thread;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.progress.ProcessCanceledException;
 
 public interface Dispatch {
 
@@ -15,7 +15,11 @@ public interface Dispatch {
     static void conditional(Runnable runnable) {
         Application application = ApplicationManager.getApplication();
         if (application.isDispatchThread()) {
-            Failsafe.guarded(() -> runnable.run());
+            try {
+                runnable.run();
+            } catch (ProcessCanceledException ignore) {
+
+            }
         } else {
             invoke(null, runnable);
         }
@@ -25,8 +29,13 @@ public interface Dispatch {
         Application application = ApplicationManager.getApplication();
         modalityState = CommonUtil.nvl(modalityState, application.getDefaultModalityState());
         application.invokeLater(
-                () -> Failsafe.guarded(
-                        () -> runnable.run()),
+                () -> {
+                    try {
+                        runnable.run();
+                    } catch (ProcessCanceledException ignore) {
+
+                    }
+                },
                 modalityState/*, ModalityState.NON_MODAL*/);
     }
 
