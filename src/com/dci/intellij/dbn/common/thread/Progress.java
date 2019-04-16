@@ -16,9 +16,9 @@ public interface Progress {
 
 
     static void background(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
-        Failsafe.guarded(() -> {
+        if (Failsafe.check(project)) {
             ThreadInfo invoker = ThreadMonitor.current();
-            Task task = new Task.Backgroundable(Failsafe.nn(project), title, cancellable, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
+            Task task = new Task.Backgroundable(Failsafe.nd(project), title, cancellable, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
@@ -28,13 +28,13 @@ public interface Progress {
                 }
             };
             start(task);
-        });
+        }
     }
 
     static void prompt(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
-        Failsafe.guarded(() -> {
+        if (Failsafe.check(project)) {
             ThreadInfo invoker = ThreadMonitor.current();
-            Task task = new Task.Backgroundable(Failsafe.nn(project), title, cancellable, PerformInBackgroundOption.DEAF) {
+            Task task = new Task.Backgroundable(Failsafe.nd(project), title, cancellable, PerformInBackgroundOption.DEAF) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
@@ -44,13 +44,13 @@ public interface Progress {
                 }
             };
             start(task);
-        });
+        }
     }
 
     static void modal(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
-        Failsafe.guarded(() -> {
+        if (Failsafe.check(project)) {
             ThreadInfo invoker = ThreadMonitor.current();
-            Task task = new Task.Modal(Failsafe.nn(project), title, cancellable) {
+            Task task = new Task.Modal(project, title, cancellable) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
@@ -61,13 +61,13 @@ public interface Progress {
                 }
             };
             start(task);
-        });
+        }
     }
 
     static void start(Task task) {
         Application application = ApplicationManager.getApplication();
         application.invokeLater(() -> {
-            if (Failsafe.check(task)) {
+            if (Failsafe.check(task) && Failsafe.check(task.getProject())) {
                 ProgressManager progressManager = ProgressManager.getInstance();
                 progressManager.run(task);
             }

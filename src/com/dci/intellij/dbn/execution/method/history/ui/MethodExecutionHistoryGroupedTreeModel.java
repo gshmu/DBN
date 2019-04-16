@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHistoryTreeModel {
@@ -65,37 +66,42 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
 
     @Override
     public List<MethodExecutionInput> getExecutionInputs() {
-        List<MethodExecutionInput> executionInputs = new ArrayList<MethodExecutionInput>();
-        for (TreeNode connectionTreeNode : getRoot().getChildren()) {
-            ConnectionTreeNode connectionNode = (ConnectionTreeNode) connectionTreeNode;
-            for (TreeNode schemaTreeNode : connectionNode.getChildren()) {
-                SchemaTreeNode schemaNode = (SchemaTreeNode) schemaTreeNode;
-                for (TreeNode node : schemaNode.getChildren()) {
-                    if (node instanceof ProgramTreeNode) {
-                        ProgramTreeNode programNode = (ProgramTreeNode) node;
-                        for (TreeNode methodTreeNode : programNode.getChildren()) {
-                            MethodTreeNode methodNode = (MethodTreeNode) methodTreeNode;
+        RootTreeNode root = getRoot();
+        List<MethodExecutionHistoryTreeNode> children = root.getChildren();
+        if (children != null && !children.isEmpty()) {
+            List<MethodExecutionInput> executionInputs = new ArrayList<MethodExecutionInput>();
+            for (TreeNode connectionTreeNode : children) {
+                ConnectionTreeNode connectionNode = (ConnectionTreeNode) connectionTreeNode;
+                for (TreeNode schemaTreeNode : connectionNode.getChildren()) {
+                    SchemaTreeNode schemaNode = (SchemaTreeNode) schemaTreeNode;
+                    for (TreeNode node : schemaNode.getChildren()) {
+                        if (node instanceof ProgramTreeNode) {
+                            ProgramTreeNode programNode = (ProgramTreeNode) node;
+                            for (TreeNode methodTreeNode : programNode.getChildren()) {
+                                MethodTreeNode methodNode = (MethodTreeNode) methodTreeNode;
+                                MethodExecutionInput executionInput =
+                                        getExecutionInput(connectionNode, schemaNode, programNode, methodNode);
+
+                                if (executionInput != null) {
+                                    executionInputs.add(executionInput);
+                                }
+                            }
+
+                        } else {
+                            MethodTreeNode methodNode = (MethodTreeNode) node;
                             MethodExecutionInput executionInput =
-                                    getExecutionInput(connectionNode, schemaNode, programNode, methodNode);
+                                    getExecutionInput(connectionNode, schemaNode, null, methodNode);
 
                             if (executionInput != null) {
                                 executionInputs.add(executionInput);
                             }
                         }
-
-                    } else {
-                        MethodTreeNode methodNode = (MethodTreeNode) node;
-                        MethodExecutionInput executionInput =
-                                getExecutionInput(connectionNode, schemaNode, null, methodNode);
-
-                        if (executionInput != null) {
-                            executionInputs.add(executionInput);
-                        }
                     }
                 }
             }
+            return executionInputs;
         }
-        return executionInputs;
+        return Collections.emptyList();
     }
 
     private MethodExecutionInput getExecutionInput(

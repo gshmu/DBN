@@ -8,7 +8,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.List;
 
 public class MethodExecutionHistoryTreeNode extends DefaultMutableTreeNode {
-    public static enum Type {
+    public enum Type {
         ROOT,
         CONNECTION,
         SCHEMA,
