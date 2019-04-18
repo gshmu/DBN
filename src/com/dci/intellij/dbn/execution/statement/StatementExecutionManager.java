@@ -404,7 +404,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
             DBLanguagePsiFile file = (DBLanguagePsiFile) DocumentUtil.getFile(editor);
             String selection = editor.getSelectionModel().getSelectedText();
             if (selection != null && file != null) {
-                return new StatementExecutionCursorProcessor(fileEditor, file, selection, RESULT_SEQUENCE.incrementAndGet());
+                return new StatementExecutionCursorProcessor(getProject(), fileEditor, file, selection, RESULT_SEQUENCE.incrementAndGet());
             }
 
             ExecutablePsiElement executablePsiElement = PsiUtil.lookupExecutableAtCaret(editor, true);
@@ -462,10 +462,12 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     private StatementExecutionProcessor createExecutionProcessor(@NotNull FileEditor fileEditor, List<StatementExecutionProcessor> executionProcessors, @NotNull ExecutablePsiElement executablePsiElement) {
+        Project project = getProject();
+        int index = RESULT_SEQUENCE.incrementAndGet();
         StatementExecutionBasicProcessor executionProcessor =
                 executablePsiElement.isQuery() ?
-                        new StatementExecutionCursorProcessor(fileEditor, executablePsiElement, RESULT_SEQUENCE.incrementAndGet()) :
-                        new StatementExecutionBasicProcessor(fileEditor, executablePsiElement, RESULT_SEQUENCE.incrementAndGet());
+                        new StatementExecutionCursorProcessor(project, fileEditor, executablePsiElement, index) :
+                        new StatementExecutionBasicProcessor(project, fileEditor, executablePsiElement, index);
         executionProcessors.add(executionProcessor);
         executablePsiElement.setExecutionProcessor(executionProcessor);
         return executionProcessor;
