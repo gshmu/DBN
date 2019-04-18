@@ -56,6 +56,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ExecutionConsoleForm extends DBNFormImpl{
@@ -515,19 +516,17 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
     public void closeExecutionResults(List<ConnectionId> connectionIds) {
         List<TabInfo> tabs = getExecutionResultTabs();
-        if (tabs != null) {
-            for (TabInfo tabInfo : tabs) {
-                ExecutionResult executionResult = getExecutionResult(tabInfo);
-                if (executionResult != null && connectionIds.contains(executionResult.getConnectionId())) {
-                    removeTab(tabInfo);
-                }
+        for (TabInfo tabInfo : tabs) {
+            ExecutionResult executionResult = getExecutionResult(tabInfo);
+            if (executionResult != null && connectionIds.contains(executionResult.getConnectionId())) {
+                removeTab(tabInfo);
             }
         }
     }
 
-    @Nullable
-    private ArrayList<TabInfo> getExecutionResultTabs() {
-        return Failsafe.check(resultTabs) ? new ArrayList<>(resultTabs.getTabs()) : null;
+    @NotNull
+    private List<TabInfo> getExecutionResultTabs() {
+        return Failsafe.check(resultTabs) ? new ArrayList<>(resultTabs.getTabs()) : Collections.emptyList();
     }
 
     @Nullable
@@ -571,13 +570,11 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
     @Nullable
     public ExecutionResultForm getExecutionResultForm(ExecutionResult executionResult) {
-        ArrayList<TabInfo> tabs = getExecutionResultTabs();
-        if (tabs != null) {
-            for (TabInfo tabInfo : tabs) {
-                ExecutionResultForm executionResultForm = (ExecutionResultForm) tabInfo.getObject();
-                if (executionResultForm != null && executionResultForm.getExecutionResult() == executionResult) {
-                    return executionResultForm;
-                }
+        List<TabInfo> tabs = getExecutionResultTabs();
+        for (TabInfo tabInfo : tabs) {
+            ExecutionResultForm executionResultForm = (ExecutionResultForm) tabInfo.getObject();
+            if (executionResultForm != null && executionResultForm.getExecutionResult() == executionResult) {
+                return executionResultForm;
             }
         }
         return null;
