@@ -73,7 +73,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
 
 @Nullifiable
@@ -134,8 +136,9 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     @Override
     public boolean isDirty(){
-        if (getConnectionHandler() != executionInput.getConnectionHandler() || // connection changed since execution
-            getTargetSchema() != executionInput.getTargetSchemaId()) { // current schema changed since execution)
+        if (psiFileRef.get() == null ||
+                getConnectionHandler() != executionInput.getConnectionHandler() || // connection changed since execution
+                getTargetSchema() != executionInput.getTargetSchemaId()) { // current schema changed since execution)
             return true;
 
         } else {
@@ -624,7 +627,8 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Override
     @Nullable
     public ConnectionHandler getConnectionHandler() {
-        return getPsiFile().getConnectionHandler();
+        DBLanguagePsiFile psiFile = psiFileRef.get();
+        return psiFile == null ? null : psiFile.getConnectionHandler();
     }
 
     @Override
@@ -636,7 +640,8 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Override
     @Nullable
     public SchemaId getTargetSchema() {
-        return getPsiFile().getSchemaId();
+        DBLanguagePsiFile psiFile = psiFileRef.get();
+        return psiFile == null ? null : psiFile.getSchemaId();
     }
 
     @Override
