@@ -62,6 +62,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -318,6 +319,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                 throw executionException;
             }
 
+        } catch (ProcessCanceledException ignore){
         } finally {
             postExecute();
         }
