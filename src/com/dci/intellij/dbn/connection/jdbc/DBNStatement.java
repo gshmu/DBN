@@ -80,7 +80,7 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
                 }
             }
         }
-        return this.resultSet == null ? null : this.resultSet.get();
+        return WeakRef.get(resultSet);
     }
 
     protected Object wrap(Object object) {
