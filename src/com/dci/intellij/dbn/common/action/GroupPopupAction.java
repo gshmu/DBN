@@ -5,7 +5,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +15,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
 
-public abstract class GroupPopupAction extends DumbAwareAction {
+public abstract class GroupPopupAction extends DumbAwareProjectAction {
     private String groupTitle;
     public GroupPopupAction(String name, @Nullable String groupTitle, @Nullable Icon icon) {
         super(name, null, icon);
@@ -23,7 +23,7 @@ public abstract class GroupPopupAction extends DumbAwareAction {
     }
 
     @Override
-    public final void actionPerformed(@NotNull AnActionEvent e) {
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         DefaultActionGroup actionGroup = new DefaultActionGroup();
 
         for (AnAction action : getActions(e)) {
@@ -54,7 +54,7 @@ public abstract class GroupPopupAction extends DumbAwareAction {
         return null;
     }
 
-    public static void showBelowComponent(ListPopup popup, Component component) {
+    private static void showBelowComponent(ListPopup popup, Component component) {
         Point locationOnScreen = component.getLocationOnScreen();
         Point location = new Point(
                 (int) (locationOnScreen.getX() + 10),

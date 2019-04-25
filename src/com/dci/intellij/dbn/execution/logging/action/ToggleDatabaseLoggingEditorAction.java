@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.logging.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -17,9 +18,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
-import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
-
 public class ToggleDatabaseLoggingEditorAction extends ToggleAction implements DumbAware {
 
     public ToggleDatabaseLoggingEditorAction() {
@@ -34,8 +32,8 @@ public class ToggleDatabaseLoggingEditorAction extends ToggleAction implements D
 
     @Nullable
     private static ConnectionHandler getConnectionHandler(AnActionEvent e) {
-        Project project = getProject(e);
-        VirtualFile virtualFile = getVirtualFile(e);
+        Project project = Lookup.getProject(e);
+        VirtualFile virtualFile = Lookup.getVirtualFile(e);
         if (project != null && virtualFile != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(virtualFile);
@@ -77,7 +75,7 @@ public class ToggleDatabaseLoggingEditorAction extends ToggleAction implements D
     }
 
     public static boolean isVisible(AnActionEvent e) {
-        VirtualFile virtualFile = getVirtualFile(e);
+        VirtualFile virtualFile = Lookup.getVirtualFile(e);
         return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
     }
 }

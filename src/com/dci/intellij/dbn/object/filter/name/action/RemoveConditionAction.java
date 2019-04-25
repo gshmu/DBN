@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.filter.name.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.object.filter.name.FilterCondition;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilter;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterManager;
@@ -18,19 +17,18 @@ public class RemoveConditionAction extends ObjectNameFilterAction{
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         Object selection = getSelection();
         if (selection instanceof FilterCondition) {
             FilterCondition filterCondition = (FilterCondition) selection;
 
-            Project project = ActionUtil.ensureProject(e);
             ObjectNameFilterManager filterManager = ObjectNameFilterManager.getInstance(project);
             filterManager.removeFilterCondition(filterCondition, settingsForm);
         }
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         Presentation presentation = e.getPresentation();
         Object selection = getSelection();
         if (selection instanceof ObjectNameFilter) {

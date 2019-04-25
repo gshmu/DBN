@@ -1,18 +1,16 @@
 package com.dci.intellij.dbn.editor.data.action;
 
-import com.dci.intellij.dbn.common.action.DataKeys;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public abstract class AbstractDataEditorAction extends DumbAwareAction {
+public abstract class AbstractDataEditorAction extends DumbAwareProjectAction {
     public AbstractDataEditorAction(String text) {
         super(text);
     }
@@ -21,31 +19,26 @@ public abstract class AbstractDataEditorAction extends DumbAwareAction {
         super(text, null, icon);
     }
 
-
-    @Nullable
-    public static DatasetEditor getDatasetEditor(DataContext dataContext) {
-        DatasetEditor datasetEditor = DataKeys.DATASET_EDITOR.getData(dataContext);
-        if (datasetEditor == null) {
-            FileEditor fileEditor = PlatformDataKeys.FILE_EDITOR.getData(dataContext);
-            if (fileEditor instanceof DatasetEditor) {
-                return (DatasetEditor) fileEditor;
-            }
+    @Override
+    protected final void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
+        DatasetEditor datasetEditor = DatasetEditor.get(e);
+        if (Failsafe.check(datasetEditor)) {
+            actionPerformed(e, project, datasetEditor);
         }
-        return datasetEditor;
     }
 
-
-    @Nullable
-    public static DatasetEditor getDatasetEditor(AnActionEvent e) {
-        DatasetEditor datasetEditor = e.getData((DataKeys.DATASET_EDITOR));
-        if (datasetEditor == null) {
-            FileEditor fileEditor = ActionUtil.getFileEditor(e);
-            if (fileEditor instanceof DatasetEditor) {
-                return (DatasetEditor) fileEditor;
-            }
-        } else {
-            return datasetEditor;
-        }
-        return null;
+    @Override
+    protected final void update(@NotNull AnActionEvent e, @NotNull Project project) {
+        update(e, project, DatasetEditor.get(e));
     }
+
+    protected abstract void actionPerformed(
+            @NotNull AnActionEvent e,
+            @NotNull Project project,
+            @NotNull DatasetEditor datasetEditor);
+
+    protected abstract void update(
+            @NotNull AnActionEvent e,
+            @NotNull Project project,
+            @Nullable DatasetEditor datasetEditor);
 }

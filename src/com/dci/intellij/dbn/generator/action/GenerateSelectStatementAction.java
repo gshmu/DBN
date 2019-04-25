@@ -13,7 +13,7 @@ import java.util.List;
 public class GenerateSelectStatementAction extends GenerateStatementAction {
     private List<DBObjectRef> selectedObjectRefs;
 
-    public GenerateSelectStatementAction(List<DBObject> selectedObjects) {
+    GenerateSelectStatementAction(List<DBObject> selectedObjects) {
         super("SELECT Statement");
         this.selectedObjectRefs = DBObjectRef.from(selectedObjects);
     }
@@ -25,7 +25,7 @@ public class GenerateSelectStatementAction extends GenerateStatementAction {
         return statementGenerationManager.generateSelectStatement(selectedObjects, true);
     }
 
-    public List<DBObject> getSelectedObjects() {
+    private List<DBObject> getSelectedObjects() {
         return DBObjectRef.ensure(selectedObjectRefs);
     }
 

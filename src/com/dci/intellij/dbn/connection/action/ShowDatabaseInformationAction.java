@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection.action;
 
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -17,9 +16,7 @@ public class ShowDatabaseInformationAction extends AbstractConnectionAction {
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.ensureProject(e);
-        ConnectionHandler connectionHandler = getConnectionHandler();
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
         ConnectionAction.invoke("showing database information", true, connectionHandler,
                 (action) -> Progress.prompt(project, "Loading database information for " + connectionHandler.getName(), false,
                         (progress) -> ConnectionManager.showConnectionInfoDialog(connectionHandler)));

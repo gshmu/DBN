@@ -7,25 +7,22 @@ import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ExecutionResultResumeAction extends AbstractExecutionResultAction {
     public ExecutionResultResumeAction() {
-        super("Fetch next records", Icons.EXEC_RESULT_RESUME);
+        super("Fetch Next Records", Icons.EXEC_RESULT_RESUME);
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        StatementExecutionCursorResult executionResult = getExecutionResult(e);
-        if (executionResult != null) {
-            executionResult.fetchNextRecords();
-        }
-
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull StatementExecutionCursorResult executionResult) {
+        executionResult.fetchNextRecords();
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        StatementExecutionCursorResult executionResult = getExecutionResult(e);
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable StatementExecutionCursorResult executionResult) {
         boolean enabled = false;
 
         if (Failsafe.check(executionResult) && executionResult.hasResult()) {

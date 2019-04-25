@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.execution.statement.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ExecutionResultCloseAction extends AbstractExecutionResultAction {
     public ExecutionResultCloseAction() {
@@ -14,18 +14,13 @@ public class ExecutionResultCloseAction extends AbstractExecutionResultAction {
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        StatementExecutionCursorResult executionResult = getExecutionResult(e);
-        if (Failsafe.check(executionResult)) {
-            Project project = executionResult.getProject();
-            ExecutionManager executionManager = ExecutionManager.getInstance(project);
-            executionManager.removeResultTab(executionResult);
-        }
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull StatementExecutionCursorResult executionResult) {
+        ExecutionManager executionManager = ExecutionManager.getInstance(project);
+        executionManager.removeResultTab(executionResult);
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        super.update(e);
-        getTemplatePresentation().setText("Close");
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable StatementExecutionCursorResult executionResult) {
+
     }
 }

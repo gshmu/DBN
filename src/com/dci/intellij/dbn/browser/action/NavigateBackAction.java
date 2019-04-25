@@ -3,38 +3,33 @@ package com.dci.intellij.dbn.browser.action;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class NavigateBackAction extends DumbAwareAction {
+public class NavigateBackAction extends DumbAwareProjectAction {
     public NavigateBackAction() {
         super("Back", null, Icons.BROWSER_BACK);
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.ensureProject(e);
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
+        Presentation presentation = e.getPresentation();
+        presentation.setText("Back");
+
+        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
+        DatabaseBrowserTree activeTree = browserManager.getActiveBrowserTree();
+        presentation.setEnabled(activeTree != null && activeTree.getNavigationHistory().hasPrevious());
+    }
+
+    @Override
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
         DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
         if (activeBrowserTree != null) {
             activeBrowserTree.navigateBack();
-        }
-    }
-
-    @Override
-    public void update(@NotNull AnActionEvent e) {
-        Presentation presentation = e.getPresentation();
-        presentation.setText("Back");
-
-        Project project = ActionUtil.getProject(e);
-        if (project != null) {
-            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
-            DatabaseBrowserTree activeTree = browserManager.getActiveBrowserTree();
-            presentation.setEnabled(activeTree != null && activeTree.getNavigationHistory().hasPrevious());
         }
     }
 }

@@ -9,6 +9,7 @@ import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
@@ -18,23 +19,19 @@ public class TnsNamesImportAction extends ConnectionSettingsAction{
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
-        Project project = e.getProject();
-        if (project != null) {
-            VirtualFile[] virtualFiles = FileChooser.chooseFiles(TnsNamesParser.FILE_CHOOSER_DESCRIPTOR, project, null);
-            if (virtualFiles.length == 1) {
-                File file = new File(virtualFiles[0].getPath());
-                TnsNamesImportDialog dialog = new TnsNamesImportDialog(project, file);
-                dialog.show();
-                int exitCode = dialog.getExitCode();
-                if (exitCode == DialogWrapper.OK_EXIT_CODE) {
-                    ConnectionBundleSettingsForm settingsForm = getSettingsForm(e);
-                    if (settingsForm != null) {
-                        settingsForm.importTnsNames(dialog.getTnsNames());
-                    }
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
+        VirtualFile[] virtualFiles = FileChooser.chooseFiles(TnsNamesParser.FILE_CHOOSER_DESCRIPTOR, project, null);
+        if (virtualFiles.length == 1) {
+            File file = new File(virtualFiles[0].getPath());
+            TnsNamesImportDialog dialog = new TnsNamesImportDialog(project, file);
+            dialog.show();
+            int exitCode = dialog.getExitCode();
+            if (exitCode == DialogWrapper.OK_EXIT_CODE) {
+                ConnectionBundleSettingsForm settingsForm = getSettingsForm(e);
+                if (settingsForm != null) {
+                    settingsForm.importTnsNames(dialog.getTnsNames());
                 }
             }
-
         }
     }
 }

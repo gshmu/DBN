@@ -3,11 +3,11 @@ package com.dci.intellij.dbn.connection.mapping;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
@@ -570,10 +570,8 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         }
 
         @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
-            ConnectionHandler connectionHandler = getConnectionHandler();
+        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
             DBLanguagePsiFile file = fileRef.get();
-
             if (file != null) {
                 file.setConnectionHandler(connectionHandler);
                 if (promptSchemaSelection) {
@@ -595,21 +593,20 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             DBLanguagePsiFile file = fileRef.get();
             if (file != null) {
                 ConnectionHandler connectionHandler = file.getConnectionHandler();
-                return connectionHandler != null && connectionHandler.getConnectionId().equals(getConnectionHandler().getConnectionId());
+                return connectionHandler != null && connectionHandler.getConnectionId().equals(getConnectionId());
             }
             return false;
 
         }
     }
 
-    private static class ConnectionSetupAction extends AnAction {
+    private static class ConnectionSetupAction extends ProjectAction {
         private ConnectionSetupAction() {
             super("Setup New Connection", null, Icons.CONNECTION_NEW);
         }
 
         @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
-            Project project = ActionUtil.ensureProject(e);
+        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
             ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
             settingsManager.openProjectSettings(ConfigId.CONNECTIONS);
         }
@@ -668,7 +665,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         }
 
         @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
+        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBSchema object) {
             DBLanguagePsiFile file = fileRef.get();
             if (file != null) {
                 file.setDatabaseSchema(getSchema());

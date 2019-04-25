@@ -12,39 +12,35 @@ import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVari
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 
 public class ExecutionResultVariablesDialogAction extends AbstractExecutionResultAction {
     public ExecutionResultVariablesDialogAction() {
-        super("Open variables dialog", Icons.EXEC_RESULT_OPEN_EXEC_DIALOG);
+        super("Open Variables Dialog", Icons.EXEC_RESULT_OPEN_EXEC_DIALOG);
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        StatementExecutionCursorResult executionResult = getExecutionResult(e);
-        if (executionResult != null) {
-            StatementExecutionCursorProcessor executionProcessor = executionResult.getExecutionProcessor();
-            Project project = executionResult.getProject();
-            StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
-            statementExecutionManager.promptExecutionDialog(
-                    executionProcessor,
-                    DBDebuggerType.NONE,
-                    () -> Progress.prompt(project, "Executing " + executionResult.getExecutionProcessor().getStatementName(), true,
-                            (progress) -> {
-                                try {
-                                    executionProcessor.execute();
-                                } catch (SQLException ex) {
-                                    NotificationUtil.sendErrorNotification(project, "Error executing statement", ex.getMessage());
-                                }
-                            }));
-        }
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull StatementExecutionCursorResult executionResult) {
+        StatementExecutionCursorProcessor executionProcessor = executionResult.getExecutionProcessor();
+        StatementExecutionManager statementExecutionManager = StatementExecutionManager.getInstance(project);
+        statementExecutionManager.promptExecutionDialog(
+                executionProcessor,
+                DBDebuggerType.NONE,
+                () -> Progress.prompt(project, "Executing " + executionResult.getExecutionProcessor().getStatementName(), true,
+                        (progress) -> {
+                            try {
+                                executionProcessor.execute();
+                            } catch (SQLException ex) {
+                                NotificationUtil.sendErrorNotification(project, "Error executing statement", ex.getMessage());
+                            }
+                        }));
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable StatementExecutionCursorResult executionResult) {
         boolean visible = false;
-        StatementExecutionCursorResult executionResult = getExecutionResult(e);
         if (Failsafe.check(executionResult)) {
             StatementExecutionCursorProcessor executionProcessor = executionResult.getExecutionProcessor();
             if (Failsafe.check(executionProcessor)) {

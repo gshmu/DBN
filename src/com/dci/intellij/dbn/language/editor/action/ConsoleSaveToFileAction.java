@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.language.editor.action;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -15,7 +17,6 @@ import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.fileChooser.FileSaverDescriptor;
 import com.intellij.openapi.fileChooser.FileSaverDialog;
 import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWrapper;
@@ -23,18 +24,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.ensureProject;
-import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
-
-public class ConsoleSaveToFileAction extends DumbAwareAction {
+public class ConsoleSaveToFileAction extends DumbAwareProjectAction {
     ConsoleSaveToFileAction() {
-        super("Save to file", "Save console to file", Icons.CODE_EDITOR_SAVE_TO_FILE);
+        super("Save to File", "Save console to file", Icons.CODE_EDITOR_SAVE_TO_FILE);
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ensureProject(e);
-        VirtualFile virtualFile = getVirtualFile(e);
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
+        VirtualFile virtualFile = Lookup.getVirtualFile(e);
         if (virtualFile instanceof DBConsoleVirtualFile) {
             final DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
 
@@ -67,19 +64,12 @@ public class ConsoleSaveToFileAction extends DumbAwareAction {
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        super.update(e);
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
+        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        boolean visible = virtualFile instanceof DBConsoleVirtualFile && !DatabaseDebuggerManager.isDebugConsole(virtualFile);
+
         Presentation presentation = e.getPresentation();
-        presentation.setText("Save to File");
-        VirtualFile virtualFile = getVirtualFile(e);
-        presentation.setVisible(virtualFile instanceof DBConsoleVirtualFile);
         presentation.setEnabled(true);
-        presentation.setVisible(isVisible(e));
+        presentation.setVisible(visible);
     }
-
-    public static boolean isVisible(AnActionEvent e) {
-        VirtualFile virtualFile = getVirtualFile(e);
-        return virtualFile instanceof DBConsoleVirtualFile && !DatabaseDebuggerManager.isDebugConsole(virtualFile);
-    }
-
 }

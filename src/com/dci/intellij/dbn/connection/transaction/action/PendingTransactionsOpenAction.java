@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class PendingTransactionsOpenAction extends AbstractConnectionAction {
 
@@ -14,15 +15,13 @@ public class PendingTransactionsOpenAction extends AbstractConnectionAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        Project project = connectionHandler.getProject();
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
         DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
         transactionManager.showPendingTransactionsDialog(connectionHandler, null);
     }
 
     @Override
-    public void update(AnActionEvent e) {
-        e.getPresentation().setEnabled(getConnectionHandler().hasUncommittedChanges());
+    protected void update(@NotNull AnActionEvent e, Project project, @NotNull ConnectionHandler connectionHandler) {
+        e.getPresentation().setEnabled(connectionHandler.hasUncommittedChanges());
     }
 }

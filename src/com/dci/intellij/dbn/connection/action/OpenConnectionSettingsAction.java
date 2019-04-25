@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -15,9 +14,8 @@ public class OpenConnectionSettingsAction extends AbstractConnectionAction {
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.ensureProject(e);
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
         ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
-        settingsManager.openConnectionSettings(getConnectionHandler().getConnectionId());
+        settingsManager.openConnectionSettings(connectionHandler.getConnectionId());
     }
 }

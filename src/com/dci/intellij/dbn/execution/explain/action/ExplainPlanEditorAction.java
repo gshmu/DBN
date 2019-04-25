@@ -1,6 +1,9 @@
 package com.dci.intellij.dbn.execution.explain.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.Lookup;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -10,7 +13,6 @@ import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
@@ -20,14 +22,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.*;
+public class ExplainPlanEditorAction extends DumbAwareProjectAction {
 
-public class ExplainPlanEditorAction extends AnAction {
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ensureProject(e);
-        Editor editor = getEditor(e);
-        if (editor != null) {
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
+        Editor editor = Lookup.getEditor(e);
+        if (Failsafe.check(editor)) {
             FileEditor fileEditor = EditorUtil.getFileEditor(editor);
             ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
             if (fileEditor != null && executable != null && executable.is(ElementTypeAttribute.DATA_MANIPULATION)) {
@@ -38,7 +38,7 @@ public class ExplainPlanEditorAction extends AnAction {
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         Presentation presentation = e.getPresentation();
         presentation.setIcon(Icons.STMT_EXECUTION_EXPLAIN);
         presentation.setText("Explain Plan for Statement");
@@ -46,9 +46,8 @@ public class ExplainPlanEditorAction extends AnAction {
         boolean visible = false;
         boolean enabled = false;
 
-        Project project = getProject(e);
-        Editor editor = getEditor(e);
-        if (project != null && editor != null) {
+        Editor editor = Lookup.getEditor(e);
+        if (editor != null) {
             PsiFile psiFile = PsiUtil.getPsiFile(project, editor.getDocument());
             if (psiFile instanceof DBLanguagePsiFile) {
                 DBLanguagePsiFile languagePsiFile = (DBLanguagePsiFile) psiFile;
@@ -69,7 +68,7 @@ public class ExplainPlanEditorAction extends AnAction {
     }
 
     public static boolean isVisible(AnActionEvent e) {
-        VirtualFile virtualFile = getVirtualFile(e);
+        VirtualFile virtualFile = Lookup.getVirtualFile(e);
         return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
     }
 }

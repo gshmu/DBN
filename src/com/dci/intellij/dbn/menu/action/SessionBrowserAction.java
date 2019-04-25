@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.menu.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -10,22 +10,19 @@ import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.editor.session.SessionBrowserManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import org.jetbrains.annotations.NotNull;
 
-public class SessionBrowserAction extends DumbAwareAction {
+public class SessionBrowserAction extends DumbAwareProjectAction {
     public SessionBrowserAction() {
         super("Open Session Browser...", null, Icons.FILE_SESSION_BROWSER);
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         //FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.popup.file");
-        Project project = ActionUtil.ensureProject(e);
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
 
@@ -71,22 +68,13 @@ public class SessionBrowserAction extends DumbAwareAction {
         }
 
         @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
-            openSessionBrowser(getConnectionHandler());
+        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
+            openSessionBrowser(connectionHandler);
         }
     }
 
     private static void openSessionBrowser(ConnectionHandler connectionHandler) {
         SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(connectionHandler.getProject());
         sessionBrowserManager.openSessionBrowser(connectionHandler);
-    }
-
-
-    @Override
-    public void update(@NotNull AnActionEvent e) {
-        Presentation presentation = e.getPresentation();
-        Project project = ActionUtil.getProject(e);
-        presentation.setEnabled(project != null);
-        presentation.setIcon(Icons.FILE_SESSION_BROWSER);
     }
 }

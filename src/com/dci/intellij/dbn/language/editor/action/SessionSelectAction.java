@@ -1,21 +1,20 @@
 package com.dci.intellij.dbn.language.editor.action;
 
+import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.*;
-
-public class SessionSelectAction extends DumbAwareAction {
+public class SessionSelectAction extends DumbAwareProjectAction {
     private DatabaseSession session;
-    public SessionSelectAction(DatabaseSession session) {
+    SessionSelectAction(DatabaseSession session) {
         super(session.getName(), null, session.getIcon());
         this.session = session;
     }
@@ -28,9 +27,8 @@ public class SessionSelectAction extends DumbAwareAction {
 
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ensureProject(e);
-        Editor editor = getEditor(e);
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
+        Editor editor = Lookup.getEditor(e);
         if (editor != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             connectionMappingManager.setDatabaseSession(editor, session);
@@ -38,12 +36,10 @@ public class SessionSelectAction extends DumbAwareAction {
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        super.update(e);
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         boolean enabled = false;
-        Project project = getProject(e);
-        VirtualFile virtualFile = getVirtualFile(e);
-        if (project != null &&  virtualFile != null) {
+        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        if (virtualFile != null) {
             if (virtualFile instanceof DBEditableObjectVirtualFile) {
                 enabled = false;
             } else {

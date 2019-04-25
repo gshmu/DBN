@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.filter.name.action;
 
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterManager;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
@@ -17,13 +16,8 @@ public class CreateFilterForObjectTypeAction extends ObjectNameFilterAction{
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.ensureProject(e);
-        ObjectNameFilterManager.getInstance(project).createFilter(objectType, settingsForm);
-    }
-
-    @Override
-    public void update(@NotNull AnActionEvent e) {
-
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
+        ObjectNameFilterManager filterManager = ObjectNameFilterManager.getInstance(project);
+        filterManager.createFilter(objectType, settingsForm);
     }
 }
