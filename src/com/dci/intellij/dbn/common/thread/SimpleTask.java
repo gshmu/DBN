@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.thread;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.intellij.openapi.progress.ProcessCanceledException;
 
 @Deprecated
 public abstract class SimpleTask<T> extends AbstractTask<T>{
@@ -19,13 +19,13 @@ public abstract class SimpleTask<T> extends AbstractTask<T>{
     @Override
     public void run() {
         trace(this);
-        Failsafe.guarded(() -> {
+        try {
             if (canExecute()) {
                 execute();
             } else {
                 cancel();
             }
-        });
+        } catch (ProcessCanceledException ignore) {}
     }
 
     protected abstract void execute();

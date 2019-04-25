@@ -13,6 +13,7 @@ import com.intellij.openapi.components.NamedComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.ui.UIUtil;
@@ -77,14 +78,14 @@ public class Disposer {
 
     private static void dispose(@Nullable Disposable disposable) {
         if (disposable != null) {
-            Failsafe.guarded(() -> {
+            try {
                 if (disposable instanceof RegisteredDisposable) {
                     // dispose tree
                     com.intellij.openapi.util.Disposer.dispose(disposable);
                 } else {
                     disposable.dispose();
                 }
-            });
+            } catch (ProcessCanceledException ignore) {}
         }
     }
 

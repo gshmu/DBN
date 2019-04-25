@@ -29,6 +29,7 @@ import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
@@ -250,7 +251,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Override
     public void notifyChangeListeners() {
-        Failsafe.guarded(() -> {
+        try {
             Project project = getProject();
             BrowserTreeNode treeParent = getParent();
             if (isNot(INTERNAL) && isTouched() && Failsafe.check(project) && treeParent.isTreeStructureLoaded()) {
@@ -258,7 +259,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
                         BrowserTreeEventListener.TOPIC,
                         (listener) -> listener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED));
             }
-        });
+        } catch (ProcessCanceledException ignore) {}
     }
 
     /*********************************************************
@@ -330,10 +331,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Override
     public List<? extends BrowserTreeNode> getChildren() {
-        if (isLoading() || isDisposed()) {
-            return elements;
-        } else {
-            return Failsafe.guarded(Collections.emptyList(), () -> {
+        try {
+            if (!isLoading() && !isDisposed()) {
                 boolean scroll = !isTouched();
                 if (!isLoaded() || isDirty()) {
                     loadInBackground();
@@ -344,9 +343,10 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     DatabaseBrowserManager.scrollToSelectedElement(connectionHandler);
                 }
-                return elements;
-            });
-        }
+            }
+        } catch (ProcessCanceledException ignore) {}
+
+        return elements;
     }
 
     @Override

@@ -48,6 +48,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -115,7 +116,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
         @Override
         public void transactionCompleted(@NotNull Document document, @NotNull PsiFile file) {
-            Failsafe.guarded(() -> {
+            try {
                 Project project = file.getProject();
                 VirtualFile virtualFile = file.getVirtualFile();
                 if (virtualFile.isInLocalFileSystem()) {
@@ -132,7 +133,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                         }
                     }
                 }
-            });
+            } catch (ProcessCanceledException ignore) {}
         }
     };
 

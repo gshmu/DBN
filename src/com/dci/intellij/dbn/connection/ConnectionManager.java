@@ -41,6 +41,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -60,10 +61,7 @@ import java.util.stream.Collectors;
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
-import static com.dci.intellij.dbn.common.util.MessageUtil.options;
-import static com.dci.intellij.dbn.common.util.MessageUtil.showErrorDialog;
-import static com.dci.intellij.dbn.common.util.MessageUtil.showInfoDialog;
-import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
+import static com.dci.intellij.dbn.common.util.MessageUtil.*;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
 
 @State(
@@ -465,7 +463,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
 
         private void resolveIdleStatus(ConnectionHandler connectionHandler) {
-            Failsafe.guarded(() -> {
+            try {
                 List<TransactionAction> actions = actions(TransactionAction.DISCONNECT_IDLE);
 
                 Failsafe.nd(connectionHandler);
@@ -490,7 +488,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                                 }
                             }
                         });
-            });
+            } catch (ProcessCanceledException ignore) {}
         }
     }
 

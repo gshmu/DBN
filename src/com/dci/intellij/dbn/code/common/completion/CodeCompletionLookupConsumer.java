@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.code.common.lookup.BasicLookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.IdentifierLookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.VariableLookupItemBuilder;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -18,6 +17,7 @@ import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +34,7 @@ public class CodeCompletionLookupConsumer implements LookupConsumer {
     @Override
     public void consume(Object object) throws ConsumerStoppedException {
         check();
-        Failsafe.guarded(() -> {
+        try {
             LookupItemBuilder lookupItemBuilder = null;
             DBLanguage language = context.getLanguage();
             if (object instanceof DBObject) {
@@ -86,8 +86,7 @@ public class CodeCompletionLookupConsumer implements LookupConsumer {
             if (lookupItemBuilder != null) {
                 lookupItemBuilder.createLookupItem(object, this);
             }
-        });
-
+        } catch (ProcessCanceledException ignore) {}
     }
 
     @Override

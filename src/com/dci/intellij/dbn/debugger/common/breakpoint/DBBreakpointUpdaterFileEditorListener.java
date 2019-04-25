@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.debugger.common.breakpoint;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebuggerManager;
 import com.intellij.xdebugger.breakpoints.XBreakpoint;
@@ -26,7 +26,7 @@ public class DBBreakpointUpdaterFileEditorListener implements FileEditorManagerL
     public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
         if (file instanceof DBEditableObjectVirtualFile) {
             DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
-            Failsafe.guarded(() -> {
+            try {
                 XDebuggerManager debuggerManager = XDebuggerManager.getInstance(source.getProject());
                 XBreakpointManagerImpl breakpointManager = (XBreakpointManagerImpl) debuggerManager.getBreakpointManager();
                 for (XBreakpoint breakpoint : breakpointManager.getAllBreakpoints()) {
@@ -40,7 +40,7 @@ public class DBBreakpointUpdaterFileEditorListener implements FileEditorManagerL
                         }
                     }
                 }
-            });
+            } catch (ProcessCanceledException ignore) {}
         }
     }
 
