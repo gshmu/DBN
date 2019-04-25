@@ -33,6 +33,7 @@ import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.QuotePair;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.navigation.psi.DBConnectionPsiDirectory;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
@@ -56,7 +57,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private ConnectionSettings connectionSettings;
-    private ConnectionBundle connectionBundle;
+    private WeakRef<ConnectionBundle> connectionBundleRef;
     private ConnectionHandlerStatusHolder connectionStatus;
     private ConnectionPool connectionPool;
     private DatabaseInterfaceProvider interfaceProvider;
@@ -83,11 +84,11 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private Latent<DBConnectionPsiDirectory> psiDirectory = Latent.basic(() -> new DBConnectionPsiDirectory(this));
 
     private Latent<DBObjectBundle> objectBundle =
-            Latent.disposable(this, () -> new DBObjectBundleImpl(this, connectionBundle));
+            Latent.disposable(this, () -> new DBObjectBundleImpl(this, getConnectionBundle()));
 
 
     ConnectionHandlerImpl(ConnectionBundle connectionBundle, ConnectionSettings connectionSettings) {
-        this.connectionBundle = connectionBundle;
+        this.connectionBundleRef = WeakRef.from(connectionBundle);
         this.connectionSettings = connectionSettings;
         this.enabled = connectionSettings.isActive();
         ref = new ConnectionHandlerRef(this);
@@ -153,6 +154,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     @Override
     public boolean canConnect() {
+        ConnectionSettings connectionSettings = getSettings();
         if (isDisposed() || !connectionSettings.isActive()) {
             return false;
         }
@@ -182,12 +184,13 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @Override
     @NotNull
     public ConnectionBundle getConnectionBundle() {
-        return Failsafe.nn(connectionBundle);
+        return connectionBundleRef.ensure();
     }
 
+    @NotNull
     @Override
     public ConnectionSettings getSettings() {
-        return connectionSettings;
+        return Failsafe.nn(connectionSettings);
     }
 
     @Override
@@ -239,23 +242,23 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     @Override
     public DatabaseType getDatabaseType() {
-        return connectionSettings.getDatabaseSettings().getDatabaseType();
+        return getSettings().getDatabaseSettings().getDatabaseType();
     }
 
     @Override
     public double getDatabaseVersion() {
-        return connectionSettings.getDatabaseSettings().getDatabaseVersion();
+        return getSettings().getDatabaseSettings().getDatabaseVersion();
     }
 
     @Override
     public Filter<BrowserTreeNode> getObjectTypeFilter() {
-        return connectionSettings.getFilterSettings().getObjectTypeFilterSettings().getElementFilter();
+        return getSettings().getFilterSettings().getObjectTypeFilterSettings().getElementFilter();
     }
 
     @NotNull
     @Override
     public EnvironmentType getEnvironmentType() {
-        return connectionSettings.getDetailSettings().getEnvironmentType();
+        return getSettings().getDetailSettings().getEnvironmentType();
     }
 
     @Override
@@ -305,12 +308,12 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     @Override
     public boolean isAutoCommit() {
-        return connectionSettings.getPropertiesSettings().isEnableAutoCommit();
+        return getSettings().getPropertiesSettings().isEnableAutoCommit();
     }
 
     @Override
     public boolean isLoggingEnabled() {
-        return connectionSettings.getDetailSettings().isEnableDatabaseLogging();
+        return getSettings().getDetailSettings().isEnableDatabaseLogging();
     }
 
     @Override
@@ -320,12 +323,12 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     @Override
     public void setLoggingEnabled(boolean loggingEnabled) {
-        connectionSettings.getDetailSettings().setEnableDatabaseLogging(loggingEnabled);
+        getSettings().getDetailSettings().setEnableDatabaseLogging(loggingEnabled);
     }
 
     @Override
     public void setAutoCommit(boolean autoCommit) {
-        connectionSettings.getPropertiesSettings().setEnableAutoCommit(autoCommit);
+        getSettings().getPropertiesSettings().setEnableAutoCommit(autoCommit);
     }
 
     @Override
@@ -339,12 +342,12 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     @Override
     public ConnectionId getConnectionId() {
-        return connectionSettings.getConnectionId();
+        return getSettings().getConnectionId();
     }
 
     @Override
     public String getUserName() {
-        return CommonUtil.nvl(connectionSettings.getDatabaseSettings().getAuthenticationInfo().getUser(), "");
+        return CommonUtil.nvl(getSettings().getDatabaseSettings().getAuthenticationInfo().getUser(), "");
     }
 
     @Override
@@ -549,17 +552,17 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @Override
     @NotNull
     public String getName() {
-        return connectionSettings.getDatabaseSettings().getName();
+        return getSettings().getDatabaseSettings().getName();
     }
 
     @Override
     public String getDescription() {
-        return connectionSettings.getDatabaseSettings().getDescription();
+        return getSettings().getDatabaseSettings().getDescription();
     }
 
     @Override
     public String getPresentableText(){
-        return connectionSettings.getDatabaseSettings().getName();
+        return getSettings().getDatabaseSettings().getName();
     }
 
     @Override
