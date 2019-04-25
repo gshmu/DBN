@@ -47,6 +47,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -199,7 +200,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
     @Nullable
     public ConnectionHandler getConnectionHandler(@NotNull VirtualFile virtualFile) {
-        return Failsafe.guarded(null, () -> {
+        try {
             Project project = getProject();
             if (virtualFile instanceof LightVirtualFile) {
                 ConnectionHandlerRef connectionHandlerRef = virtualFile.getUserData(CONNECTION_HANDLER);
@@ -251,8 +252,9 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                 }
                 return ConnectionHandlerRef.get(connectionHandlerRef);
             }
-            return null;
-        });
+        } catch (ProcessCanceledException ignore) {}
+
+        return null;
     }
 
     @Nullable

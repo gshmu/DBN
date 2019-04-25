@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -45,29 +46,31 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
     @Override
     @Nullable
     protected PsiFile getPsiInner(@NotNull Language language) {
-        if (language instanceof DBLanguage || language instanceof DBLanguageDialect) {
-            VirtualFile virtualFile = getVirtualFile();
-            if (virtualFile instanceof DBObjectVirtualFile) {
-                return Failsafe.guarded(null, () -> {
+        try {
+            if (language instanceof DBLanguage || language instanceof DBLanguageDialect) {
+                VirtualFile virtualFile = getVirtualFile();
+                if (virtualFile instanceof DBObjectVirtualFile) {
                     DBObjectVirtualFile objectFile = (DBObjectVirtualFile) virtualFile;
                     DBObject object = objectFile.getObject();
                     return DBObjectPsiFacade.getPsiFile(object);
-                });
-            }
-
-            Language baseLanguage = getBaseLanguage();
-            PsiFile psiFile = super.getPsiInner(baseLanguage);
-            if (psiFile == null) {
-                DBParseableVirtualFile parseableFile = getParseableFile(virtualFile);
-                if (parseableFile != null) {
-                    parseableFile.initializePsiFile(this, language);
                 }
-            } else {
-                return psiFile;
-            }
-        }
 
-        return super.getPsiInner(language);
+                Language baseLanguage = getBaseLanguage();
+                PsiFile psiFile = super.getPsiInner(baseLanguage);
+                if (psiFile == null) {
+                    DBParseableVirtualFile parseableFile = getParseableFile(virtualFile);
+                    if (parseableFile != null) {
+                        parseableFile.initializePsiFile(this, language);
+                    }
+                } else {
+                    return psiFile;
+                }
+            }
+
+            return super.getPsiInner(language);
+        } catch (ProcessCanceledException ignore) {
+            return null;
+        }
     }
 
     @NotNull
@@ -81,7 +84,9 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
             file = (DBLanguagePsiFile) parserDefinition.createFile(this);
             forceCachedPsi(file);
             Document document = DocumentUtil.getDocument(file);// cache hard reference to document (??)
-            FileDocumentManagerImpl.registerDocument(document, getVirtualFile());
+            if (Failsafe.check(document)) {
+                FileDocumentManagerImpl.registerDocument(document, getVirtualFile());
+            }
         }
         return file;
     }

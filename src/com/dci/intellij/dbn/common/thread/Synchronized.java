@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.thread;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 
 public interface Synchronized {
@@ -17,16 +17,16 @@ public interface Synchronized {
     }
 
     static void sync(@NotNull String syncKey, Runnable runnable) {
-        Failsafe.guarded(() -> {
-            try {
-                Object syncObject = SYNC_OBJECT_PROVIDER.get(syncKey);
-                synchronized (syncObject) {
-                    runnable.run();
-                }
-            } finally {
-                SYNC_OBJECT_PROVIDER.release(syncKey);
+        try {
+            Object syncObject = SYNC_OBJECT_PROVIDER.get(syncKey);
+            synchronized (syncObject) {
+                runnable.run();
             }
-        });
+        }
+        catch (ProcessCanceledException ignore) {}
+        finally {
+            SYNC_OBJECT_PROVIDER.release(syncKey);
+        }
     }
 
     @FunctionalInterface

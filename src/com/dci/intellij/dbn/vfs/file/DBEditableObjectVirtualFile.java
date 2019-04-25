@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.vfs.file;
 
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -28,6 +26,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Key;
@@ -194,12 +193,13 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     @Override
     @NotNull
     public FileType getFileType() {
-        return Failsafe.guarded(SQLFileType.INSTANCE, () -> {
+        try {
             DBSchemaObject object = getObject();
             DDLFileManager ddlFileManager = DDLFileManager.getInstance(object.getProject());
             DDLFileType type =  ddlFileManager.getDDLFileType(object.getObjectType(), getMainContentType());
             return type == null ? SQLFileType.INSTANCE : type.getLanguageFileType();
-        });
+        } catch (ProcessCanceledException ignore) {}
+        return SQLFileType.INSTANCE;
     }
 
     @Override
@@ -236,9 +236,7 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
                         return (T) document;
                     }
                 }
-            } catch (AlreadyDisposedException e) {
-
-            }
+            } catch (ProcessCanceledException ignore) {}
         }
         return super.getUserData(key);
     }

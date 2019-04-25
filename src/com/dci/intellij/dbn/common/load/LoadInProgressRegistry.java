@@ -3,10 +3,10 @@ package com.dci.intellij.dbn.common.load;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.intellij.openapi.progress.ProcessCanceledException;
 
 import java.util.List;
 import java.util.Timer;
@@ -33,18 +33,15 @@ public abstract class LoadInProgressRegistry<T extends Disposable> extends Dispo
         @Override
         public void run() {
             for (T node : nodes) {
-                Failsafe.guarded(
-                        () -> {
-                            if (node.isDisposed()) {
-                                nodes.remove(node);
-                            } else {
-                                LoadInProgressRegistry.this.notify(node);
-                            }
-                        },
-                        () -> {
-                            nodes.remove(node);
-                        }
-                );
+                try {
+                    if (node.isDisposed()) {
+                        nodes.remove(node);
+                    } else {
+                        LoadInProgressRegistry.this.notify(node);
+                    }
+                } catch (ProcessCanceledException ignore) {
+                    nodes.remove(node);
+                }
             }
 
             if (nodes.isEmpty()) {

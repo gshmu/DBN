@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.object.filter.name.ui;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.object.filter.name.CompoundFilterCondition;
 import com.dci.intellij.dbn.object.filter.name.FilterCondition;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilter;
 import com.dci.intellij.dbn.object.filter.name.SimpleNameFilterCondition;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
@@ -16,7 +16,7 @@ import java.util.List;
 class FilterSettingsTreeCellRenderer extends ColoredTreeCellRenderer{
     @Override
     public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-        Failsafe.guarded(() -> {
+        try {
             if (value instanceof ObjectNameFilter) {
                 ObjectNameFilter condition = (ObjectNameFilter) value;
                 append(condition.getObjectType().getName().toUpperCase(), SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
@@ -50,6 +50,6 @@ class FilterSettingsTreeCellRenderer extends ColoredTreeCellRenderer{
                     }
                 }
             }
-        });
+        } catch (ProcessCanceledException ignore) {}
     }
 }
