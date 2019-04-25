@@ -87,8 +87,8 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
     }
 
     public void disposeInner(){
-        super.dispose();
         Disposer.dispose(component);
+        super.dispose();
         DisposableProjectComponent.super.disposeInner();
     };
 
