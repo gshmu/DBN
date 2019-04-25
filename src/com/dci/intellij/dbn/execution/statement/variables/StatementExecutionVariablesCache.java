@@ -11,6 +11,7 @@ import gnu.trove.THashSet;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,33 +28,35 @@ public class StatementExecutionVariablesCache implements PersistentStateElement 
         return projectRef.ensure();
     }
 
-    public Set<StatementExecutionVariable> getVariables(VirtualFile virtualFile) {
-        String fileUrl = virtualFile.getUrl();
-        Set<StatementExecutionVariable> fileVariables = this.fileVariablesMap.get(fileUrl);
-        if (fileVariables == null) {
-            fileVariables = new THashSet<StatementExecutionVariable>();
-            this.fileVariablesMap.put(fileUrl, fileVariables);
+    public Set<StatementExecutionVariable> getVariables(@Nullable VirtualFile virtualFile) {
+        if (virtualFile != null) {
+            String fileUrl = virtualFile.getUrl();
+            return fileVariablesMap.computeIfAbsent(fileUrl, s -> new THashSet<>());
         }
-        return fileVariables;
+        return Collections.emptySet();
     }
 
-    public void cacheVariable(VirtualFile virtualFile, StatementExecutionVariable executionVariable) {
-        Set<StatementExecutionVariable> variables = getVariables(virtualFile);
-        for (StatementExecutionVariable variable : variables) {
-            if (variable.getName().equals(executionVariable.getName())) {
-                variable.setValue(executionVariable.getValue());
-                return;
+    public void cacheVariable(@Nullable VirtualFile virtualFile, StatementExecutionVariable executionVariable) {
+        if (virtualFile != null) {
+            Set<StatementExecutionVariable> variables = getVariables(virtualFile);
+            for (StatementExecutionVariable variable : variables) {
+                if (variable.getName().equals(executionVariable.getName())) {
+                    variable.setValue(executionVariable.getValue());
+                    return;
+                }
             }
+            variables.add(new StatementExecutionVariable(executionVariable));
         }
-        variables.add(new StatementExecutionVariable(executionVariable));
     }
 
     @Nullable
-    public StatementExecutionVariable getVariable(VirtualFile virtualFile, String name) {
-        Set<StatementExecutionVariable> variables = getVariables(virtualFile);
-        for (StatementExecutionVariable variable : variables) {
-            if (variable.getName().equalsIgnoreCase(name)) {
-                return variable;
+    public StatementExecutionVariable getVariable(@Nullable VirtualFile virtualFile, String name) {
+        if (virtualFile != null) {
+            Set<StatementExecutionVariable> variables = getVariables(virtualFile);
+            for (StatementExecutionVariable variable : variables) {
+                if (variable.getName().equalsIgnoreCase(name)) {
+                    return variable;
+                }
             }
         }
         return null;

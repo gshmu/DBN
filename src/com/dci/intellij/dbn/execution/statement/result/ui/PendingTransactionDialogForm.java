@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.statement.result.ui;
 
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -50,10 +51,13 @@ public class PendingTransactionDialogForm extends DBNFormImpl<PendingTransaction
         hintTextPane.setFont(mainPanel.getFont());
         hintTextPane.setText(text);
 
+        String headerName = executionProcessor.getName();
+        Icon headerIcon = executionProcessor.getIcon();
+
         DBLanguagePsiFile psiFile = executionProcessor.getPsiFile();
-        String headerName = psiFile.getName();
-        Icon headerIcon = psiFile.getIcon();
-        JBColor headerColor = psiFile.getEnvironmentType().getColor();
+        JBColor headerColor = psiFile == null ?
+                EnvironmentType.DEFAULT.getColor() :
+                psiFile.getEnvironmentType().getColor();
         DBNHeaderForm headerForm = new DBNHeaderForm(headerName, headerIcon, headerColor, this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 

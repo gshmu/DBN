@@ -111,7 +111,8 @@ public class StatementExecutionInput extends LocalExecutionInput {
             SchemaId currentSchema = getTargetSchemaId();
             if (connectionHandler != null) {
                 executablePsiElement = Read.call(() -> {
-                    DBLanguageDialect languageDialect = executionProcessor.getPsiFile().getLanguageDialect();
+                    DBLanguagePsiFile psiFile = Failsafe.nn(executionProcessor.getPsiFile());
+                    DBLanguageDialect languageDialect = psiFile.getLanguageDialect();
                     DBLanguagePsiFile previewFile = DBLanguagePsiFile.createFromText(
                             getProject(),
                             "preview",

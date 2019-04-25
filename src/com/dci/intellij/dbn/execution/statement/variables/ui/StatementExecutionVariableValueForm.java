@@ -64,7 +64,6 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
         Project project = executionProcessor.getProject();
         StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
         StatementExecutionVariablesCache variablesCache = executionManager.getVariablesCache();
-        VirtualFile virtualFile = executionProcessor.getVirtualFile();
 
         editorComponent = new TextFieldWithPopup(project);
         editorComponent.createCalendarPopup(false);
@@ -77,6 +76,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
             @Override
             public List<String> getValues() {
                 List<String> values = new ArrayList<>();
+                VirtualFile virtualFile = executionProcessor.getVirtualFile();
                 Set<StatementExecutionVariable> variables = variablesCache.getVariables(virtualFile);
                 for (StatementExecutionVariable executionVariable : variables) {
                     if (executionVariable.getName().equals(variable.getName())) {
@@ -106,6 +106,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl<StatementEx
         JTextField textField = editorComponent.getTextField();
         String value = variable.getValue();
         if (StringUtil.isEmpty(value)) {
+            VirtualFile virtualFile = executionProcessor.getVirtualFile();
             StatementExecutionVariable cachedVariable = variablesCache.getVariable(virtualFile, variable.getName());
             if (cachedVariable != null) {
                 textField.setForeground(UIUtil.getLabelDisabledForeground());

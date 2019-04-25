@@ -181,12 +181,14 @@ public class MessagesTree extends DBNTree implements Disposable {
                 StatementExecutionProcessor executionProcessor = executionResult.getExecutionProcessor();
                 EditorProviderId editorProviderId = executionProcessor.getEditorProviderId();
                 VirtualFile virtualFile = executionProcessor.getVirtualFile();
-                FileEditor fileEditor = executionProcessor.getFileEditor();
-                fileEditor = EditorUtil.selectEditor(getProject(), fileEditor, virtualFile, editorProviderId, instruction);
-                if (fileEditor != null) {
-                    ExecutablePsiElement cachedExecutable = executionProcessor.getCachedExecutable();
-                    if (cachedExecutable != null) {
-                        cachedExecutable.navigateInEditor(fileEditor, instruction);
+                if (virtualFile != null) {
+                    FileEditor fileEditor = executionProcessor.getFileEditor();
+                    fileEditor = EditorUtil.selectEditor(getProject(), fileEditor, virtualFile, editorProviderId, instruction);
+                    if (fileEditor != null) {
+                        ExecutablePsiElement cachedExecutable = executionProcessor.getCachedExecutable();
+                        if (cachedExecutable != null) {
+                            cachedExecutable.navigateInEditor(fileEditor, instruction);
+                        }
                     }
                 }
             }
