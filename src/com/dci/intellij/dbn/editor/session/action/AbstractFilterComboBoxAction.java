@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.session.action;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
@@ -22,8 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.List;
-
-import static com.dci.intellij.dbn.common.util.ActionUtil.getFileEditor;
 
 public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction implements DumbAware {
     private SessionBrowserFilterType filterType;
@@ -96,7 +95,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction imp
     public static SessionBrowser getSessionBrowser(AnActionEvent e) {
         SessionBrowser sessionBrowser = e.getData((DataKeys.SESSION_BROWSER));
         if (sessionBrowser == null) {
-            FileEditor fileEditor = getFileEditor(e);
+            FileEditor fileEditor = Lookup.getFileEditor(e);
             if (fileEditor instanceof SessionBrowser) {
                 sessionBrowser = (SessionBrowser) fileEditor;
             }

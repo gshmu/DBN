@@ -1,11 +1,14 @@
 package com.dci.intellij.dbn.editor.data.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.DatasetLoadInstructions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
 
@@ -18,21 +21,17 @@ public class ReloadDataAction extends AbstractDataEditorAction {
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        DatasetEditor datasetEditor = getDatasetEditor(e);
-        if (datasetEditor != null) {
-            datasetEditor.loadData(LOAD_INSTRUCTIONS);
-        }
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DatasetEditor datasetEditor) {
+        datasetEditor.loadData(LOAD_INSTRUCTIONS);
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable DatasetEditor datasetEditor) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Reload");
-        DatasetEditor datasetEditor = getDatasetEditor(e);
 
         boolean enabled =
-                datasetEditor != null &&
+                Failsafe.check(datasetEditor) &&
                 datasetEditor.isLoaded() &&
                 !datasetEditor.isInserting() &&
                 !datasetEditor.isLoading();

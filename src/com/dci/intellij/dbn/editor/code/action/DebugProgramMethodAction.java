@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.editor.code.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
@@ -25,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.util.ActionUtil.SEPARATOR;
-import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class DebugProgramMethodAction extends GroupPopupAction {
     public DebugProgramMethodAction() {
@@ -67,13 +67,13 @@ public class DebugProgramMethodAction extends GroupPopupAction {
     }
 
     @Nullable
-    protected DBSourceCodeVirtualFile getSourcecodeFile(AnActionEvent e) {
-        VirtualFile virtualFile = getVirtualFile(e);
+    private DBSourceCodeVirtualFile getSourcecodeFile(AnActionEvent e) {
+        VirtualFile virtualFile = Lookup.getVirtualFile(e);
         return virtualFile instanceof DBSourceCodeVirtualFile ? (DBSourceCodeVirtualFile) virtualFile : null;
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
         boolean visible = false;
@@ -89,20 +89,15 @@ public class DebugProgramMethodAction extends GroupPopupAction {
     }
 
     public class RunMethodAction extends AnObjectAction<DBMethod> {
-        public RunMethodAction(DBMethod method) {
+        RunMethodAction(DBMethod method) {
             super(method);
         }
 
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
-            Project project = e.getProject();
-            DBMethod method = getObject();
-
-            if (project != null && method != null) {
-                DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
-                debuggerManager.startMethodDebugger(method);
-            }
+        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBMethod object) {
+            DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
+            debuggerManager.startMethodDebugger(object);
         }
     }
 }

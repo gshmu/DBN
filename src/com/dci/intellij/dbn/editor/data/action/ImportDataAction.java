@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.editor.data.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
@@ -10,6 +10,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ImportDataAction extends AbstractDataEditorAction {
 
@@ -18,20 +19,15 @@ public class ImportDataAction extends AbstractDataEditorAction {
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.ensureProject(e);
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DatasetEditor datasetEditor) {
         MessageUtil.showInfoDialog(project, "Not implemented", "Data import is not implemented yet.");
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable DatasetEditor datasetEditor) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Import Data");
-        DatasetEditor datasetEditor = getDatasetEditor(e);
-        Project project = e.getProject();
-        if (project == null || datasetEditor == null) {
-            presentation.setEnabled(false);
-        } else {
+        if (Failsafe.check(datasetEditor)) {
             EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
             boolean isEnvironmentReadonlyData = environmentManager.isReadonly(datasetEditor.getDataset(), DBContentType.DATA);
             presentation.setVisible(!isEnvironmentReadonlyData && !datasetEditor.isReadonlyData());
@@ -40,6 +36,8 @@ public class ImportDataAction extends AbstractDataEditorAction {
                     !datasetEditor.isReadonly() &&
                     !datasetEditor.isInserting();
             presentation.setEnabled(enabled);
+        } else {
+            presentation.setEnabled(false);
         }
     }
 }

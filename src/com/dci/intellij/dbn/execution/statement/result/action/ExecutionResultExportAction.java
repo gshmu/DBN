@@ -6,28 +6,25 @@ import com.dci.intellij.dbn.data.export.ui.ExportDataDialog;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ExecutionResultExportAction extends AbstractExecutionResultAction {
     public ExecutionResultExportAction() {
-        super("Export data", Icons.DATA_EXPORT);
+        super("Export Data", Icons.DATA_EXPORT);
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        StatementExecutionCursorResult executionResult = getExecutionResult(e);
-        if (Failsafe.check(executionResult)) {
-            ResultSetTable resultTable = executionResult.getResultTable();
-            if (Failsafe.check(resultTable)) {
-                ExportDataDialog dialog = new ExportDataDialog(resultTable, executionResult);
-                dialog.show();
-            }
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull StatementExecutionCursorResult executionResult) {
+        ResultSetTable resultTable = executionResult.getResultTable();
+        if (Failsafe.check(resultTable)) {
+            ExportDataDialog dialog = new ExportDataDialog(resultTable, executionResult);
+            dialog.show();
         }
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        super.update(e);
-        getTemplatePresentation().setText("Export Data");
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable StatementExecutionCursorResult executionResult) {
     }
 }

@@ -5,7 +5,9 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.dci.intellij.dbn.execution.explain.result.ui.ExplainPlanResultForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ExplainPlanResultCollapseAllAction extends AbstractExplainPlanResultAction {
     public ExplainPlanResultCollapseAllAction() {
@@ -13,19 +15,15 @@ public class ExplainPlanResultCollapseAllAction extends AbstractExplainPlanResul
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        ExplainPlanResult explainPlanResult = getExplainPlanResult(e);
-        if (Failsafe.check(explainPlanResult)) {
-            ExplainPlanResultForm resultForm = explainPlanResult.getForm();
-            if (Failsafe.check(resultForm)) {
-                resultForm.collapseAllNodes();
-            }
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ExplainPlanResult explainPlanResult) {
+        ExplainPlanResultForm resultForm = explainPlanResult.getForm();
+        if (Failsafe.check(resultForm)) {
+            resultForm.collapseAllNodes();
         }
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        super.update(e);
-        getTemplatePresentation().setText("Collapse All");
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable ExplainPlanResult explainPlanResult) {
     }
+
 }

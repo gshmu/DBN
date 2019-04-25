@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
@@ -23,8 +24,9 @@ public class SelectDatasetFilterComboBoxAction extends DBNComboBoxAction {
         presentation.setIcon(Icons.DATASET_FILTER_EMPTY);
     }
 
+    @NotNull
     @Override
-    public JComponent createCustomComponent(Presentation presentation) {
+    public JComponent createCustomComponent(@NotNull Presentation presentation) {
         return super.createCustomComponent(presentation);
     }
 
@@ -34,7 +36,7 @@ public class SelectDatasetFilterComboBoxAction extends DBNComboBoxAction {
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent button) {
         DataContext dataContext = DataManager.getInstance().getDataContext(button);
-        DatasetEditor datasetEditor = AbstractDataEditorAction.getDatasetEditor(dataContext);
+        DatasetEditor datasetEditor = DatasetEditor.get(dataContext);
 
         DefaultActionGroup actionGroup = new DefaultActionGroup();
         if (datasetEditor != null) {
@@ -56,15 +58,15 @@ public class SelectDatasetFilterComboBoxAction extends DBNComboBoxAction {
     }
 
     @Override
-    public void update(AnActionEvent e) {
-        DatasetEditor datasetEditor = AbstractDataEditorAction.getDatasetEditor(e);
+    public void update(@NotNull AnActionEvent e) {
+        DatasetEditor datasetEditor = DatasetEditor.get(e);
 
         Presentation presentation = e.getPresentation();
         boolean enabled =
-                datasetEditor != null &&
+                Failsafe.check(datasetEditor) &&
                 !datasetEditor.isInserting() &&
                 !datasetEditor.isLoading();
-        if (datasetEditor != null) {
+        if (Failsafe.check(datasetEditor)) {
             DBDataset dataset = datasetEditor.getDataset();
 
             DatasetFilterManager filterManager = DatasetFilterManager.getInstance(dataset.getProject());

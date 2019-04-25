@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.action.AnObjectAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class DebugMethodAction extends AnObjectAction<DBMethod> {
@@ -13,16 +14,13 @@ public class DebugMethodAction extends AnObjectAction<DBMethod> {
         super("Debug...", Icons.METHOD_EXECUTION_DEBUG, method);
     }
 
-    public DebugMethodAction(DBProgram program, DBMethod method) {
+    DebugMethodAction(DBProgram program, DBMethod method) {
         super(method);
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        DBMethod method = getObject();
-        if (method != null) {
-            DatabaseDebuggerManager executionManager = DatabaseDebuggerManager.getInstance(method.getProject());
-            executionManager.startMethodDebugger(method);
-        }
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBMethod object) {
+        DatabaseDebuggerManager executionManager = DatabaseDebuggerManager.getInstance(project);
+        executionManager.startMethodDebugger(object);
     }
 }

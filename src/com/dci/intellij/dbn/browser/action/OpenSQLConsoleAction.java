@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.browser.action;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
@@ -28,7 +28,7 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
     }
 
     private static ConnectionHandler getConnectionHandler(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
+        Project project = Lookup.getProject(e);
         if (project != null) {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
             return browserManager.getActiveConnection();
@@ -37,7 +37,7 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         Presentation presentation = e.getPresentation();
         ConnectionHandler connectionHandler = getConnectionHandler(e);
         presentation.setEnabled(connectionHandler != null);
@@ -67,7 +67,7 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
         private DBConsoleVirtualFile consoleVirtualFile;
         private DBConsoleType consoleType;
 
-        SelectConsoleAction(ConnectionHandler connectionHandler, @NotNull DBConsoleType consoleType) {
+        SelectConsoleAction(@NotNull ConnectionHandler connectionHandler, @NotNull DBConsoleType consoleType) {
             super("New " + consoleType.getName() + "...", connectionHandler);
             this.consoleType = consoleType;
         }
@@ -78,14 +78,12 @@ public class OpenSQLConsoleAction extends GroupPopupAction {
         }
 
         @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
+        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
             if (consoleVirtualFile == null) {
-                ConnectionHandler connectionHandler = getConnectionHandler();
-                DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(connectionHandler.getProject());
+                DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(project);
                 databaseConsoleManager.showCreateConsoleDialog(connectionHandler, consoleType);
             } else {
-                ConnectionHandler connectionHandler = consoleVirtualFile.getConnectionHandler();
-                FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
+                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                 fileEditorManager.openFile(consoleVirtualFile, true);
             }
         }

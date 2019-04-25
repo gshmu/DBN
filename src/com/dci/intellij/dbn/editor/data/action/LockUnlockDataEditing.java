@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -9,8 +10,6 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-
-import static com.dci.intellij.dbn.common.util.ActionUtil.getFileEditor;
 
 public class LockUnlockDataEditing extends ToggleAction implements DumbAware {
 
@@ -48,7 +47,7 @@ public class LockUnlockDataEditing extends ToggleAction implements DumbAware {
     }
 
     private static DatasetEditor getDatasetEditor(AnActionEvent e) {
-        FileEditor fileEditor = getFileEditor(e);
+        FileEditor fileEditor = Lookup.getFileEditor(e);
         return fileEditor instanceof DatasetEditor ? (DatasetEditor) fileEditor : null;
     }
 }

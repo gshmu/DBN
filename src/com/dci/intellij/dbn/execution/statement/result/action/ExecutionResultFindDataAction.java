@@ -5,27 +5,24 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionResultForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ExecutionResultFindDataAction extends AbstractExecutionResultAction {
     public ExecutionResultFindDataAction() {
-        super("Find data", Icons.ACTION_FIND);
+        super("Find Data", Icons.ACTION_FIND);
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        StatementExecutionCursorResult executionResult = getExecutionResult(e);
-        if (Failsafe.check(executionResult)) {
-            StatementExecutionResultForm resultForm = executionResult.getForm();
-            if (Failsafe.check(resultForm)) {
-                resultForm.showSearchHeader();
-            }
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull StatementExecutionCursorResult executionResult) {
+        StatementExecutionResultForm resultForm = executionResult.getForm();
+        if (Failsafe.check(resultForm)) {
+            resultForm.showSearchHeader();
         }
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        super.update(e);
-        getTemplatePresentation().setText("Find Data");
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable StatementExecutionCursorResult executionResult) {
     }
 }

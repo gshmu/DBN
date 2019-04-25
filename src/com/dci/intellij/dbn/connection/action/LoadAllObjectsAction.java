@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.connection.action;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObjectRecursiveLoaderVisitor;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
@@ -17,9 +16,7 @@ public class LoadAllObjectsAction extends AbstractConnectionAction {
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.ensureProject(e);
-        ConnectionHandler connectionHandler = getConnectionHandler();
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
         String connectionName = connectionHandler.getName();
         Progress.prompt(
                 project,
@@ -31,7 +28,7 @@ public class LoadAllObjectsAction extends AbstractConnectionAction {
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
+    protected void update(@NotNull AnActionEvent e, Project project, @NotNull ConnectionHandler connectionHandler) {
         e.getPresentation().setVisible(DatabaseNavigator.DEVELOPER);
     }
 }

@@ -1,13 +1,15 @@
 package com.dci.intellij.dbn.editor.code.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.diff.SourceCodeDiffManager;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CompareWithDatabaseAction extends AbstractDiffAction {
     public CompareWithDatabaseAction() {
@@ -15,20 +17,20 @@ public class CompareWithDatabaseAction extends AbstractDiffAction {
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.ensureProject(e);
-        DBSourceCodeVirtualFile sourcecodeFile = getSourcecodeFile(e);
+    protected void actionPerformed(
+            @NotNull AnActionEvent e,
+            @NotNull Project project,
+            @NotNull SourceCodeEditor fileEditor,
+            @NotNull DBSourceCodeVirtualFile sourceCodeFile) {
 
-        if (sourcecodeFile != null) {
-            SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
-            diffManager.opedDatabaseDiffWindow(sourcecodeFile);
-        }
+    SourceCodeDiffManager diffManager = SourceCodeDiffManager.getInstance(project);
+        diffManager.opedDatabaseDiffWindow(sourceCodeFile);
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        Editor editor = getEditor(e);
-        e.getPresentation().setText("Compare with Database");
-        e.getPresentation().setEnabled(editor != null);
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable SourceCodeEditor fileEditor, @Nullable DBSourceCodeVirtualFile sourceCodeFile) {
+        Presentation presentation = e.getPresentation();
+        presentation.setText("Compare with Database");
+        presentation.setEnabled(Failsafe.check(fileEditor));
     }
 }

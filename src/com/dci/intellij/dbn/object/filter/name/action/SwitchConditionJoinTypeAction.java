@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.filter.name.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.object.filter.name.CompoundFilterCondition;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterManager;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
@@ -17,8 +16,7 @@ public class SwitchConditionJoinTypeAction extends ObjectNameFilterAction{
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.ensureProject(e);
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         Object selection = getSelection();
         ObjectNameFilterManager filterManager = ObjectNameFilterManager.getInstance(project);
         if (selection instanceof CompoundFilterCondition) {
@@ -28,7 +26,7 @@ public class SwitchConditionJoinTypeAction extends ObjectNameFilterAction{
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         Presentation presentation = e.getPresentation();
         Object selection = getSelection();
         if (selection instanceof CompoundFilterCondition) {

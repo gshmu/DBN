@@ -4,27 +4,24 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.execution.common.ui.StatementViewerPopup;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
 public class ExecutionResultViewStatementAction extends AbstractExecutionResultAction {
     public ExecutionResultViewStatementAction() {
-        super("View SQL statement", Icons.EXEC_RESULT_VIEW_STATEMENT);
+        super("View SQL Statement", Icons.EXEC_RESULT_VIEW_STATEMENT);
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        StatementExecutionCursorResult executionResult = getExecutionResult(e);
-        if (executionResult != null) {
-            StatementViewerPopup statementViewer = new StatementViewerPopup(executionResult);
-            statementViewer.show((Component) e.getInputEvent().getSource());
-        }
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull StatementExecutionCursorResult executionResult) {
+        StatementViewerPopup statementViewer = new StatementViewerPopup(executionResult);
+        statementViewer.show((Component) e.getInputEvent().getSource());
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        super.update(e);
-        e.getPresentation().setText("View SQL Statement");
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable StatementExecutionCursorResult executionResult) {
     }
 }

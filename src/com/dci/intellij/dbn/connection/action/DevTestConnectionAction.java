@@ -3,21 +3,21 @@ package com.dci.intellij.dbn.connection.action;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class DevTestConnectionAction extends AbstractConnectionAction{
-    public DevTestConnectionAction(@NotNull ConnectionHandler connectionHandler) {
+    DevTestConnectionAction(@NotNull ConnectionHandler connectionHandler) {
         super("Dev Test", connectionHandler);
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
 
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    protected void update(@NotNull AnActionEvent e, Project project, @NotNull ConnectionHandler connectionHandler) {
         e.getPresentation().setVisible(DatabaseNavigator.DEVELOPER);
-        super.update(e);
     }
 }

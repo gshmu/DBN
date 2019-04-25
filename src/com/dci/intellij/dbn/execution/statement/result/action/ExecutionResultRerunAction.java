@@ -6,7 +6,9 @@ import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ExecutionResultRerunAction extends AbstractExecutionResultAction {
     public ExecutionResultRerunAction() {
@@ -14,17 +16,12 @@ public class ExecutionResultRerunAction extends AbstractExecutionResultAction {
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        StatementExecutionCursorResult executionResult = getExecutionResult(e);
-        if (executionResult != null) {
-            executionResult.reload();
-        }
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull StatementExecutionCursorResult executionResult) {
+        executionResult.reload();
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        StatementExecutionCursorResult executionResult = getExecutionResult(e);
-
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable StatementExecutionCursorResult executionResult) {
         boolean enabled = false;
         if (Failsafe.check(executionResult)) {
             ResultSetTable resultTable = executionResult.getResultTable();

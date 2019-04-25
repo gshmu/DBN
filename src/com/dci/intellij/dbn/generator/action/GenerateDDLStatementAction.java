@@ -13,7 +13,8 @@ import java.sql.SQLException;
 
 public class GenerateDDLStatementAction extends GenerateStatementAction {
     private DBObjectRef objectRef;
-    public GenerateDDLStatementAction(DBObject object) {
+
+    GenerateDDLStatementAction(DBObject object) {
         super("DDL Statement");
         objectRef = DBObjectRef.from(object);
 

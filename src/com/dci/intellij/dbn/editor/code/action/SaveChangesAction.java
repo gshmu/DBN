@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.editor.code.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.option.ConfirmationOptionHandler;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
@@ -14,6 +14,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
@@ -24,29 +25,21 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
     }
 
     @Override
-    public void actionPerformed(@NotNull final AnActionEvent e) {
-        Project project = ActionUtil.ensureProject(e);
-        SourceCodeEditor fileEditor = getFileEditor(e);
-        if (fileEditor != null) {
-            CodeEditorConfirmationSettings confirmationSettings = CodeEditorSettings.getInstance(project).getConfirmationSettings();
-            ConfirmationOptionHandler optionHandler = confirmationSettings.getSaveChanges();
-            boolean canContinue = optionHandler.resolve(fileEditor.getObject().getQualifiedNameWithType());
-            if (canContinue) {
-                DBSourceCodeVirtualFile sourceCodeFile = fileEditor.getVirtualFile();
-                SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                sourceCodeManager.saveSourceCode(sourceCodeFile, fileEditor, null);
-            }
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull SourceCodeEditor fileEditor, @NotNull DBSourceCodeVirtualFile sourceCodeFile) {
+        CodeEditorSettings editorSettings = CodeEditorSettings.getInstance(project);
+        CodeEditorConfirmationSettings confirmationSettings = editorSettings.getConfirmationSettings();
+        ConfirmationOptionHandler optionHandler = confirmationSettings.getSaveChanges();
+        boolean canContinue = optionHandler.resolve(fileEditor.getObject().getQualifiedNameWithType());
+        if (canContinue) {
+            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+            sourceCodeManager.saveSourceCode(sourceCodeFile, fileEditor, null);
         }
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable SourceCodeEditor fileEditor, @Nullable DBSourceCodeVirtualFile sourceCodeFile) {
         Presentation presentation = e.getPresentation();
-        Project project = e.getProject();
-        if (project == null || sourceCodeFile == null) {
-            presentation.setEnabled(false);
-        } else {
+        if (Failsafe.check(sourceCodeFile)) {
             EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
             boolean readonly = environmentManager.isReadonly(sourceCodeFile);
             presentation.setVisible(!readonly);
@@ -57,6 +50,8 @@ public class SaveChangesAction extends AbstractSourceCodeEditorAction {
 
             presentation.setEnabled(sourceCodeFile.is(MODIFIED) && sourceCodeFile.isNot(SAVING));
             presentation.setText(text);
+        } else {
+            presentation.setEnabled(false);
         }
     }
 }

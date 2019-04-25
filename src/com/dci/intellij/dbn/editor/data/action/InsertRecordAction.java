@@ -8,6 +8,8 @@ import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class InsertRecordAction extends AbstractDataEditorAction {
 
@@ -16,32 +18,27 @@ public class InsertRecordAction extends AbstractDataEditorAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
-        DatasetEditor datasetEditor = getDatasetEditor(e);
-        if (datasetEditor != null) {
-            Failsafe.nn(datasetEditor).insertRecord();
-        }
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DatasetEditor datasetEditor) {
+        datasetEditor.insertRecord();
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable DatasetEditor datasetEditor) {
         Presentation presentation = e.getPresentation();
         presentation.setText("Insert record");
-        DatasetEditor datasetEditor = getDatasetEditor(e);
-        Project project = e.getProject();
-        if (project == null || datasetEditor == null) {
-            presentation.setEnabled(false);
-        } else {
+        if (Failsafe.check(datasetEditor)) {
             EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
             boolean isEnvironmentReadonlyData = environmentManager.isReadonly(datasetEditor.getDataset(), DBContentType.DATA);
             presentation.setVisible(!isEnvironmentReadonlyData && !datasetEditor.isReadonlyData());
             presentation.setEnabled(
                     datasetEditor.getConnectionHandler().isConnected() &&
                     !datasetEditor.isReadonly() &&
-                    !datasetEditor.isInserting() && 
+                    !datasetEditor.isInserting() &&
                     !datasetEditor.isLoading() &&
                     !datasetEditor.isDirty());
 
+        } else {
+            presentation.setEnabled(false);
         }
     }
 }

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.action.DataKeys;
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.DisposableUserDataHolderBase;
 import com.dci.intellij.dbn.common.dispose.Disposer;
@@ -48,7 +49,10 @@ import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataProvider;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -638,6 +642,32 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
     public Object getData(@NotNull String dataId) {
         if (DataKeys.DATASET_EDITOR.is(dataId)) {
             return DatasetEditor.this;
+        }
+        return null;
+    }
+
+    @Nullable
+    public static DatasetEditor get(DataContext dataContext) {
+        DatasetEditor datasetEditor = DataKeys.DATASET_EDITOR.getData(dataContext);
+        if (datasetEditor == null) {
+            FileEditor fileEditor = PlatformDataKeys.FILE_EDITOR.getData(dataContext);
+            if (fileEditor instanceof DatasetEditor) {
+                return (DatasetEditor) fileEditor;
+            }
+        }
+        return datasetEditor;
+    }
+
+    @Nullable
+    public static DatasetEditor get(AnActionEvent e) {
+        DatasetEditor datasetEditor = e.getData((DataKeys.DATASET_EDITOR));
+        if (datasetEditor == null) {
+            FileEditor fileEditor = Lookup.getFileEditor(e);
+            if (fileEditor instanceof DatasetEditor) {
+                return (DatasetEditor) fileEditor;
+            }
+        } else {
+            return datasetEditor;
         }
         return null;
     }

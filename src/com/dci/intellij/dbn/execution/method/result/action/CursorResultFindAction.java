@@ -1,8 +1,11 @@
 package com.dci.intellij.dbn.execution.method.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.execution.method.result.ui.MethodExecutionCursorResultForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class CursorResultFindAction extends MethodExecutionCursorResultAction {
     public CursorResultFindAction() {
@@ -10,16 +13,10 @@ public class CursorResultFindAction extends MethodExecutionCursorResultAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         MethodExecutionCursorResultForm cursorResultForm = getCursorResultForm(e);
-        if (cursorResultForm != null) {
+        if (Failsafe.check(cursorResultForm)) {
             cursorResultForm.showSearchHeader();
         }
-    }
-
-    @Override
-    public void update(AnActionEvent e) {
-        super.update(e);
-        e.getPresentation().setText("Find Data");
     }
 }

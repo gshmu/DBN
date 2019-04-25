@@ -1,15 +1,17 @@
 package com.dci.intellij.dbn.object.action;
 
+import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public abstract class AnObjectAction<T extends DBObject> extends DumbAwareAction {
+public abstract class AnObjectAction<T extends DBObject> extends DumbAwareProjectAction {
     private DBObjectRef<T> objectRef;
     private boolean custom;
 
@@ -24,7 +26,15 @@ public abstract class AnObjectAction<T extends DBObject> extends DumbAwareAction
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
+    protected final void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
+        T object = getObject();
+        if (Failsafe.check(object)) {
+            actionPerformed(e, project, object);
+        }
+    }
+
+    @Override
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         if (!custom) {
             T object = getObject();
             if (object != null) {
@@ -37,4 +47,9 @@ public abstract class AnObjectAction<T extends DBObject> extends DumbAwareAction
     public T getObject() {
         return DBObjectRef.get(objectRef);
     }
+
+    protected abstract void actionPerformed(
+            @NotNull AnActionEvent e,
+            @NotNull Project project,
+            @NotNull T object);
 }

@@ -7,22 +7,21 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.action.AnObjectAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class RunMethodAction extends AnObjectAction<DBMethod> {
     public RunMethodAction(DBMethod method) {
         super("Run...", Icons.METHOD_EXECUTION_RUN, method);
     }
 
-    public RunMethodAction(DBProgram program, DBMethod method) {
+    RunMethodAction(DBProgram program, DBMethod method) {
         super(method);
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
-        DBMethod method = getObject();
-        if (method != null) {
-            MethodExecutionManager executionManager = MethodExecutionManager.getInstance(method.getProject());
-            executionManager.startMethodExecution(method, DBDebuggerType.NONE);
-        }
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBMethod object) {
+        MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
+        executionManager.startMethodExecution(object, DBDebuggerType.NONE);
     }
 }
