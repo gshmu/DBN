@@ -197,6 +197,7 @@ public class VirtualConnectionHandler extends DisposableBase implements Connecti
     @Override public void closeConnection(DBNConnection connection) {}
     @Override public void freePoolConnection(DBNConnection connection) {}
 
+    @NotNull
     @Override public ConnectionSettings getSettings() {return connectionSettings.get();}
 
     @Override public void setSettings(ConnectionSettings connectionSettings) {}

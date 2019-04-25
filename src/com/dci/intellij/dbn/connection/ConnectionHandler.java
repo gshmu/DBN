@@ -62,6 +62,7 @@ public interface ConnectionHandler extends RegisteredDisposable, EnvironmentType
 
     void freePoolConnection(DBNConnection connection);
 
+    @NotNull
     ConnectionSettings getSettings();
 
     void setSettings(ConnectionSettings connectionSettings);
