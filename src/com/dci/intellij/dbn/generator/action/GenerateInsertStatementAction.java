@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 public class GenerateInsertStatementAction extends GenerateStatementAction {
     private DBObjectRef<DBTable> tableRef;
 
-    public GenerateInsertStatementAction(DBTable table) {
+    GenerateInsertStatementAction(DBTable table) {
         super("INSERT Statement");
         tableRef = DBObjectRef.from(table);
     }

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.browser.action;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.DumbAware;
@@ -17,7 +17,7 @@ public class AutoscrollFromEditorAction extends ToggleAction implements DumbAwar
 
     @Override
     public boolean isSelected(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.getProject(e);
+        Project project = Lookup.getProject(e);
         if (project != null) {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
             return browserManager.getAutoscrollFromEditor().value();
@@ -27,7 +27,7 @@ public class AutoscrollFromEditorAction extends ToggleAction implements DumbAwar
 
     @Override
     public void setSelected(@NotNull AnActionEvent e, boolean state) {
-        Project project = ActionUtil.getProject(e);
+        Project project = Lookup.getProject(e);
         if (project != null) {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
             browserManager.getAutoscrollFromEditor().setValue(state);

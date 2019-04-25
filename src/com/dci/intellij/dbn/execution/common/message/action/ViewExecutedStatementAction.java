@@ -1,13 +1,16 @@
 package com.dci.intellij.dbn.execution.common.message.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTree;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.node.StatementExecutionMessageNode;
 import com.dci.intellij.dbn.execution.common.ui.StatementViewerPopup;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
@@ -17,19 +20,20 @@ public class ViewExecutedStatementAction extends ExecutionMessagesAction {
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        getMessagesTree().grabFocus();
-        StatementExecutionMessageNode execMessageNode = (StatementExecutionMessageNode) getMessagesTree().getSelectionPath().getLastPathComponent();
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull MessagesTree messagesTree) {
+        messagesTree.grabFocus();
+        StatementExecutionMessageNode execMessageNode = (StatementExecutionMessageNode) messagesTree.getSelectionPath().getLastPathComponent();
         StatementExecutionResult executionResult = execMessageNode.getMessage().getExecutionResult();
         StatementViewerPopup statementViewer = new StatementViewerPopup(executionResult);
         statementViewer.show((Component) e.getInputEvent().getSource());
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable MessagesTree messagesTree) {
         boolean enabled =
-                getMessagesTree().getSelectionPath() != null &&
-                 getMessagesTree().getSelectionPath().getLastPathComponent() instanceof StatementExecutionMessageNode;
+                Failsafe.check(messagesTree) &&
+                messagesTree.getSelectionPath() != null &&
+                messagesTree.getSelectionPath().getLastPathComponent() instanceof StatementExecutionMessageNode;
         Presentation presentation = e.getPresentation();
         presentation.setEnabled(enabled);
     }

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.editor.action;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -16,46 +16,31 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.*;
-
 public class SchemaSelectAction extends AnObjectAction<DBSchema> {
     SchemaSelectAction(DBSchema schema) {
         super(schema);
     }
 
-
-    @NotNull
-    public DBSchema getSchema() {
-        return Failsafe.nn(getObject());
-    }
-
-
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ensureProject(e);
-        Editor editor = getEditor(e);
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBSchema object) {
+        Editor editor = Lookup.getEditor(e);
         if (editor != null) {
-            DBSchema schema = getSchema();
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            connectionMappingManager.setDatabaseSchema(editor, SchemaId.from(schema));
+            connectionMappingManager.setDatabaseSchema(editor, SchemaId.from(object));
         }
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        super.update(e);
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
+        super.update(e, project);
         boolean enabled = false;
-        Project project = getProject(e);
-        if (project != null) {
-            VirtualFile virtualFile = getVirtualFile(e);
-            if (virtualFile instanceof DBEditableObjectVirtualFile) {
-                enabled = false;//objectFile.getObject().getSchema() == schema;
-            } else if (virtualFile != null){
-                PsiFile currentFile = PsiUtil.getPsiFile(project, virtualFile);
-                enabled = currentFile instanceof DBLanguagePsiFile;
-            }
+        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+        if (virtualFile instanceof DBEditableObjectVirtualFile) {
+            enabled = false;//objectFile.getObject().getSchema() == schema;
+        } else if (virtualFile != null){
+            PsiFile currentFile = PsiUtil.getPsiFile(project, virtualFile);
+            enabled = currentFile instanceof DBLanguagePsiFile;
         }
-
 
         Presentation presentation = e.getPresentation();
         presentation.setEnabled(enabled);

@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.debugger.common.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -15,7 +17,6 @@ import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.editor.Editor;
@@ -25,13 +26,15 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.*;
+public class DebugStatementEditorAction extends DumbAwareProjectAction {
 
-public class DebugStatementEditorAction extends AnAction {
+    public DebugStatementEditorAction() {
+        super(null);
+    }
+
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ensureProject(e);
-        Editor editor = getEditor(e);
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
+        Editor editor = Lookup.getEditor(e);
         if (editor != null) {
             VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
             ExecutablePsiElement executablePsiElement = null;
@@ -67,15 +70,14 @@ public class DebugStatementEditorAction extends AnAction {
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         Presentation presentation = e.getPresentation();
         presentation.setIcon(Icons.STMT_EXECUTION_DEBUG);
         presentation.setText("Debug Statement");
-        Project project = getProject(e);
-        Editor editor = getEditor(e);
+        Editor editor = Lookup.getEditor(e);
         boolean enabled = false;
         boolean visible = false;
-        if (project != null && editor != null) {
+        if (editor != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
             if (virtualFile != null) {

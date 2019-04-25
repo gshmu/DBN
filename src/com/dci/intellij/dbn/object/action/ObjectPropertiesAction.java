@@ -1,24 +1,18 @@
 package com.dci.intellij.dbn.object.action;
 
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class ObjectPropertiesAction extends DumbAwareAction {
-    private DBObject object;
-    public ObjectPropertiesAction(DBObject object) {
-        super("Properties");
-        this.object = object;
-
+public class ObjectPropertiesAction<T extends DBObject> extends AnObjectAction<T> {
+    public ObjectPropertiesAction(T object) {
+        super("Properties", null, object);
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.ensureProject(e);
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBObject object) {
         MessageUtil.showInfoDialog(project, "Not implemented!", "This feature is not implemented yet.");
     }
 }

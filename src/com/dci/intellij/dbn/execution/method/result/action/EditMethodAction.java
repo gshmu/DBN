@@ -5,7 +5,9 @@ import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class EditMethodAction extends MethodExecutionResultAction {
     public EditMethodAction() {
@@ -13,17 +15,13 @@ public class EditMethodAction extends MethodExecutionResultAction {
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        MethodExecutionResult executionResult = getExecutionResult(e);
-        if (executionResult != null) {
-            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-            databaseFileSystem.connectAndOpenEditor(executionResult.getMethod(), null, true, true);
-        }
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull MethodExecutionResult executionResult) {
+        DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+        databaseFileSystem.connectAndOpenEditor(executionResult.getMethod(), null, true, true);
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        MethodExecutionResult executionResult = getExecutionResult(e);
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable MethodExecutionResult executionResult) {
         Presentation presentation = e.getPresentation();
         presentation.setEnabled(executionResult != null);
         presentation.setText("Edit Method");

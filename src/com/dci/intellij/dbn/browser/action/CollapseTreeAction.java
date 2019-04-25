@@ -3,21 +3,25 @@ package com.dci.intellij.dbn.browser.action;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class CollapseTreeAction extends DumbAwareAction {
+public class CollapseTreeAction extends DumbAwareProjectAction {
     public CollapseTreeAction() {
         super("Collapse all", null, Icons.ACTION_COLLAPSE_ALL);
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.ensureProject(e);
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
+        Presentation presentation = e.getPresentation();
+        presentation.setText("Collapse All");
+    }
+
+    @Override
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
         DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
         if (activeBrowserTree != null) {
@@ -26,8 +30,7 @@ public class CollapseTreeAction extends DumbAwareAction {
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        Presentation presentation = e.getPresentation();
-        presentation.setText("Collapse All");
+    public boolean isDumbAware() {
+        return false;
     }
 }

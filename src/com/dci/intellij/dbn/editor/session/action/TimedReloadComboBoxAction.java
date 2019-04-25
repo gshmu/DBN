@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.editor.session.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DataKeys;
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.intellij.ide.DataManager;
@@ -17,8 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-
-import static com.dci.intellij.dbn.common.util.ActionUtil.getFileEditor;
 
 public class TimedReloadComboBoxAction extends DBNComboBoxAction implements DumbAware {
 
@@ -81,7 +80,7 @@ public class TimedReloadComboBoxAction extends DBNComboBoxAction implements Dumb
     public static SessionBrowser getSessionBrowser(AnActionEvent e) {
         SessionBrowser sessionBrowser = e.getData((DataKeys.SESSION_BROWSER));
         if (sessionBrowser == null) {
-            FileEditor fileEditor = getFileEditor(e);
+            FileEditor fileEditor = Lookup.getFileEditor(e);
             if (fileEditor instanceof SessionBrowser) {
                 sessionBrowser = (SessionBrowser) fileEditor;
             }

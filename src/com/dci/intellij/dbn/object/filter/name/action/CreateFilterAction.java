@@ -6,8 +6,10 @@ import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterSettings;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
@@ -41,8 +43,7 @@ public class CreateFilterAction extends ObjectNameFilterAction{
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
-
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         DefaultActionGroup actionGroup = new DefaultActionGroup();
         ObjectNameFilterSettings settings = (ObjectNameFilterSettings) getFiltersTree().getModel();
 
@@ -60,10 +61,5 @@ public class CreateFilterAction extends ObjectNameFilterAction{
 
         Component component = (Component) e.getInputEvent().getSource();
         popup.showUnderneathOf(component);
-    }
-
-    @Override
-    public void update(AnActionEvent e) {
-
     }
 }

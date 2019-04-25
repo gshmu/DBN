@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.browser.action;
 
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
 import com.dci.intellij.dbn.connection.config.action.ConnectionSettingsAction;
@@ -29,8 +28,7 @@ public class NewConnectionAction extends ConnectionSettingsAction {
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.ensureProject(e);
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
 
         DatabaseType databaseType = this.databaseType;

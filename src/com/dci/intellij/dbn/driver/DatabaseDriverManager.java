@@ -2,9 +2,9 @@ package com.dci.intellij.dbn.driver;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.thread.Synchronized;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.intellij.openapi.application.ApplicationManager;
@@ -65,7 +65,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
 
     public List<Driver> loadDriverClassesWithProgressBar(String libraryName) {
         LoaderThread loader = new LoaderThread(libraryName);
-        Project project = ActionUtil.getProject();
+        Project project = Lookup.getProject();
         ProgressManager.getInstance().runProcessWithProgressSynchronously(loader, Constants.DBN_TITLE_PREFIX + "Loading database drivers" , false, project);
         return loader.getDrivers();
     }

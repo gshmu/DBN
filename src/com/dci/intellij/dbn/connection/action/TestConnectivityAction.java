@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class TestConnectivityAction extends AbstractConnectionAction {
@@ -14,8 +15,7 @@ public class TestConnectivityAction extends AbstractConnectionAction {
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        ConnectionHandler connectionHandler = getConnectionHandler();
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
         connectionHandler.getInstructions().setAllowAutoConnect(true);
 
         ConnectionAction.invoke("testing the connectivity", true, connectionHandler,

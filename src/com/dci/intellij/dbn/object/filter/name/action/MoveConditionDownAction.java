@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.filter.name.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.object.filter.name.CompoundFilterCondition;
 import com.dci.intellij.dbn.object.filter.name.FilterCondition;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilter;
@@ -21,10 +20,9 @@ public class MoveConditionDownAction extends ObjectNameFilterAction{
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         Object selection = getSelection();
         if (selection instanceof FilterCondition) {
-            Project project = ActionUtil.ensureProject(e);
             FilterCondition condition = (FilterCondition) selection;
             ObjectNameFilterManager filterManager = ObjectNameFilterManager.getInstance(project);
             filterManager.moveFilterConditionDown(condition, settingsForm);
@@ -32,7 +30,7 @@ public class MoveConditionDownAction extends ObjectNameFilterAction{
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         Object selection = getSelection();
         Presentation presentation = e.getPresentation();
         if (selection instanceof FilterCondition) {

@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -23,7 +25,6 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ToggleAction;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBSplitter;
@@ -142,33 +143,33 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
         getTree().setSelectedInput(selectedExecutionInput);
     }
 
-    public class DeleteHistoryEntryAction extends DumbAwareAction {
+    public class DeleteHistoryEntryAction extends DumbAwareProjectAction {
         DeleteHistoryEntryAction() {
             super("Delete", null, Icons.ACTION_REMOVE);
         }
 
         @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
+        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
             getTree().removeSelectedEntries();
         }
 
         @Override
-        public void update(@NotNull AnActionEvent e) {
-            e.getPresentation().setEnabled(!getTree().isSelectionEmpty());
-            e.getPresentation().setVisible(ensureParentComponent().isEditable());
+        protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
+            Presentation presentation = e.getPresentation();
+            presentation.setEnabled(!getTree().isSelectionEmpty());
+            presentation.setVisible(ensureParentComponent().isEditable());
         }
     }
 
-    public static class OpenSettingsAction extends DumbAwareAction {
+    public static class OpenSettingsAction extends DumbAwareProjectAction {
         @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
-            Project project = ActionUtil.ensureProject(e);
+        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
             ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
             settingsManager.openProjectSettings(ConfigId.EXECUTION_ENGINE);
         }
 
         @Override
-        public void update(@NotNull AnActionEvent e) {
+        protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
             Presentation presentation = e.getPresentation();
             presentation.setIcon(Icons.ACTION_SETTINGS);
             presentation.setText("Settings");
@@ -191,7 +192,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
             MethodExecutionHistoryTree historyTree = getTree();
             List<MethodExecutionInput> executionInputs = historyTree.getModel().getExecutionInputs();
             historyTree.init(executionInputs, state);
-            Project project = ActionUtil.getProject(e);
+            Project project = Lookup.getProject(e);
             if (project != null) {
                 MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
                 executionManager.getExecutionHistory().setGroupEntries(state);

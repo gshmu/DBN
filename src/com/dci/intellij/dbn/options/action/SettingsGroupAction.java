@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.options.action;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
-import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.options.ConfigId;
@@ -10,7 +10,6 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +39,7 @@ public class SettingsGroupAction extends ActionGroup {
         //e.getPresentation().setIcon(Icons.ACTION_SETTINGS);
     }
 
-    public class SettingsAction extends DumbAwareAction {
+    public class SettingsAction extends DumbAwareProjectAction {
         private ConfigId configId;
 
         SettingsAction(ConfigId configId) {
@@ -49,8 +48,7 @@ public class SettingsGroupAction extends ActionGroup {
         }
 
         @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
-            Project project = ActionUtil.ensureProject(e);
+        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
             ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
 
             if (configId == ConfigId.CONNECTIONS) {
@@ -65,12 +63,12 @@ public class SettingsGroupAction extends ActionGroup {
         }
 
         @Override
-        public void update(@NotNull AnActionEvent e) {
+        protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
             Presentation presentation = e.getPresentation();
-/*
-        presentation.setIcon(Icons.ACTION_SETTINGS);
-        presentation.setText("Settings");
-*/
+        /*
+                presentation.setIcon(Icons.ACTION_SETTINGS);
+                presentation.setText("Settings");
+        */
         }
     }
 }

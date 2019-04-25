@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.generator.action;
 
+import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.thread.Command;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -14,7 +14,6 @@ import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,14 +21,13 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
-public abstract class GenerateStatementAction extends DumbAwareAction implements ConnectionProvider {
+public abstract class GenerateStatementAction extends DumbAwareProjectAction implements ConnectionProvider {
     GenerateStatementAction(String text) {
         super(text);
     }
 
     @Override
-    public final void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ActionUtil.ensureProject(e);
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         ConnectionAction.invoke("generating the statement", false, this,
                 (action) -> Progress.prompt(project, "Extracting select statement", true,
                         (progress) -> {

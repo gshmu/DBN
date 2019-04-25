@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.language.editor.action;
 
+import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -11,7 +13,6 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -19,17 +20,14 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.getProject;
-import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
-
-public abstract class TransactionEditorAction extends DumbAwareAction {
+public abstract class TransactionEditorAction extends DumbAwareProjectAction {
     TransactionEditorAction(String text, String description, Icon icon) {
         super(text, description, icon);
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        VirtualFile virtualFile = getVirtualFile(e);
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
+        VirtualFile virtualFile = Lookup.getVirtualFile(e);
         boolean enabled = false;
         boolean visible = false;
         ConnectionHandler connectionHandler = getConnectionHandler(e);
@@ -48,12 +46,8 @@ public abstract class TransactionEditorAction extends DumbAwareAction {
                         DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
                         DBSchemaObject object = databaseFile.getObject();
                         if (object instanceof DBTable) {
-                            Project project = getProject(e);
-                            if (project != null) {
-                                EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
-                                visible = !environmentManager.isReadonly(object, DBContentType.DATA);
-                            }
-
+                            EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
+                            visible = !environmentManager.isReadonly(object, DBContentType.DATA);
                         }
                     }
                 }
@@ -69,8 +63,8 @@ public abstract class TransactionEditorAction extends DumbAwareAction {
 
     @Nullable
     protected ConnectionHandler getConnectionHandler(@NotNull AnActionEvent e) {
-        Project project = getProject(e);
-        VirtualFile virtualFile = getVirtualFile(e);
+        Project project = Lookup.getProject(e);
+        VirtualFile virtualFile = Lookup.getVirtualFile(e);
         if (project != null && virtualFile != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             return connectionMappingManager.getConnectionHandler(virtualFile);
@@ -80,8 +74,8 @@ public abstract class TransactionEditorAction extends DumbAwareAction {
 
     @Nullable
     protected DatabaseSession getDatabaseSession(@NotNull AnActionEvent e) {
-        Project project = getProject(e);
-        VirtualFile virtualFile = getVirtualFile(e);
+        Project project = Lookup.getProject(e);
+        VirtualFile virtualFile = Lookup.getVirtualFile(e);
         if (project != null && virtualFile != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             return connectionMappingManager.getDatabaseSession(virtualFile);

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.browser.action;
 
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -28,7 +28,7 @@ public class SelectConnectionComboBoxAction extends DBNComboBoxAction {
     @NotNull
     protected DefaultActionGroup createPopupActionGroup(JComponent component) {
         DefaultActionGroup actionGroup = new DefaultActionGroup();
-        Project project = ActionUtil.getProject(component);
+        Project project = Lookup.getProject(component);
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
 /*        for (ConnectionHandler virtualConnectionHandler : connectionBundle.getVirtualConnections()) {

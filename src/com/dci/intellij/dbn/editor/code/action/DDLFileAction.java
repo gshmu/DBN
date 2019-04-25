@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.editor.code.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.ddl.action.AttachDDLFileAction;
 import com.dci.intellij.dbn.ddl.action.CreateDDLFileAction;
 import com.dci.intellij.dbn.ddl.action.DetachDDLFileAction;
@@ -10,10 +11,9 @@ import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-
-import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
 
 public class DDLFileAction extends GroupPopupAction {
     public DDLFileAction() {
@@ -21,7 +21,7 @@ public class DDLFileAction extends GroupPopupAction {
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
         Presentation presentation = e.getPresentation();
         presentation.setIcon(Icons.CODE_EDITOR_DDL_FILE);
@@ -44,7 +44,7 @@ public class DDLFileAction extends GroupPopupAction {
     }
 
     protected static DBSourceCodeVirtualFile getSourcecodeFile(AnActionEvent e) {
-        VirtualFile virtualFile = getVirtualFile(e);
+        VirtualFile virtualFile = Lookup.getVirtualFile(e);
         return virtualFile instanceof DBSourceCodeVirtualFile ? (DBSourceCodeVirtualFile) virtualFile : null;
     }
 

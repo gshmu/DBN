@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.execution.method.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
@@ -20,10 +20,9 @@ public class CursorResultFetchNextRecordsAction extends MethodExecutionCursorRes
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         ResultSetTable resultSetTable = getResultSetTable(e);
-        if (resultSetTable != null) {
-            Project project = ActionUtil.ensureProject(e);
+        if (Failsafe.check(resultSetTable)) {
             Progress.prompt(project, "Loading cursor result records", false,
                     (progress) -> {
                         try {
@@ -44,7 +43,8 @@ public class CursorResultFetchNextRecordsAction extends MethodExecutionCursorRes
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
+        super.update(e, project);
         ResultSetTable resultSetTable = getResultSetTable(e);
         Presentation presentation = e.getPresentation();
         presentation.setText("Fetch Next Records");

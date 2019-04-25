@@ -4,6 +4,8 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -25,7 +27,7 @@ public class CreateConnectionAction extends ConnectionSettingsAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         ConnectionBundleSettingsForm settingsEditor = getSettingsForm(e);
         if (settingsEditor != null) {
             DatabaseType databaseType = this.databaseType;

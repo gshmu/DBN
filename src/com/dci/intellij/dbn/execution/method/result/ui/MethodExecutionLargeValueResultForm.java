@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
+import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -16,7 +18,6 @@ import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -113,7 +114,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecu
         @Override
         @NotNull
         protected DefaultActionGroup createPopupActionGroup(JComponent button) {
-            Project project = ActionUtil.getProject(button);
+            Project project = Lookup.getProject(button);
             DataEditorQualifiedEditorSettings qualifiedEditorSettings = DataEditorSettings.getInstance(project).getQualifiedEditorSettings();
 
             DefaultActionGroup actionGroup = new DefaultActionGroup();
@@ -134,7 +135,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecu
         }
     }
 
-    public class ContentTypeSelectAction extends AnAction {
+    public class ContentTypeSelectAction extends DumbAwareProjectAction {
         private TextContentType contentType;
 
         ContentTypeSelectAction(TextContentType contentType) {
@@ -147,8 +148,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecu
         }
 
         @Override
-        public void actionPerformed(@NotNull AnActionEvent e) {
-            Project project = ActionUtil.ensureProject(e);
+        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
             SyntaxHighlighter syntaxHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(contentType.getFileType(), project, null);
             EditorColorsScheme colorsScheme = editor.getColorsScheme();
             editor.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));

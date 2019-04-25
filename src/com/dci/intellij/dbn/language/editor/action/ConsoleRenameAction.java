@@ -1,27 +1,25 @@
 package com.dci.intellij.dbn.language.editor.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.ensureProject;
-import static com.dci.intellij.dbn.common.util.ActionUtil.getVirtualFile;
-
-public class ConsoleRenameAction extends DumbAwareAction {
+public class ConsoleRenameAction extends DumbAwareProjectAction {
     ConsoleRenameAction() {
-        super("Rename console", "", Icons.ACTION_EDIT);
+        super("Rename Console", null, Icons.ACTION_EDIT);
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ensureProject(e);
-        VirtualFile virtualFile = getVirtualFile(e);
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
+        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+
         if (virtualFile instanceof DBConsoleVirtualFile) {
             DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
             DatabaseConsoleManager consoleManager = DatabaseConsoleManager.getInstance(project);
@@ -30,11 +28,10 @@ public class ConsoleRenameAction extends DumbAwareAction {
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        super.update(e);
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
+        VirtualFile virtualFile = Lookup.getVirtualFile(e);
+
         Presentation presentation = e.getPresentation();
-        presentation.setText("Rename Console");
-        VirtualFile virtualFile = getVirtualFile(e);
         presentation.setEnabled(virtualFile instanceof DBConsoleVirtualFile);
     }
 

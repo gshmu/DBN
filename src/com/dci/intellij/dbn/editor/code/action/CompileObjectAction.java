@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.execution.compiler.CompilerAction;
 import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
@@ -16,9 +17,9 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -30,24 +31,16 @@ public class CompileObjectAction extends AbstractSourceCodeEditorAction {
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
-        FileEditor fileEditor = getFileEditor(e);
-        if (sourceCodeFile != null && fileEditor != null) {
-            Project project = sourceCodeFile.getProject();
-            if (project != null) {
-                DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
-                CompilerSettings compilerSettings = getCompilerSettings(project);
-                DBContentType contentType = sourceCodeFile.getContentType();
-                CompilerAction compilerAction = new CompilerAction(CompilerActionSource.COMPILE, contentType, sourceCodeFile, fileEditor);
-                compilerManager.compileInBackground(sourceCodeFile.getObject(), compilerSettings.getCompileType(), compilerAction);
-            }
-        }
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull SourceCodeEditor fileEditor, @NotNull DBSourceCodeVirtualFile sourceCodeFile) {
+        DatabaseCompilerManager compilerManager = DatabaseCompilerManager.getInstance(project);
+        CompilerSettings compilerSettings = getCompilerSettings(project);
+        DBContentType contentType = sourceCodeFile.getContentType();
+        CompilerAction compilerAction = new CompilerAction(CompilerActionSource.COMPILE, contentType, sourceCodeFile, fileEditor);
+        compilerManager.compileInBackground(sourceCodeFile.getObject(), compilerSettings.getCompileType(), compilerAction);
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        DBSourceCodeVirtualFile sourceCodeFile = getSourcecodeFile(e);
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable SourceCodeEditor fileEditor, @Nullable DBSourceCodeVirtualFile sourceCodeFile) {
         Presentation presentation = e.getPresentation();
         if (sourceCodeFile == null) {
             presentation.setEnabled(false);

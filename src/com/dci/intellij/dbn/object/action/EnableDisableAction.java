@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.object.action;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -7,25 +8,19 @@ import com.dci.intellij.dbn.object.common.operation.DBOperationNotSupportedExcep
 import com.dci.intellij.dbn.object.common.operation.DBOperationType;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
-import static com.dci.intellij.dbn.common.util.ActionUtil.ensureProject;
-
-public class EnableDisableAction extends DumbAwareAction {
-    private DBSchemaObject object;
-
-    public EnableDisableAction(DBSchemaObject object) {
-        super("Enable/Disable");
-        this.object = object;
+public class EnableDisableAction extends AnObjectAction<DBSchemaObject> {
+    EnableDisableAction(DBSchemaObject object) {
+        super("Enable/Disable", null, object);
     }
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-        Project project = ensureProject(e);
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBSchemaObject object) {
         boolean enabled = object.getStatus().is(DBObjectStatus.ENABLED);
         String objectName = object.getQualifiedNameWithType();
         Progress.prompt(project, enabled ? "Disabling " : "Enabling " + objectName, false,
@@ -44,8 +39,15 @@ public class EnableDisableAction extends DumbAwareAction {
     }
 
     @Override
-    public void update(@NotNull AnActionEvent e) {
-        boolean enabled = object.getStatus().is(DBObjectStatus.ENABLED);
-        e.getPresentation().setText(!enabled? "Enable" : "Disable");
+    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
+        DBSchemaObject object = getObject();
+        Presentation presentation = e.getPresentation();
+        if (Failsafe.check(object)) {
+            boolean enabled = object.getStatus().is(DBObjectStatus.ENABLED);
+            presentation.setText(!enabled ? "Enable" : "Disable");
+            presentation.setVisible(true);
+        } else {
+            presentation.setVisible(false);
+        }
     }
 }
