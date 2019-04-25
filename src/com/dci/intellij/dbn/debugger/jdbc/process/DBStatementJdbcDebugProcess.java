@@ -42,6 +42,7 @@ public class DBStatementJdbcDebugProcess extends DBJdbcDebugProcess<StatementExe
         }
     }
 
+    @Nullable
     @Override
     public VirtualFile getRuntimeInfoFile(DebuggerRuntimeInfo runtimeInfo) {
         DBSchemaObject schemaObject = getDatabaseObject(runtimeInfo);
@@ -56,12 +57,13 @@ public class DBStatementJdbcDebugProcess extends DBJdbcDebugProcess<StatementExe
     @NotNull
     @Override
     public String getName() {
-        return getExecutionProcessor().getPsiFile().getName();
+        return getExecutionProcessor().getName();
     }
+
     @Nullable
     @Override
     public Icon getIcon() {
-        return getExecutionProcessor().getPsiFile().getIcon();
+        return getExecutionProcessor().getIcon();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -21,9 +22,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.util.List;
 
-public interface StatementExecutionProcessor extends ConnectionProvider, Disposable{
+public interface StatementExecutionProcessor extends ConnectionProvider, Disposable, Presentable {
 
     boolean isDirty();
 
@@ -43,9 +43,10 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
     @NotNull
     Project getProject();
 
-    @NotNull
+    @Nullable
     DBLanguagePsiFile getPsiFile();
 
+    @Nullable
     VirtualFile getVirtualFile();
 
     @NotNull
@@ -74,6 +75,7 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
 
     boolean isBound();
 
+    @Nullable
     FileEditor getFileEditor();
 
     @Nullable
@@ -90,8 +92,6 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Disposa
     void initExecutionInput(boolean bulkExecution);
 
     boolean isQuery();
-
-    List<StatementExecutionProcessor> asList();
 
     int getExecutableLineNumber();
 
