@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,7 +51,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
     }
 
     public void visitLists(DBObjectListVisitor visitor, boolean visitInternal) {
-        Failsafe.guarded(() -> {
+        try {
             if (objectLists != null) {
                 checkDisposed(visitor);
                 for (DBObjectList<DBObject> objectList : objectLists.values()) {
@@ -62,7 +63,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
                     }
                 }
             }
-        });
+        } catch (ProcessCanceledException ignore) {}
     }
 
     private void checkDisposed(DBObjectListVisitor visitor) {

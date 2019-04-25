@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.connection.transaction.ui.PendingTransactionsDetailD
 import com.dci.intellij.dbn.connection.transaction.ui.PendingTransactionsDialog;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManagerListener;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -84,12 +85,15 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
             @NotNull DBNConnection connection,
             @NotNull List<TransactionAction> actions,
             @Nullable Runnable callback) {
-
-        Project project = getProject();
-        for (TransactionAction action : actions) {
-            executeAction(connectionHandler, connection, project, action);
-        }
-        Failsafe.guarded(() -> { if (callback != null) callback.run();});
+        try {
+            Project project = getProject();
+            for (TransactionAction action : actions) {
+                executeAction(connectionHandler, connection, project, action);
+            }
+            if (callback != null) {
+                callback.run();
+            }
+        } catch (ProcessCanceledException ignore) {}
     }
 
     private void executeAction(
@@ -126,7 +130,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
                     ex.getMessage());
             success.set(false);
         } finally {
-            if (!project.isDisposed()) {
+            if (Failsafe.check(project)) {
                 // notify post-action
                 EventUtil.notify(project,
                         TransactionListener.TOPIC,

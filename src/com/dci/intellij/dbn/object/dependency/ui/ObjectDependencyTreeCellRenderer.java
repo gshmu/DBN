@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.LoadInProgressIcon;
 import com.dci.intellij.dbn.common.ui.MergedIcon;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleTextAttributes;
@@ -20,7 +20,7 @@ public class ObjectDependencyTreeCellRenderer extends ColoredTreeCellRenderer {
 
     @Override
     public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-        Failsafe.guarded(() -> {
+        try {
             ObjectDependencyTreeNode node = (ObjectDependencyTreeNode) value;
             DBObject object = node.getObject();
 
@@ -63,7 +63,7 @@ public class ObjectDependencyTreeCellRenderer extends ColoredTreeCellRenderer {
                 setIcon(LoadInProgressIcon.INSTANCE);
                 append("Loading...", SimpleTextAttributes.GRAY_ITALIC_ATTRIBUTES);
             }
-        });
+        } catch (ProcessCanceledException ignore) {}
     }
 
     @Override

@@ -17,9 +17,7 @@ public interface Dispatch {
         if (application.isDispatchThread()) {
             try {
                 runnable.run();
-            } catch (ProcessCanceledException ignore) {
-
-            }
+            } catch (ProcessCanceledException ignore) {}
         } else {
             invoke(null, runnable);
         }
@@ -32,9 +30,7 @@ public interface Dispatch {
                 () -> {
                     try {
                         runnable.run();
-                    } catch (ProcessCanceledException ignore) {
-
-                    }
+                    } catch (ProcessCanceledException ignore) {}
                 },
                 modalityState/*, ModalityState.NON_MODAL*/);
     }

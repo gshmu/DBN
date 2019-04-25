@@ -226,30 +226,28 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
         @Override
         public void run() {
             if (openFiles.size() > 0) {
-                Read.run(() ->
-                        Failsafe.guarded(null, () -> {
-                            Project project = getProject();
-                            if (!project.isDisposed()) {
-                                List<SessionBrowser> sessionBrowsers = new ArrayList<>();
-                                FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                                FileEditor[] editors = fileEditorManager.getAllEditors();
-                                for (FileEditor editor : editors) {
-                                    if (editor instanceof SessionBrowser) {
-                                        SessionBrowser sessionBrowser = (SessionBrowser) editor;
-                                        sessionBrowsers.add(sessionBrowser);
-                                    }
-                                }
-
-                                if (sessionBrowsers.size() > 0) {
-                                    Dispatch.invoke(() -> {
-                                        for (SessionBrowser sessionBrowser : sessionBrowsers) {
-                                            sessionBrowser.refreshLoadTimestamp();
-                                        }
-                                    });
-                                }
+                Read.run(() -> {
+                    Project project = getProject();
+                    if (!project.isDisposed()) {
+                        List<SessionBrowser> sessionBrowsers = new ArrayList<>();
+                        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                        FileEditor[] editors = fileEditorManager.getAllEditors();
+                        for (FileEditor editor : editors) {
+                            if (editor instanceof SessionBrowser) {
+                                SessionBrowser sessionBrowser = (SessionBrowser) editor;
+                                sessionBrowsers.add(sessionBrowser);
                             }
-                            return null;
-                        }));
+                        }
+
+                        if (sessionBrowsers.size() > 0) {
+                            Dispatch.invoke(() -> {
+                                for (SessionBrowser sessionBrowser : sessionBrowsers) {
+                                    sessionBrowser.refreshLoadTimestamp();
+                                }
+                            });
+                        }
+                    }
+                });
             }
         }
     }

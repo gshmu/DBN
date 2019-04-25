@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBList;
@@ -198,7 +199,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
             Project project = getProject();
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
             for (TabInfo tabInfo : getConnectionTabs().getTabs()) {
-                Failsafe.guarded(() -> {
+                try {
                     SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
                     ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
                     if (connectionHandler != null) {
@@ -209,7 +210,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
                             tabInfo.setTabColor(null);
                         }
                     }
-                });
+                } catch (ProcessCanceledException ignore) {}
             }
         }
     };

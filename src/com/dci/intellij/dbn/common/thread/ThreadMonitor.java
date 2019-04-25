@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.thread;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +37,8 @@ public class ThreadMonitor {
             processCounter.incrementAndGet();
             threadInfo.set(threadProperty, true);
             threadInfo.merge(invoker);
-            Failsafe.guarded(runnable);
+            runnable.run();
+        } catch (ProcessCanceledException  ignore){
         } finally {
             threadInfo.set(threadProperty, originalProperty);
             processCounter.decrementAndGet();
@@ -58,7 +59,9 @@ public class ThreadMonitor {
             processCounter.incrementAndGet();
             threadInfo.set(threadProperty, true);
             threadInfo.merge(invoker);
-            return Failsafe.guarded(defaultValue, callable);
+            return callable.call();
+        } catch (ProcessCanceledException e) {
+            return defaultValue;
         } finally {
             threadInfo.set(threadProperty, originalProperty);
             threadInfo.unmerge(invoker);

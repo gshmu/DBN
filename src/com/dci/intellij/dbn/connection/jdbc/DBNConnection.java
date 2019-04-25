@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -270,11 +271,11 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
     private void notifyStatusChange() {
-        Failsafe.guarded(() -> {
+        try {
             EventUtil.notify(getProject(),
                     ConnectionStatusListener.TOPIC,
                     (listener) -> listener.statusChanged(id, sessionId));
-        });
+        } catch (ProcessCanceledException ignore) {}
     }
 
     public SchemaId getCurrentSchema() {
