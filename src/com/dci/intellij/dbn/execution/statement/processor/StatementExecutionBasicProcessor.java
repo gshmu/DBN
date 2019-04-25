@@ -73,9 +73,7 @@ import javax.swing.*;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
-import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
 
 @Nullifiable
@@ -155,7 +153,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     @Override
     public boolean isDirty(){
-        if (psiFileRef.get() == null ||
+        if (getPsiFile() == null ||
                 getConnectionHandler() != executionInput.getConnectionHandler() || // connection changed since execution
                 getTargetSchema() != executionInput.getTargetSchemaId()) { // current schema changed since execution)
             return true;
