@@ -62,6 +62,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -72,7 +73,9 @@ import javax.swing.*;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
-import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
 
 @Nullifiable
@@ -152,8 +155,9 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     @Override
     public boolean isDirty(){
-        if (getConnectionHandler() != executionInput.getConnectionHandler() || // connection changed since execution
-            getTargetSchema() != executionInput.getTargetSchemaId()) { // current schema changed since execution)
+        if (psiFileRef.get() == null ||
+                getConnectionHandler() != executionInput.getConnectionHandler() || // connection changed since execution
+                getTargetSchema() != executionInput.getTargetSchemaId()) { // current schema changed since execution)
             return true;
 
         } else {
@@ -336,6 +340,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
                 throw executionException;
             }
 
+        } catch (ProcessCanceledException ignore){
         } finally {
             postExecute();
         }
