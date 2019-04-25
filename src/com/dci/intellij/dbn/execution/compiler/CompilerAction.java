@@ -22,7 +22,7 @@ public class CompilerAction {
         this.contentType = contentType;
     }
 
-    public CompilerAction(CompilerActionSource source, DBContentType contentType, VirtualFile virtualFile, @Nullable FileEditor fileEditor) {
+    public CompilerAction(CompilerActionSource source, DBContentType contentType, @Nullable VirtualFile virtualFile, @Nullable FileEditor fileEditor) {
         this.source = source;
         this.contentType = contentType;
         this.virtualFileRef = WeakRef.from(virtualFile);

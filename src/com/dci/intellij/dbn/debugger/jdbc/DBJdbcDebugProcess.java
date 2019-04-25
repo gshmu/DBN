@@ -76,7 +76,6 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     private transient ExecutionBacktraceInfo backtraceInfo;
     private DBDebugConsoleLogger console;
 
-
     public DBJdbcDebugProcess(@NotNull XDebugSession session, ConnectionHandler connectionHandler) {
         super(session);
         console = new DBDebugConsoleLogger(session);

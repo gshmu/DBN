@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.statement.variables.ui;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -84,9 +85,12 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
         }
 
         DBLanguagePsiFile psiFile = executionProcessor.getPsiFile();
-        String headerTitle = psiFile.getName();
-        Icon headerIcon = psiFile.getIcon();
-        JBColor headerBackground = psiFile.getEnvironmentType().getColor();
+        String headerTitle = executionProcessor.getName();
+        Icon headerIcon = executionProcessor.getIcon();
+        JBColor headerBackground = psiFile == null ?
+                EnvironmentType.DEFAULT.getColor() :
+                psiFile.getEnvironmentType().getColor();
+
         DBNHeaderForm headerForm = new DBNHeaderForm(headerTitle, headerIcon, headerBackground, this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 

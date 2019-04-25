@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement;
 
 import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
@@ -22,7 +23,8 @@ public class StatementExecutionMessage extends ConsoleMessage {
     }
 
     public VirtualFile getVirtualFile() {
-        return executionResult.getExecutionProcessor().getVirtualFile();
+        VirtualFile virtualFile = executionResult.getExecutionProcessor().getVirtualFile();
+        return Failsafe.nn(virtualFile);
     }
 
     public boolean isOrphan() {

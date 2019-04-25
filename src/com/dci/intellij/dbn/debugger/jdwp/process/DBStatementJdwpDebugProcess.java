@@ -67,7 +67,7 @@ public class DBStatementJdwpDebugProcess extends DBJdwpDebugProcess<StatementExe
     public String getName() {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor();
         if (executionProcessor != null) {
-            return executionProcessor.getPsiFile().getName();
+            return executionProcessor.getName();
         }
         return "Debug Process";
     }
@@ -83,7 +83,7 @@ public class DBStatementJdwpDebugProcess extends DBJdwpDebugProcess<StatementExe
     public Icon getIcon() {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor();
         if (executionProcessor != null) {
-            return executionProcessor.getPsiFile().getIcon();
+            return executionProcessor.getIcon();
         }
         return null;
     }
