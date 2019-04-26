@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CompareWithDatabaseAction extends AbstractDiffAction {
+public class CompareWithDatabaseAction extends AbstractCodeEditorDiffAction {
     public CompareWithDatabaseAction() {
         super("Compare with database", null, Icons.CODE_EDITOR_DIFF_DB);
     }

@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.options.ConfigId;
-import com.dci.intellij.dbn.options.action.OpenSettingsAction;
+import com.dci.intellij.dbn.options.action.ProjectSettingsOpenAction;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -46,7 +46,7 @@ public class EditorOptionsAction extends GroupPopupAction {
             }
         }
         actions.add(Separator.getInstance());
-        actions.add(new OpenSettingsAction(ConfigId.CODE_EDITOR, false));
+        actions.add(new ProjectSettingsOpenAction(ConfigId.CODE_EDITOR, false));
 
         return actions.toArray(new AnAction[0]);
     }

@@ -6,7 +6,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 public class RecordNavigationActionGroup extends DefaultActionGroup{
 
     public RecordNavigationActionGroup(DatasetFilterInput filterInput) {
-        add(new OpenRecordEditorAction(filterInput));
-        add(new OpenRecordViewerAction(filterInput));
+        add(new RecordEditorOpenAction(filterInput));
+        add(new RecordViewerOpenAction(filterInput));
     }
 }

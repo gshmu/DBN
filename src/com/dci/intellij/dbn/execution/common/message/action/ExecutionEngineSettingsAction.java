@@ -8,7 +8,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class ExecutionEngineSettingsAction extends ExecutionMessagesAction {
+public class ExecutionEngineSettingsAction extends AbstractExecutionMessagesAction {
     public ExecutionEngineSettingsAction(MessagesTree messagesTree) {
         super(messagesTree, "Settings", Icons.EXEC_RESULT_OPTIONS);
     }

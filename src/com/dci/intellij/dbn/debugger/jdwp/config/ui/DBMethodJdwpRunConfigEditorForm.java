@@ -76,14 +76,14 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
         @Override
         protected AnAction[] getActions(AnActionEvent e) {
             return new AnAction[]{
-                    new OpenMethodHistoryAction(),
-                    new OpenMethodBrowserAction()
+                    new MethodHistoryOpenAction(),
+                    new MethodBrowserOpenAction()
             };
         }
     }
 
-    public class OpenMethodBrowserAction extends DumbAwareProjectAction {
-        OpenMethodBrowserAction() {
+    public class MethodBrowserOpenAction extends DumbAwareProjectAction {
+        MethodBrowserOpenAction() {
             super("Method Browser");
         }
 
@@ -94,8 +94,8 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
                     (executionInput) -> setExecutionInput(executionInput, true));
         }
     }
-    public class OpenMethodHistoryAction extends DumbAwareProjectAction {
-        OpenMethodHistoryAction() {
+    public class MethodHistoryOpenAction extends DumbAwareProjectAction {
+        MethodHistoryOpenAction() {
             super("Execution History", null, Icons.METHOD_EXECUTION_HISTORY);
         }
 
