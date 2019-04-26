@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -17,8 +18,21 @@ public class PasteConnectionAction extends ConnectionSettingsAction {
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
-        Presentation presentation = e.getPresentation();
+    protected void actionPerformed(
+            @NotNull AnActionEvent e,
+            @NotNull Project project,
+            @NotNull ConnectionBundleSettingsForm target) {
+
+            target.pasteConnectionsFromClipboard();
+    }
+
+    @Override
+    protected void update(
+            @NotNull AnActionEvent e,
+            @NotNull Presentation presentation,
+            @NotNull Project project,
+            @Nullable ConnectionBundleSettingsForm target) {
+
         try {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             Object clipboardData = clipboard.getData(DataFlavor.stringFlavor);
@@ -31,16 +45,5 @@ public class PasteConnectionAction extends ConnectionSettingsAction {
         } catch (Exception ex) {
             presentation.setEnabled(false);
         }
-        presentation.setText("Paste From Clipboard");
-
-    }
-
-    @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-        ConnectionBundleSettingsForm settingsForm = getSettingsForm(e);
-        if (settingsForm != null) {
-            settingsForm.pasteConnectionsFromClipboard();
-        }
-
     }
 }

@@ -19,19 +19,27 @@ public class PromptMethodExecutionAction extends MethodExecutionResultAction {
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull MethodExecutionResult executionResult) {
+    protected void actionPerformed(
+            @NotNull AnActionEvent e,
+            @NotNull Project project,
+            @NotNull MethodExecutionResult executionResult) {
+
         MethodExecutionInput executionInput = executionResult.getExecutionInput();
         MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
         executionManager.startMethodExecution(executionInput, DBDebuggerType.NONE);
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable MethodExecutionResult executionResult) {
-        Presentation presentation = e.getPresentation();
-        presentation.setText("Open Execution Dialog");
-        presentation.setEnabled(
-                executionResult != null &&
-                !executionResult.getDebuggerType().isDebug() &&
-                executionResult.getExecutionContext().isNot(EXECUTING));
-    }    
+    protected void update(
+            @NotNull AnActionEvent e,
+            @NotNull Presentation presentation,
+            @NotNull Project project,
+            @Nullable MethodExecutionResult target) {
+
+        boolean enabled = target != null &&
+                !target.getDebuggerType().isDebug() &&
+                target.getExecutionContext().isNot(EXECUTING);
+
+        presentation.setEnabled(enabled);
+    }
 }

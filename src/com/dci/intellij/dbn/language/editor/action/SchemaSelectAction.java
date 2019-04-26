@@ -15,6 +15,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SchemaSelectAction extends AnObjectAction<DBSchema> {
     SchemaSelectAction(DBSchema schema) {
@@ -22,7 +23,11 @@ public class SchemaSelectAction extends AnObjectAction<DBSchema> {
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBSchema object) {
+    protected void actionPerformed(
+            @NotNull AnActionEvent e,
+            @NotNull Project project,
+            @NotNull DBSchema object) {
+
         Editor editor = Lookup.getEditor(e);
         if (editor != null) {
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
@@ -31,8 +36,13 @@ public class SchemaSelectAction extends AnObjectAction<DBSchema> {
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
-        super.update(e, project);
+    protected void update(
+            @NotNull AnActionEvent e,
+            @NotNull Presentation presentation,
+            @NotNull Project project,
+            @Nullable DBSchema target) {
+
+        super.update(e, presentation, project, target);
         boolean enabled = false;
         VirtualFile virtualFile = Lookup.getVirtualFile(e);
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
@@ -42,7 +52,7 @@ public class SchemaSelectAction extends AnObjectAction<DBSchema> {
             enabled = currentFile instanceof DBLanguagePsiFile;
         }
 
-        Presentation presentation = e.getPresentation();
         presentation.setEnabled(enabled);
+
     }
 }

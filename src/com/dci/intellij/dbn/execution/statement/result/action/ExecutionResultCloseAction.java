@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorR
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class ExecutionResultCloseAction extends AbstractExecutionResultAction {
     public ExecutionResultCloseAction() {
@@ -17,10 +16,5 @@ public class ExecutionResultCloseAction extends AbstractExecutionResultAction {
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull StatementExecutionCursorResult executionResult) {
         ExecutionManager executionManager = ExecutionManager.getInstance(project);
         executionManager.removeResultTab(executionResult);
-    }
-
-    @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable StatementExecutionCursorResult executionResult) {
-
     }
 }

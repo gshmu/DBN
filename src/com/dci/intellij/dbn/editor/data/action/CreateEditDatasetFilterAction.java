@@ -40,9 +40,7 @@ public class CreateEditDatasetFilterAction extends AbstractDataEditorAction {
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable DatasetEditor datasetEditor) {
-        Presentation presentation = e.getPresentation();
-
+    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable DatasetEditor datasetEditor) {
         if (Failsafe.check(datasetEditor) && datasetEditor.getConnectionHandler().isConnected()) {
             DBDataset dataset = datasetEditor.getDataset();
             boolean enabled = !datasetEditor.isInserting() && !datasetEditor.isLoading();

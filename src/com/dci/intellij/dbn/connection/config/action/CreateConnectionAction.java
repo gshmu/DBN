@@ -13,7 +13,7 @@ import javax.swing.*;
 public class CreateConnectionAction extends ConnectionSettingsAction {
     private DatabaseType databaseType;
 
-    public CreateConnectionAction(@Nullable DatabaseType databaseType) {
+    CreateConnectionAction(@Nullable DatabaseType databaseType) {
         super(getName(databaseType), getIcon(databaseType));
         this.databaseType = databaseType;
     }
@@ -27,17 +27,18 @@ public class CreateConnectionAction extends ConnectionSettingsAction {
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-        ConnectionBundleSettingsForm settingsEditor = getSettingsForm(e);
-        if (settingsEditor != null) {
-            DatabaseType databaseType = this.databaseType;
-            ConnectionConfigType configType = ConnectionConfigType.BASIC;
-            if (databaseType == null) {
-                configType = ConnectionConfigType.CUSTOM;
-                databaseType = DatabaseType.UNKNOWN;
-            }
+    protected void actionPerformed(
+            @NotNull AnActionEvent e,
+            @NotNull Project project,
+            @NotNull ConnectionBundleSettingsForm target) {
 
-            settingsEditor.createNewConnection(databaseType, configType);
+        DatabaseType databaseType = this.databaseType;
+        ConnectionConfigType configType = ConnectionConfigType.BASIC;
+        if (databaseType == null) {
+            configType = ConnectionConfigType.CUSTOM;
+            databaseType = DatabaseType.UNKNOWN;
         }
+
+        target.createNewConnection(databaseType, configType);
     }
 }

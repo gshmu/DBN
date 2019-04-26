@@ -1,24 +1,21 @@
 package com.dci.intellij.dbn.ddl.action;
 
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
+import com.dci.intellij.dbn.object.action.AnObjectAction;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class AttachDDLFileAction extends DumbAwareProjectAction {
-    private DBObjectRef<DBSchemaObject> objectRef;
-
+public class AttachDDLFileAction extends AnObjectAction<DBSchemaObject> {
     public AttachDDLFileAction(@NotNull DBSchemaObject object) {
-        super("Attach files");
-        this.objectRef = DBObjectRef.from(object);
+        super("Attach files", null, object);
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
+    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBSchemaObject target) {
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-        fileAttachmentManager.attachDDLFiles(objectRef);
+        fileAttachmentManager.attachDDLFiles(target.getRef());
     }
+
 }

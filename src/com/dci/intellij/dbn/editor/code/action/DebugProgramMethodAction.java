@@ -79,7 +79,8 @@ public class DebugProgramMethodAction extends GroupPopupAction {
         boolean visible = false;
         if (sourceCodeFile != null) {
             DBSchemaObject schemaObject = sourceCodeFile.getObject();
-            if (schemaObject.getObjectType().matches(DBObjectType.PROGRAM) && DatabaseFeature.DEBUGGING.isSupported(schemaObject)) {
+            if (schemaObject.getObjectType().matches(DBObjectType.PROGRAM) &&
+                    DatabaseFeature.DEBUGGING.isSupported(schemaObject)) {
                 visible = true;
             }
         }
@@ -95,7 +96,11 @@ public class DebugProgramMethodAction extends GroupPopupAction {
 
 
         @Override
-        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBMethod object) {
+        protected void actionPerformed(
+                @NotNull AnActionEvent e,
+                @NotNull Project project,
+                @NotNull DBMethod object) {
+
             DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
             debuggerManager.startMethodDebugger(object);
         }

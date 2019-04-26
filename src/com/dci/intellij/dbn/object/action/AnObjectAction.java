@@ -1,17 +1,17 @@
 package com.dci.intellij.dbn.object.action;
 
-import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.action.DumbAwareContextAction;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public abstract class AnObjectAction<T extends DBObject> extends DumbAwareProjectAction {
+public abstract class AnObjectAction<T extends DBObject> extends DumbAwareContextAction<T> {
     private DBObjectRef<T> objectRef;
     private boolean custom;
 
@@ -26,30 +26,20 @@ public abstract class AnObjectAction<T extends DBObject> extends DumbAwareProjec
     }
 
     @Override
-    protected final void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-        T object = getObject();
-        if (Failsafe.check(object)) {
-            actionPerformed(e, project, object);
-        }
+    protected T getTarget(@NotNull AnActionEvent e) {
+        return getTarget();
     }
 
-    @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
-        if (!custom) {
-            T object = getObject();
-            if (object != null) {
-                e.getPresentation().setText(object.getName(), false);
-            }
-        }
-    }
-
-    @Nullable
-    public T getObject() {
+    public T getTarget() {
         return DBObjectRef.get(objectRef);
     }
 
-    protected abstract void actionPerformed(
-            @NotNull AnActionEvent e,
-            @NotNull Project project,
-            @NotNull T object);
+    @Override
+    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable T target) {
+        if (!custom) {
+            if (target != null) {
+                presentation.setText(target.getName(), false);
+            }
+        }
+    }
 }

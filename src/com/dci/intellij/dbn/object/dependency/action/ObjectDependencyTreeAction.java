@@ -14,7 +14,11 @@ public class ObjectDependencyTreeAction extends AnObjectAction<DBSchemaObject> {
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBSchemaObject object) {
+    protected void actionPerformed(
+            @NotNull AnActionEvent e,
+            @NotNull Project project,
+            @NotNull DBSchemaObject object) {
+
         ObjectDependencyManager dependencyManager = ObjectDependencyManager.getInstance(project);
         dependencyManager.openDependencyTree(object);
     }

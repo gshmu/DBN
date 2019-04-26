@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CopyConnectionsAction extends ConnectionSettingsAction {
     public CopyConnectionsAction() {
@@ -13,19 +14,23 @@ public class CopyConnectionsAction extends ConnectionSettingsAction {
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
-        ConnectionBundleSettingsForm settingsForm = getSettingsForm(e);
+    protected void actionPerformed(
+            @NotNull AnActionEvent e,
+            @NotNull Project project,
+            @NotNull ConnectionBundleSettingsForm target) {
 
-        Presentation presentation = e.getPresentation();
-        presentation.setEnabled(settingsForm != null && settingsForm.getSelectionSize() > 0);
-        presentation.setText("Copy to Clipboard");
+        target.copyConnectionsToClipboard();
     }
 
+
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-        ConnectionBundleSettingsForm settingsForm = getSettingsForm(e);
-        if (settingsForm != null) {
-            settingsForm.copyConnectionsToClipboard();
-        }
+    protected void update(
+            @NotNull AnActionEvent e,
+            @NotNull Presentation presentation,
+            @NotNull Project project,
+            @Nullable ConnectionBundleSettingsForm target) {
+
+        presentation.setEnabled(target != null && target.getSelectionSize() > 0);
+
     }
 }

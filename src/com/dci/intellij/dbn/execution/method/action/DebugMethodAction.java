@@ -19,7 +19,11 @@ public class DebugMethodAction extends AnObjectAction<DBMethod> {
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBMethod object) {
+    protected void actionPerformed(
+            @NotNull AnActionEvent e,
+            @NotNull Project project,
+            @NotNull DBMethod object) {
+
         DatabaseDebuggerManager executionManager = DatabaseDebuggerManager.getInstance(project);
         executionManager.startMethodDebugger(object);
     }
