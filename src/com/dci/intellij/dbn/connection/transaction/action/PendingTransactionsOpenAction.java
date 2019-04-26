@@ -4,8 +4,10 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PendingTransactionsOpenAction extends AbstractConnectionAction {
 
@@ -21,7 +23,9 @@ public class PendingTransactionsOpenAction extends AbstractConnectionAction {
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, Project project, @NotNull ConnectionHandler connectionHandler) {
-        e.getPresentation().setEnabled(connectionHandler.hasUncommittedChanges());
+    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler connectionHandler) {
+        boolean enabled = connectionHandler != null && connectionHandler.hasUncommittedChanges();
+
+        presentation.setEnabled(enabled);
     }
 }

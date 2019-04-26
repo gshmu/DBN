@@ -20,21 +20,31 @@ public class ViewExecutedStatementAction extends ExecutionMessagesAction {
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull MessagesTree messagesTree) {
+    protected void actionPerformed(
+            @NotNull AnActionEvent e,
+            @NotNull Project project,
+            @NotNull MessagesTree messagesTree) {
+
         messagesTree.grabFocus();
-        StatementExecutionMessageNode execMessageNode = (StatementExecutionMessageNode) messagesTree.getSelectionPath().getLastPathComponent();
+        StatementExecutionMessageNode execMessageNode =
+                (StatementExecutionMessageNode) messagesTree.getSelectionPath().getLastPathComponent();
+
         StatementExecutionResult executionResult = execMessageNode.getMessage().getExecutionResult();
         StatementViewerPopup statementViewer = new StatementViewerPopup(executionResult);
         statementViewer.show((Component) e.getInputEvent().getSource());
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable MessagesTree messagesTree) {
+    protected void update(
+            @NotNull AnActionEvent e,
+            @NotNull Presentation presentation,
+            @NotNull Project project,
+            @Nullable MessagesTree target) {
+
         boolean enabled =
-                Failsafe.check(messagesTree) &&
-                messagesTree.getSelectionPath() != null &&
-                messagesTree.getSelectionPath().getLastPathComponent() instanceof StatementExecutionMessageNode;
-        Presentation presentation = e.getPresentation();
+                Failsafe.check(target) &&
+                target.getSelectionPath() != null &&
+                target.getSelectionPath().getLastPathComponent() instanceof StatementExecutionMessageNode;
         presentation.setEnabled(enabled);
     }
 }

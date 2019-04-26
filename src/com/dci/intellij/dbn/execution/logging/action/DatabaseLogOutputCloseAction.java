@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 
@@ -35,9 +34,5 @@ public class DatabaseLogOutputCloseAction extends AbstractDatabaseLogOutputActio
         loggingResult.getContext().close();
         ExecutionManager executionManager = ExecutionManager.getInstance(project);
         executionManager.removeResultTab(loggingResult);
-    }
-
-    @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable DatabaseLoggingResult loggingResult) {
     }
 }

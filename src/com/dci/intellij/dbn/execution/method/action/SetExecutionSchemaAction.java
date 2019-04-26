@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.method.action;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -17,13 +16,12 @@ public class SetExecutionSchemaAction extends AnObjectAction<DBSchema> {
         this.executionInput = executionInput;
     }
 
-    @NotNull
-    public DBSchema getSchema() {
-        return Failsafe.nn(getObject());
-    }
-
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBSchema object) {
+    protected void actionPerformed(
+            @NotNull AnActionEvent e,
+            @NotNull Project project,
+            @NotNull DBSchema object) {
+
         executionInput.setTargetSchemaId(SchemaId.from(object));
     }
 }

@@ -19,7 +19,11 @@ public class TnsNamesImportAction extends ConnectionSettingsAction{
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
+    protected void actionPerformed(
+            @NotNull AnActionEvent e,
+            @NotNull Project project,
+            @NotNull ConnectionBundleSettingsForm target) {
+
         VirtualFile[] virtualFiles = FileChooser.chooseFiles(TnsNamesParser.FILE_CHOOSER_DESCRIPTOR, project, null);
         if (virtualFiles.length == 1) {
             File file = new File(virtualFiles[0].getPath());
@@ -27,10 +31,7 @@ public class TnsNamesImportAction extends ConnectionSettingsAction{
             dialog.show();
             int exitCode = dialog.getExitCode();
             if (exitCode == DialogWrapper.OK_EXIT_CODE) {
-                ConnectionBundleSettingsForm settingsForm = getSettingsForm(e);
-                if (settingsForm != null) {
-                    settingsForm.importTnsNames(dialog.getTnsNames());
-                }
+                target.importTnsNames(dialog.getTnsNames());
             }
         }
     }

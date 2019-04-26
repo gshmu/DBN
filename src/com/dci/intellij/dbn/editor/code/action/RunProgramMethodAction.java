@@ -93,7 +93,11 @@ public class RunProgramMethodAction extends GroupPopupAction {
         }
 
         @Override
-        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBMethod object) {
+        protected void actionPerformed(
+                @NotNull AnActionEvent e,
+                @NotNull Project project,
+                @NotNull DBMethod object) {
+
             MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
             executionManager.startMethodExecution(object, DBDebuggerType.NONE);
         }

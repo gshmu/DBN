@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class ExecutionResultSettingsAction extends AbstractExecutionResultAction {
     public ExecutionResultSettingsAction() {
@@ -18,9 +17,5 @@ public class ExecutionResultSettingsAction extends AbstractExecutionResultAction
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull StatementExecutionCursorResult executionResult) {
         ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
         settingsManager.openProjectSettings(ConfigId.EXECUTION_ENGINE);
-    }
-
-    @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable StatementExecutionCursorResult executionResult) {
     }
 }

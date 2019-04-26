@@ -91,7 +91,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
                                     return latestConnectionId == selectConnectionAction.getConnectionHandler().getConnectionId();
                                 } else if (preselect instanceof SelectSchemaAction) {
                                     SelectSchemaAction selectSchemaAction = (SelectSchemaAction) preselect;
-                                    DBSchema object = selectSchemaAction.getObject();
+                                    DBSchema object = selectSchemaAction.getTarget();
                                     return object != null && latestSchemaName.equals(object.getName());
                                 }
                                 return false;
@@ -178,7 +178,11 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
         }
 
         @Override
-        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBSchema object) {
+        protected void actionPerformed(
+                @NotNull AnActionEvent e,
+                @NotNull Project project,
+                @NotNull DBSchema object) {
+
             showLookupPopup(e, project, object.getConnectionHandler(), object);
             latestSchemaName = object.getName();
         }

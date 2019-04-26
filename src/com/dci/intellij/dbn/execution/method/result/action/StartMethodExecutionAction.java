@@ -17,18 +17,25 @@ public class StartMethodExecutionAction extends MethodExecutionResultAction {
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull MethodExecutionResult executionResult) {
+    protected void actionPerformed(
+            @NotNull AnActionEvent e,
+            @NotNull Project project,
+            @NotNull MethodExecutionResult executionResult) {
+
         MethodExecutionManager executionManager = MethodExecutionManager.getInstance(project);
         executionManager.execute(executionResult.getExecutionInput());
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable MethodExecutionResult executionResult) {
-        Presentation presentation = e.getPresentation();
-        presentation.setText("Execute Again");
+    protected void update(
+            @NotNull AnActionEvent e,
+            @NotNull Presentation presentation,
+            @NotNull Project project,
+            @Nullable MethodExecutionResult target) {
+
         presentation.setEnabled(
-                executionResult != null &&
-                !executionResult.getDebuggerType().isDebug() &&
-                executionResult.getExecutionContext().isNot(EXECUTING));
+                target != null &&
+                        !target.getDebuggerType().isDebug() &&
+                        target.getExecutionContext().isNot(EXECUTING));
     }
 }

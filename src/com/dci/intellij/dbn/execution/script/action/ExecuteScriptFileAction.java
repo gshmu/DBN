@@ -24,7 +24,9 @@ public class ExecuteScriptFileAction extends DumbAwareProjectAction {
     }
 
     private boolean isAvailableFor(VirtualFile virtualFile) {
-        return virtualFile != null && (virtualFile.getFileType() == SQLFileType.INSTANCE || virtualFile.getFileType() == PSQLFileType.INSTANCE);
+        return virtualFile != null && (
+                virtualFile.getFileType() == SQLFileType.INSTANCE ||
+                virtualFile.getFileType() == PSQLFileType.INSTANCE);
     }
 
     @Override

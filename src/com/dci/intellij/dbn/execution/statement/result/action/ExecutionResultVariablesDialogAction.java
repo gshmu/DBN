@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionCurs
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +40,7 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable StatementExecutionCursorResult executionResult) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable StatementExecutionCursorResult executionResult) {
         boolean visible = false;
         if (Failsafe.check(executionResult)) {
             StatementExecutionCursorProcessor executionProcessor = executionResult.getExecutionProcessor();
@@ -48,7 +49,7 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
                 visible = executionVariables != null && executionVariables.getVariables().size() > 0;
             }
         }
-        e.getPresentation().setVisible(visible);
-        e.getPresentation().setText("Open Variables Dialog");
+        presentation.setVisible(visible);
+        presentation.setText("Open Variables Dialog");
     }
 }

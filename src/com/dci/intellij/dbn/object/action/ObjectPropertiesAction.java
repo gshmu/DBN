@@ -12,7 +12,11 @@ public class ObjectPropertiesAction<T extends DBObject> extends AnObjectAction<T
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBObject object) {
+    protected void actionPerformed(
+            @NotNull AnActionEvent e,
+            @NotNull Project project,
+            @NotNull DBObject object) {
+
         MessageUtil.showInfoDialog(project, "Not implemented!", "This feature is not implemented yet.");
     }
 }
