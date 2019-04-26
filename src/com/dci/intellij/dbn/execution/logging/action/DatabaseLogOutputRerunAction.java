@@ -11,7 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DatabaseLogOutputRerunAction extends AbstractDatabaseLogOutputAction {
+public class DatabaseLogOutputRerunAction extends AbstractDatabaseLoggingAction {
     public DatabaseLogOutputRerunAction() {
         super("Rerun Script", Icons.STMT_EXECUTION_RERUN);
     }

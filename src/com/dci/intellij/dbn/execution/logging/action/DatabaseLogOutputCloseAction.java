@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 
-public class DatabaseLogOutputCloseAction extends AbstractDatabaseLogOutputAction {
+public class DatabaseLogOutputCloseAction extends AbstractDatabaseLoggingAction {
     public DatabaseLogOutputCloseAction() {
         super("Close", Icons.EXEC_RESULT_CLOSE);
     }

@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.options.ConfigId;
-import com.dci.intellij.dbn.options.action.OpenSettingsAction;
+import com.dci.intellij.dbn.options.action.ProjectSettingsOpenAction;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 
@@ -18,9 +18,9 @@ public class BrowserOptionsAction extends GroupPopupAction {
                 new AutoscrollToEditorAction(),
                 new AutoscrollFromEditorAction(),
                 ActionUtil.SEPARATOR,
-                new OpenConnectionFilterSettingsAction(),
+                new ConnectionFilterSettingsOpenAction(),
                 ActionUtil.SEPARATOR,
-                new OpenSettingsAction(ConfigId.CONNECTIONS, false)
+                new ProjectSettingsOpenAction(ConfigId.CONNECTIONS, false)
         };
     }
 }

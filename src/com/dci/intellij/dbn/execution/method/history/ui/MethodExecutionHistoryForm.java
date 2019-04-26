@@ -56,7 +56,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
                 new ShowGroupedTreeAction(),
                 new DeleteHistoryEntryAction(),
                 ActionUtil.SEPARATOR,
-                new OpenSettingsAction());
+                new ProjectSettingsOpenAction());
         actionsPanel.add(actionToolbar.getComponent());
         methodExecutionForms = new HashMap<>();
         mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
@@ -161,7 +161,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
         }
     }
 
-    public static class OpenSettingsAction extends DumbAwareProjectAction {
+    public static class ProjectSettingsOpenAction extends DumbAwareProjectAction {
         @Override
         protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
             ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);

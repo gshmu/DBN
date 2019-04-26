@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
-public class CompareWithOriginalAction extends AbstractDiffAction {
+public class CompareWithOriginalAction extends AbstractCodeEditorDiffAction {
     public CompareWithOriginalAction() {
         super("Compare with original", null, Icons.CODE_EDITOR_DIFF);
     }
