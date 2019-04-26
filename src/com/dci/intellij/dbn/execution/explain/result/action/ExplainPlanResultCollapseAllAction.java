@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.execution.explain.result.ui.ExplainPlanResultForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class ExplainPlanResultCollapseAllAction extends AbstractExplainPlanResultAction {
     public ExplainPlanResultCollapseAllAction() {
@@ -21,9 +20,4 @@ public class ExplainPlanResultCollapseAllAction extends AbstractExplainPlanResul
             resultForm.collapseAllNodes();
         }
     }
-
-    @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable ExplainPlanResult explainPlanResult) {
-    }
-
 }

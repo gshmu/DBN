@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.execution.statement.result.ui.StatementExecutionResu
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class ExecutionResultFindDataAction extends AbstractExecutionResultAction {
     public ExecutionResultFindDataAction() {
@@ -20,9 +19,5 @@ public class ExecutionResultFindDataAction extends AbstractExecutionResultAction
         if (Failsafe.check(resultForm)) {
             resultForm.showSearchHeader();
         }
-    }
-
-    @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable StatementExecutionCursorResult executionResult) {
     }
 }

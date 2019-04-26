@@ -23,8 +23,7 @@ public class InsertRecordAction extends AbstractDataEditorAction {
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable DatasetEditor datasetEditor) {
-        Presentation presentation = e.getPresentation();
+    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable DatasetEditor datasetEditor) {
         presentation.setText("Insert record");
         if (Failsafe.check(datasetEditor)) {
             EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);

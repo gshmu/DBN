@@ -11,6 +11,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 
@@ -20,7 +21,11 @@ public class EnableDisableAction extends AnObjectAction<DBSchemaObject> {
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBSchemaObject object) {
+    protected void actionPerformed(
+            @NotNull AnActionEvent e,
+            @NotNull Project project,
+            @NotNull DBSchemaObject object) {
+
         boolean enabled = object.getStatus().is(DBObjectStatus.ENABLED);
         String objectName = object.getQualifiedNameWithType();
         Progress.prompt(project, enabled ? "Disabling " : "Enabling " + objectName, false,
@@ -39,11 +44,15 @@ public class EnableDisableAction extends AnObjectAction<DBSchemaObject> {
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
-        DBSchemaObject object = getObject();
-        Presentation presentation = e.getPresentation();
-        if (Failsafe.check(object)) {
-            boolean enabled = object.getStatus().is(DBObjectStatus.ENABLED);
+    protected void update(
+            @NotNull AnActionEvent e,
+            @NotNull Presentation presentation,
+            @NotNull Project project,
+            @Nullable DBSchemaObject target) {
+
+        super.update(e, presentation, project, target);
+        if (Failsafe.check(target)) {
+            boolean enabled = target.getStatus().is(DBObjectStatus.ENABLED);
             presentation.setText(!enabled ? "Enable" : "Disable");
             presentation.setVisible(true);
         } else {

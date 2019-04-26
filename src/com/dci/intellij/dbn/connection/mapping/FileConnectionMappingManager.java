@@ -665,10 +665,14 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         }
 
         @Override
-        protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull DBSchema object) {
+        protected void actionPerformed(
+                @NotNull AnActionEvent e,
+                @NotNull Project project,
+                @NotNull DBSchema object) {
+
             DBLanguagePsiFile file = fileRef.get();
             if (file != null) {
-                file.setDatabaseSchema(getSchema());
+                file.setDatabaseSchema(getSchemaId());
                 if (callback != null) {
                     callback.run();
                 }
@@ -676,15 +680,15 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         }
 
         @Nullable
-        public SchemaId getSchema() {
-            return SchemaId.from(getObject());
+        public SchemaId getSchemaId() {
+            return SchemaId.from(getTarget());
         }
 
         public boolean isSelected() {
             DBLanguagePsiFile file = fileRef.get();
             if (file != null) {
                 SchemaId fileSchema = file.getSchemaId();
-                return fileSchema != null && fileSchema.equals(getSchema());
+                return fileSchema != null && fileSchema.equals(getSchemaId());
             }
             return false;
         }

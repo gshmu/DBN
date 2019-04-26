@@ -22,7 +22,7 @@ public class ExecutionResultResumeAction extends AbstractExecutionResultAction {
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable StatementExecutionCursorResult executionResult) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable StatementExecutionCursorResult executionResult) {
         boolean enabled = false;
 
         if (Failsafe.check(executionResult) && executionResult.hasResult()) {
@@ -35,7 +35,6 @@ public class ExecutionResultResumeAction extends AbstractExecutionResultAction {
             }
         }
 
-        Presentation presentation = e.getPresentation();
         presentation.setEnabled(enabled);
         presentation.setText("Fetch Next Records");
     }

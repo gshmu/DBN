@@ -27,8 +27,7 @@ public class DeleteRecordAction extends AbstractDataEditorAction {
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable DatasetEditor datasetEditor) {
-        Presentation presentation = e.getPresentation();
+    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable DatasetEditor datasetEditor) {
         presentation.setText("Delete Records");
         if (Failsafe.check(datasetEditor) && datasetEditor.getConnectionHandler().isConnected()) {
             EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);

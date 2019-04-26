@@ -36,8 +36,7 @@ public class DatabaseLogOutputKillAction extends AbstractDatabaseLogOutputAction
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable DatabaseLoggingResult loggingResult) {
-        Presentation presentation = e.getPresentation();
+    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable DatabaseLoggingResult loggingResult) {
         presentation.setText("Kill Process");
 
         LogOutputContext context = loggingResult == null ? null : loggingResult.getContext();

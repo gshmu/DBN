@@ -7,9 +7,9 @@ import javax.swing.*;
 import javax.swing.tree.TreePath;
 
 public abstract class ObjectNameFilterAction extends DumbAwareProjectAction {
-    protected ObjectNameFilterSettingsForm settingsForm;
+    ObjectNameFilterSettingsForm settingsForm;
 
-    protected ObjectNameFilterAction(String text, Icon icon, ObjectNameFilterSettingsForm settingsForm) {
+    ObjectNameFilterAction(String text, Icon icon, ObjectNameFilterSettingsForm settingsForm) {
         super(text, null, icon);
         this.settingsForm = settingsForm;
     }
@@ -19,7 +19,7 @@ public abstract class ObjectNameFilterAction extends DumbAwareProjectAction {
         return selectionPath == null ? null : selectionPath.getLastPathComponent();
     }
 
-    protected JTree getFiltersTree() {
+    JTree getFiltersTree() {
         return settingsForm.getFiltersTree();
     }
 }

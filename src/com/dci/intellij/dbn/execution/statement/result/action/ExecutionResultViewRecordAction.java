@@ -24,7 +24,7 @@ public class ExecutionResultViewRecordAction extends AbstractExecutionResultActi
     }
 
     @Override
-    protected void update(@NotNull AnActionEvent e, @NotNull Project project, @Nullable StatementExecutionCursorResult executionResult) {
+    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable StatementExecutionCursorResult executionResult) {
         boolean enabled = false;
         if (Failsafe.check(executionResult)) {
             ResultSetTable resultTable = executionResult.getResultTable();
@@ -33,7 +33,6 @@ public class ExecutionResultViewRecordAction extends AbstractExecutionResultActi
             }
         }
 
-        Presentation presentation = e.getPresentation();
         presentation.setEnabled(enabled);
         presentation.setText("View Record");
     }
