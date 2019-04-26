@@ -3,10 +3,10 @@ package com.dci.intellij.dbn.object.action;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.compiler.action.CompileActionGroup;
-import com.dci.intellij.dbn.execution.method.action.DebugMethodAction;
-import com.dci.intellij.dbn.execution.method.action.DebugProgramMethodAction;
-import com.dci.intellij.dbn.execution.method.action.RunMethodAction;
-import com.dci.intellij.dbn.execution.method.action.RunProgramMethodAction;
+import com.dci.intellij.dbn.execution.method.action.MethodDebugAction;
+import com.dci.intellij.dbn.execution.method.action.MethodRunAction;
+import com.dci.intellij.dbn.execution.method.action.ProgramMethodDebugAction;
+import com.dci.intellij.dbn.execution.method.action.ProgramMethodRunAction;
 import com.dci.intellij.dbn.generator.action.GenerateStatementActionGroup;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
@@ -20,11 +20,7 @@ import com.intellij.openapi.project.DumbAware;
 
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DISABLEABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.EDITABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.REFERENCEABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
 public class ObjectActionGroup extends DefaultActionGroup implements DumbAware {
 
@@ -62,17 +58,17 @@ public class ObjectActionGroup extends DefaultActionGroup implements DumbAware {
 
         if (object instanceof DBMethod ) {
             addSeparator();
-            add(new RunMethodAction((DBMethod) object));
+            add(new MethodRunAction((DBMethod) object));
             if (DatabaseFeature.DEBUGGING.isSupported(object)) {
-                add(new DebugMethodAction((DBMethod) object));
+                add(new MethodDebugAction((DBMethod) object));
             }
         }
 
         if (object instanceof DBProgram && object.is(SCHEMA_OBJECT)) {
             addSeparator();
-            add(new RunProgramMethodAction((DBProgram) object));
+            add(new ProgramMethodRunAction((DBProgram) object));
             if (DatabaseFeature.DEBUGGING.isSupported(object)) {
-                add(new DebugProgramMethodAction((DBProgram) object));
+                add(new ProgramMethodDebugAction((DBProgram) object));
             }
         }
 

@@ -50,7 +50,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         add(hideColumnAction);
         addSeparator();
         if (cell != null && cell.is(MODIFIED) && !cell.isLobValue()) {
-            RevertChangesAction revertChangesAction = new RevertChangesAction(cell);
+            DataRevertAction revertChangesAction = new DataRevertAction(cell);
             add(revertChangesAction);
         }
 
@@ -97,11 +97,11 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
             if (cell != null && column.isForeignKey()) {
                 DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
                 if (filterInput != null) {
-                    add(new ShowReferencedRecordAction(filterInput));
+                    add(new ReferencedRecordOpenAction(filterInput));
                 }
             }
             if (column.isPrimaryKey()) {
-                ShowReferencingRecordsAction action = new ShowReferencingRecordsAction(column, columnValue);
+                ReferencingRecordsOpenAction action = new ReferencingRecordsOpenAction(column, columnValue);
                 action.setPopupLocation(table.getColumnHeaderLocation(column));
                 add(action);
             }
@@ -119,7 +119,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         add(columnPropertiesActionGroup);
         addSeparator();
 
-        add(new ExportDataAction());
+        add(new DataExportAction());
     }
 
     private static String getClipboardContent(int maxLength) {

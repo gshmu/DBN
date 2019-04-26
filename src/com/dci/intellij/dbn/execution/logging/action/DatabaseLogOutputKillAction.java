@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 
-public class DatabaseLogOutputKillAction extends AbstractDatabaseLogOutputAction implements ComponentBase {
+public class DatabaseLogOutputKillAction extends AbstractDatabaseLoggingAction implements ComponentBase {
     public DatabaseLogOutputKillAction() {
         super("Kill Process", Icons.KILL_PROCESS);
     }

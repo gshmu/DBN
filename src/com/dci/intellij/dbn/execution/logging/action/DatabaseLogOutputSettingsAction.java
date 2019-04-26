@@ -8,7 +8,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class DatabaseLogOutputSettingsAction extends AbstractDatabaseLogOutputAction {
+public class DatabaseLogOutputSettingsAction extends AbstractDatabaseLoggingAction {
     public DatabaseLogOutputSettingsAction() {
         super("Settings", Icons.EXEC_RESULT_OPTIONS);
     }

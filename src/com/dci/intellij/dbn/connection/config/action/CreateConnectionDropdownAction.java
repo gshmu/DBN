@@ -17,11 +17,11 @@ import javax.swing.*;
 
 public class CreateConnectionDropdownAction extends GroupPopupAction {
     private AnAction[] actions = new AnAction[] {
-            new CreateConnectionAction(DatabaseType.ORACLE),
-            new CreateConnectionAction(DatabaseType.MYSQL),
-            new CreateConnectionAction(DatabaseType.POSTGRES),
-            new CreateConnectionAction(DatabaseType.SQLITE),
-            new CreateConnectionAction(null),
+            new ConnectionCreateAction(DatabaseType.ORACLE),
+            new ConnectionCreateAction(DatabaseType.MYSQL),
+            new ConnectionCreateAction(DatabaseType.POSTGRES),
+            new ConnectionCreateAction(DatabaseType.SQLITE),
+            new ConnectionCreateAction(null),
             ActionUtil.SEPARATOR,
             new TnsNamesImportAction()
     };

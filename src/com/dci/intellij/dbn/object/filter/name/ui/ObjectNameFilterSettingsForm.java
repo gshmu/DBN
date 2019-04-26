@@ -11,12 +11,12 @@ import com.dci.intellij.dbn.object.filter.name.ObjectNameFilter;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterManager;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterSettings;
 import com.dci.intellij.dbn.object.filter.name.SimpleNameFilterCondition;
-import com.dci.intellij.dbn.object.filter.name.action.AddConditionAction;
-import com.dci.intellij.dbn.object.filter.name.action.CreateFilterAction;
-import com.dci.intellij.dbn.object.filter.name.action.MoveConditionDownAction;
-import com.dci.intellij.dbn.object.filter.name.action.MoveConditionUpAction;
-import com.dci.intellij.dbn.object.filter.name.action.RemoveConditionAction;
-import com.dci.intellij.dbn.object.filter.name.action.SwitchConditionJoinTypeAction;
+import com.dci.intellij.dbn.object.filter.name.action.FilterConditionCreateAction;
+import com.dci.intellij.dbn.object.filter.name.action.FilterConditionJoinTypeSwitchAction;
+import com.dci.intellij.dbn.object.filter.name.action.FilterConditionMoveDownAction;
+import com.dci.intellij.dbn.object.filter.name.action.FilterConditionMoveUpAction;
+import com.dci.intellij.dbn.object.filter.name.action.FilterConditionRemoveAction;
+import com.dci.intellij.dbn.object.filter.name.action.FilterCreateAction;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.options.ConfigurationException;
@@ -58,13 +58,13 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
                 "DBNavigator.ObjectNameFilters.Setup", true,
-                new CreateFilterAction(this),
-                new AddConditionAction(this),
-                new RemoveConditionAction(this),
-                new SwitchConditionJoinTypeAction(this),
+                new FilterCreateAction(this),
+                new FilterConditionCreateAction(this),
+                new FilterConditionRemoveAction(this),
+                new FilterConditionJoinTypeSwitchAction(this),
                 new Separator(),
-                new MoveConditionUpAction(this),
-                new MoveConditionDownAction(this));
+                new FilterConditionMoveUpAction(this),
+                new FilterConditionMoveDownAction(this));
         actionsPanel.add(actionToolbar.getComponent());
 
         filtersTree.setCellRenderer(new FilterSettingsTreeCellRenderer());

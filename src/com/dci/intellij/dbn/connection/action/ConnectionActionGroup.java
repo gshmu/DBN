@@ -18,17 +18,17 @@ public class ConnectionActionGroup extends DefaultActionGroup {
         add(new AutoCommitToggleAction(connectionHandler));
         add(new DatabaseLoggingToggleAction(connectionHandler));
         addSeparator();
-        add(new OpenSQLConsoleAction(connectionHandler));
+        add(new SQLConsoleOpenAction(connectionHandler));
         add(new PendingTransactionsOpenAction(connectionHandler));
         addSeparator();
         add(new AutoConnectToggleAction(connectionHandler));
-        add(new ConnectAction(connectionHandler));
-        add(new DisconnectAction(connectionHandler));
-        add(new TestConnectivityAction(connectionHandler));
+        add(new DatabaseConnectAction(connectionHandler));
+        add(new DatabaseDisconnectAction(connectionHandler));
+        add(new DatabaseConnectivityTestAction(connectionHandler));
         add(new LoadAllObjectsAction(connectionHandler));
         add(new DevTestConnectionAction(connectionHandler));
         addSeparator();
-        add(new ShowDatabaseInformationAction(connectionHandler));
-        add(new OpenConnectionSettingsAction(connectionHandler));
+        add(new DatabaseInformationOpenAction(connectionHandler));
+        add(new ConnectionSettingsOpenAction(connectionHandler));
     }
 }
