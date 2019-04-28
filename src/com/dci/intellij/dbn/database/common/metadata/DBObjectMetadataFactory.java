@@ -36,6 +36,10 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import java.sql.ResultSet;
 
 public class DBObjectMetadataFactory {
+    public static final DBObjectMetadataFactory INSTANCE = new DBObjectMetadataFactory();
+
+    private DBObjectMetadataFactory() {}
+
     public <M extends DBObjectMetadata> M create(DynamicContentType contentType, ResultSet resultSet) {
         M metadata = null;
         if (contentType instanceof DBObjectType) {
