@@ -64,7 +64,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                                 isEmpty(metaData.getProcedures(null, schemaName, null));
 
                         return empty ? "Y" : "N";
-                    default: return super.getString(columnLabel);
+                    default: return null;
                 }
             }
         };
