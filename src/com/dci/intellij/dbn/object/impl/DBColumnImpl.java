@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.database.common.metadata.def.DBColumnMetadata;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
@@ -32,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,28 +41,28 @@ import java.util.List;
 import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
-public class DBColumnImpl extends DBObjectImpl implements DBColumn {
+public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBColumn {
     private DBDataType dataType;
     private int position;
 
     private DBObjectList<DBConstraint> constraints;
     private DBObjectList<DBIndex> indexes;
 
-    DBColumnImpl(@NotNull DBDataset dataset, ResultSet resultSet) throws SQLException {
-        super(dataset, resultSet);
+    DBColumnImpl(@NotNull DBDataset dataset, DBColumnMetadata metadata) throws SQLException {
+        super(dataset, metadata);
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        String name = resultSet.getString("COLUMN_NAME");
-        set(PRIMARY_KEY, "Y".equals(resultSet.getString("IS_PRIMARY_KEY")));
-        set(FOREIGN_KEY, "Y".equals(resultSet.getString("IS_FOREIGN_KEY")));
-        set(UNIQUE_KEY, "Y".equals(resultSet.getString("IS_UNIQUE_KEY")));
-        set(NULLABLE, "Y".equals(resultSet.getString("IS_NULLABLE")));
-        set(HIDDEN, "Y".equals(resultSet.getString("IS_HIDDEN")));
-        position = resultSet.getInt("POSITION");
+    protected String initObject(DBColumnMetadata metadata) throws SQLException {
+        String name = metadata.getColumnName();
+        set(PRIMARY_KEY, metadata.isPrimaryKey());
+        set(FOREIGN_KEY, metadata.isForeignKey());
+        set(UNIQUE_KEY, metadata.isUniqueKey());
+        set(NULLABLE, metadata.isNullable());
+        set(HIDDEN, metadata.isHidden());
+        position = metadata.getPosition();
 
-        dataType = DBDataType.get(this.getConnectionHandler(), resultSet);
+        dataType = DBDataType.get(this.getConnectionHandler(), metadata.getDataType());
         return name;
     }
 

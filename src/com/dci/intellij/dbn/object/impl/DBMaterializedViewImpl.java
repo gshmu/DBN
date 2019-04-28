@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.object.impl;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.database.common.metadata.def.DBMaterializedViewMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBIndex;
 import com.dci.intellij.dbn.object.DBMaterializedView;
@@ -25,8 +26,8 @@ import static com.dci.intellij.dbn.object.common.DBObjectRelationType.INDEX_COLU
 public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterializedView {
     private DBObjectList<DBIndex> indexes;
 
-    DBMaterializedViewImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
-        super(schema, resultSet);
+    DBMaterializedViewImpl(DBSchema schema, DBMaterializedViewMetadata metadata) throws SQLException {
+        super(schema, metadata);
     }
 
     @Override

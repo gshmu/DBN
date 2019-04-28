@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.common.metadata.def.DBConstraintMetadata;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
@@ -32,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,23 +43,23 @@ import static com.dci.intellij.dbn.object.common.DBObjectType.CONSTRAINT;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DISABLEABLE;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
 
-public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint {
+public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> implements DBConstraint {
     private int constraintType;
     private DBObjectRef<DBConstraint> foreignKeyConstraint;
 
     private String checkCondition;
     private DBObjectList<DBColumn> columns;
 
-    DBConstraintImpl(DBDataset dataset, ResultSet resultSet) throws SQLException {
-        super(dataset, resultSet);
+    DBConstraintImpl(DBDataset dataset, DBConstraintMetadata metadata) throws SQLException {
+        super(dataset, metadata);
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        String name = resultSet.getString("CONSTRAINT_NAME");
-        checkCondition = resultSet.getString("CHECK_CONDITION");
+    protected String initObject(DBConstraintMetadata metadata) throws SQLException {
+        String name = metadata.getConstraintName();
+        checkCondition = metadata.getCheckCondition();
 
-        String typeString = resultSet.getString("CONSTRAINT_TYPE");
+        String typeString = metadata.getConstraintType();
         constraintType =
             typeString == null ? -1 :
             typeString.equals("CHECK")? DBConstraint.CHECK :
@@ -72,8 +72,8 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
         if (checkCondition == null && constraintType == CHECK) checkCondition = "";
 
         if (isForeignKey()) {
-            String fkOwner = resultSet.getString("FK_CONSTRAINT_OWNER");
-            String fkName = resultSet.getString("FK_CONSTRAINT_NAME");
+            String fkOwner = metadata.getFkConstraintOwner();
+            String fkName = metadata.getFkConstraintName();
 
             ConnectionHandler connectionHandler = getConnectionHandler();
             DBSchema schema = connectionHandler.getObjectBundle().getSchema(fkOwner);
@@ -96,8 +96,8 @@ public class DBConstraintImpl extends DBSchemaObjectImpl implements DBConstraint
     }
 
     @Override
-    public void initStatus(ResultSet resultSet) throws SQLException {
-        boolean enabled = resultSet.getString("IS_ENABLED").equals("Y");
+    public void initStatus(DBConstraintMetadata metadata) throws SQLException {
+        boolean enabled = metadata.isEnabled();
         getStatus().set(DBObjectStatus.ENABLED, enabled);
     }
 

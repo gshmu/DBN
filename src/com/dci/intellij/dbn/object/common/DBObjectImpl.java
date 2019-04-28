@@ -33,6 +33,7 @@ import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -63,7 +64,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -71,7 +71,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Nullifiable
-public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObject, ToolTipProvider {
+public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTreeNodeBase implements DBObject, ToolTipProvider {
+
     private static final List<DBObject> EMPTY_OBJECT_LIST = java.util.Collections.unmodifiableList(new ArrayList<>(0));
     public static final List<BrowserTreeNode> EMPTY_TREE_NODE_LIST = java.util.Collections.unmodifiableList(new ArrayList<BrowserTreeNode>(0));
 
@@ -91,15 +92,15 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         throw new DBOperationNotSupportedException(operationType);
     };
 
-    protected DBObjectImpl(@NotNull DBObject parentObject, ResultSet resultSet) throws SQLException {
+    protected DBObjectImpl(@NotNull DBObject parentObject, M metadata) throws SQLException {
         this.connectionHandlerRef = ConnectionHandlerRef.from(parentObject.getConnectionHandler());
         this.parentObjectRef = DBObjectRef.from(parentObject);
-        init(resultSet);
+        init(metadata);
     }
 
-    protected DBObjectImpl(@NotNull ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
+    protected DBObjectImpl(@NotNull ConnectionHandler connectionHandler, M metadata) throws SQLException {
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
-        init(resultSet);
+        init(metadata);
     }
 
     protected DBObjectImpl(@Nullable ConnectionHandler connectionHandler, DBObjectType objectType, String name) {
@@ -107,11 +108,11 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         objectRef = new DBObjectRef(this, objectType, name);
     }
 
-    private void init(ResultSet resultSet) throws SQLException {
-        String name = initObject(resultSet);
+    private void init(M metadata) throws SQLException {
+        String name = initObject(metadata);
         objectRef = new DBObjectRef(this, name);
 
-        initStatus(resultSet);
+        initStatus(metadata);
         initProperties();
         initLists();
 
@@ -119,9 +120,9 @@ public abstract class DBObjectImpl extends BrowserTreeNodeBase implements DBObje
         CollectionUtil.compact(childObjectRelations);
     }
 
-    protected abstract String initObject(ResultSet resultSet) throws SQLException;
+    protected abstract String initObject(M metadata) throws SQLException;
 
-    public void initStatus(ResultSet resultSet) throws SQLException {}
+    public void initStatus(M metadata) throws SQLException {}
 
     protected void initProperties() {}
 

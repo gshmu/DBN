@@ -8,6 +8,8 @@ import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.common.metadata.def.DBArgumentMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBMethodMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -28,31 +30,28 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.DBObjectType.ARGUMENT;
 import static com.dci.intellij.dbn.object.common.DBObjectType.METHOD;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DEBUGABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DETERMINISTIC;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.INVALIDABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
-public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMethod {
+public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaObjectImpl<M> implements DBMethod {
     protected DBObjectList<DBArgument> arguments;
     protected int position;
     protected int overload;
     private DBLanguage language;
 
-    DBMethodImpl(DBSchemaObject parent, ResultSet resultSet) throws SQLException {
+    DBMethodImpl(DBSchemaObject parent, M resultSet) throws SQLException {
         super(parent, resultSet);
     }
 
-    DBMethodImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+    DBMethodImpl(DBSchema schema, M resultSet) throws SQLException {
         super(schema, resultSet);
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        set(DETERMINISTIC, resultSet.getString("IS_DETERMINISTIC").equals("Y"));
-        overload = resultSet.getInt("OVERLOAD");
-        position = resultSet.getInt("POSITION");
-        language = DBLanguage.getLanguage(resultSet.getString("LANGUAGE"));
+    protected String initObject(M metadata) throws SQLException {
+        set(DETERMINISTIC, metadata.isDeterministic());
+        overload = metadata.getOverload();
+        position = metadata.getPosition();
+        language = DBLanguage.getLanguage(metadata.getLanguage());
         return null;
     }
 
@@ -65,9 +64,9 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
     }
 
     @Override
-    public void initStatus(ResultSet resultSet) throws SQLException {
-        boolean isValid = "Y".equals(resultSet.getString("IS_VALID"));
-        boolean isDebug = "Y".equals(resultSet.getString("IS_DEBUG"));
+    public void initStatus(M metadata) throws SQLException {
+        boolean isValid = metadata.isValid();
+        boolean isDebug = metadata.isDebug();
         DBObjectStatusHolder objectStatus = getStatus();
         objectStatus.set(DBObjectStatus.VALID, isValid);
         objectStatus.set(DBObjectStatus.DEBUG, isDebug);
@@ -174,7 +173,7 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
      *                         Loaders                       *
      *********************************************************/
     static {
-        new DynamicSubcontentLoader<DBArgument>(METHOD, ARGUMENT, true) {
+        new DynamicSubcontentLoader<DBArgument, DBArgumentMetadata>(METHOD, ARGUMENT, true) {
             @Override
             public boolean match(DBArgument argument, DynamicContent dynamicContent) {
                 DBMethod method = (DBMethod) dynamicContent.getParentElement();
@@ -183,8 +182,8 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
             }
 
             @Override
-            public DynamicContentLoader<DBArgument> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBArgument>(METHOD, ARGUMENT, false, true) {
+            public DynamicContentLoader<DBArgument, DBArgumentMetadata> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBArgument, DBArgumentMetadata>(METHOD, ARGUMENT, false, true) {
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBArgument> dynamicContent, DBNConnection connection) throws SQLException {
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
@@ -210,9 +209,9 @@ public abstract class DBMethodImpl extends DBSchemaObjectImpl implements DBMetho
                     }
 
                     @Override
-                    public DBArgument createElement(DynamicContent<DBArgument> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-                        DBMethod method = (DBMethod) dynamicContent.getParentElement();
-                        return new DBArgumentImpl(method, resultSet);
+                    public DBArgument createElement(DynamicContent<DBArgument> content, DBArgumentMetadata metadata, LoaderCache cache) throws SQLException {
+                        DBMethod method = (DBMethod) content.getParentElement();
+                        return new DBArgumentImpl(method, metadata);
                     }
                 };
             }

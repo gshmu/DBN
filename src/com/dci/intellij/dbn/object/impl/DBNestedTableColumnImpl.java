@@ -1,25 +1,25 @@
 package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.object.DBNestedTable;
 import com.dci.intellij.dbn.object.DBNestedTableColumn;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class DBNestedTableColumnImpl extends DBObjectImpl implements DBNestedTableColumn {
+public class DBNestedTableColumnImpl extends DBObjectImpl<DBObjectMetadata> implements DBNestedTableColumn {
 
-    public DBNestedTableColumnImpl(DBNestedTable parent, ResultSet resultSet) throws SQLException {
-        super(parent, resultSet);
+    public DBNestedTableColumnImpl(DBNestedTable parent, DBObjectMetadata metadata) throws SQLException {
+        super(parent, metadata);
         // todo !!!
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
+    protected String initObject(DBObjectMetadata metadata) throws SQLException {
         return null; //TODO
     }
 

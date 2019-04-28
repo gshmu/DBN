@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.object.impl;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.database.common.metadata.def.DBTypeAttributeMetadata;
 import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
@@ -13,24 +14,23 @@ import com.dci.intellij.dbn.object.properties.DBDataTypePresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DBTypeAttributeImpl extends DBObjectImpl implements DBTypeAttribute {
+public class DBTypeAttributeImpl extends DBObjectImpl<DBTypeAttributeMetadata> implements DBTypeAttribute {
     private DBDataType dataType;
     private int position;
 
-    DBTypeAttributeImpl(DBType parent, ResultSet resultSet) throws SQLException {
-        super(parent, resultSet);
+    DBTypeAttributeImpl(DBType parent, DBTypeAttributeMetadata metadata) throws SQLException {
+        super(parent, metadata);
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        String name = resultSet.getString("ATTRIBUTE_NAME");
-        position = resultSet.getInt("POSITION");
-        dataType = DBDataType.get(this.getConnectionHandler(), resultSet);
+    protected String initObject(DBTypeAttributeMetadata metadata) throws SQLException {
+        String name = metadata.getAttributeName();
+        position = metadata.getPosition();
+        dataType = DBDataType.get(getConnectionHandler(), metadata.getDataType());
         return name;
     }
 

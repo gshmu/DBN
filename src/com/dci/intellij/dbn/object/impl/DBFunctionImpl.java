@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.object.impl;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.database.common.metadata.def.DBFunctionMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBFunction;
@@ -22,21 +23,21 @@ import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class DBFunctionImpl extends DBMethodImpl implements DBFunction {
-    DBFunctionImpl(DBSchemaObject parent, ResultSet resultSet) throws SQLException {
+public class DBFunctionImpl extends DBMethodImpl<DBFunctionMetadata> implements DBFunction {
+    DBFunctionImpl(DBSchemaObject parent, DBFunctionMetadata metadata) throws SQLException {
         // type functions are not editable independently
-        super(parent, resultSet);
+        super(parent, metadata);
         assert this.getClass() != DBFunctionImpl.class;
     }
 
-    DBFunctionImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
-        super(schema, resultSet);
+    DBFunctionImpl(DBSchema schema, DBFunctionMetadata metadata) throws SQLException {
+        super(schema, metadata);
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        super.initObject(resultSet);
-        return resultSet.getString("FUNCTION_NAME");
+    protected String initObject(DBFunctionMetadata metadata) throws SQLException {
+        super.initObject(metadata);
+        return metadata.getFunctionName();
     }
 
     @Override

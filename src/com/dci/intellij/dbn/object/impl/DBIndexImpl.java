@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
+import com.dci.intellij.dbn.database.common.metadata.def.DBIndexMetadata;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBIndex;
@@ -15,7 +16,6 @@ import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationLi
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
@@ -24,23 +24,23 @@ import static com.dci.intellij.dbn.object.common.DBObjectType.COLUMN;
 import static com.dci.intellij.dbn.object.common.DBObjectType.INDEX;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
-public class DBIndexImpl extends DBSchemaObjectImpl implements DBIndex {
+public class DBIndexImpl extends DBSchemaObjectImpl<DBIndexMetadata> implements DBIndex {
     private DBObjectList<DBColumn> columns;
 
-    DBIndexImpl(DBDataset dataset, ResultSet resultSet) throws SQLException {
-        super(dataset, resultSet);
+    DBIndexImpl(DBDataset dataset, DBIndexMetadata metadata) throws SQLException {
+        super(dataset, metadata);
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        String name = resultSet.getString("INDEX_NAME");
-        set(UNIQUE, resultSet.getString("IS_UNIQUE").equals("Y"));
+    protected String initObject(DBIndexMetadata metadata) throws SQLException {
+        String name = metadata.getIndexName();
+        set(UNIQUE, metadata.isUnique());
         return name;
     }
 
     @Override
-    public void initStatus(ResultSet resultSet) throws SQLException {
-        boolean valid = resultSet.getString("IS_VALID").equals("Y");
+    public void initStatus(DBIndexMetadata metadata) throws SQLException {
+        boolean valid = metadata.isValid();
         getStatus().set(DBObjectStatus.VALID, valid);
     }
 

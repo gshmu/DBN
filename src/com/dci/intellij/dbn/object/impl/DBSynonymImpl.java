@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.database.common.metadata.def.DBSynonymMetadata;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSynonym;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -19,39 +20,38 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
-public class DBSynonymImpl extends DBSchemaObjectImpl implements DBSynonym {
+public class DBSynonymImpl extends DBSchemaObjectImpl<DBSynonymMetadata> implements DBSynonym {
     private DBObjectRef<DBObject> underlyingObject;
 
-    DBSynonymImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
+    DBSynonymImpl(DBSchema schema, DBSynonymMetadata resultSet) throws SQLException {
         super(schema, resultSet);
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        String name = resultSet.getString("SYNONYM_NAME");
-        String schemaName = resultSet.getString("OBJECT_OWNER");
-        String objectName = resultSet.getString("OBJECT_NAME");
-        DBObjectType objectType = DBObjectType.get(resultSet.getString("OBJECT_TYPE"), DBObjectType.ANY);
+    protected String initObject(DBSynonymMetadata metadata) throws SQLException {
+        String name = metadata.getSynonymName();
+        String schemaName = metadata.getUnderlyingObjectOwner();
+        String objectName = metadata.getUnderlyingObjectName();
+        DBObjectType objectType = DBObjectType.get(metadata.getUnderlyingObjectType(), DBObjectType.ANY);
 
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBSchema schema = connectionHandler.getObjectBundle().getSchema(schemaName);
         if (schema != null) {
             DBObjectRef schemaRef = schema.getRef();
-            underlyingObject = new DBObjectRef<DBObject>(schemaRef, objectType, objectName);
+            underlyingObject = new DBObjectRef<>(schemaRef, objectType, objectName);
         }
 
         return name;
     }
 
     @Override
-    public void initStatus(ResultSet resultSet) throws SQLException {
-        boolean valid = resultSet.getString("IS_VALID").equals("Y");
+    public void initStatus(DBSynonymMetadata metadata) throws SQLException {
+        boolean valid = metadata.isValid();
         getStatus().set(DBObjectStatus.VALID, valid);
     }
 

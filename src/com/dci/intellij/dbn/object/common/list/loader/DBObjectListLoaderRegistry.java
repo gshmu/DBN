@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoaderImpl;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
@@ -40,18 +41,21 @@ public class DBObjectListLoaderRegistry {
     }
 
     @NotNull
-    public static <T extends DynamicContentElement> DynamicContentLoader<T> get(@NotNull GenericDatabaseElement parent, @NotNull DynamicContentType contentType) {
+    public static <T extends DynamicContentElement, M extends DBObjectMetadata> DynamicContentLoader<T, M> get(
+            @NotNull GenericDatabaseElement parent,
+            @NotNull DynamicContentType contentType) {
+
         if (parent instanceof DBVirtualObject) {
             return DynamicContentLoader.VOID_CONTENT_LOADER;
         }
         else {
-            DynamicContentLoader<T> loader = find(parent, contentType);
+            DynamicContentLoader<T, M> loader = find(parent, contentType);
             DynamicContentType parentContentType = null;
             if (parent instanceof DBObject) {
-                parentContentType = ((DBObject) parent).getDynamicContentType();
+                parentContentType = parent.getDynamicContentType();
             }
 
-            DynamicContentLoader<DynamicContentElement> registeredLoader = DynamicContentLoaderImpl.resolve(parentContentType, contentType);
+            DynamicContentLoader<T, M> registeredLoader = DynamicContentLoaderImpl.resolve(parentContentType, contentType);
             if (loader != registeredLoader) {
                 System.out.println();
             }
@@ -59,7 +63,10 @@ public class DBObjectListLoaderRegistry {
         }
     }
 
-    public static <T extends DynamicContentElement> DynamicContentLoader<T> find(@NotNull GenericDatabaseElement parent, @NotNull DynamicContentType contentType) {
+    public static <T extends DynamicContentElement, M extends DBObjectMetadata> DynamicContentLoader<T, M> find(
+            @NotNull GenericDatabaseElement parent,
+            @NotNull DynamicContentType contentType) {
+
         if (parent instanceof DBObject) {
             DBObject parentObject = (DBObject) parent;
             DBObjectType parentObjectType = parentObject.getObjectType();

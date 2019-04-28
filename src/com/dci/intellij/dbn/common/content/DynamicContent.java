@@ -69,10 +69,14 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
 
     void markDirty();
 
+    DynamicContentType getContentType();
+
     Project getProject();
+
     String getContentDescription();
 
     @NotNull List<T> getElements();
+
     @Nullable List<T> getElements(String name);
 
     @NotNull List<T> getAllElements();
@@ -82,12 +86,16 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
 
 
     T getElement(String name, int overload);
+
     void setElements(@Nullable List<T> elements);
+
     int size();
 
     @NotNull
     GenericDatabaseElement getParentElement();
+
     DynamicContentLoader getLoader();
+
     ContentDependencyAdapter getDependencyAdapter();
 
     ConnectionHandler getConnectionHandler();
