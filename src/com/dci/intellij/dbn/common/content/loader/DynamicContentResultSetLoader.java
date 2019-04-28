@@ -105,8 +105,9 @@ public abstract class DynamicContentResultSetLoader<
                 dynamicContent.checkDisposed();
                 resultSet = createResultSet(dynamicContent, connection);
 
-                DBObjectMetadataFactory metadataFactory = new DBObjectMetadataFactory();
-                M metadata = metadataFactory.create(dynamicContent.getContentType(), resultSet);
+                // TODO TBD standard jdbc metadata factory? (or wrapped result set column name translation)
+                DynamicContentType contentType = dynamicContent.getContentType();
+                M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
 
                 if (addDelay) Thread.sleep(500);
                 while (resultSet != null && resultSet.next()) {
