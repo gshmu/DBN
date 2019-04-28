@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.database.common.metadata.def.DBGrantedRoleMetadata;
 import com.dci.intellij.dbn.object.DBGrantedRole;
 import com.dci.intellij.dbn.object.DBRole;
 import com.dci.intellij.dbn.object.DBRoleGrantee;
@@ -11,26 +12,25 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ADMIN_OPTION;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DEFAULT_ROLE;
 
-public class DBGrantedRoleImpl extends DBObjectImpl implements DBGrantedRole {
+public class DBGrantedRoleImpl extends DBObjectImpl<DBGrantedRoleMetadata> implements DBGrantedRole {
     private DBObjectRef<DBRole> roleRef;
 
-    public DBGrantedRoleImpl(DBRoleGrantee grantee, ResultSet resultSet) throws SQLException {
-        super(grantee, resultSet);
+    public DBGrantedRoleImpl(DBRoleGrantee grantee, DBGrantedRoleMetadata metadata) throws SQLException {
+        super(grantee, metadata);
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        String name = resultSet.getString("GRANTED_ROLE_NAME");
+    protected String initObject(DBGrantedRoleMetadata metadata) throws SQLException {
+        String name = metadata.getGrantedRoleName();
         this.roleRef = DBObjectRef.from(getConnectionHandler().getObjectBundle().getRole(name));
-        set(ADMIN_OPTION, resultSet.getString("IS_ADMIN_OPTION").equals("Y"));
-        set(DEFAULT_ROLE, resultSet.getString("IS_DEFAULT_ROLE").equals("Y"));
+        set(ADMIN_OPTION, metadata.isAdminOption());
+        set(DEFAULT_ROLE, metadata.isDefaultRole());
         return name;
     }
 

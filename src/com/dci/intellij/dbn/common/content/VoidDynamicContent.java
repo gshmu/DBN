@@ -92,6 +92,11 @@ public class VoidDynamicContent extends DisposableBase implements DynamicContent
     }
 
     @Override
+    public DynamicContentType getContentType() {
+        return null;
+    }
+
+    @Override
     public Project getProject() {
         return null;
     }

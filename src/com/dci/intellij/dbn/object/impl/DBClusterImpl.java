@@ -2,24 +2,24 @@ package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
+import com.dci.intellij.dbn.database.common.metadata.def.DBClusterMetadata;
 import com.dci.intellij.dbn.object.DBCluster;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class DBClusterImpl extends DBSchemaObjectImpl implements DBCluster {
-    DBClusterImpl(DBSchema parent, ResultSet resultSet) throws SQLException {
+public class DBClusterImpl extends DBSchemaObjectImpl<DBClusterMetadata> implements DBCluster {
+    DBClusterImpl(DBSchema parent, DBClusterMetadata resultSet) throws SQLException {
         super(parent, resultSet);
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        return resultSet.getString("CLUSTER_NAME");
+    protected String initObject(DBClusterMetadata metadata) throws SQLException {
+        return metadata.getClusterName();
     }
 
     @NotNull

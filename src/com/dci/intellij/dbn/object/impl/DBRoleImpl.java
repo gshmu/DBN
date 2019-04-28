@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.object.impl;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.database.common.metadata.def.DBRoleMetadata;
 import com.dci.intellij.dbn.object.DBGrantedPrivilege;
 import com.dci.intellij.dbn.object.DBGrantedRole;
 import com.dci.intellij.dbn.object.DBPrivilege;
@@ -19,24 +20,23 @@ import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 
-public class DBRoleImpl extends DBObjectImpl implements DBRole {
-    DBObjectList<DBGrantedPrivilege> privileges;
-    DBObjectList<DBGrantedRole> grantedRoles;
+public class DBRoleImpl extends DBObjectImpl<DBRoleMetadata> implements DBRole {
+    private DBObjectList<DBGrantedPrivilege> privileges;
+    private DBObjectList<DBGrantedRole> grantedRoles;
 
-    public DBRoleImpl(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
-        super(connectionHandler, resultSet);
+    public DBRoleImpl(ConnectionHandler connectionHandler, DBRoleMetadata metadata) throws SQLException {
+        super(connectionHandler, metadata);
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        return resultSet.getString("ROLE_NAME");
+    protected String initObject(DBRoleMetadata metadata) throws SQLException {
+        return metadata.getRoleName();
     }
 
     @Override

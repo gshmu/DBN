@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.object.impl;
 
+import com.dci.intellij.dbn.database.common.metadata.def.DBProcedureMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBProgram;
 import com.dci.intellij.dbn.object.DBType;
@@ -8,16 +9,15 @@ import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DBTypeProcedureImpl extends DBProcedureImpl implements DBTypeProcedure {
-    DBTypeProcedureImpl(DBType type, ResultSet resultSet) throws SQLException {
-        super(type, resultSet);
+    DBTypeProcedureImpl(DBType type, DBProcedureMetadata metadata) throws SQLException {
+        super(type, metadata);
     }
 
     @Override
-    public void initStatus(ResultSet resultSet) throws SQLException {}
+    public void initStatus(DBProcedureMetadata metadata) throws SQLException {}
 
     @Override
     public void initProperties() {

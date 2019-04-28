@@ -7,9 +7,12 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.common.metadata.def.DBTypeAttributeMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBTypeMetadata;
 import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBPackageType;
-import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.DBType;
+import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,17 +28,17 @@ import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.NAVIG
 
 public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
 
-    DBPackageTypeImpl(DBPackage packagee, ResultSet resultSet) throws SQLException {
-        super(packagee, resultSet);
+    DBPackageTypeImpl(DBPackage packagee, DBTypeMetadata metadata) throws SQLException {
+        super(packagee, metadata);
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        return resultSet.getString("TYPE_NAME");
+    protected String initObject(DBTypeMetadata metadata) throws SQLException {
+        return metadata.getTypeName();
     }
 
     @Override
-    public void initStatus(ResultSet resultSet) {}
+    public void initStatus(DBTypeMetadata metadata) {}
 
     @Override
     public void initProperties() {
@@ -76,11 +79,11 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
     }
 
     static {
-        new DynamicContentResultSetLoader(PACKAGE_TYPE, TYPE_ATTRIBUTE, true, true) {
+        new DynamicContentResultSetLoader<DBTypeAttribute, DBTypeAttributeMetadata>(PACKAGE_TYPE, TYPE_ATTRIBUTE, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
                 DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
-                DBPackageTypeImpl type = (DBPackageTypeImpl) dynamicContent.getParentElement();
+                DBPackageType type = (DBPackageType) dynamicContent.getParentElement();
                 return metadataInterface.loadProgramTypeAttributes(
                         type.getSchema().getName(),
                         type.getPackage().getName(),
@@ -88,9 +91,9 @@ public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
             }
 
             @Override
-            public DBObject createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-                DBTypeImpl type = (DBTypeImpl) dynamicContent.getParentElement();
-                return new DBTypeAttributeImpl(type, resultSet);
+            public DBTypeAttribute createElement(DynamicContent<DBTypeAttribute> content, DBTypeAttributeMetadata metadata, LoaderCache cache) throws SQLException {
+                DBType type = (DBType) content.getParentElement();
+                return new DBTypeAttributeImpl(type, metadata);
             }
         };
     }

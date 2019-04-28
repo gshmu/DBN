@@ -11,6 +11,10 @@ import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.common.metadata.def.DBFunctionMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBPackageMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBProcedureMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBTypeMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBPackageFunction;
@@ -34,15 +38,18 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 
-public class DBPackageImpl extends DBProgramImpl implements DBPackage {
+public class DBPackageImpl
+        extends DBProgramImpl<DBPackageMetadata, DBPackageProcedure, DBPackageFunction>
+        implements DBPackage<DBPackageProcedure, DBPackageFunction> {
+
     protected DBObjectList<DBPackageType> types;
-    DBPackageImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
-        super(schema, resultSet);
+    DBPackageImpl(DBSchema schema, DBPackageMetadata metadata) throws SQLException {
+        super(schema, metadata);
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        return resultSet.getString("PACKAGE_NAME");
+    protected String initObject(DBPackageMetadata metadata) throws SQLException {
+        return metadata.getPackageName();
     }
 
     @Override
@@ -56,7 +63,7 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
     }
 
     @Override
-    public List getTypes() {
+    public List<DBPackageType> getTypes() {
         return types.getObjects();
     }
 
@@ -110,11 +117,11 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
      *                         Loaders                       *
      *********************************************************/
     static {
-        new DynamicSubcontentLoader<DBPackageFunction>(PACKAGE, PACKAGE_FUNCTION, true) {
+        new DynamicSubcontentLoader<DBPackageFunction, DBFunctionMetadata>(PACKAGE, PACKAGE_FUNCTION, true) {
 
             @Override
-            public DynamicContentLoader<DBPackageFunction> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBPackageFunction>(PACKAGE, PACKAGE_FUNCTION, false, true) {
+            public DynamicContentLoader<DBPackageFunction, DBFunctionMetadata> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBPackageFunction, DBFunctionMetadata>(PACKAGE, PACKAGE_FUNCTION, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBPackageFunction> dynamicContent, DBNConnection connection) throws SQLException {
@@ -124,9 +131,9 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
                     }
 
                     @Override
-                    public DBPackageFunction createElement(DynamicContent<DBPackageFunction> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-                        DBPackageImpl packagee = (DBPackageImpl) dynamicContent.getParentElement();
-                        return new DBPackageFunctionImpl(packagee, resultSet);
+                    public DBPackageFunction createElement(DynamicContent<DBPackageFunction> content, DBFunctionMetadata metadata, LoaderCache cache) throws SQLException {
+                        DBPackageImpl packagee = (DBPackageImpl) content.getParentElement();
+                        return new DBPackageFunctionImpl(packagee, metadata);
                     }
                 };
             }
@@ -138,7 +145,7 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
             }
         };
 
-        new DynamicSubcontentLoader<DBPackageProcedure>(PACKAGE, PACKAGE_PROCEDURE, true) {
+        new DynamicSubcontentLoader<DBPackageProcedure, DBProcedureMetadata>(PACKAGE, PACKAGE_PROCEDURE, true) {
 
             @Override
             public boolean match(DBPackageProcedure procedure, DynamicContent dynamicContent) {
@@ -147,8 +154,8 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
             }
 
             @Override
-            public DynamicContentLoader<DBPackageProcedure> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBPackageProcedure>(PACKAGE, PACKAGE_PROCEDURE, false, true) {
+            public DynamicContentLoader<DBPackageProcedure, DBProcedureMetadata> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBPackageProcedure, DBProcedureMetadata>(PACKAGE, PACKAGE_PROCEDURE, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBPackageProcedure> dynamicContent, DBNConnection connection) throws SQLException {
@@ -158,15 +165,15 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
                     }
 
                     @Override
-                    public DBPackageProcedure createElement(DynamicContent<DBPackageProcedure> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-                        DBPackageImpl packagee = (DBPackageImpl) dynamicContent.getParentElement();
-                        return new DBPackageProcedureImpl(packagee, resultSet);
+                    public DBPackageProcedure createElement(DynamicContent<DBPackageProcedure> content, DBProcedureMetadata metadata, LoaderCache cache) throws SQLException {
+                        DBPackageImpl packagee = (DBPackageImpl) content.getParentElement();
+                        return new DBPackageProcedureImpl(packagee, metadata);
                     }
                 };
             }
         };
 
-        new DynamicSubcontentLoader<DBPackageType>(PACKAGE, PACKAGE_TYPE, true) {
+        new DynamicSubcontentLoader<DBPackageType, DBTypeMetadata>(PACKAGE, PACKAGE_TYPE, true) {
 
             @Override
             public boolean match(DBPackageType type, DynamicContent dynamicContent) {
@@ -175,8 +182,8 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
             }
 
             @Override
-            public DynamicContentLoader<DBPackageType> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBPackageType>(PACKAGE, PACKAGE_TYPE, false, true) {
+            public DynamicContentLoader<DBPackageType, DBTypeMetadata> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBPackageType, DBTypeMetadata>(PACKAGE, PACKAGE_TYPE, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBPackageType> dynamicContent, DBNConnection connection) throws SQLException {
@@ -186,9 +193,9 @@ public class DBPackageImpl extends DBProgramImpl implements DBPackage {
                     }
 
                     @Override
-                    public DBPackageType createElement(DynamicContent<DBPackageType> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-                        DBPackageImpl packagee = (DBPackageImpl) dynamicContent.getParentElement();
-                        return new DBPackageTypeImpl(packagee, resultSet);
+                    public DBPackageType createElement(DynamicContent<DBPackageType> content, DBTypeMetadata metadata, LoaderCache cache) throws SQLException {
+                        DBPackageImpl packagee = (DBPackageImpl) content.getParentElement();
+                        return new DBPackageTypeImpl(packagee, metadata);
                     }
                 };
             }

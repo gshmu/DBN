@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
+import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.navigation.psi.DBObjectListPsiDirectory;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -66,7 +67,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     @Override
-    public DynamicContentLoader<T> getLoader() {
+    public DynamicContentLoader<T, DBObjectMetadata> getLoader() {
         BrowserTreeNode parent = getParent();
         if (parent instanceof DBVirtualObject) {
             return DynamicContentLoader.VOID_CONTENT_LOADER;
@@ -389,6 +390,11 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Override
     public DBObjectType getObjectType() {
+        return objectType;
+    }
+
+    @Override
+    public DynamicContentType getContentType() {
         return objectType;
     }
 

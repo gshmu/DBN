@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.common.metadata.def.DBTriggerMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -19,31 +20,30 @@ import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
-public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrigger {
+public abstract class DBTriggerImpl extends DBSchemaObjectImpl<DBTriggerMetadata> implements DBTrigger {
     private TriggerType triggerType;
     private TriggeringEvent[] triggeringEvents;
 
-    DBTriggerImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
-        super(schema, resultSet);
+    DBTriggerImpl(DBSchema schema, DBTriggerMetadata metadata) throws SQLException {
+        super(schema, metadata);
     }
 
-    DBTriggerImpl(DBDataset dataset, ResultSet resultSet) throws SQLException {
-        super(dataset, resultSet);
+    DBTriggerImpl(DBDataset dataset, DBTriggerMetadata metadata) throws SQLException {
+        super(dataset, metadata);
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        String name = resultSet.getString("TRIGGER_NAME");
-        set(FOR_EACH_ROW, resultSet.getString("IS_FOR_EACH_ROW").equals("Y"));
+    protected String initObject(DBTriggerMetadata metadata) throws SQLException {
+        String name = metadata.getTriggerName();
+        set(FOR_EACH_ROW, metadata.isForEachRow());
 
-        String triggerTypeString = resultSet.getString("TRIGGER_TYPE");
+        String triggerTypeString = metadata.getTriggerType();
         triggerType =
                 triggerTypeString.contains("BEFORE") ? TRIGGER_TYPE_BEFORE :
                 triggerTypeString.contains("AFTER") ? TRIGGER_TYPE_AFTER :
@@ -51,7 +51,7 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
                                         TRIGGER_TYPE_UNKNOWN;
 
 
-        String triggeringEventString = resultSet.getString("TRIGGERING_EVENT");
+        String triggeringEventString = metadata.getTriggeringEvent();
         List<TriggeringEvent> triggeringEventList = new ArrayList<TriggeringEvent>();
         if (triggeringEventString.contains("INSERT")) triggeringEventList.add(TRIGGERING_EVENT_INSERT);
         if (triggeringEventString.contains("UPDATE")) triggeringEventList.add(TRIGGERING_EVENT_UPDATE);
@@ -70,14 +70,11 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl implements DBTrig
     }
 
     @Override
-    public void initStatus(ResultSet resultSet) throws SQLException {
-        boolean isEnabled = resultSet.getString("IS_ENABLED").equals("Y");
-        boolean isValid = resultSet.getString("IS_VALID").equals("Y");
-        boolean isDebug = resultSet.getString("IS_DEBUG").equals("Y");
+    public void initStatus(DBTriggerMetadata metadata) throws SQLException {
         DBObjectStatusHolder objectStatus = getStatus();
-        objectStatus.set(DBObjectStatus.ENABLED, isEnabled);
-        objectStatus.set(DBObjectStatus.VALID, isValid);
-        objectStatus.set(DBObjectStatus.DEBUG, isDebug);
+        objectStatus.set(DBObjectStatus.ENABLED, metadata.isEnabled());
+        objectStatus.set(DBObjectStatus.VALID, metadata.isValid());
+        objectStatus.set(DBObjectStatus.DEBUG, metadata.isDebug());
     }
 
     @Override

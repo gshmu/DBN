@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapte
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,8 +19,13 @@ import java.util.List;
  * This loader is to be used from building the elements of a dynamic content, based on a source content.
  * e.g. Constraints of a table are loaded from the complete actions of constraints of a Schema.
  */
-public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> extends DynamicContentLoaderImpl<T> implements DynamicContentLoader<T> {
-    private DynamicContentLoader<T> alternativeLoader = createAlternativeLoader();
+public abstract class DynamicSubcontentLoader<
+                T extends DynamicContentElement,
+                M extends DBObjectMetadata>
+        extends DynamicContentLoaderImpl<T, M>
+        implements DynamicContentLoader<T, M> {
+
+    private DynamicContentLoader<T, M> alternativeLoader = createAlternativeLoader();
     private boolean optimized;
 
     protected DynamicSubcontentLoader(@Nullable DynamicContentType parentContentType, @NotNull DynamicContentType contentType, boolean optimized) {
@@ -38,7 +44,7 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> e
         SubcontentDependencyAdapter dependencyAdapter = (SubcontentDependencyAdapter) dynamicContent.getDependencyAdapter();
 
         DynamicContent sourceContent = dependencyAdapter.getSourceContent();
-        DynamicContentLoader<T> alternativeLoader = getAlternativeLoader();
+        DynamicContentLoader<T, M> alternativeLoader = getAlternativeLoader();
 
         if (alternativeLoader != null && useAlternativeLoader(dependencyAdapter)) {
             sourceContent.loadInBackground();
@@ -87,12 +93,12 @@ public abstract class DynamicSubcontentLoader<T extends DynamicContentElement> e
         }
     }
 
-    public final DynamicContentLoader<T> getAlternativeLoader() {
+    public final DynamicContentLoader<T, M> getAlternativeLoader() {
         return alternativeLoader;
     }
 
     @org.jetbrains.annotations.Nullable
-    protected DynamicContentLoader<T> createAlternativeLoader() {
+    protected DynamicContentLoader<T, M> createAlternativeLoader() {
         return null;
     }
 }

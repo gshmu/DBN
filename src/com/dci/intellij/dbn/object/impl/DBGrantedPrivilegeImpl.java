@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.database.common.metadata.def.DBGrantedPrivilegeMetadata;
 import com.dci.intellij.dbn.object.DBGrantedPrivilege;
 import com.dci.intellij.dbn.object.DBPrivilege;
 import com.dci.intellij.dbn.object.DBPrivilegeGrantee;
@@ -11,24 +12,23 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ADMIN_OPTION;
 
-public class DBGrantedPrivilegeImpl extends DBObjectImpl implements DBGrantedPrivilege {
+public class DBGrantedPrivilegeImpl extends DBObjectImpl<DBGrantedPrivilegeMetadata> implements DBGrantedPrivilege {
     private DBObjectRef<DBPrivilege> privilegeRef;
 
-    public DBGrantedPrivilegeImpl(DBPrivilegeGrantee grantee, ResultSet resultSet) throws SQLException {
-        super(grantee, resultSet);
+    public DBGrantedPrivilegeImpl(DBPrivilegeGrantee grantee, DBGrantedPrivilegeMetadata metadata) throws SQLException {
+        super(grantee, metadata);
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        String name = resultSet.getString("GRANTED_PRIVILEGE_NAME");
+    protected String initObject(DBGrantedPrivilegeMetadata metadata) throws SQLException {
+        String name = metadata.getGrantedPrivilegeName();
         privilegeRef = DBObjectRef.from(getConnectionHandler().getObjectBundle().getPrivilege(name));
-        set(ADMIN_OPTION, resultSet.getString("IS_ADMIN_OPTION").equals("Y"));
+        set(ADMIN_OPTION, metadata.isAdminOption());
         return name;
     }
 

@@ -20,6 +20,7 @@ public interface DBObjectList<T extends DBObject> extends BrowserTreeNode, Dynam
     PsiDirectory getPsiDirectory();
 
     DBObjectType getObjectType();
+
     void addObject(T object);
 
     boolean isFiltered();
