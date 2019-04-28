@@ -232,6 +232,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
                     "Loading data dictionary" + connectionString, false,
                     (progress) -> {
                         try{
+                            progress.setText("Loading " + getContentDescription());
                             ensure();
                         } finally {
                             set(LOADING_IN_BACKGROUND, false);
