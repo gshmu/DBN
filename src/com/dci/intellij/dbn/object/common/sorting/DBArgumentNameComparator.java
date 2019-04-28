@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.object.common.sorting;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBFunction;
 import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 
 public class DBArgumentNameComparator extends DBObjectComparator<DBArgument> {
     public DBArgumentNameComparator() {

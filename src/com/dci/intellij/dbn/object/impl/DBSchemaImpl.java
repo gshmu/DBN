@@ -42,7 +42,6 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
@@ -52,6 +51,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,10 +64,10 @@ import java.util.List;
 import java.util.Set;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
-import static com.dci.intellij.dbn.object.common.DBObjectRelationType.CONSTRAINT_COLUMN;
-import static com.dci.intellij.dbn.object.common.DBObjectRelationType.INDEX_COLUMN;
-import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.CONSTRAINT_COLUMN;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN;
+import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSchema {
     private DBObjectList<DBTable> tables;

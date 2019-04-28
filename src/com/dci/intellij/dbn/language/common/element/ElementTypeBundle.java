@@ -22,7 +22,7 @@ import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.diagnostic.Logger;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;

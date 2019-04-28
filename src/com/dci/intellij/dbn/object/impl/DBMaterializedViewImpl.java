@@ -9,11 +9,11 @@ import com.dci.intellij.dbn.object.DBIndex;
 import com.dci.intellij.dbn.object.DBMaterializedView;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.common.loader.DBSourceCodeLoader;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.DBObjectRelationType.INDEX_COLUMN;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN;
 
 public class DBMaterializedViewImpl extends DBViewImpl implements DBMaterializedView {
     private DBObjectList<DBIndex> indexes;

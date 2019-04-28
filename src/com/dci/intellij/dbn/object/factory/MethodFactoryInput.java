@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.object.factory;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 
 import java.util.ArrayList;
 import java.util.HashSet;

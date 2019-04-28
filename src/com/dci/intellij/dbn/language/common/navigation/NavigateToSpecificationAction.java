@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.language.common.navigation;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 
 public class NavigateToSpecificationAction extends NavigationAction{

@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBPackageFunction;
 import com.dci.intellij.dbn.object.DBProgram;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;

@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.object.common;
+package com.dci.intellij.dbn.object.type;
 
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 
@@ -7,8 +7,8 @@ public enum DBObjectRelationType implements DynamicContentType<DBObjectRelationT
     INDEX_COLUMN(DBObjectType.INDEX, DBObjectType.COLUMN),
     USER_ROLE(DBObjectType.USER, DBObjectType.GRANTED_ROLE),
     USER_PRIVILEGE(DBObjectType.USER, DBObjectType.GRANTED_PRIVILEGE),
-    ROLE_PRIVILEGE(DBObjectType.ROLE, DBObjectType.GRANTED_PRIVILEGE),
-    ROLE_ROLE(DBObjectType.ROLE, DBObjectType.GRANTED_ROLE); 
+    ROLE_ROLE(DBObjectType.ROLE, DBObjectType.GRANTED_ROLE),
+    ROLE_PRIVILEGE(DBObjectType.ROLE, DBObjectType.GRANTED_PRIVILEGE);
 
     private DBObjectType sourceType;
     private DBObjectType targetType;

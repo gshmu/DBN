@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.object;
 
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 
 import java.sql.SQLException;
 import java.util.List;

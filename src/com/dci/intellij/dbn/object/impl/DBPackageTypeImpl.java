@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBPackageType;
 import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,9 +22,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.DBObjectType.PACKAGE_TYPE;
-import static com.dci.intellij.dbn.object.common.DBObjectType.TYPE_ATTRIBUTE;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.NAVIGABLE;
+import static com.dci.intellij.dbn.object.type.DBObjectType.PACKAGE_TYPE;
+import static com.dci.intellij.dbn.object.type.DBObjectType.TYPE_ATTRIBUTE;
 
 public class DBPackageTypeImpl extends DBTypeImpl implements DBPackageType {
 

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.common.editor;
 
 import com.dci.intellij.dbn.common.ui.Presentable;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 
 public enum DefaultEditorType implements Presentable{

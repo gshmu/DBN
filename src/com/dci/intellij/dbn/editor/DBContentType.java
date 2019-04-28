@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor;
 
 import com.dci.intellij.dbn.common.util.EnumerationUtil;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 
 public enum DBContentType {
     NONE("No Content"),

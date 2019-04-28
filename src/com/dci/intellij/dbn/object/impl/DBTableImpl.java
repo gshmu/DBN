@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.object.DBIndex;
 import com.dci.intellij.dbn.object.DBNestedTable;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBTable;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
@@ -25,6 +24,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,9 +34,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.DBObjectRelationType.INDEX_COLUMN;
-import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.TEMPORARY;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN;
+import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBTableImpl extends DBDatasetImpl<DBTableMetadata> implements DBTable {
     private static final List<DBColumn> EMPTY_COLUMN_LIST = new ArrayList<DBColumn>();

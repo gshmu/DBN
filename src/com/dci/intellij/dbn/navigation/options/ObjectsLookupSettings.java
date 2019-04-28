@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.ui.list.Selectable;
 import com.dci.intellij.dbn.navigation.options.ui.ObjectsLookupSettingsForm;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;

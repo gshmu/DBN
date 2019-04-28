@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.database;
 
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 
 /**
  * Bundles all the information needed to resolve a database object.<br>

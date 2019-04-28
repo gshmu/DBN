@@ -19,7 +19,7 @@ import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;

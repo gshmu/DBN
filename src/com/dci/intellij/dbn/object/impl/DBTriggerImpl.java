@@ -18,6 +18,8 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
+import com.dci.intellij.dbn.object.type.DBTriggerEvent;
+import com.dci.intellij.dbn.object.type.DBTriggerType;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
@@ -25,10 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
+import static com.dci.intellij.dbn.object.type.DBTriggerEvent.*;
+import static com.dci.intellij.dbn.object.type.DBTriggerType.*;
 
 public abstract class DBTriggerImpl extends DBSchemaObjectImpl<DBTriggerMetadata> implements DBTrigger {
-    private TriggerType triggerType;
-    private TriggeringEvent[] triggeringEvents;
+    private DBTriggerType triggerType;
+    private DBTriggerEvent[] triggerEvents;
 
     DBTriggerImpl(DBSchema schema, DBTriggerMetadata metadata) throws SQLException {
         super(schema, metadata);
@@ -45,27 +49,27 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl<DBTriggerMetadata
 
         String triggerTypeString = metadata.getTriggerType();
         triggerType =
-                triggerTypeString.contains("BEFORE") ? TRIGGER_TYPE_BEFORE :
-                triggerTypeString.contains("AFTER") ? TRIGGER_TYPE_AFTER :
-                triggerTypeString.contains("INSTEAD OF") ? TRIGGER_TYPE_INSTEAD_OF :
-                                        TRIGGER_TYPE_UNKNOWN;
+                triggerTypeString.contains("BEFORE") ? BEFORE :
+                triggerTypeString.contains("AFTER") ? AFTER :
+                triggerTypeString.contains("INSTEAD OF") ? INSTEAD_OF :
+                        DBTriggerType.UNKNOWN;
 
 
         String triggeringEventString = metadata.getTriggeringEvent();
-        List<TriggeringEvent> triggeringEventList = new ArrayList<TriggeringEvent>();
-        if (triggeringEventString.contains("INSERT")) triggeringEventList.add(TRIGGERING_EVENT_INSERT);
-        if (triggeringEventString.contains("UPDATE")) triggeringEventList.add(TRIGGERING_EVENT_UPDATE);
-        if (triggeringEventString.contains("DELETE")) triggeringEventList.add(TRIGGERING_EVENT_DELETE);
-        if (triggeringEventString.contains("TRUNCATE")) triggeringEventList.add(TRIGGERING_EVENT_TRUNCATE);
-        if (triggeringEventString.contains("CREATE")) triggeringEventList.add(TRIGGERING_EVENT_CREATE);
-        if (triggeringEventString.contains("ALTER")) triggeringEventList.add(TRIGGERING_EVENT_ALTER);
-        if (triggeringEventString.contains("DROP")) triggeringEventList.add(TRIGGERING_EVENT_DROP);
-        if (triggeringEventString.contains("RENAME")) triggeringEventList.add(TRIGGERING_EVENT_RENAME);
-        if (triggeringEventString.contains("LOGON")) triggeringEventList.add(TRIGGERING_EVENT_LOGON);
-        if (triggeringEventString.contains("DDL")) triggeringEventList.add(TRIGGERING_EVENT_DDL);
-        if (triggeringEventList.size() == 0) triggeringEventList.add(TRIGGERING_EVENT_UNKNOWN);
+        List<DBTriggerEvent> eventList = new ArrayList<DBTriggerEvent>();
+        if (triggeringEventString.contains("INSERT")) eventList.add(INSERT);
+        if (triggeringEventString.contains("UPDATE")) eventList.add(UPDATE);
+        if (triggeringEventString.contains("DELETE")) eventList.add(DELETE);
+        if (triggeringEventString.contains("TRUNCATE")) eventList.add(TRUNCATE);
+        if (triggeringEventString.contains("CREATE")) eventList.add(CREATE);
+        if (triggeringEventString.contains("ALTER")) eventList.add(ALTER);
+        if (triggeringEventString.contains("DROP")) eventList.add(DROP);
+        if (triggeringEventString.contains("RENAME")) eventList.add(RENAME);
+        if (triggeringEventString.contains("LOGON")) eventList.add(LOGON);
+        if (triggeringEventString.contains("DDL")) eventList.add(DDL);
+        if (eventList.size() == 0) eventList.add(DBTriggerEvent.UNKNOWN);
 
-        triggeringEvents = triggeringEventList.toArray(new TriggeringEvent[0]);
+        triggerEvents = eventList.toArray(new DBTriggerEvent[0]);
         return name;
     }
 
@@ -94,13 +98,13 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl<DBTriggerMetadata
     }
 
     @Override
-    public TriggerType getTriggerType() {
+    public DBTriggerType getTriggerType() {
         return triggerType;
     }
 
     @Override
-    public TriggeringEvent[] getTriggeringEvents() {
-        return triggeringEvents;
+    public DBTriggerEvent[] getTriggerEvents() {
+        return triggerEvents;
     }
 
     @Override
@@ -130,8 +134,8 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl<DBTriggerMetadata
         List<PresentableProperty> properties = super.getPresentableProperties();
         StringBuilder events = new StringBuilder(triggerType.getName().toLowerCase());
         events.append(" ");
-        for (TriggeringEvent triggeringEvent : triggeringEvents) {
-            if (triggeringEvent != triggeringEvents[0]) events.append(" or ");
+        for (DBTriggerEvent triggeringEvent : triggerEvents) {
+            if (triggeringEvent != triggerEvents[0]) events.append(" or ");
             events.append(triggeringEvent.getName().toUpperCase());
         }
 

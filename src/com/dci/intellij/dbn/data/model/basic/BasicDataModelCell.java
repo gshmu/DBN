@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.data.value.ArrayValue;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.editor.data.model.RecordStatus;
 import com.dci.intellij.dbn.language.common.WeakRef;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 

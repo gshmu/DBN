@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.common.sorting;
 
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;

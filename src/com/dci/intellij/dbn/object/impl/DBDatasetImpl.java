@@ -33,9 +33,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.DBObjectRelationType.CONSTRAINT_COLUMN;
-import static com.dci.intellij.dbn.object.common.DBObjectRelationType.INDEX_COLUMN;
-import static com.dci.intellij.dbn.object.common.DBObjectType.*;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.CONSTRAINT_COLUMN;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN;
+import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchemaObjectImpl<M> implements DBDataset {
     protected DBObjectList<DBColumn> columns;

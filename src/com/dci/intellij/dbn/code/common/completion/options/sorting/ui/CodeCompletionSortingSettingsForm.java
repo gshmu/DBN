@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.code.common.completion.options.sorting.action.MoveDo
 import com.dci.intellij.dbn.code.common.completion.options.sorting.action.MoveUpAction;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.ColoredListCellRenderer;

@@ -6,8 +6,8 @@ import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeComplet
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.ObjectTypeFilter;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.ui.CheckedTreeNode;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;

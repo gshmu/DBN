@@ -9,8 +9,8 @@ import com.dci.intellij.dbn.language.common.PsiElementRef;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 

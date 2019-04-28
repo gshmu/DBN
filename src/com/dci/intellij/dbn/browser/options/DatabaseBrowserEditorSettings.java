@@ -2,9 +2,9 @@ package com.dci.intellij.dbn.browser.options;
 
 import com.dci.intellij.dbn.browser.options.ui.DatabaseBrowserEditorSettingsForm;
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.editor.DefaultEditorOption;
 import com.dci.intellij.dbn.object.common.editor.DefaultEditorType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 

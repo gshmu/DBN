@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.filter.name;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 
 public interface FilterCondition extends PersistentConfiguration {
     void setParent(CompoundFilterCondition parent);
