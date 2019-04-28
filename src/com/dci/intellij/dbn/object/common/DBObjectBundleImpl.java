@@ -84,6 +84,8 @@ import com.dci.intellij.dbn.object.impl.DBUserImpl;
 import com.dci.intellij.dbn.object.impl.DBUserPrivilegeRelation;
 import com.dci.intellij.dbn.object.impl.DBUserRoleRelation;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.object.type.DBObjectRelationType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.navigation.ItemPresentation;
@@ -101,8 +103,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.object.common.DBObjectRelationType.*;
-import static com.dci.intellij.dbn.object.common.DBObjectType.*;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.*;
+import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 @Nullifiable
 public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport {

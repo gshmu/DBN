@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.common.operation;
 
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 
 public class DBOperationNotSupportedException extends Exception{
     public DBOperationNotSupportedException(DBOperationType operationType, DBObjectType objectType) {

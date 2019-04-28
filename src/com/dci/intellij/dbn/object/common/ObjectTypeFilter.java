@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.object.DBSchema;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 
 public interface ObjectTypeFilter {
     boolean acceptsRootObject(DBObjectType objectType);

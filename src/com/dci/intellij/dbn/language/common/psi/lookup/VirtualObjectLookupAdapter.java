@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.psi.lookup;
 
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 
 public class VirtualObjectLookupAdapter extends PsiLookupAdapter {
     private DBObjectType parentObjectType;

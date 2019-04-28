@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.common.editor;
 
 
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 
 public class DefaultEditorOption {
     private DBObjectType objectType;

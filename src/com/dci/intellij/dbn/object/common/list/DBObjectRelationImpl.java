@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.object.common.list;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectRelationType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;

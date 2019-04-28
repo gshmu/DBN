@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.psql.structure;
 
 import com.dci.intellij.dbn.common.util.NamingUtil;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.ide.util.treeView.smartTree.Group;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.navigation.ItemPresentation;

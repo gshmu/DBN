@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.object.filter.name.action;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterSettings;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;

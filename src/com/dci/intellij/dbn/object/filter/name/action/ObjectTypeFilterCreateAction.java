@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.object.filter.name.action;
 
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterManager;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;

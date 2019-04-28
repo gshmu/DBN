@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.browser.options;
 
 import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 

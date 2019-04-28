@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.language.common.element.util.IdentifierType;
 import com.dci.intellij.dbn.language.common.psi.IdentifierDefPsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierRefPsiElement;
 import com.dci.intellij.dbn.language.common.resolve.UnderlyingObjectResolver;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jdom.Element;

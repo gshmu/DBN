@@ -30,8 +30,8 @@ import com.dci.intellij.dbn.database.common.metadata.impl.DBTypeAttributeMetadat
 import com.dci.intellij.dbn.database.common.metadata.impl.DBTypeMetadataImpl;
 import com.dci.intellij.dbn.database.common.metadata.impl.DBUserMetadataImpl;
 import com.dci.intellij.dbn.database.common.metadata.impl.DBViewMetadataImpl;
-import com.dci.intellij.dbn.object.common.DBObjectRelationType;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectRelationType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 
 import java.sql.ResultSet;
 

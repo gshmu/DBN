@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.browser.model;
 
 import com.dci.intellij.dbn.browser.ui.ToolTipProvider;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
 import org.jetbrains.annotations.NotNull;

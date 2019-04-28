@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.database.common;
 
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ public class DatabaseObjectIdentifierImpl implements DatabaseObjectIdentifier {
     private String[] objectNames;
 
     public DatabaseObjectIdentifierImpl(DBObject object) {
-        List<DBObject> chain = new ArrayList<DBObject>();
+        List<DBObject> chain = new ArrayList<>();
         chain.add(object);
 
         DBObject parentObject = object.getParentObject();

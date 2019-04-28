@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.object.filter.name;
 
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.NameFilterCondition;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jdom.Element;
 
 public class SimpleNameFilterCondition extends NameFilterCondition implements FilterCondition {

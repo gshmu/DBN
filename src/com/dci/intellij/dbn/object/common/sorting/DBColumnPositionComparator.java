@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.common.sorting;
 
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 
 public class DBColumnPositionComparator extends DBObjectComparator<DBColumn> {
 

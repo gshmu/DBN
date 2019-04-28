@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.language.common.element.lookup.QualifiedIdentifierEl
 import com.dci.intellij.dbn.language.common.element.parser.impl.QualifiedIdentifierElementTypeParser;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jdom.Element;

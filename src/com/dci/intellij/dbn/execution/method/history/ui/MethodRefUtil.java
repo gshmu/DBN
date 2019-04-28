@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.execution.method.history.ui;
 
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 
 @Deprecated
 public class MethodRefUtil {
