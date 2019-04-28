@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.common.list;
 
 import com.dci.intellij.dbn.common.content.DynamicContent;
-import com.dci.intellij.dbn.object.common.DBObjectRelationType;
+import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

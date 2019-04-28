@@ -2,10 +2,10 @@ package com.dci.intellij.dbn.object.factory.ui;
 
 import com.dci.intellij.dbn.data.type.ui.DataTypeEditor;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.factory.ArgumentFactoryInput;
 import com.dci.intellij.dbn.object.factory.MethodFactoryInput;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.project.Project;
 
 public class FunctionFactoryInputForm extends MethodFactoryInputForm {

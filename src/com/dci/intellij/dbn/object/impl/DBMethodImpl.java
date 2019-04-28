@@ -28,9 +28,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.DBObjectType.ARGUMENT;
-import static com.dci.intellij.dbn.object.common.DBObjectType.METHOD;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
+import static com.dci.intellij.dbn.object.type.DBObjectType.ARGUMENT;
+import static com.dci.intellij.dbn.object.type.DBObjectType.METHOD;
 
 public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaObjectImpl<M> implements DBMethod {
     protected DBObjectList<DBArgument> arguments;

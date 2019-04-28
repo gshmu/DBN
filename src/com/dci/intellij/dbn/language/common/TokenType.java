@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.language.common;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.common.index.Indexable;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

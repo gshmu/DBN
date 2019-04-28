@@ -13,10 +13,12 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBDatasetTrigger;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.loader.DBSourceCodeLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
+import com.dci.intellij.dbn.object.type.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBTriggerEvent;
+import com.dci.intellij.dbn.object.type.DBTriggerType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,15 +72,15 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
 
     @Override
     public void buildToolTip(HtmlToolTipBuilder ttb) {
-        TriggerType triggerType = getTriggerType();
-        TriggeringEvent[] triggeringEvents = getTriggeringEvents();
+        DBTriggerType triggerType = getTriggerType();
+        DBTriggerEvent[] triggeringEvents = getTriggerEvents();
         ttb.append(true, getObjectType().getName(), true);
         StringBuilder triggerDesc = new StringBuilder();
         triggerDesc.append(" - ");
         triggerDesc.append(triggerType.getName().toLowerCase());
         triggerDesc.append(" ") ;
 
-        for (TriggeringEvent triggeringEvent : triggeringEvents) {
+        for (DBTriggerEvent triggeringEvent : triggeringEvents) {
             if (triggeringEvent != triggeringEvents[0]) triggerDesc.append(" or ");
             triggerDesc.append(triggeringEvent.getName());
         }

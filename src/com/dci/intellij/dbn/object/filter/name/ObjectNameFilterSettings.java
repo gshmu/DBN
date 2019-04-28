@@ -6,8 +6,8 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionRef;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 

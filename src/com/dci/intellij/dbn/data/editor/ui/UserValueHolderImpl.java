@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.data.editor.ui;
 
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.type.DBDataType;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.project.Project;
 
 public class UserValueHolderImpl<T> implements UserValueHolder<T>{

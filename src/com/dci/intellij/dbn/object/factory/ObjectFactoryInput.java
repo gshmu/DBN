@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.factory;
 
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 
 import java.util.List;
 

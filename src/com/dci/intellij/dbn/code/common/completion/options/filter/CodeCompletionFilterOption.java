@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CheckedTree
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeCompletionFilterTreeNode;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.ui.CheckedTreeNode;
 import org.jdom.Element;
 

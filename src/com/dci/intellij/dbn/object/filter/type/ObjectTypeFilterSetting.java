@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.object.filter.type;
 
 import com.dci.intellij.dbn.common.ui.list.Selectable;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.type.ui.ObjectTypeFilterSettingsForm;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

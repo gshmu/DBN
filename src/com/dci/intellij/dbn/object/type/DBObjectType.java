@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.object.common;
+package com.dci.intellij.dbn.object.type;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.content.DynamicContentType;

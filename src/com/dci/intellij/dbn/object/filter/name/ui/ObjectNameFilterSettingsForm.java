@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.name.FilterCondition;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilter;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterManager;
@@ -17,6 +16,7 @@ import com.dci.intellij.dbn.object.filter.name.action.FilterConditionMoveDownAct
 import com.dci.intellij.dbn.object.filter.name.action.FilterConditionMoveUpAction;
 import com.dci.intellij.dbn.object.filter.name.action.FilterConditionRemoveAction;
 import com.dci.intellij.dbn.object.filter.name.action.FilterCreateAction;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.options.ConfigurationException;

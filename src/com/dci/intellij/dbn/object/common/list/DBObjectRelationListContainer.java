@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectRelationType;
+import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.Nullable;
 

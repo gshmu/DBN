@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.execution.statement;
 
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 

@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
-import com.dci.intellij.dbn.object.common.DBObjectRelationType;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationImpl;
+import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 
 public class DBConstraintColumnRelation extends DBObjectRelationImpl<DBConstraint, DBColumn> {
     private int position;

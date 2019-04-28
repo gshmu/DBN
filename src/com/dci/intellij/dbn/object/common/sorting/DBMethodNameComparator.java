@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.common.sorting;
 
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBProgram;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 
 public abstract class DBMethodNameComparator<T extends DBMethod> extends DBObjectComparator<T> {
     public DBMethodNameComparator(DBObjectType objectType) {

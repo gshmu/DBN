@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.browser.action;
 
 import com.dci.intellij.dbn.execution.method.browser.ui.MethodExecutionBrowserForm;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
 import org.jetbrains.annotations.NotNull;

@@ -11,8 +11,6 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBObjectRelationType;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
@@ -29,6 +27,9 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
+import com.dci.intellij.dbn.object.type.DBConstraintType;
+import com.dci.intellij.dbn.object.type.DBObjectRelationType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,13 +39,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.DBObjectType.COLUMN;
-import static com.dci.intellij.dbn.object.common.DBObjectType.CONSTRAINT;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DISABLEABLE;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
+import static com.dci.intellij.dbn.object.type.DBObjectType.COLUMN;
+import static com.dci.intellij.dbn.object.type.DBObjectType.CONSTRAINT;
 
 public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> implements DBConstraint {
-    private int constraintType;
+    private DBConstraintType constraintType;
     private DBObjectRef<DBConstraint> foreignKeyConstraint;
 
     private String checkCondition;
@@ -60,16 +61,16 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
         checkCondition = metadata.getCheckCondition();
 
         String typeString = metadata.getConstraintType();
-        constraintType =
-            typeString == null ? -1 :
-            typeString.equals("CHECK")? DBConstraint.CHECK :
-            typeString.equals("UNIQUE") ? DBConstraint.UNIQUE_KEY :
-            typeString.equals("PRIMARY KEY") ? DBConstraint.PRIMARY_KEY :
-            typeString.equals("FOREIGN KEY") ? DBConstraint.FOREIGN_KEY :
-            typeString.equals("VIEW CHECK") ? DBConstraint.VIEW_CHECK :
-            typeString.equals("VIEW READONLY") ? DBConstraint.VIEW_READONLY : -1;
+        constraintType = // TODO move to metadata interface
+            typeString == null ? DBConstraintType.UNKNOWN :
+            typeString.equals("CHECK")? DBConstraintType.CHECK :
+            typeString.equals("UNIQUE") ? DBConstraintType.UNIQUE_KEY :
+            typeString.equals("PRIMARY KEY") ? DBConstraintType.PRIMARY_KEY :
+            typeString.equals("FOREIGN KEY") ? DBConstraintType.FOREIGN_KEY :
+            typeString.equals("VIEW CHECK") ? DBConstraintType.VIEW_CHECK :
+            typeString.equals("VIEW READONLY") ? DBConstraintType.VIEW_READONLY : DBConstraintType.UNKNOWN;
 
-        if (checkCondition == null && constraintType == CHECK) checkCondition = "";
+        if (checkCondition == null && constraintType == DBConstraintType.CHECK) checkCondition = "";
 
         if (isForeignKey()) {
             String fkOwner = metadata.getFkConstraintOwner();
@@ -121,23 +122,23 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
     }
 
     @Override
-    public int getConstraintType() {
+    public DBConstraintType getConstraintType() {
         return constraintType;
     }
 
     @Override
     public boolean isPrimaryKey() {
-        return constraintType == PRIMARY_KEY;
+        return constraintType == DBConstraintType.PRIMARY_KEY;
     }
 
     @Override
     public boolean isForeignKey() {
-        return constraintType == FOREIGN_KEY;
+        return constraintType == DBConstraintType.FOREIGN_KEY;
     }
     
     @Override
     public boolean isUniqueKey() {
-        return constraintType == UNIQUE_KEY;
+        return constraintType == DBConstraintType.UNIQUE_KEY;
     }
 
     public String getCheckCondition() {

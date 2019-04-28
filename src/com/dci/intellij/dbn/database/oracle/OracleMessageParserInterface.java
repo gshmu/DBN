@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.database.oracle;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import com.dci.intellij.dbn.database.common.DatabaseObjectIdentifierImpl;
-import com.dci.intellij.dbn.object.common.DBObjectType;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;

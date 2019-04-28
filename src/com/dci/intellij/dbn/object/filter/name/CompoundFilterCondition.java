@@ -3,9 +3,9 @@ package com.dci.intellij.dbn.object.filter.name;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jdom.Element;
 
 import java.util.ArrayList;
