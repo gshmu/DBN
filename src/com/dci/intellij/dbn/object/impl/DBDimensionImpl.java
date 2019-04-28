@@ -2,25 +2,25 @@ package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
+import com.dci.intellij.dbn.database.common.metadata.def.DBDimensionMetadata;
 import com.dci.intellij.dbn.object.DBDimension;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectType;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-public class DBDimensionImpl extends DBSchemaObjectImpl implements DBDimension {
+public class DBDimensionImpl extends DBSchemaObjectImpl<DBDimensionMetadata> implements DBDimension {
 
-    DBDimensionImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
-        super(schema, resultSet);
+    DBDimensionImpl(DBSchema schema, DBDimensionMetadata metadata) throws SQLException {
+        super(schema, metadata);
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        return resultSet.getString("DIMENSION_NAME");
+    protected String initObject(DBDimensionMetadata metadata) throws SQLException {
+        return metadata.getDimensionName();
     }
 
     @NotNull

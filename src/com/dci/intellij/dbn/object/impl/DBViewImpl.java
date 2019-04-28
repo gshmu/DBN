@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.common.metadata.def.DBViewMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
@@ -26,18 +27,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DBViewImpl extends DBDatasetImpl implements DBView {
+public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView {
     private DBType type;
-    DBViewImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
-        super(schema, resultSet);
+    DBViewImpl(DBSchema schema, DBViewMetadata metadata) throws SQLException {
+        super(schema, metadata);
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        String name = resultSet.getString("VIEW_NAME");
-        set(DBObjectProperty.SYSTEM_OBJECT, resultSet.getString("IS_SYSTEM_VIEW").equals("Y"));
-        String typeOwner = resultSet.getString("VIEW_TYPE_OWNER");
-        String typeName = resultSet.getString("VIEW_TYPE");
+    protected String initObject(DBViewMetadata metadata) throws SQLException {
+        String name = metadata.getViewName();
+        set(DBObjectProperty.SYSTEM_OBJECT, metadata.isSystemView());
+        String typeOwner = metadata.getViewTypeOwner();
+        String typeName = metadata.getViewType();
         if (typeOwner != null && typeName != null) {
             DBObjectBundle objectBundle = getConnectionHandler().getObjectBundle();
             DBSchema typeSchema = objectBundle.getSchema(typeOwner);

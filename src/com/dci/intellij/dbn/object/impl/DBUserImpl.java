@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.common.metadata.def.DBUserMetadata;
 import com.dci.intellij.dbn.object.DBGrantedPrivilege;
 import com.dci.intellij.dbn.object.DBGrantedRole;
 import com.dci.intellij.dbn.object.DBRole;
@@ -27,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,12 +35,12 @@ import java.util.List;
 import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SESSION_USER;
 
-public class DBUserImpl extends DBObjectImpl implements DBUser {
-    DBObjectList<DBGrantedRole> roles;
-    DBObjectList<DBGrantedPrivilege> privileges;
+public class DBUserImpl extends DBObjectImpl<DBUserMetadata> implements DBUser {
+    private DBObjectList<DBGrantedRole> roles;
+    private DBObjectList<DBGrantedPrivilege> privileges;
 
-    public DBUserImpl(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
-        super(connectionHandler, resultSet);
+    public DBUserImpl(ConnectionHandler connectionHandler, DBUserMetadata metadata) throws SQLException {
+        super(connectionHandler, metadata);
     }
 
     @Nullable
@@ -50,10 +50,10 @@ public class DBUserImpl extends DBObjectImpl implements DBUser {
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        String name = resultSet.getString("USER_NAME");
-        set(DBObjectProperty.EXPIRED, resultSet.getString("IS_EXPIRED").equals("Y"));
-        set(DBObjectProperty.LOCKED, resultSet.getString("IS_LOCKED").equals("Y"));
+    protected String initObject(DBUserMetadata metadata) throws SQLException {
+        String name = metadata.getUserName();
+        set(DBObjectProperty.EXPIRED, metadata.isExpired());
+        set(DBObjectProperty.LOCKED, metadata.isLocked());
         set(SESSION_USER, name.equalsIgnoreCase(getConnectionHandler().getUserName()));
         return name;
     }

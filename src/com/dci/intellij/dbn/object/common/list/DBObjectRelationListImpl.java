@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoaderImpl;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectRelationType;
 import com.intellij.openapi.project.Project;
@@ -31,7 +32,7 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
     }
 
     @Override
-    public DynamicContentLoader<T> getLoader() {
+    public DynamicContentLoader<T, DBObjectMetadata> getLoader() {
         DynamicContentType parentContentType = getParentElement().getDynamicContentType();
         return DynamicContentLoaderImpl.resolve(parentContentType, objectRelationType);
     }
@@ -46,6 +47,11 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
     @Nullable
     public Filter getFilter() {
         return null;
+    }
+
+    @Override
+    public DynamicContentType getContentType() {
+        return objectRelationType;
     }
 
     @Override

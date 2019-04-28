@@ -10,6 +10,13 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBColumnMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBConstraintColumnMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBConstraintMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBIndexColumnMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBIndexMetadata;
+import com.dci.intellij.dbn.database.common.metadata.def.DBTriggerMetadata;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
@@ -28,19 +35,15 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.DBObjectRelationType.CONSTRAINT_COLUMN;
 import static com.dci.intellij.dbn.object.common.DBObjectRelationType.INDEX_COLUMN;
-import static com.dci.intellij.dbn.object.common.DBObjectType.COLUMN;
-import static com.dci.intellij.dbn.object.common.DBObjectType.CONSTRAINT;
-import static com.dci.intellij.dbn.object.common.DBObjectType.DATASET;
-import static com.dci.intellij.dbn.object.common.DBObjectType.DATASET_TRIGGER;
-import static com.dci.intellij.dbn.object.common.DBObjectType.INDEX;
+import static com.dci.intellij.dbn.object.common.DBObjectType.*;
 
-public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBDataset {
+public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchemaObjectImpl<M> implements DBDataset {
     protected DBObjectList<DBColumn> columns;
     protected DBObjectList<DBConstraint> constraints;
     protected DBObjectList<DBDatasetTrigger> triggers;
 
-    DBDatasetImpl(DBSchema parent, ResultSet resultSet) throws SQLException {
-        super(parent, resultSet);
+    DBDatasetImpl(DBSchema parent, M metadata) throws SQLException {
+        super(parent, metadata);
     }
 
     @Override
@@ -127,7 +130,7 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
      *********************************************************/
 
     static {
-        new DynamicSubcontentLoader<DBColumn>(DATASET, COLUMN, true) {
+        new DynamicSubcontentLoader<DBColumn, DBColumnMetadata>(DATASET, COLUMN, true) {
 
             @Override
             public boolean match(DBColumn column, DynamicContent dynamicContent) {
@@ -136,8 +139,8 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
             }
 
             @Override
-            public DynamicContentLoader<DBColumn> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBColumn>(DATASET, COLUMN, false, true) {
+            public DynamicContentLoader<DBColumn, DBColumnMetadata> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBColumn, DBColumnMetadata>(DATASET, COLUMN, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBColumn> dynamicContent, DBNConnection connection) throws SQLException {
@@ -147,15 +150,15 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
                     }
 
                     @Override
-                    public DBColumn createElement(DynamicContent<DBColumn> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-                        DBDatasetImpl dataset = (DBDatasetImpl) dynamicContent.getParentElement();
-                        return new DBColumnImpl(dataset, resultSet);
+                    public DBColumn createElement(DynamicContent<DBColumn> content, DBColumnMetadata metadata, LoaderCache cache) throws SQLException {
+                        DBDatasetImpl dataset = (DBDatasetImpl) content.getParentElement();
+                        return new DBColumnImpl(dataset, metadata);
                     }
                 };
             }
         };
 
-        new DynamicSubcontentLoader<DBConstraint>(DATASET, CONSTRAINT, true) {
+        new DynamicSubcontentLoader<DBConstraint, DBConstraintMetadata>(DATASET, CONSTRAINT, true) {
 
             @Override
             public boolean match(DBConstraint constraint, DynamicContent dynamicContent) {
@@ -165,8 +168,8 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
             }
 
             @Override
-            public DynamicContentLoader<DBConstraint> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBConstraint>(DATASET, CONSTRAINT, false, true) {
+            public DynamicContentLoader<DBConstraint, DBConstraintMetadata> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBConstraint, DBConstraintMetadata>(DATASET, CONSTRAINT, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBConstraint> dynamicContent, DBNConnection connection) throws SQLException {
@@ -176,16 +179,16 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
                     }
 
                     @Override
-                    public DBConstraint createElement(DynamicContent<DBConstraint> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-                        DBDatasetImpl dataset = (DBDatasetImpl) dynamicContent.getParentElement();
-                        return new DBConstraintImpl(dataset, resultSet);
+                    public DBConstraint createElement(DynamicContent<DBConstraint> content, DBConstraintMetadata metadata, LoaderCache cache) throws SQLException {
+                        DBDatasetImpl dataset = (DBDatasetImpl) content.getParentElement();
+                        return new DBConstraintImpl(dataset, metadata);
                     }
                 };
 
             }
         };
 
-        new DynamicSubcontentLoader<DBDatasetTrigger>(DATASET, DATASET_TRIGGER, true) {
+        new DynamicSubcontentLoader<DBDatasetTrigger, DBTriggerMetadata>(DATASET, DATASET_TRIGGER, true) {
 
             @Override
             public boolean match(DBDatasetTrigger trigger, DynamicContent dynamicContent) {
@@ -194,8 +197,8 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
             }
 
             @Override
-            public DynamicContentLoader<DBDatasetTrigger> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBDatasetTrigger>(DATASET, DATASET_TRIGGER, false, true) {
+            public DynamicContentLoader<DBDatasetTrigger, DBTriggerMetadata> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBDatasetTrigger, DBTriggerMetadata>(DATASET, DATASET_TRIGGER, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent<DBDatasetTrigger> dynamicContent, DBNConnection connection) throws SQLException {
@@ -205,15 +208,15 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
                     }
 
                     @Override
-                    public DBDatasetTrigger createElement(DynamicContent<DBDatasetTrigger> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-                        DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-                        return new DBDatasetTriggerImpl(dataset, resultSet);
+                    public DBDatasetTrigger createElement(DynamicContent<DBDatasetTrigger> content, DBTriggerMetadata metadata, LoaderCache cache) throws SQLException {
+                        DBDataset dataset = (DBDataset) content.getParentElement();
+                        return new DBDatasetTriggerImpl(dataset, metadata);
                     }
                 };
             }
         };
 
-        new DynamicSubcontentLoader<DBIndex>(DATASET, INDEX, true) {
+        new DynamicSubcontentLoader<DBIndex, DBIndexMetadata>(DATASET, INDEX, true) {
 
             @Override
             public boolean match(DBIndex index, DynamicContent dynamicContent) {
@@ -223,8 +226,8 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
             }
 
             @Override
-            public DynamicContentLoader<DBIndex> createAlternativeLoader() {
-                return new DynamicContentResultSetLoader<DBIndex>(DATASET, INDEX, false, true) {
+            public DynamicContentLoader<DBIndex, DBIndexMetadata> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBIndex, DBIndexMetadata>(DATASET, INDEX, false, true) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
@@ -234,9 +237,9 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
                     }
 
                     @Override
-                    public DBIndex createElement(DynamicContent<DBIndex> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-                        DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-                        return new DBIndexImpl(dataset, resultSet);
+                    public DBIndex createElement(DynamicContent<DBIndex> content, DBIndexMetadata provider, LoaderCache cache) throws SQLException {
+                        DBDataset dataset = (DBDataset) content.getParentElement();
+                        return new DBIndexImpl(dataset, provider);
                     }
                 };
             }
@@ -251,8 +254,8 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
             }
 
             @Override
-            public DynamicContentLoader createAlternativeLoader() {
-                return new DynamicContentResultSetLoader(DATASET, INDEX_COLUMN, false, false) {
+            public DynamicContentLoader<DBIndexColumnRelation, DBIndexColumnMetadata> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBIndexColumnRelation, DBIndexColumnMetadata>(DATASET, INDEX_COLUMN, false, false) {
 
                     @Override
                     public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
@@ -262,10 +265,10 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
                     }
 
                     @Override
-                    public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-                        String columnName = resultSet.getString("COLUMN_NAME");
-                        String indexName = resultSet.getString("INDEX_NAME");
-                        DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+                    public DBIndexColumnRelation createElement(DynamicContent<DBIndexColumnRelation> content, DBIndexColumnMetadata metadata, LoaderCache cache) throws SQLException {
+                        String columnName = metadata.getColumnName();
+                        String indexName = metadata.getIndexName();
+                        DBDataset dataset = (DBDataset) content.getParentElement();
                         DBIndex index = dataset.getIndex(indexName);
                         DBColumn column = dataset.getColumn(columnName);
 
@@ -274,7 +277,6 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
                         }
                         return null;
                     }
-
                 };
 
             }
@@ -290,23 +292,29 @@ public abstract class DBDatasetImpl extends DBSchemaObjectImpl implements DBData
             }
 
             @Override
-            public DynamicContentLoader createAlternativeLoader() {
-                return new DynamicContentResultSetLoader(DATASET, CONSTRAINT_COLUMN, false, false) {
+            public DynamicContentLoader<DBConstraintColumnRelation, DBConstraintColumnMetadata> createAlternativeLoader() {
+                return new DynamicContentResultSetLoader<DBConstraintColumnRelation, DBConstraintColumnMetadata>(DATASET, CONSTRAINT_COLUMN, false, false) {
 
                     @Override
-                    public ResultSet createResultSet(DynamicContent dynamicContent, DBNConnection connection) throws SQLException {
+                    public ResultSet createResultSet(
+                            DynamicContent<DBConstraintColumnRelation> dynamicContent,
+                            DBNConnection connection) throws SQLException {
+
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                         DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
                         return metadataInterface.loadConstraintRelations(dataset.getSchema().getName(), dataset.getName(), connection);
                     }
 
                     @Override
-                    public DynamicContentElement createElement(DynamicContent dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException {
-                        String columnName = resultSet.getString("COLUMN_NAME");
-                        String constraintName = resultSet.getString("CONSTRAINT_NAME");
-                        int position = resultSet.getInt("POSITION");
+                    public DBConstraintColumnRelation createElement(
+                            DynamicContent<DBConstraintColumnRelation> content,
+                            DBConstraintColumnMetadata metadata, LoaderCache cache) throws SQLException {
 
-                        DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
+                        String columnName = metadata.getColumnName();
+                        String constraintName = metadata.getConstraintName();
+                        int position = metadata.getPosition();
+
+                        DBDataset dataset = (DBDataset) content.getParentElement();
                         DBColumn column = dataset.getColumn(columnName);
                         DBConstraint constraint = dataset.getConstraint(constraintName);
 

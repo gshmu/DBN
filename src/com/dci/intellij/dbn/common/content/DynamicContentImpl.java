@@ -80,7 +80,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
     }
 
     @Override
-    public abstract DynamicContentLoader<T> getLoader();
+    public abstract DynamicContentLoader<T, ?> getLoader();
 
     @Override
     public ContentDependencyAdapter getDependencyAdapter() {
@@ -249,7 +249,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
             // mark first the dirty status since dirty dependencies may
             // become valid due to parallel background load
             set(DIRTY, false);
-            DynamicContentLoader<T> loader = getLoader();
+            DynamicContentLoader<T, ?> loader = getLoader();
             loader.loadContent(this, force);
 
             // refresh inner elements

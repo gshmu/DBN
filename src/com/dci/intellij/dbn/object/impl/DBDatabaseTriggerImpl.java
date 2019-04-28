@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
+import com.dci.intellij.dbn.database.common.metadata.def.DBTriggerMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBDatabaseTrigger;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -21,8 +22,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DBDatabaseTriggerImpl extends DBTriggerImpl implements DBDatabaseTrigger {
-    DBDatabaseTriggerImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
-        super(schema, resultSet);
+    DBDatabaseTriggerImpl(DBSchema schema, DBTriggerMetadata metadata) throws SQLException {
+        super(schema, metadata);
     }
 
     @NotNull

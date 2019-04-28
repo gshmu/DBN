@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.data.type.DBDataType;
+import com.dci.intellij.dbn.database.common.metadata.def.DBArgumentMetadata;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBFunction;
 import com.dci.intellij.dbn.object.DBMethod;
@@ -20,36 +21,35 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DBArgumentImpl extends DBObjectImpl implements DBArgument {
+public class DBArgumentImpl extends DBObjectImpl<DBArgumentMetadata> implements DBArgument {
     private DBDataType dataType;
     private int overload;
     private int position;
     private int sequence;
 
-    DBArgumentImpl(@NotNull DBMethod method, ResultSet resultSet) throws SQLException {
-        super(method, resultSet);
+    DBArgumentImpl(@NotNull DBMethod method, DBArgumentMetadata metadata) throws SQLException {
+        super(method, metadata);
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        overload = resultSet.getInt("OVERLOAD");
-        position = resultSet.getInt("POSITION");
-        sequence = resultSet.getInt("SEQUENCE");
-        String inOut = resultSet.getString("IN_OUT");
+    protected String initObject(DBArgumentMetadata metadata) throws SQLException {
+        overload = metadata.getOverload();
+        position = metadata.getPosition();
+        sequence = metadata.getSequence();
+        String inOut = metadata.getInOut();
         if (inOut != null) {
             set(DBObjectProperty.INPUT, inOut.contains("IN"));
             set(DBObjectProperty.OUTPUT, inOut.contains("OUT"));
 
         }
-        String name = resultSet.getString("ARGUMENT_NAME");
+        String name = metadata.getArgumentName();
         if (name == null) name = position == 0 ? "return" : "[unnamed]";
 
-        dataType = DBDataType.get(this.getConnectionHandler(), resultSet);
+        dataType = DBDataType.get(getConnectionHandler(), metadata.getDataType());
         if (getParentObject() instanceof DBFunction) {
             position++;
         }

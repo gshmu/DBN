@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class DBFictiveObject extends DBObjectImpl implements PsiReference {
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
+    protected String initObject(DBObjectMetadata metadata) throws SQLException {
         throw new UnsupportedOperationException();
     }
 

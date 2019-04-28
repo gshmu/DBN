@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.object.impl;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.database.common.metadata.def.DBProcedureMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBProcedure;
 import com.dci.intellij.dbn.object.DBProgram;
@@ -21,21 +22,21 @@ import javax.swing.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class DBProcedureImpl extends DBMethodImpl implements DBProcedure {
-    DBProcedureImpl(DBSchemaObject parent, ResultSet resultSet) throws SQLException {
+public class DBProcedureImpl extends DBMethodImpl<DBProcedureMetadata> implements DBProcedure {
+    DBProcedureImpl(DBSchemaObject parent, DBProcedureMetadata metadata) throws SQLException {
         // type functions are not editable independently
-        super(parent, resultSet);
+        super(parent, metadata);
         assert this.getClass() != DBProcedureImpl.class;
     }
 
-    DBProcedureImpl(DBSchema schema, ResultSet resultSet) throws SQLException {
-        super(schema, resultSet);
+    DBProcedureImpl(DBSchema schema, DBProcedureMetadata metadata) throws SQLException {
+        super(schema, metadata);
     }
 
     @Override
-    protected String initObject(ResultSet resultSet) throws SQLException {
-        super.initObject(resultSet);
-        return resultSet.getString("PROCEDURE_NAME");
+    protected String initObject(DBProcedureMetadata metadata) throws SQLException {
+        super.initObject(metadata);
+        return metadata.getProcedureName();
     }
 
     @NotNull

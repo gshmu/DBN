@@ -19,6 +19,8 @@ import com.dci.intellij.dbn.connection.jdbc.IncrementalStatusAdapter;
 import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
+import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadataFactory;
 import com.dci.intellij.dbn.database.common.util.SkipEntrySQLException;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.diagnostic.Logger;
@@ -32,18 +34,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class DynamicContentResultSetLoader<T extends DynamicContentElement> extends DynamicContentLoaderImpl<T> implements DynamicContentLoader<T> {
+public abstract class DynamicContentResultSetLoader<
+                T extends DynamicContentElement,
+                M extends DBObjectMetadata>
+        extends DynamicContentLoaderImpl<T, M>
+        implements DynamicContentLoader<T, M> {
+
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private boolean master;
 
-    public DynamicContentResultSetLoader(@Nullable DynamicContentType parentContentType, @NotNull DynamicContentType contentType, boolean register, boolean master) {
+    public DynamicContentResultSetLoader(
+            @Nullable DynamicContentType parentContentType,
+            @NotNull DynamicContentType contentType,
+            boolean register,
+            boolean master) {
+
         super(parentContentType, contentType, register);
         this.master = master;
     }
 
     public abstract ResultSet createResultSet(DynamicContent<T> dynamicContent, DBNConnection connection) throws SQLException;
-    public abstract T createElement(DynamicContent<T> dynamicContent, ResultSet resultSet, LoaderCache loaderCache) throws SQLException;
+    public abstract T createElement(DynamicContent<T> content, M metadata, LoaderCache cache) throws SQLException;
 
     private static class DebugInfo {
         private String id = UUID.randomUUID().toString();
@@ -92,6 +104,10 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
                 connection.set(ResourceStatus.ACTIVE, true);
                 dynamicContent.checkDisposed();
                 resultSet = createResultSet(dynamicContent, connection);
+
+                DBObjectMetadataFactory metadataFactory = new DBObjectMetadataFactory();
+                M metadata = metadataFactory.create(dynamicContent.getContentType(), resultSet);
+
                 if (addDelay) Thread.sleep(500);
                 while (resultSet != null && resultSet.next()) {
                     if (addDelay) Thread.sleep(10);
@@ -99,7 +115,7 @@ public abstract class DynamicContentResultSetLoader<T extends DynamicContentElem
 
                     T element = null;
                     try {
-                        element = createElement(dynamicContent, resultSet, loaderCache);
+                        element = createElement(dynamicContent, metadata, loaderCache);
                     } catch (ProcessCanceledException e){
                         return;
                     } catch (RuntimeException e) {

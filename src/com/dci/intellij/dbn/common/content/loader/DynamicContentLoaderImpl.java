@@ -3,13 +3,18 @@ package com.dci.intellij.dbn.common.content.loader;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class DynamicContentLoaderImpl<T extends DynamicContentElement> implements DynamicContentLoader<T>{
+public abstract class DynamicContentLoaderImpl<
+                T extends DynamicContentElement,
+                M extends DBObjectMetadata>
+        implements DynamicContentLoader<T, M>{
+
     private static final Map<DynamicContentType, Map<DynamicContentType, DynamicContentLoader>> LOADERS = new HashMap<>();
 
     private static DynamicContentType NULL = new DynamicContentType() {
@@ -45,7 +50,7 @@ public abstract class DynamicContentLoaderImpl<T extends DynamicContentElement> 
     }
 
     @NotNull
-    public static <T extends DynamicContentElement> DynamicContentLoader<T> resolve(
+    public static <T extends DynamicContentElement, M extends DBObjectMetadata> DynamicContentLoader<T, M> resolve(
             @Nullable DynamicContentType parentContentType,
             @NotNull DynamicContentType contentType) {
 

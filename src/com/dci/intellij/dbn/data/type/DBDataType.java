@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.data.type;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.value.ComplexValue;
+import com.dci.intellij.dbn.database.common.metadata.def.DBDataTypeMetadata;
 import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBType;
@@ -27,8 +28,8 @@ public class DBDataType {
     private int scale;
     private boolean set;
 
-    public static DBDataType get(ConnectionHandler connectionHandler, ResultSet resultSet) throws SQLException {
-        return new Ref(resultSet, "").get(connectionHandler);
+    public static DBDataType get(ConnectionHandler connectionHandler, DBDataTypeMetadata metadata) throws SQLException {
+        return new Ref(metadata).get(connectionHandler);
     }
 
     public static DBDataType get(ConnectionHandler connectionHandler, String dataTypeName, long length, int precision, int scale, boolean set) {
@@ -227,18 +228,18 @@ public class DBDataType {
         int scale;
         boolean set;
 
-        public Ref(ResultSet resultSet, String lookupPrefix) throws SQLException {
-            dataTypeName = resultSet.getString(lookupPrefix + "DATA_TYPE_NAME");
-            length = resultSet.getLong(lookupPrefix + "DATA_LENGTH");
-            precision = resultSet.getInt(lookupPrefix + "DATA_PRECISION");
-            scale = resultSet.getInt(lookupPrefix + "DATA_SCALE");
-            set = "Y".equals(resultSet.getString(lookupPrefix + "IS_SET"));
+        public Ref(DBDataTypeMetadata metadata) throws SQLException {
+            dataTypeName = metadata.getDataTypeName();
+            length = metadata.getDataLength();
+            precision = metadata.getDataPrecision();
+            scale = metadata.getDataScale();
+            set = metadata.isSet();
 
-            dataTypeOwner = resultSet.getString(lookupPrefix + "DATA_TYPE_OWNER");
-            dataTypePackage = resultSet.getString(lookupPrefix + "DATA_TYPE_PACKAGE");
+            dataTypeOwner = metadata.getDataTypeOwner();
+            dataTypePackage = metadata.getDataTypeProgram();
         }
 
-        public Ref(String dataTypeName, String dataTypeOwner, String dataTypePackage, long length, int precision, int scale, boolean set) {
+        Ref(String dataTypeName, String dataTypeOwner, String dataTypePackage, long length, int precision, int scale, boolean set) {
             this.dataTypeName = dataTypeName;
             this.dataTypeOwner = dataTypeOwner;
             this.dataTypePackage = dataTypePackage;

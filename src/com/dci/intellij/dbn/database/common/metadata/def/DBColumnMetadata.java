@@ -1,0 +1,26 @@
+package com.dci.intellij.dbn.database.common.metadata.def;
+
+import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
+
+import java.sql.SQLException;
+
+public interface DBColumnMetadata extends DBObjectMetadata {
+
+    String getColumnName() throws SQLException;
+
+    String getDatasetName() throws SQLException;
+
+    boolean isPrimaryKey() throws SQLException;
+
+    boolean isForeignKey() throws SQLException;
+
+    boolean isUniqueKey() throws SQLException;
+
+    boolean isNullable() throws SQLException;
+
+    boolean isHidden() throws SQLException;
+
+    int getPosition() throws SQLException;
+
+    DBDataTypeMetadata getDataType();
+}
