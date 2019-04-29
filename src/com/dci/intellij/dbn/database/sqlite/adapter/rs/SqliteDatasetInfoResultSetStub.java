@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public abstract class SqliteDatasetInfoResultSetStub<T extends ResultSetElement> extends SqliteResultSetAdapter<T> {
     private DBNConnection connection;
     protected String ownerName;
-    public SqliteDatasetInfoResultSetStub(final String ownerName, SqliteDatasetNamesResultSet datasetNames, DBNConnection connection) throws SQLException {
+    SqliteDatasetInfoResultSetStub(final String ownerName, SqliteDatasetNamesResultSet datasetNames, DBNConnection connection) throws SQLException {
         this.connection = connection;
         this.ownerName = ownerName;
         new ResultSetReader(datasetNames) {
@@ -23,7 +23,7 @@ public abstract class SqliteDatasetInfoResultSetStub<T extends ResultSetElement>
         };
     }
 
-    public SqliteDatasetInfoResultSetStub(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
+    SqliteDatasetInfoResultSetStub(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
         this.connection = connection;
         this.ownerName = ownerName;
         init(ownerName, datasetName);

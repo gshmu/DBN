@@ -10,7 +10,7 @@ import java.sql.Clob;
 import java.sql.Timestamp;
 import java.sql.Types;
 
-public class MySqlNativeDataTypes extends DatabaseNativeDataTypes {
+class MySqlNativeDataTypes extends DatabaseNativeDataTypes {
     {
         createBasicDefinition("CHAR", String.class, Types.CHAR, GenericDataType.LITERAL);
         createBasicDefinition("VARCHAR", String.class, Types.VARCHAR, GenericDataType.LITERAL);

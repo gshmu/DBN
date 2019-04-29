@@ -16,14 +16,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface {
+class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface {
 
-    public static final QuoteDefinition IDENTIFIER_QUOTE_DEFINITION = new QuoteDefinition(
+    private static final QuoteDefinition IDENTIFIER_QUOTE_DEFINITION = new QuoteDefinition(
             new QuotePair('"', '"'),
             new QuotePair('[', ']'),
             new QuotePair('`', '`'));
 
-    public SqliteCompatibilityInterface(DatabaseInterfaceProvider parent) {
+    SqliteCompatibilityInterface(DatabaseInterfaceProvider parent) {
         super(parent);
     }
 

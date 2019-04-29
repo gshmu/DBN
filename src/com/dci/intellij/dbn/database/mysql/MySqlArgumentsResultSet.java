@@ -31,7 +31,7 @@ public class MySqlArgumentsResultSet extends ResultSetAdapter {
     private Argument currentArgument;
 
     public MySqlArgumentsResultSet(ResultSet resultSet) throws SQLException {
-        List<Argument> argumentList = new ArrayList<Argument>();
+        List<Argument> argumentList = new ArrayList<>();
         while (resultSet.next()) {
             String argumentsString = resultSet.getString("ARGUMENTS");
             WordTokenizer wordTokenizer = new WordTokenizer(argumentsString);
@@ -102,12 +102,12 @@ public class MySqlArgumentsResultSet extends ResultSetAdapter {
 
                     // if precision not set then set it
                     if (argument.dataPrecision == null) {
-                        argument.dataPrecision = new Integer(token);
+                        argument.dataPrecision = Integer.valueOf(token);
                         continue;
                     }
                     // if scale not set then set it
                     if (argument.dataScale == null) {
-                        argument.dataScale = new Integer(token);
+                        argument.dataScale = Integer.valueOf(token);
                         continue;
                     }
                     throwParseException(argumentsString, token);

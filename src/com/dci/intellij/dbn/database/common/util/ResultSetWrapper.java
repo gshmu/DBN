@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.connection.jdbc;
+package com.dci.intellij.dbn.database.common.util;
 
 import javax.annotation.Nullable;
 import java.io.InputStream;

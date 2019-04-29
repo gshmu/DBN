@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SqliteViewSourceResultSet extends ResultSetAdapter {
-    public static final Pattern DDL_STUB_REGEX = Pattern.compile("CREATE\\s+(TEMP(ORARY)?\\s+)?VIEW[^.]+\\s+AS\\s+(?=SELECT)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern DDL_STUB_REGEX = Pattern.compile("CREATE\\s+(TEMP(ORARY)?\\s+)?VIEW[^.]+\\s+AS\\s+(?=SELECT)", Pattern.CASE_INSENSITIVE);
     private ResultSet resultSet;
 
     public SqliteViewSourceResultSet(ResultSet resultSet) {
