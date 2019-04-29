@@ -1,34 +1,21 @@
 package com.dci.intellij.dbn.common.cache;
 
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
-import gnu.trove.THashMap;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
 public class Cache {
-    private Map<String, CacheValue> elements = new THashMap<String, CacheValue>();
-    private int expiryTimeMillis = -1;
-
-    public Cache(int expiryTimeMillis) {
-        this.expiryTimeMillis = expiryTimeMillis;
-    }
+    private Map<String, Object> elements = ContainerUtil.createSoftMap();
 
     @Nullable
     private <T> T get(String key) {
-        CacheValue<T> cacheValue = elements.get(key);
-        if (isValid(cacheValue)) {
-            return cacheValue.getValue();
-        }
-        return null;
+        return (T) elements.get(key);
     }
 
     private <T> void set(String key, T value) {
-        elements.put(key, new CacheValue<T>(value));
-    }
-
-    private boolean isValid(CacheValue cacheValue) {
-        return cacheValue != null && !cacheValue.isOlderThan(expiryTimeMillis);
+        elements.put(key, value);
     }
 
     public <T, E extends Throwable> T get(String key, ThrowableCallable<T, E> loader) throws E {
