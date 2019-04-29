@@ -5,9 +5,9 @@ import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.connection.jdbc.ResultSetWrapper;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
+import com.dci.intellij.dbn.database.common.util.ResultSetWrapper;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.Nullable;
 

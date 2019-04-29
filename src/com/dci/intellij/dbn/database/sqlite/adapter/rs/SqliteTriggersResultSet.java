@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SqliteTriggersResultSet extends ResultSetAdapter {
-    public static final Pattern TRIGGER_EVENT_REGEX = Pattern.compile("(before|after|instead\\s+of)\\s+(delete|insert|update)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern TRIGGER_EVENT_REGEX = Pattern.compile("(before|after|instead\\s+of)\\s+(delete|insert|update)", Pattern.CASE_INSENSITIVE);
     private ResultSet resultSet;
 
     public SqliteTriggersResultSet(ResultSet resultSet) {

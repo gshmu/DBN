@@ -23,7 +23,7 @@ public class SqliteResultSetAdapter<T extends ResultSetElement> extends ResultSe
         return cursor < elements.size();
     }
 
-    public T getCurrentElement() {
+    protected T getCurrentElement() {
         return elements.get(cursor);
     }
 
@@ -40,7 +40,7 @@ public class SqliteResultSetAdapter<T extends ResultSetElement> extends ResultSe
         cursor = -1;
     }
 
-    public T getElement(String name) {
+    protected T getElement(String name) {
         for (T element : elements) {
             if (element.getName().equalsIgnoreCase(name)) {
                 return element;
@@ -49,7 +49,7 @@ public class SqliteResultSetAdapter<T extends ResultSetElement> extends ResultSe
         return null;
     }
 
-    public static String toFlag(boolean value) {
+    protected static String toFlag(boolean value) {
         return value ? "Y" : "N";
     }
 

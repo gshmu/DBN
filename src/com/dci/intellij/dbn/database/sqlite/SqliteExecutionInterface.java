@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class SqliteExecutionInterface extends DatabaseExecutionInterfaceImpl {
+class SqliteExecutionInterface extends DatabaseExecutionInterfaceImpl {
 
     @Override
     public MethodExecutionProcessor createExecutionProcessor(DBMethod method) {

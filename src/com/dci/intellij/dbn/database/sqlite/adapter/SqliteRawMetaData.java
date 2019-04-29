@@ -232,7 +232,7 @@ public class SqliteRawMetaData {
 
     private abstract static class RawMetaData<T> extends ResultSetReader {
         private List<T> rows;
-        public RawMetaData(ResultSet resultSet) throws SQLException {
+        RawMetaData(ResultSet resultSet) throws SQLException {
             super(resultSet);
         }
 

@@ -17,7 +17,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import java.sql.SQLException;
 
 public class SqliteDDLInterface extends DatabaseDDLInterfaceImpl {
-    public SqliteDDLInterface(DatabaseInterfaceProvider provider) {
+    SqliteDDLInterface(DatabaseInterfaceProvider provider) {
         super("sqlite_ddl_interface.xml", provider);
     }
 

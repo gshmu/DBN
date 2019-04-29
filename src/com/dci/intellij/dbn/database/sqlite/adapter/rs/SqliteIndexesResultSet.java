@@ -18,11 +18,11 @@ import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.Raw
 
 public abstract class SqliteIndexesResultSet extends SqliteDatasetInfoResultSetStub<SqliteIndexesResultSet.Index> {
 
-    public SqliteIndexesResultSet(String ownerName, SqliteDatasetNamesResultSet datasetNames, DBNConnection connection) throws SQLException {
+    protected SqliteIndexesResultSet(String ownerName, SqliteDatasetNamesResultSet datasetNames, DBNConnection connection) throws SQLException {
         super(ownerName, datasetNames, connection);
     }
 
-    public SqliteIndexesResultSet(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
+    protected SqliteIndexesResultSet(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
         super(ownerName, datasetName, connection);
     }
 
@@ -59,7 +59,7 @@ public abstract class SqliteIndexesResultSet extends SqliteDatasetInfoResultSetS
     }
 
 
-    public static class Index implements ResultSetElement<Index> {
+    static class Index implements ResultSetElement<Index> {
         String tableName;
         String indexName;
         boolean unique;

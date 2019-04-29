@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 
-public class SqliteMessageParserInterface implements DatabaseMessageParserInterface {
+class SqliteMessageParserInterface implements DatabaseMessageParserInterface {
     @Override
     @Nullable
     public DatabaseObjectIdentifier identifyObject(SQLException exception) {

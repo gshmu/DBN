@@ -11,10 +11,10 @@ import com.dci.intellij.dbn.language.common.QuoteDefinition;
 import com.dci.intellij.dbn.language.common.QuotePair;
 
 public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface {
-    public static final QuoteDefinition IDENTIFIER_QUOTE_DEFINITION = new QuoteDefinition(new QuotePair('`', '`'));
+    private static final QuoteDefinition IDENTIFIER_QUOTE_DEFINITION = new QuoteDefinition(new QuotePair('`', '`'));
 
 
-    public MySqlCompatibilityInterface(DatabaseInterfaceProvider parent) {
+    MySqlCompatibilityInterface(DatabaseInterfaceProvider parent) {
         super(parent);
     }
 
