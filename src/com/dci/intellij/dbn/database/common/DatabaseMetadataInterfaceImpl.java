@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.database.common;
 
-import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -18,9 +17,6 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
 
     public DatabaseMetadataInterfaceImpl(String fileName, DatabaseInterfaceProvider provider) {
         super(fileName, provider);
-    }
-    public Cache getCache() {
-        return DatabaseInterfaceProviderImpl.getMetaDataCache();
     }
 
     @Override

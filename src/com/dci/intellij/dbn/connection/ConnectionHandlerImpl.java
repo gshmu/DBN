@@ -123,6 +123,11 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     @Override
+    public Cache getMetaDataCache() {
+        return metaDataCache;
+    }
+
+    @Override
     @NotNull
     public String getConnectionName(@Nullable DBNConnection connection) {
         if (connection == null || sessionBundle == null) {
@@ -501,14 +506,9 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
                     try {
                         interfaceProvider = DatabaseInterfaceProviderFactory.getInterfaceProvider(this);
                     } catch (SQLException e) {
-                        System.out.println();
+                        LOGGER.warn("Failed to resolve database interface provider", e);
                     }
                 });
-
-        if (interfaceProvider != null) {
-            interfaceProvider.setProject(getProject());
-            interfaceProvider.setMetaDataCache(metaDataCache);
-        }
 
         // do not initialize
         return interfaceProvider == null ? DatabaseInterfaceProviderFactory.GENERIC_INTERFACE_PROVIDER : interfaceProvider;

@@ -101,6 +101,7 @@ public abstract class DynamicContentResultSetLoader<
             ResultSet resultSet = null;
             List<T> list = null;
             try {
+                DatabaseInterface.init(connectionHandler);
                 connection.set(ResourceStatus.ACTIVE, true);
                 dynamicContent.checkDisposed();
                 resultSet = createResultSet(dynamicContent, connection);
@@ -142,6 +143,7 @@ public abstract class DynamicContentResultSetLoader<
                     }
                 }
             } finally {
+                DatabaseInterface.release();
                 ResourceUtil.close(resultSet);
                 connection.set(ResourceStatus.ACTIVE, false);
                 connectionHandler.freePoolConnection(connection);

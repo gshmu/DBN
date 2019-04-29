@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
-import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +35,7 @@ public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetEleme
     protected abstract ResultSet loadIndexDetailInfo(String ownerName, String indexName) throws SQLException;
 
     Map<String, List<SqliteConstraintsLoader.ConstraintColumnInfo>> loadConstraintInfo(final String ownerName, String datasetName) throws SQLException {
-        SqliteConstraintsLoader loader = new SqliteConstraintsLoader(ownerName, getCache()) {
+        SqliteConstraintsLoader loader = new SqliteConstraintsLoader(ownerName) {
             @Override
             public ResultSet loadTableInfo(String datasetName) throws SQLException {
                 return SqliteConstraintInfoResultSetStub.this.loadTableInfo(ownerName, datasetName);
@@ -62,7 +62,6 @@ public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetEleme
 
 
     public abstract static class SqliteConstraintsLoader {
-        private Cache cache;
         private String ownerName;
 
         public enum ConstraintType {
@@ -71,9 +70,8 @@ public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetEleme
             UQ
         }
 
-        SqliteConstraintsLoader(String ownerName, Cache cache) {
+        SqliteConstraintsLoader(String ownerName) {
             this.ownerName = ownerName;
-            this.cache = cache;
         }
 
         @NotNull
@@ -125,25 +123,25 @@ public abstract class SqliteConstraintInfoResultSetStub<T extends ResultSetEleme
         }
 
         private RawForeignKeyInfo getForeignKeyInfo(final String datasetName) throws SQLException {
-            return cache.get(
+            return DatabaseInterface.getMetaDataCache().get(
                     ownerName + "." + datasetName + ".FOREIGN_KEY_INFO",
                     () -> new RawForeignKeyInfo(loadForeignKeyInfo(datasetName)));
         }
 
         private RawTableInfo getTableInfo(final String datasetName) throws SQLException {
-            return cache.get(
+            return DatabaseInterface.getMetaDataCache().get(
                     ownerName + "." + datasetName + ".TABLE_INFO",
                     () -> new RawTableInfo(loadTableInfo(datasetName)));
         }
 
         private RawIndexInfo getIndexInfo(final String tableName) throws SQLException {
-            return cache.get(
+            return DatabaseInterface.getMetaDataCache().get(
                     ownerName + "." + tableName + ".INDEX_INFO",
                     () -> new RawIndexInfo(loadIndexInfo(tableName)));
         }
 
         private RawIndexDetailInfo getIndexDetailInfo(final String indexName) throws SQLException {
-            return cache.get(
+            return DatabaseInterface.getMetaDataCache().get(
                     ownerName + "." + indexName + ".INDEX_DETAIL_INFO",
                     () -> new RawIndexDetailInfo(loadIndexDetailInfo(indexName)));
         }
