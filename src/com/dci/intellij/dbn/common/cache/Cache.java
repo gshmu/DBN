@@ -1,17 +1,17 @@
 package com.dci.intellij.dbn.common.cache;
 
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
-import gnu.trove.THashMap;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
 public class Cache {
-    private Map<String, CacheValue> elements = new THashMap<String, CacheValue>();
-    private int expiryTimeMillis = -1;
+    private Map<String, CacheValue> elements = ContainerUtil.createSoftMap();
+    private int expiryMillis;
 
-    public Cache(int expiryTimeMillis) {
-        this.expiryTimeMillis = expiryTimeMillis;
+    public Cache(int expiryMillis) {
+        this.expiryMillis = expiryMillis;
     }
 
     @Nullable
@@ -28,7 +28,7 @@ public class Cache {
     }
 
     private boolean isValid(CacheValue cacheValue) {
-        return cacheValue != null && !cacheValue.isOlderThan(expiryTimeMillis);
+        return cacheValue != null && !cacheValue.isOlderThan(expiryMillis);
     }
 
     public <T, E extends Throwable> T get(String key, ThrowableCallable<T, E> loader) throws E {

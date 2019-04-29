@@ -1,10 +1,13 @@
 package com.dci.intellij.dbn.database.sqlite.adapter;
 
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.database.common.util.ResultSetReader;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SqliteRawMetaData {
@@ -239,14 +242,15 @@ public class SqliteRawMetaData {
         @Override
         protected final void processRow(ResultSet resultSet) throws SQLException {
             T row = createRow(resultSet);
-            getRows().add(row);
-        }
-
-        public List<T> getRows() {
             if (rows == null) {
                 rows = new ArrayList<T>();
             }
-            return rows;
+            rows.add(row);
+        }
+
+        @NotNull
+        public List<T> getRows() {
+            return CommonUtil.nvl(rows, Collections.emptyList());
         }
 
         protected abstract T createRow(ResultSet resultSet) throws SQLException;
