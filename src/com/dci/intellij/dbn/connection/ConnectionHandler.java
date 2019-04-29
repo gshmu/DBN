@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Referenceable;
+import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
@@ -88,6 +89,8 @@ public interface ConnectionHandler extends RegisteredDisposable, EnvironmentType
 
     @Nullable
     ConnectionInfo getConnectionInfo();
+
+    default Cache getMetaDataCache(){ return null;}
 
     @NotNull
     String getConnectionName(@Nullable DBNConnection connection);
