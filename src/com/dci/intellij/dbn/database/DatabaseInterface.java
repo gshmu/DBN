@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.database;
 
 import com.dci.intellij.dbn.common.cache.Cache;
+import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.intellij.openapi.project.Project;
 
@@ -30,5 +31,9 @@ public interface DatabaseInterface {
 
     static Project getProject() {
         return PROJECT.get();
+    }
+
+    default <T, E extends Throwable> T cached(String key, ThrowableCallable<T, E> loader) throws E{
+        return getMetaDataCache().get(key, loader);
     }
 }

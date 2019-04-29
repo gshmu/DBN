@@ -6,10 +6,11 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.ResultSetUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
+import com.dci.intellij.dbn.database.common.util.CachedResultSet;
 import com.dci.intellij.dbn.database.common.util.QueueResultSet;
+import com.dci.intellij.dbn.database.common.util.ResultSetTranslator;
 import com.dci.intellij.dbn.database.common.util.WrappedResultSet;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -18,9 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 
 public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
@@ -79,9 +78,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadTables(String ownerName, DBNConnection connection) throws SQLException {
-        DatabaseMetaData metaData = connection.getMetaData();
-        ResultSet tablesRs = metaData.getTables(null, ownerName, null, new String[]{"TABLE"});
-
+        ResultSet tablesRs = loadTablesRaw(ownerName, connection);
         return new WrappedResultSet(tablesRs) {
             /**
              * Metadata translation for TABLES
@@ -99,6 +96,16 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 }
             }
         };
+    }
+
+    private ResultSet loadTablesRaw(String ownerName, DBNConnection connection) throws SQLException {
+        return cached(
+                ownerName + "." + "TABLES",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet tablesRs = metaData.getTables(null, ownerName, null, new String[]{"TABLE"});
+                    return CachedResultSet.create(tablesRs, ResultSetTranslator.BASIC);
+                }).open();
     }
 
     @Override
@@ -162,15 +169,14 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadAllIndexes(String ownerName, DBNConnection connection) throws SQLException {
-        // TODO check if unqualified call would work here
-        //   - metaData.getIndexInfo(null, ownerName, null, false, true);
-        //   - IMPORTANT: indexes would have to be sorted by table name
-        List<String> tableNames = getTableNames(ownerName, connection);
         QueueResultSet allIndexesRs = new QueueResultSet();
-        for (String tableName : tableNames) {
-            ResultSet indexesRs = loadIndexes(ownerName, tableName, connection);
-            allIndexesRs.add(indexesRs);
-        }
+
+        ResultSet tablesRs = loadTablesRaw(ownerName, connection);
+        ResultSetUtil.forEachRow(tablesRs, "TABLE_NAME", String.class, (tableName) -> {
+            ResultSet constraintsRs = loadIndexes(ownerName, tableName, connection);
+            allIndexesRs.add(constraintsRs);
+        });
+
         return allIndexesRs;
     }
 
@@ -258,12 +264,13 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadAllConstraints(String ownerName, DBNConnection connection) throws SQLException {
-        List<String> tableNames = getTableNames(ownerName, connection);
         QueueResultSet allConstraintsRs = new QueueResultSet();
-        for (String tableName : tableNames) {
+
+        ResultSet tablesRs = loadTablesRaw(ownerName, connection);
+        ResultSetUtil.forEachRow(tablesRs, "TABLE_NAME", String.class, (tableName) -> {
             ResultSet constraintsRs = loadConstraints(ownerName, tableName, connection);
             allConstraintsRs.add(constraintsRs);
-        }
+        });
         return allConstraintsRs;
     }
 
@@ -278,26 +285,6 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     private static String generateForeignKeyName(String tableName, String columnName) {
         // TODO generated key names should not include column name (support multiple column keys)
         return "fk_" + tableName + "_" + columnName;
-    }
-
-
-    /**
-     * Cache table names temporarily (used in several places)
-     */
-    private static List<String> getTableNames(String ownerName, DBNConnection connection) throws SQLException {
-        return DatabaseInterface.getMetaDataCache().get(
-                ownerName + "." + "TABLE_NAMES",
-                () -> {
-                    ArrayList<String> tableNames = new ArrayList<>();
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getTables(null, ownerName, null, new String[]{"TABLE"});
-                    ResultSetUtil.scroll(resultSet, () -> {
-                        String tableName = resultSet.getString("TABLE_NAME");
-                        tableNames.add(tableName);
-                    });
-
-                    return tableNames;
-                });
     }
 
     private static <T> T fallback(

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.routine.ThrowableConsumer;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
-import com.dci.intellij.dbn.database.common.util.ResultSetReader;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -91,12 +91,22 @@ public class ResultSetUtil extends DisposableBase{
         return columnNames;
     }
 
-    public static void scroll(ResultSet resultSet, ThrowableRunnable<SQLException> consumer) throws SQLException {
-        new ResultSetReader(resultSet) {
-            @Override
-            protected void processRow(ResultSet resultSet) throws SQLException {
-                consumer.run();
+    public static void forEachRow(ResultSet resultSet, ThrowableRunnable<SQLException> consumer) throws SQLException {
+        try {
+            if (resultSet != null && !ResourceUtil.isClosed(resultSet)) {
+                while (resultSet.next()) {
+                    consumer.run();
+                }
             }
-        };
+        } finally {
+            ResourceUtil.close(resultSet);
+        }
+    }
+
+    public static <T> void forEachRow(ResultSet resultSet, String columnName, Class<T> columnClass, ThrowableConsumer<T, SQLException> consumer) throws SQLException {
+        forEachRow(resultSet, () -> {
+            T object = (T) resultSet.getObject(columnName);
+            consumer.accept(object);
+        });
     }
 }
