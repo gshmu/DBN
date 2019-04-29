@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.database.sqlite.adapter;
 
-import com.dci.intellij.dbn.common.cache.Cache;
-import com.dci.intellij.dbn.database.common.DatabaseInterfaceProviderImpl;
 import com.dci.intellij.dbn.database.common.util.ResultSetAdapter;
 
 import java.sql.SQLException;
@@ -12,10 +10,6 @@ import java.util.List;
 public class SqliteResultSetAdapter<T extends ResultSetElement> extends ResultSetAdapter{
     private List<T> elements = new ArrayList<T>();
     private int cursor = -1;
-
-    public Cache getCache() {
-        return DatabaseInterfaceProviderImpl.getMetaDataCache();
-    }
 
     @Override
     public boolean next() throws SQLException {
