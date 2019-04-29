@@ -20,7 +20,7 @@ import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 public final class StatementExecutionQueue extends DisposableBase{
 
     private ProjectRef projectRef;
-    private final Queue<StatementExecutionProcessor> processors = new ConcurrentLinkedQueue<StatementExecutionProcessor>();
+    private final Queue<StatementExecutionProcessor> processors = new ConcurrentLinkedQueue<>();
     private boolean executing = false;
 
     public StatementExecutionQueue(ConnectionHandler connectionHandler) {

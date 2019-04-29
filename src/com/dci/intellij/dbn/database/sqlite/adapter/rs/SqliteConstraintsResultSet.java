@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
-import org.jetbrains.annotations.NotNull;
+import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSetRow;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -40,109 +39,57 @@ public abstract class SqliteConstraintsResultSet extends SqliteConstraintInfoRes
                 List<ConstraintColumnInfo> constraintColumnInfos = constraints.get(indexKey);
                 String constraintName = getConstraintName(ConstraintType.FK, constraintColumnInfos);
                 Constraint constraint = new Constraint();
-                constraint.setConstraintName(constraintName);
-                constraint.setDatasetName(datasetName);
-                constraint.setConstraintType("FOREIGN KEY");
-                constraint.setFkConstraintOwner(ownerName);
-                constraint.setFkConstraintName(constraintName.replace("fk_", "pk_"));
-                addElement(constraint);
+                constraint.constraintName = constraintName;
+                constraint.datasetName = datasetName;
+                constraint.constraintType = "FOREIGN KEY";
+                constraint.fkConstraintOwner = ownerName;
+                constraint.fkConstraintName = constraintName.replace("fk_", "pk_");
+                add(constraint);
             } else if (indexKey.startsWith("PK")) {
                 List<ConstraintColumnInfo> constraintColumnInfos = constraints.get(indexKey);
                 String constraintName = getConstraintName(ConstraintType.PK, constraintColumnInfos);
                 Constraint constraint = new Constraint();
-                constraint.setConstraintName(constraintName);
-                constraint.setDatasetName(datasetName);
-                constraint.setConstraintType("PRIMARY KEY");
-                addElement(constraint);
+                constraint.constraintName = constraintName;
+                constraint.datasetName = datasetName;
+                constraint.constraintType = "PRIMARY KEY";
+                add(constraint);
             } else if (indexKey.startsWith("UQ")) {
                 List<ConstraintColumnInfo> constraintColumnInfos = constraints.get(indexKey);
                 String constraintName = getConstraintName(ConstraintType.UQ, constraintColumnInfos);
                 Constraint constraint = new Constraint();
-                constraint.setConstraintName(constraintName);
-                constraint.setDatasetName(datasetName);
-                constraint.setConstraintType("UNIQUE");
-                addElement(constraint);
+                constraint.constraintName = constraintName;
+                constraint.datasetName = datasetName;
+                constraint.constraintType = "UNIQUE";
+                add(constraint);
             }
         }
     }
 
     @Override
     public String getString(String columnLabel) throws SQLException {
-        Constraint element = getCurrentElement();
+        Constraint element = current();
         return
-            columnLabel.equals("DATASET_NAME") ? element.getDatasetName() :
-            columnLabel.equals("CONSTRAINT_NAME") ? element.getConstraintName() :
-            columnLabel.equals("CONSTRAINT_TYPE") ? element.getConstraintType() :
-            columnLabel.equals("CHECK_CONDITION") ? element.getCheckCondition() :
-            columnLabel.equals("FK_CONSTRAINT_OWNER") ? element.getFkConstraintOwner() :
-            columnLabel.equals("FK_CONSTRAINT_NAME") ? element.getFkConstraintName() :
+            columnLabel.equals("DATASET_NAME") ? element.datasetName :
+            columnLabel.equals("CONSTRAINT_NAME") ? element.constraintName :
+            columnLabel.equals("CONSTRAINT_TYPE") ? element.constraintType :
+            columnLabel.equals("CHECK_CONDITION") ? element.checkCondition :
+            columnLabel.equals("FK_CONSTRAINT_OWNER") ? element.fkConstraintOwner :
+            columnLabel.equals("FK_CONSTRAINT_NAME") ? element.fkConstraintName :
             columnLabel.equals("IS_ENABLED") ? "Y" : null;
     }
 
-    static class Constraint implements ResultSetElement<Constraint> {
-        String datasetName;
-        String constraintName;
-        String constraintType;
-        String checkCondition;
-        String fkConstraintOwner;
-        String fkConstraintName;
-
-        public String getDatasetName() {
-            return datasetName;
-        }
-
-        public void setDatasetName(String datasetName) {
-            this.datasetName = datasetName;
-        }
-
-        public String getConstraintName() {
-            return constraintName;
-        }
-
-        public void setConstraintName(String constraintName) {
-            this.constraintName = constraintName;
-        }
-
-        public String getConstraintType() {
-            return constraintType;
-        }
-
-        public void setConstraintType(String constraintType) {
-            this.constraintType = constraintType;
-        }
-
-        public String getFkConstraintOwner() {
-            return fkConstraintOwner;
-        }
-
-        public void setFkConstraintOwner(String fkConstraintOwner) {
-            this.fkConstraintOwner = fkConstraintOwner;
-        }
-
-        public String getFkConstraintName() {
-            return fkConstraintName;
-        }
-
-        public void setFkConstraintName(String fkConstraintName) {
-            this.fkConstraintName = fkConstraintName;
-        }
-
-        public String getCheckCondition() {
-            return checkCondition;
-        }
-
-        public void setCheckCondition(String checkCondition) {
-            this.checkCondition = checkCondition;
-        }
+    static class Constraint implements SqliteMetadataResultSetRow<Constraint> {
+        private String datasetName;
+        private String constraintName;
+        private String constraintType;
+        private String checkCondition;
+        private String fkConstraintOwner;
+        private String fkConstraintName;
 
         @Override
-        public String getName() {
-            return getDatasetName() + "." + getConstraintName();
-        }
+        public String identifier() {
+            return datasetName + "." + constraintName;
 
-        @Override
-        public int compareTo(@NotNull Constraint constraint) {
-            return (datasetName + "." + constraintName).compareTo(constraint.datasetName + "." + constraint.constraintName);
         }
 
         @Override

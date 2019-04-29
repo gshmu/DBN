@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.database.common.util;
 
-import javax.annotation.Nullable;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
@@ -15,7 +14,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.RowId;
 import java.sql.SQLException;
-import java.sql.SQLType;
 import java.sql.SQLWarning;
 import java.sql.SQLXML;
 import java.sql.Statement;
@@ -25,992 +23,966 @@ import java.util.Calendar;
 import java.util.Map;
 
 /**
- * Basic ResultSet wrapper, delegating functionality to an inner ResultSet
+ * Abstract stub implementation of {@link ResultSet}
+ * All methods throw {@link UnsupportedOperationException}
+ * Concrete implementations must override the methods expected to be invoked!
  */
-public abstract class ResultSetWrapper implements ResultSet {
-    protected ResultSet inner;
+public abstract class ResultSetStub implements ResultSet{
 
-    protected ResultSetWrapper(@Nullable ResultSet inner) {
-        this.inner = inner;
-    }
+    public static final UnsupportedOperationException UNSUPPORTED = new UnsupportedOperationException();
 
+    @Override
     public boolean next() throws SQLException {
-        return inner != null && inner.next();
+        throw UNSUPPORTED;
     }
 
     @Override
     public void close() throws SQLException {
-        inner.close();
+        throw UNSUPPORTED;
     }
-
-    @Override
-    public boolean isClosed() throws SQLException {
-        return inner.isClosed();
-    }
-
-    @Override
-    public Statement getStatement() throws SQLException {
-        return inner.getStatement();
-    }
-    
-    
 
     @Override
     public boolean wasNull() throws SQLException {
-        return inner.wasNull();
+        throw UNSUPPORTED;
     }
 
     @Override
     public String getString(int columnIndex) throws SQLException {
-        return inner.getString(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public boolean getBoolean(int columnIndex) throws SQLException {
-        return inner.getBoolean(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public byte getByte(int columnIndex) throws SQLException {
-        return inner.getByte(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public short getShort(int columnIndex) throws SQLException {
-        return inner.getShort(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public int getInt(int columnIndex) throws SQLException {
-        return inner.getInt(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public long getLong(int columnIndex) throws SQLException {
-        return inner.getLong(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public float getFloat(int columnIndex) throws SQLException {
-        return inner.getFloat(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public double getDouble(int columnIndex) throws SQLException {
-        return inner.getDouble(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
-    @Deprecated
     public BigDecimal getBigDecimal(int columnIndex, int scale) throws SQLException {
-        return inner.getBigDecimal(columnIndex, scale);
+        throw UNSUPPORTED;
     }
 
     @Override
     public byte[] getBytes(int columnIndex) throws SQLException {
-        return inner.getBytes(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Date getDate(int columnIndex) throws SQLException {
-        return inner.getDate(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Time getTime(int columnIndex) throws SQLException {
-        return inner.getTime(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Timestamp getTimestamp(int columnIndex) throws SQLException {
-        return inner.getTimestamp(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public InputStream getAsciiStream(int columnIndex) throws SQLException {
-        return inner.getAsciiStream(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
-    @Deprecated
     public InputStream getUnicodeStream(int columnIndex) throws SQLException {
-        return inner.getUnicodeStream(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public InputStream getBinaryStream(int columnIndex) throws SQLException {
-        return inner.getBinaryStream(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public String getString(String columnLabel) throws SQLException {
-        return inner.getString(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public boolean getBoolean(String columnLabel) throws SQLException {
-        return inner.getBoolean(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public byte getByte(String columnLabel) throws SQLException {
-        return inner.getByte(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public short getShort(String columnLabel) throws SQLException {
-        return inner.getShort(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public int getInt(String columnLabel) throws SQLException {
-        return inner.getInt(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public long getLong(String columnLabel) throws SQLException {
-        return inner.getLong(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public float getFloat(String columnLabel) throws SQLException {
-        return inner.getFloat(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public double getDouble(String columnLabel) throws SQLException {
-        return inner.getDouble(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
-    @Deprecated
     public BigDecimal getBigDecimal(String columnLabel, int scale) throws SQLException {
-        return inner.getBigDecimal(columnLabel, scale);
+        throw UNSUPPORTED;
     }
 
     @Override
     public byte[] getBytes(String columnLabel) throws SQLException {
-        return inner.getBytes(columnLabel);
+        return new byte[0];
     }
 
     @Override
     public Date getDate(String columnLabel) throws SQLException {
-        return inner.getDate(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Time getTime(String columnLabel) throws SQLException {
-        return inner.getTime(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Timestamp getTimestamp(String columnLabel) throws SQLException {
-        return inner.getTimestamp(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public InputStream getAsciiStream(String columnLabel) throws SQLException {
-        return inner.getAsciiStream(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
-    @Deprecated
     public InputStream getUnicodeStream(String columnLabel) throws SQLException {
-        return inner.getUnicodeStream(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public InputStream getBinaryStream(String columnLabel) throws SQLException {
-        return inner.getBinaryStream(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public SQLWarning getWarnings() throws SQLException {
-        return inner.getWarnings();
+        throw UNSUPPORTED;
     }
 
     @Override
     public void clearWarnings() throws SQLException {
-        inner.clearWarnings();
+        throw UNSUPPORTED;
     }
 
     @Override
     public String getCursorName() throws SQLException {
-        return inner.getCursorName();
+        throw UNSUPPORTED;
     }
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        return inner.getMetaData();
+        throw UNSUPPORTED;
     }
 
     @Override
     public Object getObject(int columnIndex) throws SQLException {
-        return inner.getObject(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Object getObject(String columnLabel) throws SQLException {
-        return inner.getObject(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public int findColumn(String columnLabel) throws SQLException {
-        return inner.findColumn(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Reader getCharacterStream(int columnIndex) throws SQLException {
-        return inner.getCharacterStream(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Reader getCharacterStream(String columnLabel) throws SQLException {
-        return inner.getCharacterStream(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
-        return inner.getBigDecimal(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public BigDecimal getBigDecimal(String columnLabel) throws SQLException {
-        return inner.getBigDecimal(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public boolean isBeforeFirst() throws SQLException {
-        return inner.isBeforeFirst();
+        throw UNSUPPORTED;
     }
 
     @Override
     public boolean isAfterLast() throws SQLException {
-        return inner.isAfterLast();
+        throw UNSUPPORTED;
     }
 
     @Override
     public boolean isFirst() throws SQLException {
-        return inner.isFirst();
+        throw UNSUPPORTED;
     }
 
     @Override
     public boolean isLast() throws SQLException {
-        return inner.isLast();
+        throw UNSUPPORTED;
     }
 
     @Override
     public void beforeFirst() throws SQLException {
-        inner.beforeFirst();
+        throw UNSUPPORTED;
     }
 
     @Override
     public void afterLast() throws SQLException {
-        inner.afterLast();
+        throw UNSUPPORTED;
     }
 
     @Override
     public boolean first() throws SQLException {
-        return inner.first();
+        throw UNSUPPORTED;
     }
 
     @Override
     public boolean last() throws SQLException {
-        return inner.last();
+        throw UNSUPPORTED;
     }
 
     @Override
     public int getRow() throws SQLException {
-        return inner.getRow();
+        throw UNSUPPORTED;
     }
 
     @Override
     public boolean absolute(int row) throws SQLException {
-        return inner.absolute(row);
+        throw UNSUPPORTED;
     }
 
     @Override
     public boolean relative(int rows) throws SQLException {
-        return inner.relative(rows);
+        throw UNSUPPORTED;
     }
 
     @Override
     public boolean previous() throws SQLException {
-        return inner.previous();
+        throw UNSUPPORTED;
     }
 
     @Override
     public void setFetchDirection(int direction) throws SQLException {
-        inner.setFetchDirection(direction);
+        throw UNSUPPORTED;
     }
 
     @Override
     public int getFetchDirection() throws SQLException {
-        return inner.getFetchDirection();
+        throw UNSUPPORTED;
     }
 
     @Override
     public void setFetchSize(int rows) throws SQLException {
-        inner.setFetchSize(rows);
+        throw UNSUPPORTED;
     }
 
     @Override
     public int getFetchSize() throws SQLException {
-        return inner.getFetchSize();
+        throw UNSUPPORTED;
     }
 
     @Override
     public int getType() throws SQLException {
-        return inner.getType();
+        throw UNSUPPORTED;
     }
 
     @Override
     public int getConcurrency() throws SQLException {
-        return inner.getConcurrency();
+        throw UNSUPPORTED;
     }
 
     @Override
     public boolean rowUpdated() throws SQLException {
-        return inner.rowUpdated();
+        throw UNSUPPORTED;
     }
 
     @Override
     public boolean rowInserted() throws SQLException {
-        return inner.rowInserted();
+        throw UNSUPPORTED;
     }
 
     @Override
     public boolean rowDeleted() throws SQLException {
-        return inner.rowDeleted();
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateNull(int columnIndex) throws SQLException {
-        inner.updateNull(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateBoolean(int columnIndex, boolean x) throws SQLException {
-        inner.updateBoolean(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateByte(int columnIndex, byte x) throws SQLException {
-        inner.updateByte(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateShort(int columnIndex, short x) throws SQLException {
-        inner.updateShort(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateInt(int columnIndex, int x) throws SQLException {
-        inner.updateInt(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateLong(int columnIndex, long x) throws SQLException {
-        inner.updateLong(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateFloat(int columnIndex, float x) throws SQLException {
-        inner.updateFloat(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateDouble(int columnIndex, double x) throws SQLException {
-        inner.updateDouble(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateBigDecimal(int columnIndex, BigDecimal x) throws SQLException {
-        inner.updateBigDecimal(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateString(int columnIndex, String x) throws SQLException {
-        inner.updateString(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateBytes(int columnIndex, byte[] x) throws SQLException {
-        inner.updateBytes(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateDate(int columnIndex, Date x) throws SQLException {
-        inner.updateDate(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateTime(int columnIndex, Time x) throws SQLException {
-        inner.updateTime(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateTimestamp(int columnIndex, Timestamp x) throws SQLException {
-        inner.updateTimestamp(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateAsciiStream(int columnIndex, InputStream x, int length) throws SQLException {
-        inner.updateAsciiStream(columnIndex, x, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateBinaryStream(int columnIndex, InputStream x, int length) throws SQLException {
-        inner.updateBinaryStream(columnIndex, x, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateCharacterStream(int columnIndex, Reader x, int length) throws SQLException {
-        inner.updateCharacterStream(columnIndex, x, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateObject(int columnIndex, Object x, int scaleOrLength) throws SQLException {
-        inner.updateObject(columnIndex, x, scaleOrLength);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateObject(int columnIndex, Object x) throws SQLException {
-        inner.updateObject(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateNull(String columnLabel) throws SQLException {
-        inner.updateNull(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateBoolean(String columnLabel, boolean x) throws SQLException {
-        inner.updateBoolean(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateByte(String columnLabel, byte x) throws SQLException {
-        inner.updateByte(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateShort(String columnLabel, short x) throws SQLException {
-        inner.updateShort(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateInt(String columnLabel, int x) throws SQLException {
-        inner.updateInt(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateLong(String columnLabel, long x) throws SQLException {
-        inner.updateLong(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateFloat(String columnLabel, float x) throws SQLException {
-        inner.updateFloat(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateDouble(String columnLabel, double x) throws SQLException {
-        inner.updateDouble(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateBigDecimal(String columnLabel, BigDecimal x) throws SQLException {
-        inner.updateBigDecimal(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateString(String columnLabel, String x) throws SQLException {
-        inner.updateString(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateBytes(String columnLabel, byte[] x) throws SQLException {
-        inner.updateBytes(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateDate(String columnLabel, Date x) throws SQLException {
-        inner.updateDate(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateTime(String columnLabel, Time x) throws SQLException {
-        inner.updateTime(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateTimestamp(String columnLabel, Timestamp x) throws SQLException {
-        inner.updateTimestamp(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateAsciiStream(String columnLabel, InputStream x, int length) throws SQLException {
-        inner.updateAsciiStream(columnLabel, x, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateBinaryStream(String columnLabel, InputStream x, int length) throws SQLException {
-        inner.updateBinaryStream(columnLabel, x, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateCharacterStream(String columnLabel, Reader reader, int length) throws SQLException {
-        inner.updateCharacterStream(columnLabel, reader, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateObject(String columnLabel, Object x, int scaleOrLength) throws SQLException {
-        inner.updateObject(columnLabel, x, scaleOrLength);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateObject(String columnLabel, Object x) throws SQLException {
-        inner.updateObject(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void insertRow() throws SQLException {
-        inner.insertRow();
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateRow() throws SQLException {
-        inner.updateRow();
+        throw UNSUPPORTED;
     }
 
     @Override
     public void deleteRow() throws SQLException {
-        inner.deleteRow();
+        throw UNSUPPORTED;
     }
 
     @Override
     public void refreshRow() throws SQLException {
-        inner.refreshRow();
+        throw UNSUPPORTED;
     }
 
     @Override
     public void cancelRowUpdates() throws SQLException {
-        inner.cancelRowUpdates();
+        throw UNSUPPORTED;
     }
 
     @Override
     public void moveToInsertRow() throws SQLException {
-        inner.moveToInsertRow();
+        throw UNSUPPORTED;
     }
 
     @Override
     public void moveToCurrentRow() throws SQLException {
-        inner.moveToCurrentRow();
+        throw UNSUPPORTED;
+    }
+
+    @Override
+    public Statement getStatement() throws SQLException {
+        throw UNSUPPORTED;
     }
 
     @Override
     public Object getObject(int columnIndex, Map<String, Class<?>> map) throws SQLException {
-        return inner.getObject(columnIndex, map);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Ref getRef(int columnIndex) throws SQLException {
-        return inner.getRef(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Blob getBlob(int columnIndex) throws SQLException {
-        return inner.getBlob(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Clob getClob(int columnIndex) throws SQLException {
-        return inner.getClob(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Array getArray(int columnIndex) throws SQLException {
-        return inner.getArray(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Object getObject(String columnLabel, Map<String, Class<?>> map) throws SQLException {
-        return inner.getObject(columnLabel, map);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Ref getRef(String columnLabel) throws SQLException {
-        return inner.getRef(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Blob getBlob(String columnLabel) throws SQLException {
-        return inner.getBlob(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Clob getClob(String columnLabel) throws SQLException {
-        return inner.getClob(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Array getArray(String columnLabel) throws SQLException {
-        return inner.getArray(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Date getDate(int columnIndex, Calendar cal) throws SQLException {
-        return inner.getDate(columnIndex, cal);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Date getDate(String columnLabel, Calendar cal) throws SQLException {
-        return inner.getDate(columnLabel, cal);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Time getTime(int columnIndex, Calendar cal) throws SQLException {
-        return inner.getTime(columnIndex, cal);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Time getTime(String columnLabel, Calendar cal) throws SQLException {
-        return inner.getTime(columnLabel, cal);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Timestamp getTimestamp(int columnIndex, Calendar cal) throws SQLException {
-        return inner.getTimestamp(columnIndex, cal);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Timestamp getTimestamp(String columnLabel, Calendar cal) throws SQLException {
-        return inner.getTimestamp(columnLabel, cal);
+        throw UNSUPPORTED;
     }
 
     @Override
     public URL getURL(int columnIndex) throws SQLException {
-        return inner.getURL(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public URL getURL(String columnLabel) throws SQLException {
-        return inner.getURL(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateRef(int columnIndex, Ref x) throws SQLException {
-        inner.updateRef(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateRef(String columnLabel, Ref x) throws SQLException {
-        inner.updateRef(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateBlob(int columnIndex, Blob x) throws SQLException {
-        inner.updateBlob(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateBlob(String columnLabel, Blob x) throws SQLException {
-        inner.updateBlob(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateClob(int columnIndex, Clob x) throws SQLException {
-        inner.updateClob(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateClob(String columnLabel, Clob x) throws SQLException {
-        inner.updateClob(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateArray(int columnIndex, Array x) throws SQLException {
-        inner.updateArray(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateArray(String columnLabel, Array x) throws SQLException {
-        inner.updateArray(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public RowId getRowId(int columnIndex) throws SQLException {
-        return inner.getRowId(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public RowId getRowId(String columnLabel) throws SQLException {
-        return inner.getRowId(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateRowId(int columnIndex, RowId x) throws SQLException {
-        inner.updateRowId(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateRowId(String columnLabel, RowId x) throws SQLException {
-        inner.updateRowId(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public int getHoldability() throws SQLException {
-        return inner.getHoldability();
+        throw UNSUPPORTED;
+    }
+
+    @Override
+    public boolean isClosed() throws SQLException {
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateNString(int columnIndex, String nString) throws SQLException {
-        inner.updateNString(columnIndex, nString);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateNString(String columnLabel, String nString) throws SQLException {
-        inner.updateNString(columnLabel, nString);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateNClob(int columnIndex, NClob nClob) throws SQLException {
-        inner.updateNClob(columnIndex, nClob);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateNClob(String columnLabel, NClob nClob) throws SQLException {
-        inner.updateNClob(columnLabel, nClob);
+        throw UNSUPPORTED;
     }
 
     @Override
     public NClob getNClob(int columnIndex) throws SQLException {
-        return inner.getNClob(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public NClob getNClob(String columnLabel) throws SQLException {
-        return inner.getNClob(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public SQLXML getSQLXML(int columnIndex) throws SQLException {
-        return inner.getSQLXML(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public SQLXML getSQLXML(String columnLabel) throws SQLException {
-        return inner.getSQLXML(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateSQLXML(int columnIndex, SQLXML xmlObject) throws SQLException {
-        inner.updateSQLXML(columnIndex, xmlObject);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateSQLXML(String columnLabel, SQLXML xmlObject) throws SQLException {
-        inner.updateSQLXML(columnLabel, xmlObject);
+        throw UNSUPPORTED;
     }
 
     @Override
     public String getNString(int columnIndex) throws SQLException {
-        return inner.getNString(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public String getNString(String columnLabel) throws SQLException {
-        return inner.getNString(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Reader getNCharacterStream(int columnIndex) throws SQLException {
-        return inner.getNCharacterStream(columnIndex);
+        throw UNSUPPORTED;
     }
 
     @Override
     public Reader getNCharacterStream(String columnLabel) throws SQLException {
-        return inner.getNCharacterStream(columnLabel);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateNCharacterStream(int columnIndex, Reader x, long length) throws SQLException {
-        inner.updateNCharacterStream(columnIndex, x, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateNCharacterStream(String columnLabel, Reader reader, long length) throws SQLException {
-        inner.updateNCharacterStream(columnLabel, reader, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateAsciiStream(int columnIndex, InputStream x, long length) throws SQLException {
-        inner.updateAsciiStream(columnIndex, x, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateBinaryStream(int columnIndex, InputStream x, long length) throws SQLException {
-        inner.updateBinaryStream(columnIndex, x, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateCharacterStream(int columnIndex, Reader x, long length) throws SQLException {
-        inner.updateCharacterStream(columnIndex, x, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateAsciiStream(String columnLabel, InputStream x, long length) throws SQLException {
-        inner.updateAsciiStream(columnLabel, x, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateBinaryStream(String columnLabel, InputStream x, long length) throws SQLException {
-        inner.updateBinaryStream(columnLabel, x, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateCharacterStream(String columnLabel, Reader reader, long length) throws SQLException {
-        inner.updateCharacterStream(columnLabel, reader, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateBlob(int columnIndex, InputStream inputStream, long length) throws SQLException {
-        inner.updateBlob(columnIndex, inputStream, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateBlob(String columnLabel, InputStream inputStream, long length) throws SQLException {
-        inner.updateBlob(columnLabel, inputStream, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateClob(int columnIndex, Reader reader, long length) throws SQLException {
-        inner.updateClob(columnIndex, reader, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateClob(String columnLabel, Reader reader, long length) throws SQLException {
-        inner.updateClob(columnLabel, reader, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateNClob(int columnIndex, Reader reader, long length) throws SQLException {
-        inner.updateNClob(columnIndex, reader, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateNClob(String columnLabel, Reader reader, long length) throws SQLException {
-        inner.updateNClob(columnLabel, reader, length);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateNCharacterStream(int columnIndex, Reader x) throws SQLException {
-        inner.updateNCharacterStream(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateNCharacterStream(String columnLabel, Reader reader) throws SQLException {
-        inner.updateNCharacterStream(columnLabel, reader);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateAsciiStream(int columnIndex, InputStream x) throws SQLException {
-        inner.updateAsciiStream(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateBinaryStream(int columnIndex, InputStream x) throws SQLException {
-        inner.updateBinaryStream(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateCharacterStream(int columnIndex, Reader x) throws SQLException {
-        inner.updateCharacterStream(columnIndex, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateAsciiStream(String columnLabel, InputStream x) throws SQLException {
-        inner.updateAsciiStream(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateBinaryStream(String columnLabel, InputStream x) throws SQLException {
-        inner.updateBinaryStream(columnLabel, x);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateCharacterStream(String columnLabel, Reader reader) throws SQLException {
-        inner.updateCharacterStream(columnLabel, reader);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateBlob(int columnIndex, InputStream inputStream) throws SQLException {
-        inner.updateBlob(columnIndex, inputStream);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateBlob(String columnLabel, InputStream inputStream) throws SQLException {
-        inner.updateBlob(columnLabel, inputStream);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateClob(int columnIndex, Reader reader) throws SQLException {
-        inner.updateClob(columnIndex, reader);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateClob(String columnLabel, Reader reader) throws SQLException {
-        inner.updateClob(columnLabel, reader);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateNClob(int columnIndex, Reader reader) throws SQLException {
-        inner.updateNClob(columnIndex, reader);
+        throw UNSUPPORTED;
     }
 
     @Override
     public void updateNClob(String columnLabel, Reader reader) throws SQLException {
-        inner.updateNClob(columnLabel, reader);
-    }
-
-    @Override
-    public void updateObject(int columnIndex, Object x, SQLType targetSqlType, int scaleOrLength) throws SQLException {
-        inner.updateObject(columnIndex, x, targetSqlType, scaleOrLength);
-    }
-
-    @Override
-    public void updateObject(String columnLabel, Object x, SQLType targetSqlType, int scaleOrLength) throws SQLException {
-        inner.updateObject(columnLabel, x, targetSqlType, scaleOrLength);
-    }
-
-    @Override
-    public void updateObject(int columnIndex, Object x, SQLType targetSqlType) throws SQLException {
-        inner.updateObject(columnIndex, x, targetSqlType);
-    }
-
-    @Override
-    public void updateObject(String columnLabel, Object x, SQLType targetSqlType) throws SQLException {
-        inner.updateObject(columnLabel, x, targetSqlType);
+        throw UNSUPPORTED;
     }
 
     @Override
     public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
-        return inner.getObject(columnIndex, type);
+        throw UNSUPPORTED;
     }
 
     @Override
     public <T> T getObject(String columnLabel, Class<T> type) throws SQLException {
-        return inner.getObject(columnLabel, type);
+        throw UNSUPPORTED;
     }
 
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        return inner.unwrap(iface);
+        throw UNSUPPORTED;
     }
 
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return inner.isWrapperFor(iface);
-    }    
+        throw UNSUPPORTED;
+    }
 }

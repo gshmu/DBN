@@ -3,8 +3,7 @@ package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterface;
-import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
-import org.jetbrains.annotations.NotNull;
+import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSetRow;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,11 +37,11 @@ public abstract class SqliteColumnIndexesResultSet extends SqliteDatasetInfoResu
                 String columnName = detailRow.getName();
                 if (StringUtil.isNotEmpty(columnName)) {
                     IndexColumn indexColumn = new IndexColumn();
-                    indexColumn.setTableName(tableName);
-                    indexColumn.setIndexName(indexName);
-                    indexColumn.setColumnName(columnName);
-                    indexColumn.setPosition(detailRow.getSeqno());
-                    addElement(indexColumn);
+                    indexColumn.tableName = tableName;
+                    indexColumn.indexName = indexName;
+                    indexColumn.columnName = columnName;
+                    indexColumn.position = detailRow.getSeqno();
+                    add(indexColumn);
                 }
             }
         }
@@ -67,64 +66,27 @@ public abstract class SqliteColumnIndexesResultSet extends SqliteDatasetInfoResu
 
     @Override
     public String getString(String columnLabel) throws SQLException {
-        IndexColumn element = getCurrentElement();
-        return columnLabel.equals("INDEX_NAME") ? element.getIndexName() :
-               columnLabel.equals("COLUMN_NAME") ? element.getColumnName() :
-               columnLabel.equals("TABLE_NAME") ? element.getTableName() : null;
+        IndexColumn element = current();
+        return columnLabel.equals("INDEX_NAME") ? element.indexName :
+               columnLabel.equals("COLUMN_NAME") ? element.columnName :
+               columnLabel.equals("TABLE_NAME") ? element.tableName : null;
     }
 
     @Override
     public int getInt(String columnLabel) throws SQLException {
-        IndexColumn element = getCurrentElement();
-        return columnLabel.equals("POSITION") ? element.getPosition() : 0;
+        IndexColumn element = current();
+        return columnLabel.equals("POSITION") ? element.position : 0;
     }
 
-    public static class IndexColumn implements ResultSetElement<IndexColumn> {
+    public static class IndexColumn implements SqliteMetadataResultSetRow<IndexColumn> {
         private String tableName;
         private String indexName;
         private String columnName;
         private int position;
 
-        public String getTableName() {
-            return tableName;
-        }
-
-        public void setTableName(String tableName) {
-            this.tableName = tableName;
-        }
-
-        public String getIndexName() {
-            return indexName;
-        }
-
-        public void setIndexName(String indexName) {
-            this.indexName = indexName;
-        }
-
-        public String getColumnName() {
-            return columnName;
-        }
-
-        public void setColumnName(String columnName) {
-            this.columnName = columnName;
-        }
-
-        public int getPosition() {
-            return position;
-        }
-
-        public void setPosition(int position) {
-            this.position = position;
-        }
-
         @Override
-        public String getName() {
-            return getTableName() + "." + getIndexName() + "." + getColumnName();
-        }
-
-        @Override
-        public int compareTo(@NotNull IndexColumn indexColumn) {
-            return (tableName + "." + indexName + "." + columnName).compareTo(indexColumn.tableName + "." + indexColumn.indexName + "." + indexColumn.columnName);
+        public String identifier() {
+            return tableName + "." + indexName + "." + columnName;
         }
     }
 }
