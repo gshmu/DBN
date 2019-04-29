@@ -23,7 +23,7 @@ public class GenericNativeDataTypes extends DatabaseNativeDataTypes {
         createNumericDefinition("TINYINT", Short.class, Types.TINYINT);
         createNumericDefinition("BOOL", Boolean.class, Types.BOOLEAN);
         createNumericDefinition("BOOLEAN", Boolean.class, Types.BOOLEAN);
-        createNumericDefinition("SMdataTypesINT", Integer.class, Types.SMALLINT);
+        createNumericDefinition("SMALLINT", Integer.class, Types.SMALLINT);
         createNumericDefinition("MEDIUMINT", Integer.class, Types.INTEGER);
         createNumericDefinition("INT", Integer.class, Types.INTEGER);
         createNumericDefinition("INT UNSIGNED", Integer.class, Types.INTEGER);
