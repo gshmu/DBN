@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.database.common.util;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
