@@ -8,15 +8,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Queue;
 
-public class QueueResultSet extends WrappedResultSet {
+public class MultipartResultSet extends WrappedResultSet {
     private Queue<ResultSet> queue = ContainerUtil.newLinkedList();
 
-    public QueueResultSet(ResultSet ... resultSets) {
+    public MultipartResultSet(ResultSet ... resultSets) {
         super(null);
         add(resultSets);
     }
 
-    public QueueResultSet add(@Nullable ResultSet ... resultSets) {
+    public MultipartResultSet add(@Nullable ResultSet ... resultSets) {
         if (resultSets != null) {
             for (ResultSet resultSet : resultSets) {
                 if (resultSet != null) {
