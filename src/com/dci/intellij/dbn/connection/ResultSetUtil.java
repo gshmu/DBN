@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
+import com.dci.intellij.dbn.database.common.util.ResultSetReader;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -87,5 +89,14 @@ public class ResultSetUtil extends DisposableBase{
             columnNames.add(metaData.getColumnName(i+1));
         }
         return columnNames;
+    }
+
+    public static void scroll(ResultSet resultSet, ThrowableRunnable<SQLException> consumer) throws SQLException {
+        new ResultSetReader(resultSet) {
+            @Override
+            protected void processRow(ResultSet resultSet) throws SQLException {
+                consumer.run();
+            }
+        };
     }
 }

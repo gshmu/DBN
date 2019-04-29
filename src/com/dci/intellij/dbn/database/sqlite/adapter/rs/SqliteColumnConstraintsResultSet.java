@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
-import org.jetbrains.annotations.NotNull;
+import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSetRow;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -37,32 +36,32 @@ public abstract class SqliteColumnConstraintsResultSet extends SqliteConstraintI
                 String constraintName = getConstraintName(ConstraintType.FK, constraintColumnInfos);
                 for (ConstraintColumnInfo constraintColumnInfo : constraintColumnInfos) {
                     ConstraintColumn constraintColumn = new ConstraintColumn();
-                    constraintColumn.setConstraintName(constraintName);
-                    constraintColumn.setDatasetName(constraintColumnInfo.getDataset());
-                    constraintColumn.setColumnName(constraintColumnInfo.getColumn());
-                    constraintColumn.setPosition(constraintColumnInfo.getPosition());
-                    addElement(constraintColumn);
+                    constraintColumn.constraintName = constraintName;
+                    constraintColumn.datasetName = constraintColumnInfo.getDataset();
+                    constraintColumn.columnName = constraintColumnInfo.getColumn();
+                    constraintColumn.position = constraintColumnInfo.getPosition();
+                    add(constraintColumn);
                 }
 
             } else if (indexKey.startsWith("PK")) {
                 String constraintName = getConstraintName(ConstraintType.PK, constraintColumnInfos);
                 for (ConstraintColumnInfo constraintColumnInfo : constraintColumnInfos) {
                     ConstraintColumn constraintColumn = new ConstraintColumn();
-                    constraintColumn.setConstraintName(constraintName);
-                    constraintColumn.setDatasetName(datasetName);
-                    constraintColumn.setColumnName(constraintColumnInfo.getColumn());
-                    constraintColumn.setPosition(constraintColumnInfo.getPosition());
-                    addElement(constraintColumn);
+                    constraintColumn.constraintName = constraintName;
+                    constraintColumn.datasetName = datasetName;
+                    constraintColumn.columnName = constraintColumnInfo.getColumn();
+                    constraintColumn.position = constraintColumnInfo.getPosition();
+                    add(constraintColumn);
                 }
             } else if (indexKey.startsWith("UQ")) {
                 String constraintName = getConstraintName(ConstraintType.UQ, constraintColumnInfos);
                 for (ConstraintColumnInfo constraintColumnInfo : constraintColumnInfos) {
                     ConstraintColumn constraintColumn = new ConstraintColumn();
-                    constraintColumn.setConstraintName(constraintName);
-                    constraintColumn.setDatasetName(datasetName);
-                    constraintColumn.setColumnName(constraintColumnInfo.getColumn());
-                    constraintColumn.setPosition(constraintColumnInfo.getPosition());
-                    addElement(constraintColumn);
+                    constraintColumn.constraintName = constraintName;
+                    constraintColumn.datasetName = datasetName;
+                    constraintColumn.columnName = constraintColumnInfo.getColumn();
+                    constraintColumn.position = constraintColumnInfo.getPosition();
+                    add(constraintColumn);
                 }
             }
         }
@@ -70,65 +69,27 @@ public abstract class SqliteColumnConstraintsResultSet extends SqliteConstraintI
 
     @Override
     public String getString(String columnLabel) throws SQLException {
-        ConstraintColumn element = getCurrentElement();
-        return columnLabel.equals("CONSTRAINT_NAME") ? element.getConstraintName() :
-               columnLabel.equals("COLUMN_NAME") ? element.getColumnName() :
-               columnLabel.equals("DATASET_NAME") ? element.getDatasetName() : null;
+        ConstraintColumn element = current();
+        return columnLabel.equals("CONSTRAINT_NAME") ? element.constraintName :
+               columnLabel.equals("COLUMN_NAME") ? element.columnName :
+               columnLabel.equals("DATASET_NAME") ? element.datasetName : null;
     }
 
     @Override
     public int getInt(String columnLabel) throws SQLException {
-        ConstraintColumn element = getCurrentElement();
-        return columnLabel.equals("POSITION") ? element.getPosition() : 0;
+        ConstraintColumn element = current();
+        return columnLabel.equals("POSITION") ? element.position : 0;
     }
 
-    static class ConstraintColumn implements ResultSetElement<ConstraintColumn> {
+    static class ConstraintColumn implements SqliteMetadataResultSetRow<ConstraintColumn> {
         private String datasetName;
         private String constraintName;
         private String columnName;
         private int position;
 
-        public String getDatasetName() {
-            return datasetName;
-        }
-
-        public void setDatasetName(String datasetName) {
-            this.datasetName = datasetName;
-        }
-
-        public String getConstraintName() {
-            return constraintName;
-        }
-
-        public void setConstraintName(String constraintName) {
-            this.constraintName = constraintName;
-        }
-
-        public String getColumnName() {
-            return columnName;
-        }
-
-        public void setColumnName(String columnName) {
-            this.columnName = columnName;
-        }
-
-        public int getPosition() {
-            return position;
-        }
-
-        public void setPosition(int position) {
-            this.position = position;
-        }
-
         @Override
-        public String getName() {
-            return getDatasetName() + "." + getConstraintName() + "." + getColumnName();
-        }
-
-        @Override
-        public int compareTo(@NotNull ConstraintColumn constraintColumn) {
-            return (datasetName + "." + constraintName + "." + columnName).
-                    compareTo(constraintColumn.datasetName + "." + constraintColumn.constraintName + "." + constraintColumn.columnName);
+        public String identifier() {
+            return datasetName + "." + constraintName + "." + columnName;
         }
     }
 }
