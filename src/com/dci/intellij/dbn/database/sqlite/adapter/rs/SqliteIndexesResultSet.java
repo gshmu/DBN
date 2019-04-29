@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSetRow;
 
 import java.sql.ResultSet;
@@ -42,7 +41,7 @@ public abstract class SqliteIndexesResultSet extends SqliteDatasetInfoResultSetS
     }
 
     private RawIndexInfo getIndexInfo(final String tableName) throws SQLException {
-        return DatabaseInterface.getMetaDataCache().get(
+        return cache().get(
                 ownerName + "." + tableName + ".INDEX_INFO",
                 () -> new RawIndexInfo(loadIndexInfo(tableName)));
     }

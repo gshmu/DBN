@@ -9,24 +9,28 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class CachedResultSet<T> extends ResultSetStub {
+public class CachedResultSet<T> extends ResultSetStub {
     private List<T> rows = new ArrayList<>();
     private ResultSetTranslator<T> translator;
 
-    public CachedResultSet(@Nullable ResultSet resultSet, ResultSetTranslator<T> translator) throws SQLException {
+    private CachedResultSet(@Nullable ResultSet resultSet, ResultSetTranslator<T> translator) throws SQLException {
         this.translator = translator;
         if (resultSet != null) {
             try {
                 List<String> columnNames = ResultSetUtil.getColumnNames(resultSet);
 
-                ResultSetUtil.scroll(resultSet, () -> {
-                    T row = translator.read(resultSet, columnNames);
-                    rows.add(row);
-                });
+                ResultSetUtil.forEachRow(resultSet, () -> {
+                            T row = translator.read(resultSet, columnNames);
+                            rows.add(row);
+                        });
             } finally {
                 ResourceUtil.close(resultSet);
             }
         }
+    }
+
+    public static <T> CachedResultSet<T> create(@Nullable ResultSet resultSet, ResultSetTranslator<T> translator) throws SQLException {
+        return new CachedResultSet<T>(resultSet, translator);
     }
 
     /**
@@ -49,7 +53,7 @@ public abstract class CachedResultSet<T> extends ResultSetStub {
      * Current row at cursor
      */
     protected T current() {
-        throw new IllegalStateException("Call open() on CachedResultSet to avoid concurrency issues");
+        throw new IllegalStateException("Call open() on CachedResultSet to initialize isolated iteration (avoid concurrency issues)");
     }
 
     @Override

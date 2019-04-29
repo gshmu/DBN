@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSetRow;
 import org.jetbrains.annotations.NotNull;
 
@@ -123,25 +122,25 @@ public abstract class SqliteConstraintInfoResultSetStub<T extends SqliteMetadata
         }
 
         private RawForeignKeyInfo getForeignKeyInfo(final String datasetName) throws SQLException {
-            return DatabaseInterface.getMetaDataCache().get(
+            return cache().get(
                     ownerName + "." + datasetName + ".FOREIGN_KEY_INFO",
                     () -> new RawForeignKeyInfo(loadForeignKeyInfo(datasetName)));
         }
 
         private RawTableInfo getTableInfo(final String datasetName) throws SQLException {
-            return DatabaseInterface.getMetaDataCache().get(
+            return cache().get(
                     ownerName + "." + datasetName + ".TABLE_INFO",
                     () -> new RawTableInfo(loadTableInfo(datasetName)));
         }
 
         private RawIndexInfo getIndexInfo(final String tableName) throws SQLException {
-            return DatabaseInterface.getMetaDataCache().get(
+            return cache().get(
                     ownerName + "." + tableName + ".INDEX_INFO",
                     () -> new RawIndexInfo(loadIndexInfo(tableName)));
         }
 
         private RawIndexDetailInfo getIndexDetailInfo(final String indexName) throws SQLException {
-            return DatabaseInterface.getMetaDataCache().get(
+            return cache().get(
                     ownerName + "." + indexName + ".INDEX_DETAIL_INFO",
                     () -> new RawIndexDetailInfo(loadIndexDetailInfo(indexName)));
         }

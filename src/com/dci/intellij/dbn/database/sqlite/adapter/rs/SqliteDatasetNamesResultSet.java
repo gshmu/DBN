@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
-import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSetRow;
 import com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.TableNames;
@@ -26,7 +25,7 @@ public abstract class SqliteDatasetNamesResultSet extends SqliteMetadataResultSe
     }
 
     private TableNames getTableNames() throws SQLException {
-        return DatabaseInterface.getMetaDataCache().get(
+        return cache().get(
                 ownerName + "." + "DATASET_NAMES",
                 () -> new TableNames(loadTableNames()));
     }

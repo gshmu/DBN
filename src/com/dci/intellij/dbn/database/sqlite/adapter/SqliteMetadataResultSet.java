@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.database.sqlite.adapter;
 
+import com.dci.intellij.dbn.common.cache.Cache;
+import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.common.util.ResultSetStub;
 
 import java.sql.SQLException;
@@ -46,5 +48,9 @@ public class SqliteMetadataResultSet<T extends SqliteMetadataResultSetRow> exten
     @Override
     public boolean isClosed() throws SQLException {
         return false;
+    }
+
+    protected static Cache cache() {
+        return DatabaseInterface.getMetaDataCache();
     }
 }
