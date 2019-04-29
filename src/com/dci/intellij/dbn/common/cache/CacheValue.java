@@ -4,7 +4,7 @@ public class CacheValue<T> {
     private T value;
     private long timestamp;
 
-    public CacheValue(T value) {
+    CacheValue(T value) {
         this.value = value;
         this.timestamp = System.currentTimeMillis();
     }

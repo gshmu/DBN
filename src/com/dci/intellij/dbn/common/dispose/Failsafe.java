@@ -25,12 +25,6 @@ public class Failsafe {
         return nn(component);
     }
 
-
-
-    public static @NotNull VirtualFile nvl(@Nullable VirtualFile virtualFile) {
-        return virtualFile == null ? DUMMY_VIRTUAL_FILE : virtualFile;
-    }
-
     @NotNull
     public static <T> T nd(@Nullable T object) {
         if (!check(object)) {
