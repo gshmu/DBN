@@ -1,9 +1,6 @@
 package com.dci.intellij.dbn.database.generic;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.routine.ThrowableCallable;
-import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.ResultSetUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
@@ -11,15 +8,21 @@ import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 import com.dci.intellij.dbn.database.common.util.CachedResultSet;
 import com.dci.intellij.dbn.database.common.util.QueueResultSet;
 import com.dci.intellij.dbn.database.common.util.ResultSetTranslator;
-import com.dci.intellij.dbn.database.common.util.WrappedResultSet;
 import com.intellij.openapi.diagnostic.Logger;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+
+import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.ColumnsResultSet;
+import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.ForeignKeysResultSet;
+import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.IndexesResultSet;
+import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.PrimaryKeysResultSet;
+import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.SchemasResultSet;
+import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.TablesResultSet;
+import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.ViewsResultSet;
+import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.checkEmptyAndClose;
 
 
 public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
@@ -50,28 +53,13 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
         DatabaseMetaData metaData = connection.getMetaData();
         ResultSet schemasRs = metaData.getSchemas();
 
-        return new WrappedResultSet(schemasRs) {
-            /**
-             * Metadata translation for SCHEMAS
-             * comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBSchemaMetadataImpl}
-             */
+        return new SchemasResultSet(schemasRs) {
             @Override
-            public String getString(String columnLabel) throws SQLException {
-                switch (columnLabel) {
-                    case "SCHEMA_NAME": return inner.getString("TABLE_SCHEM");
-
-                    case "IS_PUBLIC": return "N";
-                    case "IS_SYSTEM": return "N";
-                    case "IS_EMPTY":
-                        String schemaName = inner.getString("TABLE_SCHEM");
-                        boolean empty =
-                                checkEmptyAndClose(metaData.getTables(null, schemaName, null, null)) &&
-                                checkEmptyAndClose(metaData.getFunctions(null, schemaName, null)) &&
-                                checkEmptyAndClose(metaData.getProcedures(null, schemaName, null));
-
-                        return empty ? "Y" : "N";
-                    default: return null;
-                }
+            protected boolean isEmpty(String schemaName) throws SQLException {
+                return
+                    checkEmptyAndClose(loadTablesRaw(schemaName, connection)) &&
+                    checkEmptyAndClose(loadFunctionsRaw(schemaName, connection)) &&
+                    checkEmptyAndClose(loadProceduresRaw(schemaName, connection));
             }
         };
     }
@@ -79,81 +67,30 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     @Override
     public ResultSet loadTables(String ownerName, DBNConnection connection) throws SQLException {
         ResultSet tablesRs = loadTablesRaw(ownerName, connection);
-        return new WrappedResultSet(tablesRs) {
-            /**
-             * Metadata translation for TABLES
-             * comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBTableMetadataImpl}
-             */
-            @Override
-            public String getString(String columnLabel) throws SQLException {
-                switch (columnLabel) {
-                    case "TABLE_NAME": return inner.getString("TABLE_NAME"); // redundant (for clarity)
-                    case "IS_TEMPORARY":
-                        String tableType = inner.getString("TABLE_TYPE");
-                        return tableType != null && StringUtil.containsIgnoreCase(tableType, "TEMPORARY") ? "Y" : "N";
-
-                    default: return null;
-                }
-            }
-        };
+        return new TablesResultSet(tablesRs);
     }
 
     @Override
     public ResultSet loadViews(String ownerName, DBNConnection connection) throws SQLException {
-        DatabaseMetaData metaData = connection.getMetaData();
-        ResultSet viewsRs = metaData.getTables(null, ownerName, null, new String[]{"VIEW"});
+        ResultSet viewsRs = loadViewsRaw(ownerName, connection);
+        return new ViewsResultSet(viewsRs);
+    }
 
-        return new WrappedResultSet(viewsRs) {
-            /**
-             * Metadata translation for VIEWS
-             * comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBViewMetadataImpl}
-             */
-            @Override
-            public String getString(String columnLabel) throws SQLException {
-                switch (columnLabel) {
-                    case "VIEW_NAME": return inner.getString("TABLE_NAME");
-                    case "IS_SYSTEM_VIEW":
-                        String tableType = inner.getString("TABLE_TYPE");
-                        return tableType != null &&
-                                StringUtil.containsIgnoreCase(tableType, "SYSTEM") &&
-                                StringUtil.containsIgnoreCase(tableType, "VIEW") ? "Y" : "N";
+    @Override
+    public ResultSet loadColumns(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
+        ResultSet columnsRs = loadColumnsRaw(ownerName, datasetName, connection);
+        ResultSet pseudoColumnsRs = loadPseudoColumnsRaw(ownerName, datasetName, connection);
 
-                    case "VIEW_TYPE": return null;
-                    case "VIEW_TYPE_OWNER": return null;
-                    default: return null;
-                }
-            }
-        };
+        columnsRs = new ColumnsResultSet(columnsRs);
+        pseudoColumnsRs = new ColumnsResultSet(pseudoColumnsRs);
+
+        return new QueueResultSet(columnsRs, pseudoColumnsRs);
     }
 
     @Override
     public ResultSet loadIndexes(String ownerName, String tableName, DBNConnection connection) throws SQLException {
         ResultSet indexesRs = loadIndexesRaw(ownerName, tableName, connection);
-
-        return new WrappedResultSet(indexesRs) {
-            /**
-             * Metadata translation for INDEXES
-             * comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBIndexMetadataImpl}
-             */
-            @Override
-            public String getString(String columnLabel) throws SQLException {
-                switch (columnLabel) {
-                    case "INDEX_NAME":
-                        return fallback(
-                                () -> inner.getString("INDEX_NAME"),
-                                () -> inner.getString("TABLE_NAME") + "_INDEX_STATISTIC");
-
-                    case "TABLE_NAME": return inner.getString("TABLE_NAME");
-                    case "IS_UNIQUE":
-                        return fallback(
-                                () -> inner.getBoolean("NON_UNIQUE"),
-                                () -> true) ? "N" : "Y";
-
-                    case "IS_VALID": return "Y";
-                    default: return null;
-                }
-            }
-        };
+        return new IndexesResultSet(indexesRs);
     }
 
     @Override
@@ -174,77 +111,8 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
         ResultSet primaryKeysRs = loadPrimaryKeysRaw(ownerName, datasetName, connection);
         ResultSet foreignKeysRs = loadForeignKeysRaw(ownerName, datasetName, connection);
 
-        primaryKeysRs = new WrappedResultSet(primaryKeysRs) {
-
-            /**
-             * Metadata translation for CONSTRAINTS
-             * comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBConstraintMetadataImpl}
-             */
-            @Override
-            public String getString(String columnLabel) throws SQLException {
-                switch (columnLabel) {
-                    case "CONSTRAINT_NAME": {
-                        return fallback(
-                                () -> inner.getString("PK_NAME"),
-                                () -> generateUniqueKeyName(
-                                        inner.getString("TABLE_NAME"),
-                                        inner.getString("COLUMN_NAME")));
-                        // TODO support multiple column keys (complication - needs rs scroll / upfront grouping)
-                    }
-
-                    case "CONSTRAINT_TYPE": {
-                        String pkName = inner.getString("PK_NAME");
-                        return pkName == null ? "UNIQUE" : "PRIMARY KEY";
-                    }
-
-                    case "DATASET_NAME": return datasetName;
-                    case "FK_CONSTRAINT_OWNER": return null;
-                    case "FK_CONSTRAINT_NAME": return null;
-                    case "CHECK_CONDITION": return "";
-                    case "IS_ENABLED": return "Y";
-                    default: return null;
-                }
-
-            }
-        };
-
-        foreignKeysRs = new WrappedResultSet(foreignKeysRs) {
-            /**
-             * Metadata translation for CONSTRAINTS
-             * comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBConstraintMetadataImpl}
-             */
-            @Override
-            public String getString(String columnLabel) throws SQLException {
-                switch (columnLabel) {
-                    case "CONSTRAINT_NAME": {
-                        return fallback(
-                                () -> inner.getString("FK_NAME"),
-                                () -> generateForeignKeyName(
-                                        inner.getString("FKTABLE_NAME"),
-                                        inner.getString("FKCOLUMN_NAME")));
-                        // TODO support multiple column keys (complication - needs rs scroll / upfront grouping)
-                    }
-
-                    case "CONSTRAINT_TYPE": return "FOREIGN KEY";
-                    case "DATASET_NAME": return datasetName;
-
-                    case "FK_CONSTRAINT_OWNER": {
-                        return inner.getString("PKTABLE_SCHEM");
-                    }
-
-                    case "FK_CONSTRAINT_NAME": {
-                        return fallback(
-                                () -> inner.getString("PK_NAME"),
-                                () -> generateUniqueKeyName(
-                                        inner.getString("PKTABLE_NAME"),
-                                        inner.getString("PKCOLUMN_NAME")));
-                    }
-                    case "CHECK_CONDITION": return "";
-                    case "IS_ENABLED": return "Y";
-                    default: return null;
-                }
-            }
-        };
+        primaryKeysRs = new PrimaryKeysResultSet(primaryKeysRs);
+        foreignKeysRs = new ForeignKeysResultSet(foreignKeysRs);
 
         return new QueueResultSet(primaryKeysRs, foreignKeysRs);
     }
@@ -263,15 +131,65 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     /**************************************************************
-     *                     Raw cached meta data                   *
+     *                     Raw cached meta-data                   *
      **************************************************************/
     private ResultSet loadTablesRaw(String ownerName, DBNConnection connection) throws SQLException {
         return cached(
                 ownerName + ".TABLES",
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet tablesRs = metaData.getTables(null, ownerName, null, new String[]{"TABLE"});
-                    return CachedResultSet.create(tablesRs, ResultSetTranslator.BASIC);
+                    ResultSet resultSet = metaData.getTables(null, ownerName, null, new String[]{"TABLE"});
+                    return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
+                }).open();
+    }
+
+    private ResultSet loadViewsRaw(String ownerName, DBNConnection connection) throws SQLException {
+        return cached(
+                ownerName + ".VIEWS",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet resultSet = metaData.getTables(null, ownerName, null, new String[]{"VIEW"});
+                    return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
+                }).open();
+    }
+
+    private ResultSet loadColumnsRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
+        return cached(
+                ownerName + "." + datasetName + ".COLUMNS",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet resultSet = metaData.getColumns(null, ownerName, datasetName, null);
+                    return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
+                }).open();
+    }
+
+    private ResultSet loadPseudoColumnsRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
+        return cached(
+                ownerName + "." + datasetName + ".PSEUDO_COLUMNS",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet resultSet = metaData.getPseudoColumns(null, ownerName, datasetName, null);
+                    return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
+                }).open();
+    }
+
+    private ResultSet loadAllColumnsRaw(String ownerName, DBNConnection connection) throws SQLException {
+        return cached(
+                ownerName + ".ALL_COLUMNS",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet resultSet = metaData.getColumns(null, ownerName, null, null);
+                    return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
+                }).open();
+    }
+
+    private ResultSet loadAllPseudoColumnsRaw(String ownerName, DBNConnection connection) throws SQLException {
+        return cached(
+                ownerName + ".ALL_PSEUDO_COLUMNS",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet resultSet = metaData.getPseudoColumns(null, ownerName, null, null);
+                    return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
                 }).open();
     }
 
@@ -280,8 +198,8 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 ownerName + "." + datasetName + ".INDEXES",
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet primaryKeysRs = metaData.getIndexInfo(null, ownerName, datasetName, false, true);
-                    return CachedResultSet.create(primaryKeysRs, ResultSetTranslator.BASIC);
+                    ResultSet resultSet = metaData.getIndexInfo(null, ownerName, datasetName, false, true);
+                    return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
                 }).open();
     }
 
@@ -291,8 +209,8 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 ownerName + "." + datasetName + ".PRIMARY_KEYS",
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet primaryKeysRs = metaData.getPrimaryKeys(null, ownerName, datasetName);
-                    return CachedResultSet.create(primaryKeysRs, ResultSetTranslator.BASIC);
+                    ResultSet resultSet = metaData.getPrimaryKeys(null, ownerName, datasetName);
+                    return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
                 }).open();
     }
 
@@ -301,51 +219,29 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 ownerName + "." + datasetName + ".FOREIGN_KEYS",
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet primaryKeysRs = metaData.getImportedKeys(null, ownerName, datasetName);
-                    return CachedResultSet.create(primaryKeysRs, ResultSetTranslator.BASIC);
+                    ResultSet resultSet = metaData.getImportedKeys(null, ownerName, datasetName);
+                    return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
                 }).open();
     }
 
-    /**************************************************************
-     *                    Static utilities                        *
-     **************************************************************/
-    @NotNull
-    private static String generateUniqueKeyName(String tableName, String columnName) {
-        // TODO generated key names should not include column name (support multiple column keys)
-        return "unq_" + tableName + "_" + columnName;
+    private ResultSet loadFunctionsRaw(String ownerName, DBNConnection connection) throws SQLException {
+        return cached(
+                ownerName + ".FUNCTIONS",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet resultSet = metaData.getFunctions(null, ownerName, null);
+                    return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
+                }).open();
     }
 
-    @NotNull
-    private static String generateForeignKeyName(String tableName, String columnName) {
-        // TODO generated key names should not include column name (support multiple column keys)
-        return "fk_" + tableName + "_" + columnName;
+    private ResultSet loadProceduresRaw(String ownerName, DBNConnection connection) throws SQLException {
+        return cached(
+                ownerName + ".PROCEDURES",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet resultSet = metaData.getProcedures(null, ownerName, null);
+                    return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
+                }).open();
     }
 
-    private static <T> T fallback(
-            ThrowableCallable<T, Throwable> callable,
-            ThrowableCallable<T, SQLException> fallback) throws SQLException {
-        try {
-            T value = callable.call();
-            return value == null ? fallback.call() : value;
-        } catch (Throwable t) {
-            LOGGER.warn("JDBC metadata operation failed", t);
-            return fallback.call();
-        }
-    }
-
-    /**
-     * Checking if result set is missing or empty.
-     *  - returns true on exception
-     *  - always closes the result set
-     */
-    private static boolean checkEmptyAndClose(@Nullable ResultSet resultSet) {
-        try {
-            return resultSet == null || !resultSet.next();
-        } catch (Throwable t) {
-            LOGGER.warn("JDBC metadata operation failed", t);
-            return true;
-        } finally {
-            ResourceUtil.close(resultSet);
-        }
-    }
 }
