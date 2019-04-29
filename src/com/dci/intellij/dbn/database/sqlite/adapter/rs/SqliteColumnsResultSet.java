@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterface;
-import com.dci.intellij.dbn.database.sqlite.adapter.ResultSetElement;
+import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSetRow;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,21 +43,21 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
 
         for (RawTableInfo.Row row : tableInfo.getRows()) {
             Column element = new Column();
-            element.setDatasetName(datasetName);
-            element.setColumnName(row.getName());
-            element.setDataTypeName(row.getType());
-            element.setNullable(row.getNotnull() == 0);
-            element.setPrimaryKey(row.getPk() > 0);
-            element.setPosition(row.getCid() + 1);
-            addElement(element);
+            element.datasetName =  datasetName;
+            element.columnName = row.getName();
+            element.dataTypeName = row.getType();
+            element.nullable = row.getNotnull() == 0;
+            element.primaryKey = row.getPk() > 0;
+            element.position = row.getCid() + 1;
+            add(element);
         }
 
         try {
             RawForeignKeyInfo foreignKeyInfo = getForeignKeyInfo(datasetName);
             for (RawForeignKeyInfo.Row row : foreignKeyInfo.getRows()) {
                 String columnName = row.getFrom();
-                Column column = getElement(datasetName + "." + columnName);
-                column.setForeignKey(true);
+                Column column = row(datasetName + "." + columnName);
+                column.foreignKey = true;
             }
         } catch (SQLException ignore) {
 
@@ -81,27 +81,27 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
 
     @Override
     public String getString(String columnLabel) throws SQLException {
-        Column element = getCurrentElement();
+        Column element = current();
             return
-                columnLabel.equals("DATASET_NAME") ? element.getDatasetName() :
-                columnLabel.equals("COLUMN_NAME") ? element.getColumnName() :
-                columnLabel.equals("DATA_TYPE_NAME") ? element.getDataTypeName() :
-                columnLabel.equals("IS_FOREIGN_KEY") ? toFlag(element.isForeignKey()) :
-                columnLabel.equals("IS_UNIQUE_KEY") ? toFlag(element.isUniqueKey()) :
+                columnLabel.equals("DATASET_NAME") ? element.datasetName :
+                columnLabel.equals("COLUMN_NAME") ? element.columnName :
+                columnLabel.equals("DATA_TYPE_NAME") ? element.dataTypeName :
+                columnLabel.equals("IS_FOREIGN_KEY") ? toFlag(element.foreignKey) :
+                columnLabel.equals("IS_UNIQUE_KEY") ? toFlag(element.uniqueKey) :
                 columnLabel.equals("IS_HIDDEN") ? "N" :
                 columnLabel.equals("IS_SET") ? "N" :
-                columnLabel.equals("IS_NULLABLE") ? toFlag(element.isNullable()) :
-                columnLabel.equals("IS_PRIMARY_KEY") ? toFlag(element.isPrimaryKey()) : null;
+                columnLabel.equals("IS_NULLABLE") ? toFlag(element.nullable) :
+                columnLabel.equals("IS_PRIMARY_KEY") ? toFlag(element.primaryKey) : null;
     }
 
     @Override
     public int getInt(String columnLabel) throws SQLException {
-        Column element = getCurrentElement();
+        Column element = current();
         return
-            columnLabel.equals("POSITION") ? element.getPosition() :
-            columnLabel.equals("DATA_LENGTH") ? element.getDataLength() :
-            columnLabel.equals("DATA_PRECISION") ? element.getDataPrecision() :
-            columnLabel.equals("DATA_SCALE") ? element.getDataScale() : 0;
+            columnLabel.equals("POSITION") ? element.position :
+            columnLabel.equals("DATA_LENGTH") ? element.dataLength :
+            columnLabel.equals("DATA_PRECISION") ? element.dataPrecision :
+            columnLabel.equals("DATA_SCALE") ? element.dataScale : 0;
     }
 
     @Override
@@ -109,116 +109,23 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
         return getInt(columnLabel);
     }
 
-    public static class Column implements ResultSetElement<Column> {
-        String datasetName;
-        String columnName;
-        String dataTypeName;
-        int dataLength;
-        int dataPrecision;
-        int dataScale;
-        int position;
+    static class Column implements SqliteMetadataResultSetRow<Column> {
+        private String datasetName;
+        private String columnName;
+        private String dataTypeName;
+        private int dataLength;
+        private int dataPrecision;
+        private int dataScale;
+        private int position;
 
-        boolean nullable;
-        boolean primaryKey;
-        boolean foreignKey;
-        boolean uniqueKey;
-
-        public String getDatasetName() {
-            return datasetName;
-        }
-
-        public void setDatasetName(String datasetName) {
-            this.datasetName = datasetName;
-        }
-
-        public String getColumnName() {
-            return columnName;
-        }
-
-        public void setColumnName(String columnName) {
-            this.columnName = columnName;
-        }
-
-        public String getDataTypeName() {
-            return dataTypeName;
-        }
-
-        public void setDataTypeName(String dataTypeName) {
-            this.dataTypeName = dataTypeName;
-        }
-
-        public int getDataLength() {
-            return dataLength;
-        }
-
-        public void setDataLength(int dataLength) {
-            this.dataLength = dataLength;
-        }
-
-        public int getDataPrecision() {
-            return dataPrecision;
-        }
-
-        public void setDataPrecision(int dataPrecision) {
-            this.dataPrecision = dataPrecision;
-        }
-
-        public int getDataScale() {
-            return dataScale;
-        }
-
-        public void setDataScale(int dataScale) {
-            this.dataScale = dataScale;
-        }
-
-        public int getPosition() {
-            return position;
-        }
-
-        public void setPosition(int position) {
-            this.position = position;
-        }
-
-        public boolean isNullable() {
-            return nullable;
-        }
-
-        public void setNullable(boolean nullable) {
-            this.nullable = nullable;
-        }
-
-        public boolean isPrimaryKey() {
-            return primaryKey;
-        }
-
-        public void setPrimaryKey(boolean primaryKey) {
-            this.primaryKey = primaryKey;
-        }
-
-        public boolean isForeignKey() {
-            return foreignKey;
-        }
-
-        public void setForeignKey(boolean foreignKey) {
-            this.foreignKey = foreignKey;
-        }
-
-        public boolean isUniqueKey() {
-            return uniqueKey;
-        }
-
-        public void setUniqueKey(boolean uniqueKey) {
-            this.uniqueKey = uniqueKey;
-        }
+        private boolean nullable;
+        private boolean primaryKey;
+        private boolean foreignKey;
+        private boolean uniqueKey;
 
         @Override
-        public String getName() {
-            return getDatasetName() + "." + getColumnName();
-        }
-
-        @Override
-        public int compareTo(Column column) {
-            return (datasetName + "." + columnName).compareTo(column.datasetName + "." + column.columnName);
+        public String identifier() {
+            return datasetName + "." + columnName;
         }
 
         @Override

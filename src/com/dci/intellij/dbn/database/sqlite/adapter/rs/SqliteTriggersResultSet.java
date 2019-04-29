@@ -1,19 +1,18 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.database.common.util.ResultSetAdapter;
+import com.dci.intellij.dbn.database.common.util.WrappedResultSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SqliteTriggersResultSet extends ResultSetAdapter {
+public class SqliteTriggersResultSet extends WrappedResultSet {
     private static final Pattern TRIGGER_EVENT_REGEX = Pattern.compile("(before|after|instead\\s+of)\\s+(delete|insert|update)", Pattern.CASE_INSENSITIVE);
-    private ResultSet resultSet;
 
     public SqliteTriggersResultSet(ResultSet resultSet) {
-        this.resultSet = resultSet;
+        super(resultSet);
     }
 
     @Override
@@ -21,7 +20,7 @@ public class SqliteTriggersResultSet extends ResultSetAdapter {
         boolean isType = columnLabel.equals("TRIGGER_TYPE");
         boolean isEvent = columnLabel.equals("TRIGGERING_EVENT");
         if (isType || isEvent) {
-            String sourceCode = resultSet.getString("SOURCE_CODE");
+            String sourceCode = inner.getString("SOURCE_CODE");
 
             Matcher m = TRIGGER_EVENT_REGEX.matcher(sourceCode);
             if (m.find()) {
@@ -43,16 +42,6 @@ public class SqliteTriggersResultSet extends ResultSetAdapter {
                 }
             }
         }
-        return resultSet.getString(columnLabel);
-    }
-
-    @Override
-    public boolean next() throws SQLException {
-        return resultSet.next();
-    }
-
-    @Override
-    public void close() throws SQLException {
-        resultSet.close();
+        return inner.getString(columnLabel);
     }
 }

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.database.sqlite;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
-import com.dci.intellij.dbn.database.common.util.ResultSetWrapper;
+import com.dci.intellij.dbn.database.common.util.WrappedResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteColumnConstraintsResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteColumnIndexesResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteColumnsResultSet;
@@ -34,7 +34,7 @@ class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
     @Override
     public ResultSet loadSchemas(DBNConnection connection) throws SQLException {
         ResultSet resultSet = executeQuery(connection, "schemas");
-        return new ResultSetWrapper(resultSet) {
+        return new WrappedResultSet(resultSet) {
             /**
              * Metadata translation for SCHEMAS
              * comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBSchemaMetadataImpl}
