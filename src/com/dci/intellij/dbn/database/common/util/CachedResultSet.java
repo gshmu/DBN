@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.database.common.util;
 
+import com.dci.intellij.dbn.common.routine.ThrowableConsumer;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.ResultSetUtil;
 import org.jetbrains.annotations.Nullable;
@@ -49,6 +50,9 @@ public class CachedResultSet<T> extends ResultSetStub {
         return rows;
     }
 
+    public boolean isEmpty() {
+        return rows.isEmpty();
+    }
     /**
      * Current row at cursor
      */
@@ -70,7 +74,7 @@ public class CachedResultSet<T> extends ResultSetStub {
      * Cached result sets may be used concurrently
      * Open a copy with it's own cursor index to iterate
      */
-    public ResultSet open() {
+    public CachedResultSet open() {
         return new CachedResultSet<T>(rows, translator) {
             private int cursor = -1;
 
@@ -87,7 +91,13 @@ public class CachedResultSet<T> extends ResultSetStub {
         };
     }
 
+    public <V> void forEachRow(String columnName, Class<V> columnType, ThrowableConsumer<V, SQLException> consumer) throws SQLException {
+        ResultSetUtil.forEachRow(this, columnName, columnType, consumer);
+    }
 
+    /**************************************************************
+     *            Value accessor implementations                  *
+     **************************************************************/
     @Override
     public Object getObject(String columnLabel) throws SQLException {
         return translator.value(current(), columnLabel);

@@ -103,10 +103,20 @@ public class ResultSetUtil extends DisposableBase{
         }
     }
 
-    public static <T> void forEachRow(ResultSet resultSet, String columnName, Class<T> columnClass, ThrowableConsumer<T, SQLException> consumer) throws SQLException {
+    public static <T> void forEachRow(ResultSet resultSet, String columnName, Class<T> columnType, ThrowableConsumer<T, SQLException> consumer) throws SQLException {
         forEachRow(resultSet, () -> {
-            T object = (T) resultSet.getObject(columnName);
-            consumer.accept(object);
+            Object object = null;
+            if (CharSequence.class.isAssignableFrom(columnType)) {
+                object = resultSet.getString(columnName);
+
+            } else if (Integer.class.isAssignableFrom(columnType)) {
+                object = resultSet.getInt(columnName);
+
+            } else {
+                throw new UnsupportedOperationException("Lookup not implemented. Add more handlers here");
+            }
+
+            consumer.accept((T) object);
         });
     }
 }
