@@ -65,9 +65,9 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                     case "IS_EMPTY":
                         String schemaName = inner.getString("TABLE_SCHEM");
                         boolean empty =
-                                isEmpty(metaData.getTables(null, schemaName, null, null)) &&
-                                isEmpty(metaData.getFunctions(null, schemaName, null)) &&
-                                isEmpty(metaData.getProcedures(null, schemaName, null));
+                                checkEmptyAndClose(metaData.getTables(null, schemaName, null, null)) &&
+                                checkEmptyAndClose(metaData.getFunctions(null, schemaName, null)) &&
+                                checkEmptyAndClose(metaData.getProcedures(null, schemaName, null));
 
                         return empty ? "Y" : "N";
                     default: return null;
@@ -96,16 +96,6 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 }
             }
         };
-    }
-
-    private ResultSet loadTablesRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return cached(
-                ownerName + "." + "TABLES",
-                () -> {
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet tablesRs = metaData.getTables(null, ownerName, null, new String[]{"TABLE"});
-                    return CachedResultSet.create(tablesRs, ResultSetTranslator.BASIC);
-                }).open();
     }
 
     @Override
@@ -138,8 +128,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadIndexes(String ownerName, String tableName, DBNConnection connection) throws SQLException {
-        DatabaseMetaData metaData = connection.getMetaData();
-        ResultSet indexesRs = metaData.getIndexInfo(null, ownerName, tableName, false, true);
+        ResultSet indexesRs = loadIndexesRaw(ownerName, tableName, connection);
 
         return new WrappedResultSet(indexesRs) {
             /**
@@ -182,9 +171,8 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadConstraints(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
-        DatabaseMetaData metaData = connection.getMetaData();
-        ResultSet primaryKeysRs = metaData.getPrimaryKeys(null, ownerName, datasetName);
-        ResultSet foreignKeysRs = metaData.getImportedKeys(null, ownerName, datasetName);
+        ResultSet primaryKeysRs = loadPrimaryKeysRaw(ownerName, datasetName, connection);
+        ResultSet foreignKeysRs = loadForeignKeysRaw(ownerName, datasetName, connection);
 
         primaryKeysRs = new WrappedResultSet(primaryKeysRs) {
 
@@ -274,7 +262,53 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
         return allConstraintsRs;
     }
 
+    /**************************************************************
+     *                     Raw cached meta data                   *
+     **************************************************************/
+    private ResultSet loadTablesRaw(String ownerName, DBNConnection connection) throws SQLException {
+        return cached(
+                ownerName + ".TABLES",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet tablesRs = metaData.getTables(null, ownerName, null, new String[]{"TABLE"});
+                    return CachedResultSet.create(tablesRs, ResultSetTranslator.BASIC);
+                }).open();
+    }
 
+    private ResultSet loadIndexesRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
+        return cached(
+                ownerName + "." + datasetName + ".INDEXES",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet primaryKeysRs = metaData.getIndexInfo(null, ownerName, datasetName, false, true);
+                    return CachedResultSet.create(primaryKeysRs, ResultSetTranslator.BASIC);
+                }).open();
+    }
+
+
+    private ResultSet loadPrimaryKeysRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
+        return cached(
+                ownerName + "." + datasetName + ".PRIMARY_KEYS",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet primaryKeysRs = metaData.getPrimaryKeys(null, ownerName, datasetName);
+                    return CachedResultSet.create(primaryKeysRs, ResultSetTranslator.BASIC);
+                }).open();
+    }
+
+    private ResultSet loadForeignKeysRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
+        return cached(
+                ownerName + "." + datasetName + ".FOREIGN_KEYS",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet primaryKeysRs = metaData.getImportedKeys(null, ownerName, datasetName);
+                    return CachedResultSet.create(primaryKeysRs, ResultSetTranslator.BASIC);
+                }).open();
+    }
+
+    /**************************************************************
+     *                    Static utilities                        *
+     **************************************************************/
     @NotNull
     private static String generateUniqueKeyName(String tableName, String columnName) {
         // TODO generated key names should not include column name (support multiple column keys)
@@ -304,7 +338,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
      *  - returns true on exception
      *  - always closes the result set
      */
-    private static boolean isEmpty(@Nullable ResultSet resultSet) {
+    private static boolean checkEmptyAndClose(@Nullable ResultSet resultSet) {
         try {
             return resultSet == null || !resultSet.next();
         } catch (Throwable t) {
