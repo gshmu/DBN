@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
+import javax.annotation.Nullable;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
@@ -29,12 +30,12 @@ import java.util.Map;
 public abstract class ResultSetWrapper implements ResultSet {
     protected ResultSet inner;
 
-    public ResultSetWrapper(ResultSet inner) {
+    protected ResultSetWrapper(@Nullable ResultSet inner) {
         this.inner = inner;
     }
 
     public boolean next() throws SQLException {
-        return inner.next();
+        return inner != null && inner.next();
     }
 
     @Override
