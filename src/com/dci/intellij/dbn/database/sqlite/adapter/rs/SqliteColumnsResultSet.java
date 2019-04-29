@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.database.sqlite.adapter.rs;
 
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSetRow;
 
 import java.sql.ResultSet;
@@ -65,13 +64,13 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
     }
 
     private RawForeignKeyInfo getForeignKeyInfo(final String datasetName) throws SQLException {
-        return DatabaseInterface.getMetaDataCache().get(
+        return cache().get(
                 ownerName + "." + datasetName + ".FOREIGN_KEY_INFO",
                 () -> new RawForeignKeyInfo(loadForeignKeyInfo(datasetName)));
     }
 
     private RawTableInfo getTableInfo(final String datasetName) throws SQLException {
-        return DatabaseInterface.getMetaDataCache().get(
+        return cache().get(
                 ownerName + "." + datasetName + ".TABLE_INFO",
                 () -> new RawTableInfo(loadTableInfo(datasetName)));
     }
