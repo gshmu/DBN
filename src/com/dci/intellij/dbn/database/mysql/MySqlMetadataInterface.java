@@ -11,7 +11,7 @@ import java.util.Date;
 
 public class MySqlMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
-    public MySqlMetadataInterface(DatabaseInterfaceProvider provider) {
+    MySqlMetadataInterface(DatabaseInterfaceProvider provider) {
         super("mysql_metadata_interface.xml", provider);
     }
 

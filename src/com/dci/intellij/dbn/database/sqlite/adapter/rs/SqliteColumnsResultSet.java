@@ -28,11 +28,11 @@ import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.Raw
 
 public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetStub<SqliteColumnsResultSet.Column> {
 
-    public SqliteColumnsResultSet(String ownerName, SqliteDatasetNamesResultSet datasetNames, DBNConnection connection) throws SQLException {
+    protected SqliteColumnsResultSet(String ownerName, SqliteDatasetNamesResultSet datasetNames, DBNConnection connection) throws SQLException {
         super(ownerName, datasetNames, connection);
     }
 
-    public SqliteColumnsResultSet(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
+    protected SqliteColumnsResultSet(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
         super(ownerName, datasetName, connection);
     }
 

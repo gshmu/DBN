@@ -19,11 +19,11 @@ import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.Raw
  */
 
 public abstract class SqliteColumnIndexesResultSet extends SqliteDatasetInfoResultSetStub<SqliteColumnIndexesResultSet.IndexColumn> {
-    public SqliteColumnIndexesResultSet(String ownerName, SqliteDatasetNamesResultSet datasetNames, DBNConnection connection) throws SQLException {
+    protected SqliteColumnIndexesResultSet(String ownerName, SqliteDatasetNamesResultSet datasetNames, DBNConnection connection) throws SQLException {
         super(ownerName, datasetNames, connection);
     }
 
-    public SqliteColumnIndexesResultSet(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
+    protected SqliteColumnIndexesResultSet(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
         super(ownerName, datasetName, connection);
     }
 

@@ -79,7 +79,7 @@ public abstract class SqliteConstraintsResultSet extends SqliteConstraintInfoRes
             columnLabel.equals("IS_ENABLED") ? "Y" : null;
     }
 
-    public static class Constraint implements ResultSetElement<Constraint> {
+    static class Constraint implements ResultSetElement<Constraint> {
         String datasetName;
         String constraintName;
         String constraintType;

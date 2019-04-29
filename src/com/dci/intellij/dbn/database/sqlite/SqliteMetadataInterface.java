@@ -3,13 +3,13 @@ package com.dci.intellij.dbn.database.sqlite;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
+import com.dci.intellij.dbn.database.common.util.ResultSetWrapper;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteColumnConstraintsResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteColumnIndexesResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteColumnsResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintsResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteDatasetNamesResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteIndexesResultSet;
-import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteSchemasResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteTriggerSourceResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteTriggersResultSet;
 import com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteViewSourceResultSet;
@@ -20,9 +20,9 @@ import java.sql.SQLException;
 import java.util.Date;
 
 
-public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
+class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
-    public SqliteMetadataInterface(DatabaseInterfaceProvider provider) {
+    SqliteMetadataInterface(DatabaseInterfaceProvider provider) {
         super("sqlite_metadata_interface.xml", provider);
     }
 
@@ -33,7 +33,24 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadSchemas(DBNConnection connection) throws SQLException {
-        return new SqliteSchemasResultSet(executeQuery(connection, "schemas"));
+        ResultSet resultSet = executeQuery(connection, "schemas");
+        return new ResultSetWrapper(resultSet) {
+            /**
+             * Metadata translation for SCHEMAS
+             * comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBSchemaMetadataImpl}
+             */
+            @Override
+            public String getString(String columnLabel) throws SQLException {
+                switch (columnLabel) {
+                    case "SCHEMA_NAME": return inner.getString("name");
+
+                    case "IS_PUBLIC": return "N";
+                    case "IS_SYSTEM": return "N";
+                    case "IS_EMPTY": return "N";
+                    default: return null;
+                }
+            }
+        };
     }
 
     @Override
@@ -150,11 +167,11 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     private class ConstraintsResultSet extends SqliteConstraintsResultSet {
 
-        public ConstraintsResultSet(String ownerName, SqliteDatasetNamesResultSet datasetNames, DBNConnection connection) throws SQLException {
+        ConstraintsResultSet(String ownerName, SqliteDatasetNamesResultSet datasetNames, DBNConnection connection) throws SQLException {
             super(ownerName, datasetNames, connection);
         }
 
-        public ConstraintsResultSet(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
+        ConstraintsResultSet(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
             super(ownerName, datasetName, connection);
         }
 
@@ -181,11 +198,11 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     private class ColumnConstraintsResultSet extends SqliteColumnConstraintsResultSet {
 
-        public ColumnConstraintsResultSet(String ownerName, SqliteDatasetNamesResultSet datasetNames, DBNConnection connection) throws SQLException {
+        ColumnConstraintsResultSet(String ownerName, SqliteDatasetNamesResultSet datasetNames, DBNConnection connection) throws SQLException {
             super(ownerName, datasetNames, connection);
         }
 
-        public ColumnConstraintsResultSet(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
+        ColumnConstraintsResultSet(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
             super(ownerName, datasetName, connection);
         }
 
@@ -227,7 +244,7 @@ public class SqliteMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     @NotNull
-    SqliteDatasetNamesResultSet getDatasetNames(final String ownerName, final DBNConnection connection) throws SQLException {
+    private SqliteDatasetNamesResultSet getDatasetNames(final String ownerName, final DBNConnection connection) throws SQLException {
         return new SqliteDatasetNamesResultSet(ownerName) {
             @Override
             protected ResultSet loadTableNames() throws SQLException {

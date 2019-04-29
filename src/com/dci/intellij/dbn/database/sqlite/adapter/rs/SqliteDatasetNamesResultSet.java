@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 public abstract class SqliteDatasetNamesResultSet extends SqliteResultSetAdapter<SqliteDatasetNamesResultSet.Dataset> {
     protected String ownerName;
-    public SqliteDatasetNamesResultSet(String ownerName) throws SQLException {
+    protected SqliteDatasetNamesResultSet(String ownerName) throws SQLException {
         this.ownerName = ownerName;
         TableNames tableNames = getTableNames();
 
@@ -41,7 +41,7 @@ public abstract class SqliteDatasetNamesResultSet extends SqliteResultSetAdapter
         return null;
     }
 
-    public static class Dataset implements ResultSetElement<Dataset> {
+    static class Dataset implements ResultSetElement<Dataset> {
         String datasetName;
 
         public String getDatasetName() {

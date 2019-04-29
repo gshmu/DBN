@@ -9,8 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SqliteTriggerSourceResultSet extends ResultSetAdapter {
-    public static final Pattern DDL_STUB_REGEX = Pattern.compile("(CREATE\\s+(TEMP(ORARY)?\\s+)?)", Pattern.CASE_INSENSITIVE);
-    public static final Pattern GUARDED_STUB_REGEX = Pattern.compile("TRIGGER\\s+[^.]+(?=\\s+(BEFORE|AFTER|INSTEAD))", Pattern.CASE_INSENSITIVE);
+    private static final Pattern DDL_STUB_REGEX = Pattern.compile("(CREATE\\s+(TEMP(ORARY)?\\s+)?)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern GUARDED_STUB_REGEX = Pattern.compile("TRIGGER\\s+[^.]+(?=\\s+(BEFORE|AFTER|INSTEAD))", Pattern.CASE_INSENSITIVE);
     private ResultSet resultSet;
 
     public SqliteTriggerSourceResultSet(ResultSet resultSet) {

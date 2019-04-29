@@ -82,7 +82,7 @@ public abstract class SqliteColumnConstraintsResultSet extends SqliteConstraintI
         return columnLabel.equals("POSITION") ? element.getPosition() : 0;
     }
 
-    public static class ConstraintColumn implements ResultSetElement<ConstraintColumn> {
+    static class ConstraintColumn implements ResultSetElement<ConstraintColumn> {
         private String datasetName;
         private String constraintName;
         private String columnName;
@@ -127,7 +127,8 @@ public abstract class SqliteColumnConstraintsResultSet extends SqliteConstraintI
 
         @Override
         public int compareTo(@NotNull ConstraintColumn constraintColumn) {
-            return (datasetName + "." + constraintName + "." + columnName).compareTo(constraintColumn.datasetName + "." + constraintColumn.constraintName + "." + constraintColumn.columnName);
+            return (datasetName + "." + constraintName + "." + columnName).
+                    compareTo(constraintColumn.datasetName + "." + constraintColumn.constraintName + "." + constraintColumn.columnName);
         }
     }
 }
