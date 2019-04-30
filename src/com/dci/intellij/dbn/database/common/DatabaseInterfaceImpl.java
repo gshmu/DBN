@@ -53,28 +53,28 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
     protected ResultSet executeQuery(@NotNull DBNConnection connection, boolean forceExecution, String loaderId, @Nullable Object... arguments) throws SQLException {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor(loaderId);
         ResultSet result = executionProcessor.executeQuery(connection, forceExecution, arguments);
-        checkDisposed();
+        checkDisposed(connection);
         return result;
     }
 
     protected <T extends CallableStatementOutput> T executeCall(@NotNull DBNConnection connection, @Nullable T outputReader, String loaderId, @Nullable Object... arguments) throws SQLException {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor(loaderId);
         T result = executionProcessor.executeCall(connection, outputReader, arguments);
-        checkDisposed();
+        checkDisposed(connection);
         return result;
     }
 
     protected boolean executeStatement(@NotNull DBNConnection connection, String loaderId, @Nullable Object... arguments) throws SQLException {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor(loaderId);
         boolean result = executionProcessor.executeStatement(connection, arguments);
-        checkDisposed();
+        checkDisposed(connection);
         return result;
     }
 
     protected void executeUpdate(@NotNull DBNConnection connection, String loaderId, @Nullable Object... arguments) throws SQLException {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor(loaderId);
         executionProcessor.executeUpdate(connection, arguments);
-        checkDisposed();
+        checkDisposed(connection);
     }
 
     @NotNull
@@ -88,8 +88,8 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
         return executionProcessor;
     }
 
-    private void checkDisposed() throws SQLException {
-        Failsafe.nd(DatabaseInterface.getProject());
+    private void checkDisposed(DBNConnection connection) throws SQLException {
+        Failsafe.nd(connection.getProject());
     }
 
     public DatabaseInterfaceProvider getProvider() {
