@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.browser.action;
 
+import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
-import com.dci.intellij.dbn.connection.config.action.ConnectionSettingsAction;
-import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
@@ -12,11 +11,11 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class ConnectionCreateAction extends ConnectionSettingsAction {
+public class ConnectionCreateAction extends DumbAwareProjectAction {
     private DatabaseType databaseType;
 
     ConnectionCreateAction(@Nullable DatabaseType databaseType) {
-        super(getName(databaseType), getIcon(databaseType));
+        super(getName(databaseType), null, getIcon(databaseType));
         this.databaseType = databaseType;
     }
 
@@ -31,8 +30,7 @@ public class ConnectionCreateAction extends ConnectionSettingsAction {
     @Override
     protected void actionPerformed(
             @NotNull AnActionEvent e,
-            @NotNull Project project,
-            @NotNull ConnectionBundleSettingsForm target) {
+            @NotNull Project project) {
 
         ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
 
@@ -40,7 +38,7 @@ public class ConnectionCreateAction extends ConnectionSettingsAction {
         ConnectionConfigType configType = ConnectionConfigType.BASIC;
         if (databaseType == null) {
             configType = ConnectionConfigType.CUSTOM;
-            databaseType = DatabaseType.UNKNOWN;
+            databaseType = DatabaseType.GENERIC;
         }
         settingsManager.createConnection(databaseType, configType);
     }

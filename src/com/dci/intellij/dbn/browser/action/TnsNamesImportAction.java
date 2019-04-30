@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.browser.action;
 
 
-import com.dci.intellij.dbn.connection.config.action.ConnectionSettingsAction;
+import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.connection.config.tns.TnsNamesParser;
 import com.dci.intellij.dbn.connection.config.tns.ui.TnsNamesImportDialog;
-import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.fileChooser.FileChooser;
@@ -15,16 +14,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-public class TnsNamesImportAction extends ConnectionSettingsAction{
+public class TnsNamesImportAction extends DumbAwareProjectAction {
     TnsNamesImportAction() {
-        super("Import TNS Names", null);
+        super("Import TNS Names", null, null);
     }
 
     @Override
     protected void actionPerformed(
             @NotNull AnActionEvent e,
-            @NotNull Project project,
-            @NotNull ConnectionBundleSettingsForm target) {
+            @NotNull Project project) {
 
         VirtualFile[] virtualFiles = FileChooser.chooseFiles(TnsNamesParser.FILE_CHOOSER_DESCRIPTOR, project, null);
         if (virtualFiles.length == 1) {
