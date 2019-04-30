@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.AuthenticationType;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -56,8 +57,17 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
             urlPattern = databaseType.getDefaultUrlPattern();
             databaseInfo = urlPattern.getDefaultInfo();
             driverSource = DriverSource.BUILTIN;
-            authenticationInfo.setSupported(databaseType.isAuthenticationSupported());
+            initAuthType(databaseType);
         }
+    }
+
+    private void initAuthType(DatabaseType databaseType) {
+        AuthenticationType authenticationType = AuthenticationType.USER_PASSWORD;
+        AuthenticationType[] authTypes = databaseType.getAuthTypes();
+        if (!authenticationType.isOneOf(authTypes)) {
+            authenticationType = authTypes[0];
+        }
+        authenticationInfo.setType(authenticationType);
     }
 
     @Override
@@ -133,7 +143,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
             this.databaseType = databaseType;
             urlPattern = databaseType.getDefaultUrlPattern();
             databaseInfo.setUrlType(urlPattern.getUrlType());
-            authenticationInfo.setSupported(databaseType.isAuthenticationSupported());
+            initAuthType(databaseType);
         }
     }
 
@@ -207,7 +217,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
                 databaseInfo.getUrl() +
                 authenticationInfo.getUser() +
                 authenticationInfo.getPassword() +
-                authenticationInfo.isOsAuthentication()).hashCode();
+                authenticationInfo.getType()).hashCode();
     }
 
     @Override

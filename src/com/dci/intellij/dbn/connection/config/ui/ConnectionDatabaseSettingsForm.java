@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.AuthenticationType;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectivityStatus;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -167,10 +168,11 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
             filePanel.setVisible(false);
             databaseInfoPanel.setVisible(false);
         }
-        authenticationPanel.setVisible(databaseType.isAuthenticationSupported());
+        AuthenticationType[] authTypes = databaseType.getAuthTypes();
+        authenticationPanel.setVisible(authTypes.length > 1 || authTypes[0] != AuthenticationType.NONE);
     }
 
-    public void notifyPresentationChanges() {
+    void notifyPresentationChanges() {
         ConnectionDatabaseSettings configuration = getConfiguration();
         String name = nameTextField.getText();
         ConnectivityStatus connectivityStatus = configuration.getConnectivityStatus();
@@ -300,7 +302,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         DriverOption selectedDriver = ComboBoxUtil.getSelection(driverComboBox);
         DatabaseType driverDatabaseType = selectedDriver == null ? null : DatabaseType.resolve(selectedDriver.getName());
         if (driverDatabaseType != null && driverDatabaseType != selectedDatabaseType) {
-            throw new ConfigurationException("The provided driver library is not a valid " + selectedDatabaseType.getDisplayName() + " driver library.");
+            throw new ConfigurationException("The provided driver library is not a valid " + selectedDatabaseType.getName() + " driver library.");
         }
 
         boolean nameChanged = !nameTextField.getText().equals(configuration.getName());
