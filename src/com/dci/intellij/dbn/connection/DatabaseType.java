@@ -43,13 +43,21 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
             array(AuthenticationType.NONE),
             array(DatabaseUrlPattern.SQLITE)),
 
+    GENERIC(
+            "Generic",
+            Icons.DB_GENERIC,
+            Icons.DB_GENERIC_LARGE,
+            "java.sql.Driver",
+            AuthenticationType.values(),
+            array(DatabaseUrlPattern.GENERIC)),
+
     UNKNOWN(
             "Unknown",
             null,
             null,
             "java.sql.Driver",
             AuthenticationType.values(),
-            array(DatabaseUrlPattern.UNKNOWN));
+            array(DatabaseUrlPattern.GENERIC));
 
     private String name;
     private Icon icon;
@@ -128,7 +136,7 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
                 return urlPattern;
             }
         }
-        return DatabaseUrlPattern.UNKNOWN;
+        return DatabaseUrlPattern.GENERIC;
     }
 
     @NotNull
@@ -138,7 +146,7 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
                 if (name.equalsIgnoreCase(databaseType.name)) return databaseType;
             }
         }
-        return UNKNOWN;
+        return GENERIC;
     }
 
     public static DatabaseType resolve(String name) {
@@ -152,7 +160,7 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
         } else if (name.contains("SQLITE")) {
             return DatabaseType.SQLITE;
         }
-        return UNKNOWN;
+        return GENERIC;
     }
 
 

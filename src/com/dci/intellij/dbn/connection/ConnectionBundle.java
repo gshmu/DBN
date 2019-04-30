@@ -73,7 +73,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
         virtualConnections.add(new VirtualConnectionHandler(
                 ConnectionId.VIRTUAL_ISO92_SQL_CONNECTION,
                 "Virtual - ISO-92 SQL",
-                DatabaseType.UNKNOWN,
+                DatabaseType.GENERIC,
                 92,
                 project));
     }

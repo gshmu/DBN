@@ -115,7 +115,7 @@ public class CmdLineInterface extends CommonUtil implements Cloneable<CmdLineInt
         element.setAttribute("id", id);
         element.setAttribute("name", name);
         element.setAttribute("executable-path", executablePath);
-        element.setAttribute("database-type", databaseType.name());
+        element.setAttribute("database-type", databaseType.id());
     }
 
     @Override

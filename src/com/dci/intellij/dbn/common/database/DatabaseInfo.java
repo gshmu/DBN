@@ -14,11 +14,9 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
         DatabaseInfo POSTGRES = new DatabaseInfo("localhost", "5432", "postgres", DatabaseUrlType.DATABASE);
         DatabaseInfo SQLITE   = new DatabaseInfo("sqlite.db",                     DatabaseUrlType.FILE);
         DatabaseInfo GENERIC  = new DatabaseInfo("localhost", "1234", "database", DatabaseUrlType.DATABASE);
-
-        @Deprecated // jdbc generic db
-        DatabaseInfo UNKNOWN  = new DatabaseInfo("localhost", "1234", "database", DatabaseUrlType.DATABASE);
     }
 
+    private String vendor;
     private String host;
     private String port;
     private String database;

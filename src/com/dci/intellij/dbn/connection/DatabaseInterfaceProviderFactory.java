@@ -27,18 +27,13 @@ public class DatabaseInterfaceProviderFactory {
         } else {
             ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
             databaseType = databaseSettings.getDatabaseType();
-            if (databaseType == null || databaseType == DatabaseType.UNKNOWN) {
+            if (databaseType == DatabaseType.UNKNOWN) {
                 DBNConnection testConnection = null;
                 try {
                     testConnection = connectionHandler.getTestConnection();
                     databaseType = ResourceUtil.getDatabaseType(testConnection);
                     databaseSettings.setDatabaseType(databaseType);
-                } catch (SQLException e) {
-                    if (databaseSettings.getDatabaseType() == null) {
-                        databaseSettings.setDatabaseType(DatabaseType.UNKNOWN);
-                    }
-                    throw e;
-                } finally {
+                }  finally {
                     ResourceUtil.close(testConnection);
                 }
             }

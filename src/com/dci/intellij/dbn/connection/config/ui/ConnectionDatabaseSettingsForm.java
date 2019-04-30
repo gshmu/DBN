@@ -78,7 +78,8 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                     DatabaseType.ORACLE,
                     DatabaseType.MYSQL,
                     DatabaseType.POSTGRES,
-                    DatabaseType.SQLITE);
+                    DatabaseType.SQLITE,
+                    DatabaseType.GENERIC);
             databaseTypeComboBox.addActionListener(e -> {
                 DatabaseType oldValue = selectedDatabaseType;
                 DatabaseType newValue = getSelection(databaseTypeComboBox);

@@ -16,12 +16,12 @@ public class DatabaseLoggingToggleAction extends AbstractConnectionToggleAction 
     }
 
     @Override
-    public boolean isSelected(AnActionEvent e) {
+    public boolean isSelected(@NotNull AnActionEvent e) {
         return getConnectionHandler().isLoggingEnabled();
     }
 
     @Override
-    public void setSelected(AnActionEvent e, boolean state) {
+    public void setSelected(@NotNull AnActionEvent e, boolean state) {
         getConnectionHandler().setLoggingEnabled(state);
     }
 

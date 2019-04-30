@@ -36,8 +36,8 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
     private transient ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
     private String name;
     private String description;
-    private DatabaseType databaseType = DatabaseType.UNKNOWN;
-    private DatabaseUrlPattern urlPattern = DatabaseUrlPattern.UNKNOWN;
+    private DatabaseType databaseType;
+    private DatabaseUrlPattern urlPattern = DatabaseUrlPattern.GENERIC;
     private double databaseVersion = 9999;
     private int hashCode;
 
@@ -53,7 +53,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         super(parent);
         this.databaseType = databaseType;
         this.configType = configType;
-        if (databaseType != DatabaseType.UNKNOWN) {
+        if (!databaseType.isOneOf(DatabaseType.UNKNOWN, DatabaseType.GENERIC)) {
             urlPattern = databaseType.getDefaultUrlPattern();
             databaseInfo = urlPattern.getDefaultInfo();
             driverSource = DriverSource.BUILTIN;
