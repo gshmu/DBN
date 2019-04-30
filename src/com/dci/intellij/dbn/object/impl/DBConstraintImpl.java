@@ -20,8 +20,8 @@ import com.dci.intellij.dbn.object.common.list.DBObjectRelationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
+import com.dci.intellij.dbn.object.common.operation.DBOperationNotSupportedException;
 import com.dci.intellij.dbn.object.common.operation.DBOperationType;
-import com.dci.intellij.dbn.object.common.operation.DBUnsupportedOperationException;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
@@ -303,7 +303,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
                             connection);
                     getStatus().set(DBObjectStatus.ENABLED, false);
                 } else {
-                    throw new DBUnsupportedOperationException(operationType, getObjectType());
+                    throw new DBOperationNotSupportedException(operationType, getObjectType());
                 }
             } finally {
                 connectionHandler.freePoolConnection(connection);
