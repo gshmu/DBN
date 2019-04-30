@@ -27,7 +27,7 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
         objectNameFiltersPanel.add(settings.getObjectNameFilterSettings().createComponent(), BorderLayout.CENTER);
 
         hideEmptySchemasCheckBox.setSelected(settings.isHideEmptySchemas());
-        hidePseudoColumnsCheckBox.setSelected(settings.isHideHiddenColumns());
+        hidePseudoColumnsCheckBox.setSelected(settings.isHidePseudoColumns());
 
         registerComponent(hideEmptySchemasCheckBox);
         registerComponent(hidePseudoColumnsCheckBox);
@@ -43,7 +43,7 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
     public void applyFormChanges() throws ConfigurationException {
         ConnectionFilterSettings configuration = getConfiguration();
         boolean notifyFilterListenersSchemas = configuration.isHideEmptySchemas() != hideEmptySchemasCheckBox.isSelected();
-        boolean notifyFilterListenersColumns = configuration.isHideHiddenColumns() != hidePseudoColumnsCheckBox.isSelected();
+        boolean notifyFilterListenersColumns = configuration.isHidePseudoColumns() != hidePseudoColumnsCheckBox.isSelected();
 
         applyFormChanges(configuration);
 
@@ -66,6 +66,6 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
     @Override
     public void applyFormChanges(ConnectionFilterSettings configuration) throws ConfigurationException {
         configuration.setHideEmptySchemas(hideEmptySchemasCheckBox.isSelected());
-        configuration.setHideHiddenColumns(hidePseudoColumnsCheckBox.isSelected());
+        configuration.setHidePseudoColumns(hidePseudoColumnsCheckBox.isSelected());
     }
 }

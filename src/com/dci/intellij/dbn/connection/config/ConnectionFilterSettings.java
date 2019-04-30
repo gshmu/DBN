@@ -24,49 +24,65 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
     private ObjectTypeFilterSettings objectTypeFilterSettings;
     private ObjectNameFilterSettings objectNameFilterSettings;
     private boolean hideEmptySchemas = false;
-    private boolean hideHiddenColumns = true;
+    private boolean hidePseudoColumns = false;
     private ConnectionSettings connectionSettings;
 
     private static final Filter<DBSchema> EMPTY_SCHEMAS_FILTER = schema -> !schema.isEmptySchema();
-    private static final Filter<DBColumn> EMPTY_HIDDEN_COLUMN_FILTER = column -> !column.isHidden();
+    private static final Filter<DBColumn> PSEUDO_COLUMNS_FILTER = column -> !column.isHidden();
 
     private Latent<Filter<DBSchema>> schemaFilter = Latent.mutable(
             () -> hideEmptySchemas,
             () -> {
                 Filter<DBObject> filter = objectNameFilterSettings.getFilter(DBObjectType.SCHEMA);
                 if (filter == null) {
-                    return EMPTY_SCHEMAS_FILTER;
+                    return hideEmptySchemas ? EMPTY_SCHEMAS_FILTER : null; // return null filter for optimization
                 } else {
                     return new Filter<DBSchema>() {
                         @Override
                         public int hashCode() {
-                            return filter.hashCode() + EMPTY_SCHEMAS_FILTER.hashCode();
+                            if (hideEmptySchemas) {
+                                return filter.hashCode() + EMPTY_SCHEMAS_FILTER.hashCode();
+                            } else {
+                                return filter.hashCode();
+                            }
                         }
 
                         @Override
                         public boolean accepts(DBSchema schema) {
-                            return EMPTY_SCHEMAS_FILTER.accepts(schema) && filter.accepts(schema);
+                            if (hideEmptySchemas) {
+                                return EMPTY_SCHEMAS_FILTER.accepts(schema) && filter.accepts(schema);
+                            } else {
+                                return filter.accepts(schema);
+                            }
                         }
                     };
                 }
             });
 
     private Latent<Filter<DBColumn>> columnFilter = Latent.mutable(
-        () -> hideHiddenColumns,
+        () -> hidePseudoColumns,
         () -> {
             Filter<DBObject> filter = objectNameFilterSettings.getFilter(DBObjectType.COLUMN);
             if (filter == null) {
-                return EMPTY_HIDDEN_COLUMN_FILTER;
+                return PSEUDO_COLUMNS_FILTER;
             } else {
                 return new Filter<DBColumn>() {
                     @Override
                     public int hashCode() {
-                        return filter.hashCode() + EMPTY_HIDDEN_COLUMN_FILTER.hashCode();
+                        if (hidePseudoColumns) {
+                            return filter.hashCode() + PSEUDO_COLUMNS_FILTER.hashCode();
+                        } else {
+                            return filter.hashCode();
+                        }
                     }
 
                     @Override
                     public boolean accepts(DBColumn column) {
-                        return EMPTY_HIDDEN_COLUMN_FILTER.accepts(column) && filter.accepts(column);
+                        if (hidePseudoColumns) {
+                            return PSEUDO_COLUMNS_FILTER.accepts(column) && filter.accepts(column);
+                        } else {
+                            return filter.accepts(column);
+                        }
                     }
                 };
             }
@@ -87,12 +103,12 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
         this.hideEmptySchemas = hideEmptySchemas;
     }
 
-    public boolean isHideHiddenColumns() {
-        return hideHiddenColumns;
+    public boolean isHidePseudoColumns() {
+        return hidePseudoColumns;
     }
 
-    public void setHideHiddenColumns(boolean hideHiddenColumns) {
-        this.hideHiddenColumns = hideHiddenColumns;
+    public void setHidePseudoColumns(boolean hidePseudoColumns) {
+        this.hidePseudoColumns = hidePseudoColumns;
     }
 
     public ConnectionId getConnectionId() {
@@ -143,14 +159,14 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
     @Override
     public void readConfiguration(Element element) {
         hideEmptySchemas = getBooleanAttribute(element, "hide-empty-schemas", hideEmptySchemas);
-        hideHiddenColumns = getBooleanAttribute(element, "hide-hidden-columns", hideHiddenColumns);
+        hidePseudoColumns = getBooleanAttribute(element, "hide-pseudo-columns", hidePseudoColumns);
         super.readConfiguration(element);
     }
 
     @Override
     public void writeConfiguration(Element element) {
         setBooleanAttribute(element, "hide-empty-schemas", hideEmptySchemas);
-        setBooleanAttribute(element, "hide-hidden-columns", hideHiddenColumns);
+        setBooleanAttribute(element, "hide-pseudo-columns", hidePseudoColumns);
         super.writeConfiguration(element);
     }
 
