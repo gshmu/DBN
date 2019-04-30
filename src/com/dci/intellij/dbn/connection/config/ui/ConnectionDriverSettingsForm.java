@@ -32,6 +32,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
     private JLabel driverErrorLabel;
     private JLabel driverLabel;
     private JLabel driverLibraryLabel;
+    private JLabel driverSourceLabel;
 
     /** allow select a single jar file or a directory */
     private static final FileChooserDescriptor LIBRARY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, true, true, true, false, false);
@@ -57,7 +58,12 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
     }
 
     public void updateDriverFields() {
-        DriverSource driverSource = driverSourceComboBox == null ? DriverSource.EXTERNAL : getSelection(driverSourceComboBox);
+        DatabaseType databaseType = ensureParentComponent().getSelectedDatabaseType();
+        boolean allowBuiltInLibrary = databaseType != DatabaseType.GENERIC;
+
+        DriverSource driverSource = allowBuiltInLibrary ? getSelection(driverSourceComboBox) : DriverSource.EXTERNAL;
+        driverSourceComboBox.setVisible(allowBuiltInLibrary);
+        driverSourceLabel.setVisible(allowBuiltInLibrary);
 
         String error = null;
         boolean externalDriver = driverSource == DriverSource.EXTERNAL;

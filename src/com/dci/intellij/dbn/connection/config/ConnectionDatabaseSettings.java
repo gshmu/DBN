@@ -268,7 +268,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
                     errors.add("JDBC driver not provided");
                 } else {
                     DatabaseType driverDatabaseType = DatabaseType.resolve(driver);
-                    if (databaseType != DatabaseType.UNKNOWN && driverDatabaseType != databaseType) {
+                    if (databaseType != DatabaseType.GENERIC && driverDatabaseType != databaseType) {
                         errors.add("JDBC driver does not match the selected database type");
                     }
                 }
