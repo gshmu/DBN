@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.constant.Constant;
+import com.dci.intellij.dbn.common.constant.ConstantUtil;
 import com.dci.intellij.dbn.common.ui.Presentable;
-import com.dci.intellij.dbn.common.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -140,13 +140,8 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
     }
 
     @NotNull
-    public static DatabaseType get(String name) {
-        if (StringUtil.isNotEmpty(name)) {
-            for (DatabaseType databaseType : values()) {
-                if (name.equalsIgnoreCase(databaseType.name)) return databaseType;
-            }
-        }
-        return GENERIC;
+    public static DatabaseType get(String id) {
+        return ConstantUtil.get(values(), id, GENERIC);
     }
 
     public static DatabaseType resolve(String name) {

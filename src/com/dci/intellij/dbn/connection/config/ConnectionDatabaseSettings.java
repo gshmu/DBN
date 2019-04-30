@@ -28,7 +28,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getDouble;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getEnum;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getString;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setDouble;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setEnum;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setString;
 
 public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSettings, ConnectionDatabaseSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
@@ -238,9 +243,10 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
     public void checkConfiguration() throws ConfigurationException{
         List<String> errors = new ArrayList<String>();
         DatabaseType databaseType = getDatabaseType();
-        if (databaseType == DatabaseType.UNKNOWN) {
-            errors.add("Database type not provided");
-        }
+// TODO: clean up. Now it is allowed generic JDBC database configuration
+//        if (databaseType == DatabaseType.UNKNOWN) {
+//            errors.add("Database type not provided");
+//        }
 
         String connectionUrl = getConnectionUrl();
         if (StringUtil.isEmpty(connectionUrl)) {

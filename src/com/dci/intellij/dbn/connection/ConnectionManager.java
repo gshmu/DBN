@@ -32,6 +32,7 @@ import com.dci.intellij.dbn.connection.transaction.TransactionOption;
 import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSettings;
 import com.dci.intellij.dbn.connection.transaction.ui.IdleConnectionDialog;
 import com.dci.intellij.dbn.connection.ui.ConnectionAuthenticationDialog;
+import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileManager;
@@ -60,7 +61,10 @@ import java.util.stream.Collectors;
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
-import static com.dci.intellij.dbn.common.util.MessageUtil.*;
+import static com.dci.intellij.dbn.common.util.MessageUtil.options;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showErrorDialog;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showInfoDialog;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
 
 @State(
@@ -261,6 +265,17 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         } catch (ConfigurationException e) {
             showInvalidConfigMessage(project, e);
         }
+    }
+
+    /**
+     * Reload jdbc drivers
+     * <p>
+     * This is useful to reaload driver's libraries without restart IDE
+     * @param connectionSettings
+     */
+    public static void reloadConnectionDrivers(ConnectionSettings connectionSettings) {
+        ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
+        DatabaseDriverManager.getInstance().loadDriverClassesWithProgressBar(databaseSettings.getDriverLibrary(), true);
     }
 
     private static void ensureAuthenticationProvided(
