@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.database.common.util;
 
+import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.list.FiltrableListImpl;
 import com.dci.intellij.dbn.common.routine.ThrowableConsumer;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.ResultSetUtil;
@@ -28,6 +30,10 @@ public class CachedResultSet<T> extends ResultSetStub {
                 ResourceUtil.close(resultSet);
             }
         }
+    }
+
+    public static CachedResultSet basic(@Nullable ResultSet resultSet) throws SQLException {
+        return create(resultSet, ResultSetTranslator.BASIC);
     }
 
     public static <T> CachedResultSet<T> create(@Nullable ResultSet resultSet, ResultSetTranslator<T> translator) throws SQLException {
@@ -74,7 +80,12 @@ public class CachedResultSet<T> extends ResultSetStub {
      * Cached result sets may be used concurrently
      * Open a copy with it's own cursor index to iterate
      */
-    public CachedResultSet scrollable() {
+    public CachedResultSet<T> open() {
+        return open(null);
+    }
+
+    public CachedResultSet<T> open(@Nullable Filter<T> filter) {
+        List<T> rows = filter == null ? this.rows : new FiltrableListImpl<>(this.rows, filter);
         return new CachedResultSet<T>(rows, translator) {
             private int cursor = -1;
 

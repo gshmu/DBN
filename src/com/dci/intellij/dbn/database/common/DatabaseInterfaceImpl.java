@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.statement.CallableStatementOutput;
 import com.dci.intellij.dbn.database.common.statement.StatementExecutionProcessor;
-import com.dci.intellij.dbn.database.common.util.NotSupportedSQLException;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -18,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,7 +83,7 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
         StatementExecutionProcessor executionProcessor = processors.get(loaderId);
         if (executionProcessor == null) {
             DatabaseType databaseType = provider.getDatabaseType();
-            throw new NotSupportedSQLException("Feature [" + loaderId + "] not implemented / supported for " + databaseType.getName() + " database type");
+            throw new SQLFeatureNotSupportedException("Feature [" + loaderId + "] not implemented / supported for " + databaseType.getName() + " database type");
         }
         return executionProcessor;
     }
