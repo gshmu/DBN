@@ -26,7 +26,7 @@ public class GenericInterfaceProvider extends DatabaseInterfaceProviderImpl {
 
     @Override
     public DatabaseType getDatabaseType() {
-        return DatabaseType.UNKNOWN;
+        return DatabaseType.GENERIC;
     }
 
     @Override

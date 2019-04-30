@@ -172,7 +172,7 @@ class Connector {
             }
 
             DatabaseType databaseType = ResourceUtil.getDatabaseType(connection);
-            databaseSettings.setDatabaseType(databaseType);
+            databaseSettings.setResolvedDatabaseType(databaseType);
             databaseSettings.setDatabaseVersion(ResourceUtil.getDatabaseVersion(connection));
             databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
             return new DBNConnection(
@@ -185,7 +185,7 @@ class Connector {
 
         } catch (Throwable e) {
             DatabaseType databaseType = ResourceUtil.getDatabaseType(databaseSettings.getDriver());
-            databaseSettings.setDatabaseType(databaseType);
+            databaseSettings.setResolvedDatabaseType(databaseType);
             databaseSettings.setConnectivityStatus(ConnectivityStatus.INVALID);
             if (connectionStatus != null) {
                 connectionStatus.setConnectionException(e);

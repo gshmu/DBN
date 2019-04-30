@@ -51,6 +51,7 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
             AuthenticationType.values(),
             array(DatabaseUrlPattern.GENERIC)),
 
+    @Deprecated // used for fallback on existing configs TODO decommission after a few releases
     UNKNOWN(
             "Unknown",
             null,
@@ -144,6 +145,7 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
         return ConstantUtil.get(values(), id, GENERIC);
     }
 
+    @NotNull
     public static DatabaseType resolve(String name) {
         name = name == null ? "" : name.toUpperCase();
         if (name.contains("ORACLE")) {

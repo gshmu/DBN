@@ -74,7 +74,7 @@ public class CachedResultSet<T> extends ResultSetStub {
      * Cached result sets may be used concurrently
      * Open a copy with it's own cursor index to iterate
      */
-    public CachedResultSet open() {
+    public CachedResultSet scrollable() {
         return new CachedResultSet<T>(rows, translator) {
             private int cursor = -1;
 

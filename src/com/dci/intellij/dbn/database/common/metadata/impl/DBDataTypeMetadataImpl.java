@@ -34,8 +34,8 @@ public class DBDataTypeMetadataImpl extends DBObjectMetadataBase implements DBDa
         return resultSet.getString(prefix + "DATA_TYPE_PACKAGE");
     }
 
-    public long getDataLength() throws SQLException {
-        return resultSet.getLong(prefix + "DATA_LENGTH");
+    public int getDataLength() throws SQLException {
+        return resultSet.getInt(prefix + "DATA_LENGTH");
     }
 
     public int getDataPrecision() throws SQLException {

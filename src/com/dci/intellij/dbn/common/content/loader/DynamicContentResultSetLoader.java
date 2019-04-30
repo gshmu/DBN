@@ -21,7 +21,6 @@ import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadataFactory;
-import com.dci.intellij.dbn.database.common.util.SkipEntrySQLException;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -106,7 +105,6 @@ public abstract class DynamicContentResultSetLoader<
                 dynamicContent.checkDisposed();
                 resultSet = createResultSet(dynamicContent, connection);
 
-                // TODO TBD standard jdbc metadata factory? (or wrapped result set column name translation)
                 DynamicContentType contentType = dynamicContent.getContentType();
                 M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
 
@@ -121,9 +119,8 @@ public abstract class DynamicContentResultSetLoader<
                     } catch (ProcessCanceledException e){
                         return;
                     } catch (RuntimeException e) {
+                        // TODO cleanup or log
                         System.out.println("RuntimeException: " + e.getMessage());
-                    } catch (SkipEntrySQLException e) {
-                        continue;
                     }
 
                     dynamicContent.checkDisposed();
