@@ -13,6 +13,7 @@ public class ObjectListActionGroup extends DefaultActionGroup {
     public ObjectListActionGroup(DBObjectList objectList) {
         add(new ReloadObjectsAction(objectList));
         GenericDatabaseElement parentElement = objectList.getParentElement();
+        ConnectionHandler connectionHandler = objectList.getConnectionHandler();
         if(parentElement instanceof DBSchema) {
             add (new ObjectListFilterAction(objectList));
             addSeparator();
@@ -20,13 +21,11 @@ public class ObjectListActionGroup extends DefaultActionGroup {
         } else if (parentElement instanceof DBObjectBundle) {
             add (new ObjectListFilterAction(objectList));
             DBObjectType objectType = objectList.getObjectType();
-            ConnectionHandler connectionHandler = objectList.getConnectionHandler();
             if (objectType == DBObjectType.SCHEMA) {
                 add (new HideEmptySchemasToggleAction(connectionHandler));
-            } else if (objectType == DBObjectType.COLUMN) {
-                add(new HidePseudoColumnsToggleAction(connectionHandler));
             }
-
+        } else if (objectList.getObjectType() == DBObjectType.COLUMN) {
+            add(new HidePseudoColumnsToggleAction(connectionHandler));
         }
     }
 }

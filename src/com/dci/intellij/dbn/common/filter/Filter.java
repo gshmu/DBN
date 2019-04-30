@@ -15,7 +15,8 @@ public interface Filter<T> {
         }
     };
 
-    public abstract boolean accepts(T object);
+    boolean accepts(T object);
+
     default boolean acceptsAll(Collection<T> objects) {
         for (T object : objects) {
             if (!accepts(object)) return false;

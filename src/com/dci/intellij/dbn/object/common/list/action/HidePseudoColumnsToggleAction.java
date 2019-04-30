@@ -12,19 +12,19 @@ import org.jetbrains.annotations.NotNull;
 public class HidePseudoColumnsToggleAction extends AbstractConnectionToggleAction {
 
     HidePseudoColumnsToggleAction(ConnectionHandler connectionHandler) {
-        super("Hide hidden columns", connectionHandler);
+        super("Hide pseudo columns", connectionHandler);
 
     }
     @Override
     public boolean isSelected(@NotNull AnActionEvent e) {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        return connectionHandler.getSettings().getFilterSettings().isHideHiddenColumns();
+        return connectionHandler.getSettings().getFilterSettings().isHidePseudoColumns();
     }
 
     @Override
     public void setSelected(@NotNull AnActionEvent e, boolean state) {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        connectionHandler.getSettings().getFilterSettings().setHideHiddenColumns(state);
+        connectionHandler.getSettings().getFilterSettings().setHidePseudoColumns(state);
         ConnectionId connectionId = connectionHandler.getConnectionId();
         EventUtil.notify(
                 connectionHandler.getProject(),
