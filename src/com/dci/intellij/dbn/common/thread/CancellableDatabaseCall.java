@@ -29,7 +29,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
     private long startTimestamp = System.currentTimeMillis();
     private ThreadInfo invoker = ThreadMonitor.current();
-    private transient ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
+    private ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
 
 
     private DBNConnection connection;
@@ -123,6 +123,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
                             text = text + " (timing out in " + timingOutIn + " seconds) "; else
                             text = text + " (timing out in " + TimeUnit.SECONDS.toMinutes(timingOutIn) + " minutes) ";
 
+
                         progressIndicator.setText(text);
                     }
                 }
@@ -130,24 +131,20 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
 
             cancelCheckTimer.schedule(cancelCheckTask, 100, 100);
 
-            T result = null;
             try {
                 ExecutorService executorService = ThreadFactory.cancellableExecutor();
                 future = executorService.submit(this);
-                result = timeout == 0 ?  future.get() : future.get(timeout, timeUnit);
+                return timeout == 0 ?  future.get() : future.get(timeout, timeUnit);
             } finally {
-                progressIndicator = null;
                 future = null;
                 if (cancelCheckTimer != null) {
                     cancelCheckTimer.cancel();
                 }
             }
 
-            return result;
-        } catch (CancellationException e) {
+        } catch (CancellationException | InterruptedException e) {
             throw AlreadyDisposedException.INSTANCE;
-        } catch (InterruptedException e) {
-            throw AlreadyDisposedException.INSTANCE;
+
         } catch (ExecutionException e) {
             Throwable cause = e.getCause();
             if (cause instanceof SQLTimeoutException) {
