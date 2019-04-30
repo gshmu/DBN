@@ -119,8 +119,7 @@ public abstract class DynamicContentResultSetLoader<
                     } catch (ProcessCanceledException e){
                         return;
                     } catch (RuntimeException e) {
-                        // TODO cleanup or log
-                        System.out.println("RuntimeException: " + e.getMessage());
+                        LOGGER.warn("Failed to create element", e);
                     }
 
                     dynamicContent.checkDisposed();
