@@ -46,7 +46,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
-import com.dci.intellij.dbn.object.common.operation.DBOperationNotSupportedException;
+import com.dci.intellij.dbn.object.common.operation.DBUnsupportedOperationException;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperties;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -91,7 +91,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     private ConnectionHandlerRef connectionHandlerRef;
 
     private static final DBOperationExecutor NULL_OPERATION_EXECUTOR = operationType -> {
-        throw new DBOperationNotSupportedException(operationType);
+        throw new DBUnsupportedOperationException(operationType);
     };
 
     protected DBObjectImpl(@NotNull DBObject parentObject, M metadata) throws SQLException {

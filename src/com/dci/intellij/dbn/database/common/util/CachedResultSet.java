@@ -118,6 +118,18 @@ public class CachedResultSet<T> extends ResultSetStub {
                         Integer.valueOf(value.toString());
     }
 
+    @Override
+    public boolean getBoolean(String columnLabel) throws SQLException {
+        Object value = getObject(columnLabel);
+        if (value instanceof Number) {
+            Number number = (Number) value;
+            return number.intValue() != 0;
+
+        } else if (value instanceof Boolean) {
+            return (boolean) value;
+        }
+        return false;
+    }
 
     // TODO add more accessors overrides if needed
 
