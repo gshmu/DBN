@@ -7,7 +7,10 @@ import java.util.EventListener;
 
 public interface ConnectionSettingsListener extends EventListener {
     Topic<ConnectionSettingsListener> TOPIC = Topic.create("Connection changed", ConnectionSettingsListener.class);
-    void connectionsChanged();
-    void connectionChanged(ConnectionId connectionId);
-    void connectionNameChanged(ConnectionId connectionId);
+
+    default void connectionsChanged() {}
+
+    default void connectionChanged(ConnectionId connectionId) {}
+
+    default void connectionNameChanged(ConnectionId connectionId) {}
 }
