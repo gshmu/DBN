@@ -41,12 +41,12 @@ public abstract class WrappedResultSet implements ResultSet {
 
     @Override
     public void close() throws SQLException {
-        inner.close();
+        if (inner != null) inner.close();
     }
 
     @Override
     public boolean isClosed() throws SQLException {
-        return inner.isClosed();
+        return inner == null || inner.isClosed();
     }
 
     @Override
