@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -43,7 +44,12 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DELETED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DIRTY;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.UPDATING;
 
 public class DatasetEditorModel
         extends ResultSetDataModel<DatasetEditorModelRow, DatasetEditorModelCell>
@@ -163,14 +169,31 @@ public class DatasetEditorModel
         }
 
         String selectStatement = filter.createSelectStatement(dataset, getState().getSortingState());
-        DBNStatement statement;
+        DBNStatement statement = null;
         if (isReadonly()) {
             statement = connection.createStatement();
         } else {
-            if (connection.getMetaData().supportsResultSetType(ResultSet.TYPE_SCROLL_INSENSITIVE)) {
-                statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
-            } else {
-                statement = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+            // ensure we always get a statement,
+            DatabaseMetaData metaData = connection.getMetaData();
+            if (metaData.supportsResultSetType(ResultSet.TYPE_SCROLL_INSENSITIVE)) {
+                try {
+                    statement = connection.createStatement(
+                            ResultSet.TYPE_SCROLL_INSENSITIVE,
+                            ResultSet.CONCUR_UPDATABLE);
+
+                } catch (Throwable e) {
+                    if (metaData.supportsResultSetType(ResultSet.TYPE_FORWARD_ONLY)) {
+                        try {
+                            statement = connection.createStatement(
+                                    ResultSet.TYPE_FORWARD_ONLY,
+                                    ResultSet.CONCUR_READ_ONLY);
+                        } catch (Throwable e2) {
+                            // default statement creation
+                            statement = connection.createStatement();
+                        }
+                    }
+
+                }
             }
         }
         statementRef.set(statement);

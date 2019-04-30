@@ -52,11 +52,20 @@ public class DatasetFilterUtil {
     }
 
     public static void createSimpleSelectStatement(DBDataset dataset, StringBuilder buffer) {
+
+        buffer.append("select * from ");
+        buffer.append(dataset.getSchema().getQuotedName(true));
+        buffer.append(".");
+        buffer.append(dataset.getQuotedName(true));
+/*
+        // TODO: review, removed alias from query, some databases do not support it and apparently is not required
+        //  there was a reason for the alias. don't remember what it was. Something related to editable result sets
         buffer.append("select a.* from ");
         buffer.append(dataset.getSchema().getQuotedName(true));
         buffer.append(".");
         buffer.append(dataset.getQuotedName(true));
         buffer.append(" a");
+*/
 
     }
 }

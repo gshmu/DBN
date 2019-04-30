@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.notification.NotificationUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -12,6 +13,7 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.ssh.SshTunnelConnector;
 import com.dci.intellij.dbn.connection.ssh.SshTunnelManager;
 import com.dci.intellij.dbn.connection.ssl.SslConnectionManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,6 +25,8 @@ import java.util.Map;
 import java.util.Properties;
 
 class Connector {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
+
     private SessionId sessionId;
     private AuthenticationInfo authenticationInfo;
     private ConnectionSettings connectionSettings;
@@ -67,7 +71,9 @@ class Connector {
             AuthenticationType authenticationType = authenticationInfo.getType();
             if (authenticationType.isOneOf(AuthenticationType.USER, AuthenticationType.USER_PASSWORD)) {
                 String user = authenticationInfo.getUser();
-                properties.put("user", user);
+                if (StringUtil.isNotEmpty(user)) {
+                    properties.put("user", user);
+                }
 
                 if (authenticationType == AuthenticationType.USER_PASSWORD) {
                     String password = authenticationInfo.getPassword();
@@ -120,6 +126,9 @@ class Connector {
                     connectionUrl = databaseSettings.getConnectionUrl(localHost, localPort);
                 }
             }
+            /** THIS IS IMPORTANT. As we have created an isolated classloader for external driver config,
+             * we must set context lodader used by driver to ensure all required classes are available to connect */
+            Thread.currentThread().setContextClassLoader(driver.getClass().getClassLoader());
 
             Connection connection = driver.connect(connectionUrl, properties);
             if (connection == null) {
@@ -149,10 +158,17 @@ class Connector {
             }
 
             try {
-                connection.setAutoCommit(autoCommit);
-            } catch (SQLException e) {
-                // need to try twice (don't remember why)
-                connection.setAutoCommit(autoCommit);
+
+                // TODO move this to ConnectionUtils
+                try {
+                    connection.setAutoCommit(autoCommit);
+                } catch (SQLException e) {
+                    // need to try twice (don't remember why)
+                    connection.setAutoCommit(autoCommit);
+                }
+            }catch (Exception e){
+                // ignored - some databases not support to change auto-commit
+                LOGGER.warn("Unable to set auto-commit to " + autoCommit+". Maybe your database does not support transactions...", e);
             }
 
             DatabaseType databaseType = ResourceUtil.getDatabaseType(connection);

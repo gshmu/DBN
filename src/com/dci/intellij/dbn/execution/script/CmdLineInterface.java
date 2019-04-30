@@ -29,6 +29,7 @@ public class CmdLineInterface extends CommonUtil implements Cloneable<CmdLineInt
         CmdLineInterface MYSQL = new CmdLineInterface(DEFAULT_ID, DatabaseType.MYSQL, "mysql", "MySQL client", "mysql" + extension + "");
         CmdLineInterface POSTGRES = new CmdLineInterface(DEFAULT_ID, DatabaseType.POSTGRES, "psql ", "PostgreSQL terminal", "psql" + extension);
         CmdLineInterface SQLITE = new CmdLineInterface(DEFAULT_ID, DatabaseType.SQLITE, "sqlite3 ", "SQLite terminal", "sqlite3" + extension);
+        CmdLineInterface GENERIC = new CmdLineInterface(DEFAULT_ID, DatabaseType.GENERIC, "sql ", "SQL terminal", "sql" + extension);
     }
 
     public static CmdLineInterface getDefault(@Nullable DatabaseType databaseType) {
@@ -40,7 +41,7 @@ public class CmdLineInterface extends CommonUtil implements Cloneable<CmdLineInt
                 case SQLITE: return Defaults.SQLITE;
             }
         }
-        return null;
+        return Defaults.GENERIC;
     }
 
     public CmdLineInterface() {

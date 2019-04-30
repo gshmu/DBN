@@ -86,9 +86,13 @@ public class DBNConnection extends DBNConnectionBase {
                 @Override
                 protected void changeInner(boolean value) throws SQLException {
                     try {
-                        inner.setAutoCommit(value);
-                    } catch (SQLException e) {
-                        inner.setAutoCommit(value);
+                        try {
+                            inner.setAutoCommit(value);
+                        } catch (SQLException e) {
+                            inner.setAutoCommit(value);
+                        }
+                    } catch (Throwable e){
+                        LOGGER.warn("Unable to set auto-commit to " + value+". Maybe your database does not support transactions...", e);
                     }
                 }
 

@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionIdProvider;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionFilterSettingsForm;
+import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterSettings;
@@ -23,9 +24,11 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
     private ObjectTypeFilterSettings objectTypeFilterSettings;
     private ObjectNameFilterSettings objectNameFilterSettings;
     private boolean hideEmptySchemas = false;
+    private boolean hideHiddenColumns = true;
     private ConnectionSettings connectionSettings;
 
     private static final Filter<DBSchema> EMPTY_SCHEMAS_FILTER = schema -> !schema.isEmptySchema();
+    private static final Filter<DBColumn> EMPTY_HIDDEN_COLUMN_FILTER = column -> !column.isHidden();
 
     private Latent<Filter<DBSchema>> schemaFilter = Latent.mutable(
             () -> hideEmptySchemas,
@@ -48,6 +51,27 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
                 }
             });
 
+    private Latent<Filter<DBColumn>> columnFilter = Latent.mutable(
+        () -> hideHiddenColumns,
+        () -> {
+            Filter<DBObject> filter = objectNameFilterSettings.getFilter(DBObjectType.COLUMN);
+            if (filter == null) {
+                return EMPTY_HIDDEN_COLUMN_FILTER;
+            } else {
+                return new Filter<DBColumn>() {
+                    @Override
+                    public int hashCode() {
+                        return filter.hashCode() + EMPTY_HIDDEN_COLUMN_FILTER.hashCode();
+                    }
+
+                    @Override
+                    public boolean accepts(DBColumn column) {
+                        return EMPTY_HIDDEN_COLUMN_FILTER.accepts(column) && filter.accepts(column);
+                    }
+                };
+            }
+        });
+
     ConnectionFilterSettings(ConnectionSettings connectionSettings) {
         super(connectionSettings.getProject());
         this.connectionSettings = connectionSettings;
@@ -61,6 +85,14 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
 
     public void setHideEmptySchemas(boolean hideEmptySchemas) {
         this.hideEmptySchemas = hideEmptySchemas;
+    }
+
+    public boolean isHideHiddenColumns() {
+        return hideHiddenColumns;
+    }
+
+    public void setHideHiddenColumns(boolean hideHiddenColumns) {
+        this.hideHiddenColumns = hideHiddenColumns;
     }
 
     public ConnectionId getConnectionId() {
@@ -111,19 +143,22 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
     @Override
     public void readConfiguration(Element element) {
         hideEmptySchemas = getBooleanAttribute(element, "hide-empty-schemas", hideEmptySchemas);
+        hideHiddenColumns = getBooleanAttribute(element, "hide-hidden-columns", hideHiddenColumns);
         super.readConfiguration(element);
     }
 
     @Override
     public void writeConfiguration(Element element) {
         setBooleanAttribute(element, "hide-empty-schemas", hideEmptySchemas);
+        setBooleanAttribute(element, "hide-hidden-columns", hideHiddenColumns);
         super.writeConfiguration(element);
     }
 
     @Nullable
     public Filter<? extends DBObject> getNameFilter(DBObjectType objectType) {
-        return objectType == DBObjectType.SCHEMA ?
-                schemaFilter.get() :
+        return
+            objectType == DBObjectType.SCHEMA ? schemaFilter.get() :
+            objectType == DBObjectType.COLUMN ? columnFilter.get() :
                 objectNameFilterSettings.getFilter(objectType);
     }
 }
