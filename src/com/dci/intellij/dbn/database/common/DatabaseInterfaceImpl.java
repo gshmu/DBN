@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.statement.CallableStatementOutput;
 import com.dci.intellij.dbn.database.common.statement.StatementExecutionProcessor;
+import com.dci.intellij.dbn.database.common.util.NotSupportedSQLException;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -82,8 +83,7 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
         StatementExecutionProcessor executionProcessor = processors.get(loaderId);
         if (executionProcessor == null) {
             DatabaseType databaseType = provider.getDatabaseType();
-            String databaseTypeName = databaseType == DatabaseType.UNKNOWN ? "this" : databaseType.getName();
-            throw new SQLException("Feature [" + loaderId + "] not implemented / supported for " + databaseTypeName + " database type");
+            throw new NotSupportedSQLException("Feature [" + loaderId + "] not implemented / supported for " + databaseType.getName() + " database type");
         }
         return executionProcessor;
     }

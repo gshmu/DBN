@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.generic.GenericInterfaceProvider;
 import com.dci.intellij.dbn.database.mysql.MySqlInterfaceProvider;
@@ -27,6 +26,8 @@ public class DatabaseInterfaceProviderFactory {
         } else {
             ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
             databaseType = databaseSettings.getDatabaseType();
+/*
+            TODO use resolvedDatabaseType to guess better interface provider ??
             if (databaseType == DatabaseType.UNKNOWN) {
                 DBNConnection testConnection = null;
                 try {
@@ -37,6 +38,7 @@ public class DatabaseInterfaceProviderFactory {
                     ResourceUtil.close(testConnection);
                 }
             }
+*/
         }
 
         return get(databaseType);

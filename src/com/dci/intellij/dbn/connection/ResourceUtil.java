@@ -89,11 +89,9 @@ public class ResourceUtil {
             throw authenticationError.getException();
         }
 
-        DatabaseType databaseType = connectionHandler.getDatabaseType();
-
-        DatabaseInterfaceProvider interfaceProvider = databaseType == DatabaseType.UNKNOWN ? null : connectionHandler.getInterfaceProvider();
+        DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
         try {
-            DatabaseAttachmentHandler attachmentHandler = interfaceProvider == null ? null : interfaceProvider.getCompatibilityInterface().getDatabaseAttachmentHandler();
+            DatabaseAttachmentHandler attachmentHandler = interfaceProvider.getCompatibilityInterface().getDatabaseAttachmentHandler();
             DBNConnection connection = connect(
                     connectionSettings,
                     connectionStatus,
@@ -106,13 +104,11 @@ public class ResourceUtil {
             connectionStatus.setAuthenticationError(null);
             return connection;
         } catch (SQLException e) {
-            if (interfaceProvider != null) {
-                DatabaseMessageParserInterface messageParserInterface = interfaceProvider.getMessageParserInterface();
-                if (messageParserInterface.isAuthenticationException(e)){
-                    authenticationInfo.setPassword(null);
-                    authenticationError = new AuthenticationError(authenticationInfo, e);
-                    connectionStatus.setAuthenticationError(authenticationError);
-                }
+            DatabaseMessageParserInterface messageParserInterface = interfaceProvider.getMessageParserInterface();
+            if (messageParserInterface.isAuthenticationException(e)){
+                authenticationInfo.setPassword(null);
+                authenticationError = new AuthenticationError(authenticationInfo, e);
+                connectionStatus.setAuthenticationError(authenticationError);
             }
             throw e;
         }

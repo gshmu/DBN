@@ -64,20 +64,20 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadTables(String ownerName, DBNConnection connection) throws SQLException {
-        ResultSet tablesRs = loadTablesRaw(ownerName, connection);
+        ResultSet tablesRs = loadTablesRaw(ownerName, connection).scrollable();
         return new TablesResultSet(tablesRs);
     }
 
     @Override
     public ResultSet loadViews(String ownerName, DBNConnection connection) throws SQLException {
-        ResultSet viewsRs = loadViewsRaw(ownerName, connection);
+        ResultSet viewsRs = loadViewsRaw(ownerName, connection).scrollable();
         return new ViewsResultSet(viewsRs);
     }
 
     @Override
     public ResultSet loadColumns(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
-        ResultSet columnsRs = loadColumnsRaw(ownerName, datasetName, connection);
-        ResultSet pseudoColumnsRs = loadPseudoColumnsRaw(ownerName, datasetName, connection);
+        ResultSet columnsRs = loadColumnsRaw(ownerName, datasetName, connection).scrollable();
+        ResultSet pseudoColumnsRs = loadPseudoColumnsRaw(ownerName, datasetName, connection).scrollable();
 
         columnsRs = new ColumnsResultSet(columnsRs);
         pseudoColumnsRs = new ColumnsResultSet(pseudoColumnsRs);
@@ -87,8 +87,8 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadAllColumns(String ownerName, DBNConnection connection) throws SQLException {
-        ResultSet columnsRs = loadAllColumnsRaw(ownerName, connection);
-        ResultSet pseudoColumnsRs = loadAllPseudoColumnsRaw(ownerName, connection);
+        ResultSet columnsRs = loadAllColumnsRaw(ownerName, connection).scrollable();
+        ResultSet pseudoColumnsRs = loadAllPseudoColumnsRaw(ownerName, connection).scrollable();
 
         columnsRs = new ColumnsResultSet(columnsRs);
         pseudoColumnsRs = new ColumnsResultSet(pseudoColumnsRs);
@@ -98,7 +98,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadIndexes(String ownerName, String tableName, DBNConnection connection) throws SQLException {
-        ResultSet indexesRs = loadIndexesRaw(ownerName, tableName, connection);
+        ResultSet indexesRs = loadIndexesRaw(ownerName, tableName, connection).scrollable();
         return new IndexesResultSet(indexesRs);
     }
 
@@ -106,7 +106,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     public ResultSet loadAllIndexes(String ownerName, DBNConnection connection) throws SQLException {
         MultipartResultSet allIndexesRs = new MultipartResultSet();
 
-        CachedResultSet tablesRs = loadTablesRaw(ownerName, connection);
+        CachedResultSet tablesRs = loadTablesRaw(ownerName, connection).scrollable();
         tablesRs.forEachRow("TABLE_NAME", String.class, (tableName) -> {
             ResultSet indexesRs = loadIndexes(ownerName, (String) tableName, connection);
             allIndexesRs.add(indexesRs);
@@ -117,8 +117,8 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadConstraints(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
-        ResultSet primaryKeysRs = loadPrimaryKeysRaw(ownerName, datasetName, connection);
-        ResultSet foreignKeysRs = loadForeignKeysRaw(ownerName, datasetName, connection);
+        ResultSet primaryKeysRs = loadPrimaryKeysRaw(ownerName, datasetName, connection).scrollable();
+        ResultSet foreignKeysRs = loadForeignKeysRaw(ownerName, datasetName, connection).scrollable();
 
         primaryKeysRs = new PrimaryKeysResultSet(primaryKeysRs);
         foreignKeysRs = new ForeignKeysResultSet(foreignKeysRs);
@@ -131,7 +131,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     public ResultSet loadAllConstraints(String ownerName, DBNConnection connection) throws SQLException {
         MultipartResultSet allConstraintsRs = new MultipartResultSet();
 
-        CachedResultSet tablesRs = loadTablesRaw(ownerName, connection);
+        CachedResultSet tablesRs = loadTablesRaw(ownerName, connection).scrollable();
         tablesRs.forEachRow("TABLE_NAME", String.class, (tableName) -> {
             ResultSet constraintsRs = loadConstraints(ownerName, (String) tableName, connection);
             allConstraintsRs.add(constraintsRs);
@@ -149,7 +149,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getTables(null, ownerName, null, new String[]{"TABLE"});
                     return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
-                }).open();
+                });
     }
 
     private CachedResultSet loadViewsRaw(String ownerName, DBNConnection connection) throws SQLException {
@@ -159,7 +159,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getTables(null, ownerName, null, new String[]{"VIEW"});
                     return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
-                }).open();
+                });
     }
 
     private CachedResultSet loadColumnsRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
@@ -169,7 +169,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getColumns(null, ownerName, datasetName, null);
                     return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
-                }).open();
+                });
     }
 
     private CachedResultSet loadPseudoColumnsRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
@@ -179,7 +179,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getPseudoColumns(null, ownerName, datasetName, null);
                     return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
-                }).open();
+                });
     }
 
     private CachedResultSet loadAllColumnsRaw(String ownerName, DBNConnection connection) throws SQLException {
@@ -189,7 +189,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getColumns(null, ownerName, null, null);
                     return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
-                }).open();
+                });
     }
 
     private CachedResultSet loadAllPseudoColumnsRaw(String ownerName, DBNConnection connection) throws SQLException {
@@ -199,7 +199,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getPseudoColumns(null, ownerName, null, null);
                     return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
-                }).open();
+                });
     }
 
     private CachedResultSet loadIndexesRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
@@ -209,7 +209,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getIndexInfo(null, ownerName, datasetName, false, true);
                     return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
-                }).open();
+                });
     }
 
 
@@ -220,7 +220,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getPrimaryKeys(null, ownerName, datasetName);
                     return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
-                }).open();
+                });
     }
 
     private CachedResultSet loadForeignKeysRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
@@ -230,7 +230,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getImportedKeys(null, ownerName, datasetName);
                     return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
-                }).open();
+                });
     }
 
     private CachedResultSet loadFunctionsRaw(String ownerName, DBNConnection connection) throws SQLException {
@@ -240,7 +240,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getFunctions(null, ownerName, null);
                     return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
-                }).open();
+                });
     }
 
     private CachedResultSet loadProceduresRaw(String ownerName, DBNConnection connection) throws SQLException {
@@ -250,6 +250,6 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getProcedures(null, ownerName, null);
                     return CachedResultSet.create(resultSet, ResultSetTranslator.BASIC);
-                }).open();
+                });
     }
 }

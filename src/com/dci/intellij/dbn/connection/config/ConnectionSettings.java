@@ -27,7 +27,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     private ConnectionFilterSettings filterSettings         = new ConnectionFilterSettings(this);
 
     public ConnectionSettings(ConnectionBundleSettings parent) {
-        this(parent, DatabaseType.UNKNOWN, ConnectionConfigType.BASIC);
+        this(parent, DatabaseType.GENERIC, ConnectionConfigType.CUSTOM);
     }
     public ConnectionSettings(ConnectionBundleSettings parent, DatabaseType databaseType, ConnectionConfigType configType) {
         super(parent);
