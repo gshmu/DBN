@@ -19,7 +19,7 @@
           <component id="c057c" class="javax.swing.JLabel">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                <minimum-size width="80" height="-1"/>
+                <preferred-size width="90" height="-1"/>
               </grid>
             </constraints>
             <properties>
@@ -29,7 +29,9 @@
           </component>
           <component id="65390" class="javax.swing.JLabel">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                <preferred-size width="90" height="-1"/>
+              </grid>
             </constraints>
             <properties>
               <labelFor value="1de94"/>
@@ -115,7 +117,7 @@
               <component id="5f7c0" class="javax.swing.JLabel">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                    <minimum-size width="80" height="-1"/>
+                    <preferred-size width="90" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
@@ -126,7 +128,7 @@
               <component id="78909" class="javax.swing.JLabel">
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                    <minimum-size width="80" height="-1"/>
+                    <preferred-size width="90" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
@@ -193,7 +195,7 @@
               <component id="9dfc5" class="javax.swing.JLabel">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                    <minimum-size width="80" height="-1"/>
+                    <preferred-size width="90" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>

@@ -36,7 +36,7 @@ public class ConnectionCreateAction extends ConnectionSettingsAction {
         ConnectionConfigType configType = ConnectionConfigType.BASIC;
         if (databaseType == null) {
             configType = ConnectionConfigType.CUSTOM;
-            databaseType = DatabaseType.UNKNOWN;
+            databaseType = DatabaseType.GENERIC;
         }
 
         target.createNewConnection(databaseType, configType);

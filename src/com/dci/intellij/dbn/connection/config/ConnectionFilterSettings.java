@@ -37,23 +37,11 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
                 if (filter == null) {
                     return hideEmptySchemas ? EMPTY_SCHEMAS_FILTER : null; // return null filter for optimization
                 } else {
-                    return new Filter<DBSchema>() {
-                        @Override
-                        public int hashCode() {
-                            if (hideEmptySchemas) {
-                                return filter.hashCode() + EMPTY_SCHEMAS_FILTER.hashCode();
-                            } else {
-                                return filter.hashCode();
-                            }
-                        }
-
-                        @Override
-                        public boolean accepts(DBSchema schema) {
-                            if (hideEmptySchemas) {
-                                return EMPTY_SCHEMAS_FILTER.accepts(schema) && filter.accepts(schema);
-                            } else {
-                                return filter.accepts(schema);
-                            }
+                    return schema -> {
+                        if (hideEmptySchemas) {
+                            return EMPTY_SCHEMAS_FILTER.accepts(schema) && filter.accepts(schema);
+                        } else {
+                            return filter.accepts(schema);
                         }
                     };
                 }
@@ -66,23 +54,11 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
             if (filter == null) {
                 return PSEUDO_COLUMNS_FILTER;
             } else {
-                return new Filter<DBColumn>() {
-                    @Override
-                    public int hashCode() {
-                        if (hidePseudoColumns) {
-                            return filter.hashCode() + PSEUDO_COLUMNS_FILTER.hashCode();
-                        } else {
-                            return filter.hashCode();
-                        }
-                    }
-
-                    @Override
-                    public boolean accepts(DBColumn column) {
-                        if (hidePseudoColumns) {
-                            return PSEUDO_COLUMNS_FILTER.accepts(column) && filter.accepts(column);
-                        } else {
-                            return filter.accepts(column);
-                        }
+                return column -> {
+                    if (hidePseudoColumns) {
+                        return PSEUDO_COLUMNS_FILTER.accepts(column) && filter.accepts(column);
+                    } else {
+                        return filter.accepts(column);
                     }
                 };
             }

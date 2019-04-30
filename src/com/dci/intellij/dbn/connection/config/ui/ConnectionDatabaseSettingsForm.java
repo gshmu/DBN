@@ -40,7 +40,10 @@ import javax.swing.text.Document;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getElements;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 
 public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<ConnectionDatabaseSettings> {
     private JPanel mainPanel;
@@ -73,7 +76,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         updateFieldVisibility(configType, configuration.getDatabaseType());
 
         DatabaseType databaseType = configuration.getDatabaseType();
-        if (databaseType == DatabaseType.UNKNOWN) {
+        if (databaseType == DatabaseType.GENERIC) {
             initComboBox(databaseTypeComboBox,
                     DatabaseType.ORACLE,
                     DatabaseType.MYSQL,

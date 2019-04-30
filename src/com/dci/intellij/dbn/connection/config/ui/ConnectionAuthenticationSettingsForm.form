@@ -11,7 +11,7 @@
       <component id="da74e" class="javax.swing.JLabel" binding="userLabel">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-            <minimum-size width="80" height="-1"/>
+            <preferred-size width="90" height="-1"/>
           </grid>
         </constraints>
         <properties>
@@ -37,7 +37,7 @@
       <component id="8b995" class="javax.swing.JLabel" binding="passwordLabel">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
-            <minimum-size width="80" height="-1"/>
+            <preferred-size width="90" height="-1"/>
           </grid>
         </constraints>
         <properties>
@@ -57,7 +57,9 @@
       </component>
       <component id="bd58d" class="javax.swing.JLabel">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="90" height="-1"/>
+          </grid>
         </constraints>
         <properties>
           <text value="Authentication"/>
