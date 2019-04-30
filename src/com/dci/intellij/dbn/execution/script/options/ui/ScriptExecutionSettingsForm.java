@@ -54,7 +54,7 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
     private void showNewInterfacePopup(DataContext dataContext, RelativePoint point) {
         DefaultActionGroup actionGroup = new DefaultActionGroup();
         for (DatabaseType databaseType : DatabaseType.values()) {
-            if (!databaseType.isOneOf(DatabaseType.UNKNOWN, DatabaseType.GENERIC)){
+            if (databaseType != DatabaseType.GENERIC){
                 actionGroup.add(new CreateInterfaceAction(databaseType));
             }
         }

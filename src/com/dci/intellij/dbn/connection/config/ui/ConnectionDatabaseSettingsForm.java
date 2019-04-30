@@ -364,10 +364,10 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         hostTextField.setText(databaseInfo.getHost());
         portTextField.setText(databaseInfo.getPort());
         databaseTextField.setText(databaseInfo.getDatabase());
+
         DatabaseType databaseType = configuration.getDatabaseType();
-        if (databaseType != DatabaseType.UNKNOWN) {
-            setSelection(databaseTypeComboBox, databaseType);
-        }
+        setSelection(databaseTypeComboBox, databaseType);
+
 
         DatabaseUrlType[] urlTypes = databaseType.getUrlTypes();
         initComboBox(urlTypeComboBox, urlTypes);
