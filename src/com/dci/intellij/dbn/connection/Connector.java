@@ -63,12 +63,17 @@ class Connector {
             if (!authenticationInfo.isProvided() && this.authenticationInfo != null) {
                 authenticationInfo = this.authenticationInfo;
             }
-            if (authenticationInfo.isSupported() && !authenticationInfo.isOsAuthentication()) {
+
+            AuthenticationType authenticationType = authenticationInfo.getType();
+            if (authenticationType.isOneOf(AuthenticationType.USER, AuthenticationType.USER_PASSWORD)) {
                 String user = authenticationInfo.getUser();
-                String password = authenticationInfo.getPassword();
                 properties.put("user", user);
-                if (StringUtil.isNotEmpty(password)) {
-                    properties.put("password", password);
+
+                if (authenticationType == AuthenticationType.USER_PASSWORD) {
+                    String password = authenticationInfo.getPassword();
+                    if (StringUtil.isNotEmpty(password)) {
+                        properties.put("password", password);
+                    }
                 }
             }
 

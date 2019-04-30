@@ -1,13 +1,15 @@
 package com.dci.intellij.dbn.connection.ui;
 
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
+import com.dci.intellij.dbn.common.ui.ComboBoxUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.AuthenticationType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.ui.DocumentAdapter;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,14 +17,18 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
 
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
+
 public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenticationDialog>{
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JPasswordField passwordField;
     private JTextField userTextField;
-    private JCheckBox emptyPasswordCheckBox;
-    private JCheckBox osAuthenticationCheckBox;
     private JPanel hintPanel;
+    private ComboBox<AuthenticationType> authTypeComboBox;
+    private JLabel userLabel;
+    private JLabel passwordLabel;
 
     private String cachedUser = "";
     private String cachedPassword = "";
@@ -38,13 +44,9 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
             cachedUser = user;
         }
 
-        boolean isEmptyPassword = authenticationInfo.isEmptyAuthentication();
-        emptyPasswordCheckBox.setSelected(isEmptyPassword);
-        passwordField.setEnabled(!isEmptyPassword);
-        passwordField.setBackground(isEmptyPassword ? UIUtil.getPanelBackground() : UIUtil.getTextFieldBackground());
-
         String hintText;
         if (connectionHandler != null) {
+            initComboBox(authTypeComboBox, connectionHandler.getDatabaseType().getAuthTypes());
             DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler, this);
             headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
@@ -57,8 +59,11 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
                             "in DBN Settings > Connection > Details (currently set to " + expiryTimeText + ")";
 
         } else {
+            initComboBox(authTypeComboBox, AuthenticationType.values());
             hintText = "The system needs your credentials to connect to this database.";
         }
+        setSelection(authTypeComboBox, authenticationInfo.getType());
+
         DBNHintForm hintForm = new DBNHintForm(hintText, null, true);
         hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 
@@ -82,45 +87,38 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
             }
         });
 
-        osAuthenticationCheckBox.addActionListener(e -> {
-            authenticationInfo.setOsAuthentication(osAuthenticationCheckBox.isSelected());
-            updateAuthenticationFields();
-            parentComponent.updateConnectButton();
-        });
-
-        emptyPasswordCheckBox.addActionListener(e -> {
-            authenticationInfo.setEmptyAuthentication(emptyPasswordCheckBox.isSelected());
+        authTypeComboBox.addActionListener(e -> {
+            authenticationInfo.setType(ComboBoxUtil.getSelection(authTypeComboBox));
             updateAuthenticationFields();
             parentComponent.updateConnectButton();
         });
     }
 
     private void updateAuthenticationFields() {
-        boolean isOsAuthentication = osAuthenticationCheckBox.isSelected();
-        boolean isEmptyPassword = emptyPasswordCheckBox.isSelected();
-        userTextField.setEnabled(!isOsAuthentication);
+        AuthenticationType authType = ComboBoxUtil.getSelection(authTypeComboBox);
 
-        passwordField.setEnabled(!isOsAuthentication && !emptyPasswordCheckBox.isSelected());
-        passwordField.setBackground(isOsAuthentication || isEmptyPassword ? UIUtil.getPanelBackground() : UIUtil.getTextFieldBackground());
-        emptyPasswordCheckBox.setEnabled(!isOsAuthentication);
+        boolean showUser = authType.isOneOf(
+                AuthenticationType.USER,
+                AuthenticationType.USER_PASSWORD);
+
+        boolean showPassword = authType == AuthenticationType.USER_PASSWORD;
+
+
+        userLabel.setVisible(showUser);
+        userTextField.setVisible(showUser);
+
+        passwordLabel.setVisible(showPassword);
+        passwordField.setVisible(showPassword);
+        //passwordField.setBackground(showPasswordField ? UIUtil.getTextFieldBackground() : UIUtil.getPanelBackground());
 
         String user = userTextField.getText();
         String password = new String(passwordField.getPassword());
         if (StringUtil.isNotEmpty(user)) cachedUser = user;
         if (StringUtil.isNotEmpty(password)) cachedPassword = password;
 
-        if (isOsAuthentication || isEmptyPassword) {
-            passwordField.setText("");
-        } else {
-            passwordField.setText(cachedPassword);
-        }
 
-        if (isOsAuthentication) {
-            userTextField.setText("");
-            emptyPasswordCheckBox.setSelected(false);
-        } else {
-            userTextField.setText(cachedUser);
-        }
+        userTextField.setText(showUser ? cachedUser : "");
+        passwordField.setText(showPassword ? cachedPassword : "");
     }
 
     @NotNull

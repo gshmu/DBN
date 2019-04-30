@@ -100,7 +100,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         String connectionString = null;
         String driverString = null;
         if (connectionInfo != null) {
-            connectionString = connectionInfo.getDatabaseType().getDisplayName() + " " + connectionInfo.getProductVersion();
+            connectionString = connectionInfo.getDatabaseType().getName() + " " + connectionInfo.getProductVersion();
             driverString = connectionInfo.getDriverVersion();
         }
         @NonNls final StringBuilder description = new StringBuilder();

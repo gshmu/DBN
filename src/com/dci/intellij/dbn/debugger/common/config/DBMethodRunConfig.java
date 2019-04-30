@@ -67,7 +67,7 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
                 ConnectionHandler connectionHandler = method.getConnectionHandler();
                 if (!DatabaseFeature.DEBUGGING.isSupported(connectionHandler)){
                     throw new RuntimeConfigurationError(
-                            "Debugging is not supported for " + connectionHandler.getDatabaseType().getDisplayName() +" databases.");
+                            "Debugging is not supported for " + connectionHandler.getDatabaseType().getName() +" databases.");
                 }
             }
         }

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.database.postgres;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.AuthenticationType;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.database.CmdLineExecutionInput;
 import com.dci.intellij.dbn.database.common.DatabaseExecutionInterfaceImpl;
@@ -45,8 +46,13 @@ public class PostgresExecutionInterface extends DatabaseExecutionInterfaceImpl {
             command.add("--dbname=" + database);
         }
 
-        command.add("--username=" + authenticationInfo.getUser());
-        if (authenticationInfo.isEmptyAuthentication()) {
+        AuthenticationType authenticationType = authenticationInfo.getType();
+        if (authenticationType.isOneOf(AuthenticationType.USER, AuthenticationType.USER_PASSWORD)) {
+            command.add("--username=" + authenticationInfo.getUser());
+        }
+
+
+        if (authenticationType != AuthenticationType.USER_PASSWORD) {
             command.add("--no-password");
         } else {
             executionInput.getEnvironmentVars().put("PGPASSWORD", authenticationInfo.getPassword());

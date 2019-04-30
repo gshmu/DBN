@@ -3,56 +3,57 @@ package com.dci.intellij.dbn.connection.config.ui;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.intellij.util.ui.UIUtil;
+import com.dci.intellij.dbn.connection.AuthenticationType;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
 
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+
 public class ConnectionAuthenticationSettingsForm extends DBNFormImpl<ConnectionDatabaseSettingsForm> {
+    private JComboBox<AuthenticationType> authTypeComboBox;
     private JTextField userTextField;
     private JPasswordField passwordField;
-    private JCheckBox osAuthenticationCheckBox;
-    private JCheckBox emptyPasswordCheckBox;
     private JPanel mainPanel;
+    private JLabel userLabel;
+    private JLabel passwordLabel;
 
     private String cachedUser = "";
     private String cachedPassword = "";
 
     private final ActionListener actionListener = e -> updateAuthenticationFields();
 
-    public ConnectionAuthenticationSettingsForm(@NotNull ConnectionDatabaseSettingsForm parentComponent) {
+    ConnectionAuthenticationSettingsForm(@NotNull ConnectionDatabaseSettingsForm parentComponent) {
         super(parentComponent);
-        osAuthenticationCheckBox.addActionListener(actionListener);
-        emptyPasswordCheckBox.addActionListener(actionListener);
+        initComboBox(authTypeComboBox, AuthenticationType.values());
+        authTypeComboBox.addActionListener(actionListener);
     }
 
-    protected void updateAuthenticationFields() {
-        boolean isOsAuthentication = osAuthenticationCheckBox.isSelected();
-        boolean isEmptyPassword = emptyPasswordCheckBox.isSelected();
-        userTextField.setEnabled(!isOsAuthentication);
+    private void updateAuthenticationFields() {
+        AuthenticationType authType = getSelection(authTypeComboBox);
 
-        passwordField.setEnabled(!isOsAuthentication && !emptyPasswordCheckBox.isSelected());
-        passwordField.setBackground(isOsAuthentication || isEmptyPassword ? UIUtil.getPanelBackground() : UIUtil.getTextFieldBackground());
-        emptyPasswordCheckBox.setEnabled(!isOsAuthentication);
+        boolean showUser = authType.isOneOf(
+                AuthenticationType.USER,
+                AuthenticationType.USER_PASSWORD);
+        boolean showPassword = authType == AuthenticationType.USER_PASSWORD;
+
+
+        userLabel.setVisible(showUser);
+        userTextField.setVisible(showUser);
+
+        passwordLabel.setVisible(showPassword);
+        passwordField.setVisible(showPassword);
+        //passwordField.setBackground(showPasswordField ? UIUtil.getTextFieldBackground() : UIUtil.getPanelBackground());
 
         String user = userTextField.getText();
         String password = new String(passwordField.getPassword());
         if (StringUtil.isNotEmpty(user)) cachedUser = user;
         if (StringUtil.isNotEmpty(password)) cachedPassword = password;
 
-        if (isOsAuthentication || isEmptyPassword) {
-            passwordField.setText("");
-        } else {
-            passwordField.setText(cachedPassword);
-        }
 
-        if (isOsAuthentication) {
-            userTextField.setText("");
-            emptyPasswordCheckBox.setSelected(false);
-        } else {
-            userTextField.setText(cachedUser);
-        }
+        userTextField.setText(showUser ? cachedUser : "");
+        passwordField.setText(showPassword ? cachedPassword : "");
     }
 
     public JTextField getUserTextField() {
@@ -60,10 +61,9 @@ public class ConnectionAuthenticationSettingsForm extends DBNFormImpl<Connection
     }
 
     public void applyFormChanges(AuthenticationInfo authenticationInfo){
+        authenticationInfo.setType(getSelection(authTypeComboBox));
         authenticationInfo.setUser(userTextField.getText());
         authenticationInfo.setPassword(new String(passwordField.getPassword()));
-        authenticationInfo.setOsAuthentication(osAuthenticationCheckBox.isSelected());
-        authenticationInfo.setEmptyAuthentication(emptyPasswordCheckBox.isSelected());
     }
 
     public void resetFormChanges(AuthenticationInfo authenticationInfo) {
@@ -74,8 +74,7 @@ public class ConnectionAuthenticationSettingsForm extends DBNFormImpl<Connection
 
         userTextField.setText(authenticationInfo.getUser());
         passwordField.setText(authenticationInfo.getPassword());
-        osAuthenticationCheckBox.setSelected(authenticationInfo.isOsAuthentication());
-        emptyPasswordCheckBox.setSelected(authenticationInfo.isEmptyAuthentication());
+        setSelection(authTypeComboBox, authenticationInfo.getType());
         updateAuthenticationFields();
     }
 
