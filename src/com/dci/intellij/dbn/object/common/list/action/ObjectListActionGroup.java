@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.object.common.list.action;
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
@@ -18,9 +19,14 @@ public class ObjectListActionGroup extends DefaultActionGroup {
             add (new CreateObjectAction(objectList));
         } else if (parentElement instanceof DBObjectBundle) {
             add (new ObjectListFilterAction(objectList));
-            if (objectList.getObjectType() == DBObjectType.SCHEMA) {
-                add (new HideEmptySchemasToggleAction(objectList.getConnectionHandler()));
+            DBObjectType objectType = objectList.getObjectType();
+            ConnectionHandler connectionHandler = objectList.getConnectionHandler();
+            if (objectType == DBObjectType.SCHEMA) {
+                add (new HideEmptySchemasToggleAction(connectionHandler));
+            } else if (objectType == DBObjectType.COLUMN) {
+                add(new HidePseudoColumnsToggleAction(connectionHandler));
             }
+
         }
     }
 }

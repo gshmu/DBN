@@ -208,7 +208,12 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
 
     @Override
     public void setQueryTimeout(int seconds) throws SQLException {
-        inner.setQueryTimeout(seconds);
+        try {
+            inner.setQueryTimeout(seconds);
+        } catch (Throwable ignore) {
+            // catch throwable (capture e.g. java.lang.AbstractMethodError)
+            // not all databases support it, as this is used on DBN start connection, we must control exception
+        }
     }
 
     @Override

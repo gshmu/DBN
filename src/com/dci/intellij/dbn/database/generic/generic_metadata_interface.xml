@@ -1,11 +1,32 @@
 <!DOCTYPE data-dictionary [
-        <!ELEMENT data-dictionary (statement-execution-processor)*>
-        <!ELEMENT statement-execution-processor (statement)*>
-        <!ATTLIST statement-execution-processor
-                id CDATA #REQUIRED
-                is-query CDATA #IMPLIED
-                timeout CDATA #IMPLIED>
-        <!ELEMENT statement (#PCDATA)>
-        ]>
+  <!ELEMENT data-dictionary (statement-execution-processor)*>
+  <!ELEMENT statement-execution-processor (statement)*>
+  <!ATTLIST statement-execution-processor
+    id CDATA #REQUIRED
+    is-query CDATA #IMPLIED
+    is-prepared-statement CDATA #IMPLIED
+    timeout CDATA #IMPLIED>
+  <!ELEMENT statement (#PCDATA)>
+  ]>
 <data-dictionary>
+
+  <statement-execution-processor id="load-distinct-values" is-query="true">
+    <statement>
+      select distinct {2} from {0}.{1} where {2} is not null order by {2}
+    </statement>
+  </statement-execution-processor>
+
+  <statement-execution-processor id="set-current-schema">
+    <statement>
+      use {0}
+    </statement>
+  </statement-execution-processor>
+
+  <statement-execution-processor id="validate-connection" timeout="5" is-prepared-statement="true">
+    <statement>
+      select 1
+    </statement>
+  </statement-execution-processor>
+
+
 </data-dictionary>

@@ -18,7 +18,9 @@ import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 
 
 public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabaseSettingsForm>{
@@ -31,7 +33,8 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
     private JLabel driverLabel;
     private JLabel driverLibraryLabel;
 
-    private static final FileChooserDescriptor LIBRARY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, false, true, true, false, false);
+    /** allow select a single jar file or a directory */
+    private static final FileChooserDescriptor LIBRARY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, true, true, true, false, false);
 
     public ConnectionDriverSettingsForm(@NotNull final ConnectionDatabaseSettingsForm parentComponent) {
         super(parentComponent);
@@ -48,12 +51,12 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
         });
 
         driverLibraryTextField.addBrowseFolderListener(
-                "Select Driver Library",
+                "Select Driver Library or directory",
                 "Library must contain classes implementing the 'java.sql.Driver' class.",
                 null, LIBRARY_FILE_DESCRIPTOR);
     }
 
-    void updateDriverFields() {
+    public void updateDriverFields() {
         DriverSource driverSource = driverSourceComboBox == null ? DriverSource.EXTERNAL : getSelection(driverSourceComboBox);
 
         String error = null;
@@ -76,11 +79,11 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
                     initComboBox(driverComboBox);
                     setSelection(driverComboBox, null);
                 } else {
-                    List<Driver> drivers = DatabaseDriverManager.getInstance().loadDrivers(driverLibrary);
+                    List<Driver> drivers = DatabaseDriverManager.getInstance().loadDrivers(driverLibrary, false);
                     DriverOption selectedOption = getSelection(driverComboBox);
                     initComboBox(driverComboBox);
                     //driverComboBox.addItem("");
-                    if (drivers != null && drivers.size() > 0) {
+                    if (drivers != null && !drivers.isEmpty()) {
                         List<DriverOption> driverOptions = new ArrayList<DriverOption>();
                         for (Driver driver : drivers) {
                             DriverOption driverOption = new DriverOption(driver);
@@ -92,7 +95,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
 
                         initComboBox(driverComboBox, driverOptions);
 
-                        if (selectedOption == null && driverOptions.size() > 0) {
+                        if (selectedOption == null && !driverOptions.isEmpty()) {
                             selectedOption = driverOptions.get(0);
                         }
                     } else {
