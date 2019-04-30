@@ -19,6 +19,6 @@ public class DatabaseConnectivityTestAction extends AbstractConnectionAction {
         connectionHandler.getInstructions().setAllowAutoConnect(true);
 
         ConnectionAction.invoke("testing the connectivity", true, connectionHandler,
-                (action) -> ConnectionManager.testConnection(connectionHandler, null, SessionId.MAIN, false, true));
+                (action) -> ConnectionManager.testConnection(connectionHandler, null, SessionId.MAIN, true, true));
     }
 }
