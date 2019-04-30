@@ -12,8 +12,8 @@ import com.dci.intellij.dbn.object.DBTrigger;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
 import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
-import com.dci.intellij.dbn.object.common.operation.DBOperationNotSupportedException;
 import com.dci.intellij.dbn.object.common.operation.DBOperationType;
+import com.dci.intellij.dbn.object.common.operation.DBUnsupportedOperationException;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
@@ -26,9 +26,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DEBUGABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DISABLEABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.EDITABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.FOR_EACH_ROW;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.INVALIDABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.REFERENCEABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
 import static com.dci.intellij.dbn.object.type.DBTriggerEvent.*;
-import static com.dci.intellij.dbn.object.type.DBTriggerType.*;
+import static com.dci.intellij.dbn.object.type.DBTriggerType.AFTER;
+import static com.dci.intellij.dbn.object.type.DBTriggerType.BEFORE;
+import static com.dci.intellij.dbn.object.type.DBTriggerType.INSTEAD_OF;
 
 public abstract class DBTriggerImpl extends DBSchemaObjectImpl<DBTriggerMetadata> implements DBTrigger {
     private DBTriggerType triggerType;
@@ -121,7 +130,7 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl<DBTriggerMetadata
                     metadataInterface.disableTrigger(getSchema().getName(), getName(), connection);
                     getStatus().set(DBObjectStatus.ENABLED, false);
                 } else {
-                    throw new DBOperationNotSupportedException(operationType, getObjectType());
+                    throw new DBUnsupportedOperationException(operationType, getObjectType());
                 }
             } finally {
                 connectionHandler.freePoolConnection(connection);

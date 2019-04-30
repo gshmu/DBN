@@ -1,18 +1,35 @@
 package com.dci.intellij.dbn.database.generic;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.database.common.util.WrappedResultSet;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.util.HashMap;
+import java.util.Map;
 
 public interface GenericMetadataTranslators {
     Logger LOGGER = LoggerFactory.createLogger();
+
+    Latent<Map<Integer, String>> DATA_TYPE_NAMES =
+            Latent.basic(
+                    () -> Unsafe.call(() -> {
+                        Map<Integer, String> result = new HashMap<>();
+                        for (Field field : Types.class.getFields()) {
+                            result.put((Integer) field.get(null), field.getName());
+                        }
+                        return result;
+                    }));
+
 
     /**
      * Metadata translation for COLUMNS
@@ -40,7 +57,15 @@ public interface GenericMetadataTranslators {
                 }
                 case "IS_HIDDEN": return "N";
 
-                case "DATA_TYPE_NAME": return inner.getString("TYPE_NAME");
+                case "DATA_TYPE_NAME":
+                    return failsafe(
+                            () -> inner.getString("TYPE_NAME"),
+                            () -> {
+                                int dataType = inner.getInt("DATA_TYPE");
+                                return DATA_TYPE_NAMES.get().get(dataType);
+                            });
+
+
                 case "DATA_TYPE_OWNER": return null;
                 case "DATA_TYPE_PACKAGE": return null;
                 default: return null;
