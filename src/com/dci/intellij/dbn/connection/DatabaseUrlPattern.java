@@ -59,15 +59,9 @@ public enum DatabaseUrlPattern {
             DatabaseUrlType.FILE),
 
     GENERIC(
-            "jdbc:dbname://<HOST>:<PORT>/<DATABASE>",
-            "^(jdbc:dbname:\\/\\/)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})?(?<DATABASE>\\/[\\-$_a-z0-9]{0,1000})?$",
+            "jdbc:<VENDOR>://<HOST>:<PORT>/<DATABASE>",
+            "^(jdbc:(?<VENDOR>[._\\-a-z0-9]{1,1000}):\\/\\/)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})?(?<DATABASE>\\/[\\-$_a-z0-9]{0,1000})?$",
             DatabaseInfo.Default.GENERIC,
-            DatabaseUrlType.DATABASE),
-
-    UNKNOWN(
-            "jdbc:unknown://<HOST>:<PORT>/<DATABASE>",
-            "^(jdbc:unknown:\\/\\/)(?<HOST>[._\\-a-z0-9]{1,1000})(?<PORT>:[0-9]{1,100})?(?<DATABASE>\\/[\\-$_a-z0-9]{0,1000})?$",
-            DatabaseInfo.Default.UNKNOWN,
             DatabaseUrlType.DATABASE),
     ;
 
