@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.connection.AuthenticationType;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.PasswordUtil;
@@ -21,9 +22,8 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
     private static final String TEMP_PWD_ATTRIBUTE = "deprecated-pwd";
 
     private long timestamp = System.currentTimeMillis();
-    private boolean osAuthentication;
-    private boolean emptyAuthentication;
-    private boolean supported = true;
+
+    private AuthenticationType type = AuthenticationType.USER_PASSWORD;
     private String user;
     private String password;
     private boolean temporary;
@@ -35,6 +35,14 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
 
     public ConnectionId getConnectionId() {
         return getParent().getConnectionId();
+    }
+
+    public AuthenticationType getType() {
+        return type;
+    }
+
+    public void setType(AuthenticationType type) {
+        this.type = type;
     }
 
     public String getUser() {
@@ -61,32 +69,15 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
         this.password = StringUtil.isEmpty(password) ? null : password;
     }
 
-    public boolean isOsAuthentication() {
-        return osAuthentication;
-    }
-
-    public void setOsAuthentication(boolean osAuthentication) {
-        this.osAuthentication = osAuthentication;
-    }
-
-    public boolean isSupported() {
-        return supported;
-    }
-
-    public void setSupported(boolean supported) {
-        this.supported = supported;
-    }
-
-    public boolean isEmptyAuthentication() {
-        return emptyAuthentication;
-    }
-
-    public void setEmptyAuthentication(boolean emptyAuthentication) {
-        this.emptyAuthentication = emptyAuthentication;
-    }
 
     public boolean isProvided() {
-        return !supported || osAuthentication || (StringUtil.isNotEmpty(user) && (StringUtil.isNotEmpty(password) || emptyAuthentication));
+        switch (type) {
+            case NONE: return true;
+            case USER: return StringUtil.isNotEmpty(user);
+            case USER_PASSWORD: return StringUtil.isNotEmpty(user) && StringUtil.isNotEmpty(password);
+            case OS_CREDENTIALS: return true;
+        }
+        return true;
     }
 
     public boolean isOlderThan(long millis) {
@@ -95,7 +86,7 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
 
     public boolean isSame(AuthenticationInfo authenticationInfo) {
         return
-            this.osAuthentication == authenticationInfo.osAuthentication &&
+            this.type == authenticationInfo.type &&
             CommonUtil.safeEqual(this.user, authenticationInfo.user) &&
             CommonUtil.safeEqual(this.getPassword(), authenticationInfo.getPassword());
     }
@@ -121,15 +112,24 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
             }
         }
 
-        emptyAuthentication = getBoolean(element, "empty-authentication", emptyAuthentication);
-        osAuthentication = getBoolean(element, "os-authentication", osAuthentication);
-        supported = getParent().getDatabaseType().isAuthenticationSupported();
+        type = getEnum(element, "type", type);
+
+        AuthenticationType[] supportedAuthTypes = getParent().getDatabaseType().getAuthTypes();
+        if (!type.isOneOf(supportedAuthTypes)) {
+            type = supportedAuthTypes[0];
+        }
+
+        // TODO backward compatibility
+        if (getBoolean(element, "os-authentication", false)) {
+            type = AuthenticationType.OS_CREDENTIALS;
+        } else if (getBoolean(element, "empty-authentication", false)) {
+            type = AuthenticationType.USER;
+        }
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        setBoolean(element, "os-authentication", osAuthentication);
-        setBoolean(element, "empty-authentication", emptyAuthentication);
+        setEnum(element, "type", type);
         setString(element, "user", nvl(user));
 
         String encodedPassword = PasswordUtil.encodePassword(password);
@@ -141,16 +141,14 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
     @Override
     public AuthenticationInfo clone() {
         AuthenticationInfo authenticationInfo = new AuthenticationInfo(getParent(), temporary);
+        authenticationInfo.type = type;
         authenticationInfo.user = user;
         authenticationInfo.password = password;
-        authenticationInfo.osAuthentication = osAuthentication;
-        authenticationInfo.emptyAuthentication = emptyAuthentication;
-        authenticationInfo.supported = supported;
         return authenticationInfo;
     }
 
     public void updateKeyChain(String oldUserName, String oldPassword) {
-        if (supported && !temporary && DatabaseCredentialManager.USE) {
+        if (type == AuthenticationType.USER_PASSWORD && !temporary && DatabaseCredentialManager.USE) {
             oldUserName = nvl(oldUserName);
             oldPassword = nvl(oldPassword);
 

@@ -363,8 +363,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
                     storedAuthenticationInfo.setUser(newAuthenticationInfo.getUser());
                     storedAuthenticationInfo.setPassword(newAuthenticationInfo.getPassword());
-                    storedAuthenticationInfo.setOsAuthentication(newAuthenticationInfo.isOsAuthentication());
-                    storedAuthenticationInfo.setEmptyAuthentication(newAuthenticationInfo.isEmptyAuthentication());
+                    storedAuthenticationInfo.setType(newAuthenticationInfo.getType());
 
                     storedAuthenticationInfo.updateKeyChain(oldUser, oldPassword);
                 } else {
