@@ -58,7 +58,7 @@ public interface GenericMetadataTranslators {
                 case "IS_HIDDEN": return "N";
 
                 case "DATA_TYPE_NAME":
-                    return failsafe(
+                    return resolve(
                             () -> inner.getString("TYPE_NAME"),
                             () -> {
                                 int dataType = inner.getInt("DATA_TYPE");
@@ -76,9 +76,9 @@ public interface GenericMetadataTranslators {
         public int getInt(String columnLabel) throws SQLException {
             switch (columnLabel) {
                 case "POSITION":       return inner.getInt("ORDINAL_POSITION");
-                case "DATA_LENGTH":    failsafe(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
-                case "DATA_PRECISION": failsafe(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
-                case "DATA_SCALE":     failsafe(() -> inner.getInt("DECIMAL_DIGITS"),() -> 0);
+                case "DATA_LENGTH":    resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
+                case "DATA_PRECISION": resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
+                case "DATA_SCALE":     resolve(() -> inner.getInt("DECIMAL_DIGITS"),() -> 0);
                 default: return 0;
             }
         }
@@ -180,13 +180,13 @@ public interface GenericMetadataTranslators {
         public String getString(String columnLabel) throws SQLException {
             switch (columnLabel) {
                 case "INDEX_NAME":
-                    return failsafe(
+                    return resolve(
                             () -> inner.getString("INDEX_NAME"),
                             () -> inner.getString("TABLE_NAME") + "_INDEX_STATISTIC");
 
                 case "TABLE_NAME": return inner.getString("TABLE_NAME");
                 case "IS_UNIQUE": {
-                    boolean unique = !failsafe(
+                    boolean unique = !resolve(
                             () -> inner.getBoolean("NON_UNIQUE"),
                             () -> true);
                     return literalBoolean(unique);
@@ -212,7 +212,7 @@ public interface GenericMetadataTranslators {
         public String getString(String columnLabel) throws SQLException {
             switch (columnLabel) {
                 case "CONSTRAINT_NAME": {
-                    return failsafe(
+                    return resolve(
                             () -> inner.getString("PK_NAME"),
                             () -> uniqueKeyName(
                                     inner.getString("TABLE_NAME"),
@@ -250,7 +250,7 @@ public interface GenericMetadataTranslators {
         public String getString(String columnLabel) throws SQLException {
             switch (columnLabel) {
                 case "CONSTRAINT_NAME": {
-                    return failsafe(
+                    return resolve(
                             () -> inner.getString("FK_NAME"),
                             () -> foreignKeyName(
                                     inner.getString("FKTABLE_NAME"),
@@ -266,7 +266,7 @@ public interface GenericMetadataTranslators {
                 }
 
                 case "FK_CONSTRAINT_NAME": {
-                    return failsafe(
+                    return resolve(
                             () -> inner.getString("PK_NAME"),
                             () -> uniqueKeyName(
                                     inner.getString("PKTABLE_NAME"),
@@ -274,6 +274,66 @@ public interface GenericMetadataTranslators {
                 }
                 case "CHECK_CONDITION": return "";
                 case "IS_ENABLED": return "Y";
+                default: return null;
+            }
+        }
+    }
+
+    /**
+     * Metadata translation for FUNCTIONS
+     *  - from {@link java.sql.DatabaseMetaData#getFunctions(String, String, String)}
+     *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBFunctionMetadataImpl}
+     *            and {@link com.dci.intellij.dbn.database.common.metadata.impl.DBMethodMetadataImpl}
+     */
+    class FunctionsResultSet extends WrappedResultSet {
+        FunctionsResultSet(@Nullable ResultSet inner) {
+            super(inner);
+        }
+        @Override
+        public String getString(String columnLabel) throws SQLException {
+            switch (columnLabel) {
+                case "FUNCTION_NAME":
+                    return resolve(
+                            () -> inner.getString("SPECIFIC_NAME"),
+                            () -> inner.getString("FUNCTION_NAME"));
+
+                case "IS_DETERMINISTIC": return "N";
+                case "IS_VALID": return "Y";
+                case "IS_DEBUG": return "N";
+                case "LANGUAGE": return "SQL";
+                case "TYPE_NAME": return null;
+                case "PACKAGE_NAME": return null;
+
+                default: return null;
+            }
+        }
+    }
+
+    /**
+     * Metadata translation for PROCEDURES
+     *  - from {@link java.sql.DatabaseMetaData#getProcedures(String, String, String)}
+     *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBProcedureMetadataImpl}
+     *            and {@link com.dci.intellij.dbn.database.common.metadata.impl.DBMethodMetadataImpl}
+     */
+    class ProceduresResultSet extends WrappedResultSet {
+        ProceduresResultSet(@Nullable ResultSet inner) {
+            super(inner);
+        }
+        @Override
+        public String getString(String columnLabel) throws SQLException {
+            switch (columnLabel) {
+                case "PROCEDURE_NAME":
+                    return resolve(
+                            () -> inner.getString("SPECIFIC_NAME"),
+                            () -> inner.getString("PROCEDURE_NAME"));
+
+                case "IS_DETERMINISTIC": return "N";
+                case "IS_VALID": return "Y";
+                case "IS_DEBUG": return "N";
+                case "LANGUAGE": return "SQL";
+                case "TYPE_NAME": return null;
+                case "PACKAGE_NAME": return null;
+
                 default: return null;
             }
         }
@@ -298,7 +358,7 @@ public interface GenericMetadataTranslators {
         return bool ? "Y" : "N";
     }
 
-    static <T> T failsafe(
+    static <T> T resolve(
             ThrowableCallable<T, Throwable> resolver,
             ThrowableCallable<T, SQLException> fallbackResolver) throws SQLException {
         try {
