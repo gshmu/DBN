@@ -12,8 +12,8 @@ import com.dci.intellij.dbn.object.DBTrigger;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
 import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
+import com.dci.intellij.dbn.object.common.operation.DBOperationNotSupportedException;
 import com.dci.intellij.dbn.object.common.operation.DBOperationType;
-import com.dci.intellij.dbn.object.common.operation.DBUnsupportedOperationException;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
@@ -130,7 +130,7 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl<DBTriggerMetadata
                     metadataInterface.disableTrigger(getSchema().getName(), getName(), connection);
                     getStatus().set(DBObjectStatus.ENABLED, false);
                 } else {
-                    throw new DBUnsupportedOperationException(operationType, getObjectType());
+                    throw new DBOperationNotSupportedException(operationType, getObjectType());
                 }
             } finally {
                 connectionHandler.freePoolConnection(connection);

@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.common.operation.DBOperationNotSupportedException;
 import com.dci.intellij.dbn.object.common.operation.DBOperationType;
-import com.dci.intellij.dbn.object.common.operation.DBUnsupportedOperationException;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -37,7 +37,7 @@ public class EnableDisableAction extends AnObjectAction<DBSchemaObject> {
 
                         String message = "Error " + (!enabled ? "enabling " : "disabling ") + objectName;
                         MessageUtil.showErrorDialog(project, message, e1);
-                    } catch (DBUnsupportedOperationException e1) {
+                    } catch (DBOperationNotSupportedException e1) {
                         MessageUtil.showErrorDialog(project, e1.getMessage());
                     }
                 });

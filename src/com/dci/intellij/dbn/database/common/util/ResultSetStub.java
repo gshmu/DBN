@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.database.common.util;
 
-import com.dci.intellij.dbn.object.common.operation.DBUnsupportedOperationException;
+
+import com.dci.intellij.dbn.common.exception.DBUnsupportedOperationException;
 
 import java.io.InputStream;
 import java.io.Reader;
