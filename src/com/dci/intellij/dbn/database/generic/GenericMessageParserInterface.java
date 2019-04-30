@@ -2,10 +2,10 @@ package com.dci.intellij.dbn.database.generic;
 
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
-import com.dci.intellij.dbn.database.common.util.NotSupportedSQLException;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLTimeoutException;
 
 public class GenericMessageParserInterface implements DatabaseMessageParserInterface {
@@ -27,6 +27,6 @@ public class GenericMessageParserInterface implements DatabaseMessageParserInter
 
     @Override
     public boolean isModelException(SQLException e) {
-        return e instanceof NotSupportedSQLException;
+        return e instanceof SQLFeatureNotSupportedException;
     }
 }
