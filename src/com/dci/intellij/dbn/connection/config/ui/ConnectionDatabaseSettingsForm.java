@@ -306,7 +306,11 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         DriverOption selectedDriver = ComboBoxUtil.getSelection(driverComboBox);
         DatabaseType driverDatabaseType = selectedDriver == null ? null : DatabaseType.resolve(selectedDriver.getName());
         if (driverDatabaseType != null && driverDatabaseType != selectedDatabaseType) {
-            throw new ConfigurationException("The provided driver library is not a valid " + selectedDatabaseType.getName() + " driver library.");
+            if (selectedDatabaseType == DatabaseType.GENERIC) {
+                // TODO hint there is dedicated support for the database type resolved from driver
+            } else {
+                throw new ConfigurationException("The provided driver library is not a valid " + selectedDatabaseType.getName() + " driver library.");
+            }
         }
 
         boolean nameChanged = !nameTextField.getText().equals(configuration.getName());
