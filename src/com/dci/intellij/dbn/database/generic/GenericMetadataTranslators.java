@@ -307,6 +307,16 @@ public interface GenericMetadataTranslators {
                 default: return null;
             }
         }
+
+        @Override
+        public int getInt(String columnLabel) throws SQLException {
+            switch (columnLabel) {
+                case "OVERLOAD": return 0;
+                case "POSITION": return 0;
+
+                default: return 0;
+            }
+        }
     }
 
     /**
@@ -335,6 +345,15 @@ public interface GenericMetadataTranslators {
                 case "PACKAGE_NAME": return null;
 
                 default: return null;
+            }
+        }
+        @Override
+        public int getInt(String columnLabel) throws SQLException {
+            switch (columnLabel) {
+                case "OVERLOAD": return 0;
+                case "POSITION": return 0;
+
+                default: return 0;
             }
         }
     }
