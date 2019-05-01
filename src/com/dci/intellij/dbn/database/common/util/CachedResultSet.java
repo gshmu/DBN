@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.list.FiltrableListImpl;
 import com.dci.intellij.dbn.common.routine.ThrowableConsumer;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.ResultSetUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
@@ -12,18 +13,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CachedResultSet<T> extends ResultSetStub {
-    private List<T> rows = new ArrayList<>();
-    private ResultSetTranslator<T> translator;
+public class CachedResultSet extends ResultSetStub {
+    private List<CachedResultSetRow> rows = new ArrayList<>();
+    private List<String> columnNames;
 
-    private CachedResultSet(@Nullable ResultSet resultSet, ResultSetTranslator<T> translator) throws SQLException {
-        this.translator = translator;
+    private CachedResultSet(@Nullable ResultSet resultSet) throws SQLException {
         if (resultSet != null) {
             try {
-                List<String> columnNames = ResultSetUtil.getColumnNames(resultSet);
-
-                ResultSetUtil.forEachRow(resultSet, () -> {
-                            T row = translator.read(resultSet, columnNames);
+                columnNames = ResultSetUtil.getColumnNames(resultSet);
+                ResultSetUtil.forEachRow(resultSet,
+                        () -> {
+                            CachedResultSetRow row = CachedResultSetRow.create(this, resultSet);
                             rows.add(row);
                         });
             } finally {
@@ -32,27 +32,27 @@ public class CachedResultSet<T> extends ResultSetStub {
         }
     }
 
-    public static CachedResultSet basic(@Nullable ResultSet resultSet) throws SQLException {
-        return create(resultSet, ResultSetTranslator.BASIC);
-    }
-
-    public static <T> CachedResultSet<T> create(@Nullable ResultSet resultSet, ResultSetTranslator<T> translator) throws SQLException {
-        return new CachedResultSet<T>(resultSet, translator);
+    public static <T> CachedResultSet create(@Nullable ResultSet resultSet) throws SQLException {
+        return new CachedResultSet(resultSet);
     }
 
     /**
      * Internal constructor for clone on iteration
      */
-    private CachedResultSet(List<T> rows, ResultSetTranslator<T> translator) {
+    private CachedResultSet(List<CachedResultSetRow> rows, List<String> columnNames) {
         this.rows = rows;
-        this.translator = translator;
+        this.columnNames = columnNames;
     }
 
-    public void add(T row) {
-        rows.add(row);
+    List<String> columnNames() {
+        return columnNames;
     }
 
-    public List<T> rows() {
+    int columnIndex(String columnLabel) {
+        return columnNames.indexOf(columnLabel);
+    }
+
+    public List<CachedResultSetRow> rows() {
         return rows;
     }
 
@@ -62,7 +62,7 @@ public class CachedResultSet<T> extends ResultSetStub {
     /**
      * Current row at cursor
      */
-    protected T current() {
+    protected CachedResultSetRow current() {
         throw new IllegalStateException("Call open() on CachedResultSet to initialize isolated iteration (avoid concurrency issues)");
     }
 
@@ -77,16 +77,26 @@ public class CachedResultSet<T> extends ResultSetStub {
     }
 
     /**
-     * Cached result sets may be used concurrently
+     * Cached result sets are accessed concurrently
      * Open a copy with it's own cursor index to iterate
      */
-    public CachedResultSet<T> open() {
-        return open(null);
+    public CachedResultSet open() {
+        return open(null, null);
     }
 
-    public CachedResultSet<T> open(@Nullable Filter<T> filter) {
-        List<T> rows = filter == null ? this.rows : new FiltrableListImpl<>(this.rows, filter);
-        return new CachedResultSet<T>(rows, translator) {
+    public CachedResultSet groupBy(@NotNull GroupBy groupByClause) {
+        return open(null, groupByClause);
+    }
+
+    public CachedResultSet where(@NotNull Where whereCondition) {
+        return open(whereCondition, null);
+    }
+
+    public CachedResultSet open(@Nullable Where whereCondition, @Nullable GroupBy groupByClause) {
+        List<CachedResultSetRow> rows = whereCondition == null ? this.rows : new FiltrableListImpl<>(this.rows, whereCondition);
+
+        // TODO group rows using clause
+        return new CachedResultSet(rows, columnNames) {
             private int cursor = -1;
 
             @Override
@@ -96,10 +106,16 @@ public class CachedResultSet<T> extends ResultSetStub {
             }
 
             @Override
-            protected T current() {
+            protected CachedResultSetRow current() {
                 return rows.get(cursor);
             }
         };
+    }
+
+    public interface Where extends Filter<CachedResultSetRow> {}
+
+    public interface GroupBy {
+        String[] columnNames();
     }
 
     public <V> void forEachRow(String columnName, Class<V> columnType, ThrowableConsumer<V, SQLException> consumer) throws SQLException {
@@ -111,9 +127,9 @@ public class CachedResultSet<T> extends ResultSetStub {
      **************************************************************/
     @Override
     public Object getObject(String columnLabel) throws SQLException {
-        return translator.value(current(), columnLabel);
+        CachedResultSetRow currentRow = current();
+        return currentRow.get(columnLabel);
     }
-
 
     @Override
     public String getString(String columnLabel) throws SQLException {
