@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.database.generic;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
@@ -13,7 +12,6 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.Map;
 
 import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.ColumnsResultSet;
 import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.ForeignKeysResultSet;
@@ -31,8 +29,10 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     // TODO review (ORACLE behavior - package methods come back with FUNCTION_CAT / PROCEDURE_CAT as package name)
     //  filtering them out for now
-    public static final Filter<Map<String, Object>> SCHEMA_FUNCTIONS_FILTER = row -> row.get("FUNCTION_CAT") == null;
-    public static final Filter<Map<String, Object>> SCHEMA_PROCEDURES_FILTER = row -> row.get("PROCEDURE_CAT") == null;
+    public static final CachedResultSet.Where FUNCTION_CAT_IS_NULL = row -> row.get("FUNCTION_CAT") == null;
+    public static final CachedResultSet.Where PROCEDURE_CAT_IS_NULL = row -> row.get("PROCEDURE_CAT") == null;
+
+    public static final CachedResultSet.GroupBy GROUP_BY_INDEX_NAME = () -> new String[]{"INDEX_NAME"};
 
     public GenericMetadataInterface(DatabaseInterfaceProvider provider) {
         super("generic_metadata_interface.xml", provider);
@@ -108,7 +108,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     @Override
     public ResultSet loadIndexes(String ownerName, String tableName, DBNConnection connection) throws SQLException {
         // TODO needs grouping by INDEX_NAME
-        ResultSet indexesRs = loadIndexesRaw(ownerName, tableName, connection).open();
+        ResultSet indexesRs = loadIndexesRaw(ownerName, tableName, connection).groupBy(GROUP_BY_INDEX_NAME);
         return new IndexesResultSet(indexesRs);
     }
 
@@ -118,7 +118,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
         CachedResultSet tablesRs = loadTablesRaw(ownerName, connection).open();
         tablesRs.forEachRow("TABLE_NAME", String.class, (tableName) -> {
-            ResultSet indexesRs = loadIndexes(ownerName, (String) tableName, connection);
+            ResultSet indexesRs = loadIndexes(ownerName, tableName, connection);
             allIndexesRs.add(indexesRs);
         });
 
@@ -143,7 +143,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
         CachedResultSet tablesRs = loadTablesRaw(ownerName, connection).open();
         tablesRs.forEachRow("TABLE_NAME", String.class, (tableName) -> {
-            ResultSet constraintsRs = loadConstraints(ownerName, (String) tableName, connection);
+            ResultSet constraintsRs = loadConstraints(ownerName, tableName, connection);
             allConstraintsRs.add(constraintsRs);
         });
         return allConstraintsRs;
@@ -151,13 +151,13 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadFunctions(String ownerName, DBNConnection connection) throws SQLException {
-        CachedResultSet functionsRs = loadFunctionsRaw(ownerName, connection).open(SCHEMA_FUNCTIONS_FILTER);
+        CachedResultSet functionsRs = loadFunctionsRaw(ownerName, connection).where(FUNCTION_CAT_IS_NULL);
         return new FunctionsResultSet(functionsRs);
     }
 
     @Override
     public ResultSet loadProcedures(String ownerName, DBNConnection connection) throws SQLException {
-        CachedResultSet proceduresRs = loadProceduresRaw(ownerName, connection).open(SCHEMA_PROCEDURES_FILTER);
+        CachedResultSet proceduresRs = loadProceduresRaw(ownerName, connection).where(PROCEDURE_CAT_IS_NULL);
         return new ProceduresResultSet(proceduresRs);
     }
 
@@ -170,7 +170,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getTables(null, ownerName, null, new String[]{"TABLE"});
-                    return CachedResultSet.basic(resultSet);
+                    return CachedResultSet.create(resultSet);
                 });
     }
 
@@ -180,7 +180,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getTables(null, ownerName, null, new String[]{"VIEW"});
-                    return CachedResultSet.basic(resultSet);
+                    return CachedResultSet.create(resultSet);
                 });
     }
 
@@ -190,7 +190,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getColumns(null, ownerName, datasetName, null);
-                    return CachedResultSet.basic(resultSet);
+                    return CachedResultSet.create(resultSet);
                 });
     }
 
@@ -200,7 +200,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getPseudoColumns(null, ownerName, datasetName, null);
-                    return CachedResultSet.basic(resultSet);
+                    return CachedResultSet.create(resultSet);
                 });
     }
 
@@ -210,7 +210,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getColumns(null, ownerName, null, null);
-                    return CachedResultSet.basic(resultSet);
+                    return CachedResultSet.create(resultSet);
                 });
     }
 
@@ -220,7 +220,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getPseudoColumns(null, ownerName, null, null);
-                    return CachedResultSet.basic(resultSet);
+                    return CachedResultSet.create(resultSet);
                 });
     }
 
@@ -230,7 +230,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getIndexInfo(null, ownerName, datasetName, false, true);
-                    return CachedResultSet.basic(resultSet);
+                    return CachedResultSet.create(resultSet);
                 });
     }
 
@@ -241,7 +241,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getPrimaryKeys(null, ownerName, datasetName);
-                    return CachedResultSet.basic(resultSet);
+                    return CachedResultSet.create(resultSet);
                 });
     }
 
@@ -251,7 +251,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getImportedKeys(null, ownerName, datasetName);
-                    return CachedResultSet.basic(resultSet);
+                    return CachedResultSet.create(resultSet);
                 });
     }
 
@@ -261,7 +261,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getFunctions(null, ownerName, null);
-                    return CachedResultSet.basic(resultSet);
+                    return CachedResultSet.create(resultSet);
                 });
     }
 
@@ -271,7 +271,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getProcedures(null, ownerName, null);
-                    return CachedResultSet.basic(resultSet);
+                    return CachedResultSet.create(resultSet);
                 });
     }
 }
