@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import gnu.trove.THashSet;
@@ -106,7 +107,7 @@ public class NamedPsiElement extends SequencePsiElement<NamedElementType> {
     @Nullable
     @Override
     public BasePsiElement findPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount) {
-        //ProgressIndicatorProvider.checkCanceled(); // TODO performance impact
+        ProgressIndicatorProvider.checkCanceled(); // TODO small performance impact (removing this freezes the UI though)
         return super.findPsiElement(lookupAdapter, scopeCrossCount);
     }
 
