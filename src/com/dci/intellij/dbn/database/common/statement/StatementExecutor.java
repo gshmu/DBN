@@ -23,14 +23,7 @@ public abstract class StatementExecutor<T> extends Traceable implements Callable
     @Override
     public final T call() throws Exception {
         trace(this);
-        Thread currentThread = Thread.currentThread();
-        int initialPriority = currentThread.getPriority();
-        currentThread.setPriority(Thread.MIN_PRIORITY);
-        try {
-            return execute();
-        } finally {
-            currentThread.setPriority(initialPriority);
-        }
+        return execute();
     }
 
     public abstract T execute() throws Exception;
