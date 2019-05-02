@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 import com.dci.intellij.dbn.database.common.util.CachedResultSet;
 import com.dci.intellij.dbn.database.common.util.MultipartResultSet;
-import com.dci.intellij.dbn.database.common.util.WrappedResultSet;
 import com.intellij.openapi.diagnostic.Logger;
 
 import java.sql.DatabaseMetaData;
@@ -155,6 +154,35 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     @Override
+    public ResultSet loadIndexRelations(String ownerName, String tableName, DBNConnection connection) throws SQLException {
+        ResultSet indexesRs = loadIndexesRaw(ownerName, tableName, connection).open();
+        return new IndexColumnResultSet(indexesRs);
+    }
+
+    @Override
+    public ResultSet loadAllIndexRelations(String ownerName, DBNConnection connection) throws SQLException {
+        // try fast load (may not be supported)
+        try {
+            CachedResultSet allIndexRs = loadAllIndexesRaw(ownerName, connection).open();
+            if (!allIndexRs.isEmpty()) {
+                return new IndexColumnResultSet(allIndexRs);
+            }
+        } catch (Throwable ignore) {}
+
+
+        // fallback to slow load (table loop)
+        MultipartResultSet allIndexRelationsRs = new MultipartResultSet();
+
+        CachedResultSet tablesRs = loadTablesRaw(ownerName, connection).open();
+        tablesRs.forEachRow("TABLE_NAME", String.class, (tableName) -> {
+            ResultSet indexRelationsRs = loadIndexRelations(ownerName, tableName, connection);
+            allIndexRelationsRs.add(indexRelationsRs);
+        });
+
+        return allIndexRelationsRs;
+    }
+
+    @Override
     public ResultSet loadConstraints(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
         ResultSet primaryKeysRs = loadPrimaryKeysRaw(ownerName, datasetName, connection).groupBy(GROUP_BY_PK_IDENTIFIER);
         ResultSet foreignKeysRs = loadForeignKeysRaw(ownerName, datasetName, connection).groupBy(GROUP_BY_FK_IDENTIFIER);
@@ -173,8 +201,8 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
             CachedResultSet primaryKeysRs = loadAllPrimaryKeysRaw(ownerName, connection).groupBy(GROUP_BY_PK_IDENTIFIER);
             CachedResultSet foreignKeysRs = loadAllForeignKeysRaw(ownerName, connection).groupBy(GROUP_BY_FK_IDENTIFIER);
             if (!primaryKeysRs.isEmpty() && !foreignKeysRs.isEmpty()) {
-                WrappedResultSet wrappedPrimaryKeysRs = new PrimaryKeysResultSet(primaryKeysRs);
-                WrappedResultSet wrappedForeignKeysRs = new ForeignKeysResultSet(foreignKeysRs);
+                ResultSet wrappedPrimaryKeysRs = new PrimaryKeysResultSet(primaryKeysRs);
+                ResultSet wrappedForeignKeysRs = new ForeignKeysResultSet(foreignKeysRs);
                 return new MultipartResultSet(wrappedPrimaryKeysRs, wrappedForeignKeysRs);
             }
         } catch (Throwable ignore) {}
@@ -188,6 +216,41 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
             allConstraintsRs.add(constraintsRs);
         });
         return allConstraintsRs;
+    }
+
+    @Override
+    public ResultSet loadConstraintRelations(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
+        ResultSet primaryKeysRs = loadPrimaryKeysRaw(ownerName, datasetName, connection).open();
+        ResultSet foreignKeysRs = loadForeignKeysRaw(ownerName, datasetName, connection).open();
+
+        ResultSet primaryKeyRelationsRs = new PrimaryKeyRelationsResultSet(primaryKeysRs);
+        ResultSet foreignKeyRelationsRs = new ForeignKeyRelationsResultSet(foreignKeysRs);
+
+        return new MultipartResultSet(primaryKeyRelationsRs, foreignKeyRelationsRs);
+    }
+
+    @Override
+    public ResultSet loadAllConstraintRelations(String ownerName, DBNConnection connection) throws SQLException {
+        // try fast load (may not be supported)
+        try {
+            CachedResultSet primaryKeysRs = loadAllPrimaryKeysRaw(ownerName, connection).open();
+            CachedResultSet foreignKeysRs = loadAllForeignKeysRaw(ownerName, connection).open();
+            if (!primaryKeysRs.isEmpty() && !foreignKeysRs.isEmpty()) {
+                ResultSet wrappedPrimaryKeysRs = new PrimaryKeyRelationsResultSet(primaryKeysRs);
+                ResultSet wrappedForeignKeysRs = new ForeignKeyRelationsResultSet(foreignKeysRs);
+                return new MultipartResultSet(wrappedPrimaryKeysRs, wrappedForeignKeysRs);
+            }
+        } catch (Throwable ignore) {}
+
+        // fallback to slow load (table loop)
+        MultipartResultSet allConstraintRelationsRs = new MultipartResultSet();
+
+        CachedResultSet tablesRs = loadTablesRaw(ownerName, connection).open();
+        tablesRs.forEachRow("TABLE_NAME", String.class, (tableName) -> {
+            ResultSet constraintRelationsRs = loadConstraintRelations(ownerName, tableName, connection);
+            allConstraintRelationsRs.add(constraintRelationsRs);
+        });
+        return allConstraintRelationsRs;
     }
 
     @Override

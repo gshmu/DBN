@@ -199,6 +199,31 @@ public interface GenericMetadataTranslators {
     }
 
     /**
+     * Metadata translation for INDEX_COLUMN relations
+     *  - from {@link java.sql.DatabaseMetaData#getIndexInfo(String, String, String, boolean, boolean)}
+     *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBIndexColumnMetadataImpl}
+     */
+    class IndexColumnResultSet extends WrappedResultSet {
+        IndexColumnResultSet(@Nullable ResultSet inner) {
+            super(inner);
+        }
+
+        @Override
+        public String getString(String columnLabel) throws SQLException {
+            switch (columnLabel) {
+                case "INDEX_NAME":
+                    return resolve(
+                            () -> inner.getString("INDEX_NAME"),
+                            () -> inner.getString("TABLE_NAME") + "_INDEX_STATISTIC");
+                case "COLUMN_NAME": return inner.getString("COLUMN_NAME");
+                case "TABLE_NAME": return inner.getString("TABLE_NAME");
+
+            }
+            return super.getString(columnLabel);
+        }
+    }
+
+    /**
      * Metadata translation for PRIMARY KEYS
      *  - from {@link java.sql.DatabaseMetaData#getPrimaryKeys(String, String, String)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBConstraintMetadataImpl}
@@ -214,10 +239,7 @@ public interface GenericMetadataTranslators {
                 case "CONSTRAINT_NAME": {
                     return resolve(
                             () -> inner.getString("PK_NAME"),
-                            () -> uniqueKeyName(
-                                    inner.getString("TABLE_NAME"),
-                                    inner.getString("COLUMN_NAME")));
-                    // TODO support multiple column keys (complication - needs rs scroll / upfront grouping)
+                            () -> uniqueKeyName(inner.getString("TABLE_NAME"), null/*TODO what about multiple unique keys (find the additional discriminator)*/));
                 }
 
                 case "CONSTRAINT_TYPE": {
@@ -237,6 +259,39 @@ public interface GenericMetadataTranslators {
     }
 
     /**
+     * Metadata translation for PRIMARY KEY COLUMN relations
+     *  - from {@link java.sql.DatabaseMetaData#getPrimaryKeys(String, String, String)}
+     *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBConstraintColumnMetadataImpl}
+     */
+    class PrimaryKeyRelationsResultSet extends WrappedResultSet {
+        PrimaryKeyRelationsResultSet(@Nullable ResultSet inner) {
+            super(inner);
+        }
+
+        @Override
+        public String getString(String columnLabel) throws SQLException {
+            switch (columnLabel) {
+                case "CONSTRAINT_NAME":
+                    return resolve(
+                            () -> inner.getString("PK_NAME"),
+                            () -> uniqueKeyName(inner.getString("TABLE_NAME"), null/*TODO what about multiple unique keys (find the additional discriminator)*/));
+                case "COLUMN_NAME": return inner.getString("COLUMN_NAME");
+                case "DATASET_NAME": return inner.getString("TABLE_NAME");
+
+            }
+            return super.getString(columnLabel);
+        }
+
+        @Override
+        public int getInt(String columnLabel) throws SQLException {
+            switch (columnLabel) {
+                case "POSITION": return inner.getInt("KEY_SEQ");
+                default: return 0;
+            }
+        }
+    }
+
+    /**
      * Metadata translation for FOREIGN KEYS
      *  - from {@link java.sql.DatabaseMetaData#getImportedKeys(String, String, String)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBConstraintMetadataImpl}
@@ -252,10 +307,7 @@ public interface GenericMetadataTranslators {
                 case "CONSTRAINT_NAME": {
                     return resolve(
                             () -> inner.getString("FK_NAME"),
-                            () -> foreignKeyName(
-                                    inner.getString("FKTABLE_NAME"),
-                                    inner.getString("FKCOLUMN_NAME")));
-                    // TODO support multiple column keys (complication - needs rs scroll / upfront grouping)
+                            () -> foreignKeyName(inner.getString("FKTABLE_NAME"), null));
                 }
 
                 case "CONSTRAINT_TYPE": return "FOREIGN KEY";
@@ -275,6 +327,38 @@ public interface GenericMetadataTranslators {
                 case "CHECK_CONDITION": return "";
                 case "IS_ENABLED": return "Y";
                 default: return null;
+            }
+        }
+    }
+
+    /**
+     * Metadata translation for FOREIGN KEY COLUMN relations
+     *  - from {@link java.sql.DatabaseMetaData#getImportedKeys(String, String, String)}
+     *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBConstraintColumnMetadataImpl}
+     */
+    class ForeignKeyRelationsResultSet extends WrappedResultSet {
+        ForeignKeyRelationsResultSet(@Nullable ResultSet inner) {
+            super(inner);
+        }
+
+        @Override
+        public String getString(String columnLabel) throws SQLException {
+            switch (columnLabel) {
+                case "CONSTRAINT_NAME":
+                    return resolve(
+                            () -> inner.getString("FK_NAME"),
+                            () -> foreignKeyName(inner.getString("PKTABLE_NAME"), null));
+                case "COLUMN_NAME": return inner.getString("FKCOLUMN_NAME");
+                case "DATASET_NAME": return inner.getString("FKTABLE_NAME");
+                default: return null;
+            }
+        }
+
+        @Override
+        public int getInt(String columnLabel) throws SQLException {
+            switch (columnLabel) {
+                case "POSITION": return inner.getInt("KEY_SEQ");
+                default: return 0;
             }
         }
     }
@@ -363,14 +447,12 @@ public interface GenericMetadataTranslators {
      **************************************************************/
     @NotNull
     static String uniqueKeyName(String tableName, String columnName) {
-        // TODO generated key names should not include column name (support multiple column keys)
-        return "unq_" + tableName + "_" + columnName;
+        return "unq_" + tableName;
     }
 
     @NotNull
     static String foreignKeyName(String tableName, String columnName) {
-        // TODO generated key names should not include column name (support multiple column keys)
-        return "fk_" + tableName + "_" + columnName;
+        return "fk_" + tableName;
     }
 
     static String literalBoolean(boolean bool) {
