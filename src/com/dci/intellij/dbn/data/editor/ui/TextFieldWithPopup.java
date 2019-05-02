@@ -165,18 +165,6 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
         addPopupProvider(popupProvider);
     }
 
-    @Deprecated
-    public void createValuesListPopup(List<String> valuesList, boolean buttonVisible, boolean dynamicFiltering) {
-        ValuesListPopupProviderForm popupProviderForm = new ValuesListPopupProviderForm(this, new BasicListPopupValuesProvider("Possible Values List", valuesList), buttonVisible, dynamicFiltering);
-        addPopupProvider(popupProviderForm);
-    }
-
-    @Deprecated
-    public void createValuesListPopup(ListPopupValuesProvider valuesProvider, boolean buttonVisible, boolean dynamicFiltering) {
-        ValuesListPopupProviderForm popupProviderForm = new ValuesListPopupProviderForm(this, valuesProvider, buttonVisible, dynamicFiltering);
-        addPopupProvider(popupProviderForm);
-    }
-
     public void createTextEditorPopup(boolean autoPopup) {
         TextEditorPopupProviderForm popupProvider = new TextEditorPopupProviderForm(this, autoPopup);
         addPopupProvider(popupProvider);
