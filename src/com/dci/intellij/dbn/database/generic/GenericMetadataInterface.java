@@ -13,15 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 
-import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.ColumnsResultSet;
-import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.ForeignKeysResultSet;
-import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.FunctionsResultSet;
-import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.IndexesResultSet;
-import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.PrimaryKeysResultSet;
-import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.ProceduresResultSet;
-import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.SchemasResultSet;
-import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.TablesResultSet;
-import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.ViewsResultSet;
+import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.*;
 
 
 public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
@@ -63,10 +55,14 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
         return new SchemasResultSet(schemasRs) {
             @Override
             protected boolean isEmpty(String schemaName) throws SQLException {
+                return false;
+/*
+                TODO does not scale for large dbs (find another way or disable option)
                 return
                     loadTablesRaw(schemaName, connection).isEmpty() &&
                     loadFunctionsRaw(schemaName, connection).isEmpty() &&
                     loadProceduresRaw(schemaName, connection).isEmpty();
+*/
             }
         };
     }

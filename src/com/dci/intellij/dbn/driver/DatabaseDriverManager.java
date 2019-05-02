@@ -113,12 +113,13 @@ public class DatabaseDriverManager implements ApplicationComponent {
         File libraryFile = new File(libraryName);
         List<Driver> drivers = new ArrayList<Driver>();
         try {
+            ClassLoader parentClassLoader = getClass().getClassLoader();
             if (libraryFile.isFile()) {
                 URL[] urls = new URL[]{libraryFile.toURI().toURL()};
                 // creates an isolated classloader, parent = null
-                URLClassLoader classLoader = URLClassLoader.newInstance(urls, null);
+                URLClassLoader classLoader = URLClassLoader.newInstance(urls, parentClassLoader);
                 return loadDriversJar(libraryName, classLoader, reloadDrivers);
-            }else{
+            } else {
                 File[] directoryListing = libraryFile.listFiles();
                 List<URL> urls = new ArrayList<>();
                 if (directoryListing != null) {
@@ -129,7 +130,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
                         }
                     }
                     // creates an isolated classloader, parent = null
-                    URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]), null);
+                    URLClassLoader classLoader = URLClassLoader.newInstance(urls.toArray(new URL[0]), parentClassLoader);
                     // find and load drivers
                     for (File child : directoryListing) {
                         if (child.getName().endsWith(".jar")) {
@@ -177,14 +178,13 @@ public class DatabaseDriverManager implements ApplicationComponent {
                         String taskDescription = ProgressMonitor.getTaskDescription();
                         ProgressMonitor.setTaskDescription("Loading jdbc drivers from " + libraryName);
                         try {
-                            List<Driver> drivers = new ArrayList<Driver>();
+                            List<Driver> drivers = new ArrayList<>();
                             JarFile jarFile = new JarFile(libraryName);
                             Enumeration<JarEntry> entries = jarFile.entries();
                             while (entries.hasMoreElements()) {
                                 JarEntry entry = entries.nextElement();
 
-                                if (entry.isDirectory())
-                                    continue;
+                                //if (entry.isDirectory()) continue;
 
                                 String name = entry.getName();
                                 if (name.endsWith(".class")) {
@@ -192,14 +192,15 @@ public class DatabaseDriverManager implements ApplicationComponent {
                                     className = className.substring(0, className.length() - 6);
                                     try {
                                         // unsafe but fast driver loading, class name must contain "Driver"
-                                        String[] clsTokens = className.split("\\.");
-                                        if (clsTokens[clsTokens.length-1].toLowerCase().contains("driver")) {
+                                        // TODO really "unsafe" assuming all drivers contain the word "Driver" in the class name
+                                        //String[] clsTokens = className.split("\\.");
+                                        //if (clsTokens[clsTokens.length-1].toLowerCase().contains("driver")) {
                                             Class<?> clazz = classLoader.loadClass(className);
                                             if (Driver.class.isAssignableFrom(clazz)) {
                                                 Driver driver = (Driver)clazz.newInstance();
                                                 drivers.add(driver);
                                             }
-                                        }
+                                        //}
                                     } catch (Throwable throwable) {
                                         LOGGER.debug("Error loading driver "+className+" from library " + libraryName, throwable);
                                     }
