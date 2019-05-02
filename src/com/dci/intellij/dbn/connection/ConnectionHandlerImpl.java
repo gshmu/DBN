@@ -71,7 +71,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private boolean enabled;
     private ConnectionHandlerRef ref;
     private ConnectionInfo connectionInfo;
-    private Cache metaDataCache = new Cache(TimeUtil.ONE_MINUTE);
+    private Latent<Cache> metaDataCache = Latent.basic(() -> new Cache(getConnectionId().id(), TimeUtil.ONE_MINUTE));
 
     private Latent<AuthenticationInfo> temporaryAuthenticationInfo = Latent.basic(() -> {
         ConnectionDatabaseSettings databaseSettings = getSettings().getDatabaseSettings();
@@ -124,7 +124,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     @Override
     public Cache getMetaDataCache() {
-        return metaDataCache;
+        return metaDataCache.get();
     }
 
     @Override

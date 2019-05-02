@@ -10,8 +10,11 @@ import java.util.Map;
 public class Cache {
     private Map<String, CacheValue> elements = ContainerUtil.createSoftMap();
     private int expiryMillis;
+    private String qualifier;
 
-    public Cache(int expiryMillis) {
+
+    public Cache(String qualifier, int expiryMillis) {
+        this.qualifier = qualifier;
         this.expiryMillis = expiryMillis;
     }
 
@@ -33,7 +36,8 @@ public class Cache {
     }
 
     public <T, E extends Throwable> T get(String key, ThrowableCallable<T, E> loader) throws E {
-        return Synchronized.call(key, () -> {
+        String syncKey = qualifier + "." + key;
+        return Synchronized.call(syncKey, () -> {
             T value = get(key);
             if (value == null) {
                 value = loader.call();
