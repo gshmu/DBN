@@ -100,7 +100,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     public void refreshContentState() {
-        Synchronized.sync("REFRESH_STATE:" + getUrl(),
+        Synchronized.run("REFRESH_STATE:" + getUrl(),
                 () -> {
                     if (isNot(REFRESHING) && isLoaded()) {
                         try {

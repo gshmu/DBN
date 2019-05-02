@@ -18,9 +18,7 @@ import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 
 
 public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabaseSettingsForm>{
@@ -80,7 +78,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
             if (fileExists) {
                 textField.setForeground(UIUtil.getTextFieldForeground());
                 DatabaseType libraryDatabaseType = DatabaseType.resolve(driverLibrary);
-                if (libraryDatabaseType != DatabaseType.GENERIC && libraryDatabaseType != ensureParentComponent().getSelectedDatabaseType()) {
+                if (databaseType != DatabaseType.GENERIC && libraryDatabaseType != ensureParentComponent().getSelectedDatabaseType()) {
                     error = "The driver library does not match the selected database type";
                     initComboBox(driverComboBox);
                     setSelection(driverComboBox, null);

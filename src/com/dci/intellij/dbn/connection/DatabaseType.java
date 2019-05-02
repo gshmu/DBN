@@ -148,7 +148,7 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
     @NotNull
     public static DatabaseType resolve(String name) {
         name = name == null ? "" : name.toUpperCase();
-        if (name.contains("ORACLE")) {
+        if (name.contains("ORACLE") || name.contains("OJDBC")) {
             return DatabaseType.ORACLE;
         } else if (name.contains("MYSQL")) {
             return DatabaseType.MYSQL;
