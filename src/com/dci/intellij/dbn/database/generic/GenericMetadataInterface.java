@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 import com.dci.intellij.dbn.database.common.util.CachedResultSet;
 import com.dci.intellij.dbn.database.common.util.MultipartResultSet;
+import com.dci.intellij.dbn.database.common.util.WrappedResultSet;
 import com.intellij.openapi.diagnostic.Logger;
 
 import java.sql.DatabaseMetaData;
@@ -110,6 +111,16 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadAllIndexes(String ownerName, DBNConnection connection) throws SQLException {
+        // try fast load (may not be supported)
+        try {
+            CachedResultSet allIndexesRs = loadAllIndexesRaw(ownerName, connection).open();
+            if (!allIndexesRs.isEmpty()) {
+                return new IndexesResultSet(allIndexesRs);
+            }
+        } catch (Throwable ignore) {}
+
+
+        // fallback to slow load (table loop)
         MultipartResultSet allIndexesRs = new MultipartResultSet();
 
         CachedResultSet tablesRs = loadTablesRaw(ownerName, connection).open();
@@ -135,6 +146,18 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadAllConstraints(String ownerName, DBNConnection connection) throws SQLException {
+        // try fast load (may not be supported)
+        try {
+            CachedResultSet primaryKeysRs = loadAllPrimaryKeysRaw(ownerName, connection).open();
+            CachedResultSet foreignKeysRs = loadAllForeignKeysRaw(ownerName, connection).open();
+            if (!primaryKeysRs.isEmpty() || !foreignKeysRs.isEmpty()) {
+                WrappedResultSet wrappedPrimaryKeysRs = new PrimaryKeysResultSet(primaryKeysRs);
+                WrappedResultSet wrappedForeignKeysRs = new ForeignKeysResultSet(foreignKeysRs);
+                return new MultipartResultSet(wrappedPrimaryKeysRs, wrappedForeignKeysRs);
+            }
+        } catch (Throwable ignore) {}
+
+        // fallback to slow load (table loop)
         MultipartResultSet allConstraintsRs = new MultipartResultSet();
 
         CachedResultSet tablesRs = loadTablesRaw(ownerName, connection).open();
@@ -231,12 +254,33 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
 
+    private CachedResultSet loadAllIndexesRaw(String ownerName, DBNConnection connection) throws SQLException {
+        return cached(
+                ownerName + ".ALL_INDEXES",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet resultSet = metaData.getIndexInfo(null, ownerName, null, false, true);
+                    return CachedResultSet.create(resultSet);
+                });
+    }
+
+
     private CachedResultSet loadPrimaryKeysRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
         return cached(
                 ownerName + "." + datasetName + ".PRIMARY_KEYS",
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getPrimaryKeys(null, ownerName, datasetName);
+                    return CachedResultSet.create(resultSet);
+                });
+    }
+
+    private CachedResultSet loadAllPrimaryKeysRaw(String ownerName, DBNConnection connection) throws SQLException {
+        return cached(
+                ownerName + ".ALL_PRIMARY_KEYS",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet resultSet = metaData.getPrimaryKeys(null, ownerName, null);
                     return CachedResultSet.create(resultSet);
                 });
     }
@@ -250,6 +294,17 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                     return CachedResultSet.create(resultSet);
                 });
     }
+
+    private CachedResultSet loadAllForeignKeysRaw(String ownerName, DBNConnection connection) throws SQLException {
+        return cached(
+                ownerName + ".ALL_FOREIGN_KEYS",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet resultSet = metaData.getImportedKeys(null, ownerName, null);
+                    return CachedResultSet.create(resultSet);
+                });
+    }
+
 
     private CachedResultSet loadFunctionsRaw(String ownerName, DBNConnection connection) throws SQLException {
         return cached(
