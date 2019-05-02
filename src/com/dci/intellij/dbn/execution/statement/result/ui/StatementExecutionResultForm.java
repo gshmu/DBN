@@ -105,7 +105,10 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
                     sessionId == SessionId.POOL ? " (pool)" : " (session)";
             int rowCount = dataModel.getRowCount();
             String partialResultInfo = dataModel.isResultSetExhausted() ? "" : " (partial)";
-            statusLabel.setText(connectionName + connectionType + ": " + rowCount + " records" + partialResultInfo);
+            String eDuration = dataModel.getExecuteDuration() == -1 ? "":  " (executed in "+dataModel.getExecuteDuration()+" ms.)";
+            String fDuration = dataModel.getFetchDuration() == -1 ? "":  " (fetched in "+dataModel.getFetchDuration()+" ms.) ";
+
+            statusLabel.setText(connectionName + connectionType + ": " + rowCount + " records " + eDuration + fDuration + partialResultInfo);
             statusLabel.setIcon(connectionHandler.getIcon());
         });
     }

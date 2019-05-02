@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
 
@@ -22,6 +23,8 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
     private WeakRef<DBNConnection> connection;
     private WeakRef<DBNResultSet> resultSet;
 
+    /** last execution time. -1 unknown */
+    private final AtomicLong executeDuration = new AtomicLong(-1);
 
     DBNStatement(T inner, DBNConnection connection) {
         super(inner, ResourceType.STATEMENT);
@@ -83,6 +86,10 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
         return WeakRef.get(resultSet);
     }
 
+    public long getExecuteDuration() {
+        return executeDuration.get();
+    }
+
     protected Object wrap(Object object) {
         if (object instanceof ResultSet) {
             ResultSet resultSet = (ResultSet) object;
@@ -114,7 +121,13 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
         return new ManagedExecutor<R>() {
             @Override
             protected R execute() throws SQLException {
-                return callable.call();
+                executeDuration.set(-1);
+                long init = System.currentTimeMillis();
+                try {
+                    return callable.call();
+                } finally {
+                    executeDuration.set(System.currentTimeMillis() - init);
+                }
             }
         }.run();
     }
