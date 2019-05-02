@@ -174,7 +174,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     private void loadSourceFromDatabase(@NotNull DBSourceCodeVirtualFile sourceCodeFile, boolean force, boolean notifyError) {
-        Synchronized.sync(
+        Synchronized.run(
                 "LOAD_SOURCE:" + sourceCodeFile.getUrl(),
                 () -> {
                     boolean initialLoad = !sourceCodeFile.isLoaded();

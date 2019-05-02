@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.cache;
 
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
+import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,16 +33,13 @@ public class Cache {
     }
 
     public <T, E extends Throwable> T get(String key, ThrowableCallable<T, E> loader) throws E {
-        T value = get(key);
-        if (value == null) {
-            synchronized (this) {
-                value = get(key);
-                if (value == null) {
-                    value = loader.call();
-                    set(key, value);
-                }
+        return Synchronized.call(key, () -> {
+            T value = get(key);
+            if (value == null) {
+                value = loader.call();
+                set(key, value);
             }
-        }
-        return value;
+            return value;
+        });
     }
 }
