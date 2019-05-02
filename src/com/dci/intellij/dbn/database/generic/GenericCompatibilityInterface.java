@@ -10,17 +10,15 @@ import com.dci.intellij.dbn.language.common.QuoteDefinition;
 import com.dci.intellij.dbn.language.common.QuotePair;
 
 public class GenericCompatibilityInterface extends DatabaseCompatibilityInterface {
-    public static final QuoteDefinition IDENTIFIER_QUOTE_DEFINITION = new QuoteDefinition(new QuotePair('"', '"'));
+    private static final QuoteDefinition IDENTIFIER_QUOTE_DEFINITION = new QuoteDefinition(new QuotePair('"', '"'));
 
-    public GenericCompatibilityInterface(DatabaseInterfaceProvider parent) {
+    GenericCompatibilityInterface(DatabaseInterfaceProvider parent) {
         super(parent);
     }
 
     @Override
     public boolean supportsObjectType(DatabaseObjectTypeId objectTypeId) {
         return
-            objectTypeId == DatabaseObjectTypeId.CHARSET ||
-            objectTypeId == DatabaseObjectTypeId.USER ||
             objectTypeId == DatabaseObjectTypeId.SCHEMA ||
             objectTypeId == DatabaseObjectTypeId.TABLE ||
             objectTypeId == DatabaseObjectTypeId.VIEW ||
@@ -30,9 +28,7 @@ public class GenericCompatibilityInterface extends DatabaseCompatibilityInterfac
             objectTypeId == DatabaseObjectTypeId.TRIGGER ||
             objectTypeId == DatabaseObjectTypeId.FUNCTION ||
             objectTypeId == DatabaseObjectTypeId.PROCEDURE ||
-            objectTypeId == DatabaseObjectTypeId.ARGUMENT ||
-            objectTypeId == DatabaseObjectTypeId.PRIVILEGE ||
-            objectTypeId == DatabaseObjectTypeId.GRANTED_PRIVILEGE;
+            objectTypeId == DatabaseObjectTypeId.ARGUMENT;
     }
 
     @Override

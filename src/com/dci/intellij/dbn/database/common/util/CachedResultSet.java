@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.database.common.util;
 
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.list.FiltrableListImpl;
+import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.common.routine.ThrowableConsumer;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.ResultSetUtil;
@@ -81,21 +81,45 @@ public class CachedResultSet extends ResultSetStub {
      * Open a copy with it's own cursor index to iterate
      */
     public CachedResultSet open() {
-        return open(null, null);
+        return open(rows);
     }
 
-    public CachedResultSet groupBy(@NotNull GroupBy groupByClause) {
-        return open(null, groupByClause);
+    public CachedResultSet groupBy(@NotNull GroupBy groupByClause) throws SQLException {
+        if (rows.isEmpty()) {
+            return open(rows);
+        } else {
+            List<CachedResultSetRow> groupedRows = new ArrayList<>();
+            String[] columnNames = groupByClause.columnNames();
+
+            for (CachedResultSetRow row : rows) {
+                CachedResultSetRow matchingRow = find(groupedRows, row, columnNames);
+                if (matchingRow == null) {
+                    groupedRows.add(row.clone(columnNames));
+                } else {
+                    // TODO ignore or pivot the rest of columns?
+                }
+            }
+
+            return open(groupedRows);
+        }
+    }
+
+    private static CachedResultSetRow find(List<CachedResultSetRow> list, CachedResultSetRow match, String[] columnNames) {
+        for (CachedResultSetRow row : list) {
+            if (row.matches(match, columnNames)) {
+                return row;
+            }
+        }
+        return null;
     }
 
     public CachedResultSet where(@NotNull Where whereCondition) {
-        return open(whereCondition, null);
+        List<CachedResultSetRow> rows = new FilteredList<>(this.rows, whereCondition);
+        return open(rows);
     }
 
-    public CachedResultSet open(@Nullable Where whereCondition, @Nullable GroupBy groupByClause) {
-        List<CachedResultSetRow> rows = whereCondition == null ? this.rows : new FiltrableListImpl<>(this.rows, whereCondition);
-
-        // TODO group rows using clause
+    @NotNull
+    private CachedResultSet open(List<CachedResultSetRow> rows) {
         return new CachedResultSet(rows, columnNames) {
             private int cursor = -1;
 

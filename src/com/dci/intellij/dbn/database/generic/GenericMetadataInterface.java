@@ -22,12 +22,35 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     // TODO review (ORACLE behavior - package methods come back with FUNCTION_CAT / PROCEDURE_CAT as package name)
     //  filtering them out for now
-    public static final CachedResultSet.Where FUNCTION_CAT_IS_NULL = row -> row.get("FUNCTION_CAT") == null;
-    public static final CachedResultSet.Where PROCEDURE_CAT_IS_NULL = row -> row.get("PROCEDURE_CAT") == null;
+    private static final CachedResultSet.Where FUNCTION_CAT_IS_NULL = row -> row.get("FUNCTION_CAT") == null;
+    private static final CachedResultSet.Where PROCEDURE_CAT_IS_NULL = row -> row.get("PROCEDURE_CAT") == null;
 
-    public static final CachedResultSet.GroupBy GROUP_BY_INDEX_NAME = () -> new String[]{"INDEX_NAME"};
+    private static final CachedResultSet.GroupBy GROUP_BY_IDX_IDENTIFIER = () -> new String[]{
+            "TABLE_CAT",
+            "TABLE_SCHEM",
+            "TABLE_NAME",
+            "NON_UNIQUE",
+            "INDEX_QUALIFIER",
+            "INDEX_NAME",
+            "TYPE"};
 
-    public GenericMetadataInterface(DatabaseInterfaceProvider provider) {
+    private static final CachedResultSet.GroupBy GROUP_BY_PK_IDENTIFIER = () -> new String[]{
+            "TABLE_CAT",
+            "TABLE_SCHEM",
+            "TABLE_NAME",
+            "PK_NAME"};
+
+    private static final CachedResultSet.GroupBy GROUP_BY_FK_IDENTIFIER = () -> new String[]{
+            "PKTABLE_CAT",
+            "PKTABLE_SCHEM",
+            "PKTABLE_NAME",
+            "FKTABLE_CAT",
+            "FKTABLE_SCHEM",
+            "FKTABLE_NAME",
+            "FK_NAME",
+            "PK_NAME"};
+
+    GenericMetadataInterface(DatabaseInterfaceProvider provider) {
         super("generic_metadata_interface.xml", provider);
     }
 
@@ -104,8 +127,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadIndexes(String ownerName, String tableName, DBNConnection connection) throws SQLException {
-        // TODO needs grouping by INDEX_NAME
-        ResultSet indexesRs = loadIndexesRaw(ownerName, tableName, connection).groupBy(GROUP_BY_INDEX_NAME);
+        ResultSet indexesRs = loadIndexesRaw(ownerName, tableName, connection).groupBy(GROUP_BY_IDX_IDENTIFIER);
         return new IndexesResultSet(indexesRs);
     }
 
@@ -113,7 +135,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     public ResultSet loadAllIndexes(String ownerName, DBNConnection connection) throws SQLException {
         // try fast load (may not be supported)
         try {
-            CachedResultSet allIndexesRs = loadAllIndexesRaw(ownerName, connection).open();
+            CachedResultSet allIndexesRs = loadAllIndexesRaw(ownerName, connection).groupBy(GROUP_BY_IDX_IDENTIFIER);
             if (!allIndexesRs.isEmpty()) {
                 return new IndexesResultSet(allIndexesRs);
             }
@@ -134,8 +156,8 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadConstraints(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
-        ResultSet primaryKeysRs = loadPrimaryKeysRaw(ownerName, datasetName, connection).open();
-        ResultSet foreignKeysRs = loadForeignKeysRaw(ownerName, datasetName, connection).open();
+        ResultSet primaryKeysRs = loadPrimaryKeysRaw(ownerName, datasetName, connection).groupBy(GROUP_BY_PK_IDENTIFIER);
+        ResultSet foreignKeysRs = loadForeignKeysRaw(ownerName, datasetName, connection).groupBy(GROUP_BY_FK_IDENTIFIER);
 
         primaryKeysRs = new PrimaryKeysResultSet(primaryKeysRs);
         foreignKeysRs = new ForeignKeysResultSet(foreignKeysRs);
@@ -148,9 +170,9 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     public ResultSet loadAllConstraints(String ownerName, DBNConnection connection) throws SQLException {
         // try fast load (may not be supported)
         try {
-            CachedResultSet primaryKeysRs = loadAllPrimaryKeysRaw(ownerName, connection).open();
-            CachedResultSet foreignKeysRs = loadAllForeignKeysRaw(ownerName, connection).open();
-            if (!primaryKeysRs.isEmpty() || !foreignKeysRs.isEmpty()) {
+            CachedResultSet primaryKeysRs = loadAllPrimaryKeysRaw(ownerName, connection).groupBy(GROUP_BY_PK_IDENTIFIER);
+            CachedResultSet foreignKeysRs = loadAllForeignKeysRaw(ownerName, connection).groupBy(GROUP_BY_FK_IDENTIFIER);
+            if (!primaryKeysRs.isEmpty() && !foreignKeysRs.isEmpty()) {
                 WrappedResultSet wrappedPrimaryKeysRs = new PrimaryKeysResultSet(primaryKeysRs);
                 WrappedResultSet wrappedForeignKeysRs = new ForeignKeysResultSet(foreignKeysRs);
                 return new MultipartResultSet(wrappedPrimaryKeysRs, wrappedForeignKeysRs);
