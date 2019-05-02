@@ -62,7 +62,7 @@ public class DBNConnection extends DBNConnectionBase {
                     ResourceStatus.VALID,
                     ResourceStatus.VALID_SETTING,
                     ResourceStatus.VALID_CHECKING,
-                    TimeUtil.FIVE_SECONDS,
+                    TimeUtil.TEN_SECONDS,
                     Boolean.TRUE,
                     Boolean.FALSE) { // false is terminal status
                 @Override
@@ -80,7 +80,7 @@ public class DBNConnection extends DBNConnectionBase {
                     ResourceStatus.AUTO_COMMIT,
                     ResourceStatus.AUTO_COMMIT_SETTING,
                     ResourceStatus.AUTO_COMMIT_CHECKING,
-                    TimeUtil.FIVE_SECONDS,
+                    TimeUtil.TEN_SECONDS,
                     Boolean.FALSE,
                     null) { // no terminal status
                 @Override
