@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.logging.ExecutionLogOutput;
+import com.dci.intellij.dbn.object.type.DBMethodType;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
@@ -279,7 +280,7 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
     }
 
     @Override
-    public ResultSet loadMethodArguments(String ownerName, String methodName, String methodType, int overload, DBNConnection connection) throws SQLException {
+    public ResultSet loadMethodArguments(String ownerName, String methodName, DBMethodType methodType, int overload, DBNConnection connection) throws SQLException {
         return executeQuery(connection, "method-arguments", ownerName, methodName, methodType, overload);
     }
 
