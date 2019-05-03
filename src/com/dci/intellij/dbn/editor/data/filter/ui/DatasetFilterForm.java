@@ -38,13 +38,10 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
     private JPanel actionsPanel;
     private JPanel headerPanel;
 
-    private DBDataset dataset;
-
     public DatasetFilterForm(DatasetFilterGroup filterGroup, @NotNull DBDataset dataset) {
         super(filterGroup);
         filtersList.setModel(filterGroup);
         filtersList.setFont(UIUtil.getLabelFont());
-        this.dataset = dataset;
         Project project = dataset.getProject();
 
         DBNHeaderForm headerForm = new DBNHeaderForm(dataset, this);
@@ -68,10 +65,6 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
         valueChanged(null);
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
         filtersList.addListSelectionListener(this);
-    }
-
-    public DBDataset getDataset() {
-        return dataset;
     }
 
     public DatasetFilterList getFilterList() {
