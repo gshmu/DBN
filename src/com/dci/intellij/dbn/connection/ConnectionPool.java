@@ -192,8 +192,10 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
                 try {
                     Thread.sleep(TimeUtil.ONE_SECOND);
                     return allocateConnection(readonly);
-                } catch (InterruptedException e) {
-                    throw new SQLException("Could not allocate connection for '" + connectionHandler.getName() + "'. ");
+                } catch (SQLException e) {
+                    throw e;
+                } catch (Throwable e) {
+                    throw new SQLException("Could not allocate connection for '" + connectionHandler.getName() + "'. ", e);
                 }
             }
             connection = createPoolConnection();

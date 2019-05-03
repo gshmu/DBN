@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.connection.transaction.ConnectionSavepoint;
@@ -135,13 +136,19 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
         List<Cell> changedCells = currentRow.getChangedCells();
         for (Cell cell : changedCells) {
             buffer.append(cell.getColumnName());
-            buffer.append(" = ? ");
+            buffer.append(" = ?");
+            if (!CollectionUtil.isLast(changedCells, cell)) {
+                buffer.append(", ");
+            }
         }
         buffer.append(" where ");
 
         for (Cell cell : keyCells) {
             buffer.append(cell.getColumnName());
-            buffer.append(" = ? ");
+            buffer.append(" = ?");
+            if (!CollectionUtil.isLast(keyCells, cell)) {
+                buffer.append(" and ");
+            }
         }
 
         PreparedStatement preparedStatement = connection.prepareStatement(buffer.toString());

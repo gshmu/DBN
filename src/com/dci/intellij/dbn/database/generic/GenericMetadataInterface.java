@@ -1,17 +1,20 @@
 package com.dci.intellij.dbn.database.generic;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 import com.dci.intellij.dbn.database.common.util.CachedResultSet;
 import com.dci.intellij.dbn.database.common.util.MultipartResultSet;
 import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 
 import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.*;
 
@@ -21,8 +24,8 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     // TODO review (ORACLE behavior - package methods come back with FUNCTION_CAT / PROCEDURE_CAT as package name)
     //  filtering them out for now
-    private static final CachedResultSet.Where FUNCTION_CAT_IS_NULL = row -> row.get("FUNCTION_CAT") == null;
-    private static final CachedResultSet.Where PROCEDURE_CAT_IS_NULL = row -> row.get("PROCEDURE_CAT") == null;
+    private static final CachedResultSet.Condition FUNCTION_CAT_IS_NULL = row -> row.get("FUNCTION_CAT") == null;
+    private static final CachedResultSet.Condition PROCEDURE_CAT_IS_NULL = row -> row.get("PROCEDURE_CAT") == null;
 
     private static final CachedResultSet.GroupBy GROUP_BY_IDX_IDENTIFIER = () -> new String[]{
             "TABLE_CAT",
@@ -107,8 +110,8 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
         ResultSet columnsRs = loadColumnsRaw(ownerName, datasetName, connection).open();
         ResultSet pseudoColumnsRs = loadPseudoColumnsRaw(ownerName, datasetName, connection).open();
 
-        columnsRs = new ColumnsResultSet(columnsRs);
-        pseudoColumnsRs = new ColumnsResultSet(pseudoColumnsRs);
+        columnsRs = newColumnsResultSet(columnsRs, connection);
+        pseudoColumnsRs = newColumnsResultSet(pseudoColumnsRs, connection);
 
         return new MultipartResultSet(columnsRs, pseudoColumnsRs);
     }
@@ -118,11 +121,46 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
         ResultSet columnsRs = loadAllColumnsRaw(ownerName, connection).open();
         ResultSet pseudoColumnsRs = loadAllPseudoColumnsRaw(ownerName, connection).open();
 
-        columnsRs = new ColumnsResultSet(columnsRs);
-        pseudoColumnsRs = new ColumnsResultSet(pseudoColumnsRs);
+        columnsRs = newColumnsResultSet(columnsRs, connection);
+        pseudoColumnsRs = newColumnsResultSet(pseudoColumnsRs, connection);
 
         return new MultipartResultSet(columnsRs, pseudoColumnsRs);
     }
+
+    @NotNull
+    private ColumnsResultSet newColumnsResultSet(ResultSet columnsRs, DBNConnection connection) {
+        return new ColumnsResultSet(columnsRs) {
+            @Override
+            protected boolean isPrimaryKey(String ownerName, String datasetName, String columnName) throws SQLException {
+                CachedResultSet primaryKeysRs = loadPrimaryKeysRaw(ownerName, datasetName, connection);
+                return primaryKeysRs.exists(row ->
+                        row.get("PK_NAME") != null &&
+                        CommonUtil.safeEqual(row.get("TABLE_SCHEM"), ownerName) &&
+                        CommonUtil.safeEqual(row.get("TABLE_NAME"), datasetName) &&
+                        CommonUtil.safeEqual(row.get("COLUMN_NAME"), columnName));
+            }
+
+            @Override
+            protected boolean isForeignKey(String ownerName, String datasetName, String columnName) throws SQLException {
+                CachedResultSet foreignKeysRs = loadForeignKeysRaw(ownerName, datasetName, connection);
+                return foreignKeysRs.exists(row ->
+                        CommonUtil.safeEqual(row.get("FKTABLE_SCHEM"), ownerName) &&
+                        CommonUtil.safeEqual(row.get("FKTABLE_NAME"), datasetName) &&
+                        CommonUtil.safeEqual(row.get("FKCOLUMN_NAME"), columnName));
+            }
+
+            @Override
+            protected boolean isUniqueKey(String ownerName, String datasetName, String columnName) throws SQLException {
+                CachedResultSet primaryKeysRs = loadPrimaryKeysRaw(ownerName, datasetName, connection);
+                return primaryKeysRs.exists(row ->
+                        row.get("PK_NAME") == null &&
+                        CommonUtil.safeEqual(row.get("TABLE_SCHEM"), ownerName) &&
+                        CommonUtil.safeEqual(row.get("TABLE_NAME"), datasetName) &&
+                        CommonUtil.safeEqual(row.get("COLUMN_NAME"), columnName));
+            }
+        };
+    }
+
 
     @Override
     public ResultSet loadIndexes(String ownerName, String tableName, DBNConnection connection) throws SQLException {
@@ -132,23 +170,13 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadAllIndexes(String ownerName, DBNConnection connection) throws SQLException {
-        // try fast load (may not be supported)
-        try {
-            CachedResultSet allIndexesRs = loadAllIndexesRaw(ownerName, connection).groupBy(GROUP_BY_IDX_IDENTIFIER);
-            if (!allIndexesRs.isEmpty()) {
-                return new IndexesResultSet(allIndexesRs);
-            }
-        } catch (Throwable ignore) {}
-
-
-        // fallback to slow load (table loop)
         MultipartResultSet allIndexesRs = new MultipartResultSet();
 
-        CachedResultSet tablesRs = loadTablesRaw(ownerName, connection).open();
-        tablesRs.forEachRow("TABLE_NAME", String.class, (tableName) -> {
+        List<String> tableNames = loadTablesRaw(ownerName, connection).list("TABLE_NAME", String.class);
+        for (String tableName : tableNames) {
             ResultSet indexesRs = loadIndexes(ownerName, tableName, connection);
             allIndexesRs.add(indexesRs);
-        });
+        }
 
         return allIndexesRs;
     }
@@ -161,23 +189,13 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadAllIndexRelations(String ownerName, DBNConnection connection) throws SQLException {
-        // try fast load (may not be supported)
-        try {
-            CachedResultSet allIndexRs = loadAllIndexesRaw(ownerName, connection).open();
-            if (!allIndexRs.isEmpty()) {
-                return new IndexColumnResultSet(allIndexRs);
-            }
-        } catch (Throwable ignore) {}
-
-
-        // fallback to slow load (table loop)
         MultipartResultSet allIndexRelationsRs = new MultipartResultSet();
 
-        CachedResultSet tablesRs = loadTablesRaw(ownerName, connection).open();
-        tablesRs.forEachRow("TABLE_NAME", String.class, (tableName) -> {
+        List<String> tableNames = loadTablesRaw(ownerName, connection).list("TABLE_NAME", String.class);
+        for (String tableName : tableNames) {
             ResultSet indexRelationsRs = loadIndexRelations(ownerName, tableName, connection);
             allIndexRelationsRs.add(indexRelationsRs);
-        });
+        }
 
         return allIndexRelationsRs;
     }
@@ -196,25 +214,13 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadAllConstraints(String ownerName, DBNConnection connection) throws SQLException {
-        // try fast load (may not be supported)
-        try {
-            CachedResultSet primaryKeysRs = loadAllPrimaryKeysRaw(ownerName, connection).groupBy(GROUP_BY_PK_IDENTIFIER);
-            CachedResultSet foreignKeysRs = loadAllForeignKeysRaw(ownerName, connection).groupBy(GROUP_BY_FK_IDENTIFIER);
-            if (!primaryKeysRs.isEmpty() && !foreignKeysRs.isEmpty()) {
-                ResultSet wrappedPrimaryKeysRs = new PrimaryKeysResultSet(primaryKeysRs);
-                ResultSet wrappedForeignKeysRs = new ForeignKeysResultSet(foreignKeysRs);
-                return new MultipartResultSet(wrappedPrimaryKeysRs, wrappedForeignKeysRs);
-            }
-        } catch (Throwable ignore) {}
-
-        // fallback to slow load (table loop)
         MultipartResultSet allConstraintsRs = new MultipartResultSet();
 
-        CachedResultSet tablesRs = loadTablesRaw(ownerName, connection).open();
-        tablesRs.forEachRow("TABLE_NAME", String.class, (tableName) -> {
+        List<String> tableNames = loadTablesRaw(ownerName, connection).list("TABLE_NAME", String.class);
+        for (String tableName : tableNames) {
             ResultSet constraintsRs = loadConstraints(ownerName, tableName, connection);
             allConstraintsRs.add(constraintsRs);
-        });
+        }
         return allConstraintsRs;
     }
 
@@ -231,25 +237,14 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadAllConstraintRelations(String ownerName, DBNConnection connection) throws SQLException {
-        // try fast load (may not be supported)
-        try {
-            CachedResultSet primaryKeysRs = loadAllPrimaryKeysRaw(ownerName, connection).open();
-            CachedResultSet foreignKeysRs = loadAllForeignKeysRaw(ownerName, connection).open();
-            if (!primaryKeysRs.isEmpty() && !foreignKeysRs.isEmpty()) {
-                ResultSet wrappedPrimaryKeysRs = new PrimaryKeyRelationsResultSet(primaryKeysRs);
-                ResultSet wrappedForeignKeysRs = new ForeignKeyRelationsResultSet(foreignKeysRs);
-                return new MultipartResultSet(wrappedPrimaryKeysRs, wrappedForeignKeysRs);
-            }
-        } catch (Throwable ignore) {}
-
-        // fallback to slow load (table loop)
         MultipartResultSet allConstraintRelationsRs = new MultipartResultSet();
 
-        CachedResultSet tablesRs = loadTablesRaw(ownerName, connection).open();
-        tablesRs.forEachRow("TABLE_NAME", String.class, (tableName) -> {
+        List<String> tableNames = loadTablesRaw(ownerName, connection).list("TABLE_NAME", String.class);
+        for (String tableName : tableNames) {
             ResultSet constraintRelationsRs = loadConstraintRelations(ownerName, tableName, connection);
             allConstraintRelationsRs.add(constraintRelationsRs);
-        });
+        }
+
         return allConstraintRelationsRs;
     }
 
@@ -338,34 +333,12 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 });
     }
 
-
-    private CachedResultSet loadAllIndexesRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return cached(
-                ownerName + ".ALL_INDEXES",
-                () -> {
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getIndexInfo(null, ownerName, null, false, true);
-                    return CachedResultSet.create(resultSet);
-                });
-    }
-
-
     private CachedResultSet loadPrimaryKeysRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
         return cached(
                 ownerName + "." + datasetName + ".PRIMARY_KEYS",
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getPrimaryKeys(null, ownerName, datasetName);
-                    return CachedResultSet.create(resultSet);
-                });
-    }
-
-    private CachedResultSet loadAllPrimaryKeysRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return cached(
-                ownerName + ".ALL_PRIMARY_KEYS",
-                () -> {
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getPrimaryKeys(null, ownerName, null);
                     return CachedResultSet.create(resultSet);
                 });
     }
@@ -379,17 +352,6 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                     return CachedResultSet.create(resultSet);
                 });
     }
-
-    private CachedResultSet loadAllForeignKeysRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return cached(
-                ownerName + ".ALL_FOREIGN_KEYS",
-                () -> {
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getImportedKeys(null, ownerName, null);
-                    return CachedResultSet.create(resultSet);
-                });
-    }
-
 
     private CachedResultSet loadFunctionsRaw(String ownerName, DBNConnection connection) throws SQLException {
         return cached(

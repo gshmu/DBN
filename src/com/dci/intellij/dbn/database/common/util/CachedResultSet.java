@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.database.common.util;
 
+import com.dci.intellij.dbn.common.data.Data;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FilteredList;
-import com.dci.intellij.dbn.common.routine.ThrowableConsumer;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.ResultSetUtil;
 import org.jetbrains.annotations.NotNull;
@@ -67,13 +67,59 @@ public class CachedResultSet extends ResultSetStub {
     }
 
     @Override
-    public void close() throws SQLException {
+    public void close() {
         // source already closed;
     }
 
     @Override
-    public boolean isClosed() throws SQLException {
+    public boolean isClosed() {
         return false; // cached - never closed
+    }
+
+    /**************************************************************
+     *                          Utilities                         *
+     **************************************************************/
+    public CachedResultSet where(@NotNull Condition whereCondition) {
+        List<CachedResultSetRow> rows = new FilteredList<>(this.rows, whereCondition);
+        return open(rows);
+    }
+
+    public boolean exists(@NotNull Condition whereCondition) {
+        for (CachedResultSetRow row : this.rows) {
+            if (whereCondition.accepts(row)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public <T> List<T> list(String columnName, Class<T> columnType) {
+        List<T> list = new ArrayList<>();
+        for (CachedResultSetRow row : this.rows) {
+            Object columnValue = row.get(columnName);
+            T castedValue = Data.cast(columnValue, columnType);
+            list.add(castedValue);
+        }
+
+        return list;
+    }
+
+    @NotNull
+    private CachedResultSet open(List<CachedResultSetRow> rows) {
+        return new CachedResultSet(rows, columnNames) {
+            private int cursor = -1;
+
+            @Override
+            public boolean next() {
+                cursor++;
+                return cursor < rows.size();
+            }
+
+            @Override
+            protected CachedResultSetRow current() {
+                return rows.get(cursor);
+            }
+        };
     }
 
     /**
@@ -113,37 +159,10 @@ public class CachedResultSet extends ResultSetStub {
         return null;
     }
 
-    public CachedResultSet where(@NotNull Where whereCondition) {
-        List<CachedResultSetRow> rows = new FilteredList<>(this.rows, whereCondition);
-        return open(rows);
-    }
-
-    @NotNull
-    private CachedResultSet open(List<CachedResultSetRow> rows) {
-        return new CachedResultSet(rows, columnNames) {
-            private int cursor = -1;
-
-            @Override
-            public boolean next() throws SQLException {
-                cursor++;
-                return cursor < rows.size();
-            }
-
-            @Override
-            protected CachedResultSetRow current() {
-                return rows.get(cursor);
-            }
-        };
-    }
-
-    public interface Where extends Filter<CachedResultSetRow> {}
+    public interface Condition extends Filter<CachedResultSetRow> {}
 
     public interface GroupBy {
         String[] columnNames();
-    }
-
-    public <V> void forEachRow(String columnName, Class<V> columnType, ThrowableConsumer<V, SQLException> consumer) throws SQLException {
-        ResultSetUtil.forEachRow(this, columnName, columnType, consumer);
     }
 
     /**************************************************************
@@ -158,28 +177,19 @@ public class CachedResultSet extends ResultSetStub {
     @Override
     public String getString(String columnLabel) throws SQLException {
         Object value = getObject(columnLabel);
-        return value == null ? null : value.toString();
+        return Data.asString(value);
     }
 
     @Override
     public int getInt(String columnLabel) throws SQLException {
         Object value = getObject(columnLabel);
-        return value == null ? 0 :
-                value instanceof Integer ? (int) value :
-                        Integer.valueOf(value.toString());
+        return Data.asInt(value);
     }
 
     @Override
     public boolean getBoolean(String columnLabel) throws SQLException {
         Object value = getObject(columnLabel);
-        if (value instanceof Number) {
-            Number number = (Number) value;
-            return number.intValue() != 0;
-
-        } else if (value instanceof Boolean) {
-            return (boolean) value;
-        }
-        return false;
+        return Data.asBool(value);
     }
 
     // TODO add more accessors overrides if needed
