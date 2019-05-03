@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
 import com.dci.intellij.dbn.object.common.loader.DBSourceCodeLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
+import com.dci.intellij.dbn.object.type.DBMethodType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,8 +82,8 @@ public class DBProcedureImpl extends DBMethodImpl<DBProcedureMetadata> implement
     }
 
     @Override
-    public String getMethodType() {
-        return "PROCEDURE";
+    public DBMethodType getMethodType() {
+        return DBMethodType.PROCEDURE;
     }
 
     /*********************************************************

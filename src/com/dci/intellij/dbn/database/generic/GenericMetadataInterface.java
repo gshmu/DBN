@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 import com.dci.intellij.dbn.database.common.util.CachedResultSet;
 import com.dci.intellij.dbn.database.common.util.MultipartResultSet;
+import com.dci.intellij.dbn.object.type.DBMethodType;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 
@@ -254,10 +255,38 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
         return new FunctionsResultSet(functionsRs);
     }
 
+
+
     @Override
     public ResultSet loadProcedures(String ownerName, DBNConnection connection) throws SQLException {
         CachedResultSet proceduresRs = loadProceduresRaw(ownerName, connection).where(PROCEDURE_CAT_IS_NULL);
         return new ProceduresResultSet(proceduresRs);
+    }
+
+    @Override
+    public ResultSet loadMethodArguments(String ownerName, String methodName, DBMethodType methodType, int overload, DBNConnection connection) throws SQLException {
+        if (methodType == DBMethodType.FUNCTION) {
+            CachedResultSet argumentsRs = loadFunctionArgumentsRaw(ownerName, methodName, connection).open();
+            return new FunctionArgumentsResultSet(argumentsRs);
+        }
+
+        if (methodType == DBMethodType.PROCEDURE) {
+            CachedResultSet argumentsRs = loadProcedureArgumentsRaw(ownerName, methodName, connection).open();
+            return new ProcedureArgumentsResultSet(argumentsRs);
+        }
+
+        return null;
+    }
+
+    @Override
+    public ResultSet loadAllMethodArguments(String ownerName, DBNConnection connection) throws SQLException {
+        ResultSet functionArgumentsRs = loadAllFunctionArgumentsRaw(ownerName, connection).open();
+        functionArgumentsRs = new FunctionArgumentsResultSet(functionArgumentsRs);
+
+        ResultSet procedureArgumentsRs = loadAllProcedureArgumentsRaw(ownerName, connection).open();
+        procedureArgumentsRs = new ProcedureArgumentsResultSet(procedureArgumentsRs);
+
+        return new MultipartResultSet(functionArgumentsRs, procedureArgumentsRs);
     }
 
     /**************************************************************
@@ -373,6 +402,28 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 });
     }
 
+    private CachedResultSet loadFunctionArgumentsRaw(String ownerName, String functionName, DBNConnection connection) throws SQLException {
+        return cached(
+                connection,
+                ownerName + "." + functionName + ".FUNCTION_ARGUMENTS",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet resultSet = metaData.getFunctionColumns(null, ownerName, functionName, null);
+                    return CachedResultSet.create(resultSet);
+                });
+    }
+
+    private CachedResultSet loadAllFunctionArgumentsRaw(String ownerName, DBNConnection connection) throws SQLException {
+        return cached(
+                connection,
+                ownerName + ".ALL_FUNCTION_ARGUMENTS",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet resultSet = metaData.getFunctionColumns(null, ownerName, null, null);
+                    return CachedResultSet.create(resultSet);
+                });
+    }
+
     private CachedResultSet loadProceduresRaw(String ownerName, DBNConnection connection) throws SQLException {
         return cached(
                 connection,
@@ -380,6 +431,28 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getProcedures(null, ownerName, null);
+                    return CachedResultSet.create(resultSet);
+                });
+    }
+
+    private CachedResultSet loadProcedureArgumentsRaw(String ownerName, String procedureName, DBNConnection connection) throws SQLException {
+        return cached(
+                connection,
+                ownerName + "." + procedureName + ".PROCEDURE_ARGUMENTS",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet resultSet = metaData.getProcedureColumns(null, ownerName, procedureName, null);
+                    return CachedResultSet.create(resultSet);
+                });
+    }
+
+    private CachedResultSet loadAllProcedureArgumentsRaw(String ownerName, DBNConnection connection) throws SQLException {
+        return cached(
+                connection,
+                ownerName + ".ALL_PROCEDURE_ARGUMENTS",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet resultSet = metaData.getProcedureColumns(null, ownerName, null, null);
                     return CachedResultSet.create(resultSet);
                 });
     }
