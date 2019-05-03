@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.object;
 
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.type.DBMethodType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public interface DBMethod extends DBSchemaObject {
     DBArgument getArgument(String name);
     DBArgument getReturnArgument();
     DBProgram getProgram();
-    String getMethodType();
+    DBMethodType getMethodType();
 
     int getPosition();
 

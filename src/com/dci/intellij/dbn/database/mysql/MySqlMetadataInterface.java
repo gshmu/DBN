@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.database.mysql;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
+import com.dci.intellij.dbn.object.type.DBMethodType;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,7 +22,7 @@ public class MySqlMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     @Override
-    public ResultSet loadMethodArguments(String ownerName, String methodName, String methodType, int overload, DBNConnection connection) throws SQLException {
+    public ResultSet loadMethodArguments(String ownerName, String methodName, DBMethodType methodType, int overload, DBNConnection connection) throws SQLException {
         try {
             return super.loadMethodArguments(ownerName, methodName, methodType, overload, connection);
         } catch (SQLException e) {

@@ -17,6 +17,8 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.sql.DatabaseMetaData.*;
+
 public interface GenericMetadataTranslators {
     Logger LOGGER = LoggerFactory.createLogger();
 
@@ -113,6 +115,12 @@ public interface GenericMetadataTranslators {
     }
 
     /**
+     * Abstract metadata translation for COLUMNS and ARGUMENTS
+     *  - from {@link java.sql.DatabaseMetaData#getColumns(String, String, String, String)}
+     *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBDataTypeMetadataImpl}
+     */
+
+    /**
      * Metadata translation for COLUMNS
      *  - from {@link java.sql.DatabaseMetaData#getColumns(String, String, String, String)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBColumnMetadataImpl}
@@ -165,8 +173,9 @@ public interface GenericMetadataTranslators {
                             });
 
 
-                case "DATA_TYPE_OWNER": return null;
+                case "DATA_TYPE_OWNER":   return null;
                 case "DATA_TYPE_PACKAGE": return null;
+                case "IS_SET":            return literalBoolean(false);
                 default: return null;
             }
         }
@@ -175,9 +184,9 @@ public interface GenericMetadataTranslators {
         public int getInt(String columnLabel) throws SQLException {
             switch (columnLabel) {
                 case "POSITION":       return inner.getInt("ORDINAL_POSITION");
-                case "DATA_LENGTH":    resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
-                case "DATA_PRECISION": resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
-                case "DATA_SCALE":     resolve(() -> inner.getInt("DECIMAL_DIGITS"),() -> 0);
+                case "DATA_LENGTH":    return resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
+                case "DATA_PRECISION": return resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
+                case "DATA_SCALE":     return resolve(() -> inner.getInt("DECIMAL_DIGITS"),() -> 0);
                 default: return 0;
             }
         }
@@ -239,8 +248,9 @@ public interface GenericMetadataTranslators {
                     return resolve(
                             () -> inner.getString("INDEX_NAME"),
                             () -> inner.getString("TABLE_NAME") + "_INDEX_STATISTIC");
+
                 case "COLUMN_NAME": return inner.getString("COLUMN_NAME");
-                case "TABLE_NAME": return inner.getString("TABLE_NAME");
+                case "TABLE_NAME":  return inner.getString("TABLE_NAME");
 
             }
             return super.getString(columnLabel);
@@ -260,11 +270,11 @@ public interface GenericMetadataTranslators {
         @Override
         public String getString(String columnLabel) throws SQLException {
             switch (columnLabel) {
-                case "CONSTRAINT_NAME": {
+                case "CONSTRAINT_NAME":
                     return resolve(
                             () -> inner.getString("PK_NAME"),
                             () -> uniqueKeyName(inner.getString("TABLE_NAME"), null/*TODO what about multiple unique keys (find the additional discriminator)*/));
-                }
+
 
                 case "CONSTRAINT_TYPE": {
                     String pkName = inner.getString("PK_NAME");
@@ -334,22 +344,19 @@ public interface GenericMetadataTranslators {
                             () -> foreignKeyName(inner.getString("FKTABLE_NAME"), null));
                 }
 
-                case "CONSTRAINT_TYPE": return "FOREIGN KEY";
-                case "DATASET_NAME": return inner.getString("FKTABLE_NAME");
+                case "CONSTRAINT_TYPE":     return "FOREIGN KEY";
+                case "DATASET_NAME":        return inner.getString("FKTABLE_NAME");
+                case "FK_CONSTRAINT_OWNER": return inner.getString("PKTABLE_SCHEM");
 
-                case "FK_CONSTRAINT_OWNER": {
-                    return inner.getString("PKTABLE_SCHEM");
-                }
-
-                case "FK_CONSTRAINT_NAME": {
+                case "FK_CONSTRAINT_NAME":
                     return resolve(
                             () -> inner.getString("PK_NAME"),
                             () -> uniqueKeyName(
                                     inner.getString("PKTABLE_NAME"),
                                     inner.getString("PKCOLUMN_NAME")));
-                }
+
                 case "CHECK_CONDITION": return "";
-                case "IS_ENABLED": return "Y";
+                case "IS_ENABLED":      return literalBoolean(true);
                 default: return null;
             }
         }
@@ -372,9 +379,10 @@ public interface GenericMetadataTranslators {
                     return resolve(
                             () -> inner.getString("FK_NAME"),
                             () -> foreignKeyName(inner.getString("PKTABLE_NAME"), null));
-                case "COLUMN_NAME": return inner.getString("FKCOLUMN_NAME");
+
+                case "COLUMN_NAME":  return inner.getString("FKCOLUMN_NAME");
                 case "DATASET_NAME": return inner.getString("FKTABLE_NAME");
-                default: return null;
+                default:             return null;
             }
         }
 
@@ -406,13 +414,12 @@ public interface GenericMetadataTranslators {
                             () -> inner.getString("FUNCTION_NAME"));
 
                 case "IS_DETERMINISTIC": return literalBoolean(false);
-                case "IS_VALID": return literalBoolean(true);
-                case "IS_DEBUG": return literalBoolean(false);
-                case "LANGUAGE": return "SQL";
-                case "TYPE_NAME": return null;
-                case "PACKAGE_NAME": return null;
-
-                default: return null;
+                case "IS_VALID":         return literalBoolean(true);
+                case "IS_DEBUG":         return literalBoolean(false);
+                case "LANGUAGE":         return "SQL";
+                case "TYPE_NAME":        return null;
+                case "PACKAGE_NAME":     return null;
+                default:                 return null;
             }
         }
 
@@ -428,6 +435,76 @@ public interface GenericMetadataTranslators {
     }
 
     /**
+     * Metadata translation for FUNCTION ARGUMENTS
+     *  - from {@link java.sql.DatabaseMetaData#getFunctionColumns(String, String, String, String)}
+     *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBArgumentMetadataImpl}
+     *            and {@link com.dci.intellij.dbn.database.common.metadata.impl.DBDataTypeMetadataImpl}
+     */
+    class FunctionArgumentsResultSet extends WrappedResultSet {
+        FunctionArgumentsResultSet(@Nullable ResultSet inner) {
+            super(inner);
+        }
+
+        @Override
+        public String getString(String columnLabel) throws SQLException {
+            switch (columnLabel) {
+                case "ARGUMENT_NAME":
+                    return resolve(
+                            () -> inner.getString("COLUMN_NAME"),
+                            () -> "return");
+
+                case "METHOD_TYPE":   return "FUNCTION";
+                case "PROGRAM_NAME":  return null;
+
+                case "METHOD_NAME":
+                    return resolve(
+                            () -> inner.getString("SPECIFIC_NAME"),
+                            () -> inner.getString("FUNCTION_NAME"));
+
+                case "IN_OUT":
+                    return resolve(
+                            () -> {
+                                int columnType = inner.getInt("COLUMN_TYPE");
+                                switch (columnType) {
+                                    case functionColumnIn: return "IN";
+                                    case functionColumnOut: return "OUT";
+                                    case functionColumnInOut: return "IN/OUT";
+                                    case functionColumnResult: return "OUT";
+                                    default: return "IN";
+                                }
+                            },
+                            () -> "IN");
+
+
+                case "DATA_TYPE_NAME":
+                    return resolve(
+                            () -> inner.getString("TYPE_NAME"),
+                            () -> {
+                                int dataType = inner.getInt("DATA_TYPE");
+                                return DATA_TYPE_NAMES.get().get(dataType);
+                            });
+
+
+                case "DATA_TYPE_OWNER":   return null;
+                case "DATA_TYPE_PACKAGE": return null;
+                default: return null;
+            }
+        }
+        @Override
+        public int getInt(String columnLabel) throws SQLException {
+            switch (columnLabel) {
+                case "OVERLOAD":       return 0;
+                case "SEQUENCE":       return 0;
+                case "POSITION":       return inner.getInt("ORDINAL_POSITION");
+                case "DATA_LENGTH":    return resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
+                case "DATA_PRECISION": return resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
+                case "DATA_SCALE":     return resolve(() -> inner.getInt("DECIMAL_DIGITS"),() -> 0);
+                default: return 0;
+            }
+        }
+    }
+
+    /**
      * Metadata translation for PROCEDURES
      *  - from {@link java.sql.DatabaseMetaData#getProcedures(String, String, String)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBProcedureMetadataImpl}
@@ -437,22 +514,22 @@ public interface GenericMetadataTranslators {
         ProceduresResultSet(@Nullable ResultSet inner) {
             super(inner);
         }
+
         @Override
         public String getString(String columnLabel) throws SQLException {
             switch (columnLabel) {
                 case "PROCEDURE_NAME":
                     return resolve(
-                            () -> inner.getString("SPECIFIC_NAME"),
-                            () -> inner.getString("PROCEDURE_NAME"));
+                        () -> inner.getString("SPECIFIC_NAME"),
+                        () -> inner.getString("PROCEDURE_NAME"));
 
                 case "IS_DETERMINISTIC": return literalBoolean(false);
-                case "IS_VALID": return literalBoolean(true);
-                case "IS_DEBUG": return literalBoolean(false);
-                case "LANGUAGE": return "SQL";
-                case "TYPE_NAME": return null;
-                case "PACKAGE_NAME": return null;
-
-                default: return null;
+                case "IS_VALID":         return literalBoolean(true);
+                case "IS_DEBUG":         return literalBoolean(false);
+                case "LANGUAGE":         return "SQL";
+                case "TYPE_NAME":        return null;
+                case "PACKAGE_NAME":     return null;
+                default:                 return null;
             }
         }
         @Override
@@ -460,7 +537,72 @@ public interface GenericMetadataTranslators {
             switch (columnLabel) {
                 case "OVERLOAD": return 0;
                 case "POSITION": return 0;
+                default: return 0;
+            }
+        }
+    }
 
+    /**
+     * Metadata translation for PROCEDURE ARGUMENTS
+     *  - from {@link java.sql.DatabaseMetaData#getProcedureColumns(String, String, String, String)}
+     *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBArgumentMetadataImpl}
+     *            and {@link com.dci.intellij.dbn.database.common.metadata.impl.DBDataTypeMetadataImpl}
+     */
+    class ProcedureArgumentsResultSet extends WrappedResultSet {
+        ProcedureArgumentsResultSet(@Nullable ResultSet inner) {
+            super(inner);
+        }
+        @Override
+        public String getString(String columnLabel) throws SQLException {
+            switch (columnLabel) {
+                case "ARGUMENT_NAME":
+                    return resolve(
+                            () -> inner.getString("COLUMN_NAME"),
+                            () -> "return");
+
+                case "METHOD_TYPE":   return "PROCEDURE";
+                case "PROGRAM_NAME":  return null;
+                case "METHOD_NAME":   return inner.getString("PROCEDURE_NAME");
+
+                case "IN_OUT":
+                    return resolve(
+                            () -> {
+                                int columnType = inner.getInt("COLUMN_TYPE");
+                                switch (columnType) {
+                                    case functionColumnIn: return "IN";
+                                    case functionColumnOut: return "OUT";
+                                    case functionColumnInOut: return "IN/OUT";
+                                    case functionColumnResult: return "OUT";
+                                    default: return "IN";
+                                }
+                            },
+                            () -> "IN");
+
+
+                case "DATA_TYPE_NAME":
+                    return resolve(
+                            () -> inner.getString("TYPE_NAME"),
+                            () -> {
+                                int dataType = inner.getInt("DATA_TYPE");
+                                return DATA_TYPE_NAMES.get().get(dataType);
+                            });
+
+
+                case "DATA_TYPE_OWNER":   return null;
+                case "DATA_TYPE_PACKAGE": return null;
+                case "IS_SET":            return literalBoolean(false);
+                default: return null;
+            }
+        }
+        @Override
+        public int getInt(String columnLabel) throws SQLException {
+            switch (columnLabel) {
+                case "OVERLOAD":       return 0;
+                case "SEQUENCE":       return 0;
+                case "POSITION":       return inner.getInt("ORDINAL_POSITION");
+                case "DATA_LENGTH":    return resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
+                case "DATA_PRECISION": return resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
+                case "DATA_SCALE":     return resolve(() -> inner.getInt("DECIMAL_DIGITS"),() -> 0);
                 default: return 0;
             }
         }
@@ -470,12 +612,12 @@ public interface GenericMetadataTranslators {
      *                    Static utilities                        *
      **************************************************************/
     @NotNull
-    static String uniqueKeyName(String tableName, String columnName) {
+    static String uniqueKeyName(String tableName, String qualifier) {
         return "unq_" + tableName;
     }
 
     @NotNull
-    static String foreignKeyName(String tableName, String columnName) {
+    static String foreignKeyName(String tableName, String qualifier) {
         return "fk_" + tableName;
     }
 
