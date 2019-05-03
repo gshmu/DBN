@@ -120,6 +120,41 @@ public interface GenericMetadataTranslators {
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBDataTypeMetadataImpl}
      */
 
+    abstract class DataTypeResultSet extends WrappedResultSet {
+        DataTypeResultSet(@Nullable ResultSet inner) {
+            super(inner);
+        }
+
+        @Override
+        public String getString(String columnLabel) throws SQLException {
+            switch (columnLabel) {
+                case "DATA_TYPE_NAME":
+                    return resolve(
+                            () -> {
+                                int dataType = inner.getInt("DATA_TYPE");
+                                return DATA_TYPE_NAMES.get().get(dataType);
+                            },
+                            () -> inner.getString("TYPE_NAME"));
+
+
+                case "DATA_TYPE_OWNER":   return null;
+                case "DATA_TYPE_PACKAGE": return null;
+                case "IS_SET":            return literalBoolean(false);
+                default: return null;
+            }
+        }
+
+        @Override
+        public int getInt(String columnLabel) throws SQLException {
+            switch (columnLabel) {
+                case "DATA_LENGTH":    return resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
+                case "DATA_PRECISION": return resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
+                case "DATA_SCALE":     return resolve(() -> inner.getInt("DECIMAL_DIGITS"),() -> 0);
+                default: return 0;
+            }
+        }
+    }
+
     /**
      * Metadata translation for COLUMNS
      *  - from {@link java.sql.DatabaseMetaData#getColumns(String, String, String, String)}
@@ -127,7 +162,7 @@ public interface GenericMetadataTranslators {
      *            and {@link com.dci.intellij.dbn.database.common.metadata.impl.DBDataTypeMetadataImpl}
      *
      */
-    abstract class ColumnsResultSet extends WrappedResultSet {
+    abstract class ColumnsResultSet extends DataTypeResultSet {
         ColumnsResultSet(@Nullable ResultSet inner) {
             super(inner);
         }
@@ -163,31 +198,17 @@ public interface GenericMetadataTranslators {
                     return literalBoolean(nullable);
                 }
                 case "IS_HIDDEN": return literalBoolean(false);
-
-                case "DATA_TYPE_NAME":
-                    return resolve(
-                            () -> inner.getString("TYPE_NAME"),
-                            () -> {
-                                int dataType = inner.getInt("DATA_TYPE");
-                                return DATA_TYPE_NAMES.get().get(dataType);
-                            });
-
-
-                case "DATA_TYPE_OWNER":   return null;
-                case "DATA_TYPE_PACKAGE": return null;
-                case "IS_SET":            return literalBoolean(false);
-                default: return null;
+                default: return super.getString(columnLabel);
             }
         }
 
         @Override
         public int getInt(String columnLabel) throws SQLException {
             switch (columnLabel) {
-                case "POSITION":       return inner.getInt("ORDINAL_POSITION");
                 case "DATA_LENGTH":    return resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
                 case "DATA_PRECISION": return resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
                 case "DATA_SCALE":     return resolve(() -> inner.getInt("DECIMAL_DIGITS"),() -> 0);
-                default: return 0;
+                default: return super.getInt(columnLabel);
             }
         }
 
@@ -440,7 +461,7 @@ public interface GenericMetadataTranslators {
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBArgumentMetadataImpl}
      *            and {@link com.dci.intellij.dbn.database.common.metadata.impl.DBDataTypeMetadataImpl}
      */
-    class FunctionArgumentsResultSet extends WrappedResultSet {
+    class FunctionArgumentsResultSet extends DataTypeResultSet {
         FunctionArgumentsResultSet(@Nullable ResultSet inner) {
             super(inner);
         }
@@ -474,20 +495,7 @@ public interface GenericMetadataTranslators {
                                 }
                             },
                             () -> "IN");
-
-
-                case "DATA_TYPE_NAME":
-                    return resolve(
-                            () -> inner.getString("TYPE_NAME"),
-                            () -> {
-                                int dataType = inner.getInt("DATA_TYPE");
-                                return DATA_TYPE_NAMES.get().get(dataType);
-                            });
-
-
-                case "DATA_TYPE_OWNER":   return null;
-                case "DATA_TYPE_PACKAGE": return null;
-                default: return null;
+                default: return super.getString(columnLabel);
             }
         }
         @Override
@@ -496,10 +504,7 @@ public interface GenericMetadataTranslators {
                 case "OVERLOAD":       return 0;
                 case "SEQUENCE":       return 0;
                 case "POSITION":       return inner.getInt("ORDINAL_POSITION");
-                case "DATA_LENGTH":    return resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
-                case "DATA_PRECISION": return resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
-                case "DATA_SCALE":     return resolve(() -> inner.getInt("DECIMAL_DIGITS"),() -> 0);
-                default: return 0;
+                default: return super.getInt(columnLabel);
             }
         }
     }
