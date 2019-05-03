@@ -32,59 +32,6 @@ public interface GenericMetadataTranslators {
 
 
     /**
-     * Metadata translation for COLUMNS
-     *  - from {@link java.sql.DatabaseMetaData#getColumns(String, String, String, String)}
-     *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBColumnMetadataImpl}
-     *            and {@link com.dci.intellij.dbn.database.common.metadata.impl.DBDataTypeMetadataImpl}
-     *
-     */
-    class ColumnsResultSet extends WrappedResultSet {
-        ColumnsResultSet(@Nullable ResultSet inner) {
-            super(inner);
-        }
-
-        @Override
-        public String getString(String columnLabel) throws SQLException {
-            switch (columnLabel) {
-                case "COLUMN_NAME": return inner.getString("COLUMN_NAME");
-                case "DATASET_NAME": return inner.getString("TABLE_NAME");
-                case "IS_PRIMARY_KEY": return "N"; // TODO
-                case "IS_FOREIGN_KEY": return "N"; // TODO
-                case "IS_UNIQUE_KEY": return "N"; // TODO
-                case "IS_NULLABLE": {
-                    boolean nullable = "YES".equals(inner.getString("IS_NULLABLE"));
-                    return literalBoolean(nullable);
-                }
-                case "IS_HIDDEN": return "N";
-
-                case "DATA_TYPE_NAME":
-                    return resolve(
-                            () -> inner.getString("TYPE_NAME"),
-                            () -> {
-                                int dataType = inner.getInt("DATA_TYPE");
-                                return DATA_TYPE_NAMES.get().get(dataType);
-                            });
-
-
-                case "DATA_TYPE_OWNER": return null;
-                case "DATA_TYPE_PACKAGE": return null;
-                default: return null;
-            }
-        }
-
-        @Override
-        public int getInt(String columnLabel) throws SQLException {
-            switch (columnLabel) {
-                case "POSITION":       return inner.getInt("ORDINAL_POSITION");
-                case "DATA_LENGTH":    resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
-                case "DATA_PRECISION": resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
-                case "DATA_SCALE":     resolve(() -> inner.getInt("DECIMAL_DIGITS"),() -> 0);
-                default: return 0;
-            }
-        }
-    }
-
-    /**
      * Metadata translation for SCHEMAS
      *  - from {@link java.sql.DatabaseMetaData#getSchemas(String, String)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBSchemaMetadataImpl}
@@ -99,8 +46,8 @@ public interface GenericMetadataTranslators {
             switch (columnLabel) {
                 case "SCHEMA_NAME": return inner.getString("TABLE_SCHEM");
 
-                case "IS_PUBLIC": return "N";
-                case "IS_SYSTEM": return "N";
+                case "IS_PUBLIC": return literalBoolean(false);
+                case "IS_SYSTEM": return literalBoolean(false);
                 case "IS_EMPTY":
                     String schemaName = inner.getString("TABLE_SCHEM");
                     return literalBoolean(isEmpty(schemaName));
@@ -163,6 +110,83 @@ public interface GenericMetadataTranslators {
                 default: return null;
             }
         }
+    }
+
+    /**
+     * Metadata translation for COLUMNS
+     *  - from {@link java.sql.DatabaseMetaData#getColumns(String, String, String, String)}
+     *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBColumnMetadataImpl}
+     *            and {@link com.dci.intellij.dbn.database.common.metadata.impl.DBDataTypeMetadataImpl}
+     *
+     */
+    abstract class ColumnsResultSet extends WrappedResultSet {
+        ColumnsResultSet(@Nullable ResultSet inner) {
+            super(inner);
+        }
+
+        @Override
+        public String getString(String columnLabel) throws SQLException {
+            switch (columnLabel) {
+                case "COLUMN_NAME": return inner.getString("COLUMN_NAME");
+                case "DATASET_NAME": return inner.getString("TABLE_NAME");
+                case "IS_PRIMARY_KEY":
+                    return literalBoolean(
+                            isPrimaryKey(
+                                    inner.getString("TABLE_SCHEM"),
+                                    inner.getString("TABLE_NAME"),
+                                    inner.getString("COLUMN_NAME")));
+
+                case "IS_FOREIGN_KEY":
+                    return literalBoolean(
+                            isForeignKey(
+                                    inner.getString("TABLE_SCHEM"),
+                                    inner.getString("TABLE_NAME"),
+                                    inner.getString("COLUMN_NAME")));
+
+                case "IS_UNIQUE_KEY":
+                    return literalBoolean(
+                            isUniqueKey(
+                                    inner.getString("TABLE_SCHEM"),
+                                    inner.getString("TABLE_NAME"),
+                                    inner.getString("COLUMN_NAME")));
+
+                case "IS_NULLABLE": {
+                    boolean nullable = "YES".equals(inner.getString("IS_NULLABLE"));
+                    return literalBoolean(nullable);
+                }
+                case "IS_HIDDEN": return literalBoolean(false);
+
+                case "DATA_TYPE_NAME":
+                    return resolve(
+                            () -> inner.getString("TYPE_NAME"),
+                            () -> {
+                                int dataType = inner.getInt("DATA_TYPE");
+                                return DATA_TYPE_NAMES.get().get(dataType);
+                            });
+
+
+                case "DATA_TYPE_OWNER": return null;
+                case "DATA_TYPE_PACKAGE": return null;
+                default: return null;
+            }
+        }
+
+        @Override
+        public int getInt(String columnLabel) throws SQLException {
+            switch (columnLabel) {
+                case "POSITION":       return inner.getInt("ORDINAL_POSITION");
+                case "DATA_LENGTH":    resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
+                case "DATA_PRECISION": resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
+                case "DATA_SCALE":     resolve(() -> inner.getInt("DECIMAL_DIGITS"),() -> 0);
+                default: return 0;
+            }
+        }
+
+        protected abstract boolean isPrimaryKey(String ownerName, String datasetName, String columnName) throws SQLException;
+
+        protected abstract boolean isForeignKey(String ownerName, String datasetName, String columnName) throws SQLException;
+
+        protected abstract boolean isUniqueKey(String ownerName, String datasetName, String columnName) throws SQLException;
     }
 
 
@@ -381,9 +405,9 @@ public interface GenericMetadataTranslators {
                             () -> inner.getString("SPECIFIC_NAME"),
                             () -> inner.getString("FUNCTION_NAME"));
 
-                case "IS_DETERMINISTIC": return "N";
-                case "IS_VALID": return "Y";
-                case "IS_DEBUG": return "N";
+                case "IS_DETERMINISTIC": return literalBoolean(false);
+                case "IS_VALID": return literalBoolean(true);
+                case "IS_DEBUG": return literalBoolean(false);
                 case "LANGUAGE": return "SQL";
                 case "TYPE_NAME": return null;
                 case "PACKAGE_NAME": return null;
@@ -421,9 +445,9 @@ public interface GenericMetadataTranslators {
                             () -> inner.getString("SPECIFIC_NAME"),
                             () -> inner.getString("PROCEDURE_NAME"));
 
-                case "IS_DETERMINISTIC": return "N";
-                case "IS_VALID": return "Y";
-                case "IS_DEBUG": return "N";
+                case "IS_DETERMINISTIC": return literalBoolean(false);
+                case "IS_VALID": return literalBoolean(true);
+                case "IS_DEBUG": return literalBoolean(false);
                 case "LANGUAGE": return "SQL";
                 case "TYPE_NAME": return null;
                 case "PACKAGE_NAME": return null;
