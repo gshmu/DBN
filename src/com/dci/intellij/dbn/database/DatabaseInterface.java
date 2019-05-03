@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.database;
 
 import com.dci.intellij.dbn.common.cache.Cache;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 
 import java.sql.SQLException;
 
@@ -25,7 +27,8 @@ public interface DatabaseInterface {
         return META_DATA_CACHE.get();
     }
 
-    default <T, E extends Throwable> T cached(String key, ThrowableCallable<T, E> loader) throws E{
+    default <T, E extends Throwable> T cached(DBNConnection connection, String key, ThrowableCallable<T, E> loader) throws E{
+        Failsafe.nd(connection.getProject());
         return getMetaDataCache().get(key, loader);
     }
 }
