@@ -74,7 +74,7 @@ public abstract class DatabaseCompatibilityInterface implements DatabaseInterfac
 
     public  <T> T attempt(JdbcFeature feature, ThrowableCallable<T, SQLException> loader) throws SQLException {
         ConnectionHandler connectionHandler = DatabaseInterface.connectionHandler();
-        JdbcFeatures features = connectionHandler.getJdbcFeatures();
+        JdbcSupport features = connectionHandler.getJdbcSupport();
         try {
             // check supported
             if (features.is(feature)) {

@@ -252,11 +252,9 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                     Progress.modal(project, "Connecting to " + connectionName, false, (progress) -> {
                         try {
                             DBNConnection connection = ResourceUtil.connect(connectionSettings, null, authenticationInfo, SessionId.TEST, false, null);
-                            if (connection != null) {
-                                ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
-                                ResourceUtil.close(connection);
-                                showConnectionInfoDialog(connectionInfo, connectionName, environmentType);
-                            } // TODO else??
+                            ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
+                            ResourceUtil.close(connection);
+                            showConnectionInfoDialog(connectionInfo, connectionName, environmentType);
                         } catch (Exception e) {
                             showErrorConnectionMessage(project, connectionName, e);
                         }

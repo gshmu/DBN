@@ -27,9 +27,11 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -227,9 +229,16 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     public String getQuotedName(boolean quoteAlways) {
         String name = getName();
         if (quoteAlways || needsNameQuoting()) {
-            DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(this);
-            QuotePair quotes = compatibilityInterface.getDefaultIdentifierQuotes();
-            return quotes.beginChar() + name + quotes.endChar();
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
+            if (databaseSettings.getDatabaseType() == DatabaseType.GENERIC) {
+                String identifierQuotes = connectionHandler.getJdbcSupport().getIdentifierQuote();
+                return identifierQuotes + name + identifierQuotes;
+            } else {
+                DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(this);
+                QuotePair quotes = compatibilityInterface.getDefaultIdentifierQuotes();
+                return quotes.beginChar() + name + quotes.endChar();
+            }
         } else {
             return name;
         }

@@ -65,6 +65,29 @@ public interface Data {
     }
 
     @Nullable
+    static Long asLong(@Nullable Object object) {
+        if (object != null) {
+            if (object instanceof Long) {
+                return (Long) object;
+
+            } else if (object instanceof Number) {
+                Number number = (Number) object;
+                return number.longValue();
+            }
+
+            return Long.valueOf(object.toString());
+        }
+        return null;
+    }
+
+    static long asLng(@Nullable Object object) {
+        Long longVal = asLong(object);
+        return longVal == null ? 0 : longVal;
+    }
+
+
+
+    @Nullable
     static Boolean asBoolean(@Nullable Object object) {
         if (object != null) {
             if (object instanceof Boolean) {

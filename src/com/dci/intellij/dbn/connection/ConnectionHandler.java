@@ -17,7 +17,7 @@ import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
-import com.dci.intellij.dbn.database.JdbcFeatures;
+import com.dci.intellij.dbn.database.JdbcSupport;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -166,5 +166,5 @@ public interface ConnectionHandler extends RegisteredDisposable, EnvironmentType
         return CollectionUtil.map(connectionHandlers, (connectionHandler) -> connectionHandler.getConnectionId()) ;
     }
 
-    JdbcFeatures getJdbcFeatures();
+    JdbcSupport getJdbcSupport();
 }

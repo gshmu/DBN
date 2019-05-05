@@ -79,7 +79,10 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadSchemas(DBNConnection connection) throws SQLException {
-        ResultSet schemasRs = loadSchemasRaw(connection).open();
+        CachedResultSet schemasRs = loadSchemasRaw(connection).open();
+        if (schemasRs.isEmpty()) {
+            schemasRs = loadCatalogsRaw(connection).open();
+        }
 
         return new SchemasResultSet(schemasRs) {
             @Override
@@ -138,7 +141,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 CachedResultSet primaryKeysRs = loadPrimaryKeysRaw(ownerName, datasetName, connection);
                 return primaryKeysRs.exists(row ->
                         row.get("PK_NAME") != null &&
-                        CommonUtil.safeEqual(row.get("TABLE_SCHEM"), ownerName) &&
+                        CommonUtil.safeEqual(owner(row, "TABLE_CAT", "TABLE_SCHEM"), ownerName) &&
                         CommonUtil.safeEqual(row.get("TABLE_NAME"), datasetName) &&
                         CommonUtil.safeEqual(row.get("COLUMN_NAME"), columnName));
             }
@@ -147,7 +150,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
             protected boolean isForeignKey(String ownerName, String datasetName, String columnName) throws SQLException {
                 CachedResultSet foreignKeysRs = loadForeignKeysRaw(ownerName, datasetName, connection);
                 return foreignKeysRs.exists(row ->
-                        CommonUtil.safeEqual(row.get("FKTABLE_SCHEM"), ownerName) &&
+                        CommonUtil.safeEqual(owner(row, "FKTABLE_CAT", "FKTABLE_SCHEM"), ownerName) &&
                         CommonUtil.safeEqual(row.get("FKTABLE_NAME"), datasetName) &&
                         CommonUtil.safeEqual(row.get("FKCOLUMN_NAME"), columnName));
             }
@@ -157,9 +160,9 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 CachedResultSet primaryKeysRs = loadPrimaryKeysRaw(ownerName, datasetName, connection);
                 return primaryKeysRs.exists(row ->
                         row.get("PK_NAME") == null &&
-                        CommonUtil.safeEqual(row.get("TABLE_SCHEM"), ownerName) &&
-                        CommonUtil.safeEqual(row.get("TABLE_NAME"), datasetName) &&
-                        CommonUtil.safeEqual(row.get("COLUMN_NAME"), columnName));
+                                CommonUtil.safeEqual(owner(row, "TABLE_CAT", "TABLE_SCHEM"), ownerName) &&
+                                CommonUtil.safeEqual(row.get("TABLE_NAME"), datasetName) &&
+                                CommonUtil.safeEqual(row.get("COLUMN_NAME"), columnName));
             }
         };
     }
@@ -319,10 +322,11 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     private CachedResultSet loadTablesRaw(String ownerName, DBNConnection connection) throws SQLException {
         return attemptCached(
                 JdbcFeature.MD_TABLES,
-                ownerName + ".TABLES",
+                "TABLES." + ownerName,
                 () -> {
+                    String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getTables(null, ownerName, null, new String[]{"TABLE", "SYSTEM TABLE"});
+                    ResultSet resultSet = metaData.getTables(owner[0], owner[1], null, new String[]{"TABLE", "SYSTEM TABLE"});
                     return CachedResultSet.create(resultSet);
                 });
     }
@@ -330,20 +334,23 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     private CachedResultSet loadViewsRaw(String ownerName, DBNConnection connection) throws SQLException {
         return attemptCached(
                 JdbcFeature.MD_VIEWS,
-                ownerName + ".VIEWS",
+                "VIEWS." + ownerName,
                 () -> {
+                    String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getTables(null, ownerName, null, new String[]{"VIEW", "SYSTEM VIEW"});
+                    ResultSet resultSet = metaData.getTables(owner[0], owner[1], null, new String[]{"VIEW", "SYSTEM VIEW"});
                     return CachedResultSet.create(resultSet);
                 });
     }
 
     private CachedResultSet loadColumnsRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
         return attemptCached(
-                JdbcFeature.MD_COLUMNS, ownerName + "." + datasetName + ".COLUMNS",
+                JdbcFeature.MD_COLUMNS, 
+                "COLUMNS." + ownerName + "." + datasetName,
                 () -> {
+                    String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getColumns(null, ownerName, datasetName, null);
+                    ResultSet resultSet = metaData.getColumns(owner[0], owner[1], datasetName, null);
                     return CachedResultSet.create(resultSet);
                 });
     }
@@ -351,10 +358,11 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     private CachedResultSet loadPseudoColumnsRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
         return attemptCached(
                 JdbcFeature.MD_PSEUDO_COLUMNS,
-                ownerName + "." + datasetName + ".PSEUDO_COLUMNS",
+                "PSEUDO_COLUMNS." + ownerName + "." + datasetName,
                 () -> {
+                    String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getPseudoColumns(null, ownerName, datasetName, null);
+                    ResultSet resultSet = metaData.getPseudoColumns(owner[0], owner[1], datasetName, null);
                     return CachedResultSet.create(resultSet);
                 });
     }
@@ -362,10 +370,11 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     private CachedResultSet loadAllColumnsRaw(String ownerName, DBNConnection connection) throws SQLException {
         return attemptCached(
                 JdbcFeature.MD_COLUMNS,
-                ownerName + ".ALL_COLUMNS",
+                "ALL_COLUMNS" + ownerName,
                 () -> {
+                    String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getColumns(null, ownerName, null, null);
+                    ResultSet resultSet = metaData.getColumns(owner[0], owner[1], null, null);
                     return CachedResultSet.create(resultSet);
                 });
     }
@@ -373,10 +382,11 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     private CachedResultSet loadAllPseudoColumnsRaw(String ownerName, DBNConnection connection) throws SQLException {
         return attemptCached(
                 JdbcFeature.MD_PSEUDO_COLUMNS,
-                ownerName + ".ALL_PSEUDO_COLUMNS",
+                "ALL_PSEUDO_COLUMNS." + ownerName,
                 () -> {
+                    String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getPseudoColumns(null, ownerName, null, null);
+                    ResultSet resultSet = metaData.getPseudoColumns(owner[0], owner[1], null, null);
                     return CachedResultSet.create(resultSet);
                 });
     }
@@ -384,10 +394,11 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     private CachedResultSet loadIndexesRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
         return attemptCached(
                 JdbcFeature.MD_INDEXES,
-                ownerName + "." + datasetName + ".INDEXES",
+                "INDEXES." + ownerName + "." + datasetName,
                 () -> {
+                    String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getIndexInfo(null, ownerName, datasetName, false, true);
+                    ResultSet resultSet = metaData.getIndexInfo(owner[0], owner[1], datasetName, false, true);
                     return CachedResultSet.create(resultSet);
                 });
     }
@@ -395,10 +406,11 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     private CachedResultSet loadPrimaryKeysRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
         return attemptCached(
                 JdbcFeature.MD_PRIMARY_KEYS,
-                ownerName + "." + datasetName + ".PRIMARY_KEYS",
+                "PRIMARY_KEYS." + ownerName + "." + datasetName,
                 () -> {
+                    String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getPrimaryKeys(null, ownerName, datasetName);
+                    ResultSet resultSet = metaData.getPrimaryKeys(owner[0], owner[1], datasetName);
                     return CachedResultSet.create(resultSet);
                 });
     }
@@ -406,20 +418,23 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     private CachedResultSet loadForeignKeysRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
         return attemptCached(
                 JdbcFeature.MD_IMPORTED_KEYS,
-                ownerName + "." + datasetName + ".FOREIGN_KEYS",
+                "FOREIGN_KEYS." + ownerName + "." + datasetName,
                 () -> {
+                    String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getImportedKeys(null, ownerName, datasetName);
+                    ResultSet resultSet = metaData.getImportedKeys(owner[0], owner[1], datasetName);
                     return CachedResultSet.create(resultSet);
                 });
     }
 
     private CachedResultSet loadFunctionsRaw(String ownerName, DBNConnection connection) throws SQLException {
         return attemptCached(
-                JdbcFeature.MD_FUNCTIONS, ownerName + ".FUNCTIONS",
+                JdbcFeature.MD_FUNCTIONS, 
+                "FUNCTIONS." + ownerName,
                 () -> {
+                    String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getFunctions(null, ownerName, null);
+                    ResultSet resultSet = metaData.getFunctions(owner[0], owner[1], null);
                     return CachedResultSet.create(resultSet);
                 });
     }
@@ -427,10 +442,11 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     private CachedResultSet loadFunctionArgumentsRaw(String ownerName, String functionName, DBNConnection connection) throws SQLException {
         return attemptCached(
                 JdbcFeature.MD_FUNCTION_COLUMNS,
-                ownerName + "." + functionName + ".FUNCTION_ARGUMENTS",
+                "FUNCTION_ARGUMENTS." + ownerName + "." + functionName,
                 () -> {
+                    String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getFunctionColumns(null, ownerName, functionName, null);
+                    ResultSet resultSet = metaData.getFunctionColumns(owner[0], owner[1], functionName, null);
                     return CachedResultSet.create(resultSet);
                 });
     }
@@ -438,10 +454,11 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     private CachedResultSet loadAllFunctionArgumentsRaw(String ownerName, DBNConnection connection) throws SQLException {
         return attemptCached(
                 JdbcFeature.MD_FUNCTION_COLUMNS,
-                ownerName + ".ALL_FUNCTION_ARGUMENTS",
+                "ALL_FUNCTION_ARGUMENTS." + ownerName,
                 () -> {
+                    String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getFunctionColumns(null, ownerName, null, null);
+                    ResultSet resultSet = metaData.getFunctionColumns(owner[0], owner[1], null, null);
                     return CachedResultSet.create(resultSet);
                 });
     }
@@ -449,10 +466,11 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     private CachedResultSet loadProceduresRaw(String ownerName, DBNConnection connection) throws SQLException {
         return attemptCached(
                 JdbcFeature.MD_PROCEDURES,
-                ownerName + ".PROCEDURES",
+                "PROCEDURES." + ownerName,
                 () -> {
+                    String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getProcedures(null, ownerName, null);
+                    ResultSet resultSet = metaData.getProcedures(owner[0], owner[1], null);
                     return CachedResultSet.create(resultSet);
                 });
     }
@@ -460,10 +478,11 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     private CachedResultSet loadProcedureArgumentsRaw(String ownerName, String procedureName, DBNConnection connection) throws SQLException {
         return attemptCached(
                 JdbcFeature.MD_PROCEDURE_COLUMNS,
-                ownerName + "." + procedureName + ".PROCEDURE_ARGUMENTS",
+                "PROCEDURE_ARGUMENTS." + ownerName + "." + procedureName,
                 () -> {
+                    String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getProcedureColumns(null, ownerName, procedureName, null);
+                    ResultSet resultSet = metaData.getProcedureColumns(owner[0], owner[1], procedureName, null);
                     return CachedResultSet.create(resultSet);
                 });
     }
@@ -471,20 +490,34 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     private CachedResultSet loadAllProcedureArgumentsRaw(String ownerName, DBNConnection connection) throws SQLException {
         return attemptCached(
                 JdbcFeature.MD_PROCEDURE_COLUMNS,
-                ownerName + ".ALL_PROCEDURE_ARGUMENTS",
+                "ALL_PROCEDURE_ARGUMENTS." + ownerName,
                 () -> {
+                    String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getProcedureColumns(null, ownerName, null, null);
+                    ResultSet resultSet = metaData.getProcedureColumns(owner[0], owner[1], null, null);
                     return CachedResultSet.create(resultSet);
                 });
     }
 
 
-    public CachedResultSet attemptCached(JdbcFeature feature, String key, ThrowableCallable<CachedResultSet, SQLException> loader) throws SQLException{
+    private CachedResultSet attemptCached(JdbcFeature feature, String key, ThrowableCallable<CachedResultSet, SQLException> loader) throws SQLException{
         return cached(key, () -> {
             DatabaseCompatibilityInterface compatibilityInterface = getProvider().getCompatibilityInterface();
             CachedResultSet resultSet = compatibilityInterface.attempt(feature, loader);
             return CommonUtil.nvl(resultSet, CachedResultSet.EMPTY);
         });
+    }
+
+    private String[] lookupOwner(String ownerName, DBNConnection connection) throws SQLException {
+        return cached(
+                "CATALOG_SCHEMA." + ownerName,
+                () -> {
+                    CachedResultSet schemasRs = loadSchemasRaw(connection);
+                    if (schemasRs.isEmpty()) {
+                        return new String[]{ownerName, null};
+                    } else {
+                        return new String[]{null, ownerName};
+                    }
+                });
     }
 }
