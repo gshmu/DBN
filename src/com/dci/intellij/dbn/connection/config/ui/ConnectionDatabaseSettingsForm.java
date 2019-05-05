@@ -72,7 +72,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
     private DatabaseType selectedDatabaseType;
     private Map<DatabaseType, String> urlHistory = new HashMap<>();
 
-    public ConnectionDatabaseSettingsForm(final ConnectionDatabaseSettings configuration) {
+    public ConnectionDatabaseSettingsForm(ConnectionDatabaseSettings configuration) {
         super(configuration);
 
         ConnectionConfigType configType = configuration.getConfigType();
@@ -167,7 +167,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
             String historyUrl = urlHistory.get(newDatabaseType);
             if (StringUtil.isNotEmpty(historyUrl)) {
                 urlTextField.setText(historyUrl);
-            } else {
+            } else if (StringUtil.isEmpty(oldUrl) || newDatabaseType != DatabaseType.GENERIC){
                 urlTextField.setText(newUrlPattern.getDefaultUrl());
             }
         }
@@ -335,6 +335,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         DatabaseUrlType urlType = getSelection(urlTypeComboBox);
         boolean settingsChanged =
                 //!connectionConfig.getProperties().equals(propertiesEditorForm.getProperties()) ||
+                !CommonUtil.safeEqual(configuration.getDatabaseType(), selectedDatabaseType) ||
                 !CommonUtil.safeEqual(configuration.getDriverLibrary(), driverLibraryTextField.getText()) ||
                 !CommonUtil.safeEqual(databaseInfo.getHost(), hostTextField.getText()) ||
                 !CommonUtil.safeEqual(databaseInfo.getPort(), portTextField.getText()) ||
