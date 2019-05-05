@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.database;
 
+import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseAttachmentHandler;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
@@ -9,6 +10,9 @@ import com.dci.intellij.dbn.language.common.QuotePair;
 import com.dci.intellij.dbn.object.common.DBObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 
 public abstract class DatabaseCompatibilityInterface {
     private DatabaseInterfaceProvider provider;
@@ -63,4 +67,14 @@ public abstract class DatabaseCompatibilityInterface {
     public DatabaseAttachmentHandler getDatabaseAttachmentHandler() {
         return null;
     };
+
+    public  <T> T attempt(ThrowableCallable<T, SQLException> callable) throws SQLException {
+        try {
+            // TODO check is supported
+            return callable.call();
+        } catch (SQLFeatureNotSupportedException e) {
+            // TODO mark unsupported jdbc
+            return null;
+        }
+    }
 }

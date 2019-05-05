@@ -11,12 +11,27 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CachedResultSet extends ResultSetStub {
     private List<CachedResultSetRow> rows = new ArrayList<>();
     private List<String> columnNames;
+
+    public static final CachedResultSet EMPTY = new CachedResultSet(
+            Collections.emptyList(),
+            Collections.emptyList()){
+        @Override
+        public CachedResultSet open() {
+            return this;
+        }
+
+        @Override
+        public boolean next() throws SQLException {
+            return false;
+        }
+    };
 
     private CachedResultSet(@Nullable ResultSet resultSet) throws SQLException {
         if (resultSet != null) {
@@ -107,20 +122,24 @@ public class CachedResultSet extends ResultSetStub {
 
     @NotNull
     private CachedResultSet open(List<CachedResultSetRow> rows) {
-        return new CachedResultSet(rows, columnNames) {
-            private int cursor = -1;
+        if (rows == null || rows.isEmpty()) {
+            return EMPTY;
+        } else {
+            return new CachedResultSet(rows, columnNames) {
+                private int cursor = -1;
 
-            @Override
-            public boolean next() {
-                cursor++;
-                return cursor < rows.size();
-            }
+                @Override
+                public boolean next() {
+                    cursor++;
+                    return cursor < rows.size();
+                }
 
-            @Override
-            protected CachedResultSetRow current() {
-                return rows.get(cursor);
-            }
-        };
+                @Override
+                protected CachedResultSetRow current() {
+                    return rows.get(cursor);
+                }
+            };
+        }
     }
 
     /**

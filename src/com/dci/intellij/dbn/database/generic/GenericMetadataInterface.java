@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.database.generic;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 import com.dci.intellij.dbn.database.common.util.CachedResultSet;
@@ -76,8 +78,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadSchemas(DBNConnection connection) throws SQLException {
-        DatabaseMetaData metaData = connection.getMetaData();
-        ResultSet schemasRs = metaData.getSchemas();
+        ResultSet schemasRs = loadSchemasRaw(connection).open();
 
         return new SchemasResultSet(schemasRs) {
             @Override
@@ -292,30 +293,52 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     /**************************************************************
      *                     Raw cached meta-data                   *
      **************************************************************/
+    private CachedResultSet loadCatalogsRaw(DBNConnection connection) throws SQLException {
+        return attemptCached(
+                connection,
+                "CATALOGS",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet resultSet = metaData.getCatalogs();
+                    return CachedResultSet.create(resultSet);
+                });
+    }
+
+    private CachedResultSet loadSchemasRaw(DBNConnection connection) throws SQLException {
+        return attemptCached(
+                connection,
+                "SCHEMAS",
+                () -> {
+                    DatabaseMetaData metaData = connection.getMetaData();
+                    ResultSet resultSet = metaData.getSchemas();
+                    return CachedResultSet.create(resultSet);
+                });
+    }
+
     private CachedResultSet loadTablesRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return cached(
+        return attemptCached(
                 connection,
                 ownerName + ".TABLES",
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getTables(null, ownerName, null, new String[]{"TABLE"});
+                    ResultSet resultSet = metaData.getTables(null, ownerName, null, new String[]{"TABLE", "SYSTEM TABLE"});
                     return CachedResultSet.create(resultSet);
                 });
     }
 
     private CachedResultSet loadViewsRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return cached(
+        return attemptCached(
                 connection,
                 ownerName + ".VIEWS",
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getTables(null, ownerName, null, new String[]{"VIEW"});
+                    ResultSet resultSet = metaData.getTables(null, ownerName, null, new String[]{"VIEW", "SYSTEM VIEW"});
                     return CachedResultSet.create(resultSet);
                 });
     }
 
     private CachedResultSet loadColumnsRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
-        return cached(
+        return attemptCached(
                 connection,
                 ownerName + "." + datasetName + ".COLUMNS",
                 () -> {
@@ -326,7 +349,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     private CachedResultSet loadPseudoColumnsRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
-        return cached(
+        return attemptCached(
                 connection,
                 ownerName + "." + datasetName + ".PSEUDO_COLUMNS",
                 () -> {
@@ -337,7 +360,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     private CachedResultSet loadAllColumnsRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return cached(
+        return attemptCached(
                 connection,
                 ownerName + ".ALL_COLUMNS",
                 () -> {
@@ -348,7 +371,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     private CachedResultSet loadAllPseudoColumnsRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return cached(
+        return attemptCached(
                 connection,
                 ownerName + ".ALL_PSEUDO_COLUMNS",
                 () -> {
@@ -359,7 +382,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     private CachedResultSet loadIndexesRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
-        return cached(
+        return attemptCached(
                 connection,
                 ownerName + "." + datasetName + ".INDEXES",
                 () -> {
@@ -370,7 +393,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     private CachedResultSet loadPrimaryKeysRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
-        return cached(
+        return attemptCached(
                 connection,
                 ownerName + "." + datasetName + ".PRIMARY_KEYS",
                 () -> {
@@ -381,7 +404,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     private CachedResultSet loadForeignKeysRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
-        return cached(
+        return attemptCached(
                 connection,
                 ownerName + "." + datasetName + ".FOREIGN_KEYS",
                 () -> {
@@ -392,7 +415,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     private CachedResultSet loadFunctionsRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return cached(
+        return attemptCached(
                 connection,
                 ownerName + ".FUNCTIONS",
                 () -> {
@@ -403,7 +426,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     private CachedResultSet loadFunctionArgumentsRaw(String ownerName, String functionName, DBNConnection connection) throws SQLException {
-        return cached(
+        return attemptCached(
                 connection,
                 ownerName + "." + functionName + ".FUNCTION_ARGUMENTS",
                 () -> {
@@ -414,7 +437,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     private CachedResultSet loadAllFunctionArgumentsRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return cached(
+        return attemptCached(
                 connection,
                 ownerName + ".ALL_FUNCTION_ARGUMENTS",
                 () -> {
@@ -425,7 +448,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     private CachedResultSet loadProceduresRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return cached(
+        return attemptCached(
                 connection,
                 ownerName + ".PROCEDURES",
                 () -> {
@@ -436,8 +459,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     private CachedResultSet loadProcedureArgumentsRaw(String ownerName, String procedureName, DBNConnection connection) throws SQLException {
-        return cached(
-                connection,
+        return attemptCached(connection,
                 ownerName + "." + procedureName + ".PROCEDURE_ARGUMENTS",
                 () -> {
                     DatabaseMetaData metaData = connection.getMetaData();
@@ -447,7 +469,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     private CachedResultSet loadAllProcedureArgumentsRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return cached(
+        return attemptCached(
                 connection,
                 ownerName + ".ALL_PROCEDURE_ARGUMENTS",
                 () -> {
@@ -455,5 +477,14 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                     ResultSet resultSet = metaData.getProcedureColumns(null, ownerName, null, null);
                     return CachedResultSet.create(resultSet);
                 });
+    }
+
+
+    public CachedResultSet attemptCached(DBNConnection connection, String key, ThrowableCallable<CachedResultSet, SQLException> loader) throws SQLException{
+        return cached(connection, key, () -> {
+            DatabaseCompatibilityInterface compatibilityInterface = getProvider().getCompatibilityInterface();
+            CachedResultSet resultSet = compatibilityInterface.attempt(loader);
+            return CommonUtil.nvl(resultSet, CachedResultSet.EMPTY);
+        });
     }
 }
