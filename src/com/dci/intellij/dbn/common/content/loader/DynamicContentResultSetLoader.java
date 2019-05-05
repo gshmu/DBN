@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class DynamicContentResultSetLoader<
                 T extends DynamicContentElement,
@@ -90,66 +91,67 @@ public abstract class DynamicContentResultSetLoader<
 
         dynamicContent.checkDisposed();
         ConnectionHandler connectionHandler = dynamicContent.getConnectionHandler();
-        LoaderCache loaderCache = new LoaderCache();
-        int count = 0;
+        AtomicInteger count = new AtomicInteger();
         IncrementalStatusAdapter<ConnectionHandlerStatusHolder, ConnectionHandlerStatus> loading = connectionHandler.getConnectionStatus().getLoading();
         try {
-            loading.set(true);
-            dynamicContent.checkDisposed();
-            DBNConnection connection = connectionHandler.getPoolConnection(true);
-            ResultSet resultSet = null;
-            List<T> list = null;
-            try {
-                DatabaseInterface.init(connectionHandler);
-                connection.set(ResourceStatus.ACTIVE, true);
+            DatabaseInterface.execute(connectionHandler, () -> {
+                loading.set(true);
                 dynamicContent.checkDisposed();
-                resultSet = createResultSet(dynamicContent, connection);
-
-                DynamicContentType contentType = dynamicContent.getContentType();
-                M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
-
-                if (addDelay) Thread.sleep(500);
-                while (resultSet != null && resultSet.next()) {
-                    if (addDelay) Thread.sleep(10);
+                DBNConnection connection = connectionHandler.getPoolConnection(true);
+                ResultSet resultSet = null;
+                List<T> list = null;
+                try {
+                    connection.set(ResourceStatus.ACTIVE, true);
                     dynamicContent.checkDisposed();
+                    resultSet = createResultSet(dynamicContent, connection);
 
-                    T element = null;
-                    try {
-                        element = createElement(dynamicContent, metadata, loaderCache);
-                    } catch (ProcessCanceledException e){
-                        return;
-                    } catch (RuntimeException e) {
-                        LOGGER.warn("Failed to create element", e);
-                    }
+                    DynamicContentType contentType = dynamicContent.getContentType();
+                    M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
 
-                    dynamicContent.checkDisposed();
-                    if (element != null) {
-                        if (list == null) {
-                            list = dynamicContent.is(DynamicContentStatus.CONCURRENT) ?
-                                    CollectionUtil.createConcurrentList() :
-                                    new ArrayList<T>();
+                    if (addDelay) Thread.sleep(500);
+                    LoaderCache loaderCache = new LoaderCache();
+                    while (resultSet != null && resultSet.next()) {
+                        if (addDelay) Thread.sleep(10);
+                        dynamicContent.checkDisposed();
+
+                        T element = null;
+                        try {
+                            element = createElement(dynamicContent, metadata, loaderCache);
+                        } catch (ProcessCanceledException e){
+                            return;
+                        } catch (RuntimeException e) {
+                            LOGGER.warn("Failed to create element", e);
                         }
-                        list.add(element);
-                        if (count%10 == 0) {
-                            String description = element.getDescription();
-                            if (description != null)
-                                ProgressMonitor.setSubtaskDescription(description);
+
+                        dynamicContent.checkDisposed();
+                        if (element != null) {
+                            if (list == null) {
+                                list = dynamicContent.is(DynamicContentStatus.CONCURRENT) ?
+                                        CollectionUtil.createConcurrentList() :
+                                        new ArrayList<T>();
+                            }
+                            list.add(element);
+                            if (count.get()%10 == 0) {
+                                String description = element.getDescription();
+                                if (description != null)
+                                    ProgressMonitor.setSubtaskDescription(description);
+                            }
+                            count.incrementAndGet();
                         }
-                        count++;
                     }
+                } finally {
+                    ResourceUtil.close(resultSet);
+                    connection.set(ResourceStatus.ACTIVE, false);
+                    connectionHandler.freePoolConnection(connection);
                 }
-            } finally {
-                DatabaseInterface.release();
-                ResourceUtil.close(resultSet);
-                connection.set(ResourceStatus.ACTIVE, false);
-                connectionHandler.freePoolConnection(connection);
-            }
-            dynamicContent.checkDisposed();
-            dynamicContent.setElements(list);
-            dynamicContent.set(DynamicContentStatus.MASTER, master);
+                dynamicContent.checkDisposed();
+                dynamicContent.setElements(list);
+                dynamicContent.set(DynamicContentStatus.MASTER, master);
 
-            postLoadContent(dynamicContent, debugInfo);
-        } catch (Exception e) {
+                postLoadContent(dynamicContent, debugInfo);
+            });
+
+        } catch (Throwable e) {
             if (e instanceof InterruptedException) throw (InterruptedException) e;
             if (e instanceof ProcessCanceledException) throw (ProcessCanceledException) e;
             if (e == DatabaseInterface.DBN_NOT_CONNECTED_EXCEPTION) throw new InterruptedException();
