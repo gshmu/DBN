@@ -63,7 +63,7 @@ public class DBDataType {
         String typeOwner = resultSet.getString("DATA_TYPE_OWNER");
         String typePackage = resultSet.getString("DATA_TYPE_PACKAGE");
         String dataTypeName = resultSet.getString("DATA_TYPE_NAME");
-        DBObjectBundle objectBundle = parent.getConnectionHandler().getObjectBundle();
+        DBObjectBundle objectBundle = parent.getCache().getObjectBundle();
         if (typeOwner != null) {
             DBSchema typeSchema = objectBundle.getSchema(typeOwner);
             if (typePackage != null) {

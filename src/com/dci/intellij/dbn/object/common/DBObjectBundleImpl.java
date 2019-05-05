@@ -103,8 +103,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.object.type.DBObjectRelationType.*;
-import static com.dci.intellij.dbn.object.type.DBObjectType.*;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.ROLE_PRIVILEGE;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.ROLE_ROLE;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.USER_PRIVILEGE;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.USER_ROLE;
+import static com.dci.intellij.dbn.object.type.DBObjectType.CHARSET;
+import static com.dci.intellij.dbn.object.type.DBObjectType.OBJECT_PRIVILEGE;
+import static com.dci.intellij.dbn.object.type.DBObjectType.ROLE;
+import static com.dci.intellij.dbn.object.type.DBObjectType.SCHEMA;
+import static com.dci.intellij.dbn.object.type.DBObjectType.SYNONYM;
+import static com.dci.intellij.dbn.object.type.DBObjectType.SYSTEM_PRIVILEGE;
+import static com.dci.intellij.dbn.object.type.DBObjectType.USER;
 
 @Nullifiable
 public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport {
@@ -507,7 +516,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     public String getPresentableTextDetails() {
-        //return getConnectionHandler().isAutoCommit() ? "[Auto Commit]" : null;
+        //return getCache().isAutoCommit() ? "[Auto Commit]" : null;
         return null;
     }
 

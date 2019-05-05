@@ -67,21 +67,21 @@ public class NavigationPsiCache implements Disposable {
     
     public static DBObjectPsiFile getPsiFile(DBObject object) {
         object = FailsafeUtil.get(object);
-        ConnectionHandler connectionHandler = FailsafeUtil.get(object.getConnectionHandler());
+        ConnectionHandler connectionHandler = FailsafeUtil.get(object.getCache());
         NavigationPsiCache psiCache = connectionHandler.getPsiCache();
         return psiCache.lookupPsiFile(object);
     }
 
     public static DBObjectPsiDirectory getPsiDirectory(DBObject object) {
         object = FailsafeUtil.get(object);
-        ConnectionHandler connectionHandler = FailsafeUtil.get(object.getConnectionHandler());
+        ConnectionHandler connectionHandler = FailsafeUtil.get(object.getCache());
         NavigationPsiCache psiCache = connectionHandler.getPsiCache();
         return psiCache.lookupPsiDirectory(object);
     }
     
     public static DBObjectListPsiDirectory getPsiDirectory(DBObjectList objectList) {
         return objectList == null ? null :
-                objectList.getConnectionHandler().getPsiCache().lookupPsiDirectory(objectList);
+                objectList.getCache().getPsiCache().lookupPsiDirectory(objectList);
     }
 
     public static DBConnectionPsiDirectory getPsiDirectory(ConnectionHandler connectionHandler) {
