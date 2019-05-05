@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.database.common.util;
 
 import com.dci.intellij.dbn.common.data.Data;
+import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.connection.ResourceUtil;
@@ -15,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Nullifiable
 public class CachedResultSet extends ResultSetStub {
     private List<CachedResultSetRow> rows = new ArrayList<>();
     private List<String> columnNames;
