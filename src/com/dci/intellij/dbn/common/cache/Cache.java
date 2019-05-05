@@ -54,6 +54,10 @@ public class Cache {
         }
     }
 
+    public void reset() {
+        elements.clear();
+    }
+
     public <T, E extends Throwable> T get(String key, ThrowableCallable<T, E> loader) throws E {
         String syncKey = qualifier + "." + key;
         return Synchronized.call(syncKey, () -> {

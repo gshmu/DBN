@@ -80,7 +80,7 @@ public abstract class DatabaseCompatibilityInterface implements DatabaseInterfac
             if (features.is(feature)) {
                 return loader.call();
             }
-        } catch (SQLFeatureNotSupportedException e) {
+        } catch (SQLFeatureNotSupportedException | AbstractMethodError e) {
             LOGGER.warn("JDBC feature not supported " + feature + " (" + e.getMessage() + ")");
             // mark unsupported
             features.set(feature, false);
