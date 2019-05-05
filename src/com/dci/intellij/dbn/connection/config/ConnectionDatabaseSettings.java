@@ -211,6 +211,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
     public String getConnectionUrl(String host, String port) {
         if (configType == ConnectionConfigType.BASIC) {
             return urlPattern.getUrl(
+                    databaseInfo.getVendor(),
                     host,
                     port,
                     databaseInfo.getDatabase(),

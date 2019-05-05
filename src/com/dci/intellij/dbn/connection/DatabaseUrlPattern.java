@@ -82,14 +82,16 @@ public enum DatabaseUrlPattern {
 
     public String getUrl(DatabaseInfo databaseInfo) {
         return getUrl(
+                databaseInfo.getVendor(),
                 databaseInfo.getHost(),
                 databaseInfo.getPort(),
                 databaseInfo.getDatabase(),
                 databaseInfo.getMainFile());
     }
 
-    public String getUrl(String host, String port, String database, String file) {
+    public String getUrl(String vendor, String host, String port, String database, String file) {
         return urlPattern.
+                replace("<VENDOR>", CommonUtil.nvl(vendor, "")).
                 replace("<HOST>", CommonUtil.nvl(host, "")).
                 replace(":<PORT>", StringUtil.isEmpty(port) ? "" : ":" + port).
                 replace("<DATABASE>", CommonUtil.nvl(database, "")).
