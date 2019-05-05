@@ -9,11 +9,11 @@ import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 
 public class DatabaseInfo implements Cloneable<DatabaseInfo> {
     public interface Default {
-        DatabaseInfo ORACLE   = new DatabaseInfo("localhost", "1521", "XE",       DatabaseUrlType.SID);
-        DatabaseInfo MYSQL    = new DatabaseInfo("localhost", "3306", "mysql",    DatabaseUrlType.DATABASE);
-        DatabaseInfo POSTGRES = new DatabaseInfo("localhost", "5432", "postgres", DatabaseUrlType.DATABASE);
-        DatabaseInfo SQLITE   = new DatabaseInfo("sqlite.db",                     DatabaseUrlType.FILE);
-        DatabaseInfo GENERIC  = new DatabaseInfo("localhost", "1234", "database", DatabaseUrlType.DATABASE);
+        DatabaseInfo ORACLE   = new DatabaseInfo("oracle", "localhost", "1521", "XE",       DatabaseUrlType.SID);
+        DatabaseInfo MYSQL    = new DatabaseInfo("mysql", "localhost", "3306", "mysql",    DatabaseUrlType.DATABASE);
+        DatabaseInfo POSTGRES = new DatabaseInfo("postgresql", "localhost", "5432", "postgres", DatabaseUrlType.DATABASE);
+        DatabaseInfo SQLITE   = new DatabaseInfo("sqlite", "sqlite.db",                     DatabaseUrlType.FILE);
+        DatabaseInfo GENERIC  = new DatabaseInfo("dbtype", "localhost", "1234", "database", DatabaseUrlType.DATABASE);
     }
 
     private String vendor;
@@ -24,20 +24,23 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
     private DatabaseFiles files;
     private DatabaseUrlType urlType = DatabaseUrlType.DATABASE;
 
-    public DatabaseInfo() {
-    }
+    private DatabaseInfo() {}
 
-    public DatabaseInfo(String host, String port, String database, DatabaseUrlType urlType) {
+    public DatabaseInfo(String vendor, String host, String port, String database, DatabaseUrlType urlType) {
+        this.vendor = vendor;
         this.host = host;
         this.port = port;
         this.database = database;
         this.urlType = urlType;
     }
 
-    public DatabaseInfo(String file, DatabaseUrlType urlType) {
+    public DatabaseInfo(String vendor, String file, DatabaseUrlType urlType) {
+        this.vendor = vendor;
         this.files = new DatabaseFiles(file);
         this.urlType = urlType;
     }
+
+
 
     public boolean isEmpty() {
         return StringUtil.isEmpty(host) && StringUtil.isEmpty(port) && StringUtil.isEmpty(database) && (files == null || StringUtil.isEmpty(files.getMainFile().getPath()));
@@ -49,6 +52,10 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
 
     public String getUrl() {
         return url;
+    }
+
+    public String getVendor() {
+        return vendor;
     }
 
     public String getHost() {
@@ -121,6 +128,14 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
 
     @Override
     public DatabaseInfo clone() {
-        return new DatabaseInfo(host, port, database, urlType);
+        DatabaseInfo clone = new DatabaseInfo();
+        clone.vendor = vendor;
+        clone.host = host;
+        clone.port = port;
+        clone.database = database;
+        clone.url = url;
+        clone.files = files == null ? null : files.clone();
+        clone.urlType = urlType;
+        return clone;
     }
 }
