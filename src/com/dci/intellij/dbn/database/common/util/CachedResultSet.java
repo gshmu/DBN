@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CachedResultSet extends ResultSetStub {
     private List<CachedResultSetRow> rows = new ArrayList<>();
@@ -20,7 +21,7 @@ public class CachedResultSet extends ResultSetStub {
     private CachedResultSet(@Nullable ResultSet resultSet) throws SQLException {
         if (resultSet != null) {
             try {
-                columnNames = ResultSetUtil.getColumnNames(resultSet);
+                columnNames = ResultSetUtil.getColumnNames(resultSet).stream().map(s -> s.toUpperCase().trim()).collect(Collectors.toList());
                 ResultSetUtil.forEachRow(resultSet,
                         () -> {
                             CachedResultSetRow row = CachedResultSetRow.create(this, resultSet);
