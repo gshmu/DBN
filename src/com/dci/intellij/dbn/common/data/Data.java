@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.data;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 
 public interface Data {
     static <T> T cast(@Nullable Object object, Class<T> type) {
