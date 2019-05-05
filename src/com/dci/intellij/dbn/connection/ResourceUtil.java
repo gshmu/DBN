@@ -20,7 +20,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.Driver;
 import java.sql.ResultSet;
@@ -102,6 +101,7 @@ public class ResourceUtil {
             ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
             connectionHandler.setConnectionInfo(connectionInfo);
             connectionStatus.setAuthenticationError(null);
+            connectionHandler.getJdbcSupport().read(connection.getMetaData());
             return connection;
         } catch (SQLException e) {
             DatabaseMessageParserInterface messageParserInterface = interfaceProvider.getMessageParserInterface();
@@ -171,15 +171,13 @@ public class ResourceUtil {
 
     }
 
-    public static double getDatabaseVersion(Connection connection) throws SQLException {
-        DatabaseMetaData databaseMetaData = connection.getMetaData();
+    public static double getDatabaseVersion(DatabaseMetaData databaseMetaData) throws SQLException {
         int majorVersion = databaseMetaData.getDatabaseMajorVersion();
         int minorVersion = databaseMetaData.getDatabaseMinorVersion();
         return new Double(majorVersion + "." + minorVersion);
     }
 
-    public static DatabaseType getDatabaseType(Connection connection) throws SQLException {
-        DatabaseMetaData databaseMetaData = connection.getMetaData();
+    public static DatabaseType getDatabaseType(DatabaseMetaData databaseMetaData) throws SQLException {
         String productName = databaseMetaData.getDatabaseProductName();
         return DatabaseType.resolve(productName);
     }

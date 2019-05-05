@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.Unsafe;
+import com.dci.intellij.dbn.database.common.util.CachedResultSetRow;
 import com.dci.intellij.dbn.database.common.util.WrappedResultSet;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +18,10 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.sql.DatabaseMetaData.*;
+import static java.sql.DatabaseMetaData.functionColumnIn;
+import static java.sql.DatabaseMetaData.functionColumnInOut;
+import static java.sql.DatabaseMetaData.functionColumnOut;
+import static java.sql.DatabaseMetaData.functionColumnResult;
 
 public interface GenericMetadataTranslators {
     Logger LOGGER = LoggerFactory.createLogger();
@@ -45,14 +49,12 @@ public interface GenericMetadataTranslators {
 
         @Override
         public String getString(String columnLabel) throws SQLException {
+            String schemaName = owner(inner, "TABLE_CAT", "TABLE_SCHEM");
             switch (columnLabel) {
-                case "SCHEMA_NAME": return inner.getString("TABLE_SCHEM");
-
+                case "SCHEMA_NAME": return schemaName;
                 case "IS_PUBLIC": return literalBoolean(false);
-                case "IS_SYSTEM": return literalBoolean(false);
-                case "IS_EMPTY":
-                    String schemaName = inner.getString("TABLE_SCHEM");
-                    return literalBoolean(isEmpty(schemaName));
+                case "IS_SYSTEM": return literalBoolean("information_schema".equalsIgnoreCase(schemaName));
+                case "IS_EMPTY": return literalBoolean(isEmpty(schemaName));
                 default: return null;
             }
         }
@@ -145,9 +147,16 @@ public interface GenericMetadataTranslators {
         }
 
         @Override
+        public long getLong(String columnLabel) throws SQLException {
+            switch (columnLabel) {
+                case "DATA_LENGTH":    return resolve(() -> inner.getLong("COLUMN_SIZE"), () -> 0L);
+                default: return 0;
+            }
+        }
+
+        @Override
         public int getInt(String columnLabel) throws SQLException {
             switch (columnLabel) {
-                case "DATA_LENGTH":    return resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
                 case "DATA_PRECISION": return resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
                 case "DATA_SCALE":     return resolve(() -> inner.getInt("DECIMAL_DIGITS"),() -> 0);
                 default: return 0;
@@ -175,21 +184,21 @@ public interface GenericMetadataTranslators {
                 case "IS_PRIMARY_KEY":
                     return literalBoolean(
                             isPrimaryKey(
-                                    inner.getString("TABLE_SCHEM"),
+                                    owner(inner, "TABLE_CAT", "TABLE_SCHEM"),
                                     inner.getString("TABLE_NAME"),
                                     inner.getString("COLUMN_NAME")));
 
                 case "IS_FOREIGN_KEY":
                     return literalBoolean(
                             isForeignKey(
-                                    inner.getString("TABLE_SCHEM"),
+                                    owner(inner, "TABLE_CAT", "TABLE_SCHEM"),
                                     inner.getString("TABLE_NAME"),
                                     inner.getString("COLUMN_NAME")));
 
                 case "IS_UNIQUE_KEY":
                     return literalBoolean(
                             isUniqueKey(
-                                    inner.getString("TABLE_SCHEM"),
+                                    owner(inner, "TABLE_CAT", "TABLE_SCHEM"),
                                     inner.getString("TABLE_NAME"),
                                     inner.getString("COLUMN_NAME")));
 
@@ -199,16 +208,6 @@ public interface GenericMetadataTranslators {
                 }
                 case "IS_HIDDEN": return literalBoolean(false);
                 default: return super.getString(columnLabel);
-            }
-        }
-
-        @Override
-        public int getInt(String columnLabel) throws SQLException {
-            switch (columnLabel) {
-                case "DATA_LENGTH":    return resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
-                case "DATA_PRECISION": return resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
-                case "DATA_SCALE":     return resolve(() -> inner.getInt("DECIMAL_DIGITS"),() -> 0);
-                default: return super.getInt(columnLabel);
             }
         }
 
@@ -367,7 +366,7 @@ public interface GenericMetadataTranslators {
 
                 case "CONSTRAINT_TYPE":     return "FOREIGN KEY";
                 case "DATASET_NAME":        return inner.getString("FKTABLE_NAME");
-                case "FK_CONSTRAINT_OWNER": return inner.getString("PKTABLE_SCHEM");
+                case "FK_CONSTRAINT_OWNER": return owner(inner, "PKTABLE_CAT", "PKTABLE_SCHEM");
 
                 case "FK_CONSTRAINT_NAME":
                     return resolve(
@@ -501,10 +500,10 @@ public interface GenericMetadataTranslators {
         @Override
         public int getInt(String columnLabel) throws SQLException {
             switch (columnLabel) {
-                case "OVERLOAD":       return 0;
-                case "SEQUENCE":       return 0;
-                case "POSITION":       return inner.getInt("ORDINAL_POSITION");
-                default: return super.getInt(columnLabel);
+                case "OVERLOAD":    return 0;
+                case "SEQUENCE":    return 0;
+                case "POSITION":    return inner.getInt("ORDINAL_POSITION");
+                default:            return super.getInt(columnLabel);
             }
         }
     }
@@ -640,5 +639,17 @@ public interface GenericMetadataTranslators {
             LOGGER.warn("JDBC metadata operation failed", t);
             return fallbackResolver.call();
         }
+    }
+
+    static String owner(ResultSet resultSet, String catalogCol, String schemaCol) throws SQLException {
+        return resolve(
+                () -> resultSet.getString(schemaCol),
+                () -> resultSet.getString(catalogCol));
+    }
+
+    static String owner(CachedResultSetRow row, String catalogCol, String schemaCol) throws SQLException {
+        return resolve(
+                () -> (String) row.get(schemaCol),
+                () -> (String) row.get(catalogCol));
     }
 }

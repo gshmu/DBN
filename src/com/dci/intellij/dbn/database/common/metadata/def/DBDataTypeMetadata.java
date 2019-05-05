@@ -10,7 +10,7 @@ public interface DBDataTypeMetadata {
 
     String getDataTypeProgram() throws SQLException;
 
-    int getDataLength() throws SQLException;
+    long getDataLength() throws SQLException;
 
     int getDataPrecision() throws SQLException;
 
