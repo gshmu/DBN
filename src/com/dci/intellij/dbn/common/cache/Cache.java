@@ -3,13 +3,18 @@ package com.dci.intellij.dbn.common.cache;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.thread.Synchronized;
+import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Cache {
-    private Map<String, CacheValue> elements = ContainerUtil.createSoftMap();
+    private Map<String, CacheValue> elements = ContainerUtil.createConcurrentSoftMap();
     private int expiryMillis;
     private String qualifier;
 
@@ -17,6 +22,7 @@ public class Cache {
     public Cache(String qualifier, int expiryMillis) {
         this.qualifier = qualifier;
         this.expiryMillis = expiryMillis;
+        CACHE_CLEANUP_TASK.register(this);
     }
 
     @Nullable
@@ -24,12 +30,6 @@ public class Cache {
         CacheValue<T> cacheValue = elements.get(key);
         if (isValid(cacheValue)) {
             return cacheValue.getValue();
-        } else {
-            cacheValue = elements.remove(key);
-            if (cacheValue != null) {
-                Disposer.dispose(cacheValue.getValue());
-            }
-
         }
         return null;
     }
@@ -42,6 +42,18 @@ public class Cache {
         return cacheValue != null && !cacheValue.isOlderThan(expiryMillis);
     }
 
+    public void cleanup() {
+        if (!elements.isEmpty()) {
+            for (String key : elements.keySet()) {
+                CacheValue cacheValue = elements.get(key);
+                if (!isValid(cacheValue)) {
+                    cacheValue = elements.remove(key);
+                    Disposer.dispose(cacheValue.getValue());
+                }
+            }
+        }
+    }
+
     public <T, E extends Throwable> T get(String key, ThrowableCallable<T, E> loader) throws E {
         String syncKey = qualifier + "." + key;
         return Synchronized.call(syncKey, () -> {
@@ -52,5 +64,31 @@ public class Cache {
             }
             return value;
         });
+    }
+
+    private static class ConnectionCacheCleanupTask extends TimerTask {
+        List<WeakRef<Cache>> caches = ContainerUtil.createConcurrentList();
+
+        @Override
+        public void run() {
+            for (WeakRef<Cache> cacheRef : caches) {
+                Cache cache = cacheRef.get();
+                if (cache == null) {
+                    caches.remove(cacheRef);
+                } else {
+                    cache.cleanup();
+                }
+            }
+        }
+
+        void register(Cache cache) {
+            caches.add(WeakRef.from(cache));
+        }
+    }
+
+    private static ConnectionCacheCleanupTask CACHE_CLEANUP_TASK = new ConnectionCacheCleanupTask();
+    static {
+        Timer poolCleaner = new Timer("DBN - Connection Cache Cleaner");
+        poolCleaner.schedule(CACHE_CLEANUP_TASK, TimeUtil.THREE_MINUTES, TimeUtil.THREE_MINUTES);
     }
 }
