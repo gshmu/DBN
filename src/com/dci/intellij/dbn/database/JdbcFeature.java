@@ -8,19 +8,19 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import org.jetbrains.annotations.Nullable;
 
 public enum JdbcFeature implements Property {
-    CATALOGS("Catalogs"),
-    SCHEMAS("Schemas"),
-    TABLES("Tables"),
-    VIEWS("Views"),
-    COLUMNS("Columns"),
-    PSEUDO_COLUMNS("Pseudo columns"),
-    INDEXES("Indexes"),
-    PRIMARY_KEYS("Primary Keys"),
-    IMPORTED_KEYS("Imported Keys"),
-    FUNCTIONS("Functions"),
-    FUNCTION_COLUMNS("Function columns"),
-    PROCEDURES("Procedures"),
-    PROCEDURE_COLUMNS("Procedure columns"),
+    MD_CATALOGS("Catalogs"),
+    MD_SCHEMAS("Schemas"),
+    MD_TABLES("Tables"),
+    MD_VIEWS("Views"),
+    MD_COLUMNS("Columns"),
+    MD_PSEUDO_COLUMNS("Pseudo columns"),
+    MD_INDEXES("Indexes"),
+    MD_PRIMARY_KEYS("Primary Keys"),
+    MD_IMPORTED_KEYS("Imported Keys"),
+    MD_FUNCTIONS("Functions"),
+    MD_FUNCTION_COLUMNS("Function columns"),
+    MD_PROCEDURES("Procedures"),
+    MD_PROCEDURE_COLUMNS("Procedure columns"),
     ;
 
     private final int index = Property.idx(this);
