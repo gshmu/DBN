@@ -140,7 +140,7 @@ public class PSQLLanguageAnnotator implements Annotator {
 
     private static void annotateObject(@NotNull IdentifierPsiElement objectReference, AnnotationHolder holder) {
         PsiElement reference = objectReference.resolve();
-        /*ConnectionHandler connectionHandler = objectReference.getConnectionHandler();
+        /*ConnectionHandler connectionHandler = objectReference.getCache();
         if (reference == null && connectionHandler != null && connectionHandler.getConnectionStatus().isValid()) {
             Annotation annotation = holder.createErrorAnnotation(objectReference.getAstNode(),
                     "Unknown " + objectReference.getObjectTypeName());

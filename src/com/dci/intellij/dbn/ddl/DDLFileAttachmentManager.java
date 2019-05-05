@@ -239,7 +239,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         DDLFileNameProvider fileNameProvider = getDDLFileNameProvider(objectRef);
 
         if (fileNameProvider != null) {
-            //ConnectionHandler connectionHandler = object.getConnectionHandler();
+            //ConnectionHandler connectionHandler = object.getCache();
             Project project = getProject();
             FileChooserDescriptor descriptor = new FileChooserDescriptor(false, true, false, false, false, false);
             descriptor.setTitle("Select New DDL-File Location");

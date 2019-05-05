@@ -4,31 +4,35 @@ import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 
 public interface DatabaseInterface {
-    ThreadLocal<Cache> META_DATA_CACHE = new ThreadLocal<>();
+    ThreadLocal<ConnectionHandler> CONNECTION_HANDLER = new ThreadLocal<>();
 
     SQLException DBN_NOT_CONNECTED_EXCEPTION = new SQLException("Not connected to database");
 
-    void reset();
+    default void reset(){};
 
     static void init(ConnectionHandler connectionHandler) {
-        META_DATA_CACHE.set(connectionHandler.getMetaDataCache());
+        CONNECTION_HANDLER.set(connectionHandler);
     }
 
     static void release() {
-        META_DATA_CACHE.set(null);
+        CONNECTION_HANDLER.set(null);
     }
 
-    static Cache getMetaDataCache() {
-        return META_DATA_CACHE.get();
+    static Cache cache() {
+        return connectionHandler().getMetaDataCache();
     }
 
-    default <T, E extends Throwable> T cached(DBNConnection connection, String key, ThrowableCallable<T, E> loader) throws E{
-        Failsafe.nd(connection.getProject());
-        return getMetaDataCache().get(key, loader);
+    @NotNull
+    static ConnectionHandler connectionHandler() {
+        return Failsafe.nd(CONNECTION_HANDLER.get());
+    }
+
+    default <T, E extends Throwable> T cached(String key, ThrowableCallable<T, E> loader) throws E{
+        return cache().get(key, loader);
     }
 }

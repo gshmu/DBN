@@ -69,7 +69,7 @@ public class DBConstraintMetadataImpl extends DBObjectMetadataBase implements DB
             String fkOwner = metadata.getString("FK_CONSTRAINT_OWNER");
             String fkName = metadata.getString("FK_CONSTRAINT_NAME");
 
-            ConnectionHandler connectionHandler = getConnectionHandler();
+            ConnectionHandler connectionHandler = getCache();
             DBSchema schema = connectionHandler.getObjectBundle().getSchema(fkOwner);
             if (schema != null) {
                 DBObjectRef<DBSchema> schemaRef = schema.getRef();

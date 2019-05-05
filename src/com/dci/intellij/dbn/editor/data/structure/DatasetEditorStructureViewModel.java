@@ -33,7 +33,7 @@ public class DatasetEditorStructureViewModel extends DBObjectStructureViewModel 
     @NotNull
     public StructureViewTreeElement getRoot() {
         if (root == null) {
-            //DBObjectBundle objectBundle = datasetEditor.getConnectionHandler().getObjectBundle();
+            //DBObjectBundle objectBundle = datasetEditor.getCache().getObjectBundle();
             root = new DatasetEditorStructureViewElement(datasetEditor.getDataset(), datasetEditor);
         }
         return root;
