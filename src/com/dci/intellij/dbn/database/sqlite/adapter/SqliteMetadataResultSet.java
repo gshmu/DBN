@@ -51,6 +51,6 @@ public class SqliteMetadataResultSet<T extends SqliteMetadataResultSetRow> exten
     }
 
     protected static Cache cache() {
-        return DatabaseInterface.getMetaDataCache();
+        return DatabaseInterface.cache();
     }
 }

@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.database.JdbcFeatures;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -48,6 +49,8 @@ public class VirtualConnectionHandler extends DisposableBase implements Connecti
     private ConnectionHandlerRef ref;
     private DBObjectBundle objectBundle;
     private ConnectionInstructions instructions = new ConnectionInstructions();
+    private JdbcFeatures jdbcFeatures = JdbcFeatures.none();
+
     private Latent<ConnectionSettings> connectionSettings = Latent.basic(() -> {
         ConnectionBundleSettings connectionBundleSettings = ConnectionBundleSettings.getInstance(getProject());
         return new ConnectionSettings(connectionBundleSettings);
@@ -329,5 +332,10 @@ public class VirtualConnectionHandler extends DisposableBase implements Connecti
     @Override
     public StatementExecutionQueue getExecutionQueue(SessionId sessionId) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public JdbcFeatures getJdbcFeatures() {
+        return jdbcFeatures;
     }
 }
