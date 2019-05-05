@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.common.action.DumbAwareContextAction;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingResult;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.swing.*;
 
 abstract class AbstractDatabaseLoggingAction extends DumbAwareContextAction<DatabaseLoggingResult> {
