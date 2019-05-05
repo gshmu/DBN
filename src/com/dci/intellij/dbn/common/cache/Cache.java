@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.cache;
 
+import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.intellij.util.containers.ContainerUtil;
@@ -23,6 +24,12 @@ public class Cache {
         CacheValue<T> cacheValue = elements.get(key);
         if (isValid(cacheValue)) {
             return cacheValue.getValue();
+        } else {
+            cacheValue = elements.remove(key);
+            if (cacheValue != null) {
+                Disposer.dispose(cacheValue.getValue());
+            }
+
         }
         return null;
     }

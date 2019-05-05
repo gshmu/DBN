@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.database.common.util;
 
 
 
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
+
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
@@ -30,7 +32,7 @@ import java.util.Map;
  * All methods throw {@link SQLFeatureNotSupportedException}
  * Concrete implementations must override the methods expected to be invoked!
  */
-public abstract class ResultSetStub implements ResultSet{
+public abstract class ResultSetStub extends DisposableBase implements ResultSet{
 
 
     @Override
