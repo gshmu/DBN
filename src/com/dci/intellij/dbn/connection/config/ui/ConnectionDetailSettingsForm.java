@@ -50,9 +50,6 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     private JCheckBox restoreWorkspaceDeepCheckBox;
     private JTextField idleTimePoolTextField;
 
-    private JTextField alternativeIdentifierQuotesTextField;
-    private JCheckBox quotedAlwaysCheckBox;
-
     public ConnectionDetailSettingsForm(final ConnectionDetailSettings configuration) {
         super(configuration);
 
@@ -179,9 +176,6 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         configuration.setIdleTimeToDisconnectPool(idleTimeToDisconnectPool);
         configuration.setCredentialExpiryTime(passwordExpiryTime);
         configuration.setMaxConnectionPoolSize(maxPoolSize);
-        // TODO: as generic JDBC database is allowed we must control compatibility interface features, add all customizable attributes
-        configuration.setQuoteCharsCsv(alternativeIdentifierQuotesTextField.getText());
-        configuration.setQuotedAlways(quotedAlwaysCheckBox.isSelected());
     }
 
     @Override
@@ -200,8 +194,6 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         passwordExpiryTextField.setText(Integer.toString(configuration.getCredentialExpiryTime()));
         maxPoolSizeTextField.setText(Integer.toString(configuration.getMaxConnectionPoolSize()));
         alternativeStatementDelimiterTextField.setText(configuration.getAlternativeStatementDelimiter());
-        alternativeIdentifierQuotesTextField.setText(configuration.getQuoteCharsCsv());
-        quotedAlwaysCheckBox.setSelected(configuration.isQuotedAlways());
     }
 
     private EnvironmentConfigLocalListener presentationChangeListener = new EnvironmentConfigLocalListener() {

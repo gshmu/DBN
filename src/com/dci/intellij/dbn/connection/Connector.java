@@ -18,6 +18,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.Driver;
 import java.sql.SQLException;
 import java.util.List;
@@ -172,9 +173,10 @@ class Connector {
                 LOGGER.warn("Unable to set auto-commit to " + autoCommit+". Maybe your database does not support transactions...", e);
             }
 
-            DatabaseType databaseType = ResourceUtil.getDatabaseType(connection);
+            DatabaseMetaData metaData = connection.getMetaData();
+            DatabaseType databaseType = ResourceUtil.getDatabaseType(metaData);
             databaseSettings.setResolvedDatabaseType(databaseType);
-            databaseSettings.setDatabaseVersion(ResourceUtil.getDatabaseVersion(connection));
+            databaseSettings.setDatabaseVersion(ResourceUtil.getDatabaseVersion(metaData));
             databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
             return new DBNConnection(
                     project,

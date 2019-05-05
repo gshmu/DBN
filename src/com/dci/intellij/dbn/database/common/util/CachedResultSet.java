@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.database.common.util;
 
 import com.dci.intellij.dbn.common.data.Data;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
-import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.ResultSetUtil;
@@ -98,13 +97,19 @@ public class CachedResultSet extends ResultSetStub {
      *                          Utilities                         *
      **************************************************************/
     public CachedResultSet where(@NotNull Condition whereCondition) {
-        List<CachedResultSetRow> rows = new FilteredList<>(this.rows, whereCondition);
+        List<CachedResultSetRow> rows = new FilteredList<>(this.rows, object -> {
+            try {
+                return whereCondition.evaluate(object);
+            } catch (SQLException e) {
+                return false;
+            }
+        });
         return open(rows);
     }
 
-    public boolean exists(@NotNull Condition whereCondition) {
+    public boolean exists(@NotNull Condition whereCondition) throws SQLException {
         for (CachedResultSetRow row : this.rows) {
-            if (whereCondition.accepts(row)) {
+            if (whereCondition.evaluate(row)) {
                 return true;
             }
         }
@@ -181,7 +186,9 @@ public class CachedResultSet extends ResultSetStub {
         return null;
     }
 
-    public interface Condition extends Filter<CachedResultSetRow> {}
+    public interface Condition {
+        boolean evaluate(CachedResultSetRow row) throws SQLException;
+    }
 
     public interface GroupBy {
         String[] columnNames();
@@ -206,6 +213,12 @@ public class CachedResultSet extends ResultSetStub {
     public int getInt(String columnLabel) throws SQLException {
         Object value = getObject(columnLabel);
         return Data.asInt(value);
+    }
+
+    @Override
+    public long getLong(String columnLabel) throws SQLException {
+        Object value = getObject(columnLabel);
+        return Data.asLng(value);
     }
 
     @Override

@@ -49,7 +49,7 @@ public enum JdbcFeature implements Property {
     }
     public boolean isSupported(@Nullable ConnectionHandler connectionHandler) {
         if (Failsafe.check(connectionHandler)) {
-            return connectionHandler.getJdbcFeatures().is(this);
+            return connectionHandler.getJdbcSupport().is(this);
         }
         return false;
     }

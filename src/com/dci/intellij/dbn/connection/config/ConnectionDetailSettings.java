@@ -7,8 +7,6 @@ import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDetailSettingsForm;
-import com.dci.intellij.dbn.language.common.QuoteDefinition;
-import com.dci.intellij.dbn.language.common.QuotePair;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -36,13 +34,6 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
     private int credentialExpiryTime = 10;
     private int maxConnectionPoolSize = 7;
 
-    // TODO: as generic JDBC database is allowed we must control compatibility interface features, add all customizable attributes
-    /** identifier Quotes - compatibility interface */
-    private QuoteDefinition alternativeIdentifierQuotes = null;
-    private QuotePair[] quotePairs;
-    /** csv begin:end chsrs. Example  [:],":",`:` */
-    private String quoteCharsCsv;
-    private boolean quotedAlways = false;
 
     private String alternativeStatementDelimiter;
 
@@ -174,39 +165,6 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
         this.alternativeStatementDelimiter = alternativeStatementDelimiter;
     }
 
-    public QuoteDefinition getAlternativeIdentifierQuotes() {
-        return alternativeIdentifierQuotes;
-    }
-
-    public String getQuoteCharsCsv() {
-        return quoteCharsCsv;
-    }
-
-    public ConnectionDetailSettings setQuoteCharsCsv(String quoteCharsCsv) {
-        // TODO: check quoteCharsCsv pattern char:char,...
-        if (quoteCharsCsv != null && !quoteCharsCsv.isEmpty()) {
-            String[] quotedChars = quoteCharsCsv.split(",");
-            QuotePair[] quotePairs = new QuotePair[quotedChars.length];
-            for (int i=0 ; i< quotedChars.length; i++){
-                char bc = quotedChars[i].split(":")[0].charAt(0);
-                char ec = quotedChars[i].split(":")[1].charAt(0);
-                quotePairs[i] = new QuotePair(bc,ec);
-            }
-            this.quotePairs = quotePairs;
-            this.alternativeIdentifierQuotes = new QuoteDefinition(quotePairs);
-        }
-        this.quoteCharsCsv = quoteCharsCsv;
-        return this;
-    }
-
-    public boolean isQuotedAlways() {
-        return quotedAlways;
-    }
-
-    public ConnectionDetailSettings setQuotedAlways(boolean quotedAlways) {
-        this.quotedAlways = quotedAlways;
-        return this;
-    }
 
     /*********************************************************
      *                     Configuration                     *
@@ -239,10 +197,6 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
         credentialExpiryTime = getInteger(element, "credential-expiry-time", credentialExpiryTime);
         maxConnectionPoolSize = getInteger(element, "max-connection-pool-size", maxConnectionPoolSize);
         alternativeStatementDelimiter = getString(element, "alternative-statement-delimiter", null);
-
-        /** compatibility interface */
-        quotedAlways = getBoolean(element, "identifier-quoted-always", quotedAlways);
-        setQuoteCharsCsv(getString(element, "alternative-identifier-quotes-csv", null));
     }
 
     @Override
@@ -261,18 +215,6 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
         setInteger(element, "credential-expiry-time", credentialExpiryTime);
         setInteger(element, "max-connection-pool-size", maxConnectionPoolSize);
         setString(element, "alternative-statement-delimiter", CommonUtil.nvl(alternativeStatementDelimiter, ""));
-        setBoolean(element, "identifier-quoted-always", quotedAlways);
-
-        String quotePairsCsv = null;
-        if (quotePairs != null && quotePairs.length != 0){
-            for (int i = 0; i < quotePairs.length; i++){
-                char bc = quotePairs[i].beginChar();
-                char ec = quotePairs[i].endChar();
-                quotePairsCsv+= (i == 0 ? "":",") + bc+":"+ec;
-            }
-        }
-
-        setString(element, "alternative-identifier-quotes-csv", CommonUtil.nvl(quotePairsCsv, ""));
     }
 
     public ConnectionId getConnectionId() {
