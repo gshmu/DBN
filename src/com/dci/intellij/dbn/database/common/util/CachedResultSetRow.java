@@ -68,4 +68,15 @@ public class CachedResultSetRow {
         }
         return clone;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (Object column : columns) {
+            if (builder.length() > 0) builder.append(" / ");
+            builder.append(column);
+        }
+
+        return builder.toString();
+    }
 }
