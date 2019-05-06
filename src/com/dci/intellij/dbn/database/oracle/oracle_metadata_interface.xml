@@ -467,7 +467,7 @@
                       [PREFIX]_CONS_COLUMNS cc, obj
                  where
                       cc.OWNER = {0} and
-                      cc.OWNERE = obj.OWNER and
+                      cc.OWNER = obj.OWNER and
                       cc.TABLE_NAME = obj.OBJECT_NAME and
                       con.OWNER = cc.OWNER and
                       con.TABLE_NAME = cc.TABLE_NAME and
