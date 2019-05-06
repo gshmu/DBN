@@ -12,9 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Cache {
-    private Map<String, CacheValue> elements = ContainerUtil.createConcurrentSoftMap();
+    private Map<String, CacheValue> elements = new ConcurrentHashMap<>();
     private int expiryMillis;
     private String qualifier;
 

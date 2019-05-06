@@ -11,6 +11,8 @@ import java.util.Map;
 public class DatabaseCompatibility extends PropertyHolderImpl<JdbcFeature> {
 
     private String identifierQuote;
+    private boolean catalogAsOwner;
+
     private Map<TransientId, DatabaseActivityTrace> activityTraces = new HashMap<>();
 
     private DatabaseCompatibility() {}
@@ -52,6 +54,14 @@ public class DatabaseCompatibility extends PropertyHolderImpl<JdbcFeature> {
 
     public String getIdentifierQuote() {
         return identifierQuote;
+    }
+
+    public boolean isCatalogAsOwner() {
+        return catalogAsOwner;
+    }
+
+    public void setCatalogAsOwner(boolean catalogAsOwner) {
+        this.catalogAsOwner = catalogAsOwner;
     }
 
     @Override
