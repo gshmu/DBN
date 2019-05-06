@@ -42,5 +42,7 @@ public class JdbcSupport extends PropertyHolderImpl<JdbcFeature> {
         String quoteString = metaData.getIdentifierQuoteString();
         identifierQuote = quoteString == null ? "" : quoteString.trim();
 
+        //TODO JdbcFeature.SQL_DATASET_ALIASING (identify by database type?)
+
     }
 }

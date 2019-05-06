@@ -6,6 +6,8 @@ import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.JdbcFeature;
+import com.dci.intellij.dbn.database.JdbcSupport;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 
@@ -52,20 +54,25 @@ public class DatasetFilterUtil {
     }
 
     public static void createSimpleSelectStatement(DBDataset dataset, StringBuilder buffer) {
+        JdbcSupport jdbcSupport = dataset.getConnectionHandler().getJdbcSupport();
+        // TODO not implemented yet - returning always true at the moment
+        boolean aliased = jdbcSupport.is(JdbcFeature.SQL_DATASET_ALIASING);
 
-        buffer.append("select * from ");
-        buffer.append(dataset.getSchema().getQuotedName(true));
-        buffer.append(".");
-        buffer.append(dataset.getQuotedName(true));
-/*
-        // TODO: review, removed alias from query, some databases do not support it and apparently is not required
-        //  there was a reason for the alias. don't remember what it was. Something related to editable result sets
-        buffer.append("select a.* from ");
-        buffer.append(dataset.getSchema().getQuotedName(true));
-        buffer.append(".");
-        buffer.append(dataset.getQuotedName(true));
-        buffer.append(" a");
-*/
+        String schemaName = dataset.getSchema().getQuotedName(true);
+        String datasetName = dataset.getQuotedName(true);
 
+        if (aliased) {
+            // IMPORTANT oracle jdbc seems to create readonly result-set if dataset is not aliased
+            buffer.append("select a.* from ");
+            buffer.append(schemaName);
+            buffer.append(".");
+            buffer.append(datasetName);
+            buffer.append(" a");
+        } else {
+            buffer.append("select * from ");
+            buffer.append(schemaName);
+            buffer.append(".");
+            buffer.append(datasetName);
+        }
     }
 }
