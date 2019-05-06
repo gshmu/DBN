@@ -4,7 +4,9 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.database.DatabaseCompatibility;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.JdbcFeature;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
@@ -28,8 +30,13 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     // TODO review (ORACLE behavior - package methods come back with FUNCTION_CAT / PROCEDURE_CAT as package name)
     //  filtering them out for now
-    private static final CachedResultSet.Condition FUNCTION_CAT_IS_NULL = row -> row.get("FUNCTION_CAT") == null;
-    private static final CachedResultSet.Condition PROCEDURE_CAT_IS_NULL = row -> row.get("PROCEDURE_CAT") == null;
+    private static final CachedResultSet.Condition FUNCTION_CAT_IS_NULL = row ->
+            row.get("FUNCTION_CAT") == null ||
+                    compatibility().isCatalogAsOwner();
+
+    private static final CachedResultSet.Condition PROCEDURE_CAT_IS_NULL = row ->
+            row.get("PROCEDURE_CAT") == null ||
+                    compatibility().isCatalogAsOwner();
 
     private static final CachedResultSet.GroupBy GROUP_BY_IDX_IDENTIFIER = () -> new String[]{
             "TABLE_CAT",
@@ -82,6 +89,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
         CachedResultSet schemasRs = loadSchemasRaw(connection).open();
         if (schemasRs.isEmpty()) {
             schemasRs = loadCatalogsRaw(connection).open();
+            compatibility().setCatalogAsOwner(!schemasRs.isEmpty());
         }
 
         return new SchemasResultSet(schemasRs) {
@@ -324,7 +332,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 JdbcFeature.MD_TABLES,
                 "TABLES." + ownerName,
                 () -> {
-                    String[] owner = lookupOwner(ownerName, connection);
+                    String[] owner = lookupOwner(ownerName);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getTables(owner[0], owner[1], null, new String[]{"TABLE", "SYSTEM TABLE"});
                     return CachedResultSet.create(resultSet);
@@ -336,7 +344,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 JdbcFeature.MD_VIEWS,
                 "VIEWS." + ownerName,
                 () -> {
-                    String[] owner = lookupOwner(ownerName, connection);
+                    String[] owner = lookupOwner(ownerName);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getTables(owner[0], owner[1], null, new String[]{"VIEW", "SYSTEM VIEW"});
                     return CachedResultSet.create(resultSet);
@@ -348,7 +356,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 JdbcFeature.MD_COLUMNS, 
                 "COLUMNS." + ownerName + "." + datasetName,
                 () -> {
-                    String[] owner = lookupOwner(ownerName, connection);
+                    String[] owner = lookupOwner(ownerName);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getColumns(owner[0], owner[1], datasetName, null);
                     return CachedResultSet.create(resultSet);
@@ -360,7 +368,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 JdbcFeature.MD_PSEUDO_COLUMNS,
                 "PSEUDO_COLUMNS." + ownerName + "." + datasetName,
                 () -> {
-                    String[] owner = lookupOwner(ownerName, connection);
+                    String[] owner = lookupOwner(ownerName);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getPseudoColumns(owner[0], owner[1], datasetName, null);
                     return CachedResultSet.create(resultSet);
@@ -372,7 +380,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 JdbcFeature.MD_COLUMNS,
                 "ALL_COLUMNS" + ownerName,
                 () -> {
-                    String[] owner = lookupOwner(ownerName, connection);
+                    String[] owner = lookupOwner(ownerName);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getColumns(owner[0], owner[1], null, null);
                     return CachedResultSet.create(resultSet);
@@ -384,7 +392,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 JdbcFeature.MD_PSEUDO_COLUMNS,
                 "ALL_PSEUDO_COLUMNS." + ownerName,
                 () -> {
-                    String[] owner = lookupOwner(ownerName, connection);
+                    String[] owner = lookupOwner(ownerName);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getPseudoColumns(owner[0], owner[1], null, null);
                     return CachedResultSet.create(resultSet);
@@ -396,7 +404,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 JdbcFeature.MD_INDEXES,
                 "INDEXES." + ownerName + "." + datasetName,
                 () -> {
-                    String[] owner = lookupOwner(ownerName, connection);
+                    String[] owner = lookupOwner(ownerName);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getIndexInfo(owner[0], owner[1], datasetName, false, true);
                     return CachedResultSet.create(resultSet);
@@ -408,7 +416,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 JdbcFeature.MD_PRIMARY_KEYS,
                 "PRIMARY_KEYS." + ownerName + "." + datasetName,
                 () -> {
-                    String[] owner = lookupOwner(ownerName, connection);
+                    String[] owner = lookupOwner(ownerName);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getPrimaryKeys(owner[0], owner[1], datasetName);
                     return CachedResultSet.create(resultSet);
@@ -420,7 +428,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 JdbcFeature.MD_IMPORTED_KEYS,
                 "FOREIGN_KEYS." + ownerName + "." + datasetName,
                 () -> {
-                    String[] owner = lookupOwner(ownerName, connection);
+                    String[] owner = lookupOwner(ownerName);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getImportedKeys(owner[0], owner[1], datasetName);
                     return CachedResultSet.create(resultSet);
@@ -432,7 +440,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 JdbcFeature.MD_FUNCTIONS, 
                 "FUNCTIONS." + ownerName,
                 () -> {
-                    String[] owner = lookupOwner(ownerName, connection);
+                    String[] owner = lookupOwner(ownerName);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getFunctions(owner[0], owner[1], null);
                     return CachedResultSet.create(resultSet);
@@ -444,7 +452,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 JdbcFeature.MD_FUNCTION_COLUMNS,
                 "FUNCTION_ARGUMENTS." + ownerName + "." + functionName,
                 () -> {
-                    String[] owner = lookupOwner(ownerName, connection);
+                    String[] owner = lookupOwner(ownerName);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getFunctionColumns(owner[0], owner[1], functionName, null);
                     return CachedResultSet.create(resultSet);
@@ -456,7 +464,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 JdbcFeature.MD_FUNCTION_COLUMNS,
                 "ALL_FUNCTION_ARGUMENTS." + ownerName,
                 () -> {
-                    String[] owner = lookupOwner(ownerName, connection);
+                    String[] owner = lookupOwner(ownerName);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getFunctionColumns(owner[0], owner[1], null, null);
                     return CachedResultSet.create(resultSet);
@@ -468,7 +476,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 JdbcFeature.MD_PROCEDURES,
                 "PROCEDURES." + ownerName,
                 () -> {
-                    String[] owner = lookupOwner(ownerName, connection);
+                    String[] owner = lookupOwner(ownerName);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getProcedures(owner[0], owner[1], null);
                     return CachedResultSet.create(resultSet);
@@ -480,7 +488,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 JdbcFeature.MD_PROCEDURE_COLUMNS,
                 "PROCEDURE_ARGUMENTS." + ownerName + "." + procedureName,
                 () -> {
-                    String[] owner = lookupOwner(ownerName, connection);
+                    String[] owner = lookupOwner(ownerName);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getProcedureColumns(owner[0], owner[1], procedureName, null);
                     return CachedResultSet.create(resultSet);
@@ -492,7 +500,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 JdbcFeature.MD_PROCEDURE_COLUMNS,
                 "ALL_PROCEDURE_ARGUMENTS." + ownerName,
                 () -> {
-                    String[] owner = lookupOwner(ownerName, connection);
+                    String[] owner = lookupOwner(ownerName);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getProcedureColumns(owner[0], owner[1], null, null);
                     return CachedResultSet.create(resultSet);
@@ -508,16 +516,19 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
         });
     }
 
-    private String[] lookupOwner(String ownerName, DBNConnection connection) throws SQLException {
+    private String[] lookupOwner(String ownerName) throws SQLException {
         return cached(
                 "CATALOG_SCHEMA." + ownerName,
                 () -> {
-                    CachedResultSet schemasRs = loadSchemasRaw(connection);
-                    if (schemasRs.isEmpty()) {
+                    if (compatibility().isCatalogAsOwner()) {
                         return new String[]{ownerName, null};
                     } else {
                         return new String[]{null, ownerName};
                     }
                 });
+    }
+
+    static DatabaseCompatibility compatibility() {
+        return DatabaseInterface.connectionHandler().getCompatibility();
     }
 }
