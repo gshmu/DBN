@@ -44,12 +44,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DELETED;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DIRTY;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTED;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.UPDATING;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
 public class DatasetEditorModel
         extends ResultSetDataModel<DatasetEditorModelRow, DatasetEditorModelCell>
@@ -391,6 +386,7 @@ public class DatasetEditorModel
             DBNConnection connection = getConnection();
             connection.notifyDataChanges(dataset.getVirtualFile());
         } catch (SQLException e) {
+            set(INSERTING, false);
             MessageUtil.showErrorDialog(getProject(), "Could not insert record for " + dataset.getQualifiedNameWithType() + ".", e);
         }
     }
@@ -417,6 +413,7 @@ public class DatasetEditorModel
             DBNConnection connection = getConnection();
             connection.notifyDataChanges(dataset.getVirtualFile());
         } catch (SQLException e) {
+            set(INSERTING, false);
             MessageUtil.showErrorDialog(getProject(), "Could not duplicate record in " + dataset.getQualifiedNameWithType() + ".", e);
         }
     }
