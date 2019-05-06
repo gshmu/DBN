@@ -232,7 +232,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
             ConnectionHandler connectionHandler = getConnectionHandler();
             ConnectionDatabaseSettings databaseSettings = connectionHandler.getSettings().getDatabaseSettings();
             if (databaseSettings.getDatabaseType() == DatabaseType.GENERIC) {
-                String identifierQuotes = connectionHandler.getJdbcSupport().getIdentifierQuote();
+                String identifierQuotes = connectionHandler.getCompatibility().getIdentifierQuote();
                 return identifierQuotes + name + identifierQuotes;
             } else {
                 DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(this);

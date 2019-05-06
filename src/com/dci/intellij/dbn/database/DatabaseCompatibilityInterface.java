@@ -74,16 +74,14 @@ public abstract class DatabaseCompatibilityInterface implements DatabaseInterfac
 
     public  <T> T attempt(JdbcFeature feature, ThrowableCallable<T, SQLException> loader) throws SQLException {
         ConnectionHandler connectionHandler = DatabaseInterface.connectionHandler();
-        JdbcSupport features = connectionHandler.getJdbcSupport();
+        DatabaseCompatibility compatibility = connectionHandler.getCompatibility();
         try {
-            // check supported
-            if (features.is(feature)) {
+            if (compatibility.isSupported(feature)) {
                 return loader.call();
             }
         } catch (SQLFeatureNotSupportedException | AbstractMethodError e) {
             LOGGER.warn("JDBC feature not supported " + feature + " (" + e.getMessage() + ")");
-            // mark unsupported
-            features.set(feature, false);
+            compatibility.markUnsupported(feature);
         }
         return null;
     }
