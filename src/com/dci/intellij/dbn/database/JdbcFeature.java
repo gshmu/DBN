@@ -21,6 +21,7 @@ public enum JdbcFeature implements Property {
     MD_FUNCTION_COLUMNS("Function columns"),
     MD_PROCEDURES("Procedures"),
     MD_PROCEDURE_COLUMNS("Procedure columns"),
+    SQL_DATASET_ALIASING("Dataset aliasing"),
     ;
 
     private final int index = Property.idx(this);
