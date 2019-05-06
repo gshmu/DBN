@@ -25,11 +25,11 @@ import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
+import com.dci.intellij.dbn.database.DatabaseCompatibility;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
-import com.dci.intellij.dbn.database.JdbcSupport;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionQueue;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -73,7 +73,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private ConnectionHandlerRef ref;
     private ConnectionInfo connectionInfo;
     private Latent<Cache> metaDataCache = Latent.basic(() -> new Cache(getConnectionId().id(), TimeUtil.ONE_MINUTE));
-    private JdbcSupport jdbcSupport = JdbcSupport.all();
+    private DatabaseCompatibility compatibility = DatabaseCompatibility.all();
 
     private Latent<AuthenticationInfo> temporaryAuthenticationInfo = Latent.basic(() -> {
         ConnectionDatabaseSettings databaseSettings = getSettings().getDatabaseSettings();
@@ -531,8 +531,13 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     }
 
     @Override
-    public JdbcSupport getJdbcSupport() {
-        return jdbcSupport;
+    public DatabaseCompatibility getCompatibility() {
+        return compatibility;
+    }
+
+    @Override
+    public void resetCompatibilityMonitor() {
+        compatibility = DatabaseCompatibility.all();
     }
 
     @Override

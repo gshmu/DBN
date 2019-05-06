@@ -101,7 +101,7 @@ public class ResourceUtil {
             ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
             connectionHandler.setConnectionInfo(connectionInfo);
             connectionStatus.setAuthenticationError(null);
-            connectionHandler.getJdbcSupport().read(connection.getMetaData());
+            connectionHandler.getCompatibility().read(connection.getMetaData());
             return connection;
         } catch (SQLException e) {
             DatabaseMessageParserInterface messageParserInterface = interfaceProvider.getMessageParserInterface();

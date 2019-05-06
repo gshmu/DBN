@@ -327,7 +327,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-dataset-columns" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="all-dataset-columns" is-query="true" is-prepared-statement="true" timeout="90">
         <statement prefixes="DBA, ALL">
             with obj as (select
                              o.OWNER,
@@ -520,7 +520,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-column-constraint-relations" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="all-column-constraint-relations" is-query="true" is-prepared-statement="true" timeout="90">
         <statement prefixes="DBA, ALL">
             with obj as (select
                             o.OWNER,
@@ -556,7 +556,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-column-index-relations" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="all-column-index-relations" is-query="true" is-prepared-statement="true" timeout="90">
         <statement prefixes="DBA, ALL">
             select
                 TABLE_NAME,
@@ -568,7 +568,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-constraints" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="all-constraints" is-query="true" is-prepared-statement="true" timeout="90">
         <statement prefixes="DBA, ALL">
             with obj as (select
                             o.OWNER,
@@ -641,7 +641,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-indexes" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="all-indexes" is-query="true" is-prepared-statement="true" timeout="90">
         <statement prefixes="DBA, ALL">
             select
                 INDEX_NAME,
@@ -670,7 +670,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-nested-tables" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="all-nested-tables" is-query="true" is-prepared-statement="true" timeout="90">
         <statement prefixes="DBA, ALL">
             select
                 TABLE_NAME as NESTED_TABLE_NAME,
@@ -729,7 +729,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-dataset-triggers" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="all-dataset-triggers" is-query="true" is-prepared-statement="true" timeout="90">
         <statement prefixes="DBA, ALL">
             select distinct
                 t.TABLE_NAME as DATASET_NAME,
@@ -996,7 +996,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-package-functions" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="all-package-functions" is-query="true" is-prepared-statement="true" timeout="90">
         <statement prefixes="DBA, ALL">
             select
                 a.PACKAGE_NAME,
@@ -1110,7 +1110,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-package-procedures" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="all-package-procedures" is-query="true" is-prepared-statement="true" timeout="90">
         <statement prefixes="DBA, ALL">
             select
                 a.PACKAGE_NAME,
@@ -1185,7 +1185,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-package-types" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="all-package-types" is-query="true" is-prepared-statement="true" timeout="90">
         <statement prefixes="DBA, ALL">
             select distinct
                 TYPE_NAME as PACKAGE_NAME,
@@ -1292,7 +1292,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-type-attributes" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="all-type-attributes" is-query="true" is-prepared-statement="true" timeout="90">
         <statement prefixes="DBA, ALL">
              select
                  TYPE_NAME,
@@ -1428,7 +1428,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-type-functions" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="all-type-functions" is-query="true" is-prepared-statement="true" timeout="90">
         <statement prefixes="DBA, ALL">
             select
                 a.PACKAGE_NAME as TYPE_NAME,
@@ -1542,7 +1542,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-type-procedures" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="all-type-procedures" is-query="true" is-prepared-statement="true" timeout="90">
         <statement prefixes="DBA, ALL">
             select
                 a.PACKAGE_NAME as TYPE_NAME,
@@ -1670,7 +1670,7 @@
         </statement>
     </statement-execution-processor>
 
-    <statement-execution-processor id="all-method-arguments" is-query="true" is-prepared-statement="true">
+    <statement-execution-processor id="all-method-arguments" is-query="true" is-prepared-statement="true" timeout="90">
         <statement prefixes="DBA, ALL">
             select
                 ARGUMENT_NAME,

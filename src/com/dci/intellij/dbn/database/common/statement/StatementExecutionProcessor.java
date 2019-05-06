@@ -1,9 +1,13 @@
 package com.dci.intellij.dbn.database.common.statement;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.database.DatabaseActivityTrace;
+import com.dci.intellij.dbn.database.DatabaseCompatibility;
+import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jdom.Element;
@@ -18,29 +22,31 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.dci.intellij.dbn.DatabaseNavigator.DEBUG;
 
 public class StatementExecutionProcessor {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private DatabaseInterfaceProvider interfaceProvider;
-    private String id;
-    private boolean isQuery;
-    private boolean isPreparedStatement;
-    private int timeout;
-    private List<StatementDefinition> statementDefinitions = new ArrayList<StatementDefinition>();
+    private final DatabaseInterfaceProvider interfaceProvider;
+    private final String id;
+    private final boolean query;
+    private final boolean prepared;
+    private int timeout = 30;
+    private List<StatementDefinition> statementDefinitions = new ArrayList<>();
     private StatementDefinition statementDefinition;
-    private SQLException lastException;
-    public static final int DEFAULT_TIMEOUT = 30;
 
     public StatementExecutionProcessor(Element element, DatabaseInterfaceProvider interfaceProvider) {
         this.interfaceProvider = interfaceProvider;
-        id = element.getAttributeValue("id");
-        isQuery = Boolean.parseBoolean(element.getAttributeValue("is-query"));
-        isPreparedStatement = Boolean.parseBoolean(element.getAttributeValue("is-prepared-statement"));
-        String timeoutS = element.getAttributeValue("timeout");
-        timeout = StringUtil.isEmpty(timeoutS) ? DEFAULT_TIMEOUT : Integer.parseInt(timeoutS);
+        this.id = element.getAttributeValue("id");
+        this.query = Boolean.parseBoolean(element.getAttributeValue("is-query"));
+        this.prepared = Boolean.parseBoolean(element.getAttributeValue("is-prepared-statement"));
+        String customTimeout = element.getAttributeValue("timeout");
+        if (StringUtil.isNotEmpty(customTimeout)) {
+            timeout = Integer.parseInt(customTimeout);
+        }
+
         if (element.getChildren().isEmpty()) {
             String statementText = element.getContent(0).getValue().trim();
             readStatements(statementText, null);
@@ -61,14 +67,14 @@ public class StatementExecutionProcessor {
 
     private void readStatements(String statementText, String prefixes) {
         if (prefixes == null) {
-            StatementDefinition statementDefinition = new StatementDefinition(statementText, null, isPreparedStatement, false);
+            StatementDefinition statementDefinition = new StatementDefinition(statementText, null, prepared, false);
             statementDefinitions.add(statementDefinition);
         } else {
             StringTokenizer tokenizer = new StringTokenizer(prefixes, ",");
             while (tokenizer.hasMoreTokens()) {
                 String prefix = tokenizer.nextToken().trim();
                 boolean hasFallback = tokenizer.hasMoreTokens();
-                StatementDefinition statementDefinition = new StatementDefinition(statementText, prefix, isPreparedStatement, hasFallback);
+                StatementDefinition statementDefinition = new StatementDefinition(statementText, prefix, prepared, hasFallback);
                 statementDefinitions.add(statementDefinition);
             }
         }
@@ -98,81 +104,88 @@ public class StatementExecutionProcessor {
         }
     }
 
-    private ResultSet executeQuery(final StatementDefinition statementDefinition, @NotNull final DBNConnection connection, boolean forceExecution, final Object... arguments) throws SQLException {
-        if (forceExecution || statementDefinition.canExecute(connection)) {
-            return new StatementExecutor<ResultSet>(timeout) {
-                private Statement statement;
-                private ResultSet resultSet;
-                @Override
-                public ResultSet execute() throws Exception {
-                    String statementText = null;
-                    boolean executionSuccessful = true;
-                    try {
-                        if (DEBUG) {
-                            statementText = statementDefinition.prepareStatementText(arguments);
-                            LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
-                        }
-                        if (isPreparedStatement) {
-                            PreparedStatement preparedStatement = statementDefinition.prepareStatement(connection, arguments);
-                            statement = preparedStatement;
-                            preparedStatement.setQueryTimeout(timeout);
-                            resultSet = preparedStatement.executeQuery();
-                            return resultSet;
-                        } else {
-                            if (statementText == null)
+    private ResultSet executeQuery(
+            @NotNull StatementDefinition statementDefinition,
+            @NotNull DBNConnection connection,
+            boolean forceExecution,
+            Object... arguments) throws SQLException {
+
+        boolean hasFallback = statementDefinition.hasFallback();
+        DatabaseCompatibility compatibility = DatabaseInterface.connectionHandler().getCompatibility();
+        DatabaseActivityTrace activityTrace = compatibility.getActivityTrace(statementDefinition.getId());
+
+        if (forceExecution || activityTrace.canExecute(hasFallback)) {
+            AtomicReference<Statement> statementRef = new AtomicReference<>();
+            return StatementExecutor.execute(
+                    timeout,
+                    statementRef,
+                    () -> {
+                        Statement statement = null;
+                        ResultSet resultSet = null;
+                        String statementText = null;
+                        try {
+                            activityTrace.init();
+                            if (DEBUG) {
                                 statementText = statementDefinition.prepareStatementText(arguments);
-                            statement = connection.createStatement();
-                            statement.setQueryTimeout(timeout);
-                            statement.execute(statementText);
-                            if (isQuery) {
-                                try {
-                                    resultSet = statement.getResultSet();
-                                    return resultSet;
-                                } catch (SQLException e) {
+                                LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
+                            }
+                            if (prepared) {
+                                PreparedStatement preparedStatement = statementDefinition.prepareStatement(connection, arguments);
+                                statement = preparedStatement;
+                                preparedStatement.setQueryTimeout(timeout);
+                                resultSet = preparedStatement.executeQuery();
+                                return resultSet;
+                            } else {
+                                if (statementText == null)
+                                    statementText = statementDefinition.prepareStatementText(arguments);
+                                statement = connection.createStatement();
+                                statement.setQueryTimeout(timeout);
+                                statement.execute(statementText);
+                                if (query) {
+                                    try {
+                                        resultSet = statement.getResultSet();
+                                        return resultSet;
+                                    } catch (SQLException e) {
+                                        ResourceUtil.close(statement);
+                                        return null;
+                                    }
+                                } else {
                                     ResourceUtil.close(statement);
                                     return null;
                                 }
-                            } else {
+                            }
+                        } catch (SQLException exception) {
+                            ResourceUtil.close(statement);
+                            String message = exception.getMessage();
+                            if (DEBUG) LOGGER.info("[DBN-ERROR] Error executing statement: " + statementText + "\nCause: " + message);
+
+                            boolean isModelException = interfaceProvider.getMessageParserInterface().isModelException(exception);
+                            SQLException traceException =
+                                    isModelException ?
+                                            new SQLException("Model exception received while executing query '" + id +"'. " + message) :
+                                            new SQLException("Too many failed attempts of executing query '" + id +"'. " + message);
+
+                            activityTrace.fail(traceException, isModelException);
+                            throw exception;
+                        } finally {
+                            activityTrace.release();
+                            if (resultSet == null) {
                                 ResourceUtil.close(statement);
-                                return null;
                             }
                         }
-                    } catch (SQLException exception) {
-                        executionSuccessful = false;
-                        ResourceUtil.close(statement);
-                        if (DEBUG) LOGGER.info("[DBN-ERROR] Error executing statement: " + statementText + "\nCause: " + exception.getMessage());
-                        if (interfaceProvider.getMessageParserInterface().isModelException(exception)) {
-                            statementDefinition.setDisabled(true);
-                            lastException = new SQLException("Model exception received while executing query '" + id +"'. " + exception.getMessage());
-                        } else {
-                            lastException = new SQLException("Too many failed attempts of executing query '" + id +"'. " + exception.getMessage());
-                        }
-                        throw exception;
-                    } catch (Exception exception) {
-                        ResourceUtil.close(statement);
-                        throw exception;
-                    } finally {
-                        statementDefinition.updateExecutionStatus(executionSuccessful);
-                        if (resultSet == null) {
-                            ResourceUtil.close(statement);
-                        }
-                    }
-                }
-
-                @Override
-                protected void handleTimeout() {
-                    ResourceUtil.close(statement);
-                }
-            }.start();
+                    });
         } else {
-            if (lastException == null) {
-                throw new SQLException("Too many failed attempts of executing query '" + id + "'.");
-            }
-            throw lastException;
+            throw CommonUtil.nvl(
+                    activityTrace.getException(),
+                    () -> new SQLException("Too many failed attempts of executing query '" + id + "'."));
         }
     }
 
-    public <T extends CallableStatementOutput> T executeCall(@NotNull DBNConnection connection, @Nullable T outputReader, Object... arguments) throws SQLException {
+    public <T extends CallableStatementOutput> T executeCall(
+            @NotNull DBNConnection connection,
+            @Nullable T outputReader,
+            Object... arguments) throws SQLException {
+
         if (statementDefinition != null) {
             return executeCall(statementDefinition, connection, outputReader, arguments);
         } else {
@@ -189,38 +202,39 @@ public class StatementExecutionProcessor {
         }
     }
 
-    private <T extends CallableStatementOutput> T executeCall(final StatementDefinition statementDefinition, @NotNull final DBNConnection connection, @Nullable final T outputReader, final Object... arguments) throws SQLException {
-        return new StatementExecutor<T>(timeout) {
-            CallableStatement statement;
-            @Override
-            public T execute() throws Exception {
-                String statementText = statementDefinition.prepareStatementText(arguments);
-                if (DEBUG) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
+    private <T extends CallableStatementOutput> T executeCall(
+            @NotNull StatementDefinition statementDefinition,
+            @NotNull DBNConnection connection,
+            @Nullable T outputReader,
+            Object... arguments) throws SQLException {
 
-                statement = connection.prepareCall(statementText);
-                try {
-                    if (outputReader != null) outputReader.registerParameters(statement);
-                    statement.setQueryTimeout(timeout);
-                    statement.execute();
-                    if (outputReader != null) outputReader.read(statement);
-                    return outputReader;
-                } catch (SQLException exception) {
-                    if (DEBUG)
-                        LOGGER.info(
-                                "[DBN-ERROR] Error executing statement: " + statementText +
-                                        "\nCause: " + exception.getMessage());
+        AtomicReference<Statement> statementRef = new AtomicReference<>();
+        return StatementExecutor.execute(
+                timeout,
+                statementRef,
+                () -> {
+                    String statementText = statementDefinition.prepareStatementText(arguments);
+                    if (DEBUG) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
 
-                    throw exception;
-                } finally {
-                    ResourceUtil.close(statement);
-                }
-            }
+                    CallableStatement statement = connection.prepareCall(statementText);
+                    statementRef.set(statement);
+                    try {
+                        if (outputReader != null) outputReader.registerParameters(statement);
+                        statement.setQueryTimeout(timeout);
+                        statement.execute();
+                        if (outputReader != null) outputReader.read(statement);
+                        return outputReader;
+                    } catch (SQLException exception) {
+                        if (DEBUG)
+                            LOGGER.info(
+                                    "[DBN-ERROR] Error executing statement: " + statementText +
+                                            "\nCause: " + exception.getMessage());
 
-            @Override
-            protected void handleTimeout() {
-                ResourceUtil.close(statement);
-            }
-        }.start();
+                        throw exception;
+                    } finally {
+                        ResourceUtil.close(statement);
+                    }
+                });
     }
 
     public void executeUpdate(DBNConnection connection, Object... arguments) throws SQLException {
@@ -240,36 +254,37 @@ public class StatementExecutionProcessor {
         }
     }
 
-    private void executeUpdate(final StatementDefinition statementDefinition, @NotNull final DBNConnection connection, final Object... arguments) throws SQLException {
-        new StatementExecutor(timeout) {
-            private Statement statement;
-            @Override
-            public Object execute() throws Exception {
-                String statementText = statementDefinition.prepareStatementText(arguments);
-                if (DEBUG) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
+    private void executeUpdate(
+            @NotNull StatementDefinition statementDefinition,
+            @NotNull DBNConnection connection,
+            Object... arguments) throws SQLException {
 
-                statement = connection.createStatement();
-                try {
-                    statement.setQueryTimeout(timeout);
-                    statement.executeUpdate(statementText);
-                } catch (SQLException exception) {
-                    if (DEBUG)
-                        LOGGER.info(
-                                "[DBN-ERROR] Error executing statement: " + statementText +
-                                        "\nCause: " + exception.getMessage());
 
-                    throw exception;
-                } finally {
-                    ResourceUtil.close(statement);
-                }
-                return null;
-            }
+        AtomicReference<Statement> statementRef = new AtomicReference<>();
+        StatementExecutor.execute(
+                timeout,
+                statementRef,
+                () -> {
+                    String statementText = statementDefinition.prepareStatementText(arguments);
+                    if (DEBUG) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
 
-            @Override
-            protected void handleTimeout() {
-                ResourceUtil.close(statement);
-            }
-        }.start();
+                    Statement statement = connection.createStatement();
+                    statementRef.set(statement);
+                    try {
+                        statement.setQueryTimeout(timeout);
+                        statement.executeUpdate(statementText);
+                    } catch (SQLException exception) {
+                        if (DEBUG)
+                            LOGGER.info(
+                                    "[DBN-ERROR] Error executing statement: " + statementText +
+                                            "\nCause: " + exception.getMessage());
+
+                        throw exception;
+                    } finally {
+                        ResourceUtil.close(statement);
+                    }
+                    return null;
+                });
     }
 
     public boolean executeStatement(@NotNull DBNConnection connection, Object... arguments) throws SQLException {
@@ -288,34 +303,34 @@ public class StatementExecutionProcessor {
         }
     }
 
-    private boolean executeStatement(final StatementDefinition statementDefinition, @NotNull final DBNConnection connection, final Object... arguments) throws SQLException {
-        return new StatementExecutor<Boolean>(timeout) {
-            private Statement statement;
-            @Override
-            public Boolean execute() throws Exception {
-                String statementText = statementDefinition.prepareStatementText(arguments);
-                if (DEBUG) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
+    private boolean executeStatement(
+            @NotNull StatementDefinition statementDefinition,
+            @NotNull DBNConnection connection,
+            Object... arguments) throws SQLException {
 
-                statement = connection.createStatement();
-                try {
-                    statement.setQueryTimeout(timeout);
-                    return statement.execute(statementText);
-                } catch (SQLException exception) {
-                    if (DEBUG)
-                        LOGGER.info(
-                                "[DBN-ERROR] Error executing statement: " + statementText +
-                                        "\nCause: " + exception.getMessage());
+        AtomicReference<Statement> statementRef = new AtomicReference<>();
+        return StatementExecutor.execute(
+                timeout,
+                statementRef,
+                () -> {
+                    String statementText = statementDefinition.prepareStatementText(arguments);
+                    if (DEBUG) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
 
-                    throw exception;
-                } finally {
-                    ResourceUtil.close(statement);
-                }
-            }
+                    Statement statement = connection.createStatement();
+                    statementRef.set(statement);
+                    try {
+                        statement.setQueryTimeout(timeout);
+                        return statement.execute(statementText);
+                    } catch (SQLException exception) {
+                        if (DEBUG)
+                            LOGGER.info(
+                                    "[DBN-ERROR] Error executing statement: " + statementText +
+                                            "\nCause: " + exception.getMessage());
 
-            @Override
-            protected void handleTimeout() {
-                ResourceUtil.close(statement);
-            }
-        }.start();
+                        throw exception;
+                    } finally {
+                        ResourceUtil.close(statement);
+                    }
+                });
     }
 }
