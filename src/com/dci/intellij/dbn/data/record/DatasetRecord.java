@@ -2,11 +2,11 @@ package com.dci.intellij.dbn.data.record;
 
 
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.PooledConnection;
 import com.dci.intellij.dbn.connection.ResourceUtil;
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNPreparedStatement;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
-import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
+import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
@@ -14,8 +14,10 @@ import com.intellij.openapi.Disposable;
 import gnu.trove.THashMap;
 
 import java.sql.SQLException;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
+import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 
 public class DatasetRecord implements Disposable {
     private DatasetFilterInput filterInput;
@@ -34,11 +36,11 @@ public class DatasetRecord implements Disposable {
         DBDataset dataset = getDataset();
         StringBuilder selectStatement = new StringBuilder();
         selectStatement.append("select ");
-        Iterator<DBColumn> iterator = dataset.getColumns().iterator();
-        while (iterator.hasNext()) {
-            DBColumn column = iterator.next();
+
+        List<DBColumn> columns = dataset.getColumns();
+        for (DBColumn column : columns) {
             selectStatement.append(column.getName());
-            if (iterator.hasNext()) {
+            if (!isLast(columns, column)) {
                 selectStatement.append(", ");
             }
         }
@@ -47,55 +49,53 @@ public class DatasetRecord implements Disposable {
         selectStatement.append(dataset.getQualifiedName());
         selectStatement.append(" where ");
 
-        iterator = filterInput.getColumns().iterator();
-        while (iterator.hasNext()) {
-            DBColumn column = iterator.next();
+        List<DBColumn> filterColumns = filterInput.getColumns();
+        for (DBColumn column : filterColumns) {
             selectStatement.append(column.getName());
             selectStatement.append(" = ? ");
-            if (iterator.hasNext()) {
+            if (!isLast(filterColumns, column)) {
                 selectStatement.append(" and ");
             }
         }
 
         ConnectionHandler connectionHandler = dataset.getConnectionHandler();
-        DBNConnection connection = null;
-        DBNPreparedStatement statement = null;
-        DBNResultSet resultSet = null;
-        try {
-            connection = connectionHandler.getPoolConnection(true);
-            statement = connection.prepareStatement(selectStatement.toString());
+        PooledConnection.run(true,
+                connectionHandler,
+                connection -> {
+                    DBNPreparedStatement statement = null;
+                    DBNResultSet resultSet = null;
+                    try {
+                        statement = connection.prepareStatement(selectStatement.toString());
 
-            int index = 1;
-            iterator = filterInput.getColumns().iterator();
-            while (iterator.hasNext()) {
-                DBColumn column = iterator.next();
-                Object value = filterInput.getColumnValue(column);
-                column.getDataType().setValueToPreparedStatement(statement, index, value);
-                index++;
-            }
+                        int index = 1;
 
-            resultSet = statement.executeQuery();
-            try {
-                connection.set(ResourceStatus.ACTIVE, true);
-                if (resultSet.next()) {
-                    index = 1;
+                        for (DBColumn column : filterColumns) {
+                            Object value = filterInput.getColumnValue(column);
+                            DBDataType dataType = column.getDataType();
+                            dataType.setValueToPreparedStatement(statement, index, value);
+                            index++;
+                        }
 
-                    for (DBColumn column : dataset.getColumns()) {
-                        Object value = column.getDataType().getValueFromResultSet(resultSet, index);
-                        values.put(column.getName(), value);
-                        index++;
+                        resultSet = statement.executeQuery();
+                        try {
+                            if (resultSet.next()) {
+                                index = 1;
+
+                                for (DBColumn column : dataset.getColumns()) {
+                                    DBDataType dataType = column.getDataType();
+                                    Object value = dataType.getValueFromResultSet(resultSet, index);
+                                    values.put(column.getName(), value);
+                                    index++;
+                                }
+                            }
+                        } finally {
+                            connection.updateLastAccess();
+                        }
+                    }  finally {
+                        ResourceUtil.close(resultSet);
+                        ResourceUtil.close(statement);
                     }
-                }
-            } finally {
-                connection.set(ResourceStatus.ACTIVE, false);
-                connection.updateLastAccess();
-            }
-        }  finally {
-            ResourceUtil.close(resultSet);
-            ResourceUtil.close(statement);
-            connectionHandler.freePoolConnection(connection);
-        }
-
+                });
     }
 
     public DBDataset getDataset() {

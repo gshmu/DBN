@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
-import com.dci.intellij.dbn.common.notification.NotificationUtil;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
+import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
@@ -206,7 +206,7 @@ public class ResourceUtil {
         } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
             sentWarningNotification(
-                    "Commit",
+                    NotificationGroup.TRANSACTION,
                     "Failed to commit",
                     connection,
                     e);
@@ -229,7 +229,7 @@ public class ResourceUtil {
         } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
             sentWarningNotification(
-                    "Rollback",
+                    NotificationGroup.TRANSACTION,
                     "Failed to rollback",
                     connection,
                     e);
@@ -252,7 +252,7 @@ public class ResourceUtil {
         } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
             sentWarningNotification(
-                    "Savepoint",
+                    NotificationGroup.TRANSACTION,
                     "Failed to rollback savepoint for",
                     connection,
                     e);
@@ -268,7 +268,7 @@ public class ResourceUtil {
         } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
             sentWarningNotification(
-                    "Savepoint",
+                    NotificationGroup.TRANSACTION,
                     "Failed to create savepoint for",
                     connection,
                     e);
@@ -284,7 +284,7 @@ public class ResourceUtil {
         } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
             sentWarningNotification(
-                    "Savepoint",
+                    NotificationGroup.TRANSACTION,
                     "Failed to release savepoint for",
                     connection,
                     e);
@@ -298,7 +298,7 @@ public class ResourceUtil {
                 connection.setReadOnly(readonly);
             } catch (SQLException e) {
             sentWarningNotification(
-                    "Readonly",
+                    NotificationGroup.CONNECTION,
                     "Failed to initialize readonly status for",
                     connection,
                     e);
@@ -314,22 +314,22 @@ public class ResourceUtil {
         } catch (SQLRecoverableException ignore) {
         } catch (Exception e) {
             sentWarningNotification(
-                    "Auto-Commit",
+                    NotificationGroup.CONNECTION,
                     "Failed to change auto-commit status for",
                     connection,
                     e);
         }
     }
 
-    private static void sentWarningNotification(String title, String message, DBNConnection connection, Exception e) {
+    private static void sentWarningNotification(NotificationGroup title, String message, DBNConnection connection, Exception e) {
         String name = connection.getName();
         SessionId sessionId = connection.getSessionId();
         String errorMessage = e.getMessage();
         String notificationMessage = message + " connection \"" + name + " (" + sessionId + ")\": " + errorMessage;
 
-        NotificationUtil.sendWarningNotification(
+        NotificationSupport.sendWarningNotification(
                 connection.getProject(),
-                Constants.DBN_TITLE_PREFIX + title,
+                title,
                 notificationMessage);
 
     }

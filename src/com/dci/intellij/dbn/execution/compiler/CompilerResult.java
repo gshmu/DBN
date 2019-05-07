@@ -1,15 +1,19 @@
 package com.dci.intellij.dbn.execution.compiler;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.message.MessageType;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
+import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ResourceUtil;
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +23,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CompilerResult implements Disposable {
+public class CompilerResult implements Disposable, NotificationSupport {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
+
     private DBObjectRef<DBSchemaObject> objectRef;
     private List<CompilerMessage> compilerMessages = new ArrayList<>();
     private boolean isError = false;
@@ -44,30 +50,36 @@ public class CompilerResult implements Disposable {
 
     private void init(ConnectionHandler connectionHandler, DBSchema schema, String objectName, CompilerAction compilerAction) {
         this.compilerAction = compilerAction;
-        DBNConnection connection = null;
-        ResultSet resultSet = null;
         DBContentType contentType = compilerAction.getContentType();
+
         try {
-            connection = connectionHandler.getPoolConnection(true);
-            resultSet = connectionHandler.getInterfaceProvider().getMetadataInterface().loadCompileObjectErrors(
-                    schema.getName(),
-                    objectName,
-                    connection);
+            DatabaseInterface.run(true,
+                    connectionHandler,
+                    (provider, connection) -> {
+                        ResultSet resultSet = null;
+                        try {
+                            resultSet = provider.getMetadataInterface().loadCompileObjectErrors(
+                                    schema.getName(),
+                                    objectName,
+                                    connection);
 
-            while (resultSet != null && resultSet.next()) {
-                CompilerMessage errorMessage = new CompilerMessage(this, resultSet);
-                isError = true;
-                if (/*!compilerAction.isDDL() || */contentType.isBundle() || contentType == errorMessage.getContentType()) {
-                    compilerMessages.add(errorMessage);
-                }
-            }
-
+                            while (resultSet != null && resultSet.next()) {
+                                CompilerMessage errorMessage = new CompilerMessage(this, resultSet);
+                                isError = true;
+                                if (/*!compilerAction.isDDL() || */contentType.isBundle() || contentType == errorMessage.getContentType()) {
+                                    compilerMessages.add(errorMessage);
+                                }
+                            }
+                        } finally{
+                            ResourceUtil.close(resultSet);
+                        }
+                    });
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally{
-            ResourceUtil.close(resultSet);
-            connectionHandler.freePoolConnection(connection);
+            sendErrorNotification(
+                    NotificationGroup.COMPILER,
+                    "Failed to read compiler result: {0}", e);
         }
+
 
         if (compilerMessages.size() == 0) {
             String contentDesc =

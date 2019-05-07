@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.debugger;
 
-import com.dci.intellij.dbn.common.notification.NotificationUtil;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
+import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.common.thread.ThreadFactory;
 import com.intellij.openapi.project.Project;
@@ -20,11 +21,10 @@ public interface DBDebugOperation {
             try {
                 runnable.run();
             } catch (Exception e) {
-                NotificationUtil.sendErrorNotification(
+                NotificationSupport.sendErrorNotification(
                         project,
-                        "Debugger",
-                        "Error performing debug operation (" + title + ").",
-                        e.getMessage());
+                        NotificationGroup.DEBUGGER,
+                        "Error performing debug operation ({0}): {1}", title, e);
             } finally {
                 currentThread.setPriority(initialPriority);
             }

@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
+import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModel;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
@@ -41,7 +42,8 @@ public class ResultSetDataModel<
         super(connectionHandler.getProject());
         this.connectionHandler = connectionHandler;
         this.resultSet = resultSet;
-        this.executeDuration = resultSet.getStatement().getExecuteDuration();
+        DBNStatement statement = resultSet.getStatement();
+        this.executeDuration = statement == null ? 0 : statement.getExecuteDuration();
         setHeader(new ResultSetDataModelHeader(connectionHandler, resultSet));
         fetchNextRecords(maxRecords, false);
         Disposer.register(connectionHandler, this);
