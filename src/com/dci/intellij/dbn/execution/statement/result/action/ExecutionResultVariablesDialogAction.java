@@ -2,7 +2,8 @@ package com.dci.intellij.dbn.execution.statement.result.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.notification.NotificationUtil;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
+import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
@@ -34,7 +35,10 @@ public class ExecutionResultVariablesDialogAction extends AbstractExecutionResul
                             try {
                                 executionProcessor.execute();
                             } catch (SQLException ex) {
-                                NotificationUtil.sendErrorNotification(project, "Error executing statement", ex.getMessage());
+                                NotificationSupport.sendErrorNotification(
+                                        project,
+                                        NotificationGroup.EXECUTION,
+                                        "Error executing statement. {0}", ex);
                             }
                         }));
     }

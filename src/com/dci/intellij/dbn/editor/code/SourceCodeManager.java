@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
@@ -199,10 +200,10 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                             sourceCodeFile.setSourceLoadError(e.getMessage());
                             sourceCodeFile.set(MODIFIED, false);
                             if (notifyError) {
+                                String objectDesc = object.getQualifiedNameWithType();
                                 sendErrorNotification(
-                                        "Source Load Error",
-                                        "Could not load sourcecode for " + object.getQualifiedNameWithType() + " from database. " +
-                                                "Cause: " + e.getMessage());
+                                        NotificationGroup.SOURCE_CODE,
+                                        "Could not load sourcecode for {0} from database: {1}", objectDesc, e);
                             }
                         } finally {
                             sourceCodeFile.set(LOADING, false);
@@ -286,13 +287,12 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         ConnectionHandler connectionHandler = object.getConnectionHandler();
         boolean optionalContent = contentType == DBContentType.CODE_BODY;
 
-        String sourceCode =  DatabaseInterface.call(object,
-                (interfaceProvider) -> {
-                    DBNConnection connection = null;
+        String sourceCode = DatabaseInterface.call(true,
+                connectionHandler,
+                (provider, connection) -> {
                     ResultSet resultSet = null;
                     try {
-                        connection = connectionHandler.getPoolConnection(true);
-                        DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
+                        DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
                         resultSet = loadSourceFromDatabase(
                                 object,
                                 contentType,
@@ -311,9 +311,9 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                         return StringUtil.removeCharacter(buffer.toString(), '\r');
                     } finally {
                         ResourceUtil.close(resultSet);
-                        connectionHandler.freePoolConnection(connection);
                     }
                 });
+
         SourceCodeContent sourceCodeContent = new SourceCodeContent(sourceCode);
 
         String objectName = object.getName();
@@ -413,30 +413,29 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     public ChangeTimestamp loadChangeTimestamp(@NotNull DBSchemaObject object, DBContentType contentType) throws SQLException{
         if (DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(object)) {
             ProgressMonitor.setTaskDescription("Loading timestamp for " + object.getQualifiedNameWithType());
-            Timestamp timestamp = DatabaseInterface.call(
-                    object,
-                    (interfaceProvider) -> {
-                        ConnectionHandler connectionHandler = object.getConnectionHandler();
-                        DBNConnection connection = null;
+            ConnectionHandler connectionHandler = object.getConnectionHandler();
+
+            Timestamp timestamp = DatabaseInterface.call(true,
+                    connectionHandler,
+                    (provider, connection) -> {
                         ResultSet resultSet = null;
                         try {
-                            connection = connectionHandler.getPoolConnection(true);
                             String schemaName = object.getSchema().getName();
                             String objectName = object.getName();
                             String contentQualifier = getContentQualifier(object.getObjectType(), contentType);
 
-                            resultSet = interfaceProvider.getMetadataInterface().loadObjectChangeTimestamp(
+                            resultSet = provider.getMetadataInterface().loadObjectChangeTimestamp(
                                     schemaName,
                                     objectName,
                                     contentQualifier,
                                     connection);
 
                             return resultSet.next() ? resultSet.getTimestamp(1) : null;
-                        }  finally {
+                        } finally {
                             ResourceUtil.close(resultSet);
-                            connectionHandler.freePoolConnection(connection);
                         }
                     });
+
             if (timestamp != null) {
                 return new ChangeTimestamp(timestamp);
             }

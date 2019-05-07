@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.language.common.WeakRef;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -40,12 +41,14 @@ public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, C
     }
 
     @Override
+    @Nullable
     public DBNStatement getStatement() {
-        return Failsafe.nn(statement.get());
+        return WeakRef.get(statement);
     }
 
     public DBNConnection getConnection() {
-        return Failsafe.nn(connection == null ? getStatement().getConnection() : connection.get());
+        DBNStatement statement = getStatement();
+        return Failsafe.nn(connection == null ? statement == null ? null : statement.getConnection() : connection.get());
     }
 
     @Override

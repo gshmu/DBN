@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.action.UserDataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -266,6 +267,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     }
 
     public void process(StatementExecutionProcessor executionProcessor) {
+        String statementName = executionProcessor.getStatementName();
         try {
             DBNConnection connection = null;
             try {
@@ -274,7 +276,10 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                 ConnectionHandler connectionHandler = Failsafe.nn(executionProcessor.getConnectionHandler());
                 connection = connectionHandler.getConnection(executionInput.getTargetSessionId(), schema);
             } catch (SQLException e) {
-                sendErrorNotification("Error executing " + executionProcessor.getStatementName() + ". Failed to ensure connectivity.", e.getMessage());
+                sendErrorNotification(
+                        NotificationGroup.EXECUTION,
+                        "Error executing {0}. Failed to ensure connectivity: {1}", statementName, e);
+
                 ExecutionContext context = executionProcessor.getExecutionContext();
                 context.reset();
             }
@@ -284,7 +289,9 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
             }
         } catch (ProcessCanceledException ignore) {
         } catch (SQLException e) {
-            sendErrorNotification("Error executing " + executionProcessor.getStatementName(), e.getMessage());
+            sendErrorNotification(
+                    NotificationGroup.EXECUTION,
+                    "Error executing {0}: {1}", statementName, e);
         } finally {
             DocumentUtil.refreshEditorAnnotations(executionProcessor.getPsiFile());
         }

@@ -2,7 +2,8 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
-import com.dci.intellij.dbn.common.notification.NotificationUtil;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
+import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -147,14 +148,14 @@ class Connector {
             if (databaseAttachmentHandler != null) {
                 List<DatabaseFile> attachedDatabaseFiles = databaseSettings.getDatabaseInfo().getFiles().getSecondaryFiles();
                 for (DatabaseFile databaseFile : attachedDatabaseFiles) {
-                    String path = databaseFile.getPath();
+                    String filePath = databaseFile.getPath();
                     try {
-                        databaseAttachmentHandler.attachDatabase(connection, path, databaseFile.getSchema());
+                        databaseAttachmentHandler.attachDatabase(connection, filePath, databaseFile.getSchema());
                     } catch (Exception e) {
-                        NotificationUtil.sendErrorNotification(
+                        NotificationSupport.sendErrorNotification(
                                 project,
-                                "Database Attachment Failure",
-                                "Unable to attach database file " + path + ". Cause: " + e.getMessage());
+                                NotificationGroup.CONNECTION,
+                                "Unable to attach database file {0}: {1}", filePath, e);
                     }
                 }
             }

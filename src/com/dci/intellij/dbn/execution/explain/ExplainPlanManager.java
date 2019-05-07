@@ -8,10 +8,9 @@ import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.SchemaId;
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
@@ -60,34 +59,38 @@ public class ExplainPlanManager extends AbstractProjectComponent {
                         (action) -> Progress.prompt(getProject(), "Extracting explain plan for " + elementDescription, true,
                                 (progress) -> {
                                     ConnectionHandler connectionHandler = action.getConnectionHandler();
-                                    SchemaId currentSchema = executable.getFile().getSchemaId();
-                                    ExplainPlanResult explainPlanResult = null;
-                                    DBNConnection connection = null;
-                                    Statement statement = null;
-                                    ResultSet resultSet = null;
+                                    ExplainPlanResult explainPlanResult;
                                     try {
-                                        DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
-                                        DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
-                                        connection = connectionHandler.getPoolConnection(currentSchema, true);
-                                        metadataInterface.clearExplainPlanData(connection);
+                                        explainPlanResult = DatabaseInterface.call(true,
+                                                connectionHandler,
+                                                (provider, connection) -> {
+                                                    SchemaId currentSchema = executable.getFile().getSchemaId();
+                                                    connectionHandler.setCurrentSchema(connection, currentSchema);
+                                                    Statement statement = null;
+                                                    ResultSet resultSet = null;
+                                                    try {
+                                                        DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
+                                                        metadataInterface.clearExplainPlanData(connection);
 
-                                        DatabaseCompatibilityInterface compatibilityInterface = interfaceProvider.getCompatibilityInterface();
-                                        String explainPlanStatementPrefix = compatibilityInterface.getExplainPlanStatementPrefix();
-                                        String explainPlanQuery = explainPlanStatementPrefix + "\n" + executable.prepareStatementText();
-                                        statement = connection.createStatement();
-                                        statement.execute(explainPlanQuery);
+                                                        DatabaseCompatibilityInterface compatibilityInterface = provider.getCompatibilityInterface();
+                                                        String explainPlanStatementPrefix = compatibilityInterface.getExplainPlanStatementPrefix();
+                                                        String explainPlanQuery = explainPlanStatementPrefix + "\n" + executable.prepareStatementText();
+                                                        statement = connection.createStatement();
+                                                        statement.execute(explainPlanQuery);
 
-                                        resultSet = metadataInterface.loadExplainPlan(connection);
-                                        explainPlanResult = new ExplainPlanResult(executable, resultSet);
+                                                        resultSet = metadataInterface.loadExplainPlan(connection);
+                                                        return new ExplainPlanResult(executable, resultSet);
 
+                                                    } finally {
+                                                        ResourceUtil.close(resultSet);
+                                                        ResourceUtil.close(statement);
+                                                        ResourceUtil.rollbackSilently(connection);
+                                                    }
+                                                });
                                     } catch (SQLException e) {
                                         explainPlanResult = new ExplainPlanResult(executable, e.getMessage());
-                                    } finally {
-                                        ResourceUtil.close(resultSet);
-                                        ResourceUtil.close(statement);
-                                        ResourceUtil.rollbackSilently(connection);
-                                        connectionHandler.freePoolConnection(connection);
                                     }
+
 
                                     if (callback == null) {
                                         ExecutionManager executionManager = ExecutionManager.getInstance(project);

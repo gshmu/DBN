@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.transaction;
 
 import com.dci.intellij.dbn.common.constant.Constant;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -15,72 +16,71 @@ import java.util.stream.Collectors;
 
 public enum TransactionAction implements Serializable, Constant<TransactionAction> {
     COMMIT(
-            "Transaction",
             "Commit",
+            NotificationGroup.TRANSACTION,
             NotificationType.INFORMATION, "Connection \"{0}\" committed",
             NotificationType.ERROR, "Error committing connection \"{0}\". Details: {1}",
             false,
             (connectionHandler, connection) -> ResourceUtil.commit(connection)),
 
     ROLLBACK(
-            "Transaction",
             "Rollback",
+            NotificationGroup.TRANSACTION,
             NotificationType.INFORMATION, "Connection \"{0}\" rolled back.",
             NotificationType.ERROR, "Error rolling back connection \"{0}\". Details: {1}",
             false,
             (connectionHandler, connection) -> ResourceUtil.rollback(connection)),
 
     ROLLBACK_IDLE(
-            "Transaction",
             "Idle Rollback",
+            NotificationGroup.TRANSACTION,
             NotificationType.INFORMATION, "Connection \"{0}\" rolled back.",
             NotificationType.ERROR, "Error rolling back connection \"{0}\". Details: {1}",
             false,
             (connectionHandler, connection) -> ResourceUtil.rollback(connection)),
 
     DISCONNECT(
-            "Session",
             "Disconnect",
+            NotificationGroup.SESSION,
             NotificationType.INFORMATION, "Disconnected from \"{0}\"",
             NotificationType.WARNING, "Error disconnecting from \"{0}\". Details: {1}",
             true,
             (connectionHandler, connection) -> connectionHandler.closeConnection(connection)),
 
     DISCONNECT_IDLE(
-            "Session",
             "Idle disconnect",
+            NotificationGroup.SESSION,
             NotificationType.INFORMATION, "Disconnected from \"{0}\" because it has exceeded the configured idle timeout.",
             NotificationType.WARNING, "Error disconnecting from \"{0}\". Details: {1}",
             true,
             (connectionHandler, connection) -> connectionHandler.closeConnection(connection)),
 
     KEEP_ALIVE(
-            "Ping",
             "Keep Alive",
+            NotificationGroup.CONNECTION,
             null, "",
             NotificationType.ERROR, "Error checking connectivity for \"{0}\". Details: {1}",
             false,
             (connectionHandler, connection) -> connection.updateLastAccess()),
 
     TURN_AUTO_COMMIT_ON(
-            "Transaction",
             "Enable Auto-Commit",
-            NotificationType.WARNING,
-            "Auto-Commit switched ON for connection \"{0}\".",
+            NotificationGroup.TRANSACTION,
+            NotificationType.WARNING, "Auto-Commit switched ON for connection \"{0}\".",
             NotificationType.ERROR, "Error switching Auto-Commit ON for connection \"{0}\". Details: {1}",
             true,
             (connectionHandler, connection) -> connection.setAutoCommit(true)),
 
     TURN_AUTO_COMMIT_OFF(
-            "Transaction",
             "Disable Auto-Commit",
+            NotificationGroup.TRANSACTION,
             NotificationType.INFORMATION, "Auto-Commit switched OFF for connection \"{0}\".",
             NotificationType.ERROR, "Error switching Auto-Commit OFF for connection\"{0}\". Details: {1}",
             true,
             (connectionHandler, connection) -> connection.setAutoCommit(false));
 
 
-    private String group;
+    private NotificationGroup group;
     private String name;
     private String successNotificationMessage;
     private String failureNotificationMessage;
@@ -89,7 +89,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
     private Executor executor;
     private boolean isStatusChange;
 
-    TransactionAction(String group, String name, NotificationType notificationType, String successNotificationMessage, NotificationType failureNotificationType, String failureNotificationMessage, boolean isStatusChange, Executor executor) {
+    TransactionAction(String name, NotificationGroup group, NotificationType notificationType, String successNotificationMessage, NotificationType failureNotificationType, String failureNotificationMessage, boolean isStatusChange, Executor executor) {
         this.group = group;
         this.name = name;
         this.failureNotificationMessage = failureNotificationMessage;
@@ -100,7 +100,7 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
         this.failureNotificationType = failureNotificationType;
     }
 
-    public String getGroup() {
+    public NotificationGroup getGroup() {
         return group;
     }
 

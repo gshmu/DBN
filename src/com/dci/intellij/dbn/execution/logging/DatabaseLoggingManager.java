@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.logging;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -43,7 +44,9 @@ public class DatabaseLoggingManager extends AbstractProjectComponent {
                 LOGGER.warn("Error enabling database logging: " + e.getMessage());
                 DatabaseCompatibilityInterface compatibilityInterface = interfaceProvider.getCompatibilityInterface();
                 String logName = getLogName(compatibilityInterface);
-                sendWarningNotification("Database Logging", "Error enabling " + logName + ": " + e.getMessage());
+                sendWarningNotification(
+                        NotificationGroup.LOGGING,
+                        "Error enabling {0}: {1}", logName, e);
                 return false;
             }
         }
@@ -62,7 +65,9 @@ public class DatabaseLoggingManager extends AbstractProjectComponent {
                     LOGGER.warn("Error disabling database logging: " + e.getMessage());
                     DatabaseCompatibilityInterface compatibilityInterface = interfaceProvider.getCompatibilityInterface();
                     String logName = getLogName(compatibilityInterface);
-                    sendWarningNotification("Database Logging", "Error disabling " + logName + ": " + e.getMessage());
+                    sendWarningNotification(
+                            NotificationGroup.LOGGING,
+                            "Error disabling {0}: {1}", logName, e);
                 }
             }
         }
@@ -77,7 +82,9 @@ public class DatabaseLoggingManager extends AbstractProjectComponent {
         } catch (SQLException e) {
             LOGGER.warn("Error reading database log output: " + e.getMessage());
             String logName = getLogName(compatibilityInterface);
-            sendWarningNotification("Database Logging", "Error loading " + logName + " : " + e.getMessage());
+            sendWarningNotification(
+                    NotificationGroup.LOGGING,
+                    "Error loading {0}: {1}", logName, e);
         }
 
         return null;

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection.transaction;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.routine.ProgressRunnable;
@@ -117,17 +116,17 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
             if (action.getNotificationType() != null) {
                 sendNotification(
                         action.getNotificationType(),
-                        Constants.DBN_TITLE_PREFIX + action.getGroup(),
+                        action.getGroup(),
                         action.getSuccessNotificationMessage(),
                         connectionName);
             }
         } catch (SQLException ex) {
             sendNotification(
                     action.getFailureNotificationType(),
-                    Constants.DBN_TITLE_PREFIX + action.getGroup(),
+                    action.getGroup(),
                     action.getFailureNotificationMessage(),
                     connectionName,
-                    ex.getMessage());
+                    ex);
             success.set(false);
         } finally {
             if (Failsafe.check(project)) {

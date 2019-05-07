@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -143,7 +143,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
                         connection = ResourceUtil.connect(connectionHandler, sessionId);
                         dedicatedConnections.put(sessionId, connection);
                         sendInfoNotification(
-                                Constants.DBN_TITLE_PREFIX + "Session",
+                                NotificationGroup.SESSION,
                                 "Connected to database \"{0}\"",
                                 connectionHandler.getConnectionName(connection));
                     } finally {
@@ -256,7 +256,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
         if (poolConnections.size() == 0) {
             // Notify first pool connection
             sendInfoNotification(
-                    Constants.DBN_TITLE_PREFIX + "Session",
+                    NotificationGroup.SESSION,
                     "Connected to database \"{0}\"",
                     connectionHandler.getConnectionName(connection));
         }
@@ -268,7 +268,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
         return connection;
     }
 
-    void releaseConnection(DBNConnection connection) {
+    void releaseConnection(@Nullable DBNConnection connection) {
         if (connection != null) {
             if (connection.isPoolConnection()) {
                 try {

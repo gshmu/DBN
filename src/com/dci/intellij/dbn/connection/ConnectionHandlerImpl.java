@@ -13,6 +13,8 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MapLatent;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
+import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -54,7 +56,7 @@ import java.util.Comparator;
 import java.util.List;
 
 @Nullifiable
-public class ConnectionHandlerImpl extends DisposableBase implements ConnectionHandler {
+public class ConnectionHandlerImpl extends DisposableBase implements ConnectionHandler, NotificationSupport {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private ConnectionSettings connectionSettings;
@@ -325,11 +327,19 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     @Override
     public boolean hasPendingTransactions(@NotNull DBNConnection connection) {
-        return DatabaseInterface.call(
-                this, interfaceProvider -> {
-                    DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
-                    return metadataInterface.hasPendingTransactions(connection);
-                });
+        try {
+            return DatabaseInterface.call(
+                    this, interfaceProvider -> {
+                        DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
+                        return metadataInterface.hasPendingTransactions(connection);
+                    });
+        } catch (SQLException e) {
+            sendErrorNotification(
+                    NotificationGroup.TRANSACTION,
+                    "Failed to check connection transactional status: {0}", e);
+            return false;
+
+        }
 
     }
 
@@ -428,7 +438,8 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     public DBNConnection getDebugConnection(@Nullable SchemaId schemaId) throws SQLException {
         assertCanConnect();
         DBNConnection connection = getConnectionPool().ensureDebugConnection();
-        return setCurrentSchema(connection, schemaId);
+        setCurrentSchema(connection, schemaId);
+        return connection;
     }
 
     @Override
@@ -449,14 +460,16 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @NotNull
     public DBNConnection getMainConnection(@Nullable SchemaId schemaId) throws SQLException {
         DBNConnection connection = getMainConnection();
-        return setCurrentSchema(connection, schemaId);
+        setCurrentSchema(connection, schemaId);
+        return connection;
     }
 
     @Override
     @NotNull
     public DBNConnection getPoolConnection(@Nullable SchemaId schemaId, boolean readonly) throws SQLException {
         DBNConnection connection = getPoolConnection(readonly);
-        return setCurrentSchema(connection, schemaId);
+        setCurrentSchema(connection, schemaId);
+        return connection;
     }
 
     @Override
@@ -466,10 +479,12 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
                 sessionId == SessionId.MAIN ? getMainConnection() :
                 sessionId == SessionId.POOL ? getPoolConnection(false) :
                 getConnectionPool().ensureSessionConnection(sessionId);
-        return setCurrentSchema(connection, schemaId);
+        setCurrentSchema(connection, schemaId);
+        return connection;
     }
 
-    private DBNConnection setCurrentSchema(DBNConnection connection, @Nullable SchemaId schema) throws SQLException {
+    @Override
+    public void setCurrentSchema(DBNConnection connection, @Nullable SchemaId schema) throws SQLException {
         if (schema != null && /*!schema.isPublicSchema() && */DatabaseFeature.CURRENT_SCHEMA.isSupported(this) && !schema.equals(connection.getCurrentSchema())) {
             DatabaseInterface.run(this,
                     (interfaceProvider) -> {
@@ -480,7 +495,6 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
                         connection.setCurrentSchema(schema);
                     });
         }
-        return connection;
     }
 
 
@@ -550,8 +564,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     @Override
     public DBLanguageDialect getLanguageDialect(DBLanguage language) {
-        return DatabaseInterface.call(this,
-                interfaceProvider -> interfaceProvider.getLanguageDialect(language));
+        return getInterfaceProvider().getLanguageDialect(language);
     }
 
     public static Comparator<ConnectionHandler> getComparator(boolean asc) {

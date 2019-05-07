@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.data.export;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.processor.CSVDataExportProcessor;
@@ -78,7 +78,10 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                 DataExportInstructions.Destination destination = instructions.getDestination();
                 if (destination == DataExportInstructions.Destination.CLIPBOARD) {
                     successCallback.run();
-                    sendInfoNotification(Constants.DBN_TITLE_PREFIX + "Data Export", "Data content exported to clipboard.");
+                    sendInfoNotification(
+                            NotificationGroup.DATA,
+                            "Data content exported to clipboard.");
+
                 } else if (destination == DataExportInstructions.Destination.FILE) {
                     final File file = instructions.getFile();
                     if (Desktop.isDesktopSupported()) {
@@ -106,7 +109,9 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                                     }
                                 });
                     } else {
-                        sendInfoNotification(Constants.DBN_TITLE_PREFIX + "Data Export", "Content exported to file " + file.getPath());
+                        sendInfoNotification(
+                                NotificationGroup.DATA,
+                                "Content exported to file: {0}", file.getPath());
                     }
                 }
             }
@@ -148,7 +153,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
     }
 
     @Override
-    public void loadState(Element element) {
+    public void loadState(@NotNull Element element) {
         exportInstructions.readState(element);
     }
 }

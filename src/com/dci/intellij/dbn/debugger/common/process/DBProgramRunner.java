@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.debugger.common.process;
 
-import com.dci.intellij.dbn.common.notification.NotificationUtil;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
+import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -245,7 +246,10 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                             }
 
                         } catch (ExecutionException e) {
-                            NotificationUtil.sendErrorNotification(project, "Debugger", "Error initializing debug environment: " + e.getMessage());
+                            NotificationSupport.sendErrorNotification(
+                                    project,
+                                    NotificationGroup.DEBUGGER,
+                                    "Error initializing environment: {0}", e);
                         }
                     });
         });
