@@ -72,7 +72,7 @@ public abstract class DatabaseCompatibilityInterface implements DatabaseInterfac
         return null;
     };
 
-    public  <T> T attempt(JdbcFeature feature, ThrowableCallable<T, SQLException> loader) throws SQLException {
+    public  <T> T attempt(JdbcProperty feature, ThrowableCallable<T, SQLException> loader) throws SQLException {
         ConnectionHandler connectionHandler = DatabaseInterface.connectionHandler();
         DatabaseCompatibility compatibility = connectionHandler.getCompatibility();
         try {

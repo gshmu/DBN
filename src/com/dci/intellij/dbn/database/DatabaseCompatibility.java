@@ -8,33 +8,33 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DatabaseCompatibility extends PropertyHolderImpl<JdbcFeature> {
+public class DatabaseCompatibility extends PropertyHolderImpl<JdbcProperty> {
 
     private String identifierQuote;
-    private boolean catalogAsOwner;
-
     private Map<TransientId, DatabaseActivityTrace> activityTraces = new HashMap<>();
 
     private DatabaseCompatibility() {}
 
-    public static DatabaseCompatibility all() {
+    public static DatabaseCompatibility allFeatures() {
         DatabaseCompatibility compatibility = new DatabaseCompatibility();
         // mark all features as supported
-        for (JdbcFeature value : JdbcFeature.values()) {
-            compatibility.set(value, true);
+        for (JdbcProperty property : JdbcProperty.values()) {
+            if (property.isFeature()) {
+                compatibility.set(property, true);
+            }
         }
         return compatibility;
     }
 
-    public static DatabaseCompatibility none() {
+    public static DatabaseCompatibility noFeatures() {
         return new DatabaseCompatibility();
     }
 
-    public void markUnsupported(JdbcFeature feature) {
+    public void markUnsupported(JdbcProperty feature) {
         set(feature, false);
     }
 
-    public boolean isSupported(JdbcFeature feature) {
+    public boolean isSupported(JdbcProperty feature) {
         return is(feature);
     };
 
@@ -56,23 +56,15 @@ public class DatabaseCompatibility extends PropertyHolderImpl<JdbcFeature> {
         return identifierQuote;
     }
 
-    public boolean isCatalogAsOwner() {
-        return catalogAsOwner;
-    }
-
-    public void setCatalogAsOwner(boolean catalogAsOwner) {
-        this.catalogAsOwner = catalogAsOwner;
-    }
-
     @Override
-    protected JdbcFeature[] properties() {
-        return JdbcFeature.values();
+    protected JdbcProperty[] properties() {
+        return JdbcProperty.values();
     }
 
     public void read(DatabaseMetaData metaData) throws SQLException {
         String quoteString = metaData.getIdentifierQuoteString();
         identifierQuote = quoteString == null ? "" : quoteString.trim();
 
-        //TODO JdbcFeature.SQL_DATASET_ALIASING (identify by database type?)
+        //TODO JdbcProperty.SQL_DATASET_ALIASING (identify by database type?)
     }
 }

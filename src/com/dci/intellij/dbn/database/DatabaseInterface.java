@@ -17,7 +17,7 @@ public interface DatabaseInterface {
     default void reset(){};
 
 
-    static <E extends Throwable> void execute(ConnectionHandler connectionHandler, ThrowableRunnable<E> runnable) throws E {
+    static <E extends Throwable> void run(ConnectionHandler connectionHandler, ThrowableRunnable<E> runnable) throws E {
         boolean owner = false;
         try {
             // init
@@ -41,6 +41,32 @@ public interface DatabaseInterface {
             }
         }
     }
+
+    static <R, E extends Throwable> R call(ConnectionHandler connectionHandler, ThrowableCallable<R, E> callable) throws E {
+        boolean owner = false;
+        try {
+            // init
+            ConnectionHandler localConnectionHandler = CONNECTION_HANDLER.get();
+            if (localConnectionHandler == null) {
+                CONNECTION_HANDLER.set(connectionHandler);
+                owner = true;
+            } else {
+                if (connectionHandler != localConnectionHandler) {
+                    throw new IllegalStateException("Already initialized for another connection");
+                }
+            }
+
+            // execute
+            return callable.call();
+        } finally {
+
+            // release
+            if (owner) {
+                CONNECTION_HANDLER.set(null);
+            }
+        }
+    }
+
 
     static Cache cache() {
         return connectionHandler().getMetaDataCache();

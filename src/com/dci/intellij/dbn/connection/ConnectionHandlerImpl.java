@@ -73,7 +73,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private ConnectionHandlerRef ref;
     private ConnectionInfo connectionInfo;
     private Latent<Cache> metaDataCache = Latent.basic(() -> new Cache(getConnectionId().id(), TimeUtil.ONE_MINUTE));
-    private DatabaseCompatibility compatibility = DatabaseCompatibility.all();
+    private DatabaseCompatibility compatibility = DatabaseCompatibility.allFeatures();
 
     private Latent<AuthenticationInfo> temporaryAuthenticationInfo = Latent.basic(() -> {
         ConnectionDatabaseSettings databaseSettings = getSettings().getDatabaseSettings();
@@ -537,7 +537,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     @Override
     public void resetCompatibilityMonitor() {
-        compatibility = DatabaseCompatibility.all();
+        compatibility = DatabaseCompatibility.allFeatures();
     }
 
     @Override

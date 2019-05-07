@@ -2,7 +2,10 @@ package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.database.DatabaseInterface;
+import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBFunctionMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -107,12 +110,18 @@ public class DBFunctionImpl extends DBMethodImpl<DBFunctionMetadata> implements 
 
         @Override
         public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
-            return getConnectionHandler().getInterfaceProvider().getMetadataInterface().loadObjectSourceCode(
-                   getSchema().getName(),
-                   getName(),
-                   "FUNCTION",
-                   getOverload(),
-                   connection);
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            return DatabaseInterface.call(
+                    connectionHandler,
+                    () -> {
+                        DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                        return metadataInterface.loadObjectSourceCode(
+                                getSchema().getName(),
+                                getName(),
+                                "FUNCTION",
+                                getOverload(),
+                                connection);
+                    });
         }
     }
 
