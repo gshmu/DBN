@@ -109,10 +109,12 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
                             if (is(LATEST) || is(MERGED)) {
                                 boolean checkSources = true;
+                                Project project = object.getProject();
+                                SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
 
                                 ChangeTimestamp latestTimestamp = new ChangeTimestamp();
                                 if (isChangeTracingSupported()) {
-                                    latestTimestamp = object.loadChangeTimestamp(contentType);
+                                    latestTimestamp = sourceCodeManager.loadChangeTimestamp(object, contentType);
                                     checkSources = databaseTimestamp.isOlderThan(latestTimestamp);
                                     databaseTimestamp = latestTimestamp;
                                 }
@@ -120,8 +122,6 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
                                 databaseTimestamp = latestTimestamp;
 
                                 if (checkSources) {
-                                    Project project = object.getProject();
-                                    SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
                                     SourceCodeContent latestContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
 
                                     if (is(LATEST) && !latestContent.matches(originalContent, true)) {
@@ -182,7 +182,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         Project project = object.getProject();
         SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
         SourceCodeContent newContent = sourceCodeManager.loadSourceFromDatabase(object, contentType);
-        databaseTimestamp = object.loadChangeTimestamp(contentType);
+        databaseTimestamp = sourceCodeManager.loadChangeTimestamp(object, contentType);
 
         updateFileContent(newContent, null);
         originalContent.setText(newContent.getText());
@@ -196,10 +196,14 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
 
     public void saveSourceToDatabase() throws SQLException {
         DBSchemaObject object = getObject();
+        Project project = object.getProject();
+
         String oldContent = getOriginalContent().toString();
         String newContent = getContent().toString();
         object.executeUpdateDDL(contentType, oldContent, newContent);
-        databaseTimestamp = object.loadChangeTimestamp(contentType);
+
+        SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+        databaseTimestamp = sourceCodeManager.loadChangeTimestamp(object, contentType);
         originalContent.setText(newContent);
 
         databaseContent = null;

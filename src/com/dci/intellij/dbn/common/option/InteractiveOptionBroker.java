@@ -80,7 +80,7 @@ public class InteractiveOptionBroker<T extends InteractiveOption> implements Dia
         return "Remember option";
     }
 
-    public void resolve(Object[] messageArgs, ParametricRunnable<T> callback) {
+    public void resolve(Object[] messageArgs, ParametricRunnable.Basic<T> callback) {
         Dispatch.invoke(() -> {
             T option;
             if (selectedOption != null && !selectedOption.isAsk()) {

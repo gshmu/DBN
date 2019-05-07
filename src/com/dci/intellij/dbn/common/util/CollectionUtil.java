@@ -137,7 +137,7 @@ public class CollectionUtil {
         return list.stream().map(mapper).collect(Collectors.toList());
     }
 
-    public static <T> void first(@Nullable List<T> list, Predicate<? super T> predicate, ParametricRunnable<T> callback) {
+    public static <T> void first(@Nullable List<T> list, Predicate<? super T> predicate, ParametricRunnable.Basic<T> callback) {
         if (list != null && !list.isEmpty()) {
             // indexed loop is supposed to be fastest
             for (int i=0; i<list.size(); i++) {

@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.language.common.PsiFileRef;
 import com.intellij.codeInsight.intention.LowPriorityAction;
@@ -23,13 +24,18 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
     @NotNull
     public String getText() {
         ConnectionHandler connectionHandler = getLastCheckedConnection();
-        if (connectionHandler != null) {
-            String databaseLogName = connectionHandler.getInterfaceProvider().getCompatibilityInterface().getDatabaseLogName();
-            if (StringUtil.isEmpty(databaseLogName)) {
-                return connectionHandler.isLoggingEnabled() ? "Disable database logging" : "Enable database logging";
-            } else {
-                return (connectionHandler.isLoggingEnabled() ? "Disable logging (" : "Enable logging (") + databaseLogName + ')';
-            }
+        if (Failsafe.check(connectionHandler)) {
+            DatabaseInterface.call(
+                    connectionHandler,
+                    interfaceProvider -> {
+                        String databaseLogName = interfaceProvider.getCompatibilityInterface().getDatabaseLogName();
+                        boolean loggingEnabled = connectionHandler.isLoggingEnabled();
+                        if (StringUtil.isEmpty(databaseLogName)) {
+                            return loggingEnabled ? "Disable database logging" : "Enable database logging";
+                        } else {
+                            return (loggingEnabled ? "Disable logging (" : "Enable logging (") + databaseLogName + ')';
+                        }
+                    });
         }
 
         return "Database logging";

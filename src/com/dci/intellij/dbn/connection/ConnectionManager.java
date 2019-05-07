@@ -277,7 +277,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     private static void ensureAuthenticationProvided(
             @NotNull ConnectionDatabaseSettings databaseSettings,
-            @NotNull ParametricRunnable<AuthenticationInfo> callback) {
+            @NotNull ParametricRunnable.Basic<AuthenticationInfo> callback) {
 
         AuthenticationInfo authenticationInfo = databaseSettings.getAuthenticationInfo().clone();
         if (!authenticationInfo.isProvided()) {
@@ -360,7 +360,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     static void promptAuthenticationDialog(
             @Nullable ConnectionHandler connectionHandler,
             @NotNull AuthenticationInfo authenticationInfo,
-            @NotNull ParametricRunnable<AuthenticationInfo> callback) {
+            @NotNull ParametricRunnable.Basic<AuthenticationInfo> callback) {
 
         ConnectionAuthenticationDialog passwordDialog = new ConnectionAuthenticationDialog(null, connectionHandler, authenticationInfo);
         passwordDialog.show();

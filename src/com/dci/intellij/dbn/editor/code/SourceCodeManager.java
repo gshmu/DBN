@@ -9,14 +9,19 @@ import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManag
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Synchronized;
+import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
+import com.dci.intellij.dbn.connection.ResourceUtil;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.database.DatabaseInterface;
+import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
@@ -28,12 +33,11 @@ import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
-import com.dci.intellij.dbn.language.common.QuoteDefinition;
-import com.dci.intellij.dbn.language.common.QuotePair;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.editor.DBLanguageFileEditorListener;
 import com.dci.intellij.dbn.language.psql.PSQLFile;
+import com.dci.intellij.dbn.object.DBDatasetTrigger;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -59,7 +63,9 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
@@ -67,7 +73,7 @@ import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 import static com.dci.intellij.dbn.common.util.MessageUtil.*;
 import static com.dci.intellij.dbn.common.util.NamingUtil.unquote;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
-import static com.intellij.openapi.util.text.StringUtil.*;
+import static com.intellij.openapi.util.text.StringUtil.equalsIgnoreCase;
 
 @State(
     name = SourceCodeManager.COMPONENT_NAME,
@@ -275,61 +281,187 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    public SourceCodeContent loadSourceFromDatabase(DBSchemaObject object, DBContentType contentType) throws SQLException {
+    public SourceCodeContent loadSourceFromDatabase(@NotNull DBSchemaObject object, DBContentType contentType) throws SQLException {
         ProgressMonitor.setTaskDescription("Loading source code of " + object.getQualifiedNameWithType());
-        String sourceCode = object.loadCodeFromDatabase(contentType);
-        SourceCodeContent sourceCodeContent = new SourceCodeContent(sourceCode);
         ConnectionHandler connectionHandler = object.getConnectionHandler();
+        boolean optionalContent = contentType == DBContentType.CODE_BODY;
+
+        String sourceCode =  DatabaseInterface.call(object,
+                (interfaceProvider) -> {
+                    DBNConnection connection = null;
+                    ResultSet resultSet = null;
+                    try {
+                        connection = connectionHandler.getPoolConnection(true);
+                        DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
+                        resultSet = loadSourceFromDatabase(
+                                object,
+                                contentType,
+                                metadataInterface,
+                                connection);
+
+                        StringBuilder buffer = new StringBuilder();
+                        while (resultSet != null && resultSet.next()) {
+                            String codeLine = resultSet.getString("SOURCE_CODE");
+                            buffer.append(codeLine);
+                        }
+
+                        if (buffer.length() == 0 && !optionalContent)
+                            throw new SQLException("Source lookup returned empty");
+
+                        return StringUtil.removeCharacter(buffer.toString(), '\r');
+                    } finally {
+                        ResourceUtil.close(resultSet);
+                        connectionHandler.freePoolConnection(connection);
+                    }
+                });
+        SourceCodeContent sourceCodeContent = new SourceCodeContent(sourceCode);
+
+        String objectName = object.getName();
+        DBObjectType objectType = object.getObjectType();
+
         DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
-        ddlInterface.computeSourceCodeOffsets(sourceCodeContent, object.getObjectType().getTypeId(), object.getName());
+        ddlInterface.computeSourceCodeOffsets(sourceCodeContent, objectType.getTypeId(), objectName);
         return sourceCodeContent;
     }
 
-    @Deprecated
-    private boolean isValidObjectTypeAndName(String text, DBSchemaObject object, DBContentType contentType) {
-        ConnectionHandler connectionHandler = object.getConnectionHandler();
-        DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
-        if (ddlInterface.includesTypeAndNameInSourceContent(object.getObjectType().getTypeId())) {
-            int typeIndex = indexOfIgnoreCase(text, object.getTypeName(), 0);
-            if (typeIndex == -1 || !isEmptyOrSpaces(text.substring(0, typeIndex))) {
-                return false;
-            }
+    @Nullable
+    private static ResultSet loadSourceFromDatabase(
+            @NotNull DBSchemaObject object,
+            DBContentType contentType,
+            DatabaseMetadataInterface metadataInterface,
+            @NotNull DBNConnection connection) throws SQLException {
 
-            int typeEndIndex = typeIndex + object.getTypeName().length();
-            if (!Character.isWhitespace(text.charAt(typeEndIndex))) return false;
+        DBObjectType objectType = object.getObjectType();
+        String schemaName = object.getSchema().getName();
+        String objectName = object.getName();
+        int objectOverload = object.getOverload();
 
-            if (contentType.getObjectTypeSubname() != null) {
-                int subnameIndex = indexOfIgnoreCase(text, contentType.getObjectTypeSubname(), typeEndIndex);
-                typeEndIndex = subnameIndex + contentType.getObjectTypeSubname().length();
-                if (!Character.isWhitespace(text.charAt(typeEndIndex))) return false;
-            }
+        switch (objectType) {
+            case VIEW:
+                return metadataInterface.loadViewSourceCode(
+                        schemaName,
+                        objectName,
+                        connection);
 
-            QuoteDefinition quotes = DatabaseCompatibilityInterface.getInstance(connectionHandler).getIdentifierQuotes();
+            case MATERIALIZED_VIEW:
+                return metadataInterface.loadMaterializedViewSourceCode(
+                        schemaName,
+                        objectName,
+                        connection);
 
-            String objectName = object.getName();
-            int nameIndex = indexOfIgnoreCase(text, objectName, typeEndIndex);
-            if (nameIndex == -1) return false;
-            int nameEndIndex = nameIndex + objectName.length();
+            case DATABASE_TRIGGER:
+                return metadataInterface.loadDatabaseTriggerSourceCode(
+                        schemaName,
+                        objectName,
+                        connection);
 
-            char namePreChar = text.charAt(nameIndex - 1);
-            char namePostChar = text.charAt(nameEndIndex);
-            QuotePair quotePair = null;
-            if (quotes.isQuoteBegin(namePreChar)) {
-                quotePair = quotes.getQuote(namePreChar);
-                if (!quotes.isQuoteEnd(namePreChar, namePostChar)) return false;
-                nameIndex = nameIndex -1;
-                nameEndIndex = nameEndIndex + 1;
-            }
+            case DATASET_TRIGGER:
+                DBDatasetTrigger trigger = (DBDatasetTrigger) object;
+                String datasetSchemaName = trigger.getDataset().getSchema().getName();
+                String datasetName = trigger.getDataset().getName();
+                return metadataInterface.loadDatasetTriggerSourceCode(
+                        datasetSchemaName,
+                        datasetName,
+                        schemaName,
+                        objectName,
+                        connection);
 
-            String typeNameGap = text.substring(typeEndIndex, nameIndex);
-            typeNameGap = replaceIgnoreCase(typeNameGap, object.getSchema().getName(), "").replace(".", " ");
-            if (quotePair != null) {
-                typeNameGap = quotePair.replaceQuotes(typeNameGap, ' ');
-            }
-            if (!isEmptyOrSpaces(typeNameGap)) return false;
-            if (!Character.isWhitespace(text.charAt(nameEndIndex)) && text.charAt(nameEndIndex) != '(') return false;
+            case FUNCTION:
+                return metadataInterface.loadObjectSourceCode(
+                        schemaName,
+                        objectName,
+                        "FUNCTION",
+                        objectOverload,
+                        connection);
+
+            case PROCEDURE:
+                return metadataInterface.loadObjectSourceCode(
+                        schemaName,
+                        objectName,
+                        "PROCEDURE",
+                        objectOverload,
+                        connection);
+
+            case TYPE:
+                String typeContent =
+                        contentType == DBContentType.CODE_SPEC ? "TYPE" :
+                        contentType == DBContentType.CODE_BODY ? "TYPE BODY" : null;
+
+                return metadataInterface.loadObjectSourceCode(
+                        schemaName,
+                        objectName,
+                        typeContent,
+                        connection);
+
+            case PACKAGE:
+                String packageContent =
+                        contentType == DBContentType.CODE_SPEC ? "PACKAGE" :
+                        contentType == DBContentType.CODE_BODY ? "PACKAGE BODY" : null;
+
+                return metadataInterface.loadObjectSourceCode(
+                        schemaName,
+                        objectName,
+                        packageContent,
+                        connection);
+
+            default:
+                return null;
         }
-        return true;
+    }
+
+    @NotNull
+    public ChangeTimestamp loadChangeTimestamp(@NotNull DBSchemaObject object, DBContentType contentType) throws SQLException{
+        if (DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(object)) {
+            ProgressMonitor.setTaskDescription("Loading timestamp for " + object.getQualifiedNameWithType());
+            Timestamp timestamp = DatabaseInterface.call(
+                    object,
+                    (interfaceProvider) -> {
+                        ConnectionHandler connectionHandler = object.getConnectionHandler();
+                        DBNConnection connection = null;
+                        ResultSet resultSet = null;
+                        try {
+                            connection = connectionHandler.getPoolConnection(true);
+                            String schemaName = object.getSchema().getName();
+                            String objectName = object.getName();
+                            String contentQualifier = getContentQualifier(object.getObjectType(), contentType);
+
+                            resultSet = interfaceProvider.getMetadataInterface().loadObjectChangeTimestamp(
+                                    schemaName,
+                                    objectName,
+                                    contentQualifier,
+                                    connection);
+
+                            return resultSet.next() ? resultSet.getTimestamp(1) : null;
+                        }  finally {
+                            ResourceUtil.close(resultSet);
+                            connectionHandler.freePoolConnection(connection);
+                        }
+                    });
+            if (timestamp != null) {
+                return new ChangeTimestamp(timestamp);
+            }
+        }
+
+        return new ChangeTimestamp(new Timestamp(System.currentTimeMillis()));
+    }
+
+    private static String getContentQualifier(DBObjectType objectType, DBContentType contentType) {
+        switch (objectType) {
+            case FUNCTION:         return "FUNCTION";
+            case PROCEDURE:        return "PROCEDURE";
+            case VIEW:             return "VIEW";
+            case DATASET_TRIGGER:  return "TRIGGER";
+            case DATABASE_TRIGGER: return "TRIGGER";
+            case PACKAGE:
+                return
+                    contentType == DBContentType.CODE_SPEC ? "PACKAGE" :
+                    contentType == DBContentType.CODE_BODY ? "PACKAGE BODY" : null;
+            case TYPE:
+                return
+                    contentType == DBContentType.CODE_SPEC ? "TYPE" :
+                    contentType == DBContentType.CODE_BODY ? "TYPE BODY" : null;
+        }
+        return null;
     }
 
     private boolean isValidObjectTypeAndName(@NotNull DBLanguagePsiFile psiFile, @NotNull DBSchemaObject object, DBContentType contentType) {
@@ -538,11 +670,6 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     @Override
     public void projectOpened() {
         EventUtil.subscribe(getProject(), this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorListener);
-    }
-
-    @Override
-    public void projectClosed() {
-
     }
 
     @Override

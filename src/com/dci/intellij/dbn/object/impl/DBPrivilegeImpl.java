@@ -28,11 +28,11 @@ public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBO
 
     @Override
     public List<DBUser> getUserGrantees() {
-        return new ArrayList<DBUser>();
+        return new ArrayList<>();
     }
 
     public List<DBRole> getRoleGrantees() {
-        List<DBRole> grantees = new ArrayList<DBRole>();
+        List<DBRole> grantees = new ArrayList<>();
         List<DBRole> roles = getConnectionHandler().getObjectBundle().getRoles();
         if (roles != null) {
             for (DBRole role : roles) {
@@ -46,10 +46,10 @@ public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBO
 
     @Override
     protected List<DBObjectNavigationList> createNavigationLists() {
-        List<DBObjectNavigationList> navigationLists = new ArrayList<DBObjectNavigationList>();
-        navigationLists.add(new DBObjectNavigationListImpl<DBUser>("User grantees", getUserGrantees()));
+        List<DBObjectNavigationList> navigationLists = new ArrayList<>();
+        navigationLists.add(new DBObjectNavigationListImpl<>("User grantees", getUserGrantees()));
         if (getConnectionHandler().getInterfaceProvider().getCompatibilityInterface().supportsObjectType(DBObjectType.ROLE.getTypeId())) {
-            navigationLists.add(new DBObjectNavigationListImpl<DBRole>("Role grantees", getRoleGrantees()));    
+            navigationLists.add(new DBObjectNavigationListImpl<>("Role grantees", getRoleGrantees()));
         }
         return navigationLists;
     }

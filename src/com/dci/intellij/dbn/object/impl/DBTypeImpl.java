@@ -30,8 +30,6 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
-import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
-import com.dci.intellij.dbn.object.common.loader.DBSourceCodeLoader;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -325,48 +323,6 @@ public class DBTypeImpl
         };
     }
 
-
-
-    private class SpecSourceCodeLoader extends DBSourceCodeLoader {
-        SpecSourceCodeLoader(DBObject object) {
-            super(object, false);
-        }
-
-        @Override
-        public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
-            DatabaseMetadataInterface metadataInterface = getConnectionHandler().getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadObjectSourceCode(getSchema().getName(), getName(), "TYPE", connection);
-        }
-    }
-
-    private class BodySourceCodeLoader extends DBSourceCodeLoader {
-        BodySourceCodeLoader(DBObject object) {
-            super(object, true);
-        }
-
-        @Override
-        public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadObjectSourceCode(getSchema().getName(), getName(), "TYPE BODY", connection);
-        }
-    }
-
-    private static DBObjectTimestampLoader SPEC_TIMESTAMP_LOADER = new DBObjectTimestampLoader("TYPE") {};
-    private static DBObjectTimestampLoader BODY_TIMESTAMP_LOADER = new DBObjectTimestampLoader("TYPE BODY") {};
-
-   /*********************************************************
-    *                   DBEditableObject                    *
-    *********************************************************/
-    @Override
-    public String loadCodeFromDatabase(DBContentType contentType) throws SQLException {
-       DBSourceCodeLoader loader =
-               contentType == DBContentType.CODE_SPEC ? new SpecSourceCodeLoader(this) :
-               contentType == DBContentType.CODE_BODY ? new BodySourceCodeLoader(this) : null;
-
-       return loader == null ? null : loader.load();
-    }
-
     @Override
     public String getCodeParseRootId(DBContentType contentType) {
         if (getParentObject() instanceof DBSchema) {
@@ -410,15 +366,6 @@ public class DBTypeImpl
             }
         }
 
-
-
         return objectNavigationLists;
     }
-
-    @Override
-    public DBObjectTimestampLoader getTimestampLoader(DBContentType contentType) {
-        return contentType == DBContentType.CODE_SPEC ? SPEC_TIMESTAMP_LOADER :
-               contentType == DBContentType.CODE_BODY ? BODY_TIMESTAMP_LOADER : null;
-    }
-
 }

@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
+import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.ddl.options.DDLFileExtensionSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -82,19 +83,21 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
         DBSchemaObject object = sourceCodeFile.getObject();
         String content = sourceCodeFile.getOriginalContent().toString().trim();
         if (content.length() > 0) {
-            Project project = getProject();
-
-            ConnectionHandler connectionHandler = object.getConnectionHandler();
-            String alternativeStatementDelimiter = connectionHandler.getSettings().getDetailSettings().getAlternativeStatementDelimiter();
-            DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
-            return ddlInterface.createDDLStatement(project,
-                    object.getObjectType().getTypeId(),
-                    connectionHandler.getUserName(),
-                    object.getSchema().getName(),
-                    object.getName(),
-                    contentType,
-                    content,
-                    alternativeStatementDelimiter);
+            return DatabaseInterface.call(
+                    object,
+                    (interfaceProvider) -> {
+                        ConnectionHandler connectionHandler = object.getConnectionHandler();
+                        String alternativeStatementDelimiter = connectionHandler.getSettings().getDetailSettings().getAlternativeStatementDelimiter();
+                        DatabaseDDLInterface ddlInterface = interfaceProvider.getDDLInterface();
+                        return ddlInterface.createDDLStatement(getProject(),
+                                object.getObjectType().getTypeId(),
+                                connectionHandler.getUserName(),
+                                object.getSchema().getName(),
+                                object.getName(),
+                                contentType,
+                                content,
+                                alternativeStatementDelimiter);
+                    });
         }
         return "";
     }

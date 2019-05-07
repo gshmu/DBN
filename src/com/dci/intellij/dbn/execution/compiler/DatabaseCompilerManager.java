@@ -298,7 +298,11 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         }
     }
 
-    private void promptCompileTypeSelection(CompileType compileType, @Nullable DBSchemaObject program, @NotNull ParametricRunnable<CompileType> callback) {
+    private void promptCompileTypeSelection(
+            CompileType compileType,
+            @Nullable DBSchemaObject program,
+            @NotNull ParametricRunnable.Basic<CompileType> callback) {
+
         if (compileType == CompileType.ASK) {
             CompilerTypeSelectionDialog dialog = new CompilerTypeSelectionDialog(getProject(), program);
             dialog.show();

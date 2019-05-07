@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUpdaterFileEditorListener;
 import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfig;
@@ -39,6 +40,7 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBSystemPrivilege;
 import com.dci.intellij.dbn.object.DBUser;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
@@ -334,7 +336,8 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     }
 
 
-    private void startDebugger(ParametricRunnable<DBDebuggerType> debuggerStarter) {
+    private void startDebugger(@NotNull ParametricRunnable.Basic<DBDebuggerType> debuggerStarter) {
+
         getDebuggerSettings().getDebuggerType().resolve(list(),
                 debuggerTypeOption -> {
                     DBDebuggerType debuggerType = debuggerTypeOption.getDebuggerType();
@@ -406,21 +409,27 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
     }
 
     public List<String> getMissingDebugPrivileges(@NotNull ConnectionHandler connectionHandler) {
-        List<String> missingPrivileges = new ArrayList<>();
-        String userName = connectionHandler.getUserName();
-        DBUser user = connectionHandler.getObjectBundle().getUser(userName);
+        return DatabaseInterface.call(
+                connectionHandler,
+                (interfaceProvider) -> {
+                    List<String> missingPrivileges = new ArrayList<>();
+                    String userName = connectionHandler.getUserName();
+                    DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+                    DBUser user = objectBundle.getUser(userName);
 
-        if (user != null) {
-            String[] privilegeNames = connectionHandler.getInterfaceProvider().getDebuggerInterface().getRequiredPrivilegeNames();
+                    if (user != null) {
+                        String[] privilegeNames = interfaceProvider.getDebuggerInterface().getRequiredPrivilegeNames();
 
-            for (String privilegeName : privilegeNames) {
-                DBSystemPrivilege systemPrivilege = connectionHandler.getObjectBundle().getSystemPrivilege(privilegeName);
-                if (systemPrivilege == null || !user.hasSystemPrivilege(systemPrivilege))  {
-                    missingPrivileges.add(privilegeName);
-                }
-            }
-        }
-        return missingPrivileges;
+                        for (String privilegeName : privilegeNames) {
+                            DBSystemPrivilege systemPrivilege = objectBundle.getSystemPrivilege(privilegeName);
+                            if (systemPrivilege == null || !user.hasSystemPrivilege(systemPrivilege))  {
+                                missingPrivileges.add(privilegeName);
+                            }
+                        }
+                    }
+                    return missingPrivileges;
+
+                });
     }
 
     private static final Comparator<DBSchemaObject> DEPENDENCY_COMPARATOR = (schemaObject1, schemaObject2) -> {
@@ -429,22 +438,25 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         return 0;
     };
 
-    public String getDebuggerVersion(ConnectionHandler connectionHandler) {
+    public String getDebuggerVersion(@NotNull ConnectionHandler connectionHandler) {
+        return DatabaseInterface.call(
+                connectionHandler,
+                (interfaceProvider) -> {
+                    if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
+                        DatabaseDebuggerInterface debuggerInterface = interfaceProvider.getDebuggerInterface();
+                        DBNConnection connection = null;
+                        try {
+                            connection = connectionHandler.getPoolConnection(true);
+                            DebuggerVersionInfo debuggerVersion = debuggerInterface.getDebuggerVersion(connection);
+                            return debuggerVersion.getVersion();
+                        } catch (Exception ignore) {
 
-        if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
-            DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
-            DBNConnection connection = null;
-            try {
-                connection = connectionHandler.getPoolConnection(true);
-                DebuggerVersionInfo debuggerVersion = debuggerInterface.getDebuggerVersion(connection);
-                return debuggerVersion.getVersion();
-            } catch (Exception ignore) {
-
-            } finally {
-                connectionHandler.freePoolConnection(connection);
-            }
-        }
-        return "Unknown";
+                        } finally {
+                            connectionHandler.freePoolConnection(connection);
+                        }
+                    }
+                    return "Unknown";
+                });
     }
 
 
