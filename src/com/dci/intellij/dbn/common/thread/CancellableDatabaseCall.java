@@ -109,22 +109,25 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
                             LOGGER.warn("Error cancelling operation", e);
                         }
                         cancelCheckTimer.cancel();
-                    } else if (progressIndicator != null && timeout > 0) {
-                        String text = progressIndicator.getText();
-                        int index = text.indexOf(" (timing out in ");
-                        if (index > -1) {
-                            text = text.substring(0, index);
+                    } else {
+                        ProgressIndicator progressIndicator = CancellableDatabaseCall.this.progressIndicator;
+                        if (progressIndicator != null && timeout > 0) {
+                            String text = progressIndicator.getText();
+                            int index = text.indexOf(" (timing out in ");
+                            if (index > -1) {
+                                text = text.substring(0, index);
+                            }
+
+                            long runningForSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTimestamp);
+                            long timeoutSeconds = timeUnit.toSeconds(timeout);
+                            long timingOutIn = timeoutSeconds - runningForSeconds;
+                            if (timingOutIn < 60)
+                                text = text + " (timing out in " + timingOutIn + " seconds) "; else
+                                text = text + " (timing out in " + TimeUnit.SECONDS.toMinutes(timingOutIn) + " minutes) ";
+
+
+                            progressIndicator.setText(text);
                         }
-
-                        long runningForSeconds = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTimestamp);
-                        long timeoutSeconds = timeUnit.toSeconds(timeout);
-                        long timingOutIn = timeoutSeconds - runningForSeconds;
-                        if (timingOutIn < 60)
-                            text = text + " (timing out in " + timingOutIn + " seconds) "; else
-                            text = text + " (timing out in " + TimeUnit.SECONDS.toMinutes(timingOutIn) + " minutes) ";
-
-
-                        progressIndicator.setText(text);
                     }
                 }
             };

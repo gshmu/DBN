@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.dispose;
 
+import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.intellij.mock.MockProject;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
@@ -57,5 +58,11 @@ public class Failsafe {
             }
         }
         return true;
+    }
+
+    public static <T, E extends Throwable> void invoke(@Nullable T target, ParametricRunnable<T, E> invoker) throws E {
+        if (check(target)) {
+            invoker.run(target);
+        }
     }
 }
