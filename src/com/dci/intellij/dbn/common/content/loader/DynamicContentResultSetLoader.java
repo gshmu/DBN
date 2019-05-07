@@ -94,7 +94,7 @@ public abstract class DynamicContentResultSetLoader<
         AtomicInteger count = new AtomicInteger();
         IncrementalStatusAdapter<ConnectionHandlerStatusHolder, ConnectionHandlerStatus> loading = connectionHandler.getConnectionStatus().getLoading();
         try {
-            DatabaseInterface.execute(connectionHandler, () -> {
+            DatabaseInterface.run(connectionHandler, () -> {
                 loading.set(true);
                 dynamicContent.checkDisposed();
                 DBNConnection connection = connectionHandler.getPoolConnection(true);

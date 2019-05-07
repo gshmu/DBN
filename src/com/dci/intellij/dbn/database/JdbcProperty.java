@@ -7,21 +7,23 @@ import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.object.common.DBObject;
 import org.jetbrains.annotations.Nullable;
 
-public enum JdbcFeature implements Property {
-    MD_CATALOGS("Catalogs"),
-    MD_SCHEMAS("Schemas"),
-    MD_TABLES("Tables"),
-    MD_VIEWS("Views"),
-    MD_COLUMNS("Columns"),
-    MD_PSEUDO_COLUMNS("Pseudo columns"),
-    MD_INDEXES("Indexes"),
-    MD_PRIMARY_KEYS("Primary Keys"),
-    MD_IMPORTED_KEYS("Imported Keys"),
-    MD_FUNCTIONS("Functions"),
-    MD_FUNCTION_COLUMNS("Function columns"),
-    MD_PROCEDURES("Procedures"),
-    MD_PROCEDURE_COLUMNS("Procedure columns"),
-    SQL_DATASET_ALIASING("Dataset aliasing"),
+public enum JdbcProperty implements Property {
+    MD_CATALOGS("Catalogs", true),
+    MD_SCHEMAS("Schemas", true),
+    MD_TABLES("Tables", true),
+    MD_VIEWS("Views", true),
+    MD_COLUMNS("Columns", true),
+    MD_PSEUDO_COLUMNS("Pseudo columns", true),
+    MD_INDEXES("Indexes", true),
+    MD_PRIMARY_KEYS("Primary Keys", true),
+    MD_IMPORTED_KEYS("Imported Keys", true),
+    MD_FUNCTIONS("Functions", true),
+    MD_FUNCTION_COLUMNS("Function columns", true),
+    MD_PROCEDURES("Procedures", true),
+    MD_PROCEDURE_COLUMNS("Procedure columns", true),
+    SQL_DATASET_ALIASING("Dataset aliasing", true),
+
+    CATALOG_AS_OWNER("Catalog as owner", false),
     ;
 
     private final int index = Property.idx(this);
@@ -32,13 +34,19 @@ public enum JdbcFeature implements Property {
     }
 
     private String description;
+    private boolean feature;
 
-    JdbcFeature(String description) {
+    JdbcProperty(String description, boolean feature) {
         this.description = description;
+        this.feature = feature;
     }
 
     public String getDescription() {
         return description;
+    }
+
+    public boolean isFeature() {
+        return feature;
     }
 
     public boolean isSupported(@Nullable ConnectionProvider connectionProvider) {

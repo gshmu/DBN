@@ -22,6 +22,7 @@ import static java.sql.DatabaseMetaData.functionColumnIn;
 import static java.sql.DatabaseMetaData.functionColumnInOut;
 import static java.sql.DatabaseMetaData.functionColumnOut;
 import static java.sql.DatabaseMetaData.functionColumnResult;
+import static java.sql.DatabaseMetaData.functionReturn;
 
 public interface GenericMetadataTranslators {
     Logger LOGGER = LoggerFactory.createLogger();
@@ -470,7 +471,7 @@ public interface GenericMetadataTranslators {
             switch (columnLabel) {
                 case "ARGUMENT_NAME":
                     return resolve(
-                            () -> inner.getString("COLUMN_NAME"),
+                            () -> name(inner.getString("COLUMN_NAME")),
                             () -> "return");
 
                 case "METHOD_TYPE":   return "FUNCTION";
@@ -490,6 +491,7 @@ public interface GenericMetadataTranslators {
                                     case functionColumnOut: return "OUT";
                                     case functionColumnInOut: return "IN/OUT";
                                     case functionColumnResult: return "OUT";
+                                    case functionReturn: return "OUT";
                                     default: return "IN";
                                 }
                             },
@@ -561,7 +563,7 @@ public interface GenericMetadataTranslators {
             switch (columnLabel) {
                 case "ARGUMENT_NAME":
                     return resolve(
-                            () -> inner.getString("COLUMN_NAME"),
+                            () -> name(inner.getString("COLUMN_NAME")),
                             () -> "return");
 
                 case "METHOD_TYPE":   return "PROCEDURE";
@@ -577,6 +579,7 @@ public interface GenericMetadataTranslators {
                                     case functionColumnOut: return "OUT";
                                     case functionColumnInOut: return "IN/OUT";
                                     case functionColumnResult: return "OUT";
+                                    case functionReturn: return "OUT";
                                     default: return "IN";
                                 }
                             },
@@ -651,5 +654,9 @@ public interface GenericMetadataTranslators {
         return resolve(
                 () -> (String) row.get(schemaCol),
                 () -> (String) row.get(catalogCol));
+    }
+
+    static String name(String string) {
+        return StringUtil.isEmpty(string) ? null : string.trim();
     }
 }
