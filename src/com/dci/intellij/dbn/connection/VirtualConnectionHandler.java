@@ -49,7 +49,7 @@ public class VirtualConnectionHandler extends DisposableBase implements Connecti
     private ConnectionHandlerRef ref;
     private DBObjectBundle objectBundle;
     private ConnectionInstructions instructions = new ConnectionInstructions();
-    private DatabaseCompatibility compatibility = DatabaseCompatibility.none();
+    private DatabaseCompatibility compatibility = DatabaseCompatibility.noFeatures();
 
     private Latent<ConnectionSettings> connectionSettings = Latent.basic(() -> {
         ConnectionBundleSettings connectionBundleSettings = ConnectionBundleSettings.getInstance(getProject());
