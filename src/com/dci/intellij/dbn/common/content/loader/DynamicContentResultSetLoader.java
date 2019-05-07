@@ -6,10 +6,8 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusHolder;
@@ -18,7 +16,6 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.IncrementalStatusAdapter;
 import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
 import com.dci.intellij.dbn.database.DatabaseInterface;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadataFactory;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -29,6 +26,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.sql.SQLNonTransientConnectionException;
+import java.sql.SQLTimeoutException;
+import java.sql.SQLTransientConnectionException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -83,94 +84,98 @@ public abstract class DynamicContentResultSetLoader<
     }
 
     @Override
-    public void loadContent(DynamicContent<T> dynamicContent, boolean forceReload) throws DynamicContentLoadException, InterruptedException {
-        boolean addDelay = DatabaseNavigator.getInstance().isSlowDatabaseModeEnabled();
-        ProgressMonitor.setTaskDescription("Loading " + dynamicContent.getContentDescription());
-
-        DebugInfo debugInfo = preLoadContent(dynamicContent);
-
-        dynamicContent.checkDisposed();
+    public void loadContent(DynamicContent<T> dynamicContent, boolean forceReload) throws SQLException {
         ConnectionHandler connectionHandler = dynamicContent.getConnectionHandler();
-        AtomicInteger count = new AtomicInteger();
-        IncrementalStatusAdapter<ConnectionHandlerStatusHolder, ConnectionHandlerStatus> loading = connectionHandler.getConnectionStatus().getLoading();
-        try {
-            DatabaseInterface.run(connectionHandler, () -> {
-                loading.set(true);
-                dynamicContent.checkDisposed();
-                DBNConnection connection = connectionHandler.getPoolConnection(true);
-                ResultSet resultSet = null;
-                List<T> list = null;
-                try {
-                    connection.set(ResourceStatus.ACTIVE, true);
+
+        DatabaseInterface.run(
+                connectionHandler,
+                (interfaceProvider) -> {
+                    boolean addDelay = DatabaseNavigator.getInstance().isSlowDatabaseModeEnabled();
+                    ProgressMonitor.setTaskDescription("Loading " + dynamicContent.getContentDescription());
+
+                    DebugInfo debugInfo = preLoadContent(dynamicContent);
+
                     dynamicContent.checkDisposed();
-                    resultSet = createResultSet(dynamicContent, connection);
-
-                    DynamicContentType contentType = dynamicContent.getContentType();
-                    M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
-
-                    if (addDelay) Thread.sleep(500);
-                    LoaderCache loaderCache = new LoaderCache();
-                    while (resultSet != null && resultSet.next()) {
-                        if (addDelay) Thread.sleep(10);
+                    AtomicInteger count = new AtomicInteger();
+                    IncrementalStatusAdapter<ConnectionHandlerStatusHolder, ConnectionHandlerStatus> loading = connectionHandler.getConnectionStatus().getLoading();
+                    try {
+                        loading.set(true);
                         dynamicContent.checkDisposed();
-
-                        T element = null;
+                        DBNConnection connection = connectionHandler.getPoolConnection(true);
+                        ResultSet resultSet = null;
+                        List<T> list = null;
                         try {
-                            element = createElement(dynamicContent, metadata, loaderCache);
-                        } catch (ProcessCanceledException e){
-                            return;
-                        } catch (RuntimeException e) {
-                            LOGGER.warn("Failed to create element", e);
-                        }
+                            connection.set(ResourceStatus.ACTIVE, true);
+                            dynamicContent.checkDisposed();
+                            resultSet = createResultSet(dynamicContent, connection);
 
+                            DynamicContentType contentType = dynamicContent.getContentType();
+                            M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
+
+                            if (addDelay) Thread.sleep(500);
+                            LoaderCache loaderCache = new LoaderCache();
+                            while (resultSet != null && resultSet.next()) {
+                                if (addDelay) Thread.sleep(10);
+                                dynamicContent.checkDisposed();
+
+                                T element = null;
+                                try {
+                                    element = createElement(dynamicContent, metadata, loaderCache);
+                                } catch (ProcessCanceledException e) {
+                                    return;
+                                } catch (RuntimeException e) {
+                                    LOGGER.warn("Failed to create element", e);
+                                }
+
+                                dynamicContent.checkDisposed();
+                                if (element != null) {
+                                    if (list == null) {
+                                        list = dynamicContent.is(DynamicContentStatus.CONCURRENT) ?
+                                                CollectionUtil.createConcurrentList() :
+                                                new ArrayList<T>();
+                                    }
+                                    list.add(element);
+                                    if (count.get() % 10 == 0) {
+                                        String description = element.getDescription();
+                                        if (description != null)
+                                            ProgressMonitor.setSubtaskDescription(description);
+                                    }
+                                    count.incrementAndGet();
+                                }
+                            }
+                        } finally {
+                            ResourceUtil.close(resultSet);
+                            connection.set(ResourceStatus.ACTIVE, false);
+                            connectionHandler.freePoolConnection(connection);
+                        }
                         dynamicContent.checkDisposed();
-                        if (element != null) {
-                            if (list == null) {
-                                list = dynamicContent.is(DynamicContentStatus.CONCURRENT) ?
-                                        CollectionUtil.createConcurrentList() :
-                                        new ArrayList<T>();
-                            }
-                            list.add(element);
-                            if (count.get()%10 == 0) {
-                                String description = element.getDescription();
-                                if (description != null)
-                                    ProgressMonitor.setSubtaskDescription(description);
-                            }
-                            count.incrementAndGet();
+                        dynamicContent.setElements(list);
+                        dynamicContent.set(DynamicContentStatus.MASTER, master);
+
+                        postLoadContent(dynamicContent, debugInfo);
+
+                    } catch (InterruptedException | ProcessCanceledException e) {
+                        throw new SQLTimeoutException(e);
+
+                    } catch (SQLTimeoutException |
+                            SQLFeatureNotSupportedException |
+                            SQLTransientConnectionException |
+                            SQLNonTransientConnectionException e) {
+                        throw e;
+
+                    } catch (SQLException e) {
+                        boolean modelException = interfaceProvider.getMessageParserInterface().isModelException(e);
+                        if (modelException) {
+                            throw new SQLFeatureNotSupportedException(e);
                         }
+                        throw e;
+                    } catch (Throwable e) {
+                        throw new SQLException(e);
+
+                    } finally {
+                        loading.set(false);
                     }
-                } finally {
-                    ResourceUtil.close(resultSet);
-                    connection.set(ResourceStatus.ACTIVE, false);
-                    connectionHandler.freePoolConnection(connection);
-                }
-                dynamicContent.checkDisposed();
-                dynamicContent.setElements(list);
-                dynamicContent.set(DynamicContentStatus.MASTER, master);
-
-                postLoadContent(dynamicContent, debugInfo);
-            });
-
-        } catch (Throwable e) {
-            if (e instanceof InterruptedException) throw (InterruptedException) e;
-            if (e instanceof ProcessCanceledException) throw (ProcessCanceledException) e;
-            if (e == DatabaseInterface.DBN_NOT_CONNECTED_EXCEPTION) throw new InterruptedException();
-
-            String message = StringUtil.trim(e.getMessage()).replace("\n", " ");
-            LOGGER.warn("Error loading database content (" + dynamicContent.getContentDescription() + "): " + message);
-
-            boolean modelException = false;
-            if (e instanceof SQLException) {
-                SQLException sqlException = (SQLException) e;
-                if (Failsafe.check(dynamicContent)) {
-                    DatabaseInterfaceProvider interfaceProvider = dynamicContent.getConnectionHandler().getInterfaceProvider();
-                    modelException = interfaceProvider.getMessageParserInterface().isModelException(sqlException);
-                }
-            }
-            throw new DynamicContentLoadException(e, modelException);
-        } finally {
-            loading.set(false);
-        }
+        });
     }
 
     public class LoaderCache {

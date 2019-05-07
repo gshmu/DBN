@@ -40,7 +40,7 @@ public class EventUtil {
         messageBusConnection.subscribe(topic, handler);
     }
 
-    public static <T> void notify(@Nullable Project project, Topic<T> topic, ParametricRunnable<T> callback) {
+    public static <T> void notify(@Nullable Project project, Topic<T> topic, ParametricRunnable.Basic<T> callback) {
         if (Failsafe.check(project) && /*!project.isDefault() &&*/ project != Failsafe.DUMMY_PROJECT) {
             try {
                 MessageBus messageBus = project.getMessageBus();

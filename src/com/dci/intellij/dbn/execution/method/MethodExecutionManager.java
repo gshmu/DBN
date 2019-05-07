@@ -137,7 +137,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
             @Nullable MethodExecutionInput selection,
             boolean editable,
             boolean debug,
-            @Nullable ParametricRunnable<MethodExecutionInput> callback) {
+            @Nullable ParametricRunnable<MethodExecutionInput, RuntimeException> callback) {
 
         Project project = getProject();
         Progress.prompt(project, "Loading method execution history", true,
@@ -224,7 +224,11 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         }
     }
 
-    public void debugExecute(MethodExecutionInput executionInput, @NotNull DBNConnection connection, DBDebuggerType debuggerType) throws SQLException {
+    public void debugExecute(
+            @NotNull MethodExecutionInput executionInput,
+            @NotNull DBNConnection connection,
+            DBDebuggerType debuggerType) throws SQLException {
+
         DBMethod method = executionInput.getMethod();
         if (method != null) {
             ConnectionHandler connectionHandler = method.getConnectionHandler();
@@ -243,7 +247,10 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         }
     }
 
-    public void promptMethodBrowserDialog(MethodExecutionInput executionInput, boolean debug, ParametricRunnable<MethodExecutionInput> callback) {
+    public void promptMethodBrowserDialog(
+            @Nullable MethodExecutionInput executionInput,  boolean debug,
+            @Nullable ParametricRunnable.Basic<MethodExecutionInput> callback) {
+
         Project project = getProject();
         Progress.prompt(project, "Loading executable elements", true,
                 (progress) -> {

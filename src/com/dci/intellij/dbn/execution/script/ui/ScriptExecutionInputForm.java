@@ -72,7 +72,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         cmdLineExecutableComboBox.set(ValueSelectorOption.HIDE_ICON, true);
         cmdLineExecutableComboBox.setValueFactory(new PresentableFactory<CmdLineInterface>("New Cmd-Line Interface...") {
             @Override
-            public void create(ParametricRunnable<CmdLineInterface> callback) {
+            public void create(ParametricRunnable.Basic<CmdLineInterface> callback) {
                 ConnectionHandler connectionHandler = connectionComboBox.getSelectedValue();
                 if (connectionHandler != null) {
                     ScriptExecutionManager scriptExecutionManager = ScriptExecutionManager.getInstance(project);

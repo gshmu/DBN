@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.content;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapter;
-import com.dci.intellij.dbn.common.content.loader.DynamicContentLoadException;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
@@ -17,25 +17,22 @@ import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.CHANGING;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DIRTY;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADED;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING_IN_BACKGROUND;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.MASTER;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.REFRESHING;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement> extends DisposablePropertyHolder<DynamicContentStatus> implements DynamicContent<T> {
-    protected static final List EMPTY_CONTENT = java.util.Collections.unmodifiableList(new ArrayList(0));
-    protected static final List EMPTY_DISPOSED_CONTENT = java.util.Collections.unmodifiableList(new ArrayList(0));
-    protected static final List EMPTY_UNTOUCHED_CONTENT = java.util.Collections.unmodifiableList(new ArrayList(0));
+    private static final Logger LOGGER = LoggerFactory.createLogger();
+
+    protected static final List EMPTY_CONTENT = java.util.Collections.unmodifiableList(Collections.emptyList());
+    protected static final List EMPTY_DISPOSED_CONTENT = java.util.Collections.unmodifiableList(Collections.emptyList());
+    protected static final List EMPTY_UNTOUCHED_CONTENT = java.util.Collections.unmodifiableList(Collections.emptyList());
 
     private long changeTimestamp = 0;
 
@@ -248,7 +245,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
         }
     }
 
-    private void performLoad(boolean force) throws InterruptedException {
+    private void performLoad(boolean force) {
         //System.out.println( this + " :invoked by " + ThreadMonitor.current());
         checkDisposed();
         dependencyAdapter.beforeLoad(force);
@@ -262,8 +259,8 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
 
             // refresh inner elements
             if (force) elements.forEach(t -> t.refresh());
-        } catch (DynamicContentLoadException e) {
-            set(DIRTY, !e.isModelException());
+        } catch (SQLException e) {
+            LOGGER.warn("Failed to load content: " + e.getMessage());
         }
         checkDisposed();
         dependencyAdapter.afterLoad();

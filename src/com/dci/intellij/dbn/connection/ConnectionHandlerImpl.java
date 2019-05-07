@@ -325,7 +325,12 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     @Override
     public boolean hasPendingTransactions(@NotNull DBNConnection connection) {
-        return getInterfaceProvider().getMetadataInterface().hasPendingTransactions(connection);
+        return DatabaseInterface.call(
+                this, interfaceProvider -> {
+                    DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
+                    return metadataInterface.hasPendingTransactions(connection);
+                });
+
     }
 
     @Override
@@ -466,11 +471,14 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     private DBNConnection setCurrentSchema(DBNConnection connection, @Nullable SchemaId schema) throws SQLException {
         if (schema != null && /*!schema.isPublicSchema() && */DatabaseFeature.CURRENT_SCHEMA.isSupported(this) && !schema.equals(connection.getCurrentSchema())) {
-            String schemaName = schema.getName();
-            DatabaseMetadataInterface metadataInterface = getInterfaceProvider().getMetadataInterface();
-            QuotePair quotePair = getInterfaceProvider().getCompatibilityInterface().getDefaultIdentifierQuotes();
-            metadataInterface.setCurrentSchema(quotePair.quote(schemaName), connection);
-            connection.setCurrentSchema(schema);
+            DatabaseInterface.run(this,
+                    (interfaceProvider) -> {
+                        String schemaName = schema.getName();
+                        DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
+                        QuotePair quotePair = interfaceProvider.getCompatibilityInterface().getDefaultIdentifierQuotes();
+                        metadataInterface.setCurrentSchema(quotePair.quote(schemaName), connection);
+                        connection.setCurrentSchema(schema);
+                    });
         }
         return connection;
     }
@@ -542,7 +550,8 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
     @Override
     public DBLanguageDialect getLanguageDialect(DBLanguage language) {
-        return getInterfaceProvider().getLanguageDialect(language);
+        return DatabaseInterface.call(this,
+                interfaceProvider -> interfaceProvider.getLanguageDialect(language));
     }
 
     public static Comparator<ConnectionHandler> getComparator(boolean asc) {
