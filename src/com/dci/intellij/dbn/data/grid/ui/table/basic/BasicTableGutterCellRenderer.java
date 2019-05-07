@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -36,7 +37,10 @@ public class BasicTableGutterCellRenderer extends JPanel implements ListCellRend
         BasicTableGutter tableGutter = (BasicTableGutter) list;
         textLabel.setText(Integer.toString(index + 1));
         DBNTable table = tableGutter.getTable();
-        boolean isCaretRow = table.getCellSelectionEnabled() && table.getSelectedRow() == index && table.getSelectedRowCount() == 1;
+        boolean isCaretRow = Failsafe.check(table) &&
+                table.getCellSelectionEnabled() &&
+                table.getSelectedRow() == index &&
+                table.getSelectedRowCount() == 1;
 
         setBackground(isSelected ?
                 BasicTableColors.getSelectionBackgroundColor() :
