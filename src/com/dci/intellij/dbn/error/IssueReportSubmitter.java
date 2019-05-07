@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.error;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.notification.NotificationUtil;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
+import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -80,13 +80,17 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
     @Override
     public boolean submit(@NotNull final IdeaLoggingEvent[] events, String additionalInfo, @NotNull Component parentComponent, @NotNull final Consumer<SubmittedReportInfo> consumer) {
         DataContext dataContext = DataManager.getInstance().getDataContext(parentComponent);
-        final Project project = PlatformDataKeys.PROJECT.getData(dataContext);
+        Project project = PlatformDataKeys.PROJECT.getData(dataContext);
 
-        final String localPluginVersion = getPluginDescriptor().getVersion();
+        String localPluginVersion = getPluginDescriptor().getVersion();
         String repositoryPluginVersion = DatabaseNavigator.getInstance().getRepositoryPluginVersion();
 
         if (repositoryPluginVersion != null && repositoryPluginVersion.compareTo(localPluginVersion) > 0) {
-            NotificationUtil.sendWarningNotification(project, Constants.DBN_TITLE_PREFIX + "New Plugin Version Available", "A newer version of Database Navigator plugin is available in repository" + ". Error report not sent.");
+            NotificationSupport.sendWarningNotification(
+                    project,
+                    NotificationGroup.REPORTING,
+                    "A newer version of Database Navigator plugin is available in repository. Error report not sent.");
+
             consumer.consume(new SubmittedReportInfo(getTicketUrlStub(), "", FAILED));
             return false;
         }
@@ -164,8 +168,10 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
                         result = submit(events, localPluginVersion, summary, description.toString());
                     } catch (Exception e) {
 
-                        NotificationUtil.sendErrorNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
-                                "<html>Failed to send error report: " + e.getMessage() + "</html>");
+                        NotificationSupport.sendErrorNotification(
+                                project,
+                                NotificationGroup.REPORTING,
+                                "<html>Failed to send error report: {0}</html>", e);
 
                         consumer.consume(new SubmittedReportInfo(null, null, FAILED));
                         return;
@@ -177,12 +183,16 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
 
                         String ticketId = result.getTicketId();
                         String ticketUrl = getTicketUrl(ticketId);
-                        NotificationUtil.sendInfoNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
+                        NotificationSupport.sendInfoNotification(
+                                project,
+                                NotificationGroup.REPORTING,
                                 "<html>Error report successfully sent. Ticket <a href='" + ticketUrl + "'>" + ticketId + "</a> created.</html>");
 
                         consumer.consume(new SubmittedReportInfo(ticketUrl, ticketId, NEW_ISSUE));
                     } else {
-                        NotificationUtil.sendErrorNotification(project, Constants.DBN_TITLE_PREFIX + "Error Reporting",
+                        NotificationSupport.sendErrorNotification(
+                                project,
+                                NotificationGroup.REPORTING,
                                 "<html>Failed to send error report: " + errorMessage + "</html>");
                         consumer.consume(new SubmittedReportInfo(null, null, FAILED));
                     }

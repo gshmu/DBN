@@ -93,12 +93,13 @@ public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView 
 
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
-        DatabaseInterface.run(this,
-                (interfaceProvider) -> {
-                    ConnectionHandler connectionHandler = getConnectionHandler();
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        DatabaseInterface.run(
+                connectionHandler,
+                (provider) -> {
                     DBNConnection connection = connectionHandler.getPoolConnection(getSchemaIdentifier(), false);
                     try {
-                        DatabaseDDLInterface ddlInterface = interfaceProvider.getDDLInterface();
+                        DatabaseDDLInterface ddlInterface = provider.getDDLInterface();
                         ddlInterface.updateView(getName(), newCode, connection);
                     } finally {
                         connectionHandler.freePoolConnection(connection);

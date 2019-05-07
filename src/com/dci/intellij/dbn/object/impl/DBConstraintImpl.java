@@ -4,8 +4,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBConstraintMetadata;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
@@ -20,8 +18,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectRelationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationListLoader;
 import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
-import com.dci.intellij.dbn.object.common.operation.DBOperationNotSupportedException;
-import com.dci.intellij.dbn.object.common.operation.DBOperationType;
+import com.dci.intellij.dbn.object.common.operation.DatabaseOperationManager;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.DBObjectPresentableProperty;
@@ -284,29 +281,10 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
     @Override
     public DBOperationExecutor getOperationExecutor() {
         return operationType -> {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            DBNConnection connection = connectionHandler.getPoolConnection(getSchemaIdentifier(), false);
-            try {
-                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-                if (operationType == DBOperationType.ENABLE) {
-                    metadataInterface.enableConstraint(
-                            getSchema().getName(),
-                            getDataset().getName(),
-                            getName(),
-                            connection);
-                    getStatus().set(DBObjectStatus.ENABLED, true);
-                } else if (operationType == DBOperationType.DISABLE) {
-                    metadataInterface.disableConstraint(
-                            getSchema().getName(),
-                            getDataset().getName(),
-                            getName(),
-                            connection);
-                    getStatus().set(DBObjectStatus.ENABLED, false);
-                } else {
-                    throw new DBOperationNotSupportedException(operationType, getObjectType());
-                }
-            } finally {
-                connectionHandler.freePoolConnection(connection);
+            DatabaseOperationManager operationManager = DatabaseOperationManager.getInstance(getProject());
+            switch (operationType) {
+                case ENABLE:  operationManager.enableConstraint(this); break;
+                case DISABLE: operationManager.disableConstraint(this); break;
             }
         };
     }

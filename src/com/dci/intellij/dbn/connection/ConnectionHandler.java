@@ -60,6 +60,8 @@ public interface ConnectionHandler extends RegisteredDisposable, EnvironmentType
     @NotNull
     DBNConnection getPoolConnection(@Nullable SchemaId schemaId, boolean readonly) throws SQLException;
 
+    void setCurrentSchema(DBNConnection connection, @Nullable SchemaId schema) throws SQLException;
+
     void closeConnection(DBNConnection connection);
 
     void freePoolConnection(DBNConnection connection);
@@ -151,6 +153,7 @@ public interface ConnectionHandler extends RegisteredDisposable, EnvironmentType
     ConnectionHandlerRef getRef();
 
     DatabaseInfo getDatabaseInfo();
+
     AuthenticationInfo getAuthenticationInfo();
 
     @Deprecated

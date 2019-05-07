@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.debugger.jdbc;
 
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Synchronized;
@@ -422,10 +422,13 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
     private void suspendSession() {
         if (is(PROCESS_TERMINATING)) return;
         XDebugSession session = getSession();
+        DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
         if (isTerminated()) {
             int reasonCode = runtimeInfo.getReason();
-            String message = "Session terminated with code :" + reasonCode + " (" + getDebuggerInterface().getRuntimeEventReason(reasonCode) + ")";
-            sendInfoNotification(Constants.DBN_TITLE_PREFIX + "Debugger", message);
+            String reason = debuggerInterface.getRuntimeEventReason(reasonCode);
+            sendInfoNotification(
+                    NotificationGroup.DEBUGGER,
+                    "Session terminated with code {0} ({1})", reasonCode, reason);
 
             set(PROCESS_STOPPED_NORMALLY, true);
             session.stop();
@@ -433,14 +436,16 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
             VirtualFile virtualFile = getRuntimeInfoFile(runtimeInfo);
             DBDebugUtil.openEditor(virtualFile);
             try {
-                backtraceInfo = getDebuggerInterface().getExecutionBacktraceInfo(debugConnection);
+                backtraceInfo = debuggerInterface.getExecutionBacktraceInfo(debugConnection);
                 List<DebuggerRuntimeInfo> frames = backtraceInfo.getFrames();
                 if (frames.size() > 0) {
                     DebuggerRuntimeInfo topRuntimeInfo = frames.get(0);
                     if (runtimeInfo.isTerminated()) {
                         int reasonCode = runtimeInfo.getReason();
-                        String message = "Session terminated with code :" + reasonCode + " (" + getDebuggerInterface().getRuntimeEventReason(reasonCode) + ")";
-                        sendInfoNotification(Constants.DBN_TITLE_PREFIX + "Debugger", message);
+                        String reason = debuggerInterface.getRuntimeEventReason(reasonCode);
+                        sendInfoNotification(
+                                NotificationGroup.DEBUGGER,
+                                "Session terminated with code {0} ({1})", reasonCode, reason);
                     }
                     if (!runtimeInfo.equals(topRuntimeInfo)) {
                         runtimeInfo = topRuntimeInfo;

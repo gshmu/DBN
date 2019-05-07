@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -103,17 +104,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.object.type.DBObjectRelationType.ROLE_PRIVILEGE;
-import static com.dci.intellij.dbn.object.type.DBObjectRelationType.ROLE_ROLE;
-import static com.dci.intellij.dbn.object.type.DBObjectRelationType.USER_PRIVILEGE;
-import static com.dci.intellij.dbn.object.type.DBObjectRelationType.USER_ROLE;
-import static com.dci.intellij.dbn.object.type.DBObjectType.CHARSET;
-import static com.dci.intellij.dbn.object.type.DBObjectType.OBJECT_PRIVILEGE;
-import static com.dci.intellij.dbn.object.type.DBObjectType.ROLE;
-import static com.dci.intellij.dbn.object.type.DBObjectType.SCHEMA;
-import static com.dci.intellij.dbn.object.type.DBObjectType.SYNONYM;
-import static com.dci.intellij.dbn.object.type.DBObjectType.SYSTEM_PRIVILEGE;
-import static com.dci.intellij.dbn.object.type.DBObjectType.USER;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.*;
+import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 @Nullifiable
 public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport {
@@ -730,7 +722,9 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                                 schema.refreshObjectsStatus();
                             }
                         } catch (SQLException e) {
-                            sendErrorNotification("Object Status Refresh", "Could not refresh object status. Cause: " + e.getMessage());
+                            sendErrorNotification(
+                                    NotificationGroup.BROWSER,
+                                    "Error refreshing object status: {0}", e);
                         }
                     });
         }

@@ -29,11 +29,11 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.PooledConnection;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -543,27 +543,26 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Override
     public String extractDDL() throws SQLException {
-        String ddl;
-        DBNCallableStatement statement = null;
-        DBNConnection connection = null;
-
         ConnectionHandler connectionHandler = Failsafe.nn(getConnectionHandler());
-        try {
-            connection = connectionHandler.getPoolConnection(true);
-            statement = connection.prepareCall("{? = call DBMS_METADATA.GET_DDL(?, ?, ?)}");
-            statement.registerOutParameter(1, Types.CLOB);
-            statement.setString(2, getTypeName().toUpperCase());
-            statement.setString(3, getName());
-            statement.setString(4, getSchema().getName());
+        // TODO move to database interface (ORACLE)
+        return PooledConnection.call(true,
+                connectionHandler,
+                connection -> {
+                    DBNCallableStatement statement = null;
+                    try {
+                        statement = connection.prepareCall("{? = call DBMS_METADATA.GET_DDL(?, ?, ?)}");
+                        statement.registerOutParameter(1, Types.CLOB);
+                        statement.setString(2, getTypeName().toUpperCase());
+                        statement.setString(3, getName());
+                        statement.setString(4, getSchema().getName());
 
-            statement.execute();
-            ddl = statement.getString(1);
-            ddl = ddl == null ? null : ddl.trim();
-        } finally{
-            ResourceUtil.close(statement);
-            connectionHandler.freePoolConnection(connection);
-        }
-        return ddl;
+                        statement.execute();
+                        String ddl = statement.getString(1);
+                        return ddl == null ? null : ddl.trim();
+                    } finally{
+                        ResourceUtil.close(statement);
+                    }
+                });
     }
 
     @Override

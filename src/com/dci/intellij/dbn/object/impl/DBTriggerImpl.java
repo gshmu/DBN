@@ -1,9 +1,6 @@
 package com.dci.intellij.dbn.object.impl;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBTriggerMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBDataset;
@@ -11,8 +8,7 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBTrigger;
 import com.dci.intellij.dbn.object.common.DBSchemaObjectImpl;
 import com.dci.intellij.dbn.object.common.operation.DBOperationExecutor;
-import com.dci.intellij.dbn.object.common.operation.DBOperationNotSupportedException;
-import com.dci.intellij.dbn.object.common.operation.DBOperationType;
+import com.dci.intellij.dbn.object.common.operation.DatabaseOperationManager;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
@@ -109,21 +105,10 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl<DBTriggerMetadata
     @Override
     public DBOperationExecutor getOperationExecutor() {
         return operationType -> {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            DBNConnection connection = connectionHandler.getPoolConnection(getSchemaIdentifier(), false);
-            try {
-                DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-                if (operationType == DBOperationType.ENABLE) {
-                    metadataInterface.enableTrigger(getSchema().getName(), getName(), connection);
-                    getStatus().set(DBObjectStatus.ENABLED, true);
-                } else if (operationType == DBOperationType.DISABLE) {
-                    metadataInterface.disableTrigger(getSchema().getName(), getName(), connection);
-                    getStatus().set(DBObjectStatus.ENABLED, false);
-                } else {
-                    throw new DBOperationNotSupportedException(operationType, getObjectType());
-                }
-            } finally {
-                connectionHandler.freePoolConnection(connection);
+            DatabaseOperationManager operationManager = DatabaseOperationManager.getInstance(getProject());
+            switch (operationType) {
+                case ENABLE:  operationManager.enableTrigger(this); break;
+                case DISABLE: operationManager.disableTrigger(this); break;
             }
         };
     }

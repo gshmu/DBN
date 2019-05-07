@@ -9,13 +9,11 @@ import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerStatus;
-import com.dci.intellij.dbn.connection.ConnectionHandlerStatusHolder;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.IncrementalStatusAdapter;
-import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
 import com.dci.intellij.dbn.database.DatabaseInterface;
+import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadataFactory;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -33,7 +31,6 @@ import java.sql.SQLTransientConnectionException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class DynamicContentResultSetLoader<
                 T extends DynamicContentElement,
@@ -85,35 +82,31 @@ public abstract class DynamicContentResultSetLoader<
 
     @Override
     public void loadContent(DynamicContent<T> dynamicContent, boolean forceReload) throws SQLException {
+        ProgressMonitor.setTaskDescription("Loading " + dynamicContent.getContentDescription());
+
         ConnectionHandler connectionHandler = dynamicContent.getConnectionHandler();
-
-        DatabaseInterface.run(
+        DatabaseInterface.run(true,
                 connectionHandler,
-                (interfaceProvider) -> {
-                    boolean addDelay = DatabaseNavigator.getInstance().isSlowDatabaseModeEnabled();
-                    ProgressMonitor.setTaskDescription("Loading " + dynamicContent.getContentDescription());
-
+                (provider, connection) -> {
                     DebugInfo debugInfo = preLoadContent(dynamicContent);
-
-                    dynamicContent.checkDisposed();
-                    AtomicInteger count = new AtomicInteger();
-                    IncrementalStatusAdapter<ConnectionHandlerStatusHolder, ConnectionHandlerStatus> loading = connectionHandler.getConnectionStatus().getLoading();
+                    IncrementalStatusAdapter loading = connectionHandler.getConnectionStatus().getLoading();
                     try {
                         loading.set(true);
                         dynamicContent.checkDisposed();
-                        DBNConnection connection = connectionHandler.getPoolConnection(true);
                         ResultSet resultSet = null;
                         List<T> list = null;
                         try {
-                            connection.set(ResourceStatus.ACTIVE, true);
                             dynamicContent.checkDisposed();
                             resultSet = createResultSet(dynamicContent, connection);
 
                             DynamicContentType contentType = dynamicContent.getContentType();
                             M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
 
+                            boolean addDelay = DatabaseNavigator.getInstance().isSlowDatabaseModeEnabled();
                             if (addDelay) Thread.sleep(500);
                             LoaderCache loaderCache = new LoaderCache();
+                            int count = 0;
+
                             while (resultSet != null && resultSet.next()) {
                                 if (addDelay) Thread.sleep(10);
                                 dynamicContent.checkDisposed();
@@ -135,18 +128,16 @@ public abstract class DynamicContentResultSetLoader<
                                                 new ArrayList<T>();
                                     }
                                     list.add(element);
-                                    if (count.get() % 10 == 0) {
+                                    if (count % 10 == 0) {
                                         String description = element.getDescription();
                                         if (description != null)
                                             ProgressMonitor.setSubtaskDescription(description);
                                     }
-                                    count.incrementAndGet();
+                                    count++;
                                 }
                             }
                         } finally {
                             ResourceUtil.close(resultSet);
-                            connection.set(ResourceStatus.ACTIVE, false);
-                            connectionHandler.freePoolConnection(connection);
                         }
                         dynamicContent.checkDisposed();
                         dynamicContent.setElements(list);
@@ -164,7 +155,8 @@ public abstract class DynamicContentResultSetLoader<
                         throw e;
 
                     } catch (SQLException e) {
-                        boolean modelException = interfaceProvider.getMessageParserInterface().isModelException(e);
+                        DatabaseMessageParserInterface messageParserInterface = provider.getMessageParserInterface();
+                        boolean modelException = messageParserInterface.isModelException(e);
                         if (modelException) {
                             throw new SQLFeatureNotSupportedException(e);
                         }
@@ -175,7 +167,7 @@ public abstract class DynamicContentResultSetLoader<
                     } finally {
                         loading.set(false);
                     }
-        });
+                });
     }
 
     public class LoaderCache {
