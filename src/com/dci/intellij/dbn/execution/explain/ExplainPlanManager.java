@@ -46,7 +46,10 @@ public class ExplainPlanManager extends AbstractProjectComponent {
      *                       Execution                       *
      *********************************************************/
 
-    public void explainPlan(ExecutablePsiElement executable, @Nullable ParametricRunnable<ExplainPlanResult> callback) {
+    public void explainPlan(
+            @NotNull ExecutablePsiElement executable,
+            @Nullable ParametricRunnable.Basic<ExplainPlanResult> callback) {
+
         Project project = getProject();
         String elementDescription = executable.getSpecificElementType().getDescription();
 

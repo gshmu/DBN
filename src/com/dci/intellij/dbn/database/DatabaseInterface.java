@@ -2,22 +2,27 @@ package com.dci.intellij.dbn.database;
 
 import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.routine.ParametricCallable;
+import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
-import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionProvider;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.SQLException;
+import java.sql.SQLNonTransientConnectionException;
 
 public interface DatabaseInterface {
     ThreadLocal<ConnectionHandler> CONNECTION_HANDLER = new ThreadLocal<>();
 
-    SQLException DBN_NOT_CONNECTED_EXCEPTION = new SQLException("Not connected to database");
+    SQLNonTransientConnectionException DBN_NOT_CONNECTED_EXCEPTION = new SQLNonTransientConnectionException("Not connected to database");
 
     default void reset(){};
 
 
-    static <E extends Throwable> void run(ConnectionHandler connectionHandler, ThrowableRunnable<E> runnable) throws E {
+    static <E extends Throwable> void run(
+            @NotNull ConnectionProvider connectionProvider,
+            @NotNull ParametricRunnable<DatabaseInterfaceProvider, E> runnable) throws E {
+        ConnectionHandler connectionHandler = connectionProvider.ensureConnectionHandler();
         boolean owner = false;
         try {
             // init
@@ -32,7 +37,8 @@ public interface DatabaseInterface {
             }
 
             // execute
-            runnable.run();
+            DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
+            runnable.run(interfaceProvider);
         } finally {
 
             // release
@@ -42,7 +48,11 @@ public interface DatabaseInterface {
         }
     }
 
-    static <R, E extends Throwable> R call(ConnectionHandler connectionHandler, ThrowableCallable<R, E> callable) throws E {
+    static <R, E extends Throwable> R call(
+            @NotNull ConnectionProvider connectionProvider,
+            @NotNull ParametricCallable<DatabaseInterfaceProvider, R, E> callable) throws E{
+
+        ConnectionHandler connectionHandler = connectionProvider.ensureConnectionHandler();
         boolean owner = false;
         try {
             // init
@@ -57,7 +67,8 @@ public interface DatabaseInterface {
             }
 
             // execute
-            return callable.call();
+            DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
+            return callable.call(interfaceProvider);
         } finally {
 
             // release

@@ -12,7 +12,7 @@ import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.database.DatabaseFeature;
-import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.dci.intellij.dbn.driver.DriverSource;
@@ -78,40 +78,49 @@ public class ResourceUtil {
         // do not retry connection on authentication error unless
         // credentials changed (account can be locked on several invalid trials)
         AuthenticationError authenticationError = connectionStatus.getAuthenticationError();
-        ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
-        AuthenticationInfo authenticationInfo = databaseSettings.getAuthenticationInfo();
-        if (!authenticationInfo.isProvided()) {
-            authenticationInfo = connectionHandler.getTemporaryAuthenticationInfo();
-        }
+        AuthenticationInfo authenticationInfo = ensureAuthenticationInfo(connectionHandler);
 
         if (authenticationError != null && authenticationError.getAuthenticationInfo().isSame(authenticationInfo) && !authenticationError.isExpired()) {
             throw authenticationError.getException();
         }
 
-        DatabaseInterfaceProvider interfaceProvider = connectionHandler.getInterfaceProvider();
-        try {
-            DatabaseAttachmentHandler attachmentHandler = interfaceProvider.getCompatibilityInterface().getDatabaseAttachmentHandler();
-            DBNConnection connection = connect(
-                    connectionSettings,
-                    connectionStatus,
-                    connectionHandler.getTemporaryAuthenticationInfo(),
-                    sessionId,
-                    propertiesSettings.isEnableAutoCommit(),
-                    attachmentHandler);
-            ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
-            connectionHandler.setConnectionInfo(connectionInfo);
-            connectionStatus.setAuthenticationError(null);
-            connectionHandler.getCompatibility().read(connection.getMetaData());
-            return connection;
-        } catch (SQLException e) {
-            DatabaseMessageParserInterface messageParserInterface = interfaceProvider.getMessageParserInterface();
-            if (messageParserInterface.isAuthenticationException(e)){
-                authenticationInfo.setPassword(null);
-                authenticationError = new AuthenticationError(authenticationInfo, e);
-                connectionStatus.setAuthenticationError(authenticationError);
-            }
-            throw e;
+        return DatabaseInterface.call(
+                connectionHandler,
+                (interfaceProvider) -> {
+                    try {
+                        DatabaseAttachmentHandler attachmentHandler = interfaceProvider.getCompatibilityInterface().getDatabaseAttachmentHandler();
+                        DBNConnection connection = connect(
+                                connectionSettings,
+                                connectionStatus,
+                                connectionHandler.getTemporaryAuthenticationInfo(),
+                                sessionId,
+                                propertiesSettings.isEnableAutoCommit(),
+                                attachmentHandler);
+                        ConnectionInfo connectionInfo = new ConnectionInfo(connection.getMetaData());
+                        connectionHandler.setConnectionInfo(connectionInfo);
+                        connectionStatus.setAuthenticationError(null);
+                        connectionHandler.getCompatibility().read(connection.getMetaData());
+                        return connection;
+                    } catch (SQLException e) {
+                        DatabaseMessageParserInterface messageParserInterface = interfaceProvider.getMessageParserInterface();
+                        if (messageParserInterface.isAuthenticationException(e)){
+                            authenticationInfo.setPassword(null);
+                            connectionStatus.setAuthenticationError(new AuthenticationError(authenticationInfo, e));
+                        }
+                        throw e;
+                    }
+                });
+    }
+
+    @NotNull
+    private static AuthenticationInfo ensureAuthenticationInfo(ConnectionHandler connectionHandler) {
+        ConnectionSettings connectionSettings = connectionHandler.getSettings();
+        ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
+        AuthenticationInfo authenticationInfo = databaseSettings.getAuthenticationInfo();
+        if (!authenticationInfo.isProvided()) {
+            authenticationInfo = connectionHandler.getTemporaryAuthenticationInfo();
         }
+        return authenticationInfo;
     }
 
     @NotNull

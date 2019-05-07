@@ -129,7 +129,7 @@ public abstract class ConnectionAction implements Runnable{
             String description,
             boolean interactive,
             ConnectionProvider connectionProvider,
-            ParametricRunnable<ConnectionAction> action) {
+            ParametricRunnable.Basic<ConnectionAction> action) {
         new ConnectionAction(description, interactive, connectionProvider) {
             @Override
             public void run() {
@@ -142,9 +142,9 @@ public abstract class ConnectionAction implements Runnable{
             String description,
             boolean interactive,
             ConnectionProvider connectionProvider,
-            ParametricRunnable<ConnectionAction> action,
-            ParametricRunnable<ConnectionAction> cancel,
-            ParametricCallable<ConnectionAction, Boolean> canExecute) {
+            ParametricRunnable.Basic<ConnectionAction> action,
+            ParametricRunnable.Basic<ConnectionAction> cancel,
+            ParametricCallable.Basic<ConnectionAction, Boolean> canExecute) {
 
         new ConnectionAction(description, interactive, connectionProvider) {
             @Override

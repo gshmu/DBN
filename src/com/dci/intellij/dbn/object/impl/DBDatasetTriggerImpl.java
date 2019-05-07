@@ -6,14 +6,11 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
-import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBTriggerMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.DBDatasetTrigger;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBObject;
-import com.dci.intellij.dbn.object.common.loader.DBSourceCodeLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -23,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrigger {
@@ -96,18 +92,6 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
     /*********************************************************
      *                         Loaders                       *
      *********************************************************/
-    private class SourceCodeLoader extends DBSourceCodeLoader {
-        protected SourceCodeLoader(DBObject object) {
-            super(object, false);
-        }
-
-        @Override
-        public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadDatasetTriggerSourceCode(getDataset().getSchema().getName(), getDataset().getName(), getSchema().getName(), getName(), connection);
-        }
-    }
 
     @Override
     public void executeUpdateDDL(DBContentType contentType, String oldCode, String newCode) throws SQLException {
@@ -121,11 +105,5 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
         } finally {
             connectionHandler.freePoolConnection(connection);
         }
-    }
-
-    @Override
-    public String loadCodeFromDatabase(DBContentType contentType) throws SQLException {
-        SourceCodeLoader sourceCodeLoader = new SourceCodeLoader(this);
-        return sourceCodeLoader.load();
     }
 }

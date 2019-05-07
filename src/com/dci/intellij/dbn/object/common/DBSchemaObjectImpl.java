@@ -3,12 +3,10 @@ package com.dci.intellij.dbn.object.common;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
-import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
-import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBObjectDependencyMetadata;
@@ -19,7 +17,6 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
-import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
@@ -30,7 +27,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -98,25 +94,6 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
     @Override
     protected List<DBObjectNavigationList> createNavigationLists() {
         return new ArrayList<>();
-    }
-
-    @Override
-    @NotNull
-    public ChangeTimestamp loadChangeTimestamp(DBContentType contentType) throws SQLException {
-        if (DatabaseFeature.OBJECT_CHANGE_TRACING.isSupported(this)) {
-            Timestamp timestamp = getTimestampLoader(contentType).load(this);
-            return new ChangeTimestamp(timestamp == null ? new Timestamp(System.currentTimeMillis()) : timestamp);
-        }
-        return new ChangeTimestamp(new Timestamp(System.currentTimeMillis()));
-    }
-
-    public DBObjectTimestampLoader getTimestampLoader(DBContentType contentType) {
-        return new DBObjectTimestampLoader(getTypeName().toUpperCase());
-    }
-
-    @Override
-    public String loadCodeFromDatabase(DBContentType contentType) throws SQLException {
-        return null;
     }
 
     @Override

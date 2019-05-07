@@ -265,7 +265,11 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         }
     }
 
-    public void createCmdLineInterface(@NotNull DatabaseType databaseType, @Nullable Set<String> bannedNames, ParametricRunnable<CmdLineInterface> callback) {
+    public void createCmdLineInterface(
+            @NotNull DatabaseType databaseType,
+            @Nullable Set<String> bannedNames,
+            @NotNull ParametricRunnable<CmdLineInterface, RuntimeException> callback) {
+
         boolean updateSettings = false;
         VirtualFile virtualFile = selectCmdLineExecutable(databaseType, null);
         if (virtualFile != null) {

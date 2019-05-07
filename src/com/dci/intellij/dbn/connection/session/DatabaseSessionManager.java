@@ -40,17 +40,27 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
         return Failsafe.getComponent(project, DatabaseSessionManager.class);
     }
 
-    public void showCreateSessionDialog(ConnectionHandler connectionHandler, @Nullable ParametricRunnable<DatabaseSession> callback) {
+    public void showCreateSessionDialog(
+            @NotNull ConnectionHandler connectionHandler,
+            @Nullable ParametricRunnable.Basic<DatabaseSession> callback) {
+
         showCreateRenameSessionDialog(connectionHandler, null, callback);
     }
 
-    public void showRenameSessionDialog(@NotNull DatabaseSession session, @Nullable ParametricRunnable<DatabaseSession> callback) {
+    public void showRenameSessionDialog(
+            @NotNull DatabaseSession session,
+            @Nullable ParametricRunnable.Basic<DatabaseSession> callback) {
+
         showCreateRenameSessionDialog(session.getConnectionHandler(), session, callback);
     }
 
 
-    private void showCreateRenameSessionDialog(ConnectionHandler connectionHandler, DatabaseSession session, @Nullable ParametricRunnable<DatabaseSession> callback) {
-        Dispatch.invokeNonModal(() -> {
+    private void showCreateRenameSessionDialog(
+            @NotNull ConnectionHandler connectionHandler,
+            @Nullable DatabaseSession session,
+            @Nullable ParametricRunnable.Basic<DatabaseSession> callback) {
+
+        Dispatch.invoke(() -> {
             CreateRenameSessionDialog dialog = session == null ?
                     new CreateRenameSessionDialog(connectionHandler) :
                     new CreateRenameSessionDialog(connectionHandler, session);

@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBFunctionMetadata;
@@ -21,11 +20,8 @@ import com.dci.intellij.dbn.object.DBPackageFunction;
 import com.dci.intellij.dbn.object.DBPackageProcedure;
 import com.dci.intellij.dbn.object.DBPackageType;
 import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
-import com.dci.intellij.dbn.object.common.loader.DBObjectTimestampLoader;
-import com.dci.intellij.dbn.object.common.loader.DBSourceCodeLoader;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
@@ -202,61 +198,9 @@ public class DBPackageImpl
         };
     }
 
-
-
-
-    private class SpecSourceCodeLoader extends DBSourceCodeLoader {
-        SpecSourceCodeLoader(DBObject object) {
-            super(object, false);
-        }
-
-        @Override
-        public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadObjectSourceCode(
-                    getSchema().getName(), getName(), "PACKAGE", connection);
-        }
-    }
-
-    private class BodySourceCodeLoader extends DBSourceCodeLoader {
-        BodySourceCodeLoader(DBObject object) {
-            super(object, true);
-        }
-
-        @Override
-        public ResultSet loadSourceCode(DBNConnection connection) throws SQLException {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-            return metadataInterface.loadObjectSourceCode(getSchema().getName(), getName(), "PACKAGE BODY",connection);
-        }
-    }
-
-    private static DBObjectTimestampLoader SPEC_TIMESTAMP_LOADER = new DBObjectTimestampLoader("PACKAGE") {};
-    private static DBObjectTimestampLoader BODY_TIMESTAMP_LOADER = new DBObjectTimestampLoader("PACKAGE BODY") {};
-
-   /*********************************************************
-     *                   DBEditableObject                    *
-     *********************************************************/
-    @Override
-    public String loadCodeFromDatabase(DBContentType contentType) throws SQLException {
-       DBSourceCodeLoader loader =
-               contentType == DBContentType.CODE_SPEC ? new SpecSourceCodeLoader(this) :
-               contentType == DBContentType.CODE_BODY ? new BodySourceCodeLoader(this) : null;
-
-       return loader == null ? null : loader.load();
-
-    }
-
     @Override
     public String getCodeParseRootId(DBContentType contentType) {
         return contentType == DBContentType.CODE_SPEC ? "package_spec" :
                contentType == DBContentType.CODE_BODY ? "package_body" : null;
-    }
-
-    @Override
-    public DBObjectTimestampLoader getTimestampLoader(DBContentType contentType) {
-        return contentType == DBContentType.CODE_SPEC ? SPEC_TIMESTAMP_LOADER :
-               contentType == DBContentType.CODE_BODY ? BODY_TIMESTAMP_LOADER : null;
     }
 }
