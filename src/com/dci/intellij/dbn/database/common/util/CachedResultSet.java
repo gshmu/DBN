@@ -87,7 +87,7 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
     });
 
     private CachedResultSet(@Nullable ResultSet resultSet, @Nullable ResultSetCondition condition) throws SQLException {
-        if (resultSet != null) {
+        if (resultSet != null && !resultSet.isClosed()) {
             try {
                 if (resultSet instanceof CachedResultSet) {
                     CachedResultSet cachedResultSet = (CachedResultSet) resultSet;

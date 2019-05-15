@@ -64,7 +64,7 @@ public class StatementDefinition {
         for (int i = 0; i < placeholderIndexes.length; i++) {
             Integer argumentIndex = placeholderIndexes[i];
             Object argumentValue = arguments[argumentIndex];
-            preparedStatement.setObject(i + 1, argumentValue);
+                preparedStatement.setObject(i + 1, argumentValue);
         }
         return preparedStatement;
     }

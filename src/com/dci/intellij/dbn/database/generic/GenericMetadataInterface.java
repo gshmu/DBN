@@ -297,7 +297,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     @Override
-    public ResultSet loadMethodArguments(String ownerName, String methodName, DBMethodType methodType, int overload, DBNConnection connection) throws SQLException {
+    public ResultSet loadMethodArguments(String ownerName, String methodName, String methodType, int overload, DBNConnection connection) throws SQLException {
         CachedResultSet functionArgumentsRs = loadFunctionArgumentsRaw(ownerName, methodName, connection);
         CachedResultSet procedureArgumentsRs = loadProcedureArgumentsRaw(ownerName, methodName, connection);
         procedureArgumentsRs = procedureArgumentsRs.filter(Condition.notIn(functionArgumentsRs, METHOD_ARGUMENT_IDENTIFIER));

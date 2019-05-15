@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.database;
 
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
-import com.dci.intellij.dbn.object.type.DBMethodType;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
@@ -521,7 +520,7 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
      *  <li> SEQUENCE (number)
      *  <li> IN_OUT ('IN', 'OUT', 'IN/OUT')
      */
-    ResultSet loadMethodArguments(String ownerName, String methodName, DBMethodType methodType, int overload, DBNConnection connection) throws SQLException;
+    ResultSet loadMethodArguments(String ownerName, String methodName, String methodType, int overload, DBNConnection connection) throws SQLException;
 
     /**
      * Loads all arguments for a given program method (function or procedure of a package or type).<br>
