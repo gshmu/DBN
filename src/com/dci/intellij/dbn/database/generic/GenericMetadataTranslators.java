@@ -450,7 +450,7 @@ public interface GenericMetadataTranslators {
         @Override
         public int getInt(String columnLabel) throws SQLException {
             switch (columnLabel) {
-                case "OVERLOAD": return 0;
+                case "OVERLOAD": return inner.getInt("METHOD_OVERLOAD");
                 case "POSITION": return 0;
                 default: return 0;
             }
@@ -513,8 +513,8 @@ public interface GenericMetadataTranslators {
         @Override
         public int getInt(String columnLabel) throws SQLException {
             switch (columnLabel) {
-                case "OVERLOAD":       return 0;
                 case "SEQUENCE":       return 0;
+                case "OVERLOAD":       return inner.getInt("METHOD_OVERLOAD");
                 case "POSITION":       return inner.getInt("ORDINAL_POSITION");
                 default:            return super.getInt(columnLabel);
             }
