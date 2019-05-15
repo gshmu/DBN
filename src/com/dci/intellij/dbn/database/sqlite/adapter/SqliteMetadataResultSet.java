@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.database.sqlite.adapter;
 
 import com.dci.intellij.dbn.common.cache.Cache;
+import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.common.util.ResultSetStub;
 
@@ -8,7 +9,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SqliteMetadataResultSet<T extends SqliteMetadataResultSetRow> extends ResultSetStub {
+@Deprecated // replace with com.dci.intellij.dbn.database.common.util.CachedResultSet
+public class SqliteMetadataResultSet<T extends SqliteMetadataResultSetRow>
+        extends DisposableBase
+        implements ResultSetStub {
+
     private List<T> rows = new ArrayList<T>();
     private int cursor = -1;
 

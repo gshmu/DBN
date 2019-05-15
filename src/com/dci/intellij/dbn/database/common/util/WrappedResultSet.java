@@ -28,10 +28,10 @@ import java.util.Map;
 /**
  * Basic ResultSet wrapper, delegating functionality to an inner ResultSet
  */
-public abstract class WrappedResultSet implements ResultSet {
-    protected ResultSet inner;
+public abstract class WrappedResultSet<T extends ResultSet> implements ResultSet {
+    protected T inner;
 
-    protected WrappedResultSet(@Nullable ResultSet inner) {
+    protected WrappedResultSet(@Nullable T inner) {
         this.inner = inner;
     }
 

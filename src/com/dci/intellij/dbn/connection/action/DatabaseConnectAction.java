@@ -5,13 +5,14 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DatabaseConnectAction extends AbstractConnectionAction {
     DatabaseConnectAction(ConnectionHandler connectionHandler) {
         super("Connect", "Connect to " + connectionHandler.getName(), null, connectionHandler);
-        getTemplatePresentation().setEnabled(!connectionHandler.getConnectionStatus().isConnected());
     }
 
     @Override
@@ -20,6 +21,11 @@ public class DatabaseConnectAction extends AbstractConnectionAction {
 
         ConnectionAction.invoke("", true, connectionHandler,
                 (action) -> ConnectionManager.testConnection(connectionHandler, null, SessionId.MAIN, false, true));
+    }
+
+    @Override
+    protected void update(@NotNull AnActionEvent e, @NotNull Presentation presentation, @NotNull Project project, @Nullable ConnectionHandler target) {
+        presentation.setEnabled(target != null && !target.getConnectionStatus().isConnected());
     }
 
 }
