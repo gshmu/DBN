@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,12 +24,11 @@ import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 public class CachedResultSet extends DisposableBase implements ResultSetStub {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private static final CachedResultSetRow[] EMPTY_ROWS = new CachedResultSetRow[0];
-    private CachedResultSetRow[] rows = EMPTY_ROWS;
+    private List<CachedResultSetRow> rows = new ArrayList<>();
     private List<String> columnNames;
 
     public static final CachedResultSet EMPTY = new CachedResultSet(
-            EMPTY_ROWS,
+            Collections.emptyList(),
             Collections.emptyList()){
         @Override
         public CachedResultSet open() {
@@ -44,12 +42,12 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
     };
 
     private MapLatent<Condition, CachedResultSet> filtered = MapLatent.create(condition -> {
-        if (rows.length == 0) {
+        if (rows.isEmpty()) {
             return this;
         } else {
             List<CachedResultSetRow> filteredRows = new ArrayList<>();
-            for (int i = 0; i < rows.length; i++) {
-                CachedResultSetRow element = rows[i];
+            for (int i = 0; i < rows.size(); i++) {
+                CachedResultSetRow element = rows.get(i);
                 try {
                     if (condition.evaluate(element)) {
                         filteredRows.add(element);
@@ -62,18 +60,17 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
         }
     });
 
-    private MapLatent<Columns, CachedResultSet> grouped = MapLatent.create(groupBy -> {
-        if (rows.length == 0) {
+    private MapLatent<Columns, CachedResultSet> grouped = MapLatent.create(columns -> {
+        if (rows.isEmpty()) {
             return this;
         } else {
             List<CachedResultSetRow> groupedRows = new ArrayList<>();
             try {
-                String[] columnNames = groupBy.names();
 
                 for (CachedResultSetRow row : rows) {
-                    CachedResultSetRow matchingRow = find(groupedRows, row, columnNames);
+                    CachedResultSetRow matchingRow = find(groupedRows, row, columns);
                     if (matchingRow == null) {
-                        groupedRows.add(row.clone(columnNames));
+                        groupedRows.add(row.clone(columns));
                     } else {
                         // TODO ignore or pivot the rest of columns?
                     }
@@ -98,7 +95,7 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
                     this.columnNames = columnNames.stream().map(s -> s.toUpperCase().trim()).collect(Collectors.toList());
                 }
 
-                this.rows = array(load(resultSet, condition));
+                load(resultSet, condition);
             } finally {
                 ResourceUtil.close(resultSet);
             }
@@ -106,28 +103,17 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
     }
 
     private CachedResultSet(@NotNull CachedResultSet resultSet, @NotNull Condition condition) throws SQLException {
-        List<CachedResultSetRow> rows = new ArrayList<>();
         for (CachedResultSetRow row : resultSet.rows) {
             if (condition.evaluate(row)) {
                 rows.add(row);
             }
         }
-        this.rows = array(rows);
     }
 
     /**
      * Internal constructor for clone on iteration
      */
     private CachedResultSet(List<CachedResultSetRow> rows, List<String> columnNames) {
-        this(array(rows), columnNames);
-    }
-
-    @NotNull
-    private static CachedResultSetRow[] array(List<CachedResultSetRow> rows) {
-        return rows.toArray(new CachedResultSetRow[0]);
-    }
-
-    private CachedResultSet(CachedResultSetRow[] rows, List<String> columnNames) {
         this.rows = rows;
         this.columnNames = columnNames;
     }
@@ -136,18 +122,15 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
      * Load and cache the result set passed in as parameter
      * @param resultSet the result set to cache
      * @param condition the condition to filter out records from original result set
-     * @return a list of {@link CachedResultSetRow}
      * @throws SQLException propagated from original result set evaluations
      */
-    private List<CachedResultSetRow> load(@NotNull ResultSet resultSet, @Nullable ResultSetCondition condition) throws SQLException {
-        List<CachedResultSetRow> rows = new ArrayList<>();
+    private void load(@NotNull ResultSet resultSet, @Nullable ResultSetCondition condition) throws SQLException {
         ResultSetUtil.forEachRow(resultSet, () -> {
             if (condition == null || condition.evaluate(resultSet)) {
                 CachedResultSetRow row = CachedResultSetRow.create(this, resultSet);
                 rows.add(row);
             }
         });
-        return rows;
     }
 
     public static <T> CachedResultSet create(@Nullable ResultSet resultSet) throws SQLException {
@@ -166,12 +149,16 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
         return columnNames.indexOf(columnLabel);
     }
 
-    public CachedResultSetRow[] rows() {
+    public List<CachedResultSetRow> rows() {
         return rows;
     }
 
+    public CachedResultSetRow rowAt(int index) {
+        return rows.get(index);
+    }
+
     public boolean isEmpty() {
-        return rows.length == 0;
+        return rows.isEmpty();
     }
     /**
      * Current row at cursor
@@ -212,15 +199,55 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
         return this;
     }
 
+    public CachedResultSet enrich(String columnName, ColumnValue value) throws SQLException {
+        columnNames.add(columnName);
+        for (int i = 0; i < rows.size(); i++) {
+            CachedResultSetRow row = rows.get(i);
+            row.extend(value.resolve(this, i));
+        }
+        return this;
+    }
+
     @Nullable
     public CachedResultSetRow first(@NotNull Condition whereCondition) throws SQLException {
-        for (int i = 0; i < rows.length; i++) {
-            CachedResultSetRow row = rows[i];
+        return next(whereCondition, 0);
+    }
+
+    /**
+     * Next row from index (inclusive) matching the condition
+     */
+    public CachedResultSetRow next(@NotNull Condition whereCondition, int fromIndex) throws SQLException {
+        for (int i = fromIndex; i < rows.size(); i++) {
+            CachedResultSetRow row = rows.get(i);
             if (whereCondition.evaluate(row)) {
                 return row;
             }
         }
         return null;
+    }
+
+    /**
+     * Previous row from index (non-inclusive) matching the condition
+     */
+    public CachedResultSetRow previous(@NotNull Condition whereCondition, int fromIndex) throws SQLException {
+        for (int i = fromIndex-1; i >= 0; i--) {
+            CachedResultSetRow row = rows.get(i);
+            if (whereCondition.evaluate(row)) {
+                return row;
+            }
+        }
+        return null;
+    }
+
+    public int count(@NotNull Condition whereCondition) throws SQLException {
+        int count = 0;
+        for (int i = 0; i < rows.size(); i++) {
+            CachedResultSetRow row = rows.get(i);
+            if (whereCondition.evaluate(row)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     public boolean exists(@NotNull Condition whereCondition) throws SQLException {
@@ -230,8 +257,8 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
     @NotNull
     public <T> List<T> list(String columnName, Class<T> columnType) {
         List<T> list = new ArrayList<>();
-        for (int i = 0; i < rows.length; i++) {
-            CachedResultSetRow row = rows[i];
+        for (int i = 0; i < rows.size(); i++) {
+            CachedResultSetRow row = rows.get(i);
             Object columnValue = row.get(columnName);
             T castedValue = Data.cast(columnValue, columnType);
             list.add(castedValue);
@@ -241,8 +268,8 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
     }
 
     @NotNull
-    private CachedResultSet open(CachedResultSetRow[] rows) {
-        if (rows == null || rows.length == 0) {
+    private CachedResultSet open(List<CachedResultSetRow> rows) {
+        if (rows == null || rows.isEmpty()) {
             return EMPTY;
         } else {
             return new CachedResultSet(rows, columnNames) {
@@ -250,16 +277,16 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
 
                 @Override
                 public boolean next() {
-                    if (cursor == rows.length) {
+                    if (cursor == rows.size()) {
                         throw new IllegalStateException("Result set exhausted. Call open() again");
                     }
                     cursor++;
-                    return cursor < rows.length;
+                    return cursor < rows.size();
                 }
 
                 @Override
                 protected CachedResultSetRow current() {
-                    return rows[cursor];
+                    return rows.get(cursor);
                 }
             };
         }
@@ -273,8 +300,8 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
             return this;
 
         } else {
-            List<CachedResultSetRow> newRows = new ArrayList<>(Arrays.asList(rows));
-            newRows.addAll(Arrays.asList(resultSet.rows));
+            List<CachedResultSetRow> newRows = new ArrayList<>(rows);
+            newRows.addAll(resultSet.rows);
             return new CachedResultSet(newRows, columnNames);
         }
     }
@@ -288,17 +315,17 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
     }
 
     public CachedResultSet groupBy(@NotNull Columns groupByClause) throws SQLException {
-        if (rows.length == 0) {
+        if (rows.isEmpty()) {
             return this ;
         } else {
             return grouped.get(groupByClause);
         }
     }
 
-    private static CachedResultSetRow find(List<CachedResultSetRow> list, CachedResultSetRow match, String[] columnNames) {
+    private static CachedResultSetRow find(List<CachedResultSetRow> list, CachedResultSetRow match, Columns columns) {
         for (int i = 0; i < list.size(); i++) {
             CachedResultSetRow row = list.get(i);
-            if (row.matches(match, columnNames)) {
+            if (row.matches(match, columns)) {
                 return row;
             }
         }
@@ -311,13 +338,18 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
 
         static Condition in(CachedResultSet source, Columns matchColumns) {
             return row -> source.exists(sourceRow ->
-                    sourceRow.matches(row, matchColumns.names()));
+                    sourceRow.matches(row, matchColumns));
         }
 
         static Condition notIn(CachedResultSet source, Columns matchColumns) {
             return row -> !source.exists(sourceRow ->
-                    sourceRow.matches(row, matchColumns.names()));
+                    sourceRow.matches(row, matchColumns));
         }
+    }
+
+    @FunctionalInterface
+    public interface ColumnValue {
+        Object resolve(CachedResultSet resultSet, int index) throws SQLException;
     }
 
     @FunctionalInterface
