@@ -41,15 +41,15 @@ public interface DatabaseInterface {
     }
 
     static Cache cache() {
-        return connectionHandler().getMetaDataCache();
+        return getConnectionHandler().getMetaDataCache();
     }
 
     @NotNull
-    static ConnectionHandler connectionHandler() {
+    static ConnectionHandler getConnectionHandler() {
         return Failsafe.nd(CONNECTION_HANDLER.get());
     }
 
-    default <T, E extends Throwable> T cached(String key, ThrowableCallable<T, E> loader) throws E{
+    static <T, E extends Throwable> T cached(String key, ThrowableCallable<T, E> loader) throws E{
         return cache().get(key, loader);
     }
 

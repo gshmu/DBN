@@ -16,6 +16,10 @@ public class MultipartResultSet extends WrappedResultSet {
         add(resultSets);
     }
 
+    public static MultipartResultSet create(ResultSet ... resultSets) {
+        return new MultipartResultSet(resultSets);
+    }
+
     public MultipartResultSet add(@Nullable ResultSet ... resultSets) {
         if (resultSets != null) {
             for (ResultSet resultSet : resultSets) {

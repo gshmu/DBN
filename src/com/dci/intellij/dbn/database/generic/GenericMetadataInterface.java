@@ -1,28 +1,31 @@
 package com.dci.intellij.dbn.database.generic;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
-import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.JdbcProperty;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 import com.dci.intellij.dbn.database.common.util.CachedResultSet;
+import com.dci.intellij.dbn.database.common.util.CachedResultSet.Columns;
 import com.dci.intellij.dbn.database.common.util.MultipartResultSet;
+import com.dci.intellij.dbn.database.common.util.ResultSetCondition;
 import com.dci.intellij.dbn.object.type.DBMethodType;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import static com.dci.intellij.dbn.database.common.util.CachedResultSet.Condition;
+import static com.dci.intellij.dbn.database.generic.GenericMetadataLoaders.*;
 import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.*;
+import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.MetadataSource.FUNCTIONS;
+import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.MetadataSource.PROCEDURES;
 
 
 public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
@@ -30,15 +33,13 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     // TODO review (ORACLE behavior - package methods come back with FUNCTION_CAT / PROCEDURE_CAT as package name)
     //  filtering them out for now
-    private static final CachedResultSet.Condition FUNCTION_CAT_IS_NULL = row ->
-            row.get("FUNCTION_CAT") == null ||
-                    is(JdbcProperty.CATALOG_AS_OWNER);
 
-    private static final CachedResultSet.Condition PROCEDURE_CAT_IS_NULL = row ->
-            row.get("PROCEDURE_CAT") == null ||
-                    is(JdbcProperty.CATALOG_AS_OWNER);
+    private static final ResultSetCondition IS_FUNCTION = rs -> "FUNCTION".equals(resolveMethodType(rs, FUNCTIONS));
+    private static final ResultSetCondition IS_FUNCTION_P = rs -> "FUNCTION".equals(resolveMethodType(rs, PROCEDURES));
+    private static final ResultSetCondition IS_PROCEDURE = rs -> "PROCEDURE".equals(resolveMethodType(rs, PROCEDURES));
+    private static final ResultSetCondition IS_PROCEDURE_F = rs -> "PROCEDURE".equals(resolveMethodType(rs, FUNCTIONS));
 
-    private static final CachedResultSet.GroupBy GROUP_BY_IDX_IDENTIFIER = () -> new String[]{
+    private static final Columns IDX_IDENTIFIER = () -> new String[]{
             "TABLE_CAT",
             "TABLE_SCHEM",
             "TABLE_NAME",
@@ -47,13 +48,13 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
             "INDEX_NAME",
             "TYPE"};
 
-    private static final CachedResultSet.GroupBy GROUP_BY_PK_IDENTIFIER = () -> new String[]{
+    private static final Columns PK_IDENTIFIER = () -> new String[]{
             "TABLE_CAT",
             "TABLE_SCHEM",
             "TABLE_NAME",
             "PK_NAME"};
 
-    private static final CachedResultSet.GroupBy GROUP_BY_FK_IDENTIFIER = () -> new String[]{
+    private static final Columns FK_IDENTIFIER = () -> new String[]{
             "PKTABLE_CAT",
             "PKTABLE_SCHEM",
             "PKTABLE_NAME",
@@ -62,6 +63,19 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
             "FKTABLE_NAME",
             "FK_NAME",
             "PK_NAME"};
+
+    private static final Columns METHOD_IDENTIFIER = () -> new String[]{
+            "METHOD_CAT",
+            "METHOD_SCHEM",
+            "METHOD_NAME",
+            "METHOD_NAME"};
+
+    private static final Columns METHOD_ARGUMENT_IDENTIFIER = () -> new String[]{
+            "METHOD_CAT",
+            "METHOD_SCHEM",
+            "METHOD_NAME",
+            "METHOD_NAME",
+            "COLUMN_NAME"};
 
     GenericMetadataInterface(DatabaseInterfaceProvider provider) {
         super("generic_metadata_interface.xml", provider);
@@ -88,8 +102,9 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     public ResultSet loadSchemas(DBNConnection connection) throws SQLException {
         CachedResultSet schemasRs = loadSchemasRaw(connection).open();
         if (schemasRs.isEmpty()) {
-            schemasRs = loadCatalogsRaw(connection).open();
-            compatibility().set(JdbcProperty.CATALOG_AS_OWNER, !schemasRs.isEmpty());
+            CachedResultSet catalogsRs = loadCatalogsRaw(connection).open();
+            getCompatibility().set(JdbcProperty.CATALOG_AS_OWNER, !catalogsRs.isEmpty());
+            schemasRs = catalogsRs;
         }
 
         return new SchemasResultSet(schemasRs) {
@@ -109,58 +124,56 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadTables(String ownerName, DBNConnection connection) throws SQLException {
-        ResultSet tablesRs = loadTablesRaw(ownerName, connection).open();
+        CachedResultSet tablesRs = loadTablesRaw(ownerName, connection).open();
         return new TablesResultSet(tablesRs);
     }
 
     @Override
     public ResultSet loadViews(String ownerName, DBNConnection connection) throws SQLException {
-        ResultSet viewsRs = loadViewsRaw(ownerName, connection).open();
+        CachedResultSet viewsRs = loadViewsRaw(ownerName, connection).open();
         return new ViewsResultSet(viewsRs);
     }
 
     @Override
     public ResultSet loadColumns(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
-        ResultSet columnsRs = loadColumnsRaw(ownerName, datasetName, connection).open();
-        ResultSet pseudoColumnsRs = loadPseudoColumnsRaw(ownerName, datasetName, connection).open();
+        CachedResultSet columnsRs = loadColumnsRaw(ownerName, datasetName, connection).open();
+        CachedResultSet pseudoColumnsRs = loadPseudoColumnsRaw(ownerName, datasetName, connection).open();
 
-        columnsRs = newColumnsResultSet(columnsRs, connection);
-        pseudoColumnsRs = newColumnsResultSet(pseudoColumnsRs, connection);
-
-        return new MultipartResultSet(columnsRs, pseudoColumnsRs);
+        return MultipartResultSet.create(
+                createColumnsResultSet(columnsRs, connection),
+                createColumnsResultSet(pseudoColumnsRs, connection));
     }
 
     @Override
     public ResultSet loadAllColumns(String ownerName, DBNConnection connection) throws SQLException {
-        ResultSet columnsRs = loadAllColumnsRaw(ownerName, connection).open();
-        ResultSet pseudoColumnsRs = loadAllPseudoColumnsRaw(ownerName, connection).open();
+        CachedResultSet columnsRs = loadAllColumnsRaw(ownerName, connection).open();
+        CachedResultSet pseudoColumnsRs = loadAllPseudoColumnsRaw(ownerName, connection).open();
 
-        columnsRs = newColumnsResultSet(columnsRs, connection);
-        pseudoColumnsRs = newColumnsResultSet(pseudoColumnsRs, connection);
-
-        return new MultipartResultSet(columnsRs, pseudoColumnsRs);
+        return MultipartResultSet.create(
+                createColumnsResultSet(columnsRs, connection),
+                createColumnsResultSet(pseudoColumnsRs, connection));
     }
 
     @NotNull
-    private ColumnsResultSet newColumnsResultSet(ResultSet columnsRs, DBNConnection connection) {
+    private static ColumnsResultSet createColumnsResultSet(CachedResultSet columnsRs, DBNConnection connection) {
         return new ColumnsResultSet(columnsRs) {
             @Override
             protected boolean isPrimaryKey(String ownerName, String datasetName, String columnName) throws SQLException {
                 CachedResultSet primaryKeysRs = loadPrimaryKeysRaw(ownerName, datasetName, connection);
                 return primaryKeysRs.exists(row ->
                         row.get("PK_NAME") != null &&
-                        CommonUtil.safeEqual(owner(row, "TABLE_CAT", "TABLE_SCHEM"), ownerName) &&
-                        CommonUtil.safeEqual(row.get("TABLE_NAME"), datasetName) &&
-                        CommonUtil.safeEqual(row.get("COLUMN_NAME"), columnName));
+                        match(ownerName,   resolveOwner(row, "TABLE_CAT", "TABLE_SCHEM")) &&
+                        match(datasetName, row.get("TABLE_NAME")) &&
+                        match(columnName,  row.get("COLUMN_NAME")));
             }
 
             @Override
             protected boolean isForeignKey(String ownerName, String datasetName, String columnName) throws SQLException {
                 CachedResultSet foreignKeysRs = loadForeignKeysRaw(ownerName, datasetName, connection);
                 return foreignKeysRs.exists(row ->
-                        CommonUtil.safeEqual(owner(row, "FKTABLE_CAT", "FKTABLE_SCHEM"), ownerName) &&
-                        CommonUtil.safeEqual(row.get("FKTABLE_NAME"), datasetName) &&
-                        CommonUtil.safeEqual(row.get("FKCOLUMN_NAME"), columnName));
+                        match(ownerName,   resolveOwner(row, "FKTABLE_CAT", "FKTABLE_SCHEM")) &&
+                        match(datasetName, row.get("FKTABLE_NAME")) &&
+                        match(columnName,  row.get("FKCOLUMN_NAME")));
             }
 
             @Override
@@ -168,9 +181,9 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                 CachedResultSet primaryKeysRs = loadPrimaryKeysRaw(ownerName, datasetName, connection);
                 return primaryKeysRs.exists(row ->
                         row.get("PK_NAME") == null &&
-                                CommonUtil.safeEqual(owner(row, "TABLE_CAT", "TABLE_SCHEM"), ownerName) &&
-                                CommonUtil.safeEqual(row.get("TABLE_NAME"), datasetName) &&
-                                CommonUtil.safeEqual(row.get("COLUMN_NAME"), columnName));
+                                match(ownerName,   resolveOwner(row, "TABLE_CAT", "TABLE_SCHEM")) &&
+                                match(datasetName, row.get("TABLE_NAME")) &&
+                                match(columnName,  row.get("COLUMN_NAME")));
             }
         };
     }
@@ -178,8 +191,8 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadIndexes(String ownerName, String tableName, DBNConnection connection) throws SQLException {
-        ResultSet indexesRs = loadIndexesRaw(ownerName, tableName, connection).groupBy(GROUP_BY_IDX_IDENTIFIER);
-        return new IndexesResultSet(indexesRs);
+        CachedResultSet indexesRs = loadIndexesRaw(ownerName, tableName, connection).groupBy(IDX_IDENTIFIER);
+        return new IndexesResultSet(indexesRs.open());
     }
 
     @Override
@@ -197,7 +210,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadIndexRelations(String ownerName, String tableName, DBNConnection connection) throws SQLException {
-        ResultSet indexesRs = loadIndexesRaw(ownerName, tableName, connection).open();
+        CachedResultSet indexesRs = loadIndexesRaw(ownerName, tableName, connection).open();
         return new IndexColumnResultSet(indexesRs);
     }
 
@@ -216,13 +229,12 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadConstraints(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
-        ResultSet primaryKeysRs = loadPrimaryKeysRaw(ownerName, datasetName, connection).groupBy(GROUP_BY_PK_IDENTIFIER);
-        ResultSet foreignKeysRs = loadForeignKeysRaw(ownerName, datasetName, connection).groupBy(GROUP_BY_FK_IDENTIFIER);
+        CachedResultSet primaryKeysRs = loadPrimaryKeysRaw(ownerName, datasetName, connection).groupBy(PK_IDENTIFIER);
+        CachedResultSet foreignKeysRs = loadForeignKeysRaw(ownerName, datasetName, connection).groupBy(FK_IDENTIFIER);
 
-        primaryKeysRs = new PrimaryKeysResultSet(primaryKeysRs);
-        foreignKeysRs = new ForeignKeysResultSet(foreignKeysRs);
-
-        return new MultipartResultSet(primaryKeysRs, foreignKeysRs);
+        return MultipartResultSet.create(
+                new PrimaryKeysResultSet(primaryKeysRs.open()),
+                new ForeignKeysResultSet(foreignKeysRs.open()));
     }
 
 
@@ -240,13 +252,12 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadConstraintRelations(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
-        ResultSet primaryKeysRs = loadPrimaryKeysRaw(ownerName, datasetName, connection).open();
-        ResultSet foreignKeysRs = loadForeignKeysRaw(ownerName, datasetName, connection).open();
+        CachedResultSet primaryKeysRs = loadPrimaryKeysRaw(ownerName, datasetName, connection).open();
+        CachedResultSet foreignKeysRs = loadForeignKeysRaw(ownerName, datasetName, connection).open();
 
-        ResultSet primaryKeyRelationsRs = new PrimaryKeyRelationsResultSet(primaryKeysRs);
-        ResultSet foreignKeyRelationsRs = new ForeignKeyRelationsResultSet(foreignKeysRs);
-
-        return new MultipartResultSet(primaryKeyRelationsRs, foreignKeyRelationsRs);
+        return MultipartResultSet.create(
+                new PrimaryKeyRelationsResultSet(primaryKeysRs),
+                new ForeignKeyRelationsResultSet(foreignKeysRs));
     }
 
     @Override
@@ -264,275 +275,115 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadFunctions(String ownerName, DBNConnection connection) throws SQLException {
-        CachedResultSet functionsRs = loadFunctionsRaw(ownerName, connection).where(FUNCTION_CAT_IS_NULL);
-        return new FunctionsResultSet(functionsRs);
+        CachedResultSet functionsRs = loadMethodsRaw(ownerName, connection, DBMethodType.FUNCTION);
+        return createMethodsResultSet(functionsRs.open(), "FUNCTION");
     }
-
-
 
     @Override
     public ResultSet loadProcedures(String ownerName, DBNConnection connection) throws SQLException {
-        CachedResultSet proceduresRs = loadProceduresRaw(ownerName, connection).where(PROCEDURE_CAT_IS_NULL);
-        return new ProceduresResultSet(proceduresRs);
+        CachedResultSet proceduresRs = loadMethodsRaw(ownerName, connection, DBMethodType.PROCEDURE);
+        return createMethodsResultSet(proceduresRs.open(), "PROCEDURE");
+    }
+
+    @NotNull
+    private MethodsResultSet createMethodsResultSet(CachedResultSet functionsRs, String methodType) {
+        return new MethodsResultSet(functionsRs) {
+
+            @Override
+            public String getMethodType() {
+                return methodType;
+            }
+        };
     }
 
     @Override
     public ResultSet loadMethodArguments(String ownerName, String methodName, DBMethodType methodType, int overload, DBNConnection connection) throws SQLException {
-        if (methodType == DBMethodType.FUNCTION) {
-            CachedResultSet argumentsRs = loadFunctionArgumentsRaw(ownerName, methodName, connection).open();
-            return new FunctionArgumentsResultSet(argumentsRs);
-        }
+        CachedResultSet functionArgumentsRs = loadFunctionArgumentsRaw(ownerName, methodName, connection);
+        CachedResultSet procedureArgumentsRs = loadProcedureArgumentsRaw(ownerName, methodName, connection);
+        procedureArgumentsRs = procedureArgumentsRs.filter(Condition.notIn(functionArgumentsRs, METHOD_ARGUMENT_IDENTIFIER));
 
-        if (methodType == DBMethodType.PROCEDURE) {
-            CachedResultSet argumentsRs = loadProcedureArgumentsRaw(ownerName, methodName, connection).open();
-            return new ProcedureArgumentsResultSet(argumentsRs);
-        }
-
-        return null;
+        CachedResultSet methodArgumentsRs = functionArgumentsRs.unionAll(procedureArgumentsRs);
+        return createArgumentsResultSet(methodArgumentsRs.open(), ownerName, connection);
     }
 
     @Override
     public ResultSet loadAllMethodArguments(String ownerName, DBNConnection connection) throws SQLException {
-        ResultSet functionArgumentsRs = loadAllFunctionArgumentsRaw(ownerName, connection).open();
-        functionArgumentsRs = new FunctionArgumentsResultSet(functionArgumentsRs);
+        CachedResultSet functionArgumentsRs = loadAllFunctionArgumentsRaw(ownerName, connection);
+        CachedResultSet procedureArgumentsRs = loadAllProcedureArgumentsRaw(ownerName, connection);
+        procedureArgumentsRs = procedureArgumentsRs.filter(Condition.notIn(functionArgumentsRs, METHOD_ARGUMENT_IDENTIFIER));
 
-        ResultSet procedureArgumentsRs = loadAllProcedureArgumentsRaw(ownerName, connection).open();
-        procedureArgumentsRs = new ProcedureArgumentsResultSet(procedureArgumentsRs);
-
-        return new MultipartResultSet(functionArgumentsRs, procedureArgumentsRs);
+        CachedResultSet methodArgumentsRs = functionArgumentsRs.unionAll(procedureArgumentsRs);
+        return createArgumentsResultSet(methodArgumentsRs.open(), ownerName, connection);
     }
 
-    /**************************************************************
-     *                     Raw cached meta-data                   *
-     **************************************************************/
-    private CachedResultSet loadCatalogsRaw(DBNConnection connection) throws SQLException {
-        return attemptCached(
-                JdbcProperty.MD_CATALOGS,
-                "CATALOGS",
-                () -> {
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getCatalogs();
-                    return CachedResultSet.create(resultSet);
-                });
-    }
+    @NotNull
+    private static MethodArgumentsResultSet createArgumentsResultSet(CachedResultSet argumentsRs, String ownerName, DBNConnection connection) {
+        return new MethodArgumentsResultSet(argumentsRs) {
+            @Override
+            String getMethodType(String methodName, String methodSpecificName) throws SQLException {
+                CachedResultSet functionsRs = loadMethodsRaw(ownerName, connection, DBMethodType.FUNCTION);
+                boolean isFunction = functionsRs.exists(row ->
+                        match(ownerName, resolveOwner(row, "METHOD_CAT", "METHOD_SCHEM")) &&
+                        match(methodName, row.get("METHOD_NAME")) &&
+                        match(methodSpecificName, row.get("SPECIFIC_NAME")));
+                if (isFunction) {
+                    return "FUNCTION";
+                }
 
-    private CachedResultSet loadSchemasRaw(DBNConnection connection) throws SQLException {
-        return attemptCached(
-                JdbcProperty.MD_SCHEMAS,
-                "SCHEMAS",
-                () -> {
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getSchemas();
-                    return CachedResultSet.create(resultSet);
-                });
-    }
+                CachedResultSet proceduresRs = loadMethodsRaw(ownerName, connection, DBMethodType.PROCEDURE);
+                boolean isProcedure = proceduresRs.exists(row ->
+                        match(ownerName, resolveOwner(row, "METHOD_CAT", "METHOD_SCHEM")) &&
+                        match(methodName, row.get("METHOD_NAME")) &&
+                        match(methodSpecificName, row.get("SPECIFIC_NAME")));
 
-    private CachedResultSet loadTablesRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return attemptCached(
-                JdbcProperty.MD_TABLES,
-                "TABLES." + ownerName,
-                () -> {
-                    String[] owner = lookupOwner(ownerName);
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getTables(owner[0], owner[1], null, new String[]{"TABLE", "SYSTEM TABLE"});
-                    return CachedResultSet.create(resultSet);
-                });
-    }
+                if (isProcedure) {
+                    return "PROCEDURE";
+                }
 
-    private CachedResultSet loadViewsRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return attemptCached(
-                JdbcProperty.MD_VIEWS,
-                "VIEWS." + ownerName,
-                () -> {
-                    String[] owner = lookupOwner(ownerName);
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getTables(owner[0], owner[1], null, new String[]{"VIEW", "SYSTEM VIEW"});
-                    return CachedResultSet.create(resultSet);
-                });
-    }
-
-    private CachedResultSet loadColumnsRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
-        return attemptCached(
-                JdbcProperty.MD_COLUMNS,
-                "COLUMNS." + ownerName + "." + datasetName,
-                () -> {
-                    String[] owner = lookupOwner(ownerName);
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getColumns(owner[0], owner[1], datasetName, null);
-                    return CachedResultSet.create(resultSet);
-                });
-    }
-
-    private CachedResultSet loadPseudoColumnsRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
-        return attemptCached(
-                JdbcProperty.MD_PSEUDO_COLUMNS,
-                "PSEUDO_COLUMNS." + ownerName + "." + datasetName,
-                () -> {
-                    String[] owner = lookupOwner(ownerName);
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getPseudoColumns(owner[0], owner[1], datasetName, null);
-                    return CachedResultSet.create(resultSet);
-                });
-    }
-
-    private CachedResultSet loadAllColumnsRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return attemptCached(
-                JdbcProperty.MD_COLUMNS,
-                "ALL_COLUMNS" + ownerName,
-                () -> {
-                    String[] owner = lookupOwner(ownerName);
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getColumns(owner[0], owner[1], null, null);
-                    return CachedResultSet.create(resultSet);
-                });
-    }
-
-    private CachedResultSet loadAllPseudoColumnsRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return attemptCached(
-                JdbcProperty.MD_PSEUDO_COLUMNS,
-                "ALL_PSEUDO_COLUMNS." + ownerName,
-                () -> {
-                    String[] owner = lookupOwner(ownerName);
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getPseudoColumns(owner[0], owner[1], null, null);
-                    return CachedResultSet.create(resultSet);
-                });
-    }
-
-    private CachedResultSet loadIndexesRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
-        return attemptCached(
-                JdbcProperty.MD_INDEXES,
-                "INDEXES." + ownerName + "." + datasetName,
-                () -> {
-                    String[] owner = lookupOwner(ownerName);
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getIndexInfo(owner[0], owner[1], datasetName, false, true);
-                    return CachedResultSet.create(resultSet);
-                });
-    }
-
-    private CachedResultSet loadPrimaryKeysRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
-        return attemptCached(
-                JdbcProperty.MD_PRIMARY_KEYS,
-                "PRIMARY_KEYS." + ownerName + "." + datasetName,
-                () -> {
-                    String[] owner = lookupOwner(ownerName);
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getPrimaryKeys(owner[0], owner[1], datasetName);
-                    return CachedResultSet.create(resultSet);
-                });
-    }
-
-    private CachedResultSet loadForeignKeysRaw(String ownerName, String datasetName, DBNConnection connection) throws SQLException {
-        return attemptCached(
-                JdbcProperty.MD_IMPORTED_KEYS,
-                "FOREIGN_KEYS." + ownerName + "." + datasetName,
-                () -> {
-                    String[] owner = lookupOwner(ownerName);
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getImportedKeys(owner[0], owner[1], datasetName);
-                    return CachedResultSet.create(resultSet);
-                });
-    }
-
-    private CachedResultSet loadFunctionsRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return attemptCached(
-                JdbcProperty.MD_FUNCTIONS,
-                "FUNCTIONS." + ownerName,
-                () -> {
-                    String[] owner = lookupOwner(ownerName);
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getFunctions(owner[0], owner[1], null);
-                    return CachedResultSet.create(resultSet);
-                });
-    }
-
-    private CachedResultSet loadFunctionArgumentsRaw(String ownerName, String functionName, DBNConnection connection) throws SQLException {
-        return attemptCached(
-                JdbcProperty.MD_FUNCTION_COLUMNS,
-                "FUNCTION_ARGUMENTS." + ownerName + "." + functionName,
-                () -> {
-                    String[] owner = lookupOwner(ownerName);
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getFunctionColumns(owner[0], owner[1], functionName, null);
-                    return CachedResultSet.create(resultSet);
-                });
-    }
-
-    private CachedResultSet loadAllFunctionArgumentsRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return attemptCached(
-                JdbcProperty.MD_FUNCTION_COLUMNS,
-                "ALL_FUNCTION_ARGUMENTS." + ownerName,
-                () -> {
-                    String[] owner = lookupOwner(ownerName);
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getFunctionColumns(owner[0], owner[1], null, null);
-                    return CachedResultSet.create(resultSet);
-                });
-    }
-
-    private CachedResultSet loadProceduresRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return attemptCached(
-                JdbcProperty.MD_PROCEDURES,
-                "PROCEDURES." + ownerName,
-                () -> {
-                    String[] owner = lookupOwner(ownerName);
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getProcedures(owner[0], owner[1], null);
-                    return CachedResultSet.create(resultSet);
-                });
-    }
-
-    private CachedResultSet loadProcedureArgumentsRaw(String ownerName, String procedureName, DBNConnection connection) throws SQLException {
-        return attemptCached(
-                JdbcProperty.MD_PROCEDURE_COLUMNS,
-                "PROCEDURE_ARGUMENTS." + ownerName + "." + procedureName,
-                () -> {
-                    String[] owner = lookupOwner(ownerName);
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getProcedureColumns(owner[0], owner[1], procedureName, null);
-                    return CachedResultSet.create(resultSet);
-                });
-    }
-
-    private CachedResultSet loadAllProcedureArgumentsRaw(String ownerName, DBNConnection connection) throws SQLException {
-        return attemptCached(
-                JdbcProperty.MD_PROCEDURE_COLUMNS,
-                "ALL_PROCEDURE_ARGUMENTS." + ownerName,
-                () -> {
-                    String[] owner = lookupOwner(ownerName);
-                    DatabaseMetaData metaData = connection.getMetaData();
-                    ResultSet resultSet = metaData.getProcedureColumns(owner[0], owner[1], null, null);
-                    return CachedResultSet.create(resultSet);
-                });
+                return null;
+            }
+        };
     }
 
 
-    private CachedResultSet attemptCached(JdbcProperty feature, String key, ThrowableCallable<CachedResultSet, SQLException> loader) throws SQLException{
-        return cached(key, () -> {
-            DatabaseCompatibilityInterface compatibilityInterface = getProvider().getCompatibilityInterface();
-            CachedResultSet resultSet = compatibilityInterface.attempt(feature, loader);
-            return CommonUtil.nvl(resultSet, CachedResultSet.EMPTY);
-        });
+    private static CachedResultSet loadMethodsRaw(String ownerName, DBNConnection connection, DBMethodType type) throws SQLException {
+        switch (type) {
+            case FUNCTION:
+                return DatabaseInterface.cached(
+                        "UNSCRAMBLED_FUNCTIONS." + ownerName,
+                        () -> {
+                            CachedResultSet functionsRs = loadFunctionsRaw(ownerName, connection);
+                            functionsRs = functionsRs.filter(IS_FUNCTION);
+
+                            CachedResultSet proceduresRs = loadProceduresRaw(ownerName, connection);
+                            proceduresRs = proceduresRs.filter(IS_FUNCTION_P);
+                            proceduresRs = proceduresRs.filter(Condition.notIn(functionsRs, METHOD_IDENTIFIER));
+
+                            return functionsRs.unionAll(proceduresRs);
+                        });
+
+            case PROCEDURE:
+                return DatabaseInterface.cached(
+                        "UNSCRAMBLED_PROCEDURES." + ownerName,
+                        () -> {
+                            CachedResultSet proceduresRs = loadProceduresRaw(ownerName, connection);
+                            proceduresRs = proceduresRs.filter(IS_PROCEDURE);
+
+                            CachedResultSet functionsRs = loadFunctionsRaw(ownerName, connection);
+                            functionsRs = functionsRs.filter(IS_PROCEDURE_F);
+                            functionsRs = functionsRs.filter(Condition.notIn(proceduresRs, METHOD_IDENTIFIER));
+
+                            return proceduresRs.unionAll(functionsRs);
+                        });
+        }
+        throw new IllegalArgumentException("Method type " + type + " not supported");
     }
 
-    private String[] lookupOwner(String ownerName) throws SQLException {
-        return cached(
-                "CATALOG_SCHEMA." + ownerName,
-                () -> {
-                    if (is(JdbcProperty.CATALOG_AS_OWNER)) {
-                        return new String[]{ownerName, null};
-                    } else {
-                        return new String[]{null, ownerName};
-                    }
-                });
+    static DatabaseCompatibility getCompatibility() {
+        return DatabaseInterface.getConnectionHandler().getCompatibility();
     }
 
-    static DatabaseCompatibility compatibility() {
-        return DatabaseInterface.connectionHandler().getCompatibility();
-    }
-
-    private static boolean is(JdbcProperty property) {
-        return compatibility().is(property);
+    private static boolean match(Object value1, Object value2) {
+        return CommonUtil.safeEqual(value1, value2);
     }
 }

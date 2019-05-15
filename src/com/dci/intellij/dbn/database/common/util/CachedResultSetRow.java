@@ -81,4 +81,5 @@ public class CachedResultSetRow extends DisposableBase {
     public void disposeInner() {
         resultSet = null;
     }
+
 }
