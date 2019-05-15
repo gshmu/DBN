@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.database.JdbcProperty;
 import com.dci.intellij.dbn.database.common.DatabaseMetadataInterfaceImpl;
 import com.dci.intellij.dbn.database.common.util.CachedResultSet;
 import com.dci.intellij.dbn.database.common.util.CachedResultSet.Columns;
+import com.dci.intellij.dbn.database.common.util.CachedResultSetRow;
 import com.dci.intellij.dbn.database.common.util.MultipartResultSet;
 import com.dci.intellij.dbn.database.common.util.ResultSetCondition;
 import com.dci.intellij.dbn.object.type.DBMethodType;
@@ -68,13 +69,13 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
             "METHOD_CAT",
             "METHOD_SCHEM",
             "METHOD_NAME",
-            "METHOD_NAME"};
+            "SPECIFIC_NAME"};
 
     private static final Columns METHOD_ARGUMENT_IDENTIFIER = () -> new String[]{
             "METHOD_CAT",
             "METHOD_SCHEM",
             "METHOD_NAME",
-            "METHOD_NAME",
+            "SPECIFIC_NAME",
             "COLUMN_NAME"};
 
     GenericMetadataInterface(DatabaseInterfaceProvider provider) {
@@ -359,7 +360,10 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                             proceduresRs = proceduresRs.filter(IS_FUNCTION_P);
                             proceduresRs = proceduresRs.filter(Condition.notIn(functionsRs, METHOD_IDENTIFIER));
 
-                            return functionsRs.unionAll(proceduresRs);
+                            CachedResultSet methodsRs = functionsRs.unionAll(proceduresRs);
+                            methodsRs = methodsRs.enrich("METHOD_OVERLOAD", methodOverloadEnricher());
+
+                            return methodsRs;
                         });
 
             case PROCEDURE:
@@ -373,10 +377,27 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                             functionsRs = functionsRs.filter(IS_PROCEDURE_F);
                             functionsRs = functionsRs.filter(Condition.notIn(proceduresRs, METHOD_IDENTIFIER));
 
-                            return proceduresRs.unionAll(functionsRs);
+                            CachedResultSet methodsRs = proceduresRs.unionAll(functionsRs);
+                            methodsRs = methodsRs.enrich("METHOD_OVERLOAD", methodOverloadEnricher());
+
+                            return methodsRs;
                         });
         }
         throw new IllegalArgumentException("Method type " + type + " not supported");
+    }
+
+    @NotNull
+    private static CachedResultSet.ColumnValue methodOverloadEnricher() {
+        return (resultSet, index) -> {
+            CachedResultSetRow currentRow = resultSet.rowAt(index);
+            int count = resultSet.count(row -> row.matches(currentRow, METHOD_IDENTIFIER));
+            if (count > 0) {
+                CachedResultSetRow previousRow = resultSet.previous(row -> row.matches(currentRow, METHOD_IDENTIFIER), index);
+                int previousOverload = previousRow == null ? 0 : (int) previousRow.get("METHOD_OVERLOAD");
+                return previousOverload + 1;
+            }
+            return 0;
+        };
     }
 
     static DatabaseCompatibility getCompatibility() {

@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.database.common.util.CachedResultSet.Columns;
+
 @Nullifiable
 public class CachedResultSetRow extends DisposableBase {
     private CachedResultSet resultSet;
@@ -42,8 +44,8 @@ public class CachedResultSetRow extends DisposableBase {
     }
 
 
-    public boolean matches(CachedResultSetRow that, String[] columnNames) {
-        for (String columnName : columnNames) {
+    public boolean matches(CachedResultSetRow that, Columns columns) {
+        for (String columnName : columns.names()) {
             Object thisColumnValue = this.get(columnName);
             Object thatColumnValue = that.get(columnName);
             if (!CommonUtil.safeEqual(thisColumnValue, thatColumnValue)) {
@@ -53,8 +55,9 @@ public class CachedResultSetRow extends DisposableBase {
         return true;
     }
 
-    public CachedResultSetRow clone(String[] columnNames) throws SQLException {
+    public CachedResultSetRow clone(Columns columns) throws SQLException {
         CachedResultSetRow clone = new CachedResultSetRow(resultSet, null);
+        String[] columnNames = columns.names();
         for (String columnName : resultSet.columnNames()) {
             if (StringUtil.isOneOf(columnName, columnNames)) {
                 Object columnValue = get(columnName);
@@ -64,6 +67,10 @@ public class CachedResultSetRow extends DisposableBase {
             }
         }
         return clone;
+    }
+
+    public void extend(Object value){
+        columns.add(value);
     }
 
     @Override
