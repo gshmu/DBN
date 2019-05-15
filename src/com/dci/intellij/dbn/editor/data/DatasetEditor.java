@@ -671,4 +671,9 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
         }
         return null;
     }
+
+    @Override
+    public String toString() {
+        return databaseFile == null ? super.toString() : databaseFile.getPath();
+    }
 }

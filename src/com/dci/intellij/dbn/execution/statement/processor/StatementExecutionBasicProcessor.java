@@ -188,7 +188,15 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Nullable
     @Override
     public DBLanguagePsiFile getPsiFile() {
-        return psiFileRef.get();
+        DBLanguagePsiFile psiFile = psiFileRef.get();
+        if (psiFile == null) {
+            ExecutablePsiElement executablePsiElement = cachedExecutableRef.get();
+            if (executablePsiElement != null && executablePsiElement.isValid()) {
+                psiFile = executablePsiElement.getFile();
+                psiFileRef = PsiFileRef.from(psiFile);
+            }
+        }
+        return psiFile;
     }
 
     @Nullable

@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
+import java.sql.SQLRecoverableException;
 import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class ResourceStatusAdapterImpl<T extends Resource> implements ResourceStatusAdapter<T> {
@@ -100,8 +101,10 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
                     set(subject, checkControlled());
                 }
             }
-        } catch (Exception t){
-            LOGGER.warn("Failed to check resource " + subject + " status", t);
+        } catch (SQLRecoverableException e){
+            fail();
+        } catch (Exception e){
+            LOGGER.warn("Failed to check resource " + subject + " status", e);
             fail();
         } finally {
             set(checking, false);

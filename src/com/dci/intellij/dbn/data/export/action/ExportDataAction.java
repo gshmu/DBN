@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class ExportDataAction extends AnAction {
     private ResultSetTable table;
@@ -18,7 +19,7 @@ public class ExportDataAction extends AnAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         ExportDataDialog dialog = new ExportDataDialog(table, dataset);
         dialog.show();
     }

@@ -5,10 +5,10 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.Unsafe;
+import com.dci.intellij.dbn.database.common.util.CachedResultSet;
 import com.dci.intellij.dbn.database.common.util.CachedResultSetRow;
-import com.dci.intellij.dbn.database.common.util.WrappedResultSet;
+import com.dci.intellij.dbn.database.common.util.WrappedCachedResultSet;
 import com.intellij.openapi.diagnostic.Logger;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -18,11 +18,7 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.sql.DatabaseMetaData.functionColumnIn;
-import static java.sql.DatabaseMetaData.functionColumnInOut;
-import static java.sql.DatabaseMetaData.functionColumnOut;
-import static java.sql.DatabaseMetaData.functionColumnResult;
-import static java.sql.DatabaseMetaData.functionReturn;
+import static java.sql.DatabaseMetaData.*;
 
 public interface GenericMetadataTranslators {
     Logger LOGGER = LoggerFactory.createLogger();
@@ -37,20 +33,25 @@ public interface GenericMetadataTranslators {
                         return result;
                     }));
 
+    enum MetadataSource {
+        FUNCTIONS,
+        PROCEDURES
+    }
+
 
     /**
      * Metadata translation for SCHEMAS
      *  - from {@link java.sql.DatabaseMetaData#getSchemas(String, String)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBSchemaMetadataImpl}
      */
-    abstract class SchemasResultSet extends WrappedResultSet {
-        SchemasResultSet(@Nullable ResultSet inner) {
+    abstract class SchemasResultSet extends WrappedCachedResultSet {
+        SchemasResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
 
         @Override
         public String getString(String columnLabel) throws SQLException {
-            String schemaName = owner(inner, "TABLE_CAT", "TABLE_SCHEM");
+            String schemaName = resolveOwner(inner, "TABLE_CAT", "TABLE_SCHEM");
             switch (columnLabel) {
                 case "SCHEMA_NAME": return schemaName;
                 case "IS_PUBLIC": return literalBoolean(false);
@@ -69,10 +70,11 @@ public interface GenericMetadataTranslators {
      *  - from {@link java.sql.DatabaseMetaData#getTables(String, String, String, String[])}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBTableMetadataImpl}
      */
-    class TablesResultSet extends WrappedResultSet {
-        TablesResultSet(@Nullable ResultSet inner) {
+    class TablesResultSet extends WrappedCachedResultSet {
+        TablesResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
+
         @Override
         public String getString(String columnLabel) throws SQLException {
             switch (columnLabel) {
@@ -92,8 +94,8 @@ public interface GenericMetadataTranslators {
      *  - from {@link java.sql.DatabaseMetaData#getTables(String, String, String, String[])}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBViewMetadataImpl}
      */
-    class ViewsResultSet extends WrappedResultSet {
-        ViewsResultSet(@Nullable ResultSet inner) {
+    class ViewsResultSet extends WrappedCachedResultSet {
+        ViewsResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
 
@@ -123,8 +125,8 @@ public interface GenericMetadataTranslators {
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBDataTypeMetadataImpl}
      */
 
-    abstract class DataTypeResultSet extends WrappedResultSet {
-        DataTypeResultSet(@Nullable ResultSet inner) {
+    abstract class DataTypeResultSet extends WrappedCachedResultSet {
+        DataTypeResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
 
@@ -173,7 +175,7 @@ public interface GenericMetadataTranslators {
      *
      */
     abstract class ColumnsResultSet extends DataTypeResultSet {
-        ColumnsResultSet(@Nullable ResultSet inner) {
+        ColumnsResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
 
@@ -185,21 +187,21 @@ public interface GenericMetadataTranslators {
                 case "IS_PRIMARY_KEY":
                     return literalBoolean(
                             isPrimaryKey(
-                                    owner(inner, "TABLE_CAT", "TABLE_SCHEM"),
+                                    resolveOwner(inner, "TABLE_CAT", "TABLE_SCHEM"),
                                     inner.getString("TABLE_NAME"),
                                     inner.getString("COLUMN_NAME")));
 
                 case "IS_FOREIGN_KEY":
                     return literalBoolean(
                             isForeignKey(
-                                    owner(inner, "TABLE_CAT", "TABLE_SCHEM"),
+                                    resolveOwner(inner, "TABLE_CAT", "TABLE_SCHEM"),
                                     inner.getString("TABLE_NAME"),
                                     inner.getString("COLUMN_NAME")));
 
                 case "IS_UNIQUE_KEY":
                     return literalBoolean(
                             isUniqueKey(
-                                    owner(inner, "TABLE_CAT", "TABLE_SCHEM"),
+                                    resolveOwner(inner, "TABLE_CAT", "TABLE_SCHEM"),
                                     inner.getString("TABLE_NAME"),
                                     inner.getString("COLUMN_NAME")));
 
@@ -225,8 +227,8 @@ public interface GenericMetadataTranslators {
      *  - from {@link java.sql.DatabaseMetaData#getIndexInfo(String, String, String, boolean, boolean)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBIndexMetadataImpl}
      */
-    class IndexesResultSet extends WrappedResultSet {
-        IndexesResultSet(@Nullable ResultSet inner) {
+    class IndexesResultSet extends WrappedCachedResultSet {
+        IndexesResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
 
@@ -257,8 +259,8 @@ public interface GenericMetadataTranslators {
      *  - from {@link java.sql.DatabaseMetaData#getIndexInfo(String, String, String, boolean, boolean)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBIndexColumnMetadataImpl}
      */
-    class IndexColumnResultSet extends WrappedResultSet {
-        IndexColumnResultSet(@Nullable ResultSet inner) {
+    class IndexColumnResultSet extends WrappedCachedResultSet {
+        IndexColumnResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
 
@@ -283,8 +285,8 @@ public interface GenericMetadataTranslators {
      *  - from {@link java.sql.DatabaseMetaData#getPrimaryKeys(String, String, String)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBConstraintMetadataImpl}
      */
-    class PrimaryKeysResultSet extends WrappedResultSet {
-        PrimaryKeysResultSet(@Nullable ResultSet inner) {
+    class PrimaryKeysResultSet extends WrappedCachedResultSet {
+        PrimaryKeysResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
 
@@ -294,7 +296,7 @@ public interface GenericMetadataTranslators {
                 case "CONSTRAINT_NAME":
                     return resolve(
                             () -> inner.getString("PK_NAME"),
-                            () -> uniqueKeyName(inner.getString("TABLE_NAME"), null/*TODO what about multiple unique keys (find the additional discriminator)*/));
+                            () -> generateUniqueKeyName(inner.getString("TABLE_NAME"), null/*TODO what about multiple unique keys (find the additional discriminator)*/));
 
 
                 case "CONSTRAINT_TYPE": {
@@ -318,8 +320,8 @@ public interface GenericMetadataTranslators {
      *  - from {@link java.sql.DatabaseMetaData#getPrimaryKeys(String, String, String)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBConstraintColumnMetadataImpl}
      */
-    class PrimaryKeyRelationsResultSet extends WrappedResultSet {
-        PrimaryKeyRelationsResultSet(@Nullable ResultSet inner) {
+    class PrimaryKeyRelationsResultSet extends WrappedCachedResultSet {
+        PrimaryKeyRelationsResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
 
@@ -329,7 +331,7 @@ public interface GenericMetadataTranslators {
                 case "CONSTRAINT_NAME":
                     return resolve(
                             () -> inner.getString("PK_NAME"),
-                            () -> uniqueKeyName(inner.getString("TABLE_NAME"), null/*TODO what about multiple unique keys (find the additional discriminator)*/));
+                            () -> generateUniqueKeyName(inner.getString("TABLE_NAME"), null/*TODO what about multiple unique keys (find the additional discriminator)*/));
                 case "COLUMN_NAME": return inner.getString("COLUMN_NAME");
                 case "DATASET_NAME": return inner.getString("TABLE_NAME");
 
@@ -351,8 +353,8 @@ public interface GenericMetadataTranslators {
      *  - from {@link java.sql.DatabaseMetaData#getImportedKeys(String, String, String)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBConstraintMetadataImpl}
      */
-    class ForeignKeysResultSet extends WrappedResultSet {
-        ForeignKeysResultSet(@Nullable ResultSet inner) {
+    class ForeignKeysResultSet extends WrappedCachedResultSet {
+        ForeignKeysResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
 
@@ -362,17 +364,17 @@ public interface GenericMetadataTranslators {
                 case "CONSTRAINT_NAME": {
                     return resolve(
                             () -> inner.getString("FK_NAME"),
-                            () -> foreignKeyName(inner.getString("FKTABLE_NAME"), null));
+                            () -> generateForeignKeyName(inner.getString("FKTABLE_NAME"), null));
                 }
 
                 case "CONSTRAINT_TYPE":     return "FOREIGN KEY";
                 case "DATASET_NAME":        return inner.getString("FKTABLE_NAME");
-                case "FK_CONSTRAINT_OWNER": return owner(inner, "PKTABLE_CAT", "PKTABLE_SCHEM");
+                case "FK_CONSTRAINT_OWNER": return resolveOwner(inner, "PKTABLE_CAT", "PKTABLE_SCHEM");
 
                 case "FK_CONSTRAINT_NAME":
                     return resolve(
                             () -> inner.getString("PK_NAME"),
-                            () -> uniqueKeyName(
+                            () -> generateUniqueKeyName(
                                     inner.getString("PKTABLE_NAME"),
                                     inner.getString("PKCOLUMN_NAME")));
 
@@ -388,8 +390,8 @@ public interface GenericMetadataTranslators {
      *  - from {@link java.sql.DatabaseMetaData#getImportedKeys(String, String, String)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBConstraintColumnMetadataImpl}
      */
-    class ForeignKeyRelationsResultSet extends WrappedResultSet {
-        ForeignKeyRelationsResultSet(@Nullable ResultSet inner) {
+    class ForeignKeyRelationsResultSet extends WrappedCachedResultSet {
+        ForeignKeyRelationsResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
 
@@ -399,7 +401,7 @@ public interface GenericMetadataTranslators {
                 case "CONSTRAINT_NAME":
                     return resolve(
                             () -> inner.getString("FK_NAME"),
-                            () -> foreignKeyName(inner.getString("PKTABLE_NAME"), null));
+                            () -> generateForeignKeyName(inner.getString("PKTABLE_NAME"), null));
 
                 case "COLUMN_NAME":  return inner.getString("FKCOLUMN_NAME");
                 case "DATASET_NAME": return inner.getString("FKTABLE_NAME");
@@ -417,29 +419,30 @@ public interface GenericMetadataTranslators {
     }
 
     /**
-     * Metadata translation for FUNCTIONS
-     *  - from {@link java.sql.DatabaseMetaData#getFunctions(String, String, String)}
-     *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBFunctionMetadataImpl}
+     * Metadata translation for PROCEDURES and FUNCTIONS
+     *  - from {@link java.sql.DatabaseMetaData#getProcedures(String, String, String)}
+     *     and {@link java.sql.DatabaseMetaData#getFunctions(String, String, String)}
+     *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBProcedureMetadataImpl}
+     *            and {@link com.dci.intellij.dbn.database.common.metadata.impl.DBFunctionMetadataImpl}
      *            and {@link com.dci.intellij.dbn.database.common.metadata.impl.DBMethodMetadataImpl}
      */
-    class FunctionsResultSet extends WrappedResultSet {
-        FunctionsResultSet(@Nullable ResultSet inner) {
+    abstract class MethodsResultSet extends WrappedCachedResultSet {
+        MethodsResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
+
         @Override
         public String getString(String columnLabel) throws SQLException {
             switch (columnLabel) {
                 case "FUNCTION_NAME":
-                    return resolve(
-                            () -> inner.getString("SPECIFIC_NAME"),
-                            () -> inner.getString("FUNCTION_NAME"));
-
-                case "IS_DETERMINISTIC": return literalBoolean(false);
+                case "PROCEDURE_NAME":   return resolveMethodName(inner);
+                case "METHOD_TYPE":      return getMethodType();
                 case "IS_VALID":         return literalBoolean(true);
-                case "IS_DEBUG":         return literalBoolean(false);
+                case "IS_DEBUG":
+                case "IS_DETERMINISTIC": return literalBoolean(false);
                 case "LANGUAGE":         return "SQL";
-                case "TYPE_NAME":        return null;
-                case "PACKAGE_NAME":     return null;
+                case "TYPE_NAME":
+                case "PACKAGE_NAME":
                 default:                 return null;
             }
         }
@@ -449,113 +452,22 @@ public interface GenericMetadataTranslators {
             switch (columnLabel) {
                 case "OVERLOAD": return 0;
                 case "POSITION": return 0;
-
                 default: return 0;
             }
         }
+
+        public abstract String getMethodType();
     }
 
     /**
-     * Metadata translation for FUNCTION ARGUMENTS
-     *  - from {@link java.sql.DatabaseMetaData#getFunctionColumns(String, String, String, String)}
-     *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBArgumentMetadataImpl}
-     *            and {@link com.dci.intellij.dbn.database.common.metadata.impl.DBDataTypeMetadataImpl}
-     */
-    class FunctionArgumentsResultSet extends DataTypeResultSet {
-        FunctionArgumentsResultSet(@Nullable ResultSet inner) {
-            super(inner);
-        }
-
-        @Override
-        public String getString(String columnLabel) throws SQLException {
-            switch (columnLabel) {
-                case "ARGUMENT_NAME":
-                    return resolve(
-                            () -> name(inner.getString("COLUMN_NAME")),
-                            () -> "return");
-
-                case "METHOD_TYPE":   return "FUNCTION";
-                case "PROGRAM_NAME":  return null;
-
-                case "METHOD_NAME":
-                    return resolve(
-                            () -> inner.getString("SPECIFIC_NAME"),
-                            () -> inner.getString("FUNCTION_NAME"));
-
-                case "IN_OUT":
-                    return resolve(
-                            () -> {
-                                int columnType = inner.getInt("COLUMN_TYPE");
-                                switch (columnType) {
-                                    case functionColumnIn: return "IN";
-                                    case functionColumnOut: return "OUT";
-                                    case functionColumnInOut: return "IN/OUT";
-                                    case functionColumnResult: return "OUT";
-                                    case functionReturn: return "OUT";
-                                    default: return "IN";
-                                }
-                            },
-                            () -> "IN");
-                default: return super.getString(columnLabel);
-            }
-        }
-        @Override
-        public int getInt(String columnLabel) throws SQLException {
-            switch (columnLabel) {
-                case "OVERLOAD":    return 0;
-                case "SEQUENCE":    return 0;
-                case "POSITION":    return inner.getInt("ORDINAL_POSITION");
-                default:            return super.getInt(columnLabel);
-            }
-        }
-    }
-
-    /**
-     * Metadata translation for PROCEDURES
-     *  - from {@link java.sql.DatabaseMetaData#getProcedures(String, String, String)}
-     *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBProcedureMetadataImpl}
-     *            and {@link com.dci.intellij.dbn.database.common.metadata.impl.DBMethodMetadataImpl}
-     */
-    class ProceduresResultSet extends WrappedResultSet {
-        ProceduresResultSet(@Nullable ResultSet inner) {
-            super(inner);
-        }
-
-        @Override
-        public String getString(String columnLabel) throws SQLException {
-            switch (columnLabel) {
-                case "PROCEDURE_NAME":
-                    return resolve(
-                        () -> inner.getString("SPECIFIC_NAME"),
-                        () -> inner.getString("PROCEDURE_NAME"));
-
-                case "IS_DETERMINISTIC": return literalBoolean(false);
-                case "IS_VALID":         return literalBoolean(true);
-                case "IS_DEBUG":         return literalBoolean(false);
-                case "LANGUAGE":         return "SQL";
-                case "TYPE_NAME":        return null;
-                case "PACKAGE_NAME":     return null;
-                default:                 return null;
-            }
-        }
-        @Override
-        public int getInt(String columnLabel) throws SQLException {
-            switch (columnLabel) {
-                case "OVERLOAD": return 0;
-                case "POSITION": return 0;
-                default: return 0;
-            }
-        }
-    }
-
-    /**
-     * Metadata translation for PROCEDURE ARGUMENTS
+     * Metadata translation for PROCEDURE and FUNCTION ARGUMENTS
      *  - from {@link java.sql.DatabaseMetaData#getProcedureColumns(String, String, String, String)}
+     *     and {@link java.sql.DatabaseMetaData#getFunctionColumns(String, String, String, String)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBArgumentMetadataImpl}
      *            and {@link com.dci.intellij.dbn.database.common.metadata.impl.DBDataTypeMetadataImpl}
      */
-    class ProcedureArgumentsResultSet extends WrappedResultSet {
-        ProcedureArgumentsResultSet(@Nullable ResultSet inner) {
+    abstract class MethodArgumentsResultSet extends DataTypeResultSet {
+        MethodArgumentsResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
         @Override
@@ -563,42 +475,39 @@ public interface GenericMetadataTranslators {
             switch (columnLabel) {
                 case "ARGUMENT_NAME":
                     return resolve(
-                            () -> name(inner.getString("COLUMN_NAME")),
+                            () -> emptyToNull(inner.getString("COLUMN_NAME")),
                             () -> "return");
 
-                case "METHOD_TYPE":   return "PROCEDURE";
-                case "PROGRAM_NAME":  return null;
-                case "METHOD_NAME":   return inner.getString("PROCEDURE_NAME");
+                case "METHOD_NAME":  return resolveMethodName(inner);
+                case "METHOD_TYPE":  return getMethodType(
+                        resolveMethodName(inner),
+                        inner.getString("SPECIFIC_NAME"));
+                case "PROGRAM_NAME": return null;
 
                 case "IN_OUT":
                     return resolve(
                             () -> {
                                 int columnType = inner.getInt("COLUMN_TYPE");
                                 switch (columnType) {
+                                    case functionColumnUnknown: return "IN";
                                     case functionColumnIn: return "IN";
                                     case functionColumnOut: return "OUT";
                                     case functionColumnInOut: return "IN/OUT";
                                     case functionColumnResult: return "OUT";
                                     case functionReturn: return "OUT";
+
+                                    //case procedureColumnUnknown: return "IN";
+                                    //case procedureColumnIn: return "IN";
+                                    //case procedureColumnOut: return "OUT";
+                                    //case procedureColumnInOut: return "IN/OUT";
+                                    //case procedureColumnResult: return "OUT";
+                                    //case procedureColumnReturn: return "OUT";
                                     default: return "IN";
                                 }
                             },
                             () -> "IN");
 
-
-                case "DATA_TYPE_NAME":
-                    return resolve(
-                            () -> inner.getString("TYPE_NAME"),
-                            () -> {
-                                int dataType = inner.getInt("DATA_TYPE");
-                                return DATA_TYPE_NAMES.get().get(dataType);
-                            });
-
-
-                case "DATA_TYPE_OWNER":   return null;
-                case "DATA_TYPE_PACKAGE": return null;
-                case "IS_SET":            return literalBoolean(false);
-                default: return null;
+                default: return super.getString(columnLabel);
             }
         }
         @Override
@@ -607,56 +516,108 @@ public interface GenericMetadataTranslators {
                 case "OVERLOAD":       return 0;
                 case "SEQUENCE":       return 0;
                 case "POSITION":       return inner.getInt("ORDINAL_POSITION");
-                case "DATA_LENGTH":    return resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
-                case "DATA_PRECISION": return resolve(() -> inner.getInt("COLUMN_SIZE"), () -> 0);
-                case "DATA_SCALE":     return resolve(() -> inner.getInt("DECIMAL_DIGITS"),() -> 0);
-                default: return 0;
+                default:            return super.getInt(columnLabel);
             }
         }
+
+        abstract String getMethodType(String methodName, String methodSpecificName) throws SQLException;
     }
 
     /**************************************************************
      *                    Static utilities                        *
      **************************************************************/
-    @NotNull
-    static String uniqueKeyName(String tableName, String qualifier) {
+    static String generateUniqueKeyName(String tableName, String qualifier) {
         return "unq_" + tableName;
     }
 
-    @NotNull
-    static String foreignKeyName(String tableName, String qualifier) {
+    static String generateForeignKeyName(String tableName, String qualifier) {
         return "fk_" + tableName;
+    }
+
+    static String resolveOwner(ResultSet resultSet, String catalogCol, String schemaCol) throws SQLException {
+        return resolve(
+                () -> resultSet.getString(schemaCol),
+                () -> resultSet.getString(catalogCol));
+    }
+
+    static String resolveOwner(CachedResultSetRow row, String catalogCol, String schemaCol) throws SQLException {
+        return resolve(
+                () -> (String) row.get(schemaCol),
+                () -> (String) row.get(catalogCol));
+    }
+
+    static String resolveMethodName(ResultSet resultSet) throws SQLException {
+        return resolve(
+                () -> resultSet.getString("METHOD_NAME"),
+                () -> resultSet.getString("SPECIFIC_NAME"));
+    }
+
+    @Nullable
+    static String resolveMethodType(ResultSet resultSet, MetadataSource source) throws SQLException {
+        if (source == MetadataSource.PROCEDURES) {
+            // getProcedures may return functions
+            String methodType = resolve(
+                    () -> resultSet.getString("METHOD_TYPE"),
+                    () -> resultSet.getString("PROCEDURE_TYPE"),
+                    () -> resultSet.getString("FUNCTION_TYPE"),
+                    () -> "0");
+            int procedureType = Integer.parseInt(methodType);
+            switch (procedureType) {
+                case procedureNoResult: return "PROCEDURE";
+                case procedureReturnsResult: return "FUNCTION";
+                case procedureResultUnknown: return "PROCEDURE";
+                default: return "PROCEDURE";
+            }
+        }
+
+        if (source == MetadataSource.FUNCTIONS) {
+            // getFunctions may return procedures
+            String methodType = resolve(
+                    () -> resultSet.getString("METHOD_TYPE"),
+                    () -> resultSet.getString("FUNCTION_TYPE"),
+                    () -> resultSet.getString("PROCEDURE_TYPE"),
+                    () -> "0");
+            int functionType = Integer.parseInt(methodType);
+            switch (functionType) {
+                case functionNoTable: return "FUNCTION";
+                case functionReturnsTable: return "FUNCTION";
+                case functionResultUnknown: return "FUNCTION";
+                default: return "FUNCTION";
+            }
+        }
+        return null;
+    }
+
+
+    @SafeVarargs
+    static <T> T resolve(ThrowableCallable<T, SQLException> ... resolvers) throws SQLException {
+        for (int i = 0; i < resolvers.length; i++) {
+            ThrowableCallable<T, SQLException> resolver = resolvers[i];
+            try {
+                T value = resolver.call();
+                if (value != null) {
+                    return value;
+                }
+            } catch (Throwable t) {
+                if (i == resolvers.length -1) {
+                    if (t instanceof SQLException) {
+                        throw t;
+                    } else {
+                        throw new SQLException("Operation failed", t);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    static String emptyToNull(String string) {
+        return StringUtil.isEmpty(string) ? null : string.trim();
     }
 
     static String literalBoolean(boolean bool) {
         return bool ? "Y" : "N";
     }
 
-    static <T> T resolve(
-            ThrowableCallable<T, Throwable> resolver,
-            ThrowableCallable<T, SQLException> fallbackResolver) throws SQLException {
-        try {
-            T value = resolver.call();
-            return value == null ? fallbackResolver.call() : value;
-        } catch (Throwable t) {
-            LOGGER.warn("JDBC metadata operation failed", t);
-            return fallbackResolver.call();
-        }
-    }
 
-    static String owner(ResultSet resultSet, String catalogCol, String schemaCol) throws SQLException {
-        return resolve(
-                () -> resultSet.getString(schemaCol),
-                () -> resultSet.getString(catalogCol));
-    }
-
-    static String owner(CachedResultSetRow row, String catalogCol, String schemaCol) throws SQLException {
-        return resolve(
-                () -> (String) row.get(schemaCol),
-                () -> (String) row.get(catalogCol));
-    }
-
-    static String name(String string) {
-        return StringUtil.isEmpty(string) ? null : string.trim();
-    }
 }

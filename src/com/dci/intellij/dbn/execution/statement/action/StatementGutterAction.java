@@ -78,7 +78,7 @@ public class StatementGutterAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor(false);
-        if (executionProcessor != null) {
+        if (executionProcessor != null && !executionProcessor.isDirty()) {
             Project project = executionProcessor.getProject();
             StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
             ExecutionContext context = executionProcessor.getExecutionContext();

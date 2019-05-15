@@ -111,7 +111,7 @@ public class StatementExecutionProcessor {
             Object... arguments) throws SQLException {
 
         boolean hasFallback = statementDefinition.hasFallback();
-        DatabaseCompatibility compatibility = DatabaseInterface.connectionHandler().getCompatibility();
+        DatabaseCompatibility compatibility = DatabaseInterface.getConnectionHandler().getCompatibility();
         DatabaseActivityTrace activityTrace = compatibility.getActivityTrace(statementDefinition.getId());
 
         if (forceExecution || activityTrace.canExecute(hasFallback)) {

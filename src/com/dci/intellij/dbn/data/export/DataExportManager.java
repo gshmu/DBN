@@ -78,9 +78,17 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
                 DataExportInstructions.Destination destination = instructions.getDestination();
                 if (destination == DataExportInstructions.Destination.CLIPBOARD) {
                     successCallback.run();
-                    sendInfoNotification(
+                    MessageUtil.showInfoDialog(
+                            project,
+                            "Export info",
+                            "Content exported to clipboard",
+                            new String[]{"OK"}, 0, null);
+
+/*
+                            sendInfoNotification(
                             NotificationGroup.DATA,
                             "Data content exported to clipboard.");
+*/
 
                 } else if (destination == DataExportInstructions.Destination.FILE) {
                     final File file = instructions.getFile();
