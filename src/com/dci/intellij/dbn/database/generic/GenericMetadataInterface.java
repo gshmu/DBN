@@ -65,7 +65,12 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
             "FK_NAME",
             "PK_NAME"};
 
-    private static final Columns METHOD_IDENTIFIER = () -> new String[]{
+    private static final Columns METHOD_SIMPLE_IDENTIFIER = () -> new String[]{
+            "METHOD_CAT",
+            "METHOD_SCHEM",
+            "METHOD_NAME"};
+
+    private static final Columns METHOD_QUALIFIED_IDENTIFIER = () -> new String[]{
             "METHOD_CAT",
             "METHOD_SCHEM",
             "METHOD_NAME",
@@ -358,7 +363,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
                             CachedResultSet proceduresRs = loadProceduresRaw(ownerName, connection);
                             proceduresRs = proceduresRs.filter(IS_FUNCTION_P);
-                            proceduresRs = proceduresRs.filter(Condition.notIn(functionsRs, METHOD_IDENTIFIER));
+                            proceduresRs = proceduresRs.filter(Condition.notIn(functionsRs, METHOD_QUALIFIED_IDENTIFIER));
 
                             CachedResultSet methodsRs = functionsRs.unionAll(proceduresRs);
                             methodsRs = methodsRs.enrich("METHOD_OVERLOAD", methodOverloadEnricher());
@@ -375,7 +380,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
                             CachedResultSet functionsRs = loadFunctionsRaw(ownerName, connection);
                             functionsRs = functionsRs.filter(IS_PROCEDURE_F);
-                            functionsRs = functionsRs.filter(Condition.notIn(proceduresRs, METHOD_IDENTIFIER));
+                            functionsRs = functionsRs.filter(Condition.notIn(proceduresRs, METHOD_QUALIFIED_IDENTIFIER));
 
                             CachedResultSet methodsRs = proceduresRs.unionAll(functionsRs);
                             methodsRs = methodsRs.enrich("METHOD_OVERLOAD", methodOverloadEnricher());
@@ -390,9 +395,9 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     private static CachedResultSet.ColumnValue methodOverloadEnricher() {
         return (resultSet, index) -> {
             CachedResultSetRow currentRow = resultSet.rowAt(index);
-            int count = resultSet.count(row -> row.matches(currentRow, METHOD_IDENTIFIER));
-            if (count > 0) {
-                CachedResultSetRow previousRow = resultSet.previous(row -> row.matches(currentRow, METHOD_IDENTIFIER), index);
+            int count = resultSet.count(row -> row.matches(currentRow, METHOD_SIMPLE_IDENTIFIER));
+            if (count > 1) {
+                CachedResultSetRow previousRow = resultSet.previous(row -> row.matches(currentRow, METHOD_SIMPLE_IDENTIFIER), index);
                 int previousOverload = previousRow == null ? 0 : (int) previousRow.get("METHOD_OVERLOAD");
                 return previousOverload + 1;
             }
