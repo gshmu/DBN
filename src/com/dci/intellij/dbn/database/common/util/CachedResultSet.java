@@ -83,27 +83,26 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
         }
     });
 
-    private CachedResultSet(@Nullable ResultSet resultSet, @Nullable ResultSetCondition condition) throws SQLException {
-        if (resultSet != null && !resultSet.isClosed()) {
+    private CachedResultSet(@Nullable ResultSet source, @Nullable ResultSetCondition condition) throws SQLException {
+        if (source instanceof CachedResultSet) {
+            CachedResultSet cachedResultSet = (CachedResultSet) source;
+            this.columnNames = new ArrayList<>(cachedResultSet.columnNames);
+            source = cachedResultSet.open();
+            load(source, condition);
+        } else if (source != null && !source.isClosed()) {
             try {
-                if (resultSet instanceof CachedResultSet) {
-                    CachedResultSet cachedResultSet = (CachedResultSet) resultSet;
-                    this.columnNames = cachedResultSet.columnNames;
-                    resultSet = cachedResultSet.open();
-                } else {
-                    List<String> columnNames = ResultSetUtil.getColumnNames(resultSet);
-                    this.columnNames = columnNames.stream().map(s -> s.toUpperCase().trim()).collect(Collectors.toList());
-                }
-
-                load(resultSet, condition);
+                List<String> columnNames = ResultSetUtil.getColumnNames(source);
+                this.columnNames = columnNames.stream().map(s -> s.toUpperCase().trim()).collect(Collectors.toList());
+                load(source, condition);
             } finally {
-                ResourceUtil.close(resultSet);
+                ResourceUtil.close(source);
             }
         }
     }
 
-    private CachedResultSet(@NotNull CachedResultSet resultSet, @NotNull Condition condition) throws SQLException {
-        for (CachedResultSetRow row : resultSet.rows) {
+    private CachedResultSet(@NotNull CachedResultSet source, @NotNull Condition condition) throws SQLException {
+        columnNames = new ArrayList<>(source.columnNames);
+        for (CachedResultSetRow row : source.rows) {
             if (condition.evaluate(row)) {
                 rows.add(row);
             }
@@ -127,7 +126,7 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
     private void load(@NotNull ResultSet resultSet, @Nullable ResultSetCondition condition) throws SQLException {
         ResultSetUtil.forEachRow(resultSet, () -> {
             if (condition == null || condition.evaluate(resultSet)) {
-                CachedResultSetRow row = CachedResultSetRow.create(this, resultSet);
+                CachedResultSetRow row = CachedResultSetRow.create(resultSet, columnNames);
                 rows.add(row);
             }
         });
@@ -139,14 +138,6 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
 
     public static <T> CachedResultSet create(@Nullable ResultSet resultSet, @Nullable ResultSetCondition condition) throws SQLException {
         return new CachedResultSet(resultSet, condition);
-    }
-
-    List<String> columnNames() {
-        return columnNames;
-    }
-
-    int columnIndex(String columnLabel) {
-        return columnNames.indexOf(columnLabel);
     }
 
     public List<CachedResultSetRow> rows() {
@@ -196,6 +187,10 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
         columnNames = columnNames.stream().
                 map(columnName -> nvl(columnMapper.map(columnName), columnName)).
                 collect(Collectors.toList());
+        for (int i = 0; i < rows.size(); i++) {
+            CachedResultSetRow row = rows.get(i);
+            row.normalize(columnMapper);
+        }
         return this;
     }
 
@@ -203,7 +198,7 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
         columnNames.add(columnName);
         for (int i = 0; i < rows.size(); i++) {
             CachedResultSetRow row = rows.get(i);
-            row.extend(value.resolve(this, i));
+            row.extend(columnName, value.resolve(this, i));
         }
         return this;
     }
