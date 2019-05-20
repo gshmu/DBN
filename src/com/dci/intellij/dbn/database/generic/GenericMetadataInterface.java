@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.database.common.util.CachedResultSet.Columns;
 import com.dci.intellij.dbn.database.common.util.CachedResultSetRow;
 import com.dci.intellij.dbn.database.common.util.MultipartResultSet;
 import com.dci.intellij.dbn.database.common.util.ResultSetCondition;
-import com.dci.intellij.dbn.object.type.DBMethodType;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 
@@ -281,13 +280,13 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
     @Override
     public ResultSet loadFunctions(String ownerName, DBNConnection connection) throws SQLException {
-        CachedResultSet functionsRs = loadMethodsRaw(ownerName, connection, DBMethodType.FUNCTION);
+        CachedResultSet functionsRs = loadMethodsRaw(ownerName, connection, "FUNCTION");
         return createMethodsResultSet(functionsRs.open(), "FUNCTION");
     }
 
     @Override
     public ResultSet loadProcedures(String ownerName, DBNConnection connection) throws SQLException {
-        CachedResultSet proceduresRs = loadMethodsRaw(ownerName, connection, DBMethodType.PROCEDURE);
+        CachedResultSet proceduresRs = loadMethodsRaw(ownerName, connection, "PROCEDURE");
         return createMethodsResultSet(proceduresRs.open(), "PROCEDURE");
     }
 
@@ -327,34 +326,48 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
         return new MethodArgumentsResultSet(argumentsRs) {
             @Override
             String getMethodType(String methodName, String methodSpecificName) throws SQLException {
-                CachedResultSet functionsRs = loadMethodsRaw(ownerName, connection, DBMethodType.FUNCTION);
-                boolean isFunction = functionsRs.exists(row ->
-                        match(ownerName, resolveOwner(row, "METHOD_CAT", "METHOD_SCHEM")) &&
-                        match(methodName, row.get("METHOD_NAME")) &&
-                        match(methodSpecificName, row.get("SPECIFIC_NAME")));
-                if (isFunction) {
+                CachedResultSetRow function = findMethod(ownerName, methodName, methodSpecificName, "FUNCTION", connection);
+                if (function != null) {
                     return "FUNCTION";
                 }
 
-                CachedResultSet proceduresRs = loadMethodsRaw(ownerName, connection, DBMethodType.PROCEDURE);
-                boolean isProcedure = proceduresRs.exists(row ->
-                        match(ownerName, resolveOwner(row, "METHOD_CAT", "METHOD_SCHEM")) &&
-                        match(methodName, row.get("METHOD_NAME")) &&
-                        match(methodSpecificName, row.get("SPECIFIC_NAME")));
-
-                if (isProcedure) {
+                CachedResultSetRow procedure = findMethod(ownerName, methodName, methodSpecificName, "PROCEDURE", connection);
+                if (procedure != null) {
                     return "PROCEDURE";
                 }
 
                 return null;
             }
+
+            @Override
+            int getMethodOverload(String methodName, String methodSpecificName) throws SQLException {
+                CachedResultSetRow function = findMethod(ownerName, methodName, methodSpecificName, "FUNCTION", connection);
+                if (function != null) {
+                    return (int) function.get("METHOD_OVERLOAD");
+                }
+
+                CachedResultSetRow procedure = findMethod(ownerName, methodName, methodSpecificName, "PROCEDURE", connection);
+                if (procedure != null) {
+                    return (int) procedure.get("METHOD_OVERLOAD");
+                }
+
+                return 0;
+            }
         };
     }
 
+    private static CachedResultSetRow findMethod(String ownerName, String methodName, String methodSpecificName, String methodType, DBNConnection connection) throws SQLException {
+        CachedResultSet functionsRs = loadMethodsRaw(ownerName, connection, methodType);
+        return functionsRs.first(row ->
+                match(ownerName, resolveOwner(row, "METHOD_CAT", "METHOD_SCHEM")) &&
+                        match(methodName, row.get("METHOD_NAME")) &&
+                        match(methodSpecificName, row.get("SPECIFIC_NAME")));
+    }
 
-    private static CachedResultSet loadMethodsRaw(String ownerName, DBNConnection connection, DBMethodType type) throws SQLException {
-        switch (type) {
-            case FUNCTION:
+
+    private static CachedResultSet loadMethodsRaw(String ownerName, DBNConnection connection, String methodType) throws SQLException {
+        switch (methodType) {
+            case "FUNCTION":
                 return DatabaseInterface.cached(
                         "UNSCRAMBLED_FUNCTIONS." + ownerName,
                         () -> {
@@ -371,7 +384,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                             return methodsRs;
                         });
 
-            case PROCEDURE:
+            case "PROCEDURE":
                 return DatabaseInterface.cached(
                         "UNSCRAMBLED_PROCEDURES." + ownerName,
                         () -> {
@@ -388,7 +401,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
                             return methodsRs;
                         });
         }
-        throw new IllegalArgumentException("Method type " + type + " not supported");
+        throw new IllegalArgumentException("Method type " + methodType + " not supported");
     }
 
     @NotNull

@@ -514,13 +514,17 @@ public interface GenericMetadataTranslators {
         public int getInt(String columnLabel) throws SQLException {
             switch (columnLabel) {
                 case "SEQUENCE":       return 0;
-                case "OVERLOAD":       return inner.getInt("METHOD_OVERLOAD");
+                case "OVERLOAD":       return getMethodOverload(
+                        resolveMethodName(inner),
+                        inner.getString("SPECIFIC_NAME"));
                 case "POSITION":       return inner.getInt("ORDINAL_POSITION");
                 default:            return super.getInt(columnLabel);
             }
         }
 
         abstract String getMethodType(String methodName, String methodSpecificName) throws SQLException;
+
+        abstract int getMethodOverload(String methodName, String methodSpecificName) throws SQLException;
     }
 
     /**************************************************************
