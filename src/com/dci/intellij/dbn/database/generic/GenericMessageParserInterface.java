@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.sql.SQLSyntaxErrorException;
 import java.sql.SQLTimeoutException;
 
 public class GenericMessageParserInterface implements DatabaseMessageParserInterface {
@@ -27,6 +28,6 @@ public class GenericMessageParserInterface implements DatabaseMessageParserInter
 
     @Override
     public boolean isModelException(SQLException e) {
-        return e instanceof SQLFeatureNotSupportedException;
+        return e instanceof SQLFeatureNotSupportedException || e instanceof SQLSyntaxErrorException;
     }
 }
