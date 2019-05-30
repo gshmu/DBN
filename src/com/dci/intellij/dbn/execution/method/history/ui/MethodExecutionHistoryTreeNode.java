@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import java.util.List;
 
 public class MethodExecutionHistoryTreeNode extends DefaultMutableTreeNode {
@@ -59,7 +60,7 @@ public class MethodExecutionHistoryTreeNode extends DefaultMutableTreeNode {
                     objectType == DBObjectType.TYPE_FUNCTION ? Type.FUNCTION : Type.UNKNOWN;
     }
 
-    public List<MethodExecutionHistoryTreeNode> getChildren() {
+    public List<TreeNode> getChildren() {
         return children;
     }
 

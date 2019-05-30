@@ -122,7 +122,7 @@ public class MessagesTreeModel extends DisposableBase implements TreeModel, Disp
             MessagesTreeLeafNode messageTreeNode = (MessagesTreeLeafNode) node;
             messageTreeNode.getMessage().setNew(false);
         } else {
-            Enumeration<TreeNode> children = node.children();
+            Enumeration<? extends TreeNode> children = node.children();
             while (children.hasMoreElements()) {
                 TreeNode treeNode = children.nextElement();
                 resetMessagesStatus(treeNode);
