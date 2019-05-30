@@ -37,15 +37,8 @@ public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
     private static int findFreePort(int minPortNumber, int maxPortNumber) throws ExecutionException {
         for (int portNumber = minPortNumber; portNumber < maxPortNumber; portNumber++) {
             try {
-                ServerSocket socket = null;
-                try {
-                    socket = new ServerSocket(portNumber);
+                try (ServerSocket ignored = new ServerSocket(portNumber)) {
                     return portNumber;
-                } finally {
-                    if (socket != null) {
-                        socket.close();
-                    }
-
                 }
             } catch (Exception ignore) {}
         }
