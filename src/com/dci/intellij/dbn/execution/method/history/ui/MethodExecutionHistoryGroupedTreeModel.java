@@ -44,7 +44,7 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
 
     @Override
     public TreePath getTreePath(MethodExecutionInput executionInput) {
-        List<MethodExecutionHistoryTreeNode> path = new ArrayList<MethodExecutionHistoryTreeNode>();
+        List<MethodExecutionHistoryTreeNode> path = new ArrayList<>();
         MethodExecutionHistoryTreeModel.RootTreeNode rootTreeNode = getRoot();
         path.add(rootTreeNode);
         ConnectionTreeNode connectionTreeNode = rootTreeNode.getConnectionNode(executionInput);
@@ -67,9 +67,9 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
     @Override
     public List<MethodExecutionInput> getExecutionInputs() {
         RootTreeNode root = getRoot();
-        List<MethodExecutionHistoryTreeNode> children = root.getChildren();
+        List<TreeNode> children = root.getChildren();
         if (children != null && !children.isEmpty()) {
-            List<MethodExecutionInput> executionInputs = new ArrayList<MethodExecutionInput>();
+            List<MethodExecutionInput> executionInputs = new ArrayList<>();
             for (TreeNode connectionTreeNode : children) {
                 ConnectionTreeNode connectionNode = (ConnectionTreeNode) connectionTreeNode;
                 for (TreeNode schemaTreeNode : connectionNode.getChildren()) {
