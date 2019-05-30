@@ -40,7 +40,7 @@ import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.*
 public class DBJdbcBreakpointHandler extends DBBreakpointHandler<DBJdbcDebugProcess> {
     protected BreakpointInfo defaultBreakpointInfo;
 
-    public DBJdbcBreakpointHandler(XDebugSession session, DBJdbcDebugProcess debugProcess) {
+    DBJdbcBreakpointHandler(XDebugSession session, DBJdbcDebugProcess debugProcess) {
         super(session, debugProcess);
         //resetBreakpoints();
     }

@@ -30,7 +30,7 @@ public abstract class DBJdwpProcessStarter extends DBDebugProcessStarter {
 
     public static final Key<Integer> JDWP_DEBUGGER_PORT = new Key<Integer>("JDWP_DEBUGGER_PORT");
 
-    public DBJdwpProcessStarter(ConnectionHandler connectionHandler) {
+    DBJdwpProcessStarter(ConnectionHandler connectionHandler) {
         super(connectionHandler);
     }
 

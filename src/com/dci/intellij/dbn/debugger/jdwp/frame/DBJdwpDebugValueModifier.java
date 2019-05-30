@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 public class DBJdwpDebugValueModifier extends XValueModifier {
     private DBJdwpDebugValue value;
 
-    public DBJdwpDebugValueModifier(DBJdwpDebugValue value) {
+    DBJdwpDebugValueModifier(DBJdwpDebugValue value) {
         this.value = value;
     }
 

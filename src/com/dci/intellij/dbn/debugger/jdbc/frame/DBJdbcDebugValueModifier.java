@@ -12,7 +12,7 @@ import java.sql.SQLException;
 public class DBJdbcDebugValueModifier extends XValueModifier {
     private DBJdbcDebugValue value;
 
-    public DBJdbcDebugValueModifier(DBJdbcDebugValue value) {
+    DBJdbcDebugValueModifier(DBJdbcDebugValue value) {
         this.value = value;
     }
 
