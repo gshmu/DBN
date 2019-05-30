@@ -11,7 +11,7 @@ import java.util.Set;
 public class DBJdbcDebugValue extends DBDebugValue<DBJdbcDebugStackFrame>{
     private DBJdbcDebugValueModifier modifier;
 
-    public DBJdbcDebugValue(DBJdbcDebugStackFrame stackFrame, DBJdbcDebugValue parentValue, String variableName, @Nullable Set<String> childVariableNames, Icon icon) {
+    DBJdbcDebugValue(DBJdbcDebugStackFrame stackFrame, DBJdbcDebugValue parentValue, String variableName, @Nullable Set<String> childVariableNames, Icon icon) {
         super(stackFrame, variableName, childVariableNames, parentValue, icon);
     }
 

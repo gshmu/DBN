@@ -7,7 +7,7 @@ import com.intellij.xdebugger.XDebugSession;
 import org.jetbrains.annotations.NotNull;
 
 public class DBStatementJdbcProcessStarter extends DBDebugProcessStarter {
-    public DBStatementJdbcProcessStarter(ConnectionHandler connectionHandler) {
+    DBStatementJdbcProcessStarter(ConnectionHandler connectionHandler) {
         super(connectionHandler);
     }
 

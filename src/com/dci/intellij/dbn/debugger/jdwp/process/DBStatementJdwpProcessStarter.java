@@ -6,7 +6,7 @@ import com.intellij.xdebugger.XDebugSession;
 import org.jetbrains.annotations.NotNull;
 
 public class DBStatementJdwpProcessStarter extends DBJdwpProcessStarter {
-    public DBStatementJdwpProcessStarter(ConnectionHandler connectionHandler) {
+    DBStatementJdwpProcessStarter(ConnectionHandler connectionHandler) {
         super(connectionHandler);
     }
 

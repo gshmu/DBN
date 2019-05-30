@@ -16,7 +16,7 @@ import javax.swing.*;
 import java.sql.SQLException;
 
 public class DBMethodJdwpDebugProcess extends DBJdwpDebugProcess<MethodExecutionInput> {
-    public DBMethodJdwpDebugProcess(@NotNull XDebugSession session, @NotNull DebuggerSession debuggerSession, ConnectionHandler connectionHandler, int tcpPort) {
+    DBMethodJdwpDebugProcess(@NotNull XDebugSession session, @NotNull DebuggerSession debuggerSession, ConnectionHandler connectionHandler, int tcpPort) {
         super(session, debuggerSession, connectionHandler, tcpPort);
     }
 

@@ -15,7 +15,7 @@ public class DBJdbcDebugExecutionStack extends XExecutionStack {
     private DBJdbcDebugStackFrame topStackFrame;
     private DBJdbcDebugProcess debugProcess;
 
-    protected DBJdbcDebugExecutionStack(DBJdbcDebugProcess debugProcess) {
+    DBJdbcDebugExecutionStack(DBJdbcDebugProcess debugProcess) {
         super(debugProcess.getName(), debugProcess.getIcon());
         this.debugProcess = debugProcess;
         ExecutionBacktraceInfo backtraceInfo = debugProcess.getBacktraceInfo();

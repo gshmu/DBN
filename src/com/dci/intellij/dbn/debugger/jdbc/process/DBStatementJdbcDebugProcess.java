@@ -20,7 +20,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class DBStatementJdbcDebugProcess extends DBJdbcDebugProcess<StatementExecutionInput> {
-    public DBStatementJdbcDebugProcess(@NotNull XDebugSession session, ConnectionHandler connectionHandler) {
+    DBStatementJdbcDebugProcess(@NotNull XDebugSession session, ConnectionHandler connectionHandler) {
         super(session, connectionHandler);
     }
 

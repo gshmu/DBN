@@ -17,7 +17,7 @@ import javax.swing.*;
 import java.sql.SQLException;
 
 public class DBMethodJdbcDebugProcess extends DBJdbcDebugProcess<MethodExecutionInput> {
-    public DBMethodJdbcDebugProcess(@NotNull XDebugSession session, ConnectionHandler connectionHandler) {
+    DBMethodJdbcDebugProcess(@NotNull XDebugSession session, ConnectionHandler connectionHandler) {
         super(session, connectionHandler);
     }
 
