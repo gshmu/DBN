@@ -49,11 +49,8 @@ public class YouTrackIssueReportSubmitter extends IssueReportSubmitter {
         URLConnection issueConnection = issueUrl.openConnection();
         issueConnection.setDoOutput(true);
 
-        OutputStream outputStream = issueConnection.getOutputStream();
-        try {
+        try (OutputStream outputStream = issueConnection.getOutputStream()) {
             outputStream.write(output);
-        } finally {
-            outputStream.close();
         }
 
         BufferedReader responseReader = new BufferedReader(new InputStreamReader(issueConnection.getInputStream()));
