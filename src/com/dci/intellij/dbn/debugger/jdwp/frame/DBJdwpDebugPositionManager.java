@@ -26,7 +26,7 @@ import java.util.StringTokenizer;
 public class DBJdwpDebugPositionManager implements PositionManager {
     private DebugProcess process;
 
-    public DBJdwpDebugPositionManager(@NotNull DebugProcess process) {
+    DBJdwpDebugPositionManager(@NotNull DebugProcess process) {
         this.process = process;
     }
 

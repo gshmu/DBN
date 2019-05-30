@@ -8,7 +8,7 @@ import com.intellij.xdebugger.frame.XValuePlace;
 import org.jetbrains.annotations.NotNull;
 
 public class DBSuspendReasonDebugValue extends DBJdbcDebugValue {
-    public DBSuspendReasonDebugValue(DBJdbcDebugStackFrame stackFrame) {
+    DBSuspendReasonDebugValue(DBJdbcDebugStackFrame stackFrame) {
         super(stackFrame, null, "DEBUG_RUNTIME_EVENT", null, Icons.EXEC_MESSAGES_INFO);
     }
 

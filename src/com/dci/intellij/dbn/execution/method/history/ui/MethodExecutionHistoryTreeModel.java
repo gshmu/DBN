@@ -42,7 +42,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
     /**********************************************************
      *                        TreeNodes                       *
      **********************************************************/
-    protected class RootTreeNode extends MethodExecutionHistoryTreeNode {
+    class RootTreeNode extends MethodExecutionHistoryTreeNode {
         RootTreeNode() {
             super(null, MethodExecutionHistoryTreeNode.Type.ROOT, "ROOT");
         }
@@ -100,7 +100,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
         }
     }
 
-    protected class SchemaTreeNode extends MethodExecutionHistoryTreeNode {
+    class SchemaTreeNode extends MethodExecutionHistoryTreeNode {
         SchemaTreeNode(MethodExecutionHistoryTreeNode parent, MethodExecutionInput executionInput) {
             super(parent, MethodExecutionHistoryTreeNode.Type.SCHEMA, executionInput.getMethodRef().getSchemaName());
         }

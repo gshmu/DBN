@@ -15,9 +15,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
-import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.engine.DebugProcessImpl;
-import com.intellij.debugger.engine.DebuggerManagerThreadImpl;
 import com.intellij.debugger.engine.requests.RequestManagerImpl;
 import com.intellij.debugger.impl.PrioritizedTask;
 import com.intellij.debugger.jdi.ThreadReferenceProxyImpl;
@@ -48,12 +46,8 @@ import static com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUtil.g
 
 public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProcess> {
     private static final Key<LineBreakpoint> LINE_BREAKPOINT_KEY = Key.create("DBNavigator.LineBreakpoint");
-    public static final ClassPrepareRequestor GENERIC_CLASS_PREPARE_REQUESTOR = new ClassPrepareRequestor() {
-        @Override
-        public void processClassPrepare(DebugProcess debuggerProcess, ReferenceType referenceType) {
-            System.out.println();
-        }
-    };
+    private static final ClassPrepareRequestor GENERIC_CLASS_PREPARE_REQUESTOR =
+            (debuggerProcess, referenceType) -> System.out.println();
 
     public DBJdwpBreakpointHandler(XDebugSession session, DBJdwpDebugProcess debugProcess) {
         super(session, debugProcess);
@@ -132,7 +126,7 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
         }
     }
 
-    boolean isBreakpointRequested(LineBreakpoint lineBreakpoint) {
+    private boolean isBreakpointRequested(LineBreakpoint lineBreakpoint) {
         RequestManagerImpl requestsManager = getRequestsManager();
         Set<EventRequest> requests = requestsManager.findRequests(lineBreakpoint);
         for (EventRequest request : requests) {
@@ -180,12 +174,8 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
             if (lineBreakpoint != null) {
                 Set<EventRequest> requests = requestsManager.findRequests(lineBreakpoint);
                 if (requests.size() == 0) {
-                    ClassPrepareRequest request = requestsManager.createClassPrepareRequest(new ClassPrepareRequestor() {
-                        @Override
-                        public void processClassPrepare(DebugProcess debuggerProcess, ReferenceType referenceType) {
-                            createBreakpointRequest(breakpoint);
-                        }
-                    }, programIdentifier);
+                    ClassPrepareRequest request = requestsManager.createClassPrepareRequest(
+                            (debuggerProcess, referenceType) -> createBreakpointRequest(breakpoint), programIdentifier);
                     if (request != null) {
                         requestsManager.enableRequest(request);
                     }
@@ -222,7 +212,7 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
     }
 
     @Nullable
-    public static LineBreakpoint getLineBreakpoint(Project project, @NotNull XLineBreakpoint breakpoint) {
+    private static LineBreakpoint getLineBreakpoint(Project project, @NotNull XLineBreakpoint breakpoint) {
         LineBreakpoint lineBreakpoint = breakpoint.getUserData(LINE_BREAKPOINT_KEY);
         if (lineBreakpoint == null) {
             lineBreakpoint = LineBreakpoint.create(project, breakpoint);
@@ -235,10 +225,6 @@ public class DBJdwpBreakpointHandler extends DBBreakpointHandler<DBJdwpDebugProc
         VirtualMachineProxyImpl virtualMachineProxy = getVirtualMachineProxy();
         ThreadReferenceProxyImpl threadReferenceProxy = virtualMachineProxy.allThreads().iterator().next();
         return threadReferenceProxy.getThreadReference();
-    }
-
-    DebuggerManagerThreadImpl getManagerThread() {
-        return getJdiDebugProcess().getManagerThread();
     }
 
     private DebugProcessImpl getJdiDebugProcess() {
