@@ -56,7 +56,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
         DBObjectRef methodRef = executionInput.getMethodRef();
 
         ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
-        if (debuggerType.isDebug()) {
+        if (connectionHandler != null && debuggerType.isDebug()) {
             versionPanel.setVisible(true);
             versionPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
             DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());

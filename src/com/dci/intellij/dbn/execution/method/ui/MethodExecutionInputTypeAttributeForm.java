@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.data.editor.ui.UserValueHolderImpl;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionArgumentValue;
+import com.dci.intellij.dbn.execution.method.MethodExecutionArgumentValuesCache;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -116,14 +117,17 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl<MethodExe
                 DBTypeAttribute typeAttribute = getTypeAttribute();
                 if (argument != null && typeAttribute != null) {
                     ConnectionHandler connectionHandler = argument.getConnectionHandler();
-                    if (connectionHandler != null) {
-                        MethodExecutionManager executionManager = MethodExecutionManager.getInstance(argument.getProject());
-                        MethodExecutionArgumentValue argumentValue = executionManager.getArgumentValuesCache().getArgumentValue(connectionHandler.getConnectionId(), getAttributeQualifiedName(), false);
-                        if (argumentValue != null) {
-                            List<String> cachedValues = new ArrayList<String>(argumentValue.getValueHistory());
-                            cachedValues.removeAll(getValues());
-                            return cachedValues;
-                        }
+                    MethodExecutionManager executionManager = MethodExecutionManager.getInstance(argument.getProject());
+                    MethodExecutionArgumentValuesCache argumentValuesCache = executionManager.getArgumentValuesCache();
+                    MethodExecutionArgumentValue argumentValue = argumentValuesCache.getArgumentValue(
+                            connectionHandler.getConnectionId(),
+                            getAttributeQualifiedName(),
+                            false);
+
+                    if (argumentValue != null) {
+                        List<String> cachedValues = new ArrayList<String>(argumentValue.getValueHistory());
+                        cachedValues.removeAll(getValues());
+                        return cachedValues;
                     }
                 }
                 return Collections.emptyList();

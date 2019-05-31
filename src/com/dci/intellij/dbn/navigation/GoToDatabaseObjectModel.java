@@ -61,11 +61,13 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
         return selectedConnectionRef.get();
     }
 
+    @NotNull
     @Override
     public String getNotInMessage() {
-        return null;
+        return "No database object matching criteria";
     }
 
+    @NotNull
     @Override
     public String getNotFoundMessage() {
         return "Database object not found";
@@ -244,9 +246,8 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
                     return true;
                 }
             }
-            return false;
         }
-        return enabled;
+        return false;
     }
 
 

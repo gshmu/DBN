@@ -11,6 +11,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public final class SchemaId extends PseudoConstant<SchemaId> implements Presentable {
+    public static final SchemaId NONE = get("NONE");
+
     public SchemaId(String id) {
         super(id);
     }

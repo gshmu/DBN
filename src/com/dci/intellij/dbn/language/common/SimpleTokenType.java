@@ -224,6 +224,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
         return formatting;
     }
 
+    @NotNull
     private SharedTokenTypeBundle getSharedTokenTypes() {
         Language lang = getLanguage();
         if (lang instanceof DBLanguageDialect) {
@@ -233,7 +234,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
             DBLanguage language = (DBLanguage) lang;
             return language.getSharedTokenTypes();
         }
-        return null;
+        throw new IllegalArgumentException("Language element of type " + lang + "is not supported");
     }
 
     @Override

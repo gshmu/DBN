@@ -346,9 +346,13 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
             BasePsiElement relevantPsiElement = getRelevantPsiElement();
             if(virtualFile instanceof DBContentVirtualFile) {
                 Document document = DocumentUtil.getDocument(containingFile);
-                Editor[] editors =  EditorFactory.getInstance().getEditors(document);
-                OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(relevantPsiElement);
-                if (descriptor != null) descriptor.navigateIn(editors[0]);
+                if (document != null) {
+                    Editor[] editors =  EditorFactory.getInstance().getEditors(document);
+                    OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(relevantPsiElement);
+                    if (descriptor != null) {
+                        descriptor.navigateIn(editors[0]);
+                    }
+                }
 
             } else{
                 relevantPsiElement.navigate(requestFocus);

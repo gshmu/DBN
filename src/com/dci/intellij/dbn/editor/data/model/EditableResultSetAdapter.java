@@ -111,7 +111,7 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
 
     @Override
     public void setValue(final int columnIndex, @NotNull final ValueAdapter valueAdapter, @Nullable final Object value) throws SQLException {
-        Connection connection = resultSet.getStatement().getConnection();
+        Connection connection = resultSet.getConnection();
         if (isUseSavePoints()) {
             ConnectionSavepoint.run(resultSet,
                     () -> valueAdapter.write(connection, resultSet, columnIndex, value));

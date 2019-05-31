@@ -276,7 +276,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                         if (browserDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
                             DBMethod method = browserDialog.getSelectedMethod();
                             MethodExecutionInput methodExecutionInput = executionManager.getExecutionInput(method);
-                            if (methodExecutionInput != null) {
+                            if (callback != null && methodExecutionInput != null) {
                                 callback.run(methodExecutionInput);
                             }
                         }
