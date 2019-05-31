@@ -99,7 +99,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void addExecutionResult(@NotNull CompilerResult compilerResult) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             executionConsoleForm.addResult(compilerResult);
@@ -107,7 +107,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void addExecutionResults(List<CompilerResult> compilerResults) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             executionConsoleForm.addResults(compilerResults);
@@ -115,7 +115,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void addExplainPlanResult(@NotNull ExplainPlanResult explainPlanResult) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             executionConsoleForm.addResult(explainPlanResult);
@@ -123,7 +123,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void writeLogOutput(@NotNull LogOutputContext context, LogOutput output) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             if (!context.isClosed()) {
                 showExecutionConsole();
                 ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
@@ -133,7 +133,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void addExecutionResult(@NotNull StatementExecutionResult executionResult) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             if (executionResult.isLoggingActive()) {
@@ -171,7 +171,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
 
     public void addExecutionResult(MethodExecutionResult executionResult) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             executionConsoleForm.addResult(executionResult);
@@ -179,7 +179,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     }
 
     public void selectExecutionResult(final StatementExecutionResult executionResult) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
             executionConsoleForm.selectResult(executionResult);
             showExecutionConsole();

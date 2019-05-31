@@ -233,7 +233,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
     private ConnectionPresentationChangeListener connectionPresentationChangeListener = new ConnectionPresentationChangeListener() {
         @Override
         public void presentationChanged(String name, Icon icon, Color color, ConnectionId connectionId, DatabaseType databaseType) {
-            Dispatch.invoke(() -> {
+            Dispatch.run(() -> {
                 ConnectionSettings configuration = getConfiguration();
                 if (configuration.getConnectionId().equals(connectionId)) {
                     if (name != null) headerForm.setTitle(name);

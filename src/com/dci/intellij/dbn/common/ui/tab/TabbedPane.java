@@ -77,7 +77,7 @@ public class TabbedPane extends JBEditorTabs implements RegisteredDisposable {
 
     @Override
     public void dispose() {
-        Dispatch.invoke(() -> TabbedPane.super.dispose());
+        Dispatch.run(() -> TabbedPane.super.dispose());
         RegisteredDisposable.super.disposeInner();
     }
 }

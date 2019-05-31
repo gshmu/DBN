@@ -187,7 +187,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                 runnable.run();
             } finally {
                 model.set(UPDATING, false);
-                Dispatch.invokeNonModal(() -> {
+                Dispatch.run(() -> {
                     DBNTableGutter tableGutter = getTableGutter();
                     GUIUtil.repaint(tableGutter);
                     GUIUtil.repaint(DatasetEditorTable.this);
@@ -197,7 +197,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     }
 
     public void showErrorPopup(DatasetEditorModelCell cell) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.run(() -> {
             checkDisposed();
 
             if (!isShowing()) {
@@ -220,16 +220,16 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     @Override
     public void clearSelection() {
-        Dispatch.invokeNonModal(() -> DatasetEditorTable.super.clearSelection());
+        Dispatch.run(() -> DatasetEditorTable.super.clearSelection());
     }
 
     @Override
     public void removeEditor() {
-        Dispatch.invokeNonModal(() -> DatasetEditorTable.super.removeEditor());
+        Dispatch.run(() -> DatasetEditorTable.super.removeEditor());
     }
 
     public void updateTableGutter() {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.run(() -> {
             DBNTableGutter tableGutter = getTableGutter();
             GUIUtil.repaint(tableGutter);
         });
@@ -364,7 +364,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     public void fireEditingCancel() {
         if (isEditing()) {
-            Dispatch.invokeNonModal(() -> cancelEditing());
+            Dispatch.run(() -> cancelEditing());
         }
     }
 
@@ -526,7 +526,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
                     ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
                     JPopupMenu popupMenu = actionPopupMenu.getComponent();
-                    Dispatch.invokeNonModal(() -> {
+                    Dispatch.run(() -> {
                         Component component = (Component) event.getSource();
                         if (component.isShowing()) {
                             int x = event.getX();

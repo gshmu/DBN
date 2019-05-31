@@ -244,7 +244,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                         }
 
                         if (sessionBrowsers.size() > 0) {
-                            Dispatch.invoke(() -> {
+                            Dispatch.run(() -> {
                                 for (SessionBrowser sessionBrowser : sessionBrowsers) {
                                     sessionBrowser.refreshLoadTimestamp();
                                 }

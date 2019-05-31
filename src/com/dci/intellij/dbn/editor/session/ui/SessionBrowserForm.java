@@ -106,7 +106,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     }
 
     public void showLoadingHint() {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             Failsafe.nd(this);
             loadingLabel.setVisible(true);
             loadingIconPanel.setVisible(true);
@@ -116,7 +116,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     }
 
     public void hideLoadingHint() {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             Failsafe.nd(this);
             loadingLabel.setVisible(false);
             loadingIconPanel.setVisible(false);

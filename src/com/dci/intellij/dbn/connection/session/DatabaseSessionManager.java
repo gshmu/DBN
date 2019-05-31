@@ -60,7 +60,7 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
             @Nullable DatabaseSession session,
             @Nullable ParametricRunnable.Basic<DatabaseSession> callback) {
 
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             CreateRenameSessionDialog dialog = session == null ?
                     new CreateRenameSessionDialog(connectionHandler) :
                     new CreateRenameSessionDialog(connectionHandler, session);

@@ -71,7 +71,7 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
     }
 
     public void rebuildForm() {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             updateArgumentValueTree();
             updateOutputTabs();
             updateStatusBarLabels();

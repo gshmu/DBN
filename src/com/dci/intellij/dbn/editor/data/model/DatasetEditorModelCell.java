@@ -206,7 +206,7 @@ public class DatasetEditorModelCell
     }
 
     public void edit() {
-        Dispatch.conditional(() -> {
+        Dispatch.runConditional(() -> {
             int index = getEditorTable().convertColumnIndexToView(getIndex());
             if (index > 0) {
                 DatasetEditorTable table = getEditorTable();
@@ -216,7 +216,7 @@ public class DatasetEditorModelCell
     }
 
     public void editPrevious() {
-        Dispatch.conditional(() -> {
+        Dispatch.runConditional(() -> {
             int index = getEditorTable().convertColumnIndexToView(getIndex());
             if (index > 0) {
                 DatasetEditorTable table = getEditorTable();
@@ -227,7 +227,7 @@ public class DatasetEditorModelCell
     }
 
     public void editNext(){
-        Dispatch.conditional(() -> {
+        Dispatch.runConditional(() -> {
             int index = getEditorTable().convertColumnIndexToView(getIndex());
             DatasetEditorModelRow row = getRow();
             if (index < row.getCells().size()-1) {
@@ -278,7 +278,7 @@ public class DatasetEditorModelCell
     }
 
     private void scrollToVisible() {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.run(() -> {
             int rowIndex = getRow().getIndex();
             int colIndex = getIndex();
             DatasetEditorTable table = getEditorTable();

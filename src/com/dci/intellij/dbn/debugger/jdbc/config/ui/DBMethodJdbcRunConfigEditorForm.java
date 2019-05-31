@@ -134,7 +134,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
                         }
                     }
 
-                    Dispatch.invoke(() -> {
+                    Dispatch.run(() -> {
                         methodArgumentsPanel.removeAll();
                         Disposer.dispose(methodExecutionInputForm);
                         methodExecutionInputForm = null;

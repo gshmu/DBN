@@ -269,7 +269,7 @@ public class BasicDataModel<
     }
 
     protected void notifyListeners(@Nullable ListDataEvent listDataEvent, @Nullable TableModelEvent modelEvent) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             if (listDataEvent != null) {
                 if (listModel.loaded()) {
                     listModel.get().notifyListeners(listDataEvent);

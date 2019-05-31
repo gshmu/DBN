@@ -342,7 +342,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     }
 
     public static void showConnectionInfoDialog(ConnectionHandler connectionHandler) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(connectionHandler);
             infoDialog.setModal(true);
             infoDialog.show();
@@ -350,7 +350,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     }
 
     private static void showConnectionInfoDialog(ConnectionInfo connectionInfo, String connectionName, EnvironmentType environmentType) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             ConnectionInfoDialog infoDialog = new ConnectionInfoDialog(null, connectionInfo, connectionName, environmentType);
             infoDialog.setModal(true);
             infoDialog.show();
@@ -489,7 +489,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                             if (idleMinutes > idleMinutesToDisconnect) {
                                 if (connection.hasDataChanges()) {
                                     connection.set(ResourceStatus.RESOLVING_TRANSACTION, true);
-                                    Dispatch.invokeNonModal(() -> {
+                                    Dispatch.run(() -> {
                                         IdleConnectionDialog idleConnectionDialog = new IdleConnectionDialog(connectionHandler, connection);
                                         idleConnectionDialog.show();
                                     });
@@ -505,7 +505,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     void disposeConnections(@NotNull List<ConnectionHandler> connectionHandlers) {
         if (connectionHandlers.size() > 0) {
             Project project = getProject();
-            Dispatch.invoke(() -> {
+            Dispatch.run(() -> {
                 List<ConnectionId> connectionIds = ConnectionHandler.ids(connectionHandlers);
 
                 ExecutionManager executionManager = ExecutionManager.getInstance(project);

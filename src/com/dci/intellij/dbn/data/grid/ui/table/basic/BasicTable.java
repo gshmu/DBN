@@ -150,7 +150,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     }
 
     public void updateBackground(boolean readonly) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             JBViewport viewport = UIUtil.getParentOfType(JBViewport.class, this);
             if (viewport != null) {
                 DataGridTextAttributes attributes = cellRenderer.getAttributes();

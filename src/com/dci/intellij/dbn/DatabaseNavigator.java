@@ -127,7 +127,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
     private void resolvePluginConflict() {
         if (showPluginConflictDialog && sqlPluginActive()) {
             showPluginConflictDialog = false;
-            Dispatch.invokeNonModal(() -> {
+            Dispatch.run(() -> {
                 List<String> disabledList = PluginManager.getDisabledPlugins();
                 String message =
                         "Database Navigator plugin (DBN) is not compatible with the IntelliJ IDEA built-in SQL functionality. " +

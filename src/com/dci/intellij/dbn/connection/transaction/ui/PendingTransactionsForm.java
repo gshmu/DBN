@@ -139,6 +139,6 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
     };
 
     private void refreshForm() {
-        Dispatch.invoke(() -> updateListModel());
+        Dispatch.run(() -> updateListModel());
     }
 }

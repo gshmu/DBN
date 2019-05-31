@@ -104,7 +104,7 @@ public class DataSearchResultController implements Disposable {
             searchResult.setMatches(matches);
 
             searchResult.stopUpdating();
-            Dispatch.invoke(() -> {
+            Dispatch.run(() -> {
                 int selectedRowIndex = table.getSelectedRow();
                 int selectedColumnIndex = table.getSelectedRow();
                 if (selectedRowIndex < 0) selectedRowIndex = 0;

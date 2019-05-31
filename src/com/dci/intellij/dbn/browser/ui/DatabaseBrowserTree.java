@@ -83,7 +83,7 @@ public class DatabaseBrowserTree extends DBNTree {
     }
 
     public void expandConnectionManagers() {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.run(() -> {
             ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
             ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
             TreePath treePath = DatabaseBrowserUtils.createTreePath(connectionBundle);
@@ -150,7 +150,7 @@ public class DatabaseBrowserTree extends DBNTree {
     }
 
     private void selectPath(TreePath treePath) {
-        Dispatch.invoke(() -> TreeUtil.selectPath(DatabaseBrowserTree.this, treePath, true));
+        Dispatch.run(() -> TreeUtil.selectPath(DatabaseBrowserTree.this, treePath, true));
     }
 
 
@@ -249,7 +249,7 @@ public class DatabaseBrowserTree extends DBNTree {
                                 DBObject navigationObject = object.getDefaultNavigationObject();
                                 if (navigationObject != null) {
                                     Progress.check(progress);
-                                    Dispatch.invoke(() -> navigationObject.navigate(true));
+                                    Dispatch.run(() -> navigationObject.navigate(true));
                                 }
                             });
                 }
@@ -350,7 +350,7 @@ public class DatabaseBrowserTree extends DBNTree {
                                     Progress.check(progress);
                                     ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
                                     popupMenu = actionPopupMenu.getComponent();
-                                    Dispatch.invoke(() -> {
+                                    Dispatch.run(() -> {
                                         if (isShowing()) {
                                             popupMenu.show(DatabaseBrowserTree.this, event.getX(), event.getY());
                                         }

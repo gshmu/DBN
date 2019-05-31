@@ -109,7 +109,7 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
                 (progress) -> {
                     MethodBrowserSettings settings = getSettings();
                     ObjectTreeModel model = new ObjectTreeModel(settings.getSchema(), settings.getVisibleObjectTypes(), null);
-                    Dispatch.invoke(() -> {
+                    Dispatch.run(() -> {
                         methodsTree.setModel(model);
                         GUIUtil.repaint(methodsTree);
                     });

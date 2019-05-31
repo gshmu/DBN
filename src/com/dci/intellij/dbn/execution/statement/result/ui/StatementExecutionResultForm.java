@@ -76,7 +76,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
     }
 
     public void rebuildForm() {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             StatementExecutionCursorResult executionResult = getExecutionResult();
             JScrollBar horizontalScrollBar = resultScrollPane.getHorizontalScrollBar();
             int horizontalScrolling = horizontalScrollBar.getValue();
@@ -94,7 +94,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
     }
 
     public void updateVisibleComponents() {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             StatementExecutionCursorResult executionResult = getExecutionResult();
             ResultSetDataModel dataModel = executionResult.getTableModel();
             ConnectionHandler connectionHandler = executionResult.getConnectionHandler();

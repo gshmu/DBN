@@ -30,7 +30,7 @@ public class DBExecutionPointHighlighter {
     }
 
     public void show(final @NotNull XSourcePosition position, final boolean useSelection) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.run(() -> {
             ApplicationManager.getApplication().assertIsDispatchThread();
             removeHighlighter();
 
@@ -45,7 +45,7 @@ public class DBExecutionPointHighlighter {
     }
 
     public void hide() {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.run(() -> {
             ApplicationManager.getApplication().assertIsDispatchThread();
             removeHighlighter();
             myOpenFileDescriptor = null;

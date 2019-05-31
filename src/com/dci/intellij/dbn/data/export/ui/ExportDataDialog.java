@@ -85,7 +85,7 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
                                     table,
                                     exportInstructions,
                                     connectionHandler,
-                                    () -> Dispatch.invoke(() -> ExportDataDialog.super.doOKAction()));
+                                    () -> Dispatch.run(() -> ExportDataDialog.super.doOKAction()));
                         })
         );
     }

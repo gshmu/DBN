@@ -31,7 +31,7 @@ public class DialogWithTimeoutForm extends DBNFormImpl {
     }
 
     public void updateTimeLeft(int secondsLeft) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             int minutes = 0;
             int seconds = secondsLeft;
             if (secondsLeft > 60) {

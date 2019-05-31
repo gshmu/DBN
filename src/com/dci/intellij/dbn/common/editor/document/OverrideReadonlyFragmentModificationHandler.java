@@ -35,7 +35,7 @@ public class OverrideReadonlyFragmentModificationHandler implements
             if (virtualFile instanceof DBSourceCodeVirtualFile || virtualFile instanceof LightVirtualFile || virtualFile instanceof DBConsoleVirtualFile) {
                 //Messages.showErrorDialog("You're not allowed to change name and type of the edited component.", "Action denied");
             } else {
-                Dispatch.invoke(() -> originalHandler.handle(e));
+                Dispatch.run(() -> originalHandler.handle(e));
             }
         }
     }

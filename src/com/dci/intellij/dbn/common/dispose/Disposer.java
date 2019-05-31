@@ -37,7 +37,7 @@ public class Disposer {
 
     public static void disposeInBackground(Object ... disposable) {
         // trigger background in dispatch thread
-        Dispatch.invoke(() ->Background.run(() -> dispose((Object[]) disposable)));
+        Dispatch.run(() ->Background.run(() -> dispose((Object[]) disposable)));
     }
 
     public static void dispose(@Nullable Object ... objects) {
@@ -179,7 +179,7 @@ public class Disposer {
 
     private static void dispose(@Nullable Component component) {
         if (component != null) {
-            Dispatch.conditional(() -> {
+            Dispatch.runConditional(() -> {
                 GUIUtil.removeListeners(component);
                 UIUtil.dispose(component);
                 if (component instanceof Container) {

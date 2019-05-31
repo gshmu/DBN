@@ -186,7 +186,7 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
     public void afterUpdate() {
         Object userValue = userValueHolder.getUserValue();
         if (userValue instanceof String && StringUtil.isEmpty(displayValue)) {
-            Dispatch.invoke(() -> {
+            Dispatch.run(() -> {
                 String text = (String) userValue;
                 setEditable(text.length() < 1000 && text.indexOf('\n') == -1);
                 setText(text);

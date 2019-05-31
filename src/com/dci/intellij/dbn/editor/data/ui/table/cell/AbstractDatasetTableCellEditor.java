@@ -40,7 +40,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
 
     private DatasetEditorModelCellValueListener cellValueListener = cell -> {
         if (cell == getCell()) {
-            Dispatch.invokeNonModal(() -> setCellValueToEditor());
+            Dispatch.run(() -> setCellValueToEditor());
         }
     };
 

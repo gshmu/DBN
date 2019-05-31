@@ -338,7 +338,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
             @NotNull DBDebuggerType debuggerType,
             @NotNull Runnable callback) {
 
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.run(() -> {
             if (promptExecutionDialogs(processors, debuggerType)) {
                 callback.run();
             }
@@ -410,7 +410,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     public void promptPendingTransactionDialog(StatementExecutionProcessor executionProcessor) {
         ExecutionContext context = executionProcessor.getExecutionContext();
         context.set(PROMPTED, true);
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.run(() -> {
             try {
                 PendingTransactionDialog dialog = new PendingTransactionDialog(executionProcessor);
                 dialog.show();

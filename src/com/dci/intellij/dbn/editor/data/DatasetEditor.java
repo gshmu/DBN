@@ -350,7 +350,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
     }
 
     private void handleLoadError(SQLException e, DatasetLoadInstructions instr) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.run(() -> {
             checkDisposed();
             focusEditor();
             ConnectionHandler connectionHandler = getConnectionHandler();
@@ -554,7 +554,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
             boolean statusChanged = getStatus().set(CONNECTED, connected);
 
             if (statusChanged) {
-                Dispatch.invokeNonModal(() -> {
+                Dispatch.run(() -> {
                     DatasetEditorTable editorTable = getEditorTable();
                     editorTable.updateBackground(!connected);
                     if (connected) {
