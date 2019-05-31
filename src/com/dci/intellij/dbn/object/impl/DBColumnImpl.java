@@ -198,7 +198,9 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
                     childObjectRelations.getObjectRelationList(DBObjectRelationType.CONSTRAINT_COLUMN);
             if (constraintColumnRelations != null) {
                 for (DBConstraintColumnRelation relation : constraintColumnRelations.getObjectRelations()) {
-                    if (relation.getColumn().equals(this) && relation.getConstraint().equals(constraint))
+                    DBColumn relationColumn = relation.getColumn();
+                    DBConstraint relationConstraint = relation.getConstraint();
+                    if (relationColumn != null && relationConstraint != null && relationColumn.equals(this) && relationConstraint.equals(constraint))
                         return relation.getPosition();
                 }
             }
@@ -214,7 +216,8 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
                     childObjectRelations.getObjectRelationList(DBObjectRelationType.CONSTRAINT_COLUMN);
             if (constraintColumnRelations != null) {
                 for (DBConstraintColumnRelation relation : constraintColumnRelations.getObjectRelations()) {
-                    if (relation.getColumn().equals(this) && relation.getPosition() == position) {
+                    DBColumn relationColumn = relation.getColumn();
+                    if (relationColumn != null && relationColumn.equals(this) && relation.getPosition() == position) {
                         return relation.getConstraint();
                     }
                 }
