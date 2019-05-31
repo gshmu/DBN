@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.1.1432.0</version>
+    <version>3.2.0041.0</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -21,6 +21,7 @@
                 <li>MySQL
                 <li>SQLite
                 <li>PostgreSQL
+                <li>Any JDBC compliant database (EXPERIMENTAL)
             </ul><br>
             <br><br>
             This tool is free for personal and commercial usage. <br>
@@ -28,6 +29,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.2.0041</b>
+            <ul>
+                <li>Generic database support (Experimental)
+                <li>Support for latest IDE EAP versions
+                <li>Bug fixes and performance improvements
+            </ul>
             <li><b>3.1.1432</b>
             <ul>
                 <li>Fixed issue with built-in driver libraries
