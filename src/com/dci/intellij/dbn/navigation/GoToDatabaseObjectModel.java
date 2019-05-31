@@ -247,7 +247,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
                 }
             }
         }
-        return false;
+        return enabled;
     }
 
 
