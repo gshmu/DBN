@@ -43,7 +43,6 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
     private JPanel headerPanel;
     private JButton infoButton;
     private JButton testButton;
-    private JButton reloadButton;
     private JCheckBox activeCheckBox;
     private TabbedPane configTabbedPane;
 
@@ -110,7 +109,6 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         resetFormChanges();
 
         registerComponent(testButton);
-        registerComponent(reloadButton);
         registerComponent(infoButton);
         registerComponent(activeCheckBox);
     }
@@ -165,16 +163,13 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
             public void actionPerformed(ActionEvent e) {
                 Object source = e.getSource();
                 ConnectionSettings configuration = getConfiguration();
-                if (source == testButton || source == infoButton || source == reloadButton) {
+                if (source == testButton || source == infoButton) {
                     ConnectionSettingsForm connectionSettingsForm = configuration.getSettingsEditor();
                     if (connectionSettingsForm != null) {
                         try {
                             ConnectionSettings temporaryConfig = connectionSettingsForm.getTemporaryConfig();
 
                             if (source == testButton) ConnectionManager.testConfigConnection(temporaryConfig, true);
-                            if (source == reloadButton){
-                                ConnectionManager.reloadConnectionDrivers(temporaryConfig);
-                            }
                             if (source == infoButton) {
                                 ConnectionDetailSettingsForm detailSettingsForm = configuration.getDetailSettings().getSettingsEditor();
                                 if (detailSettingsForm != null) {

@@ -80,7 +80,7 @@ public class EditorNotificationPanel extends JPanel{
         });
     }
 
-    public HyperlinkLabel createActionLabel(final String text, final Runnable action) {
+    protected HyperlinkLabel createActionLabel(final String text, final Runnable action) {
         HyperlinkLabel label = new HyperlinkLabel(text, PlatformColors.BLUE, getBackground(), PlatformColors.BLUE);
         label.addHyperlinkListener(new HyperlinkAdapter() {
             @Override
@@ -92,7 +92,7 @@ public class EditorNotificationPanel extends JPanel{
         return label;
     }
 
-    protected void executeAction(final String actionId) {
+    private void executeAction(final String actionId) {
         final AnAction action = ActionManager.getInstance().getAction(actionId);
         final AnActionEvent event = new AnActionEvent(null, DataManager.getInstance().getDataContext(this), ActionPlaces.UNKNOWN,
                 action.getTemplatePresentation(), ActionManager.getInstance(),
