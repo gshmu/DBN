@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution;
 
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
@@ -19,9 +20,11 @@ public interface ExecutionResult<F extends ExecutionResultForm> extends Disposab
 
     @Nullable
     default F getForm() {
-        Project project = getProject();
-        ExecutionManager executionManager = ExecutionManager.getInstance(project);
-        return (F) executionManager.getExecutionResultForm(this);
+        return Dispatch.callConditional(() -> {
+            Project project = getProject();
+            ExecutionManager executionManager = ExecutionManager.getInstance(project);
+            return (F) executionManager.getExecutionResultForm(this);
+        });
     }
 
     @NotNull

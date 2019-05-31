@@ -259,7 +259,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
         @Override
         public void run() {
             if (scrollPane != null && scrollDistance != 0) {
-                Dispatch.invoke(() -> {
+                Dispatch.run(() -> {
                     JViewport viewport = scrollPane.getViewport();
                     Point viewPosition = viewport.getViewPosition();
                     viewport.setViewPosition(new Point((int) (viewPosition.x + scrollDistance), viewPosition.y));

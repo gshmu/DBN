@@ -82,7 +82,7 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
                         ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
                         Disposer.register(ObjectPropertiesForm.this, tableModel);
 
-                        Dispatch.invokeNonModal(() -> {
+                        Dispatch.run(() -> {
                             objectLabel.setText(object.getName());
                             objectLabel.setIcon(object.getIcon());
                             objectTypeLabel.setText(NamingUtil.capitalize(object.getTypeName()) + ":");

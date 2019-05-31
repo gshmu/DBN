@@ -81,7 +81,7 @@ public class InteractiveOptionBroker<T extends InteractiveOption> implements Dia
     }
 
     public void resolve(Object[] messageArgs, ParametricRunnable.Basic<T> callback) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             T option;
             if (selectedOption != null && !selectedOption.isAsk()) {
                 option = selectedOption;

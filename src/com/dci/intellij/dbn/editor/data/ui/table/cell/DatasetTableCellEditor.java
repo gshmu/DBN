@@ -103,7 +103,7 @@
     void selectText(JTextField textField) {
         if (textField.isEditable()) {
             String originalText = textField.getText();
-            Dispatch.invokeNonModal(() -> {
+            Dispatch.run(() -> {
                 checkDisposed();
                 // select all only if the text didn't change
                 if (settings.getGeneralSettings().getSelectContentOnCellEdit().value()) {
@@ -200,7 +200,7 @@
                         DBColumn column = cell.getColumnInfo().getColumn();
                         DBColumn foreignKeyColumn = column.getForeignKeyColumn();
                         if (foreignKeyColumn != null && !e.isConsumed()) {
-                            Dispatch.invokeNonModal(() -> {
+                            Dispatch.run(() -> {
                                 textField.setToolTipText("<html>Show referenced <b>" + foreignKeyColumn.getDataset().getQualifiedName() + "</b> record<html>");
                                 textField.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                             });

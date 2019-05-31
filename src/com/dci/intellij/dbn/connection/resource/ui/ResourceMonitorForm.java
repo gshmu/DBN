@@ -126,7 +126,7 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
     };
 
     private void refreshForm() {
-        Dispatch.invoke(() -> updateListModel());
+        Dispatch.run(() -> updateListModel());
 
     }
 }

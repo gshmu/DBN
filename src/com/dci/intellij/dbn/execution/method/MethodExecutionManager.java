@@ -114,7 +114,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                                 } else {
                                     // load the arguments in background
                                     executionInput.getMethod().getArguments();
-                                    Dispatch.invokeNonModal(() -> {
+                                    Dispatch.run(() -> {
                                         MethodExecutionInputDialog executionDialog = new MethodExecutionInputDialog(executionInput, debuggerType);
                                         executionDialog.show();
                                         if (executionDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
@@ -152,7 +152,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                     }
 
                     if (!progress.isCanceled()) {
-                        Dispatch.invoke(() -> {
+                        Dispatch.run(() -> {
                             MethodExecutionHistoryDialog executionHistoryDialog = new MethodExecutionHistoryDialog(project, selectedInput, editable, debug);
                             executionHistoryDialog.show();
                             MethodExecutionInput newlySelected = executionHistoryDialog.getSelectedExecutionInput();
@@ -269,7 +269,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
                             new ObjectTreeModel(schema, settings.getVisibleObjectTypes(), settings.getMethod()) :
                             new ObjectTreeModel(null, settings.getVisibleObjectTypes(), null);
 
-                    Dispatch.invoke(() -> {
+                    Dispatch.run(() -> {
                         Failsafe.nn(project);
                         MethodExecutionBrowserDialog browserDialog = new MethodExecutionBrowserDialog(project, objectTreeModel, true);
                         browserDialog.show();

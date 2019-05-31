@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ProjectUtil {
     public static void closeProject(@NotNull Project project) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.run(() -> {
             ProjectManager.getInstance().closeProject(project);
             WelcomeFrame.showIfNoProjectOpened();
         });

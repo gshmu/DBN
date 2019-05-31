@@ -42,7 +42,7 @@ public abstract class DialogWithTimeout extends DBNDialog<DialogWithTimeoutForm>
                     secondsLeft = secondsLeft -1;
                     getComponent().updateTimeLeft(secondsLeft);
                     if (secondsLeft == 0) {
-                        Dispatch.invoke(() -> doDefaultAction());
+                        Dispatch.run(() -> doDefaultAction());
                     }
                 }
             } catch (ProcessCanceledException ignore) {}

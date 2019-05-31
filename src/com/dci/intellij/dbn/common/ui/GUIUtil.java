@@ -207,14 +207,14 @@ public class GUIUtil{
     }
 
     public static void repaint(JComponent component) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             component.revalidate();
             component.repaint();
         });
     }
 
     public static void repaintAndFocus(JComponent component) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             component.revalidate();
             component.repaint();
             component.requestFocus();

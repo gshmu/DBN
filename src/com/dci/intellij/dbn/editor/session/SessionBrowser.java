@@ -117,7 +117,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
 
     private void replaceModel(SessionBrowserModel newModel) {
         if (newModel != null) {
-            Dispatch.invokeNonModal(() -> {
+            Dispatch.run(() -> {
                 SessionBrowserTable editorTable = getEditorTable();
                 SessionBrowserModel oldModel = editorTable.getModel();
                 SessionBrowserState state = oldModel.getState();
@@ -294,7 +294,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
         if (this.loading != loading) {
             this.loading = loading;
 
-            Dispatch.invokeNonModal(() -> {
+            Dispatch.run(() -> {
                 if (editorForm != null) {
                     if (SessionBrowser.this.loading)
                         editorForm.showLoadingHint(); else

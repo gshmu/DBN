@@ -60,7 +60,7 @@ public abstract class ObjectListShowAction extends DumbAwareAction {
                                 List<? extends DBObject> recentObjectList = getRecentObjectList();
                                 List<? extends DBObject> objects = getObjectList();
                                 if (!action.isCancelled()) {
-                                    Dispatch.invokeNonModal(() -> {
+                                    Dispatch.run(() -> {
                                         if (objects.size() > 0) {
                                             ObjectListActionGroup actionGroup = new ObjectListActionGroup(ObjectListShowAction.this, objects, recentObjectList);
                                             JBPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(

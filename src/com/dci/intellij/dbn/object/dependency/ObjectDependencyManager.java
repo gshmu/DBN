@@ -43,7 +43,7 @@ public class ObjectDependencyManager extends AbstractProjectComponent implements
 
     public void openDependencyTree(DBSchemaObject schemaObject) {
         ConnectionAction.invoke("opening object dependency tree", false, schemaObject,
-                (action) -> Dispatch.invoke(() -> {
+                (action) -> Dispatch.run(() -> {
                     ObjectDependencyTreeDialog dependencyTreeDialog = new ObjectDependencyTreeDialog(getProject(), schemaObject);
                     dependencyTreeDialog.show();
                 }));

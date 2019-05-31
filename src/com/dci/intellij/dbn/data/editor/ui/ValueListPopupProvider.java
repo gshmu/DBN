@@ -106,7 +106,7 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
                             return;
                         }
 
-                        Dispatch.invoke(() -> {
+                        Dispatch.run(() -> {
                             try {
                                 if (!isShowingPopup()) {
                                     doShowPopup();

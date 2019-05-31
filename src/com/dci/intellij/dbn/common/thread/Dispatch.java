@@ -1,29 +1,32 @@
 package com.dci.intellij.dbn.common.thread;
 
+import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.progress.ProcessCanceledException;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public interface Dispatch {
 
-    static void invoke(Runnable runnable) {
-        invoke(null, runnable);
+    static void run(Runnable runnable) {
+        run(null, runnable);
     }
 
-    static void conditional(Runnable runnable) {
+    static void runConditional(Runnable runnable) {
         Application application = ApplicationManager.getApplication();
         if (application.isDispatchThread()) {
             try {
                 runnable.run();
             } catch (ProcessCanceledException ignore) {}
         } else {
-            invoke(null, runnable);
+            run(null, runnable);
         }
     }
 
-    static void invoke(ModalityState modalityState, Runnable runnable) {
+    static void run(ModalityState modalityState, Runnable runnable) {
         Application application = ApplicationManager.getApplication();
         modalityState = CommonUtil.nvl(modalityState, application.getDefaultModalityState());
         application.invokeLater(
@@ -36,6 +39,38 @@ public interface Dispatch {
     }
 
     static void invokeNonModal(Runnable runnable) {
-        invoke(ModalityState.NON_MODAL, runnable);
+        run(ModalityState.NON_MODAL, runnable);
+    }
+
+    static <T, E extends Throwable> T callConditional(ThrowableCallable<T, E> callable) throws E{
+        Application application = ApplicationManager.getApplication();
+        if (application.isDispatchThread()) {
+            return callable.call();
+        } else {
+            return call(callable);
+        }
+    }
+
+
+    static <T, E extends Throwable> T call(ThrowableCallable<T, E> callable) throws E{
+        Application application = ApplicationManager.getApplication();
+        ModalityState modalityState = application.getDefaultModalityState();
+        AtomicReference<T> resultRef = new AtomicReference<>();
+        AtomicReference<E> exceptionRef = new AtomicReference<>();
+        application.invokeAndWait(() -> {
+            T result = null;
+            try {
+                result = callable.call();
+                resultRef.set(result);
+            } catch (Throwable e) {
+                exceptionRef.set((E) e);
+            }
+
+        }, modalityState);
+        if (exceptionRef.get() != null) {
+            throw exceptionRef.get();
+        }
+
+        return resultRef.get();
     }
 }

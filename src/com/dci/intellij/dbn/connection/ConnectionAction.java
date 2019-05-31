@@ -44,7 +44,7 @@ public abstract class ConnectionAction implements Runnable{
     }
 
     public final void start() {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             ConnectionHandler connectionHandler = getConnectionHandler();
             if (connectionHandler.isVirtual() || connectionHandler.canConnect()) {
                 if (interactive || connectionHandler.isValid()) {
