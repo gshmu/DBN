@@ -142,7 +142,7 @@ public class BasicTextEditorState implements FileEditorState {
 
         if (foldingState != null) {
             Write.run(() -> {
-                Project project = Failsafe.nn(editor.getProject());
+                Project project = Failsafe.nd(editor.getProject());
                 PsiDocumentManager.getInstance(project).commitDocument(document);
                 CodeFoldingManager.getInstance(project).restoreFoldingState(editor, getFoldingState());
             });

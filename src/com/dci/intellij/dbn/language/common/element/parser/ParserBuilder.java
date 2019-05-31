@@ -74,8 +74,10 @@ public class ParserBuilder {
         return builder.getCurrentOffset();
     }
 
+    @Nullable
     public TokenType lookAhead(int steps) {
-        return (TokenType) builder.lookAhead(steps);
+        IElementType elementType = builder.lookAhead(steps);
+        return elementType instanceof TokenType ? (TokenType) elementType : null;
     }
 
 
