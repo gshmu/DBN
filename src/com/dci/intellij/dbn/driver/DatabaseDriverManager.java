@@ -125,7 +125,6 @@ public class DatabaseDriverManager implements ApplicationComponent {
             Synchronized.run(this,
                     () -> !driversCache.containsKey(libraryName) || force,
                     () -> {
-
                         if (driversCache.containsKey(libraryName) && force){
                             try{
                                 // clean up old classloader opened resources

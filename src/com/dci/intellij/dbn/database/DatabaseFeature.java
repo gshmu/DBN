@@ -12,6 +12,7 @@ public enum DatabaseFeature {
     OBJECT_DDL_EXTRACTION("Object DDL extraction"),
     OBJECT_INVALIDATION("Object invalidation"),
     OBJECT_DISABLING("Disabling objects"),
+    OBJECT_SOURCE_EDITING("Editing object sources"),
     OBJECT_CHANGE_TRACING("Tracing objects changes"),
     AUTHID_METHOD_EXECUTION("AUDHID method execution (execution on different schema)"),
     FUNCTION_OUT_ARGUMENTS("OUT arguments for functions"),
