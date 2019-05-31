@@ -369,13 +369,11 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
                     if (virtualFile instanceof DBSessionStatementVirtualFile) {
                         DBSessionStatementVirtualFile sessionBrowserStatementFile = (DBSessionStatementVirtualFile) virtualFile;
                         SessionBrowser sessionBrowser = sessionBrowserStatementFile.getSessionBrowser();
-                        if (sessionBrowser != null) {
-                            SessionBrowserForm editorForm = sessionBrowser.getEditorForm();
-                            EditorEx viewer = editorForm.getDetailsForm().getCurrentSqlPanel().getViewer();
-                            if (viewer != null) {
-                                descriptor.navigateIn(viewer);
-                                if (requestFocus) EditorUtil.focusEditor(viewer);
-                            }
+                        SessionBrowserForm editorForm = sessionBrowser.getEditorForm();
+                        EditorEx viewer = editorForm.getDetailsForm().getCurrentSqlPanel().getViewer();
+                        if (viewer != null) {
+                            descriptor.navigateIn(viewer);
+                            if (requestFocus) EditorUtil.focusEditor(viewer);
                         }
                         return;
                     }
@@ -436,7 +434,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
                     if (reference instanceof DBObjectPsiElement) {
                         DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) reference;
                         if (objects == null) {
-                            objects = new HashSet<DBObject>();
+                            objects = new HashSet<>();
                         }
                         objects.add(objectPsiElement.ensureObject());
                     }

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.data.model;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
@@ -29,6 +30,7 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,6 +51,8 @@ import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 public class DatasetEditorModel
         extends ResultSetDataModel<DatasetEditorModelRow, DatasetEditorModelCell>
         implements ListSelectionListener {
+
+    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private boolean isResultSetUpdatable;
     private DatasetEditor datasetEditor;
@@ -177,18 +181,23 @@ public class DatasetEditorModel
                             ResultSet.CONCUR_UPDATABLE);
 
                 } catch (Throwable e) {
-                    if (metaData.supportsResultSetType(ResultSet.TYPE_FORWARD_ONLY)) {
-                        try {
-                            statement = connection.createStatement(
-                                    ResultSet.TYPE_FORWARD_ONLY,
-                                    ResultSet.CONCUR_READ_ONLY);
-                        } catch (Throwable e2) {
-                            // default statement creation
-                            statement = connection.createStatement();
-                        }
-                    }
-
+                    LOGGER.error("Failed to create SCROLL_INSENSITIVE statement", e);
                 }
+            }
+
+            if (statement == null && metaData.supportsResultSetType(ResultSet.TYPE_FORWARD_ONLY)) {
+                try {
+                    statement = connection.createStatement(
+                            ResultSet.TYPE_FORWARD_ONLY,
+                            ResultSet.CONCUR_READ_ONLY);
+                } catch (Throwable e) {
+                    LOGGER.error("Failed to create FORWARD_ONLY statement", e);
+                }
+            }
+
+            if (statement == null) {
+                // default statement creation
+                statement = connection.createStatement();
             }
         }
         statementRef.set(statement);

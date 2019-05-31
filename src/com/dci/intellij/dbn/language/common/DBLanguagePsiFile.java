@@ -299,13 +299,15 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         Editor selectedEditor = EditorUtil.getSelectedEditor(getProject());
         if (selectedEditor != null) {
             Document document = DocumentUtil.getDocument(getContainingFile());
-            Editor[] editors = EditorFactory.getInstance().getEditors(document);
-            for (Editor editor : editors) {
-                if (editor == selectedEditor) {
-                    OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(this);
-                    if (descriptor != null) {
-                        descriptor.navigateIn(selectedEditor);
-                        return;
+            if (document != null) {
+                Editor[] editors = EditorFactory.getInstance().getEditors(document);
+                for (Editor editor : editors) {
+                    if (editor == selectedEditor) {
+                        OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(this);
+                        if (descriptor != null) {
+                            descriptor.navigateIn(selectedEditor);
+                            return;
+                        }
                     }
                 }
             }

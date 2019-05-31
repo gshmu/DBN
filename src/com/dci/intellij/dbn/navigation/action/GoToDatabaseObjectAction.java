@@ -148,12 +148,12 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
         }
 
         @Override
-        public boolean canBePerformed(DataContext context) {
+        public boolean canBePerformed(@NotNull DataContext context) {
             return true;
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             ConnectionHandler connectionHandler = getConnectionHandler();
             Project project = connectionHandler.getProject();
             showLookupPopup(e, project, connectionHandler, null);
@@ -163,7 +163,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
         @NotNull
         @Override
         public AnAction[] getChildren(AnActionEvent e) {
-            List<SelectSchemaAction> schemaActions = new ArrayList<SelectSchemaAction>();
+            List<SelectSchemaAction> schemaActions = new ArrayList<>();
             ConnectionHandler connectionHandler = getConnectionHandler();
             for (DBSchema schema : connectionHandler.getObjectBundle().getSchemas()) {
                 schemaActions.add(new SelectSchemaAction(schema));
@@ -279,8 +279,8 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
     }
 
     @Override
-    public void update(AnActionEvent event) {
-        super.update(event);
-        event.getPresentation().setText("Database Object...");
+    public void update(@NotNull AnActionEvent e) {
+        super.update(e);
+        e.getPresentation().setText("Database Object...");
     }
 }

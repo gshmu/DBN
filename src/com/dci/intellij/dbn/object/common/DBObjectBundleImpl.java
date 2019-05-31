@@ -567,7 +567,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @NotNull
     @Override
     public String getName() {
-        return getPresentableText();
+        return CommonUtil.nvl(getPresentableText(), "Object Bundle");
     }
 
     @Override
