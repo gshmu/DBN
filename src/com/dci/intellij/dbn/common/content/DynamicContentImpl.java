@@ -9,6 +9,8 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
+import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
@@ -18,16 +20,21 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
 
-public abstract class DynamicContentImpl<T extends DynamicContentElement> extends DisposablePropertyHolder<DynamicContentStatus> implements DynamicContent<T> {
+public abstract class DynamicContentImpl<T extends DynamicContentElement>
+        extends DisposablePropertyHolder<DynamicContentStatus>
+        implements DynamicContent<T>,
+                   NotificationSupport {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     protected static final List EMPTY_CONTENT = java.util.Collections.unmodifiableList(Collections.emptyList());
@@ -250,6 +257,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
         checkDisposed();
         dependencyAdapter.beforeLoad(force);
         checkDisposed();
+
         try {
             // mark first the dirty status since dirty dependencies may
             // become valid due to parallel background load
@@ -259,9 +267,30 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
 
             // refresh inner elements
             if (force) elements.forEach(t -> t.refresh());
+
+        } catch (ProcessCanceledException e) {
+            throw e;
+
+        } catch (SQLFeatureNotSupportedException e) {
+            // unsupported feature: log in notification area
+            elements = EMPTY_CONTENT;
+            sendErrorNotification(
+                    NotificationGroup.METADATA,
+                    "Failed to load {0}. Feature not supported: {1}",
+                    getContentDescription(), e);
+
         } catch (SQLException e) {
-            LOGGER.warn("Failed to load content: " + e.getMessage());
+            // connectivity / timeout exceptions: mark content dirty (no logging)
+            elements = EMPTY_CONTENT;
+            set(DIRTY, true);
+
+        } catch (Throwable e) {
+            // any other exception: log error
+            LOGGER.error("Failed to load content", e);
+            elements = EMPTY_CONTENT;
+            set(DIRTY, true);
         }
+
         checkDisposed();
         dependencyAdapter.afterLoad();
     }

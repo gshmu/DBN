@@ -13,6 +13,7 @@ public enum NotificationGroup {
     COMPILER("Compiler"),
     LOGGING("Logging"),
     BROWSER("Browser"),
+    METADATA("Metadata"),
     DATA("Data"),
     ;
 
