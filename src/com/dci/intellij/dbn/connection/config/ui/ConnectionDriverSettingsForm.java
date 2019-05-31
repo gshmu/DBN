@@ -78,7 +78,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
                     "TemporaryLabelTimeout",
                     3000,
                     listener -> {
-                        reloadDriversLink.setVisible(true);
+                        updateDriverReloadLink();
                         reloadDriversCheckLabel.setVisible(false);
                     });
             timer.setRepeats(false);
@@ -88,19 +88,18 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
 
     void updateDriverFields() {
         DatabaseType databaseType = getDatabaseType();
-        boolean allowBuiltInLibrary = databaseType != DatabaseType.GENERIC;
+        boolean allowBuiltInLibrary = isBuiltInLibrarySupported(databaseType);
 
-        DriverSource driverSource = allowBuiltInLibrary ? getSelection(driverSourceComboBox) : DriverSource.EXTERNAL;
         driverSourceComboBox.setVisible(allowBuiltInLibrary);
         driverSourceLabel.setVisible(allowBuiltInLibrary);
 
         String error = null;
-        boolean externalDriver = driverSource == DriverSource.EXTERNAL;
+        boolean externalDriver = getDriverSource() == DriverSource.EXTERNAL;
         driverLibraryLabel.setVisible(externalDriver);
         driverLibraryTextField.setVisible(externalDriver);
         driverLabel.setVisible(externalDriver);
         driverComboBox.setVisible(externalDriver);
-        reloadDriversLink.setVisible(externalDriver && StringUtil.isNotEmpty(getDriverLibrary()));
+        updateDriverReloadLink();
 
         if (externalDriver) {
             String driverLibrary = getDriverLibrary();
@@ -110,7 +109,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
             if (fileExists) {
                 libraryTextField.setForeground(UIUtil.getTextFieldForeground());
                 DatabaseType libraryDatabaseType = DatabaseType.resolve(driverLibrary);
-                if (databaseType != DatabaseType.GENERIC && libraryDatabaseType != getDatabaseType()) {
+                if (isBuiltInLibrarySupported(databaseType) && libraryDatabaseType != getDatabaseType()) {
                     error = "The driver library does not match the selected database type";
                     initComboBox(driverComboBox);
                     setSelection(driverComboBox, null);
@@ -160,6 +159,27 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
             driverErrorLabel.setText("");
             driverErrorLabel.setVisible(false);
         }
+    }
+
+    private void updateDriverReloadLink() {
+        reloadDriversLink.setVisible(
+                getDriverSource() == DriverSource.EXTERNAL &&
+                        isDriverLibraryAccessible());
+    }
+
+    private DriverSource getDriverSource() {
+        DatabaseType databaseType = getDatabaseType();
+        boolean allowBuiltInLibrary = isBuiltInLibrarySupported(databaseType);
+        return allowBuiltInLibrary ? getSelection(driverSourceComboBox) : DriverSource.EXTERNAL;
+    }
+
+    private boolean isBuiltInLibrarySupported(DatabaseType databaseType) {
+        return databaseType != DatabaseType.GENERIC;
+    }
+
+    private boolean isDriverLibraryAccessible() {
+        String driverLibrary = getDriverLibrary();
+        return StringUtil.isNotEmpty(driverLibrary) && new File(driverLibrary).exists();
     }
 
     private String getDriverLibrary() {
