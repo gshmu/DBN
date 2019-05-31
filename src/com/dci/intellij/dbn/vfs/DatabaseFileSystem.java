@@ -496,8 +496,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     public void closeEditor(DBSchemaObject object) {
         VirtualFile virtualFile = findDatabaseFile(object);
         if (virtualFile != null) {
-            FileEditorManager fileEditorManager = FileEditorManager.getInstance(object.getProject());
-            fileEditorManager.closeFile(virtualFile);
+            DatabaseFileManager databaseFileManager = DatabaseFileManager.getInstance(object.getProject());
+            databaseFileManager.closeFile(virtualFile);
         }
     }
 
