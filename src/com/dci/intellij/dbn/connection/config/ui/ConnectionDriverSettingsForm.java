@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.ComboBoxUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -90,8 +91,11 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
         DatabaseType databaseType = getDatabaseType();
         boolean allowBuiltInLibrary = isBuiltInLibrarySupported(databaseType);
 
-        driverSourceComboBox.setVisible(allowBuiltInLibrary);
-        driverSourceLabel.setVisible(allowBuiltInLibrary);
+        driverSourceComboBox.setEnabled(allowBuiltInLibrary);
+        if (!allowBuiltInLibrary) {
+            ComboBoxUtil.setSelection(driverSourceComboBox, DriverSource.EXTERNAL);
+        }
+        //driverSourceLabel.setVisible(allowBuiltInLibrary);
 
         String error = null;
         boolean externalDriver = getDriverSource() == DriverSource.EXTERNAL;

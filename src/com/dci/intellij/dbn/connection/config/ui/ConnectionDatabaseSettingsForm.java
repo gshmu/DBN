@@ -4,11 +4,13 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
+import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
 import com.dci.intellij.dbn.common.ui.ComboBoxUtil;
+import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -32,6 +34,7 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -42,10 +45,7 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getElements;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 
 public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<ConnectionDatabaseSettings> {
     private JPanel mainPanel;
@@ -64,6 +64,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
     private JPanel urlPanel;
     private JPanel filePanel;
     private JPanel databaseFilesPanel;
+    private JPanel databaseTypeHintPanel;
 
     private DatabaseFileSettingsForm databaseFileSettingsForm;
     private ConnectionDriverSettingsForm driverSettingsForm;
@@ -118,6 +119,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
         if (configType == ConnectionConfigType.CUSTOM) {
             databaseTypeComboBox.addActionListener(e -> databaseTypeChanged());
+            updateNativeSupportDatabaseHint();
         }
     }
 
@@ -174,6 +176,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
         driverSettingsForm.updateDriverFields();
         selectedDatabaseType = newDatabaseType;
+        updateNativeSupportDatabaseHint();
     }
 
     private void updateFieldVisibility(ConnectionConfigType configType, DatabaseType databaseType) {
@@ -280,7 +283,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();
         JComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
 
-        DatabaseType databaseType = CommonUtil.nvl(getSelection(databaseTypeComboBox), configuration.getDatabaseType());
+        DatabaseType databaseType = getSelectedDatabaseType();
         DriverOption driverOption = ComboBoxUtil.getSelection(driverComboBox);
         DatabaseUrlType urlType = CommonUtil.nvl(getSelection(urlTypeComboBox), DatabaseUrlType.DATABASE);
 
@@ -316,11 +319,9 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         ConnectionDatabaseSettings configuration = getConfiguration();
 
         TextFieldWithBrowseButton driverLibraryTextField = driverSettingsForm.getDriverLibraryTextField();
-        JComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
 
-        DatabaseType selectedDatabaseType = CommonUtil.nvl(getSelection(databaseTypeComboBox), configuration.getDatabaseType());
-        DriverOption selectedDriver = ComboBoxUtil.getSelection(driverComboBox);
-        DatabaseType driverDatabaseType = selectedDriver == null ? null : DatabaseType.resolve(selectedDriver.getName());
+        DatabaseType selectedDatabaseType = getSelectedDatabaseType();
+        DatabaseType driverDatabaseType = getDriverDatabaseType();
         if (driverDatabaseType != null && driverDatabaseType != selectedDatabaseType) {
             if (selectedDatabaseType == DatabaseType.GENERIC) {
                 // TODO hint there is dedicated support for the database type resolved from driver
@@ -364,6 +365,19 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         });
     }
 
+    @NotNull
+    DatabaseType getSelectedDatabaseType() {
+        ConnectionDatabaseSettings configuration = getConfiguration();;
+        return CommonUtil.nvl(getSelection(databaseTypeComboBox), configuration.getDatabaseType());
+    }
+
+    @Nullable
+    private DatabaseType getDriverDatabaseType() {
+        JComboBox<DriverOption> driverComboBox = driverSettingsForm.getDriverComboBox();
+        DriverOption selectedDriver = ComboBoxUtil.getSelection(driverComboBox);
+        return selectedDriver == null ? null : DatabaseType.resolve(selectedDriver.getName());
+    }
+
 
     @Override
     public void resetFormChanges() {
@@ -400,8 +414,19 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         setSelection(driverComboBox, DriverOption.get(getElements(driverComboBox), configuration.getDriver()));
     }
 
-    public DatabaseType getSelectedDatabaseType() {
-        return getSelection(databaseTypeComboBox);
+    private void updateNativeSupportDatabaseHint() {
+        DatabaseType selectedDatabaseType = getSelectedDatabaseType();
+        DatabaseType driverDatabaseType = getDriverDatabaseType();
+        if (selectedDatabaseType == DatabaseType.GENERIC && driverDatabaseType != null && driverDatabaseType != selectedDatabaseType) {
+            String databaseTypeName = driverDatabaseType.getName();
+            DBNHintForm hintForm = new DBNHintForm(
+                    "Your database type was identified as \"" + databaseTypeName +"\".\n" +
+                    "Use specific connection type instead of \"Generic\", " +
+                            "to enable dedicated support for this database", MessageType.WARNING, true);
+            databaseTypeHintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
+        } else {
+            databaseTypeHintPanel.removeAll();
+        }
     }
 }
 
