@@ -105,7 +105,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
     @NotNull
     public BrowserToolWindowForm getToolWindowForm() {
-        return toolWindowForm.get();
+        return Failsafe.nn(toolWindowForm.get());
     }
 
     public BooleanSetting getAutoscrollFromEditor() {

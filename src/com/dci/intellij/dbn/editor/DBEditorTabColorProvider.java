@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
 import com.intellij.openapi.fileEditor.impl.EditorTabColorProvider;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -25,24 +26,27 @@ public class DBEditorTabColorProvider implements EditorTabColorProvider, DumbAwa
     @Override
     public Color getEditorTabColor(@NotNull Project project, @NotNull VirtualFile file) {
         if (file.getFileType() instanceof DBLanguageFileType) {
-            ConnectionHandler connectionHandler = getConnectionHandler(file, project);
-            if (connectionHandler == null) {
-                return null;
-            } else {
-                EnvironmentSettings environmentSettings = GeneralProjectSettings.getInstance(connectionHandler.getProject()).getEnvironmentSettings();
-                EnvironmentVisibilitySettings visibilitySettings = environmentSettings.getVisibilitySettings();
-                EnvironmentType environmentType = connectionHandler.getEnvironmentType();
-                if (file instanceof DBVirtualFileImpl) {
-                    if (visibilitySettings.getObjectEditorTabs().value()) {
-                        return environmentType.getColor();
-                    }
+            try {
+                ConnectionHandler connectionHandler = getConnectionHandler(file, project);
+                if (connectionHandler == null) {
+                    return null;
                 } else {
-                    if (visibilitySettings.getScriptEditorTabs().value()) {
-                        return environmentType.getColor();
+                    GeneralProjectSettings instance = GeneralProjectSettings.getInstance(project);
+                    EnvironmentSettings environmentSettings = instance.getEnvironmentSettings();
+                    EnvironmentVisibilitySettings visibilitySettings = environmentSettings.getVisibilitySettings();
+                    EnvironmentType environmentType = connectionHandler.getEnvironmentType();
+                    if (file instanceof DBVirtualFileImpl) {
+                        if (visibilitySettings.getObjectEditorTabs().value()) {
+                            return environmentType.getColor();
+                        }
+                    } else {
+                        if (visibilitySettings.getScriptEditorTabs().value()) {
+                            return environmentType.getColor();
+                        }
                     }
+                    return null;
                 }
-                return null;
-            }
+            } catch (ProcessCanceledException ignore) {}
         }
         return null;
     }

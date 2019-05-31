@@ -88,9 +88,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             Callback callback) {
         DBRunConfig runProfile = (DBRunConfig) environment.getRunProfile();
         ConnectionHandler connectionHandler = runProfile.getConnectionHandler();
-        if (connectionHandler == null) {
-
-        } else {
+        if (connectionHandler != null) {
             DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(project);
             List<String> missingPrivileges = debuggerManager.getMissingDebugPrivileges(connectionHandler);
             if (missingPrivileges.size() > 0) {
