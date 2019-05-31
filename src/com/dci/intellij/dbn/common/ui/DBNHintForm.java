@@ -34,7 +34,7 @@ public class DBNHintForm extends DBNFormImpl{
             hintLabel.setVisible(false);
         }
 
-        Color background = boxed ? adjustColor(UIUtil.getPanelBackground(), 0.04) : UIUtil.getPanelBackground();
+        Color background = boxed ? adjustColor(UIUtil.getPanelBackground(), 0.01) : UIUtil.getPanelBackground();
 
         mainPanel.setBackground(background);
         hintTextPane.setBackground(background);
