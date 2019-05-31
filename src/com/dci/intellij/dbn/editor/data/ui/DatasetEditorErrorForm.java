@@ -73,7 +73,7 @@ public class DatasetEditorErrorForm extends DBNFormImpl implements ChangeListene
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             if (popup.isVisible()) popup.cancel();
         });
     }

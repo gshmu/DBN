@@ -101,7 +101,7 @@ public class MessageUtil {
             @Nullable MessageCallback callback,
             @Nullable DialogWrapper.DoNotAskOption doNotAskOption) {
 
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             int option = Messages.showDialog(project, message, Constants.DBN_TITLE_PREFIX + title, options, defaultOptionIndex, icon, doNotAskOption);
             if (callback != null) {
                 callback.run(option);

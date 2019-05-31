@@ -453,7 +453,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         DBEditableObjectVirtualFile databaseFile = findOrCreateDatabaseFile(project, object.getRef());
         databaseFile.setSelectedEditorProviderId(editorProviderId);
         if (!ProgressMonitor.isCancelled()) {
-            Dispatch.invoke(() -> {
+            Dispatch.run(() -> {
                 if (Failsafe.check(object) && (isFileOpened(object) || databaseFile.preOpen())) {
                     DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scrollBrowser);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
@@ -473,7 +473,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
         sourceCodeManager.ensureSourcesLoaded(schemaObject, false);
         if (!ProgressMonitor.isCancelled()) {
-            Dispatch.invoke(() -> {
+            Dispatch.run(() -> {
                 if (Failsafe.check(schemaObject) && (isFileOpened(schemaObject) || databaseFile.preOpen())) {
                     DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scrollBrowser);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);

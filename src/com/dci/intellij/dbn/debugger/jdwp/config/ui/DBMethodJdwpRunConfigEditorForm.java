@@ -152,7 +152,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
                         }
                     }
 
-                    Dispatch.invoke(() -> {
+                    Dispatch.run(() -> {
                         methodArgumentsPanel.removeAll();
                         Disposer.dispose(methodExecutionInputForm);
                         methodExecutionInputForm = null;

@@ -132,8 +132,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
                                             }
                                         }
                                     }
-
-                                    Dispatch.invokeNonModal(() -> {
+                                    Dispatch.run(() -> {
                                         try {
                                             PluginManagerMain.downloadPlugins(updateDescriptors, pluginIds, () -> PluginManagerMain.notifyPluginsUpdated(project), null);
                                         } catch (IOException e1) {
@@ -142,6 +141,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
                                                     "Error updating plugin: {0}", e1);
                                         }
                                     });
+
                                 } catch (Exception ex) {
                                     sendErrorNotification(
                                             NotificationGroup.SOFTWARE,

@@ -30,11 +30,11 @@ public class DBExecutionPointHighlighter {
     }
 
     public void show(final @NotNull XSourcePosition position, final boolean useSelection) {
-        Dispatch.invokeNonModal(() -> doShow(position, useSelection));
+        Dispatch.run(() -> doShow(position, useSelection));
     }
 
     public void hide() {
-        Dispatch.invokeNonModal(() -> doHide());
+        Dispatch.run(() -> doHide());
     }
 
     public void navigateTo() {

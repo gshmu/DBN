@@ -177,7 +177,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
 
     @Override
     public void projectOpened() {
-        Dispatch.invokeNonModal(() -> registerExtensions(getExtensionSettings()));
+        Dispatch.run(() -> registerExtensions(getExtensionSettings()));
     }
 
     @Override

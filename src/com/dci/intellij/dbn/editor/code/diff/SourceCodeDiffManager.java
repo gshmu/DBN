@@ -48,7 +48,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
 
     @Deprecated
     public void openCodeMergeDialogOld(String databaseContent, DBSourceCodeVirtualFile sourceCodeFile, SourceCodeEditor fileEditor, MergeAction action) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.run(() -> {
             com.intellij.openapi.diff.DiffRequestFactory diffRequestFactory = new com.intellij.openapi.diff.impl.mergeTool.DiffRequestFactoryImpl();
             Project project = sourceCodeFile.getProject();
             com.intellij.openapi.diff.MergeRequest mergeRequest = diffRequestFactory.createMergeRequest(
@@ -97,7 +97,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
     }
 
     public void openCodeMergeDialog(String databaseContent, DBSourceCodeVirtualFile sourceCodeFile, SourceCodeEditor fileEditor, MergeAction action) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             Project project = getProject();
             SourceCodeDiffContent leftContent = new SourceCodeDiffContent("Database version", databaseContent);
             SourceCodeDiffContent targetContent = new SourceCodeDiffContent("Merge result", sourceCodeFile.getOriginalContent());
@@ -153,7 +153,7 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
 
 
     public void openDiffWindow(@NotNull DBSourceCodeVirtualFile sourceCodeFile,  String referenceText, String referenceTitle, String windowTitle) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.run(() -> {
             Project project = sourceCodeFile.getProject();
             SimpleContent originalContent = new SimpleContent(referenceText, sourceCodeFile.getFileType());
             SourceCodeFileContent changedContent = new SourceCodeFileContent(project, sourceCodeFile);

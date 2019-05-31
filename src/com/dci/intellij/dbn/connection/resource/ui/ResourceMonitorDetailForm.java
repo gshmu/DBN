@@ -292,7 +292,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     };
 
     private void refreshSessionData(DatabaseSession session) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             checkDisposed();
             ConnectionHandler connectionHandler = getConnectionHandler();
 
@@ -304,7 +304,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     }
 
     private void refreshTransactionsData(DBNConnection connection) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             checkDisposed();
             ConnectionHandler connectionHandler = getConnectionHandler();
 

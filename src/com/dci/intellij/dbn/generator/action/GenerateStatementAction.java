@@ -41,7 +41,7 @@ public abstract class GenerateStatementAction extends DumbAwareProjectAction imp
     }
 
     private void pasteStatement(StatementGeneratorResult result, Project project) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.run(() -> {
             Editor editor = EditorUtil.getSelectedEditor(project, SQLFileType.INSTANCE);
             if (editor != null)
                 pasteToEditor(editor, result); else

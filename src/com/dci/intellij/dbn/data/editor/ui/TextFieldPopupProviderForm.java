@@ -154,7 +154,7 @@ public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements 
                 return;
             }
 
-            Dispatch.invoke(() -> {
+            Dispatch.run(() -> {
                 try {
                     if (!isShowingPopup()) {
                         popup = createPopup();
@@ -184,7 +184,7 @@ public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements 
     @Override
     public void hidePopup() {
         if (isShowingPopup()) {
-            Dispatch.invoke(() -> {
+            Dispatch.run(() -> {
                 if (isShowingPopup()) {
                     popup.cancel();
                     popup = null;

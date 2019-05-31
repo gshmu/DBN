@@ -6,7 +6,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 
 public interface Write {
     static void run(Runnable runnable) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             Application application = ApplicationManager.getApplication();
             application.runWriteAction(
                     () -> {

@@ -71,7 +71,7 @@ public class AutoCommitLabel extends JPanel implements Disposable {
     }
 
     private void update() {
-        Dispatch.conditional(() -> {
+        Dispatch.runConditional(() -> {
             ConnectionHandler connectionHandler = getConnectionHandler();
             if (connectionHandler != null && !connectionHandler.isVirtual()) {
                 setVisible(true);

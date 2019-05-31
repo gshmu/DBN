@@ -214,7 +214,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
                                     method.getArguments();
                                 }
 
-                                Dispatch.invoke(() -> {
+                                Dispatch.run(() -> {
                                     MethodExecutionHistoryDialog dialog = ensureParentComponent();
                                     showMethodExecutionPanel(executionInput);
                                     dialog.setSelectedExecutionInput(executionInput);

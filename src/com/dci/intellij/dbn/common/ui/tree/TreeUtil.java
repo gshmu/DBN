@@ -77,7 +77,7 @@ public class TreeUtil {
     }
 
     private static void notifyTreeModelListeners(final Set<TreeModelListener> treeModelListeners, final TreeEventType eventType, final TreeModelEvent event) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             try {
                 Object lastPathComponent = event.getTreePath().getLastPathComponent();
                 if (lastPathComponent != null) {

@@ -74,7 +74,7 @@ public class ObjectDependencyTree extends DBNTree{
 
                         ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
                         JPopupMenu popupMenu = actionPopupMenu.getComponent();
-                        Dispatch.invoke(() -> {
+                        Dispatch.run(() -> {
                             if (isShowing()) {
                                 popupMenu.show(ObjectDependencyTree.this, event.getX(), event.getY());
                             }

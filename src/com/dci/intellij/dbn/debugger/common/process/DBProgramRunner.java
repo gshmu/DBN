@@ -166,7 +166,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             @Nullable Callback callback,
             List<DBSchemaObject> dependencies) {
 
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.run(() -> {
             Project project = connectionHandler.getProject();
             DBRunConfig runConfiguration = (DBRunConfig) environment.getRunProfile();
             CompileDebugDependenciesDialog dependenciesDialog = new CompileDebugDependenciesDialog(runConfiguration, dependencies);
@@ -212,7 +212,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
             T executionInput,
             ExecutionEnvironment environment,
             Callback callback) {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.run(() -> {
             ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
             Project project = environment.getProject();
 

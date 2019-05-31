@@ -85,16 +85,16 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
 
     @Override
     public void clearSelection() {
-        Dispatch.invokeNonModal(() -> SessionBrowserTable.super.clearSelection());
+        Dispatch.run(() -> SessionBrowserTable.super.clearSelection());
     }
 
     @Override
     public void removeEditor() {
-        Dispatch.invokeNonModal(() -> SessionBrowserTable.super.removeEditor());
+        Dispatch.run(() -> SessionBrowserTable.super.removeEditor());
     }
 
     public void updateTableGutter() {
-        Dispatch.invokeNonModal(() -> {
+        Dispatch.run(() -> {
             DBNTableGutter tableGutter = getTableGutter();
             GUIUtil.repaint(tableGutter);
         });

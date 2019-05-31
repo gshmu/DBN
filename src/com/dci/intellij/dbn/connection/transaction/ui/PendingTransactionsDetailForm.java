@@ -98,7 +98,7 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
     };
 
     private void refreshForm(ConnectionHandler connectionHandler) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             checkDisposed();
             PendingTransactionsTableModel oldTableModel = tableModel;
             tableModel = new PendingTransactionsTableModel(connectionHandler);

@@ -25,7 +25,7 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
         super(project);
         EventUtil.subscribe(project, this,
                 ConnectionLoadListener.TOPIC,
-                connectionHandler -> Dispatch.invokeNonModal(() -> {
+                connectionHandler -> Dispatch.run(() -> {
 
                     checkDisposed();
                     Failsafe.nn(project);

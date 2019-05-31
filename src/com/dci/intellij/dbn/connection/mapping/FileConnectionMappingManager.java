@@ -469,7 +469,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
 
     public void selectConnectionAndSchema(@NotNull DBLanguagePsiFile file, @NotNull Runnable callback) {
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             Project project = getProject();
             ConnectionHandler activeConnection = file.getConnectionHandler();
             if (activeConnection == null || activeConnection.isVirtual()) {
@@ -630,7 +630,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
                                 }
                             }
 
-                            Dispatch.invoke(() -> {
+                            Dispatch.run(() -> {
                                 ListPopup popupBuilder = JBPopupFactory.getInstance().createActionGroupPopup(
                                         "Select Schema",
                                         actionGroup,

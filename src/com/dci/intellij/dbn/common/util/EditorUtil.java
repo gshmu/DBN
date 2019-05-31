@@ -213,7 +213,7 @@ public class EditorUtil {
         editor.setViewer(readonly);
         EditorColorsScheme scheme = editor.getColorsScheme();
         Color defaultBackground = scheme.getDefaultBackground();
-        Dispatch.invoke(() -> {
+        Dispatch.run(() -> {
             editor.setBackgroundColor(readonly ? GUIUtil.adjustColor(defaultBackground, -0.03) : defaultBackground);
             scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
                     GUIUtil.adjustColor(defaultBackground, -0.03) :
@@ -229,7 +229,7 @@ public class EditorUtil {
             Read.run(() -> {
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                 FileEditor[] allEditors = fileEditorManager.getAllEditors();
-                Dispatch.invoke(() -> {
+                Dispatch.run(() -> {
                     for (FileEditor fileEditor : allEditors) {
                         if (fileEditor instanceof SourceCodeEditor) {
                             SourceCodeEditor sourceCodeEditor = (SourceCodeEditor) fileEditor;
@@ -343,7 +343,7 @@ public class EditorUtil {
     }
     public static void focusEditor(@Nullable Editor editor) {
         if (editor != null) {
-            Dispatch.invoke(() -> {
+            Dispatch.run(() -> {
                 Project project = editor.getProject();
                 IdeFocusManager ideFocusManager = IdeFocusManager.getInstance(project);
                 ideFocusManager.requestFocus(editor.getContentComponent(), true);
@@ -400,7 +400,7 @@ public class EditorUtil {
 
     public static void releaseEditor(@Nullable Editor editor) {
         if (editor != null) {
-            Dispatch.conditional(() -> {
+            Dispatch.runConditional(() -> {
                 EditorFactory editorFactory = EditorFactory.getInstance();
                 editorFactory.releaseEditor(editor);
             });
