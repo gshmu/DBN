@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -31,11 +32,13 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
     private JLabel driverLabel;
     private JLabel driverLibraryLabel;
     private JLabel driverSourceLabel;
+    private HyperlinkLabel reloadDriversLink;
+    private JLabel reloadDriversCheckLabel;
 
     /** allow select a single jar file or a directory */
     private static final FileChooserDescriptor LIBRARY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, true, true, true, false, false);
 
-    public ConnectionDriverSettingsForm(@NotNull final ConnectionDatabaseSettingsForm parentComponent) {
+    ConnectionDriverSettingsForm(@NotNull final ConnectionDatabaseSettingsForm parentComponent) {
         super(parentComponent);
 
         initComboBox(driverSourceComboBox, DriverSource.BUILTIN, DriverSource.EXTERNAL);
@@ -50,13 +53,41 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
         });
 
         driverLibraryTextField.addBrowseFolderListener(
-                "Select Driver Library or directory",
+                "Select Driver Library or Directory",
                 "Library must contain classes implementing the 'java.sql.Driver' class.",
                 null, LIBRARY_FILE_DESCRIPTOR);
+
+        reloadDriversCheckLabel.setText("");
+        reloadDriversCheckLabel.setIcon(Icons.COMMON_CHECK);
+        reloadDriversCheckLabel.setVisible(false);
+        reloadDriversLink.setHyperlinkText("Reload Drivers");
+        reloadDriversLink.addHyperlinkListener(e -> {
+            reloadDriversLink.setVisible(false);
+            DatabaseDriverManager driverManager = DatabaseDriverManager.getInstance();
+            String driverLibrary = driverLibraryTextField.getText();
+            List<Driver> drivers = driverManager.loadDrivers(driverLibrary, true);
+            if (drivers == null || drivers.isEmpty()) {
+                reloadDriversCheckLabel.setIcon(Icons.COMMON_WARNING);
+                reloadDriversCheckLabel.setText("No drivers found");
+            } else {
+                reloadDriversCheckLabel.setIcon(Icons.COMMON_CHECK);
+                reloadDriversCheckLabel.setText("Drivers reloaded");
+            }
+            reloadDriversCheckLabel.setVisible(true);
+            Timer timer = UIUtil.createNamedTimer(
+                    "TemporaryLabelTimeout",
+                    3000,
+                    listener -> {
+                        reloadDriversLink.setVisible(true);
+                        reloadDriversCheckLabel.setVisible(false);
+                    });
+            timer.setRepeats(false);
+            timer.start();
+        });
     }
 
-    public void updateDriverFields() {
-        DatabaseType databaseType = ensureParentComponent().getSelectedDatabaseType();
+    void updateDriverFields() {
+        DatabaseType databaseType = getDatabaseType();
         boolean allowBuiltInLibrary = databaseType != DatabaseType.GENERIC;
 
         DriverSource driverSource = allowBuiltInLibrary ? getSelection(driverSourceComboBox) : DriverSource.EXTERNAL;
@@ -69,21 +100,23 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
         driverLibraryTextField.setVisible(externalDriver);
         driverLabel.setVisible(externalDriver);
         driverComboBox.setVisible(externalDriver);
+        reloadDriversLink.setVisible(externalDriver && StringUtil.isNotEmpty(getDriverLibrary()));
 
         if (externalDriver) {
-            JTextField textField = driverLibraryTextField.getTextField();
-            String driverLibrary = textField.getText();
+            String driverLibrary = getDriverLibrary();
 
             boolean fileExists = StringUtil.isNotEmpty(driverLibrary) && fileExists(driverLibrary);
+            JTextField libraryTextField = driverLibraryTextField.getTextField();
             if (fileExists) {
-                textField.setForeground(UIUtil.getTextFieldForeground());
+                libraryTextField.setForeground(UIUtil.getTextFieldForeground());
                 DatabaseType libraryDatabaseType = DatabaseType.resolve(driverLibrary);
-                if (databaseType != DatabaseType.GENERIC && libraryDatabaseType != ensureParentComponent().getSelectedDatabaseType()) {
+                if (databaseType != DatabaseType.GENERIC && libraryDatabaseType != getDatabaseType()) {
                     error = "The driver library does not match the selected database type";
                     initComboBox(driverComboBox);
                     setSelection(driverComboBox, null);
                 } else {
-                    List<Driver> drivers = DatabaseDriverManager.getInstance().loadDrivers(driverLibrary, false);
+                    DatabaseDriverManager driverManager = DatabaseDriverManager.getInstance();
+                    List<Driver> drivers = driverManager.loadDrivers(driverLibrary, false);
                     DriverOption selectedOption = getSelection(driverComboBox);
                     initComboBox(driverComboBox);
                     //driverComboBox.addItem("");
@@ -108,7 +141,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
                     setSelection(driverComboBox, selectedOption);
                 }
             } else {
-                textField.setForeground(JBColor.RED);
+                libraryTextField.setForeground(JBColor.RED);
                 if (StringUtil.isEmpty(driverLibrary)) {
                     error = "Driver library is not specified";
                 } else {
@@ -129,15 +162,23 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
         }
     }
 
+    private String getDriverLibrary() {
+        return driverLibraryTextField.getTextField().getText();
+    }
+
+    private DatabaseType getDatabaseType() {
+        return ensureParentComponent().getSelectedDatabaseType();
+    }
+
     private static boolean fileExists(String driverLibrary) {
         return driverLibrary != null && new File(driverLibrary).exists();
     }
 
-    public TextFieldWithBrowseButton getDriverLibraryTextField() {
+    TextFieldWithBrowseButton getDriverLibraryTextField() {
         return driverLibraryTextField;
     }
 
-    public JComboBox<DriverOption> getDriverComboBox() {
+    JComboBox<DriverOption> getDriverComboBox() {
         return driverComboBox;
     }
 
@@ -151,7 +192,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
         return mainPanel;
     }
 
-    public JComboBox<DriverSource> getDriverSourceComboBox() {
+    JComboBox<DriverSource> getDriverSourceComboBox() {
         return driverSourceComboBox;
     }
 }
