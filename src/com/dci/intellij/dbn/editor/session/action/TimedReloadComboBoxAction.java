@@ -91,13 +91,13 @@ public class TimedReloadComboBoxAction extends DBNComboBoxAction implements Dumb
     private class SelectRefreshTimeAction extends AnAction {
         private int seconds;
 
-        public SelectRefreshTimeAction(int seconds) {
-            super(seconds == 0 ? "No refresh" : seconds + " seconds", null, seconds == 0 ? null : Icons.COMMON_TIMER);
+        SelectRefreshTimeAction(int seconds) {
+            super(seconds == 0 ? "No Refresh" : seconds + " seconds", null, seconds == 0 ? null : Icons.COMMON_TIMER);
             this.seconds = seconds;
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             SessionBrowser sessionBrowser = getSessionBrowser(e);
             if (sessionBrowser != null) {
                 sessionBrowser.setRefreshInterval(seconds);

@@ -18,6 +18,7 @@ public class Icons {
     public static final Icon COMMON_INFO_DISABLED = load("/img/common/InfoDisabled.png");
     public static final Icon COMMON_WARNING = load("/img/common/Warning.png");
     public static final Icon COMMON_ERROR = load("/img/common/Error.png");
+    public static final Icon COMMON_CHECK = load("/img/common/Check.png");
     public static final Icon COMMON_RIGHT = load("/img/common/SplitRight.png");
     public static final Icon COMMON_LEFT = load("/img/common/SplitLeft.png");
     public static final Icon COMMON_UP = load("/img/common/SplitUp.png");

@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.driver;
 
-import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -10,8 +8,6 @@ import com.dci.intellij.dbn.connection.DatabaseType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -76,49 +72,23 @@ public class DatabaseDriverManager implements ApplicationComponent {
     @Override
     public void disposeComponent() {}
 
-    public List<Driver> loadDriverClassesWithProgressBar(String libraryName, boolean reloadDrivers) {
-        LoaderThread loader = new LoaderThread(libraryName, reloadDrivers);
-        Project project = Lookup.getProject();
-        ProgressManager.getInstance().runProcessWithProgressSynchronously(loader, Constants.DBN_TITLE_PREFIX + "Loading database drivers" , false, project);
-        return loader.getDrivers();
-    }
-
-    class LoaderThread implements Runnable{
-        public LoaderThread(String libraryName, boolean reloadDrivers) {
-            this.libraryName = libraryName;
-            this.reloadDrivers = reloadDrivers;
-        }
-
-        List<Driver> drivers;
-        String libraryName;
-        boolean reloadDrivers;
-        @Override
-        public void run() {
-            drivers = loadDrivers(libraryName, reloadDrivers);
-        }
-        public List<Driver> getDrivers() {
-                return drivers;
-        }
-    }
-
     /**
      *
      * @param libraryName jar library path or directory containing driver/s and all required dependencies
-     * @param reloadDrivers reload isolated classloader with (updated) drivers without restart IDE
+     * @param force reload isolated classloader with (updated) drivers without restart IDE
      *                                   and no need to create a new connection definition
-     * @return
      */
-    public List<Driver> loadDrivers(String libraryName, boolean reloadDrivers) {
+    public List<Driver> loadDrivers(String libraryName, boolean force) {
 
         File libraryFile = new File(libraryName);
-        List<Driver> drivers = new ArrayList<Driver>();
+        List<Driver> drivers = new ArrayList<>();
         try {
             ClassLoader parentClassLoader = getClass().getClassLoader();
             if (libraryFile.isFile()) {
                 URL[] urls = new URL[]{libraryFile.toURI().toURL()};
                 // creates an isolated classloader, parent = null
                 URLClassLoader classLoader = URLClassLoader.newInstance(urls, parentClassLoader);
-                return loadDriversJar(libraryName, classLoader, reloadDrivers);
+                return loadDriversJar(libraryName, classLoader, force);
             } else {
                 File[] directoryListing = libraryFile.listFiles();
                 List<URL> urls = new ArrayList<>();
@@ -134,7 +104,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
                     // find and load drivers
                     for (File child : directoryListing) {
                         if (child.getName().endsWith(".jar")) {
-                            List<Driver> drvs = loadDriversJar(child.getAbsolutePath(), classLoader, reloadDrivers);
+                            List<Driver> drvs = loadDriversJar(child.getAbsolutePath(), classLoader, force);
                             if (drvs != null) {
                                 drivers.addAll(drvs);
                             }
@@ -148,15 +118,15 @@ public class DatabaseDriverManager implements ApplicationComponent {
         return drivers;
     }
 
-    private List<Driver> loadDriversJar(String libraryName, final URLClassLoader classLoader, boolean reloadDrivers) {
+    private List<Driver> loadDriversJar(String libraryName, final URLClassLoader classLoader, boolean force) {
         File libraryFile = new File(libraryName);
 
         if (libraryFile.isFile()) {
             Synchronized.run(this,
-                    () -> !driversCache.containsKey(libraryName) || reloadDrivers,
+                    () -> !driversCache.containsKey(libraryName) || force,
                     () -> {
 
-                        if (driversCache.containsKey(libraryName) && reloadDrivers){
+                        if (driversCache.containsKey(libraryName) && force){
                             try{
                                 // clean up old classloader opened resources
                                 List<Driver> drivers = driversCache.get(libraryName);

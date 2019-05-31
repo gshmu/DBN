@@ -14,19 +14,19 @@ public class DDLMappedNotificationPanel extends EditorNotificationPanel {
 
     public DDLMappedNotificationPanel(@NotNull final VirtualFile virtualFile, final DBSchemaObject editableObject) {
         super(MessageType.INFO);
-        final Project project = editableObject.getProject();
-        final DBObjectRef<DBSchemaObject> editableObjectRef = DBObjectRef.from(editableObject);
-        setText("This DDL file is attached to the database " + editableObject.getQualifiedNameWithType() + ". Changes done to the " + editableObject.getObjectType().getName() + " are mirrored to this DDL file, overwriting any changes you may do to it.");
-        createActionLabel("Detach", new Runnable() {
-            @Override
-            public void run() {
-                if (!project.isDisposed()) {
-                    DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);
-                    attachmentManager.detachDDLFile(virtualFile);
-                    DBSchemaObject editableObject = DBObjectRef.get(editableObjectRef);
-                    if (editableObject != null) {
-                        DatabaseFileSystem.getInstance().reopenEditor(editableObject);
-                    }
+        Project project = editableObject.getProject();
+        DBObjectRef<DBSchemaObject> editableObjectRef = DBObjectRef.from(editableObject);
+        String objectName = editableObject.getQualifiedNameWithType();
+        String objectTypeName = editableObject.getObjectType().getName();
+        setText("This DDL file is attached to the database " + objectName + ". " +
+                "Changes done to the " + objectTypeName + " are mirrored to this DDL file, overwriting any changes you may do to it.");
+        createActionLabel("Detach", () -> {
+            if (!project.isDisposed()) {
+                DDLFileAttachmentManager attachmentManager = DDLFileAttachmentManager.getInstance(project);
+                attachmentManager.detachDDLFile(virtualFile);
+                DBSchemaObject editableObject1 = DBObjectRef.get(editableObjectRef);
+                if (editableObject1 != null) {
+                    DatabaseFileSystem.getInstance().reopenEditor(editableObject1);
                 }
             }
         });
