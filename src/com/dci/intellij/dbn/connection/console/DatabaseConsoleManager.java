@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.connection.session.SessionManagerListener;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
+import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -110,7 +111,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                 MessageUtil.OPTIONS_YES_NO, 0,
                 (option) -> conditional(option == 0,
                         () -> {
-                            FileEditorManager.getInstance(project).closeFile(consoleFile);
+                            DatabaseFileManager.getInstance(project).closeFile(consoleFile);
                             ConnectionHandler connectionHandler = consoleFile.getConnectionHandler();
                             String fileName = consoleFile.getName();
                             connectionHandler.getConsoleBundle().removeConsole(fileName);

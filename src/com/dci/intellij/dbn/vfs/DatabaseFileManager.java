@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.vfs;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -125,22 +126,22 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
             }
         }
 
-        FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
         for (DBEditableObjectVirtualFile virtualFile : filesToClose) {
-            fileEditorManager.closeFile(virtualFile);
+            closeFile(virtualFile);
         }
     }
-
-    /********************************************************
-     *                ObjectFactoryListener                 *
-     ********************************************************/
 
     public void closeFile(DBSchemaObject object) {
         if (isFileOpened(object)) {
-            FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
-            fileEditorManager.closeFile(object.getVirtualFile());
+            closeFile(object.getVirtualFile());
         }
     }
+
+    public void closeFile(@NotNull VirtualFile file) {
+        FileEditorManager editorManager = FileEditorManager.getInstance(getProject());
+        Dispatch.runConditional(() -> editorManager.closeFile(file));
+    }
+
 
     /*********************************************
      *            FileEditorManagerListener       *
@@ -156,7 +157,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         }
 
         @Override
-        public void beforeFileClosed(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
+        public void beforeFileClosed(@NotNull FileEditorManager editorManager, @NotNull VirtualFile file) {
             if (file instanceof DBEditableObjectVirtualFile) {
                 DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
                 if (databaseFile.isModified()) {
@@ -173,12 +174,16 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                                 switch (option) {
                                     case CANCEL: break;
                                     case SAVE: {
-                                        sourceCodeManager.saveSourceCodeChanges(databaseFile, () -> source.closeFile(file));
+                                        sourceCodeManager.saveSourceCodeChanges(
+                                                databaseFile,
+                                                () -> closeFile(file));
                                         break;
                                     }
 
                                     case DISCARD: {
-                                        sourceCodeManager.revertSourceCodeChanges(databaseFile, () -> source.closeFile(file));
+                                        sourceCodeManager.revertSourceCodeChanges(
+                                                databaseFile,
+                                                () -> closeFile(file));
                                         break;
                                     }
                                     case SHOW: {
@@ -198,6 +203,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
 
         }
     };
+
     private FileEditorManagerListener fileEditorManagerListener  =new FileEditorManagerListener() {
         @Override
         public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
@@ -228,7 +234,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                 DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) virtualFile;
                 ConnectionId connectionId = databaseVirtualFile.getConnectionId();
                 if (connectionIds.contains(connectionId)) {
-                    fileEditorManager.closeFile(virtualFile);
+                    closeFile(virtualFile);
                 }
             }
         }
