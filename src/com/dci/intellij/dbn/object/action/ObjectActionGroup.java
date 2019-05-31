@@ -20,7 +20,11 @@ import com.intellij.openapi.project.DumbAware;
 
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DISABLEABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.EDITABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.REFERENCEABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
 
 public class ObjectActionGroup extends DefaultActionGroup implements DumbAware {
 
@@ -35,7 +39,9 @@ public class ObjectActionGroup extends DefaultActionGroup implements DumbAware {
                 } 
 
                 if (contentType == DBContentType.CODE || contentType == DBContentType.CODE_AND_DATA || contentType == DBContentType.CODE_SPEC_AND_BODY) {
-                    add(new EditObjectCodeAction(schemaObject));
+                    if (DatabaseFeature.OBJECT_SOURCE_EDITING.isSupported(object)) {
+                        add(new EditObjectCodeAction(schemaObject));
+                    }
                 }
             }
 
