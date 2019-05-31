@@ -25,7 +25,7 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
 
     ReadonlyResultSetAdapter(DatasetEditorModel model, DBNResultSet resultSet) {
         super(model);
-        this.connection = resultSet.getStatement().getConnection();
+        this.connection = resultSet.getConnection();
     }
 
     @Override

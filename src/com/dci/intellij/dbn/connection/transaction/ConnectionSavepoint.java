@@ -12,7 +12,7 @@ import java.sql.Savepoint;
 
 public interface ConnectionSavepoint<T>{
     static <R> R call(DBNResultSet resultSet, ThrowableCallable<R, SQLException> callback) throws SQLException {
-        DBNConnection connection = resultSet.getStatement().getConnection();
+        DBNConnection connection = resultSet.getConnection();
         return call(connection, callback);
     }
 
@@ -35,7 +35,7 @@ public interface ConnectionSavepoint<T>{
     }
 
     static <R> void run(DBNResultSet resultSet, ThrowableRunnable<SQLException> runnable) throws SQLException {
-        DBNConnection connection = resultSet.getStatement().getConnection();
+        DBNConnection connection = resultSet.getConnection();
         run(connection, runnable);
     }
 

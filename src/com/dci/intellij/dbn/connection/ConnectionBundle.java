@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableListImpl;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -223,7 +224,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     @NotNull
     @Override
     public String getName() {
-        return getPresentableText();
+        return CommonUtil.nvl(getPresentableText(), "Connection Bundle");
     }
 
     @Override

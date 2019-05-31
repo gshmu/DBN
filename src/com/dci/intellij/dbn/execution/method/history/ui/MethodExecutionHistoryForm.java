@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -95,7 +96,8 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
     private void createUIComponents() {
         MethodExecutionHistory executionHistory = getExecutionHistory();
         boolean group = executionHistory.isGroupEntries();
-        executionInputsTree = new MethodExecutionHistoryTree(getParentComponent(), group, debug);
+        MethodExecutionHistoryDialog dialog = Failsafe.nn(getParentComponent());
+        executionInputsTree = new MethodExecutionHistoryTree(dialog, group, debug);
         Disposer.register(this, (Disposable) executionInputsTree);
     }
 

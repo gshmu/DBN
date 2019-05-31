@@ -277,7 +277,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
                 return underlyingObject;
             }
 
-            return resolveActualObject(underlyingObject);
+            return null;
         } catch (ProcessCanceledException ignore){
             return null;
         } finally {

@@ -18,6 +18,7 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import static com.dci.intellij.dbn.DatabaseNavigator.DEBUG;
 
 public class StatementExecutionProcessor {
     private static final Logger LOGGER = LoggerFactory.createLogger();
+    public static final SQLFeatureNotSupportedException NO_STATEMENT_DEFINITION_EXCEPTION = new SQLFeatureNotSupportedException("No statement definition found");
 
     private final DatabaseInterfaceProvider interfaceProvider;
     private final String id;
@@ -92,7 +94,7 @@ public class StatementExecutionProcessor {
         if (statementDefinition != null) {
             return executeQuery(statementDefinition, connection, forceExecution, arguments);
         } else {
-            SQLException exception = null;
+            SQLException exception = NO_STATEMENT_DEFINITION_EXCEPTION;
             for (StatementDefinition statementDefinition : statementDefinitions) {
                 try {
                     return executeQuery(statementDefinition, connection, forceExecution, arguments);
@@ -189,7 +191,7 @@ public class StatementExecutionProcessor {
         if (statementDefinition != null) {
             return executeCall(statementDefinition, connection, outputReader, arguments);
         } else {
-            SQLException exception = null;
+            SQLException exception = NO_STATEMENT_DEFINITION_EXCEPTION;
             for (StatementDefinition statementDefinition : statementDefinitions) {
                 try {
                     return executeCall(statementDefinition, connection, outputReader, arguments);
@@ -241,7 +243,7 @@ public class StatementExecutionProcessor {
         if (statementDefinition != null) {
             executeUpdate(statementDefinition, connection, arguments);
         } else {
-            SQLException exception = null;
+            SQLException exception = NO_STATEMENT_DEFINITION_EXCEPTION;
             for (StatementDefinition statementDefinition : statementDefinitions) {
                 try {
                     executeUpdate(statementDefinition, connection, arguments);
@@ -291,7 +293,7 @@ public class StatementExecutionProcessor {
         if (statementDefinition != null) {
             return executeStatement(statementDefinition, connection, arguments);
         } else {
-            SQLException exception = null;
+            SQLException exception = NO_STATEMENT_DEFINITION_EXCEPTION;
             for (StatementDefinition statementDefinition : statementDefinitions) {
                 try {
                     return executeStatement(statementDefinition, connection, arguments);

@@ -164,16 +164,14 @@ public class EditorUtil {
     public static BasicTextEditor getTextEditor(DBSourceCodeVirtualFile sourceCodeVirtualFile) {
         DBEditableObjectVirtualFile databaseFile = sourceCodeVirtualFile.getMainDatabaseFile();
         Project project = databaseFile.getProject();
-        if (project != null) {
-            FileEditorManager editorManager = FileEditorManager.getInstance(project);
-            FileEditor[] fileEditors = editorManager.getEditors(databaseFile);
-            for (FileEditor fileEditor : fileEditors) {
-                if (fileEditor instanceof BasicTextEditor) {
-                    BasicTextEditor basicTextEditor = (BasicTextEditor) fileEditor;
-                    VirtualFile file = FileDocumentManager.getInstance().getFile(basicTextEditor.getEditor().getDocument());
-                    if (file!= null && file.equals(sourceCodeVirtualFile)) {
-                        return basicTextEditor;
-                    }
+        FileEditorManager editorManager = FileEditorManager.getInstance(project);
+        FileEditor[] fileEditors = editorManager.getEditors(databaseFile);
+        for (FileEditor fileEditor : fileEditors) {
+            if (fileEditor instanceof BasicTextEditor) {
+                BasicTextEditor basicTextEditor = (BasicTextEditor) fileEditor;
+                VirtualFile file = FileDocumentManager.getInstance().getFile(basicTextEditor.getEditor().getDocument());
+                if (file!= null && file.equals(sourceCodeVirtualFile)) {
+                    return basicTextEditor;
                 }
             }
         }
@@ -262,16 +260,14 @@ public class EditorUtil {
     @Nullable
     public static BasicTextEditor getTextEditor(DBConsoleVirtualFile consoleVirtualFile) {
         Project project = consoleVirtualFile.getProject();
-        if (project != null) {
-            FileEditorManager editorManager = FileEditorManager.getInstance(project);
-            FileEditor[] fileEditors = editorManager.getEditors(consoleVirtualFile);
-            for (FileEditor fileEditor : fileEditors) {
-                if (fileEditor instanceof BasicTextEditor) {
-                    BasicTextEditor basicTextEditor = (BasicTextEditor) fileEditor;
-                    VirtualFile file = FileDocumentManager.getInstance().getFile(basicTextEditor.getEditor().getDocument());
-                    if (file!= null && file.equals(consoleVirtualFile)) {
-                        return basicTextEditor;
-                    }
+        FileEditorManager editorManager = FileEditorManager.getInstance(project);
+        FileEditor[] fileEditors = editorManager.getEditors(consoleVirtualFile);
+        for (FileEditor fileEditor : fileEditors) {
+            if (fileEditor instanceof BasicTextEditor) {
+                BasicTextEditor basicTextEditor = (BasicTextEditor) fileEditor;
+                VirtualFile file = FileDocumentManager.getInstance().getFile(basicTextEditor.getEditor().getDocument());
+                if (file!= null && file.equals(consoleVirtualFile)) {
+                    return basicTextEditor;
                 }
             }
         }

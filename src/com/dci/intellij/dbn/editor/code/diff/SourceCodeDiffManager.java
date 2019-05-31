@@ -51,48 +51,46 @@ public class SourceCodeDiffManager extends AbstractProjectComponent implements P
         Dispatch.invokeNonModal(() -> {
             com.intellij.openapi.diff.DiffRequestFactory diffRequestFactory = new com.intellij.openapi.diff.impl.mergeTool.DiffRequestFactoryImpl();
             Project project = sourceCodeFile.getProject();
-            if (project != null) {
-                com.intellij.openapi.diff.MergeRequest mergeRequest = diffRequestFactory.createMergeRequest(
-                        databaseContent,
-                        sourceCodeFile.getContent().toString(),
-                        sourceCodeFile.getOriginalContent().toString(),
-                        sourceCodeFile,
-                        project,
-                        ActionButtonPresentation.APPLY,
-                        ActionButtonPresentation.CANCEL_WITH_PROMPT);
-                mergeRequest.setVersionTitles(new String[]{"Database version", "Merge result", "Your version"});
-                DBSchemaObject object = sourceCodeFile.getObject();
-                mergeRequest.setWindowTitle("Version conflict resolution for " + object.getQualifiedNameWithType());
+            com.intellij.openapi.diff.MergeRequest mergeRequest = diffRequestFactory.createMergeRequest(
+                    databaseContent,
+                    sourceCodeFile.getContent().toString(),
+                    sourceCodeFile.getOriginalContent().toString(),
+                    sourceCodeFile,
+                    project,
+                    ActionButtonPresentation.APPLY,
+                    ActionButtonPresentation.CANCEL_WITH_PROMPT);
+            mergeRequest.setVersionTitles(new String[]{"Database version", "Merge result", "Your version"});
+            DBSchemaObject object = sourceCodeFile.getObject();
+            mergeRequest.setWindowTitle("Version conflict resolution for " + object.getQualifiedNameWithType());
 
-                com.intellij.openapi.diff.DiffManager.getInstance().getDiffTool().show(mergeRequest);
+            com.intellij.openapi.diff.DiffManager.getInstance().getDiffTool().show(mergeRequest);
 
-                int result = mergeRequest.getResult();
-                if (action == MergeAction.SAVE) {
-                    switch (result) {
-                        case 0:
-                            SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
-                            sourceCodeManager.storeSourceToDatabase(sourceCodeFile, fileEditor, null);
-                            EventUtil.notify(project,
-                                    SourceCodeDifManagerListener.TOPIC,
-                                    (listener) -> listener.contentMerged(sourceCodeFile, action));
-                            break;
-                        case 1:
-                            sourceCodeFile.set(SAVING, false);
-                            break;
+            int result = mergeRequest.getResult();
+            if (action == MergeAction.SAVE) {
+                switch (result) {
+                    case 0:
+                        SourceCodeManager sourceCodeManager = SourceCodeManager.getInstance(project);
+                        sourceCodeManager.storeSourceToDatabase(sourceCodeFile, fileEditor, null);
+                        EventUtil.notify(project,
+                                SourceCodeDifManagerListener.TOPIC,
+                                (listener) -> listener.contentMerged(sourceCodeFile, action));
+                        break;
+                    case 1:
+                        sourceCodeFile.set(SAVING, false);
+                        break;
 
-                    }
-                } else if (action == MergeAction.MERGE) {
-                    switch (result) {
-                        case 0:
-                            sourceCodeFile.markAsMerged();
-                            EventUtil.notify(project,
-                                    SourceCodeDifManagerListener.TOPIC,
-                                    (listener) -> listener.contentMerged(sourceCodeFile, action));
-                            break;
-                        case 1:
-                            break;
+                }
+            } else if (action == MergeAction.MERGE) {
+                switch (result) {
+                    case 0:
+                        sourceCodeFile.markAsMerged();
+                        EventUtil.notify(project,
+                                SourceCodeDifManagerListener.TOPIC,
+                                (listener) -> listener.contentMerged(sourceCodeFile, action));
+                        break;
+                    case 1:
+                        break;
 
-                    }
                 }
             }
         });

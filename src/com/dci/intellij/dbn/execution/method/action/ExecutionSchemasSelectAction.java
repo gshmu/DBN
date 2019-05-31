@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.method.action;
 
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
@@ -43,6 +44,7 @@ public class ExecutionSchemasSelectAction extends ComboBoxAction {
     public void update(AnActionEvent e) {
         SchemaId schema = executionInput.getTargetSchemaId();
         Presentation presentation = e.getPresentation();
+        schema = CommonUtil.nvl(schema, SchemaId.NONE);
         presentation.setText(schema.getName(), false);
         presentation.setIcon(schema.getIcon());
     }

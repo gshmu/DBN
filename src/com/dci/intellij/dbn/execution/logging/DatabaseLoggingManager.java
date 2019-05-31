@@ -90,7 +90,7 @@ public class DatabaseLoggingManager extends AbstractProjectComponent {
         return null;
     }
 
-    @Nullable
+    @NotNull
     private String getLogName(@Nullable DatabaseCompatibilityInterface compatibilityInterface) {
         String logName = compatibilityInterface == null ? null : compatibilityInterface.getDatabaseLogName();
         if (StringUtil.isEmpty(logName)) {

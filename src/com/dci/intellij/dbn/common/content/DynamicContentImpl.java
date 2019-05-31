@@ -188,7 +188,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement> extend
                             element.refresh();
                         });
                 set(LOADED, true);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 setElements(EMPTY_CONTENT);
                 set(DIRTY, true);
             } finally {

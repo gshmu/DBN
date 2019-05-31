@@ -76,7 +76,7 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                 return handlerPsiElement;
             }
         }
-        return providerPsiElement;
+        return null;
     }
 
 
