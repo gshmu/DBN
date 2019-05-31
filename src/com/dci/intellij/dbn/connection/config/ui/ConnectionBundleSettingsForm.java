@@ -29,7 +29,6 @@ import com.intellij.ui.ListUtil;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.UIUtil;
-import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.lang.ArrayUtils;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -43,7 +42,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
-import java.io.StringReader;
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -275,7 +274,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         try {
             String clipboardData = ClipboardUtil.getStringContent();
             if (clipboardData != null) {
-                Document xmlDocument = CommonUtil.createXMLDocument(new ReaderInputStream(new StringReader(clipboardData), "UTF-8"));
+                Document xmlDocument = CommonUtil.createXMLDocument(new ByteArrayInputStream(clipboardData.getBytes()));
                 if (xmlDocument != null) {
                     Element rootElement = xmlDocument.getRootElement();
                     List<Element> configElements = rootElement.getChildren();
