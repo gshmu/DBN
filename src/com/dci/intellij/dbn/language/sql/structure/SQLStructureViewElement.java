@@ -24,7 +24,7 @@ public class SQLStructureViewElement extends DBLanguageStructureViewElement<SQLS
     @Override
     @NotNull
     public ItemPresentation getPresentation() {
-        final PsiElement psiElement = getPsiElement();
+        PsiElement psiElement = getPsiElement();
         if (psiElement instanceof BasePsiElement) return (ItemPresentation) psiElement;
         return new ItemPresentation() {
             @Override
