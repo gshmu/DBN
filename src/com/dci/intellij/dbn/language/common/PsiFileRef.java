@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.common;
 
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -18,19 +19,26 @@ public class PsiFileRef<T extends PsiFile>{
 
     @Nullable
     public T get() {
-        T psiFile = psiFileRef.get();
-        if (psiFile != null && !psiFile.isValid()) {
-            Project project = psiFile.getProject();
-            VirtualFile virtualFile = psiFile.getVirtualFile();
+        return Read.call(() -> {
+            T psiFile = psiFileRef.get();
+            if (psiFile != null && !psiFile.isValid()) {
+                Project project = psiFile.getProject();
+                VirtualFile virtualFile = psiFile.getVirtualFile();
 
-            PsiFile newPsiFile = PsiUtil.getPsiFile(project, virtualFile);
-            if (newPsiFile != null && newPsiFile.isValid() && newPsiFile.getClass() == psiFile.getClass()) {
-                psiFileRef = WeakRef.from((T) newPsiFile);
-            } else {
-                psiFile = null;
+                PsiFile newPsiFile = PsiUtil.getPsiFile(project, virtualFile);
+                if (newPsiFile != null &&
+                        newPsiFile != psiFile &&
+                        newPsiFile.isValid() &&
+                        newPsiFile.getClass() == psiFile.getClass()) {
+
+                    psiFile = (T) newPsiFile;
+                    psiFileRef = WeakRef.from(psiFile);
+                } else {
+                    psiFile = null;
+                }
             }
-        }
-        return psiFile;
+            return psiFile;
+        });
     }
 
     public static <T extends PsiFile> PsiFileRef<T> from(@NotNull T psiFile) {
