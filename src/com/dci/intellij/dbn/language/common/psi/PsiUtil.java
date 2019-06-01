@@ -21,7 +21,6 @@ import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiWhiteSpace;
 import gnu.trove.THashSet;
@@ -56,13 +55,13 @@ public class PsiUtil {
 
     @Nullable
     public static VirtualFile getVirtualFileForElement(@NotNull PsiElement psiElement) {
-        PsiFile psiFile = null;
-        try {
-            psiFile = psiElement.getContainingFile().getOriginalFile();
-        } catch (PsiInvalidElementAccessException e) {
-            System.out.println("");
-        }
-        return psiFile == null ? null : psiFile.getVirtualFile();
+        return Read.call(() -> {
+            if (psiElement.isValid()) {
+                PsiFile psiFile = psiElement.getContainingFile().getOriginalFile();
+                return psiFile.getVirtualFile();
+            }
+            return null;
+        });
     }
 
     @Nullable

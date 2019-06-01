@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.statement.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.execution.ExecutionContext;
@@ -54,25 +55,27 @@ public class StatementGutterAction extends AnAction {
 
     @Nullable
     private ExecutablePsiElement getExecutablePsiElement() {
-        DBLanguagePsiFile psiFile = getPsiFile();
-        if (psiFile != null) {
-            PsiElement elementAtOffset = psiFile.findElementAt(elementOffset);
-            if (elementAtOffset != null && !(elementAtOffset instanceof BasePsiElement)) {
-                elementAtOffset = elementAtOffset.getParent();
-            }
-            if (elementAtOffset instanceof ExecutablePsiElement) {
-                return (ExecutablePsiElement) elementAtOffset;
-            } else if (elementAtOffset instanceof BasePsiElement) {
-                BasePsiElement basePsiElement = (BasePsiElement) elementAtOffset;
-                ExecutablePsiElement executablePsiElement = (ExecutablePsiElement)
-                        basePsiElement.findEnclosingPsiElement(ExecutablePsiElement.class);
+        return Read.call(() -> {
+            DBLanguagePsiFile psiFile = getPsiFile();
+            if (psiFile != null) {
+                PsiElement elementAtOffset = psiFile.findElementAt(elementOffset);
+                if (elementAtOffset != null && !(elementAtOffset instanceof BasePsiElement)) {
+                    elementAtOffset = elementAtOffset.getParent();
+                }
+                if (elementAtOffset instanceof ExecutablePsiElement) {
+                    return (ExecutablePsiElement) elementAtOffset;
+                } else if (elementAtOffset instanceof BasePsiElement) {
+                    BasePsiElement basePsiElement = (BasePsiElement) elementAtOffset;
+                    ExecutablePsiElement executablePsiElement = (ExecutablePsiElement)
+                            basePsiElement.findEnclosingPsiElement(ExecutablePsiElement.class);
 
-                if (executablePsiElement != null && executablePsiElement.isValid()) {
-                    return executablePsiElement;
+                    if (executablePsiElement != null && executablePsiElement.isValid()) {
+                        return executablePsiElement;
+                    }
                 }
             }
-        }
-        return null;
+            return null;
+        });
     }
 
     @Override

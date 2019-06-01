@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
+import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -14,7 +15,11 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 
-import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.*;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.CONNECTION_ACTIVE;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.CONNECTION_VALID;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.NEW;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.RESOLVING;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.RESOLVING_OBJECT_TYPE;
 
 public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
     private ConnectionHandlerRef connectionHandlerRef;
@@ -108,23 +113,25 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
             return false;
         }
 
-        if (referencedElement == null || !referencedElement.isValid() ||
+        return Read.call(() -> {
+            if (referencedElement == null || !referencedElement.isValid() ||
                 (element != null && !element.textMatches(referencedElement.getText()))) {
-            return true;
-        }
-
-        BasePsiElement parent = getParent();
-        if (parent != null) {
-            if (!parent.isValid()) {
                 return true;
-            } else if (referencedElement instanceof DBObjectPsiElement) {
-                DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) referencedElement;
-                return !objectPsiElement.isValid() || objectPsiElement.ensureObject().getParentObject() != parent.resolveUnderlyingObject();
             }
-        } else {
-            return element != null && element.isPrecededByDot();
-        }
-        return false;
+
+            BasePsiElement parent = getParent();
+            if (parent != null) {
+                if (!parent.isValid()) {
+                    return true;
+                } else if (referencedElement instanceof DBObjectPsiElement) {
+                    DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) referencedElement;
+                    return !objectPsiElement.isValid() || objectPsiElement.ensureObject().getParentObject() != parent.resolveUnderlyingObject();
+                }
+            } else {
+                return element != null && element.isPrecededByDot();
+            }
+            return false;
+        }, true);
     }
 
     private BasePsiElement getParent() {
