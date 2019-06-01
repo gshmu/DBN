@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.psql.structure;
 
 import com.dci.intellij.dbn.common.editor.structure.EmptyStructureViewModel;
+import com.dci.intellij.dbn.common.thread.Read;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
@@ -17,32 +18,26 @@ public class PSQLStructureViewBuilderFactory implements PsiStructureViewFactory 
     public StructureViewBuilder getStructureViewBuilder(@NotNull final PsiFile psiFile) {
         return new TreeBasedStructureViewBuilder() {
             @NotNull
+            //@Override TODO older versions support. Decommission
             public StructureViewModel createStructureViewModel() {
-                try {
-                    return !psiFile.isValid() ||
-                            psiFile.getProject().isDisposed() ||
-                            PsiEditorUtil.Service.getInstance() == null ?
-                                    EmptyStructureViewModel.INSTANCE :
-                                    new PSQLStructureViewModel(null, psiFile);
-                } catch (Throwable e) {
-                    // TODO dirty workaround (compatibility issue)
-                    return EmptyStructureViewModel.INSTANCE;
-                }
+                return createStructureViewModel(null);
             }
 
             @NotNull
             @Override
             public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
-                try {
-                    return !psiFile.isValid() ||
-                            psiFile.getProject().isDisposed() ||
-                            PsiEditorUtil.Service.getInstance() == null ?
-                                    EmptyStructureViewModel.INSTANCE :
-                                    new PSQLStructureViewModel(editor, psiFile);
-                } catch (Throwable e) {
-                    // TODO dirty workaround (compatibility issue)
-                    return EmptyStructureViewModel.INSTANCE;
-                }
+                return Read.call(() -> {
+                    try {
+                        return !psiFile.isValid() ||
+                                psiFile.getProject().isDisposed() ||
+                                PsiEditorUtil.Service.getInstance() == null ?
+                                EmptyStructureViewModel.INSTANCE :
+                                new PSQLStructureViewModel(editor, psiFile);
+                    } catch (Throwable e) {
+                        // TODO dirty workaround (compatibility issue)
+                        return EmptyStructureViewModel.INSTANCE;
+                    }
+                }, EmptyStructureViewModel.INSTANCE);
             }
         };
     }

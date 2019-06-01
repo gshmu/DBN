@@ -11,6 +11,7 @@ public interface Read {
     static <T> T call(ThrowableCallable<T, RuntimeException> callable) {
         return call(callable, null);
     }
+
     static <T> T call(ThrowableCallable<T, RuntimeException> callable, T defaultValue) {
         Application application = ApplicationManager.getApplication();
         return application.runReadAction((Computable<T>) () -> {
