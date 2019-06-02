@@ -44,6 +44,7 @@ public class PostgresCompatibilityInterface extends DatabaseCompatibilityInterfa
             case SESSION_KILL: return true;
             case SESSION_CURRENT_SQL: return true;
             case UPDATABLE_RESULT_SETS: return true;
+            case OBJECT_SOURCE_EDITING: return true;
             case CURRENT_SCHEMA: return true;
             case CONSTRAINT_MANIPULATION: return true;
             case READONLY_CONNECTIVITY: return true;
