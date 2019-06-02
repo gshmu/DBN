@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.code;
 
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
@@ -19,7 +20,8 @@ public class SourceCodeEditorProvider extends BasicSourceCodeEditorProvider {
             DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
 
             DBContentType contentType = databaseFile.getContentType();
-            return contentType.isOneOf(DBContentType.CODE, DBContentType.CODE_AND_DATA);
+            return contentType.has(DBContentType.CODE) &&
+                    DatabaseFeature.OBJECT_SOURCE_EDITING.isSupported(databaseFile.getObject());
 
         }
         return false;

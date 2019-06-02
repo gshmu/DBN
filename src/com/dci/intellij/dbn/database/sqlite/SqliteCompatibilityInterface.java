@@ -44,6 +44,7 @@ class SqliteCompatibilityInterface extends DatabaseCompatibilityInterface {
     public boolean supportsFeature(DatabaseFeature feature) {
         switch (feature) {
             case CONNECTION_ERROR_RECOVERY: return true;
+            case OBJECT_SOURCE_EDITING: return true;
             default: return false;
         }
     }

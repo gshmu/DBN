@@ -93,4 +93,12 @@ public enum DBContentType {
             default: return NONE;
         }
     }
+
+    public boolean has(DBContentType contentType) {
+        switch (contentType) {
+            case DATA: return this == DATA || this == CODE_AND_DATA;
+            case CODE: return this == CODE || this == CODE_AND_DATA || this == CODE_SPEC_AND_BODY;
+            default:   return false;
+        }
+    }
 }
