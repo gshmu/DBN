@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.connection.config.ConnectionDetailSettings;
+import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.EditorStateManager;
@@ -56,7 +57,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.*;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.CONSOLES;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.DATASET_FILTERS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.OBJECTS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.OBJECT_CONTENTS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.SESSION_BROWSERS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.SESSION_STATEMENTS;
+import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.values;
 
 public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysicalFileSystem, */ApplicationComponent {
     public static final String PS = "/";
@@ -413,21 +420,23 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
      *              FileEditorManagerListener                *
      *********************************************************/
     public void connectAndOpenEditor(DBObject object, @Nullable EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {
-        ConnectionAction.invoke(
-                "opening the object editor", false, object,
-                (action) -> {
-                    Project project = object.getProject();
-                    String title = "Opening editor (" + object.getQualifiedName() + ")";
-                    ProgressRunnable runnable = (progress) -> openEditor(object, editorProviderId, scrollBrowser, focusEditor);
+        if (isEditable(object)) {
+            ConnectionAction.invoke(
+                    "opening the object editor", false, object,
+                    (action) -> {
+                        Project project = object.getProject();
+                        String title = "Opening editor (" + object.getQualifiedName() + ")";
+                        ProgressRunnable runnable = (progress) -> openEditor(object, editorProviderId, scrollBrowser, focusEditor);
 
-                    if (focusEditor)
-                        Progress.prompt(project, title, true, runnable); else
-                        Progress.background( project, title, true, runnable);
-                });
+                        if (focusEditor)
+                            Progress.prompt(project, title, true, runnable); else
+                            Progress.background( project, title, true, runnable);
+                    });
+        }
     }
 
     public void openEditor(DBObject object, @Nullable EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {
-        if (Failsafe.check(object)) {
+        if (isEditable(object)) {
             EditorProviderId providerId = editorProviderId;
             if (editorProviderId == null) {
                 EditorStateManager editorStateManager = EditorStateManager.getInstance(object.getProject());
@@ -446,6 +455,12 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                 }
             }
         }
+    }
+
+    private boolean isEditable(DBObject object) {
+        return Failsafe.check(object) && (
+                object.getContentType().has(DBContentType.DATA) ||
+                DatabaseFeature.OBJECT_SOURCE_EDITING.isSupported(object));
     }
 
     private void openSchemaObject(@NotNull DBSchemaObject object, EditorProviderId editorProviderId, boolean scrollBrowser, boolean focusEditor) {

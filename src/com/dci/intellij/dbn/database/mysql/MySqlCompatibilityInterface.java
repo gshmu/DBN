@@ -43,6 +43,7 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
             case SESSION_BROWSING: return true;
             case SESSION_KILL: return true;
             case OBJECT_CHANGE_TRACING: return true;
+            case OBJECT_SOURCE_EDITING: return true;
             case UPDATABLE_RESULT_SETS: return true;
             case CURRENT_SCHEMA: return true;
             case CONSTRAINT_MANIPULATION: return true;
