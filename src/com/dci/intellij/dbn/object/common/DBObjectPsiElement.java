@@ -276,6 +276,7 @@ public class DBObjectPsiElement extends DisposableBase implements PsiNamedElemen
         return DBObjectRef.get(objectRef);
     }
 
+    @NotNull
     public DBObjectType getObjectType() {
         return objectRef.objectType;
     }

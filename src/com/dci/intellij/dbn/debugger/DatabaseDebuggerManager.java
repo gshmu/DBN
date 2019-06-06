@@ -440,8 +440,8 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
             try {
                 return DatabaseInterface.call(true,
                         connectionHandler,
-                        (interfaceProvider, connection) -> {
-                            DatabaseDebuggerInterface debuggerInterface = interfaceProvider.getDebuggerInterface();
+                        (provider, connection) -> {
+                            DatabaseDebuggerInterface debuggerInterface = provider.getDebuggerInterface();
                             DebuggerVersionInfo debuggerVersion = debuggerInterface.getDebuggerVersion(connection);
                             return debuggerVersion.getVersion();
                         });

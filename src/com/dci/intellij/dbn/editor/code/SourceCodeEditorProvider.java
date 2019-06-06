@@ -20,7 +20,7 @@ public class SourceCodeEditorProvider extends BasicSourceCodeEditorProvider {
             DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
 
             DBContentType contentType = databaseFile.getContentType();
-            return contentType.has(DBContentType.CODE) &&
+            return contentType.isOneOf(DBContentType.CODE, DBContentType.CODE_AND_DATA) &&
                     DatabaseFeature.OBJECT_SOURCE_EDITING.isSupported(databaseFile.getObject());
 
         }

@@ -329,8 +329,8 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     public boolean hasPendingTransactions(@NotNull DBNConnection connection) {
         try {
             return DatabaseInterface.call(
-                    this, interfaceProvider -> {
-                        DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
+                    this, provider -> {
+                        DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
                         return metadataInterface.hasPendingTransactions(connection);
                     });
         } catch (SQLException e) {
@@ -487,10 +487,10 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     public void setCurrentSchema(DBNConnection connection, @Nullable SchemaId schema) throws SQLException {
         if (schema != null && /*!schema.isPublicSchema() && */DatabaseFeature.CURRENT_SCHEMA.isSupported(this) && !schema.equals(connection.getCurrentSchema())) {
             DatabaseInterface.run(this,
-                    (interfaceProvider) -> {
+                    (provider) -> {
                         String schemaName = schema.getName();
-                        DatabaseMetadataInterface metadataInterface = interfaceProvider.getMetadataInterface();
-                        QuotePair quotePair = interfaceProvider.getCompatibilityInterface().getDefaultIdentifierQuotes();
+                        DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
+                        QuotePair quotePair = provider.getCompatibilityInterface().getDefaultIdentifierQuotes();
                         metadataInterface.setCurrentSchema(quotePair.quote(schemaName), connection);
                         connection.setCurrentSchema(schema);
                     });

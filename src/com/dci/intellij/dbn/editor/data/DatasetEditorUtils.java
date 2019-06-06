@@ -17,7 +17,8 @@ public class DatasetEditorUtils {
     public static List<String> loadDistinctColumnValues(@NotNull DBColumn column) {
         try {
             ConnectionHandler connectionHandler = column.getConnectionHandler();
-            return DatabaseInterface.call(false,
+            return DatabaseInterface.call(
+                    true,
                     connectionHandler,
                     (provider, connection) -> {
                         List<String> list = new ArrayList<>();

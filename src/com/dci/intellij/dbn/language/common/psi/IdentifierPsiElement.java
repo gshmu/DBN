@@ -211,9 +211,13 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
         return getParent() instanceof QualifiedIdentifierPsiElement;
     }
 
+    @NotNull
     public DBObjectType getObjectType() {
-        if (ref != null && ref.getObjectType() != null) {
-            return ref.getObjectType();
+        if (ref != null) {
+            DBObjectType objectType = ref.getObjectType();
+            if (objectType != DBObjectType.UNKNOWN) {
+                return objectType;
+            }
         }
         return elementType.getObjectType();
     }

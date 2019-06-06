@@ -52,8 +52,7 @@ public class DBObjectStatusHolder {
     }
 
 
-    public boolean set(DBContentType contentType, DBObjectStatus status, boolean value) {
-        Entry statusEntry = ensure(contentType);
+    public boolean set(DBContentType contentType, DBObjectStatus status, boolean value) { Entry statusEntry = ensure(contentType);
         return statusEntry.set(status, value);
     }
 
