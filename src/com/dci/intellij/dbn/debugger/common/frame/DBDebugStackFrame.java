@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.openapi.diagnostic.Logger;
@@ -222,8 +223,9 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
 
             IdentifierPsiElement subject = getSubject();
             if (subject != null) {
+                DBObjectType objectType = subject.getObjectType();
                 frameName = frameName + "." + subject.getChars();
-                frameIcon = subject.getObjectType().getIcon();
+                frameIcon = objectType.getIcon();
             }
 
             component.append(frameName, SimpleTextAttributes.REGULAR_ATTRIBUTES);

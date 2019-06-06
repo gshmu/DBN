@@ -13,13 +13,10 @@ import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.CONNECTION_ACTIVE;
-import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.CONNECTION_VALID;
-import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.NEW;
-import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.RESOLVING;
-import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.RESOLVING_OBJECT_TYPE;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.*;
 
 public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
     private ConnectionHandlerRef connectionHandlerRef;
@@ -171,6 +168,7 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
         return false;
     }
 
+    @NotNull
     public DBObjectType getObjectType() {
         if (isNot(RESOLVING_OBJECT_TYPE)) {
             set(RESOLVING_OBJECT_TYPE, true);
@@ -197,7 +195,7 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
             }
         }
 
-        return null;
+        return DBObjectType.UNKNOWN;
     }
 
     /*********************************************************

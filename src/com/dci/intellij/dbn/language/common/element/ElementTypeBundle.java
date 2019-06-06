@@ -29,6 +29,7 @@ import gnu.trove.THashSet;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -223,10 +224,11 @@ public class ElementTypeBundle {
     }
 
 
+    @NotNull
     public static DBObjectType resolveObjectType(String name) throws ElementTypeDefinitionException {
         DBObjectType objectType = DBObjectType.get(name);
         if (objectType == null)
-            throw new ElementTypeDefinitionException("Invalid object type '" + name + '\'');
+            throw new ElementTypeDefinitionException("Invalid object type '" + name + "'");
         return objectType;
     }
 

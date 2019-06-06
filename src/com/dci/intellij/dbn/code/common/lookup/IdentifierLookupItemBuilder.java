@@ -37,6 +37,7 @@ public class IdentifierLookupItemBuilder extends LookupItemBuilder {
 
     @Override
     public Icon getIcon() {
-        return identifierPsiElement.getObjectType().getIcon();
+        DBObjectType objectType = identifierPsiElement.getObjectType();
+        return objectType.getIcon();
     }
 }

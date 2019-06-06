@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
+import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBObjectDependencyMetadata;
@@ -133,29 +134,34 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
 
     @Override
     public List<DBSchema> getReferencingSchemas() throws SQLException {
-        List<DBSchema> schemas = new ArrayList<>();
         ConnectionHandler connectionHandler = getConnectionHandler();
-        DBNConnection connection = connectionHandler.getPoolConnection(getSchemaIdentifier(), true);
-        ResultSet resultSet = null;
-        try {
-            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
-            resultSet = metadataInterface.loadReferencingSchemas(getSchema().getName(), getName(), connection);
-            while (resultSet.next()) {
-                String schemaName = resultSet.getString("SCHEMA_NAME");
-                DBSchema schema = getConnectionHandler().getObjectBundle().getSchema(schemaName);
-                if (schema != null)  {
-                    schemas.add(schema);
-                }
-            }
-            if (schemas.isEmpty()) {
-                schemas.add(getSchema());
-            }
+        return DatabaseInterface.call(
+                true,
+                connectionHandler,
+                (provider, connection) -> {
+                    List<DBSchema> schemas = new ArrayList<>();
+                    ResultSet resultSet = null;
+                    try {
+                        DBSchema schema1 = getSchema();
+                        DatabaseMetadataInterface metadataInterface = provider.getMetadataInterface();
+                        resultSet = metadataInterface.loadReferencingSchemas(schema1.getName(), getName(), connection);
+                        DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
+                        while (resultSet.next()) {
+                            String schemaName = resultSet.getString("SCHEMA_NAME");
+                            DBSchema schema = objectBundle.getSchema(schemaName);
+                            if (schema != null)  {
+                                schemas.add(schema);
+                            }
+                        }
+                        if (schemas.isEmpty()) {
+                            schemas.add(schema1);
+                        }
 
-        } finally {
-            ResourceUtil.close(resultSet);
-            connectionHandler.freePoolConnection(connection);
-        }
-        return schemas;
+                    } finally {
+                        ResourceUtil.close(resultSet);
+                    }
+                    return schemas;
+                });
     }
 
     @Override
