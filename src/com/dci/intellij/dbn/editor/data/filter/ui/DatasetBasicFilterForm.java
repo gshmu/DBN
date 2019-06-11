@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
+import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.Disposer;
@@ -194,7 +195,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
                 SyntaxHighlighter syntaxHighlighter = dataset.getLanguageDialect(SQLLanguage.INSTANCE).getSyntaxHighlighter();
                 EditorColorsScheme colorsScheme = this.viewer.getColorsScheme();
                 this.viewer.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
-                this.viewer.setBackgroundColor(GUIUtil.adjustColor(this.viewer.getBackgroundColor(), -0.01));
+                this.viewer.setBackgroundColor(Colors.adjust(this.viewer.getBackgroundColor(), -0.01));
                 viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
                 viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
                 //viewerScrollPane.setBorder(null);

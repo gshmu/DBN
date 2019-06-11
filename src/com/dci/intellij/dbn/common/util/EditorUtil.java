@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.common.util;
 
+import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
@@ -214,9 +214,9 @@ public class EditorUtil {
         EditorColorsScheme scheme = editor.getColorsScheme();
         Color defaultBackground = scheme.getDefaultBackground();
         Dispatch.run(() -> {
-            editor.setBackgroundColor(readonly ? GUIUtil.adjustColor(defaultBackground, -0.03) : defaultBackground);
+            editor.setBackgroundColor(readonly ? Colors.adjust(defaultBackground, -0.03) : defaultBackground);
             scheme.setColor(EditorColors.CARET_ROW_COLOR, readonly ?
-                    GUIUtil.adjustColor(defaultBackground, -0.03) :
+                    Colors.adjust(defaultBackground, -0.03) :
                     EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.CARET_ROW_COLOR));
         });
     }

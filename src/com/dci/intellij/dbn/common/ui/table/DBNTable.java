@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableHeaderRenderer;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
@@ -35,7 +36,7 @@ import java.util.TimerTask;
 public abstract class DBNTable<T extends DBNTableModel> extends JTable implements RegisteredDisposable {
     private static final int MAX_COLUMN_WIDTH = 300;
     private static final int MIN_COLUMN_WIDTH = 10;
-    private static final Color GRID_COLOR = new JBColor(new Color(0xE6E6E6), Color.DARK_GRAY);
+    public static final Color GRID_COLOR = new JBColor(new Color(0xE6E6E6), Color.DARK_GRAY);
     protected DBNTableGutter tableGutter;
     private ProjectRef projectRef;
     private double scrollDistance;
@@ -62,11 +63,12 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
 
         adjustRowHeight(1);
 
-        final JTableHeader tableHeader = getTableHeader();
+        JTableHeader tableHeader = getTableHeader();
         if (!showHeader) {
             tableHeader.setVisible(false);
             tableHeader.setPreferredSize(new Dimension(-1, 0));
         } else {
+            tableHeader.setDefaultRenderer(new BasicTableHeaderRenderer());
             tableHeader.addMouseMotionListener(new MouseMotionAdapter() {
                 @Override
                 public void mouseDragged(MouseEvent e) {
