@@ -140,7 +140,6 @@
 
     <application-components>
         <component><implementation-class>com.dci.intellij.dbn.DatabaseNavigator</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.vfs.DatabaseFileSystem</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.driver.DatabaseDriverManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.EditorManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.ConnectionCache</implementation-class></component>
@@ -399,6 +398,7 @@
     </actions>
     <extensions defaultExtensionNs="com.intellij">
         <!--<applicationInitializedListener implementation="com.dci.intellij.dbn.init.DatabaseNavigatorInitializer"/>-->
+        <virtualFileSystem implementationClass="com.dci.intellij.dbn.vfs.DatabaseFileSystem" key="db" physical="false"/>
 
         <debugger.nodeRenderer order="first" implementation="com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpNodeRenderer"/>
         <debugger.positionManagerFactory id="dbJdwpPositionManagerFactory" order="first" implementation="com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpDebugPositionManagerFactory"/>

@@ -12,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-import static com.dci.intellij.dbn.common.ui.GUIUtil.adjustColor;
-
 public class DBNHintForm extends DBNFormImpl{
     private JPanel mainPanel;
     private JLabel hintLabel;
@@ -34,13 +32,13 @@ public class DBNHintForm extends DBNFormImpl{
             hintLabel.setVisible(false);
         }
 
-        Color background = boxed ? adjustColor(UIUtil.getPanelBackground(), 0.01) : UIUtil.getPanelBackground();
+        Color background = boxed ? Colors.adjust(UIUtil.getPanelBackground(), 0.01) : UIUtil.getPanelBackground();
 
         mainPanel.setBackground(background);
         hintTextPane.setBackground(background);
         hintTextPane.setText(hintText);
         hintTextPane.setFont(UIUtil.getLabelFont());
-        hintTextPane.setForeground(boxed ? adjustColor(UIUtil.getLabelForeground(), 0.18) : Colors.HINT_COLOR);
+        hintTextPane.setForeground(boxed ? Colors.adjust(UIUtil.getLabelForeground(), 0.18) : Colors.HINT_COLOR);
         if (boxed) {
             mainPanel.setBorder(new RoundedLineBorder(UIUtil.getBoundsColor(), 4));
         } else {

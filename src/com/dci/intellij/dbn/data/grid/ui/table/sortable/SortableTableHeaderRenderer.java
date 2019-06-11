@@ -1,22 +1,24 @@
 package com.dci.intellij.dbn.data.grid.ui.table.sortable;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableHeaderRenderer;
+import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRendererBase;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModel;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
 import com.dci.intellij.dbn.data.sorting.SortingState;
+import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class SortableTableHeaderRenderer implements BasicTableHeaderRenderer {
+public class SortableTableHeaderRenderer extends DBNTableHeaderRendererBase {
     private JPanel mainPanel;
     private JLabel nameLabel;
     private JLabel sortingLabel;
 
     public SortableTableHeaderRenderer() {
-        mainPanel.setOpaque(false);
+        mainPanel.setOpaque(true);
+        mainPanel.setBackground(UIUtil.getPanelBackground());
     }
 
     @Override
@@ -43,17 +45,16 @@ public class SortableTableHeaderRenderer implements BasicTableHeaderRenderer {
 
         nameLabel.setText(columnName);
 
-        FontMetrics fontMetrics = nameLabel.getFontMetrics(nameLabel.getFont());
+        FontMetrics fontMetrics = getFontMetrics();
         width += fontMetrics.stringWidth(columnName) + 24;
-        int height = fontMetrics.getHeight() + 2;
+        int height = fontMetrics.getHeight() + 6;
         mainPanel.setPreferredSize(new Dimension(width, height));
-
+        mainPanel.setBorder(columnIndex == 0 ? BORDER_LBR.get() : BORDER_BR.get());
         return mainPanel;
     }
 
-
     @Override
-    public void setFont(Font font) {
-        nameLabel.setFont(font);
+    protected JLabel getNameLabel() {
+        return nameLabel;
     }
 }

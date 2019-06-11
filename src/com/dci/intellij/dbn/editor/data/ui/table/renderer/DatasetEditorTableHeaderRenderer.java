@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.editor.data.ui.table.renderer;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRendererBase;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
-import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableHeaderRenderer;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
 import com.dci.intellij.dbn.data.sorting.SortingState;
@@ -14,13 +14,14 @@ import com.intellij.util.ui.UIUtil;
 import javax.swing.*;
 import java.awt.*;
 
-public class DatasetEditorTableHeaderRenderer implements BasicTableHeaderRenderer {
+public class DatasetEditorTableHeaderRenderer extends DBNTableHeaderRendererBase {
     private JPanel mainPanel;
     private JLabel nameLabel;
     private JLabel sortingLabel;
 
     public DatasetEditorTableHeaderRenderer() {
-        mainPanel.setOpaque(false);
+        mainPanel.setOpaque(true);
+        mainPanel.setBackground(UIUtil.getPanelBackground());
     }
 
     @Override
@@ -66,18 +67,23 @@ public class DatasetEditorTableHeaderRenderer implements BasicTableHeaderRendere
         }
         nameLabel.setForeground(UIUtil.getLabelForeground());
 
-        FontMetrics fontMetrics = nameLabel.getFontMetrics(nameLabel.getFont());
+        FontMetrics fontMetrics = getFontMetrics();
         width += fontMetrics.stringWidth(columnName) + 20;
-        int height = fontMetrics.getHeight() + 2;
+        int height = fontMetrics.getHeight() + 6;
         mainPanel.setPreferredSize(new Dimension(width, height));
-
+        mainPanel.setBorder(columnIndex == 0 ? BORDER_TLBR.get() : BORDER_TBR.get());
         updateTooltip(column);
 
 
         return mainPanel;
     }
 
-    protected void updateTooltip(DBColumn column) {
+    @Override
+    protected JLabel getNameLabel() {
+        return nameLabel;
+    }
+
+    private void updateTooltip(DBColumn column) {
         if (column != null) {
             DataGridSettings dataGridSettings = DataGridSettings.getInstance(column.getProject());
             if (dataGridSettings.getGeneralSettings().isColumnTooltipEnabled()) {
@@ -99,11 +105,5 @@ public class DatasetEditorTableHeaderRenderer implements BasicTableHeaderRendere
         } else {
             mainPanel.setToolTipText(null);
         }
-    }
-
-
-    @Override
-    public void setFont(Font font) {
-        nameLabel.setFont(font);
     }
 }
