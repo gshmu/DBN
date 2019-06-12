@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.grid.color;
 
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
 import com.intellij.openapi.editor.colors.EditorColors;
@@ -42,12 +43,10 @@ public class BasicTableTextAttributes extends CommonUtil implements DataGridText
 
     private Color caretRowBgColor;
 
-    public BasicTableTextAttributes() {
-        load();
-    }
+    private static final Latent<BasicTableTextAttributes> INSTANCE = Latent.laf(
+            () -> new BasicTableTextAttributes());
 
-    @Override
-    public void load() {
+    private BasicTableTextAttributes() {
         EditorColorsScheme globalScheme = EditorColorsManager.getInstance().getGlobalScheme();
         caretRowBgColor = globalScheme.getAttributes(DataGridTextAttributesKeys.CARET_ROW).getBackgroundColor();
 
@@ -121,6 +120,10 @@ public class BasicTableTextAttributes extends CommonUtil implements DataGridText
 
         selection = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.SELECTION);
         searchResult = TextAttributesUtil.getSimpleTextAttributes(EditorColors.TEXT_SEARCH_RESULT_ATTRIBUTES);
+    }
+
+    public static BasicTableTextAttributes get() {
+        return INSTANCE.get();
     }
 
     @Override

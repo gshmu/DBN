@@ -8,18 +8,26 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 
 public interface DBNTableHeaderRenderer extends TableCellRenderer {
-     Latent<CustomLineBorder> BORDER_BR = Latent.laf(
-            () -> new CustomLineBorder(Colors.tableHeaderBorderColor(), 0, 0, 1, 1));
+    Latent<CustomLineBorder> BORDER_BR = Latent.mutable(
+            () -> tableHeaderBorderColor(),
+            () -> new CustomLineBorder(tableHeaderBorderColor(), 0, 0, 1, 1));
 
-     Latent<CustomLineBorder> BORDER_TBR = Latent.laf(
-            () -> new CustomLineBorder(Colors.tableHeaderBorderColor(), 1, 0, 1, 1));
+    Latent<CustomLineBorder> BORDER_TBR = Latent.mutable(
+            () -> tableHeaderBorderColor(),
+            () -> new CustomLineBorder(tableHeaderBorderColor(), 1, 0, 1, 1));
 
-     Latent<CustomLineBorder> BORDER_LBR = Latent.laf(
-            () -> new CustomLineBorder(Colors.tableHeaderBorderColor(), 0, 1, 1, 1));
+    Latent<CustomLineBorder> BORDER_LBR = Latent.mutable(
+            () -> tableHeaderBorderColor(),
+            () -> new CustomLineBorder(tableHeaderBorderColor(), 0, 1, 1, 1));
 
-     Latent<CustomLineBorder> BORDER_TLBR = Latent.laf(
-            () -> new CustomLineBorder(Colors.tableHeaderBorderColor(), 1, 1, 1, 1));
+    Latent<CustomLineBorder> BORDER_TLBR = Latent.mutable(
+            () -> tableHeaderBorderColor(),
+            () -> new CustomLineBorder(tableHeaderBorderColor(), 1, 1, 1, 1));
 
     void setFont(Font font);
+
+    static Color tableHeaderBorderColor() {
+        return Colors.tableHeaderBorderColor();
+    }
 
 }

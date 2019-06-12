@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.common.latent;
 
 
+import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.intellij.openapi.Disposable;
-
-import javax.swing.*;
 
 public interface Latent<T> {
     T get();
@@ -55,17 +54,9 @@ public interface Latent<T> {
     }
 
     static <T> Latent<T> laf(Loader<T> loader) {
-        return new MutableLatent<T, String>() {
-            @Override
-            public Loader<T> getLoader() {
-                return loader;
-            }
-
-            @Override
-            protected Loader<String> getMutableLoader() {
-                return () -> UIManager.getLookAndFeel().getName();
-            }
-        };
+        BasicLatent<T> latent = basic(loader);
+        Colors.subscribe(() -> latent.reset());
+        return latent;
     }
 
 

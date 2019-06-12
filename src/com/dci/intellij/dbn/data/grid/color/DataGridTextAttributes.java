@@ -5,8 +5,6 @@ import com.intellij.ui.SimpleTextAttributes;
 import java.awt.*;
 
 public interface DataGridTextAttributes {
-    void load();
-
     SimpleTextAttributes getSelection();
 
     SimpleTextAttributes getSearchResult();

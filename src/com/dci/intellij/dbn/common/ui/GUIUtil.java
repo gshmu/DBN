@@ -6,6 +6,7 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.popup.list.ListPopupImpl;
 import com.intellij.util.ui.UIUtil;
@@ -16,6 +17,7 @@ import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
+import java.awt.event.InputEvent;
 import java.lang.reflect.Method;
 import java.util.EventListener;
 
@@ -192,5 +194,19 @@ public class GUIUtil{
             component.repaint();
             component.requestFocus();
         });
+    }
+
+    public static void setPanelBackground(JPanel panel, Color background) {
+        panel.setBackground(background);
+        for (Component component : panel.getComponents()) {
+            if (component instanceof JPanel) {
+                JPanel childPanel = (JPanel) component;
+                setPanelBackground(childPanel, background);
+            }
+        }
+    }
+
+    public static int ctrlDownMask() {
+        return SystemInfo.isMac ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK;
     }
 }

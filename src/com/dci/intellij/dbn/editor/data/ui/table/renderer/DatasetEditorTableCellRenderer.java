@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui.table.renderer;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
@@ -65,10 +66,10 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
             Color foreground = CommonUtil.nvl(textAttributes.getFgColor(), table.getForeground());
 
 
-            Border border = getLineBorder(background);
+            Border border = Borders.getLineBorder(background);
 
             if (cell.hasError() && isConnected) {
-                border = getLineBorder(SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
+                border = Borders.getLineBorder(SimpleTextAttributes.ERROR_ATTRIBUTES.getFgColor());
                 SimpleTextAttributes errorData = attributes.getErrorData();
                 background = errorData.getBgColor();
                 foreground = errorData.getFgColor();

@@ -49,7 +49,6 @@ public class ExplainPlanTreeTable extends TreeTable implements RegisteredDisposa
     private static final int MAX_COLUMN_WIDTH = 250;
     private static final int MIN_COLUMN_WIDTH = 10;
 
-    private BasicTableTextAttributes textAttributes = new BasicTableTextAttributes();
     private SimpleTextAttributes operationAttributes;
     private JBPopup largeValuePopup;
 
@@ -63,7 +62,7 @@ public class ExplainPlanTreeTable extends TreeTable implements RegisteredDisposa
         setDefaultRenderer(BigDecimal.class, tableCellRenderer);
         setAutoResizeMode(AUTO_RESIZE_OFF);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        SimpleTextAttributes plainDataAttributes = textAttributes.getPlainData(false, false);
+        SimpleTextAttributes plainDataAttributes = BasicTableTextAttributes.get().getPlainData(false, false);
         setBackground(plainDataAttributes.getBgColor());
 
         Font font = getFont();
@@ -148,7 +147,7 @@ public class ExplainPlanTreeTable extends TreeTable implements RegisteredDisposa
         protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
             SimpleTextAttributes attributes = selected ?
                     SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES :
-                    textAttributes.getPlainData(false, false);
+                    BasicTableTextAttributes.get().getPlainData(false, false);
             if (value instanceof DBObjectRef) {
                 DBObjectRef objectRef = (DBObjectRef) value;
                 append(objectRef.getPath(), attributes);

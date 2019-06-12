@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.editor.session.ui.table;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.editor.session.color.SessionBrowserTextAttributes;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelCell;
@@ -16,13 +16,8 @@ import java.awt.*;
 public class SessionBrowserTableCellRenderer extends BasicTableCellRenderer {
 
     @Override
-    protected DataGridTextAttributes createTextAttributes() {
-        return new SessionBrowserTextAttributes();
-    }
-
-    @Override
     public SessionBrowserTextAttributes getAttributes() {
-        return (SessionBrowserTextAttributes) super.getAttributes();
+        return SessionBrowserTextAttributes.get();
     }
 
     @Override
@@ -61,7 +56,7 @@ public class SessionBrowserTableCellRenderer extends BasicTableCellRenderer {
             Color foreground = CommonUtil.nvl(textAttributes.getFgColor(), table.getForeground());
 
 
-            Border border = getLineBorder(background);
+            Border border = Borders.getLineBorder(background);
 
             setBorder(border);
             setBackground(background);
