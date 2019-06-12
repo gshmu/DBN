@@ -29,7 +29,6 @@ import com.intellij.openapi.editor.event.SelectionEvent;
 import com.intellij.openapi.editor.event.SelectionListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.LightColors;
 import com.intellij.ui.components.JBList;
@@ -44,7 +43,6 @@ import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -227,7 +225,7 @@ public class DataSearchComponent extends DBNFormImpl implements Disposable, Sele
                 //requestFocus(myEditor.getContentComponent());
                 addTextToRecent(DataSearchComponent.this.searchField);
             }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, SystemInfo.isMac ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK),
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, GUIUtil.ctrlDownMask()),
                 JComponent.WHEN_FOCUSED);
 
         final String initialText = findModel.getStringToFind();

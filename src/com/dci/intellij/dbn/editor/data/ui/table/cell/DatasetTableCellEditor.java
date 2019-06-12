@@ -1,5 +1,6 @@
  package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
+ import com.dci.intellij.dbn.common.Colors;
  import com.dci.intellij.dbn.common.thread.Background;
  import com.dci.intellij.dbn.common.thread.Dispatch;
  import com.dci.intellij.dbn.common.ui.Borders;
@@ -16,6 +17,7 @@
  import com.dci.intellij.dbn.object.DBColumn;
  import com.intellij.ui.JBColor;
  import com.intellij.ui.SimpleTextAttributes;
+ import com.intellij.util.ui.UIUtil;
  import org.jetbrains.annotations.NotNull;
 
  import javax.swing.*;
@@ -41,28 +43,35 @@
 
     DatasetTableCellEditor(DatasetEditorTable table) {
         this(table, new BasicDataEditorComponent());
-        SimpleTextAttributes selectionTextAttributes = table.getCellRenderer().getAttributes().getSelection();
-
-        JTextField textField = getTextField();
-        textField.setSelectionColor(selectionTextAttributes.getBgColor());
-        textField.setSelectedTextColor(selectionTextAttributes.getFgColor());
-        textField.setFont(table.getFont());
     }
 
-    public DatasetTableCellEditor(DatasetEditorTable table, DataEditorComponent editorComponent) {
+    DatasetTableCellEditor(DatasetEditorTable table, DataEditorComponent editorComponent) {
         super(table, editorComponent);
         JTextField textField = getTextField();
         textField.addKeyListener(this);
         textField.addMouseListener(mouseListener);
         textField.addMouseMotionListener(mouseMotionListener);
 
-        SimpleTextAttributes selectionTextAttributes = table.getCellRenderer().getAttributes().getSelection();
-        textField.setSelectionColor(selectionTextAttributes.getBgColor());
-        textField.setSelectedTextColor(selectionTextAttributes.getFgColor());
         textField.setFont(table.getFont());
+
+        updateTextField();
+        Colors.subscribe(() -> updateTextField());
     }
 
-    public void prepareEditor(@NotNull DatasetEditorModelCell cell) {
+     private void updateTextField() {
+         JTextField textField = getTextField();
+         textField.setForeground(UIUtil.getTextFieldForeground());
+         textField.setBackground(UIUtil.getTextFieldBackground());
+         SimpleTextAttributes selTextAttributes = getSelectionTextAttributes();
+         textField.setSelectionColor(selTextAttributes.getBgColor());
+         textField.setSelectedTextColor(selTextAttributes.getFgColor());
+     }
+
+     private SimpleTextAttributes getSelectionTextAttributes() {
+         return getTable().getCellRenderer().getAttributes().getSelection();
+     }
+
+     public void prepareEditor(@NotNull DatasetEditorModelCell cell) {
         setCell(cell);
         ColumnInfo columnInfo = cell.getColumnInfo();
         DBDataType dataType = columnInfo.getDataType();

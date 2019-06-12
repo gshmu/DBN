@@ -1,7 +1,9 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
+import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -18,7 +20,9 @@ import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,10 +47,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
         editorTextArea.setBorder(JBUI.Borders.empty(4));
         editorTextArea.addKeyListener(this);
         editorTextArea.setWrapStyleWord(true);
-        Color bgColor = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.DEFAULT_PLAIN_DATA).getBgColor();
-        if (bgColor != null) {
-            editorTextArea.setBackground(bgColor);
-        }
+
 
         textEditorScrollPane.setBorder(Borders.COMPONENT_LINE_BORDER);
 
@@ -60,7 +61,24 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
                 new RevertAction(),
                 new AcceptAction());
         rightActionPanel.add(rightActionToolbar.getComponent(), BorderLayout.EAST);
+
+        updateComponentColors();
+        Colors.subscribe(() -> updateComponentColors());
     }
+
+    private void updateComponentColors() {
+        GUIUtil.setPanelBackground(mainPanel, UIUtil.getPanelBackground());
+
+        SimpleTextAttributes textAttributes = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.DEFAULT_PLAIN_DATA);
+        editorTextArea.setBackground(CommonUtil.nvl(
+                textAttributes.getBgColor(),
+                UIUtil.getTextFieldBackground()));
+
+        editorTextArea.setForeground(CommonUtil.nvl(
+                textAttributes.getFgColor(),
+                UIUtil.getTextFieldForeground()));
+    }
+
 
     @NotNull
     @Override
@@ -159,7 +177,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private class AcceptAction extends DumbAwareAction {
         private AcceptAction() {
             super("Accept changes", null, Icons.TEXT_CELL_EDIT_ACCEPT);
-            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_ENTER, InputEvent.ALT_MASK));
+            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_ENTER, InputEvent.ALT_DOWN_MASK));
             registerAction(this);
         }
 
@@ -205,7 +223,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private class DeleteAction extends AnAction {
         private DeleteAction() {
             super("Delete Content", null, Icons.TEXT_CELL_EDIT_DELETE);
-            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_DELETE, InputEvent.CTRL_MASK));
+            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_DELETE, GUIUtil.ctrlDownMask()));
             //registerAction(this);
         }
 

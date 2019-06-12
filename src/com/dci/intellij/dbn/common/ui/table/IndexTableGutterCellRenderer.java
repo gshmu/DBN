@@ -1,10 +1,8 @@
 package com.dci.intellij.dbn.common.ui.table;
 
+import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableColors;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.editor.colors.EditorFontType;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.intellij.ui.border.CustomLineBorder;
 import com.intellij.util.ui.UIUtil;
 
@@ -15,10 +13,6 @@ import java.awt.*;
 
 public class IndexTableGutterCellRenderer extends JPanel implements ListCellRenderer {
 
-    static EditorColorsScheme getGlobalScheme() {
-        return EditorColorsManager.getInstance().getGlobalScheme();
-    }
-
     private static final Border BORDER = new CompoundBorder(new CustomLineBorder(UIUtil.getPanelBackground(), 0, 0, 1, 1), Borders.TEXT_FIELD_BORDER);
     private JLabel textLabel;
 
@@ -27,8 +21,8 @@ public class IndexTableGutterCellRenderer extends JPanel implements ListCellRend
         setBorder(BORDER);
         setLayout(new BorderLayout());
         textLabel = new JLabel();
-        textLabel.setForeground(BasicTableColors.getLineNumberColor());
-        textLabel.setFont(EditorColorsManager.getInstance().getGlobalScheme().getFont(EditorFontType.PLAIN));
+        textLabel.setForeground(Colors.tableLineNumberColor());
+        textLabel.setFont(GUIUtil.getEditorFont());
         add(textLabel, BorderLayout.EAST);
     }
 
@@ -40,11 +34,13 @@ public class IndexTableGutterCellRenderer extends JPanel implements ListCellRend
         boolean isCaretRow = table.getCellSelectionEnabled() && table.getSelectedRow() == index && table.getSelectedRowCount() == 1;
 
         setBackground(isSelected ?
-                BasicTableColors.getSelectionBackgroundColor() :
+                Colors.tableSelectionBackgroundColor() :
                 isCaretRow ?
-                        BasicTableColors.getCaretRowColor() :
+                        Colors.tableCaretRowColor() :
                         UIUtil.getPanelBackground());
-        textLabel.setForeground(isSelected ? BasicTableColors.getSelectionForegroundColor() : BasicTableColors.getLineNumberColor());
+        textLabel.setForeground(isSelected ?
+                Colors.tableSelectionForegroundColor() :
+                Colors.tableLineNumberColor());
         return this;
     }
 }

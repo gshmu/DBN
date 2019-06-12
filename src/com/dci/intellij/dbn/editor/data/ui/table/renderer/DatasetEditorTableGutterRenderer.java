@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.editor.data.ui.table.renderer;
 
+import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
-import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableColors;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
@@ -70,15 +70,15 @@ public class DatasetEditorTableGutterRenderer extends JPanel implements ListCell
 
         boolean isCaretRow = table.getCellSelectionEnabled() && table.getSelectedRow() == index && table.getSelectedRowCount() == 1;
         Color background = isSelected ?
-                BasicTableColors.getSelectionBackgroundColor() :
-                    isCaretRow ?
-                        BasicTableColors.getCaretRowColor() :
+                Colors.tableSelectionBackgroundColor() :
+                isCaretRow ?
+                        Colors.tableCaretRowColor() :
                         UIUtil.getPanelBackground();
         setBackground(background);
         textPanel.setBackground(background);
         textLabel.setForeground(isSelected ?
-                BasicTableColors.getSelectionForegroundColor() :
-                BasicTableColors.getLineNumberColor());
+                Colors.tableSelectionForegroundColor() :
+                Colors.tableLineNumberColor());
         return this;
     }
 }

@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
+import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -13,7 +15,6 @@ import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.ui.JBColor;
-import com.intellij.util.containers.HashSet;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.FocusEvent;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -39,6 +39,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.Set;
 
 public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implements TableModelListener {
@@ -59,7 +60,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     private JPanel actionsPanelBottom;
     private JPanel headerSeparatorPanel;
 
-    protected CalendarPopupProviderForm(TextFieldWithPopup textField, boolean autoPopup) {
+    CalendarPopupProviderForm(TextFieldWithPopup textField, boolean autoPopup) {
         super(textField, autoPopup, true);
         calendarPanel.setBackground(weeksTable.getBackground());
         daysTable.addKeyListener(this);
@@ -67,6 +68,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
 
         weeksTable.setDefaultRenderer(Object.class, HEADER_CELL_RENDERER);
         weeksTable.setFocusable(false);
+        weeksTable.setShowGrid(false);
         calendarPanel.setBorder(Borders.COMPONENT_LINE_BORDER);
         headerSeparatorPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
@@ -74,6 +76,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
         daysTable.setDefaultRenderer(Object.class, CELL_RENDERER);
         daysTable.getTableHeader().setDefaultRenderer(HEADER_CELL_RENDERER);
         daysTable.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        daysTable.setShowGrid(false);
         daysTable.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -107,6 +110,22 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
         actionsLeftPanel.add(actionToolbarLeft.getComponent(), BorderLayout.WEST);
         actionsRightPanel.add(actionToolbarRight.getComponent(), BorderLayout.EAST);
         actionsPanelBottom.add(actionToolbarBottom.getComponent(), BorderLayout.EAST);
+
+        updateComponentColors();
+        Colors.subscribe(() -> updateComponentColors());
+    }
+
+    private void updateComponentColors() {
+        Color panelBackground = UIUtil.getPanelBackground();
+        Color labelForeground = UIUtil.getLabelForeground();
+        Color tableBackground = UIUtil.getTableBackground();
+
+        GUIUtil.setPanelBackground(mainPanel, panelBackground);
+        timeLabel.setForeground(labelForeground);
+        monthYearLabel.setForeground(labelForeground);
+        daysTable.setBackground(tableBackground);
+        weeksTable.setBackground(tableBackground);
+        calendarPanel.setBackground(tableBackground);
     }
 
     @NotNull
@@ -226,7 +245,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     /******************************************************
      *                  TableModels                       *
      ******************************************************/
-    private class CalendarHeaderTableModel implements TableModel {
+    private static class CalendarHeaderTableModel implements TableModel {
         @Override
         public int getRowCount() {
             return 1;
@@ -275,7 +294,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     }
 
     private class CalendarTableModel implements TableModel {
-        private Set<TableModelListener> listeners = new HashSet<TableModelListener>();
+        private Set<TableModelListener> listeners = new HashSet<>();
         private Calendar inputDate = new GregorianCalendar();
         private Calendar activeMonth = new GregorianCalendar();
         private Calendar previousMonth = new GregorianCalendar();
@@ -450,11 +469,11 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     private class NextMonthAction extends AnAction {
         private NextMonthAction() {
             super("Next Month", null, Icons.CALENDAR_CELL_EDIT_NEXT_MONTH);
-            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_RIGHT, InputEvent.CTRL_MASK));
+            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_RIGHT, GUIUtil.ctrlDownMask()));
             registerAction(this);
         }
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             CalendarTableModel tableModel = (CalendarTableModel) daysTable.getModel();
             tableModel.rollMonth(1);
         }
@@ -463,11 +482,11 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     private class NextYearAction extends AnAction {
         private NextYearAction() {
             super("Next Year", null, Icons.CALENDAR_CELL_EDIT_NEXT_YEAR);
-            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_UP, InputEvent.CTRL_MASK));
+            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_UP, GUIUtil.ctrlDownMask()));
             registerAction(this);
         }
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             CalendarTableModel tableModel = (CalendarTableModel) daysTable.getModel();
             tableModel.rollYear(1);
         }
@@ -476,12 +495,12 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     private class PreviousMonthAction extends AnAction {
         private PreviousMonthAction() {
             super("Previous Month", null, Icons.CALENDAR_CELL_EDIT_PREVIOUS_MONTH);
-            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_LEFT, InputEvent.CTRL_MASK));
+            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_LEFT, GUIUtil.ctrlDownMask()));
             registerAction(this);
 
         }
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             CalendarTableModel tableModel = (CalendarTableModel) daysTable.getModel();
             tableModel.rollMonth(-1);
         }
@@ -490,11 +509,11 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     private class PreviousYearAction extends AnAction {
         private PreviousYearAction() {
             super("Previous Year", null, Icons.CALENDAR_CELL_EDIT_PREVIOUS_YEAR);
-            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_DOWN, InputEvent.CTRL_MASK));
+            setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_DOWN, GUIUtil.ctrlDownMask()));
             registerAction(this);
         }
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             CalendarTableModel tableModel = (CalendarTableModel) daysTable.getModel();
             tableModel.rollYear(-1);
         }
@@ -506,8 +525,8 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
             registerAction(this);
         }
         @Override
-        public void actionPerformed(AnActionEvent e) {
-            Calendar calendar = new GregorianCalendar(2000,1,0,0,0,0);
+        public void actionPerformed(@NotNull AnActionEvent e) {
+            Calendar calendar = new GregorianCalendar(2000, Calendar.JANUARY,0,0,0,0);
             String timeString = getFormatter().formatTime(calendar.getTime());
             timeTextField.setText(timeString);
         }
