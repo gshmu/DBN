@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -16,33 +17,14 @@ import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.intellij.ui.SimpleTextAttributes;
 
 import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 
 public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
-    private Map<Color, Border> lineBorderCache = new HashMap<Color, Border>();
-
-    protected Border getLineBorder(Color color) {
-        Border border = lineBorderCache.get(color);
-        if (border == null) {
-            border = new LineBorder(color, 1);
-            lineBorderCache.put(color, border);
-        }
-        return border;
-    }
-
-    private DataGridTextAttributes attributes = createTextAttributes();
-
-    protected DataGridTextAttributes createTextAttributes() {
-        return new BasicTableTextAttributes();
-    }
 
     public DataGridTextAttributes getAttributes() {
-        return attributes;
+        return BasicTableTextAttributes.get();
     }
 
     @Override
@@ -79,7 +61,7 @@ public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
 
             Color background = CommonUtil.nvl(textAttributes.getBgColor(), table.getBackground());
             Color foreground = CommonUtil.nvl(textAttributes.getFgColor(), table.getForeground());
-            Border border = getLineBorder(background);
+            Border border = Borders.getLineBorder(background);
 
             setBorder(border);
             setBackground(background);

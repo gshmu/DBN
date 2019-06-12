@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
+import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
@@ -21,7 +22,7 @@ public class BasicTableGutterCellRenderer extends JPanel implements ListCellRend
         setBorder(new CompoundBorder(new CustomLineBorder(UIUtil.getPanelBackground(), 0, 0, 1, 1), Borders.TEXT_FIELD_BORDER));
         setLayout(new BorderLayout());
         textLabel = new JLabel();
-        textLabel.setForeground(BasicTableColors.getLineNumberColor());
+        textLabel.setForeground(Colors.tableLineNumberColor());
         textLabel.setFont(EditorColorsManager.getInstance().getGlobalScheme().getFont(EditorFontType.PLAIN));
         add(textLabel, BorderLayout.EAST);
     }
@@ -43,11 +44,13 @@ public class BasicTableGutterCellRenderer extends JPanel implements ListCellRend
                 table.getSelectedRowCount() == 1;
 
         setBackground(isSelected ?
-                BasicTableColors.getSelectionBackgroundColor() :
+                Colors.tableSelectionBackgroundColor() :
                 isCaretRow ?
-                        BasicTableColors.getCaretRowColor() :
+                        Colors.tableCaretRowColor() :
                         UIUtil.getPanelBackground());
-        textLabel.setForeground(isSelected ? BasicTableColors.getSelectionBackgroundColor() : BasicTableColors.getLineNumberColor());
+        textLabel.setForeground(isSelected ?
+                Colors.tableSelectionBackgroundColor() :
+                Colors.tableLineNumberColor());
         return this;
     }
 }

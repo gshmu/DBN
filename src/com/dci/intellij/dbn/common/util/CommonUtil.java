@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -50,13 +51,22 @@ public class CommonUtil {
     }
 
     public static double getProgressPercentage(int is, int should) {
-        BigDecimal fraction = new BigDecimal(is).divide(new BigDecimal(should), 6, BigDecimal.ROUND_HALF_UP);
+        BigDecimal fraction = new BigDecimal(is).divide(new BigDecimal(should), 6, RoundingMode.HALF_UP);
         return fraction.doubleValue();
     }
 
     @NotNull
     public static <T, E extends Throwable> T nvl(@Nullable T value, @NotNull ThrowableCallable<T, E> defaultValue) throws E {
         return value == null ? defaultValue.call() : value;
+    }
+
+    public static <T> T nvlf(@Nullable T value, T ... values) {
+        int index = 0;
+        while (value == null && index < values.length) {
+            value = values[index];
+            index++;
+        }
+        return value;
     }
 
     @NotNull

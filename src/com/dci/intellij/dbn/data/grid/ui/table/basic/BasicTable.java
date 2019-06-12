@@ -52,12 +52,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         dataGridSettings = DataGridSettings.getInstance(project);
         cellRenderer = createCellRenderer();
         DataGridTextAttributes displayAttributes = cellRenderer.getAttributes();
-        Color selectionFgColor = displayAttributes.getSelection().getFgColor();
-        Color selectionBgColor = displayAttributes.getSelection().getBgColor();
-        if (selectionFgColor != null && selectionBgColor != null) {
-            setSelectionForeground(selectionFgColor);
-            setSelectionBackground(selectionBgColor);
-        }
+
         EditorColorsManager.getInstance().addEditorColorsListener(this, this);
         Color bgColor = displayAttributes.getPlainData(false, false).getBgColor();
         setBackground(bgColor == null ? UIUtil.getTableBackground() : bgColor);
@@ -230,7 +225,6 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
      *********************************************************/
     @Override
     public void globalSchemeChange(EditorColorsScheme scheme) {
-        cellRenderer.getAttributes().load();
         updateBackground(isLoading);
         resizeAndRepaint();
 /*        JBScrollPane scrollPane = UIUtil.getParentOfType(JBScrollPane.class, this);

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
+import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
@@ -200,6 +201,7 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
             buttonsPanel.add(button, buttonsPanel.getComponentCount());
             customizeButton(button);
             popupProvider.setButton(button);
+            Colors.subscribe(() -> customizeButton(button));
         }
         Disposer.register(this, popupProvider);
     }

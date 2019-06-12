@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.session.color;
 
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
@@ -31,12 +32,10 @@ public class SessionBrowserTextAttributes extends CommonUtil implements DataGrid
 
     private Color caretRowBgColor;
 
-    public SessionBrowserTextAttributes() {
-        load();
-    }
+    private static final Latent<SessionBrowserTextAttributes> INSTANCE = Latent.laf(
+            () -> new SessionBrowserTextAttributes());
 
-    @Override
-    public void load() {
+    private SessionBrowserTextAttributes() {
         EditorColorsScheme globalScheme = EditorColorsManager.getInstance().getGlobalScheme();
         caretRowBgColor = globalScheme.getAttributes(DataGridTextAttributesKeys.CARET_ROW).getBackgroundColor();
 
@@ -56,6 +55,10 @@ public class SessionBrowserTextAttributes extends CommonUtil implements DataGrid
 
         selection = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.SELECTION);
         searchResult = TextAttributesUtil.getSimpleTextAttributes(EditorColors.TEXT_SEARCH_RESULT_ATTRIBUTES);
+    }
+
+    public static SessionBrowserTextAttributes get() {
+        return INSTANCE.get();
     }
 
     public SimpleTextAttributes getActiveSession(boolean atCaretRow) {

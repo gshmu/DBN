@@ -10,7 +10,7 @@ import java.awt.*;
 
 public interface DataGridTextAttributesKeys {
     TextAttributesKey DEFAULT_PLAIN_DATA     = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.PlainData");
-    TextAttributesKey DEFAULT_CARET_ROW     = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.CaretRow");
+    TextAttributesKey DEFAULT_CARET_ROW      = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.CaretRow");
     TextAttributesKey DEFAULT_TRACKING_DATA  = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.TrackingData");
     TextAttributesKey DEFAULT_MODIFIED_DATA  = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.ModifiedData");
     TextAttributesKey DEFAULT_DELETED_DATA   = TextAttributesKey.createTextAttributesKey("DBNavigator.DefaultTextAttributes.DataEditor.DeletedData");

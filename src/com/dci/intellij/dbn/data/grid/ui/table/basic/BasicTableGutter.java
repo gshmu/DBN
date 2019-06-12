@@ -8,8 +8,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.FocusEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
     public BasicTableGutter(final T table) {
@@ -20,19 +18,16 @@ public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
             setFixedCellWidth(10);
         }
         table.getSelectionModel().addListSelectionListener(tableSelectionListener);
-        table.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent e) {
-                Object newProperty = e.getNewValue();
-                if (newProperty instanceof Font) {
-                    Font font = (Font) newProperty;
-                    setFont(font);
-                    setFixedCellHeight(table.getRowHeight());
-                    ListCellRenderer cellRenderer = getCellRenderer();
-                    if (cellRenderer instanceof Component) {
-                        Component component = (Component) cellRenderer;
-                        component.setFont(font);
-                    }
+        table.addPropertyChangeListener(e -> {
+            Object newProperty = e.getNewValue();
+            if (newProperty instanceof Font) {
+                Font font = (Font) newProperty;
+                setFont(font);
+                setFixedCellHeight(table.getRowHeight());
+                ListCellRenderer cellRenderer = getCellRenderer();
+                if (cellRenderer instanceof Component) {
+                    Component component = (Component) cellRenderer;
+                    component.setFont(font);
                 }
             }
         });
