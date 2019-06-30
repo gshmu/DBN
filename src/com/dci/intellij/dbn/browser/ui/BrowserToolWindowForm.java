@@ -72,6 +72,7 @@ public class BrowserToolWindowForm extends DBNFormImpl {
                 displayMode == BrowserDisplayMode.SIMPLE ? new SimpleBrowserForm(this) : null;
 
 
+
         browserPanel.removeAll();
         browserPanel.add(this.browserForm.getComponent(), BorderLayout.CENTER);
         GUIUtil.repaint(browserPanel);

@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.FailsafeWeakRef;
 import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.ExceptionUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,7 +97,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
                 set(subject, checkControlled());
             } else {
                 long currentTimeMillis = System.currentTimeMillis();
-                if (TimeUtil.isOlderThan(checkTimestamp, checkInterval)) {
+                if (TimeUtil.isOlderThan(checkTimestamp, checkInterval) && !ApplicationManager.getApplication().isDispatchThread()) {
                     checkTimestamp = currentTimeMillis;
                     set(subject, checkControlled());
                 }
