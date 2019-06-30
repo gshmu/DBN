@@ -148,7 +148,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
             XDebugSessionImpl sessionImpl = (XDebugSessionImpl) session;
             sessionImpl.getSessionData().setBreakpointsMuted(false);
         }
-        Progress.background(project, "Initialize debug environment", true,
+        Progress.background(project, "Initializing debug environment", true,
                 (progress) -> {
                     try {
                         T executionInput = getExecutionInput();
@@ -180,7 +180,7 @@ public abstract class DBJdbcDebugProcess<T extends ExecutionInput> extends XDebu
 
     private void synchronizeSession() {
         Project project = getProject();
-        Progress.background(project, "Initialize debug environment", false,
+        Progress.background(project, "Initializing debug environment", false,
                 (progress) -> {
                     if (is(PROCESS_TERMINATING) || is(TARGET_EXECUTION_TERMINATED)) {
                         getSession().stop();
