@@ -79,6 +79,11 @@ public class CommonUtil {
         return value == null ? defaultValue : value;
     }
 
+    @Nullable
+    public static <T, E extends Throwable> T nvln(@Nullable T value, @NotNull ThrowableCallable<T, E> defaultValue) throws E{
+        return value == null ? defaultValue.call() : value;
+    }
+
     public static String nullIfEmpty(String string) {
         if (string != null) {
             string = string.trim();

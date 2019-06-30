@@ -5,7 +5,9 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -31,6 +33,13 @@ public abstract class AbstractConnectionAction extends DumbAwareContextAction<Co
     @Override
     protected ConnectionHandler getTarget(@NotNull AnActionEvent e) {
         return connectionHandlerRef.get();
+    }
+
+    @Nullable
+    @Override
+    protected Project getProject() {
+        ConnectionHandler connectionHandler = connectionHandlerRef.get();
+        return connectionHandler == null ? null : connectionHandler.getProject();
     }
 }
 

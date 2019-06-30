@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.action;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -26,11 +27,21 @@ public abstract class ProjectAction extends AnAction {
     @Override
     public final void actionPerformed(@NotNull AnActionEvent e) {
         try {
-            Project project = Lookup.getProject(e);
+            Project project = CommonUtil.nvln(
+                    getProject(),
+                    () -> Lookup.getProject(e));
             if (Failsafe.check(project)) {
                 actionPerformed(e, project);
             }
         } catch (ProcessCanceledException ignore) {}
+    }
+
+    /**
+     * fallback when project cannot be loaded from the data context (TODO check why)
+     */
+    @Nullable
+    protected Project getProject() {
+        return null;
     }
 
     @Override
