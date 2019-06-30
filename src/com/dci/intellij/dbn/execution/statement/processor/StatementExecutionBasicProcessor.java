@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -470,8 +471,12 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         ConnectionId connectionId = executionInput.getConnectionHandlerId();
         StatementExecutionQueue executionQueue = executionManager.getExecutionQueue(connectionId, sessionId);
         executionQueue.cancelExecution(this);
+        CancellableDatabaseCall<StatementExecutionResult> databaseCall = this.databaseCall;
         if (databaseCall != null) {
-            databaseCall.cancelSilently();
+            Progress.background(
+                    getProject(),
+                    "Cancelling statement execution", false,
+                    (progress) -> databaseCall.cancelSilently());
         }
     }
 
