@@ -115,7 +115,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
     @Nullable
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return connectionComboBox;
+        return connectionComboBox.isEnabled() ? connectionComboBox : schemaComboBox;
     }
 
     private void updateControls(ScriptExecutionInput executionInput) {
