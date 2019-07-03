@@ -44,7 +44,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         super(parentComponent);
 
         VirtualFile sourceFile = executionInput.getSourceFile();
-        String headerTitle = sourceFile.getPath();
+        String headerTitle = sourceFile.isInLocalFileSystem() ? sourceFile.getPath() : sourceFile.getName();
         Icon headerIcon = sourceFile.getFileType().getIcon();
         if (sourceFile instanceof DBVirtualFile) {
             DBVirtualFile databaseVirtualFile = (DBVirtualFile) sourceFile;
