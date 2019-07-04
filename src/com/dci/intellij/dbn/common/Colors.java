@@ -62,12 +62,12 @@ public interface Colors {
         private Color tableSelectionBackgroundColor = nvlf(
                 BasicTableTextAttributes.get().getSelection().getBgColor(),
                 getGlobalScheme().getColor(EditorColors.SELECTION_BACKGROUND_COLOR),
-                UIUtil.getTableSelectionBackground(false));
+                UIUtil.getTableSelectionBackground());
 
         private Color tableSelectionForegroundColor = nvlf(
                 BasicTableTextAttributes.get().getSelection().getFgColor(),
                 getGlobalScheme().getColor(EditorColors.SELECTION_FOREGROUND_COLOR),
-                UIUtil.getTableSelectionForeground(false));
+                UIUtil.getTableSelectionForeground());
 
 
         private Color tableLineNumberColor = getGlobalScheme().getColor(EditorColors.LINE_NUMBERS_COLOR);
