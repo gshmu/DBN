@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.2.0127.0</version>
+    <version>3.2.0148.0</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -29,6 +29,11 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.2.0148</b>
+            <ul>
+                <li>MS-SQL Server meta-data load issues
+                <li>Bug fixes
+            </ul>
             <li><b>3.2.0127</b>
             <ul>
                 <li>Generic database support (Experimental)
