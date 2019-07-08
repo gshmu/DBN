@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.JdbcProperty;
 import com.dci.intellij.dbn.database.common.util.CachedResultSet;
 import com.dci.intellij.dbn.database.common.util.CachedResultSetRow;
-import com.dci.intellij.dbn.database.common.util.ResultSetCondition;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -21,13 +20,6 @@ import static com.dci.intellij.dbn.database.DatabaseInterface.cached;
 import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.resolve;
 
 public interface GenericMetadataLoaders {
-    ResultSetCondition IS_DECLARED_METHOD = rs ->
-            is(JdbcProperty.CATALOG_AS_OWNER) ||
-                    StringUtil.isEmpty(
-                            resolve(() -> rs.getString("FUNCTION_CAT"),
-                                    () -> rs.getString("PROCEDURE_CAT"),
-                                    () -> null));
-
     CachedResultSet.Mapper<String> METHOD_COLUMNS = original -> {
         switch (original) {
             case "FUNCTION_CAT":
@@ -183,7 +175,7 @@ public interface GenericMetadataLoaders {
                     String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getFunctions(owner[0], owner[1], null);
-                    return CachedResultSet.create(resultSet, IS_DECLARED_METHOD).normalize(METHOD_COLUMNS);
+                    return CachedResultSet.create(resultSet, rs -> isDeclaredMethod(rs, connection)).normalize(METHOD_COLUMNS);
                 });
     }
 
@@ -195,7 +187,7 @@ public interface GenericMetadataLoaders {
                     String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getFunctionColumns(owner[0], owner[1], functionName, null);
-                    return CachedResultSet.create(resultSet, IS_DECLARED_METHOD).normalize(METHOD_COLUMNS);
+                    return CachedResultSet.create(resultSet, rs -> isDeclaredMethod(rs, connection)).normalize(METHOD_COLUMNS);
                 });
     }
 
@@ -207,7 +199,7 @@ public interface GenericMetadataLoaders {
                     String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getFunctionColumns(owner[0], owner[1], null, null);
-                    return CachedResultSet.create(resultSet, IS_DECLARED_METHOD).normalize(METHOD_COLUMNS);
+                    return CachedResultSet.create(resultSet, rs -> isDeclaredMethod(rs, connection)).normalize(METHOD_COLUMNS);
                 });
     }
 
@@ -219,7 +211,7 @@ public interface GenericMetadataLoaders {
                     String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getProcedures(owner[0], owner[1], null);
-                    return CachedResultSet.create(resultSet, IS_DECLARED_METHOD).normalize(METHOD_COLUMNS);
+                    return CachedResultSet.create(resultSet, rs -> isDeclaredMethod(rs, connection)).normalize(METHOD_COLUMNS);
                 });
     }
 
@@ -231,7 +223,7 @@ public interface GenericMetadataLoaders {
                     String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getProcedureColumns(owner[0], owner[1], procedureName, null);
-                    return CachedResultSet.create(resultSet, IS_DECLARED_METHOD).normalize(METHOD_COLUMNS);
+                    return CachedResultSet.create(resultSet, rs -> isDeclaredMethod(rs, connection)).normalize(METHOD_COLUMNS);
                 });
     }
 
@@ -243,7 +235,7 @@ public interface GenericMetadataLoaders {
                     String[] owner = lookupOwner(ownerName, connection);
                     DatabaseMetaData metaData = connection.getMetaData();
                     ResultSet resultSet = metaData.getProcedureColumns(owner[0], owner[1], null, null);
-                    return CachedResultSet.create(resultSet, IS_DECLARED_METHOD).normalize(METHOD_COLUMNS);
+                    return CachedResultSet.create(resultSet, rs -> isDeclaredMethod(rs, connection)).normalize(METHOD_COLUMNS);
                 });
     }
 
@@ -257,7 +249,7 @@ public interface GenericMetadataLoaders {
                     } else {
                         CachedResultSet schemasRs = loadSchemasRaw(connection);
                         CachedResultSetRow schemaRow = schemasRs.first(row -> ownerName.equals(row.get("TABLE_SCHEM")));
-                        String catalogName = schemaRow == null ? null : CommonUtil.nvl((String) schemaRow.get("TABLE_CATALOG"), "");
+                        String catalogName = schemaRow == null ? null : (String) schemaRow.get("TABLE_CATALOG");
                         return new String[]{catalogName, ownerName};
                     }
                 });
@@ -278,6 +270,23 @@ public interface GenericMetadataLoaders {
 
     static boolean is(JdbcProperty property) {
         return getCompatibility().is(property);
+    }
+
+    static boolean isDeclaredMethod(ResultSet rs, DBNConnection connection) throws SQLException {
+        if (is(JdbcProperty.CATALOG_AS_OWNER)) {
+            return true;
+        } else {
+            String catalog = resolve(
+                    () -> rs.getString("FUNCTION_CAT"),
+                    () -> rs.getString("PROCEDURE_CAT"),
+                    () -> null);
+            if (StringUtil.isEmpty(catalog)) {
+                return true;
+            } else {
+                CachedResultSet catalogsRs = loadCatalogsRaw(connection);
+                return catalogsRs.exists(row -> catalog.equals(row.get("TABLE_CAT")));
+            }
+        }
     }
 
 }
