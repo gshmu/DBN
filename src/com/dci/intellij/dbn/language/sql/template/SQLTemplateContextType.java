@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.sql.template;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.codeInsight.template.TemplateContextType;
 import com.intellij.lang.Language;
@@ -22,14 +23,13 @@ public class SQLTemplateContextType extends TemplateContextType {
         if (language instanceof SQLLanguage) {
             LeafPsiElement leafPsiElement = PsiUtil.lookupLeafBeforeOffset(file, offset);
             if (leafPsiElement != null) {
-                if (leafPsiElement.getLanguage() instanceof SQLLanguage) {
+                if (leafPsiElement.getLanguage() instanceof PSQLLanguage) {
                     BasePsiElement scopePsiElement = leafPsiElement.getEnclosingScopePsiElement();
                     return scopePsiElement != null && !scopePsiElement.getTextRange().contains(offset);
                 }
 
-            } else {
-                return true;
             }
+            return true;
         }
         return false;
     }
