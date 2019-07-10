@@ -23,6 +23,7 @@ import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatusHolder;
 import com.dci.intellij.dbn.debugger.jdwp.DBJdwpBreakpointHandler;
+import com.dci.intellij.dbn.debugger.jdwp.DBJdwpSourcePath;
 import com.dci.intellij.dbn.debugger.jdwp.ManagedThreadCommand;
 import com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpDebugStackFrame;
 import com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpDebugSuspendContext;
@@ -61,11 +62,18 @@ import org.jetbrains.annotations.Nullable;
 import java.net.Inet4Address;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.StringTokenizer;
 
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.*;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.BREAKPOINT_SETTING_ALLOWED;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.DEBUGGER_STOPPING;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.SESSION_INITIALIZATION_THREW_EXCEPTION;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.TARGET_EXECUTION_STARTED;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.TARGET_EXECUTION_TERMINATED;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.TARGET_EXECUTION_THREW_EXCEPTION;
 
-public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaDebugProcess implements DBDebugProcess {
+public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
+        extends JavaDebugProcess
+        implements DBDebugProcess {
+
     public static final Key<DBJdwpDebugProcess> KEY = new Key<DBJdwpDebugProcess>("DBNavigator.JdwpDebugProcess");
     protected DBNConnection targetConnection;
     private ConnectionHandlerRef connectionHandlerRef;
@@ -362,15 +370,14 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
     @Nullable
     public VirtualFile getVirtualFile(Location location) {
         if (location != null) {
-            String sourcePath = "<NULL>";
+            String sourceUrl = "<NULL>";
             try {
-                sourcePath = location.sourcePath();
-                StringTokenizer tokenizer = new StringTokenizer(sourcePath, "\\.");
-                tokenizer.nextToken(); // signature
-                String programType = tokenizer.nextToken();// program type
+                sourceUrl = location.sourcePath();
+                DBJdwpSourcePath sourcePath = DBJdwpSourcePath.from(sourceUrl);
+                String programType = sourcePath.getProgramType();
                 if (!programType.equals("Block")) {
-                    String schemaName = tokenizer.nextToken();
-                    String programName = tokenizer.nextToken();
+                    String schemaName = sourcePath.getProgramOwner();
+                    String programName = sourcePath.getProgramName();
                     DBSchema schema = getConnectionHandler().getObjectBundle().getSchema(schemaName);
                     if (schema != null) {
                         DBProgram program = schema.getProgram(programName);
@@ -387,26 +394,9 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput> extends JavaD
                     }
                 }
             } catch (Exception e) {
-                getConsole().warning("Error evaluating suspend position '" + sourcePath + "': " + CommonUtil.nvl(e.getMessage(), e.getClass().getSimpleName()));
+                getConsole().warning("Error evaluating suspend position '" + sourceUrl + "': " + CommonUtil.nvl(e.getMessage(), e.getClass().getSimpleName()));
             }
         }
-        return null;
-    }
-
-    @Nullable
-    public String getOwnerName(@Nullable Location location) {
-        try {
-            if (location != null) {
-                String sourcePath = location.sourcePath();
-                StringTokenizer tokenizer = new StringTokenizer(sourcePath, "\\.");
-                String signature = tokenizer.nextToken();
-                String programType = tokenizer.nextToken();
-                return tokenizer.nextToken();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         return null;
     }
 
