@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.common.frame.DBDebugSourcePosition;
 import com.dci.intellij.dbn.debugger.common.frame.DBDebugStackFrame;
+import com.dci.intellij.dbn.debugger.jdwp.DBJdwpDebugUtil;
 import com.dci.intellij.dbn.debugger.jdwp.evaluation.DBJdwpDebuggerEvaluator;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
 import com.dci.intellij.dbn.execution.ExecutionInput;
@@ -21,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Set;
 
-public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess, DBJdwpDebugValue>{
+public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess, DBJdwpDebugValue> implements DBJdwpDebugUtil {
     private long childrenComputed = 0;
     private JavaStackFrame underlyingFrame;
 
@@ -52,7 +53,7 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
         int lineNumber = location == null ? 0 : location.lineNumber() - 1;
 
         DBJdwpDebugProcess debugProcess = getDebugProcess();
-        if (debugProcess.isDeclaredBlock(location) || debugProcess.getOwnerName(location) == null) {
+        if (debugProcess.isDeclaredBlock(location) || getOwnerName(location) == null) {
             ExecutionInput executionInput = debugProcess.getExecutionInput();
             if (executionInput instanceof StatementExecutionInput) {
                 StatementExecutionInput statementExecutionInput = (StatementExecutionInput) executionInput;
