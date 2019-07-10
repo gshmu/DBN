@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.debugger.jdwp.frame;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.debugger.jdwp.DBJdwpDebugUtil;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
 import com.dci.intellij.dbn.execution.ExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
@@ -10,6 +12,7 @@ import com.intellij.debugger.PositionManager;
 import com.intellij.debugger.SourcePosition;
 import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.requests.ClassPrepareRequestor;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.sun.jdi.AbsentInformationException;
@@ -21,9 +24,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.StringTokenizer;
 
-public class DBJdwpDebugPositionManager implements PositionManager {
+public class DBJdwpDebugPositionManager implements PositionManager, DBJdwpDebugUtil {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
+
     private DebugProcess process;
 
     DBJdwpDebugPositionManager(@NotNull DebugProcess process) {
@@ -51,22 +55,6 @@ public class DBJdwpDebugPositionManager implements PositionManager {
                 }
                 return SourcePosition.createFromLine(psiFile, lineNumber);
             }
-        }
-
-        return null;
-    }
-
-    public String getOwnerName(@Nullable Location location) {
-        try {
-            if (location != null) {
-                String sourcePath = location.sourcePath();
-                StringTokenizer tokenizer = new StringTokenizer(sourcePath, "\\.");
-                String signature = tokenizer.nextToken();
-                String programType = tokenizer.nextToken();
-                return tokenizer.nextToken();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         return null;
