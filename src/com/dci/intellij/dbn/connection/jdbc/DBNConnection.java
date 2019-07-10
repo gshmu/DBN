@@ -126,14 +126,6 @@ public class DBNConnection extends DBNConnectionBase {
             statement = (S) new DBNStatement<Statement>(statement, this);
         }
 
-        if (isPoolConnection()) {
-            for (DBNStatement currentStatement : statements) {
-                if (TimeUtil.isOlderThan(currentStatement.getInitTimestamp(), TimeUtil.TEN_MINUTES)) {
-                    LOGGER.error("Statement not released", new SQLException(currentStatement.traceable.getTrace()));
-                }
-            }
-        }
-
         statements.add((DBNStatement) statement);
         return statement;
     }
