@@ -89,6 +89,10 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
             sortingActionGroup.add(new SortAscendingAction());
             sortingActionGroup.add(new SortDescendingAction());
             add(sortingActionGroup);
+/*
+            add(new SortAscendingAction());
+            add(new SortDescendingAction());
+*/
         }
 
         DBDataset dataset = table.getDataset();
@@ -160,7 +164,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
 
     private class SortAscendingAction extends DumbAwareAction {
         private SortAscendingAction() {
-            super("Sort ascending");
+            super("Sort ascending", null, Icons.ACTION_SORT_ASC);
         }
 
         @Override
@@ -174,7 +178,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
 
     private class SortDescendingAction extends DumbAwareAction {
         private SortDescendingAction() {
-            super("Sort descending");
+            super("Sort descending", null, Icons.ACTION_SORT_DESC);
         }
 
         @Override

@@ -29,7 +29,7 @@ public class SQLDataExportProcessor extends DataExportProcessor{
 
     @Override
     public String adjustFileName(String fileName) {
-        if (!fileName.contains(".sql")) {
+        if (fileName != null && !fileName.contains(".sql")) {
             fileName = fileName + ".sql";
         }
         return fileName;
