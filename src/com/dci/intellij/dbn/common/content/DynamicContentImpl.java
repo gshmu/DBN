@@ -29,7 +29,14 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.CHANGING;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DIRTY;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADED;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING_IN_BACKGROUND;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.MASTER;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.REFRESHING;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement>
         extends DisposablePropertyHolder<DynamicContentStatus>
@@ -274,7 +281,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         } catch (SQLFeatureNotSupportedException e) {
             // unsupported feature: log in notification area
             elements = EMPTY_CONTENT;
-            sendErrorNotification(
+            sendWarningNotification(
                     NotificationGroup.METADATA,
                     "Failed to load {0}. Feature not supported: {1}",
                     getContentDescription(), e);

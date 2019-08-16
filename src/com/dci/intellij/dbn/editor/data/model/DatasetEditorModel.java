@@ -46,7 +46,12 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DELETED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DIRTY;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.UPDATING;
 
 public class DatasetEditorModel
         extends ResultSetDataModel<DatasetEditorModelRow, DatasetEditorModelCell>
@@ -181,7 +186,7 @@ public class DatasetEditorModel
                             ResultSet.CONCUR_UPDATABLE);
 
                 } catch (Throwable e) {
-                    LOGGER.error("Failed to create SCROLL_INSENSITIVE statement", e);
+                    LOGGER.warn("Failed to create SCROLL_INSENSITIVE statement: " + e.getMessage());
                 }
             }
 
@@ -191,7 +196,7 @@ public class DatasetEditorModel
                             ResultSet.TYPE_FORWARD_ONLY,
                             ResultSet.CONCUR_READ_ONLY);
                 } catch (Throwable e) {
-                    LOGGER.error("Failed to create FORWARD_ONLY statement", e);
+                    LOGGER.warn("Failed to create FORWARD_ONLY statement: " + e.getMessage());
                 }
             }
 
