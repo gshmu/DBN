@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.2.0148.0</version>
+    <version>3.2.0163.0</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -29,10 +29,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.2.0148</b>
+            <li><b>3.2.0163</b>
             <ul>
-                <li>MS-SQL Server meta-data load issues
-                <li>Bug fixes
+                <li>Fixed MS-SQL Server meta-data load issues
+                <li>Fixed Oracle JDWP debugger issues under MacOS(<a href="https://database-navigator.atlassian.net/browse/DBN-436">DBN-436</a>)
+                <li>Fixed Oracle code completion issues
+                <li>Small bug fixes and cosmetics
             </ul>
             <li><b>3.2.0127</b>
             <ul>
