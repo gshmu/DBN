@@ -60,7 +60,7 @@ public class SQLConsoleOpenAction extends DumbAwareProjectAction {
                     actionGroup,
                     e.getDataContext(),
                     //JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
-                    false,
+                    true,
                     true,
                     true,
                     null,
@@ -139,7 +139,7 @@ public class SQLConsoleOpenAction extends DumbAwareProjectAction {
         }
 
         SelectConsoleAction(DBConsoleVirtualFile consoleVirtualFile) {
-            super(consoleVirtualFile.getName(), null, consoleVirtualFile.getIcon());
+            super(consoleVirtualFile.getName().replaceAll("_", "__"), null, consoleVirtualFile.getIcon());
             this.consoleVirtualFile = consoleVirtualFile;
         }
 
