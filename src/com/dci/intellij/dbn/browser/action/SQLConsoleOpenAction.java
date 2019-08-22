@@ -73,7 +73,7 @@ public class SQLConsoleOpenAction extends GroupPopupAction {
         }
 
         SelectConsoleAction(DBConsoleVirtualFile consoleVirtualFile) {
-            super(consoleVirtualFile.getName(), null, consoleVirtualFile.getIcon(), consoleVirtualFile.getConnectionHandler());
+            super(consoleVirtualFile.getName().replaceAll("_", "__"), null, consoleVirtualFile.getIcon(), consoleVirtualFile.getConnectionHandler());
             this.consoleVirtualFile = consoleVirtualFile;
         }
 
