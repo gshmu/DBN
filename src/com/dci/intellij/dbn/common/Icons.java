@@ -25,6 +25,7 @@ public class Icons {
     public static final Icon COMMON_DOWN = load("/img/common/SplitDown.png");
     public static final Icon COMMON_ARROW_DOWN = load("/img/ComboBoxArrow.png");
     public static final Icon COMMON_TIMER = load("/img/Timer.png");
+    public static final Icon COMMON_DATA_GRID = load("/img/common/DataGrid.png");
 
     public static final Icon COMMON_FILTER_ACTIVE =    load("/img/ActiveFilterCondition.png");
     public static final Icon COMMON_FILTER_INACTIVE =    load("/img/InactiveFilterCondition.png");

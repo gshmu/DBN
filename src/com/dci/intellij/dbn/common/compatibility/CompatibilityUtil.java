@@ -2,12 +2,17 @@ package com.dci.intellij.dbn.common.compatibility;
 
 import com.intellij.find.editorHeaderActions.Utils;
 import com.intellij.openapi.editor.ex.EditorEx;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,9 +34,6 @@ public class CompatibilityUtil {
         Utils.showCompletionPopup(byClickingToolbarButton ? toolbarComponent : null, list, title, textField, "");
     }
 
-    public static void setSmallerFontForChildren(JComponent component) {
-        Utils.setSmallerFontForChildren(component);
-    }
 
     public static void setSmallerFont(JComponent component) {
         Utils.setSmallerFont(component);
@@ -41,11 +43,13 @@ public class CompatibilityUtil {
         return UIUtil.isUnderGTKLookAndFeel();
     }
 
-    public static boolean isUnderIntelliJLaF() {
-        try {
-            return UIUtil.isUnderIntelliJLaF();
-        } catch (Error e) {
-            return UIManager.getLookAndFeel().getName().contains("IntelliJ");
-        }
+
+    @Nullable
+    public static FileEditor getSelectedEditor(Project project) {
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+        //return fileEditorManager.getSelectedEditor();
+
+        VirtualFile[] files = fileEditorManager.getSelectedFiles();
+        return files.length == 0 ? null : fileEditorManager.getSelectedEditor(files[0]);
     }
 }

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.editor.data.statusbar;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
@@ -16,6 +17,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.CustomStatusBarWidget;
 import com.intellij.openapi.wm.StatusBar;
+import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -57,12 +59,19 @@ public class DatasetEditorStatusBarWidget extends AbstractProjectComponent imple
 
     @Nullable
     private DatasetEditor getSelectedEditor() {
-        FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
-        FileEditor selectedEditor = fileEditorManager.getSelectedEditor();
+        Project project = getProject();
+        FileEditor selectedEditor = CompatibilityUtil.getSelectedEditor(project);
         if (selectedEditor instanceof DatasetEditor) {
             return (DatasetEditor) selectedEditor;
         }
         return null;
+    }
+
+    @Override
+    public void projectOpened() {
+        Project project = getProject();
+        StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
+        statusBar.addWidget(this, project);
     }
 
     @Override
@@ -96,8 +105,8 @@ public class DatasetEditorStatusBarWidget extends AbstractProjectComponent imple
             } else {
                 BigDecimal selectionSum = editorTable.getSelectionSum();
                 BigDecimal selectionAverage = editorTable.getSelectionAverage();
-                textLabel.setText("Sum " + selectionSum + "   Average " + selectionAverage);
-                textLabel.setIcon(Icons.DBO_TMP_TABLE);
+                textLabel.setText(" Sum " + selectionSum + "   Average " + selectionAverage);
+                textLabel.setIcon(Icons.COMMON_DATA_GRID);
             }
             GUIUtil.repaint(getComponent());
         }, 100);

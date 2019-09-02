@@ -541,7 +541,7 @@
             <category>DBNavigator</category>
         </intentionAction>-->
         <fileTemplateGroup implementation="com.dci.intellij.dbn.common.file.DBNFileTemplateGroupDescriptorFactory"/>
-        <statusBarWidgetProvider implementation="com.dci.intellij.dbn.editor.data.statusbar.DatasetEditorStatusBarWidgetProvider"/>
+        <!--<statusBarWidgetProvider implementation="com.dci.intellij.dbn.editor.data.statusbar.DatasetEditorStatusBarWidgetProvider"/>-->
     </extensions>
     <helpset file="help.jar" path="/Help.hs"/>
 
