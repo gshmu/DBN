@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
-import com.dci.intellij.dbn.common.thread.DelayedActionRunner;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
@@ -29,6 +28,7 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.ui.components.JBViewport;
+import com.intellij.util.Alarm;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -130,17 +130,18 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
                     }
                     selectionSum = total;
                     selectionAverage = total.divide(count, total.scale(), RoundingMode.HALF_UP);
-                    showSelectionToltip();
+                    showSelectionTooltip();
                 }
             }
         });
 
         addMouseMotionListener(new MouseMotionAdapter() {
-            private DelayedActionRunner runner = new DelayedActionRunner(200);
+            private Alarm runner = new Alarm(BasicTable.this);
             @Override
             public void mouseMoved(MouseEvent e) {
                 if (selectionSum != null && isCellSelected(e.getPoint())) {
-                    runner.run(() -> showSelectionToltip());
+                    runner.cancelAllRequests();
+                    runner.addRequest(() -> showSelectionTooltip(), 100);
                 }
             }
         });
@@ -162,18 +163,16 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         return false;
     }
 
-    private void showSelectionToltip() {
-        Dispatch.runConditional(() -> {
-            JPanel panel = new JPanel(new BorderLayout());
-            panel.add(new JLabel("Sum: " + selectionSum), BorderLayout.CENTER);
-            panel.add(new JLabel("Avg: " + selectionAverage), BorderLayout.SOUTH);
-            Point mousePosition = getMousePosition();
-            if (mousePosition != null && isCellSelected(mousePosition)) {
-                IdeTooltip tooltip = new IdeTooltip(this, mousePosition, panel);
-                tooltip.setFont(UIUtil.getLabelFont().deriveFont((float) 16));
-                IdeTooltipManager.getInstance().show(tooltip, true);
-            }
-        });
+    private void showSelectionTooltip() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(new JLabel("Sum: " + selectionSum), BorderLayout.CENTER);
+        panel.add(new JLabel("Avg: " + selectionAverage), BorderLayout.SOUTH);
+        Point mousePosition = getMousePosition();
+        if (mousePosition != null && isCellSelected(mousePosition)) {
+            IdeTooltip tooltip = new IdeTooltip(this, mousePosition, panel);
+            tooltip.setFont(UIUtil.getLabelFont().deriveFont((float) 16));
+            IdeTooltipManager.getInstance().show(tooltip, true);
+        }
     }
 
     private RegionalSettingsListener regionalSettingsListener = new RegionalSettingsListener() {
@@ -386,6 +385,14 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
 
     protected boolean isLargeValuePopupActive() {
         return true;
+    }
+
+    public BigDecimal getSelectionSum() {
+        return selectionSum;
+    }
+
+    public BigDecimal getSelectionAverage() {
+        return selectionAverage;
     }
 
     private boolean canDisplayCompleteValue(int rowIndex, int columnIndex) {
