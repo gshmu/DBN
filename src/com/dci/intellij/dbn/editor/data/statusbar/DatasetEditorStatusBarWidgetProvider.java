@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.editor.data;
+package com.dci.intellij.dbn.editor.data.statusbar;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.StatusBar;
