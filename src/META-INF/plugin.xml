@@ -181,7 +181,7 @@
         <component><implementation-class>com.dci.intellij.dbn.editor.data.DatasetEditorManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.data.state.DatasetEditorStateManager</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.editor.data.DatasetEditorStatusBarWidget</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.editor.data.statusbar.DatasetEditorStatusBarWidget</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.editor.session.SessionBrowserManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.generator.StatementGenerationManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.object.common.loader.DatabaseLoaderManager</implementation-class></component>
@@ -535,7 +535,7 @@
             <category>DBNavigator</category>
         </intentionAction>-->
         <fileTemplateGroup implementation="com.dci.intellij.dbn.common.file.DBNFileTemplateGroupDescriptorFactory"/>
-        <statusBarWidgetProvider implementation="com.dci.intellij.dbn.editor.data.DatasetEditorStatusBarWidgetProvider"/>
+        <statusBarWidgetProvider implementation="com.dci.intellij.dbn.editor.data.statusbar.DatasetEditorStatusBarWidgetProvider"/>
     </extensions>
     <helpset file="help.jar" path="/Help.hs"/>
 
