@@ -29,6 +29,12 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.2.NEXT</b>
+            <ul>
+                <li>Resolved broken JIRA issue reporting framework
+                <li>New datagrid numeric functions on selection (Sum / Average)
+                <li>Bug fixes
+            </ul>
             <li><b>3.2.0163</b>
             <ul>
                 <li>Fixed MS-SQL Server meta-data load issues
