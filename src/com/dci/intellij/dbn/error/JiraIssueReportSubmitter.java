@@ -51,9 +51,10 @@ public class JiraIssueReportSubmitter extends IssueReportSubmitter {
 
             // https://developer.atlassian.com/cloud/jira/platform/jira-rest-api-basic-authentication/
             // dancioca@bluewin.ch:YeRDb1bt6dA7DJH75D8j3465 => BASE64
+            // or plugin@database-navigator.com:YeRDb1bt6dA7DJH75D8j3465 => BASE64
 
             HttpPost httpPost = new HttpPost(URL + "rest/api/latest/issue");
-            httpPost.addHeader("Authorization", "Basic ZGFuY2lvY2FAYmx1ZXdpbi5jaDpZZVJEYjFidDZkQTdESkg3NUQ4ajM0NjU=");
+            httpPost.addHeader("Authorization", "Basic cGx1Z2luQGRhdGFiYXNlLW5hdmlnYXRvci5jb206WWVSRGIxYnQ2ZEE3REpINzVEOGozNDY1");
             httpPost.addHeader("Content-Type", "application/json");
             httpPost.setEntity(params);
             HttpClient httpClient = HTTP_CLIENT_BUILDER.build();
