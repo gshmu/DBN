@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -34,10 +35,11 @@ import java.util.Set;
 
 public abstract class ValueSelector<T extends Presentable> extends JPanel{
     private Set<ValueSelectorListener<T>> listeners = new HashSet<>();
+    private PropertyHolder<ValueSelectorOption> options = PropertyHolder.create(ValueSelectorOption.class);
+
     private JLabel label;
     private JPanel innerPanel;
     private boolean isEnabled = true;
-    private OptionBundle<ValueSelectorOption> options;
     private ListPopup popup;
 
     private static Border focusBorder = new CompoundBorder(new RoundedLineBorder(new JBColor(Gray._190, Gray._55), 3, 1), JBUI.Borders.empty(2, 4));
@@ -81,7 +83,10 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
     }
 
     public void setOptions(ValueSelectorOption ... options) {
-        this.options = new OptionBundle<>(options);
+        for (ValueSelectorOption option : options) {
+            this.options.set(option, true);
+        }
+
     }
 
     public void setValueFactory(PresentableFactory<T> valueFactory) {
