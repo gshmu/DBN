@@ -9,9 +9,13 @@ import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableHeaderRenderer;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.keyFMap.KeyFMap;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
@@ -33,7 +37,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 @Nullifiable
-public abstract class DBNTable<T extends DBNTableModel> extends JTable implements RegisteredDisposable {
+public abstract class DBNTable<T extends DBNTableModel> extends JTable implements RegisteredDisposable, UserDataHolder {
     private static final int MAX_COLUMN_WIDTH = 300;
     private static final int MIN_COLUMN_WIDTH = 10;
     protected DBNTableGutter tableGutter;
@@ -42,6 +46,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     private JBScrollPane scrollPane;
     private Timer scrollTimer;
     private int rowVerticalPadding;
+    private KeyFMap userData = KeyFMap.EMPTY_MAP;
 
     @Override
     public void setModel(@NotNull TableModel dataModel) {
@@ -356,6 +361,22 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
             columnModel.addColumn(newColumn);
         }
         setColumnModel(columnModel);
+    }
+    /********************************************************
+     *                    Disposable                        *
+     ********************************************************/
+
+    @Nullable
+    @Override
+    public <V> V getUserData(@NotNull Key<V> key) {
+        return userData.get(key);
+    }
+
+    @Override
+    public <V> void putUserData(@NotNull Key<V> key, @Nullable V value) {
+        userData = value == null ?
+                userData.minus(key) :
+                userData.plus(key, value);
     }
 
     /********************************************************

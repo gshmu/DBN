@@ -5,6 +5,7 @@ import com.intellij.ide.IdeTooltip;
 import com.intellij.ide.IdeTooltipManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.util.Alarm;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ import java.awt.*;
 import java.awt.event.MouseWheelEvent;
 
 public class BasicTableScrollPane extends JBScrollPane{
+    private Alarm resizeAlarm = new Alarm();
     @Override
     protected void processMouseWheelEvent(MouseWheelEvent e) {
         if (e.isControlDown()) {
@@ -31,9 +33,12 @@ public class BasicTableScrollPane extends JBScrollPane{
                     float defaultSize = UIUtil.getLabelFont().getSize();
                     int percentage = (int) (size / defaultSize * 100);
 
-                    IdeTooltip tooltip = new IdeTooltip(this, e.getPoint(), new JLabel(percentage + "%"));
-                    tooltip.setFont(UIUtil.getLabelFont().deriveFont((float) 16));
-                    IdeTooltipManager.getInstance().show(tooltip, true);
+                    resizeAlarm.cancelAllRequests();
+                    resizeAlarm.addRequest(() -> {
+                        IdeTooltip tooltip = new IdeTooltip(this, e.getPoint(), new JLabel(percentage + "%"));
+                        tooltip.setFont(UIUtil.getLabelFont().deriveFont((float) 16));
+                        IdeTooltipManager.getInstance().show(tooltip, true);
+                    }, 10);
                 }
             } else {
                 super.processMouseWheelEvent(e);
