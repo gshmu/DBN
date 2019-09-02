@@ -29,7 +29,11 @@ import org.jetbrains.annotations.Nullable;
 public class SourceCodeEditorNotificationProvider extends EditorNotificationProvider<SourceCodeEditorNotificationPanel> {
     private static final Key<SourceCodeEditorNotificationPanel> KEY = Key.create("DBNavigator.SourceCodeEditorNotificationPanel");
 
-    public SourceCodeEditorNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
+    public SourceCodeEditorNotificationProvider(@NotNull Project project) {
+        this(project, FrameStateManager.getInstance());
+    }
+
+    public SourceCodeEditorNotificationProvider(@NotNull Project project, @NotNull FrameStateManager frameStateManager) {
         super(project);
         EventUtil.subscribe(project, project, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
         EventUtil.subscribe(project, project, SourceCodeDifManagerListener.TOPIC, sourceCodeDifManagerListener);
