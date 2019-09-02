@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class EditorNotificationProvider<T extends EditorNotificationPanel> extends EditorNotifications.Provider<T> {
     protected ProjectRef projectRef;
 
-    public EditorNotificationProvider(final Project project) {
+    public EditorNotificationProvider(@NotNull Project project) {
         this.projectRef = ProjectRef.from(project);
     }
 

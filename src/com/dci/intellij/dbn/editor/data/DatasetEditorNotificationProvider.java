@@ -24,7 +24,11 @@ import org.jetbrains.annotations.Nullable;
 public class DatasetEditorNotificationProvider extends EditorNotificationProvider<DatasetEditorNotificationPanel> {
     private static final Key<DatasetEditorNotificationPanel> KEY = Key.create("DBNavigator.DatasetEditorNotificationPanel");
 
-    public DatasetEditorNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
+    public DatasetEditorNotificationProvider(@NotNull Project project) {
+        this(project, FrameStateManager.getInstance());
+    }
+
+    public DatasetEditorNotificationProvider(@NotNull Project project, @NotNull FrameStateManager frameStateManager) {
         super(project);
 
         EventUtil.subscribe(project, project, DatasetLoadListener.TOPIC, datasetLoadListener);
