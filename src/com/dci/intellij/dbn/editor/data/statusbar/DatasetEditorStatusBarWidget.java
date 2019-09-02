@@ -13,7 +13,6 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.CustomStatusBarWidget;
 import com.intellij.openapi.wm.StatusBar;
@@ -28,7 +27,7 @@ import java.math.BigDecimal;
 
 public class DatasetEditorStatusBarWidget extends AbstractProjectComponent implements CustomStatusBarWidget, FileEditorManagerListener {
     private static final String WIDGET_ID = DatasetEditorStatusBarWidget.class.getName();
-    private static final Key<Boolean> SELECTION_LISTENER_SET_KEY = Key.create("SELECTION_LISTENER_SET_KEY");
+    public static final String COMPONENT_NAME = "DBNavigator.Project.DatasetEditorStatusBarWidget";
 
     private JLabel textLabel;
     private Alarm updateAlarm = new Alarm(this);
@@ -49,6 +48,12 @@ public class DatasetEditorStatusBarWidget extends AbstractProjectComponent imple
     @Override
     public String ID() {
         return WIDGET_ID;
+    }
+
+    @NotNull
+    @Override
+    public String getComponentName() {
+        return COMPONENT_NAME;
     }
 
     @Nullable
