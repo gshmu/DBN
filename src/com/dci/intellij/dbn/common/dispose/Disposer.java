@@ -37,7 +37,7 @@ public class Disposer {
 
     public static void disposeInBackground(Object ... disposable) {
         // trigger background in dispatch thread
-        Dispatch.run(() ->Background.run(() -> dispose((Object[]) disposable)));
+        Dispatch.run(() ->Background.run(() -> dispose(disposable)));
     }
 
     public static void dispose(@Nullable Object ... objects) {

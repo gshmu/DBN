@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableScrollPane;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
+import com.dci.intellij.dbn.editor.data.DatasetEditorStatusBarWidget;
 import com.dci.intellij.dbn.editor.data.state.column.DatasetColumnState;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
@@ -28,6 +29,7 @@ import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -103,13 +105,17 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     }
 
     public DatasetEditorTable beforeRebuild() throws SQLException {
+        Project project = getProject();
+
         DatasetEditorTable oldEditorTable = getEditorTable();
         DatasetEditor datasetEditor = getDatasetEditor();
         datasetEditorTable = new DatasetEditorTable(datasetEditor);
         Disposer.register(this, datasetEditorTable);
+        DatasetEditorStatusBarWidget statusBarWidget = DatasetEditorStatusBarWidget.getInstance(project);
+        datasetEditorTable.getSelectionModel().addListSelectionListener(e -> statusBarWidget.update());
 
 
-        DataGridSettings dataGridSettings = DataGridSettings.getInstance(getProject());
+        DataGridSettings dataGridSettings = DataGridSettings.getInstance(project);
         DataGridTrackingColumnSettings trackingColumnSettings = dataGridSettings.getTrackingColumnSettings();
 
         List<TableColumn> hiddenColumns = new ArrayList<>();
