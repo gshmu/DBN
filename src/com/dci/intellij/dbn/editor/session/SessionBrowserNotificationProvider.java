@@ -19,7 +19,11 @@ public class SessionBrowserNotificationProvider extends EditorNotifications.Prov
     private static final Key<SessionBrowserErrorNotificationPanel> KEY = Key.create("DBNavigator.SessionBrowserErrorNotificationPanel");
     private ProjectRef projectRef;
 
-    public SessionBrowserNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
+    public SessionBrowserNotificationProvider(@NotNull Project project) {
+        this(project, FrameStateManager.getInstance());
+    }
+
+    public SessionBrowserNotificationProvider(@NotNull Project project, @NotNull FrameStateManager frameStateManager) {
         this.projectRef = ProjectRef.from(project);
         EventUtil.subscribe(project, project, SessionBrowserLoadListener.TOPIC, sessionsLoadListener);
 

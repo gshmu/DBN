@@ -29,7 +29,12 @@ import java.util.List;
 public class DDLMappedNotificationProvider extends EditorNotifications.Provider<DDLMappedNotificationPanel> {
     private static final Key<DDLMappedNotificationPanel> KEY = Key.create("DBNavigator.DDLMappedNotificationPanel");
     private ProjectRef projectRef;
-    public DDLMappedNotificationProvider(final Project project, @NotNull FrameStateManager frameStateManager) {
+
+    public DDLMappedNotificationProvider(@NotNull Project project) {
+        this(project, FrameStateManager.getInstance());
+    }
+
+    public DDLMappedNotificationProvider(@NotNull Project project, @NotNull FrameStateManager frameStateManager) {
         this.projectRef = ProjectRef.from(project);
 
         EventUtil.subscribe(project, project, DDLFileAttachmentManagerListener.TOPIC, ddlFileAttachmentManagerListener);
