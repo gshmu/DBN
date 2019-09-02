@@ -55,11 +55,25 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
 
     @Override
     public JComponent getPreferredFocusedComponent() {
+        JComponent focusComponent = null;
         if (!isDisposed()) {
-            JComponent focusComponent = getComponent().getPreferredFocusedComponent();
-            return focusComponent == null ? super.getPreferredFocusedComponent() : focusComponent;
+            focusComponent = getComponent().getPreferredFocusedComponent();
+            if (focusComponent == null) {
+                focusComponent = super.getPreferredFocusedComponent();
+
+                if (focusComponent == null) {
+                    Action okAction = getOKAction();
+                    focusComponent = getButton(okAction);
+
+                    if (focusComponent == null) {
+                        Action cancelAction = getCancelAction();
+                        focusComponent = getButton(cancelAction);
+                    }
+                }
+            }
+
         }
-        return null;
+        return focusComponent;
     }
 
     @Override
