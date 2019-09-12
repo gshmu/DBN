@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.Disposable;
 import com.intellij.ui.SpeedSearchBase;
@@ -73,7 +73,7 @@ public class ObjectDependencyTreeSpeedSearch extends SpeedSearchBase<JTree> impl
         ObjectDependencyTreeNode rootNode = treeNode.getModel().getRoot();
         DBObject rootObject = rootNode.getObject();
         if (rootObject != null && object != null) {
-            if (CommonUtil.safeEqual(rootObject.getSchema(), object.getSchema())) {
+            if (Safe.equal(rootObject.getSchema(), object.getSchema())) {
                 return object.getName();
             } else {
                 return object.getSchema().getName() + "." + object.getName();

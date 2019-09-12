@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.impl;
 
-import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -94,12 +93,6 @@ public class DBArgumentImpl extends DBObjectImpl<DBArgumentMetadata> implements 
     @Override
     public boolean isLeaf() {
         return true;
-    }
-
-    @Override
-    @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return EMPTY_TREE_NODE_LIST;
     }
 
     @Override

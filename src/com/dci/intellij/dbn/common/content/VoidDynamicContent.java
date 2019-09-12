@@ -82,6 +82,16 @@ public class VoidDynamicContent extends DisposableBase implements DynamicContent
     }
 
     @Override
+    public boolean isMutable() {
+        return false;
+    }
+
+    @Override
+    public boolean isPassive() {
+        return false;
+    }
+
+    @Override
     public boolean isEmpty() {
         return true;
     }

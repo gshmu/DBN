@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.object.DBConsole;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
@@ -15,6 +16,7 @@ public class SQLConsoleOpenAction extends AbstractConnectionAction {
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-        fileEditorManager.openFile(connectionHandler.getConsoleBundle().getDefaultConsole(), true);
+        DBConsole defaultConsole = connectionHandler.getConsoleBundle().getDefaultConsole();
+        fileEditorManager.openFile(defaultConsole.getVirtualFile(), true);
     }
 }

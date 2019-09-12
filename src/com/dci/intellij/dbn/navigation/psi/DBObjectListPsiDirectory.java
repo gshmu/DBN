@@ -100,7 +100,7 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
         GenericDatabaseElement parent = getObjectList().getParent();
         if (parent instanceof DBObject) {
             DBObject parentObject = (DBObject) parent;
-            return DBObjectPsiFacade.getPsiDirectory(parentObject);
+            return DBObjectPsiFacade.asPsiDirectory(parentObject);
         }
 
         if (parent instanceof DBObjectBundle) {
@@ -143,9 +143,9 @@ public class DBObjectListPsiDirectory implements PsiDirectory, Disposable {
         for (Object obj : getObjectList().getObjects()) {
             DBObject object = (DBObject) obj;
             if (object instanceof DBSchemaObject) {
-                children.add(DBObjectPsiFacade.getPsiFile(object));
+                children.add(DBObjectPsiFacade.asPsiFile(object));
             } else {
-                children.add(DBObjectPsiFacade.getPsiDirectory(object));
+                children.add(DBObjectPsiFacade.asPsiDirectory(object));
             }
         }
         return children.toArray(new PsiElement[0]);

@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -23,6 +24,7 @@ import com.dci.intellij.dbn.editor.EditorStateManager;
 import com.dci.intellij.dbn.editor.code.SourceCodeMainEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.execution.NavigationInstruction;
+import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -137,7 +139,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                     String relativePath = path.substring(index + 1);
                     if (CONSOLES.is(relativePath)) {
                         String consoleName = CONSOLES.collate(relativePath);
-                        return connectionHandler.getConsoleBundle().getConsole(consoleName);
+                        DBConsole console = connectionHandler.getConsoleBundle().getConsole(consoleName);
+                        return Safe.call(console, target -> target.getVirtualFile());
 
                     } else if (SESSION_BROWSERS.is(relativePath)) {
                         return connectionHandler.getSessionBrowserFile();
@@ -264,6 +267,12 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     static String createPath(DBVirtualFile virtualFile) {
         try {
             ConnectionId connectionId = virtualFile.getConnectionId();
+
+            if (virtualFile instanceof DBConsoleVirtualFile) {
+                DBConsoleVirtualFile file = (DBConsoleVirtualFile) virtualFile;
+                return connectionId + PS + CONSOLES + file.getName();
+            }
+
             if (virtualFile instanceof DBConnectionVirtualFile) {
                 DBConnectionVirtualFile file = (DBConnectionVirtualFile) virtualFile;
                 return file.getConnectionId() + "";
@@ -300,11 +309,6 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
             if (virtualFile instanceof DBDatasetFilterVirtualFile) {
                 DBDatasetFilterVirtualFile file = (DBDatasetFilterVirtualFile) virtualFile;
                 return connectionId + PS + DATASET_FILTERS + file.getDataset().getRef().serialize();
-            }
-
-            if (virtualFile instanceof DBConsoleVirtualFile) {
-                DBConsoleVirtualFile file = (DBConsoleVirtualFile) virtualFile;
-                return connectionId + PS + CONSOLES + file.getName();
             }
 
             if (virtualFile instanceof DBSessionBrowserVirtualFile) {

@@ -7,11 +7,13 @@ import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.object.DBConsole;
+import com.dci.intellij.dbn.object.impl.DBConsoleImpl;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
-import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,14 +22,14 @@ import java.util.Set;
 public class DatabaseConsoleBundle extends DisposableBase {
     private ConnectionHandlerRef connectionHandlerRef;
 
-    private List<DBConsoleVirtualFile> consoles = CollectionUtil.createConcurrentList();
+    private List<DBConsole> consoles = CollectionUtil.createConcurrentList();
 
     public DatabaseConsoleBundle(ConnectionHandler connectionHandler) {
         super(connectionHandler);
         this.connectionHandlerRef = connectionHandler.getRef();
     }
 
-    public List<DBConsoleVirtualFile> getConsoles() {
+    public List<DBConsole> getConsoles() {
         Synchronized.run(this,
                 () -> consoles.isEmpty(),
                 () -> createConsole(getConnectionHandler().getName(), DBConsoleType.STANDARD));
@@ -36,7 +38,7 @@ public class DatabaseConsoleBundle extends DisposableBase {
 
     public Set<String> getConsoleNames() {
         Set<String> consoleNames = new HashSet<String>();
-        for (DBConsoleVirtualFile console : consoles) {
+        for (DBConsole console : consoles) {
             consoleNames.add(console.getName());
         }
 
@@ -48,13 +50,13 @@ public class DatabaseConsoleBundle extends DisposableBase {
     }
 
     @NotNull
-    public DBConsoleVirtualFile getDefaultConsole() {
+    public DBConsole getDefaultConsole() {
         return getConsole(getConnectionHandler().getName(), DBConsoleType.STANDARD, true);
     }
 
     @Nullable
-    public DBConsoleVirtualFile getConsole(String name) {
-        for (DBConsoleVirtualFile console : consoles) {
+    public DBConsole getConsole(String name) {
+        for (DBConsole console : consoles) {
             if (console.getName().equals(name)) {
                 return console;
             }
@@ -62,8 +64,8 @@ public class DatabaseConsoleBundle extends DisposableBase {
         return null;
     }
 
-    public DBConsoleVirtualFile getConsole(String name, DBConsoleType type, boolean create) {
-        DBConsoleVirtualFile console = getConsole(name);
+    public DBConsole getConsole(String name, DBConsoleType type, boolean create) {
+        DBConsole console = getConsole(name);
         if (console == null && create) {
             synchronized (this) {
                 console = getConsole(name);
@@ -75,16 +77,16 @@ public class DatabaseConsoleBundle extends DisposableBase {
         return console;
     }
 
-    public DBConsoleVirtualFile createConsole(String name, DBConsoleType type) {
+    DBConsole createConsole(String name, DBConsoleType type) {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        DBConsoleVirtualFile console = new DBConsoleVirtualFile(connectionHandler, name, type);
+        DBConsole console = new DBConsoleImpl(connectionHandler, name, type);
         consoles.add(console);
-        java.util.Collections.sort(consoles);
+        Collections.sort(consoles);
         return console;
     }
 
-    public void removeConsole(String name) {
-        DBConsoleVirtualFile console = getConsole(name);
+    void removeConsole(String name) {
+        DBConsole console = getConsole(name);
         consoles.remove(console);
         Disposer.dispose(console);
     }
@@ -95,8 +97,8 @@ public class DatabaseConsoleBundle extends DisposableBase {
         super.disposeInner();
     }
 
-    public void renameConsole(String oldName, String newName) {
-        DBConsoleVirtualFile console = getConsole(oldName);
+    void renameConsole(String oldName, String newName) {
+        DBConsole console = getConsole(oldName);
         if (console != null) {
             console.setName(newName);
         }

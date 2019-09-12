@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectSelectionHistory;
@@ -67,7 +67,7 @@ public class ObjectDependencyTree extends DBNTree{
                         if (node != null) {
                             ObjectDependencyTreeNode rootNode = node.getModel().getRoot();
                             DBObject object = node.getObject();
-                            if (object instanceof DBSchemaObject && !CommonUtil.safeEqual(rootNode.getObject(), object)) {
+                            if (object instanceof DBSchemaObject && !Safe.equal(rootNode.getObject(), object)) {
                                 actionGroup.add(new SelectObjectAction((DBSchemaObject) object));
                             }
                         }

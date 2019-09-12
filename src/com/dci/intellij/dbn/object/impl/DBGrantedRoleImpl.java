@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.impl;
 
-import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.database.common.metadata.def.DBGrantedRoleMetadata;
 import com.dci.intellij.dbn.object.DBGrantedRole;
 import com.dci.intellij.dbn.object.DBRole;
@@ -13,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ADMIN_OPTION;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DEFAULT_ROLE;
@@ -74,11 +72,5 @@ public class DBGrantedRoleImpl extends DBObjectImpl<DBGrantedRoleMetadata> imple
         return true;
     }
 
-
-    @Override
-    @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return EMPTY_TREE_NODE_LIST;
-    }
 
 }

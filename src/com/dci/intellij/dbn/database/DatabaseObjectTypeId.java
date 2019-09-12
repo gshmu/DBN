@@ -82,10 +82,11 @@ public enum DatabaseObjectTypeId {
     EXCEPTION,
     WINDOW,
 
-    NON_EXISTENT,
+    CONSOLE,
     UNKNOWN,
     NONE,
     ANY,
+    NON_EXISTENT,
     INCOMING_DEPENDENCY,
     OUTGOING_DEPENDENCY;
 

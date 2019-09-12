@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.database;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.Cloneable;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.AuthenticationType;
@@ -87,8 +87,8 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
     public boolean isSame(AuthenticationInfo authenticationInfo) {
         return
             this.type == authenticationInfo.type &&
-            CommonUtil.safeEqual(this.user, authenticationInfo.user) &&
-            CommonUtil.safeEqual(this.getPassword(), authenticationInfo.getPassword());
+            Safe.equal(this.user, authenticationInfo.user) &&
+            Safe.equal(this.getPassword(), authenticationInfo.getPassword());
     }
 
     @Override
@@ -155,8 +155,8 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
             String newUserName = nvl(user);
             String newPassword = nvl(password);
 
-            boolean userNameChanged = !CommonUtil.safeEqual(oldUserName, newUserName);
-            boolean passwordChanged = !CommonUtil.safeEqual(oldPassword, newPassword);
+            boolean userNameChanged = !Safe.equal(oldUserName, newUserName);
+            boolean passwordChanged = !Safe.equal(oldPassword, newPassword);
             if (userNameChanged || passwordChanged) {
                 DatabaseCredentialManager credentialManager = DatabaseCredentialManager.getInstance();
                 ConnectionId connectionId = getConnectionId();

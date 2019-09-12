@@ -6,8 +6,6 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
-import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
-import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -18,9 +16,9 @@ import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
+import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
-import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
@@ -45,18 +43,15 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.List;
 
-public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentListener, DBParseableVirtualFile, Comparable<DBConsoleVirtualFile> {
+public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> implements DocumentListener, DBParseableVirtualFile, Comparable<DBConsoleVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private SourceCodeContent content = new SourceCodeContent();
-    private ConnectionHandlerRef connectionHandlerRef;
     private SchemaId databaseSchema;
     private DatabaseSession databaseSession;
-    private final DBConsoleType type;
 
-    public DBConsoleVirtualFile(ConnectionHandler connectionHandler, String name, DBConsoleType type) {
-        super(connectionHandler.getProject());
-        this.type = type;
-        connectionHandlerRef = connectionHandler.getRef();
+    public DBConsoleVirtualFile(@NotNull DBConsole console) {
+        super(console.getProject(), console.getRef());
+        ConnectionHandler connectionHandler = console.getConnectionHandler();
         databaseSession = connectionHandler.getSessionBundle().getMainSession();
         setDatabaseSchema(connectionHandler.getDefaultSchema());
         setName(name);
@@ -70,7 +65,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
     public void setText(String text) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         Project project = connectionHandler.getProject();
-        if (type == DBConsoleType.DEBUG && StringUtil.isEmpty(text)) {
+        if (getObject().getConsoleType() == DBConsoleType.DEBUG && StringUtil.isEmpty(text)) {
             DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
             CodeStyleCaseSettings styleCaseSettings = DBLCodeStyleManager.getInstance(project).getCodeStyleCaseSettings(PSQLLanguage.INSTANCE);
             text = debuggerInterface.getDebugConsoleTemplate(styleCaseSettings);
@@ -102,27 +97,20 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
         url = null;
     }
 
+    @NotNull
+    public DBConsole getConsole() {
+        return getObject();
+    }
+
+    @Nullable
     @Override
     public Icon getIcon() {
-        switch (type) {
+        switch (getConsole().getConsoleType()) {
             case STANDARD: return Icons.FILE_SQL_CONSOLE;
             case DEBUG: return Icons.FILE_SQL_DEBUG_CONSOLE;
         }
         return null;
     }
-
-    @NotNull
-    @Override
-    public ConnectionId getConnectionId() {
-        return connectionHandlerRef.getConnectionId();
-    }
-
-    @Override
-    @NotNull
-    public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
-    }
-
     public void setDatabaseSchema(SchemaId currentSchema) {
         this.databaseSchema = currentSchema;
     }
@@ -154,7 +142,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
 
     @Override
     public boolean isValid() {
-        return super.isValid() && connectionHandlerRef.isValid();
+        return super.isValid() /*&& connectionHandlerRef.isValid()*/;
     }
 
     @Override
@@ -170,7 +158,7 @@ public class DBConsoleVirtualFile extends DBVirtualFileImpl implements DocumentL
     }
 
     public DBConsoleType getType() {
-        return type;
+        return getObject().getConsoleType();
     }
 
     @Override

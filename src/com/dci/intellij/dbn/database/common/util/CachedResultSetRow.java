@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database.common.util;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +38,7 @@ public class CachedResultSetRow {
         for (String columnName : columns.names()) {
             Object thisColumnValue = this.get(columnName);
             Object thatColumnValue = that.get(columnName);
-            if (!CommonUtil.safeEqual(thisColumnValue, thatColumnValue)) {
+            if (!Safe.equal(thisColumnValue, thatColumnValue)) {
                 return false;
             }
         }

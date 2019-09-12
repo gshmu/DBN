@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.object.dependency.ui;
 import com.dci.intellij.dbn.common.load.LoadInProgressIcon;
 import com.dci.intellij.dbn.common.ui.MergedIcon;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.ui.ColoredTreeCellRenderer;
@@ -27,7 +27,7 @@ public class ObjectDependencyTreeCellRenderer extends ColoredTreeCellRenderer {
             if (object != null) {
                 ObjectDependencyTreeNode selectedNode = (ObjectDependencyTreeNode) tree.getLastSelectedPathComponent();
                 boolean isLoading = node.isLoading();
-                boolean highlight = !isLoading && selectedNode != null && selectedNode != node && CommonUtil.safeEqual(object, selectedNode.getObject());
+                boolean highlight = !isLoading && selectedNode != null && selectedNode != node && Safe.equal(object, selectedNode.getObject());
 
                 SimpleTextAttributes regularAttributes = highlight ?
                         SimpleTextAttributes.REGULAR_ATTRIBUTES.derive(SimpleTextAttributes.STYLE_PLAIN, null, HIGHLIGHT_BACKGROUND, null) :
@@ -49,7 +49,7 @@ public class ObjectDependencyTreeCellRenderer extends ColoredTreeCellRenderer {
 
                 ObjectDependencyTreeNode rootNode = model.getRoot();
                 DBObject rootObject = rootNode.getObject();
-                if (rootObject == null || CommonUtil.safeEqual(rootObject.getSchema(), object.getSchema())) {
+                if (rootObject == null || Safe.equal(rootObject.getSchema(), object.getSchema())) {
                     appendSchema = false;
                 }
 

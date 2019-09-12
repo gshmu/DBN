@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -147,7 +147,7 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
 
     private boolean schemaChanged() {
         IdentifierPsiElement element = this.element.get();
-        return element != null && !CommonUtil.safeEqual(DBObjectRef.get(databaseSchema), element.getDatabaseSchema());
+        return element != null && !Safe.equal(DBObjectRef.get(databaseSchema), element.getDatabaseSchema());
     }
 
     private boolean connectionBecameValid(ConnectionHandler connectionHandler) {

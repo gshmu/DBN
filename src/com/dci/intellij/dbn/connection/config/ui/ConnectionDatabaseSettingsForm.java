@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.AuthenticationType;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -336,14 +337,14 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         DatabaseUrlType urlType = getSelection(urlTypeComboBox);
         boolean settingsChanged =
                 //!connectionConfig.getProperties().equals(propertiesEditorForm.getProperties()) ||
-                !CommonUtil.safeEqual(configuration.getDatabaseType(), selectedDatabaseType) ||
-                !CommonUtil.safeEqual(configuration.getDriverLibrary(), driverLibraryTextField.getText()) ||
-                !CommonUtil.safeEqual(databaseInfo.getHost(), hostTextField.getText()) ||
-                !CommonUtil.safeEqual(databaseInfo.getPort(), portTextField.getText()) ||
-                !CommonUtil.safeEqual(databaseInfo.getDatabase(), databaseTextField.getText()) ||
-                !CommonUtil.safeEqual(databaseInfo.getUrlType(), urlType) ||
-                !CommonUtil.safeEqual(databaseInfo.getFiles(), urlType == DatabaseUrlType.FILE ? databaseFileSettingsForm.getDatabaseFiles() : null) ||
-                !CommonUtil.safeEqual(configuration.getAuthenticationInfo().getUser(), authenticationSettingsForm.getUserTextField().getText());
+                !Safe.equal(configuration.getDatabaseType(), selectedDatabaseType) ||
+                !Safe.equal(configuration.getDriverLibrary(), driverLibraryTextField.getText()) ||
+                !Safe.equal(databaseInfo.getHost(), hostTextField.getText()) ||
+                !Safe.equal(databaseInfo.getPort(), portTextField.getText()) ||
+                !Safe.equal(databaseInfo.getDatabase(), databaseTextField.getText()) ||
+                !Safe.equal(databaseInfo.getUrlType(), urlType) ||
+                !Safe.equal(databaseInfo.getFiles(), urlType == DatabaseUrlType.FILE ? databaseFileSettingsForm.getDatabaseFiles() : null) ||
+                !Safe.equal(configuration.getAuthenticationInfo().getUser(), authenticationSettingsForm.getUserTextField().getText());
 
 
         applyFormChanges(configuration);
