@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
@@ -42,15 +41,10 @@ import com.dci.intellij.dbn.navigation.psi.DBConnectionPsiDirectory;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBObjectBundleImpl;
-import com.dci.intellij.dbn.object.common.list.DBObjectList;
-import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFileEvent;
-import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,7 +56,7 @@ import java.util.Comparator;
 import java.util.List;
 
 @Nullifiable
-public class ConnectionHandlerImpl extends DisposableBase implements ConnectionHandler, NotificationSupport, VirtualFileListener {
+public class ConnectionHandlerImpl extends DisposableBase implements ConnectionHandler, NotificationSupport {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private ConnectionSettings connectionSettings;
@@ -635,26 +629,5 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
             }
         }
         return false;
-    }
-
-    /*********************************************************
-     *                  VirtualFileListener}                 *
-     *********************************************************/
-
-    @Override
-    public void fileCreated(@NotNull VirtualFileEvent event) {
-
-    }
-
-    @Override
-    public void fileDeleted(@NotNull VirtualFileEvent event) {
-        reloadConsoles(event);
-    }
-
-    private void reloadConsoles(@NotNull VirtualFileEvent event) {
-        if (event.getFile() instanceof DBConsoleVirtualFile) {
-            DBObjectList objectList = getObjectBundle().getObjectListContainer().getObjectList(DBObjectType.CONSOLE);
-            Safe.run(objectList, target -> target.markDirty());
-        }
     }
 }
