@@ -6,6 +6,8 @@ import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.MathResult;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -23,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.math.BigDecimal;
 
 public class DatasetEditorStatusBarWidget extends AbstractProjectComponent implements CustomStatusBarWidget, FileEditorManagerListener {
     private static final String WIDGET_ID = DatasetEditorStatusBarWidget.class.getName();
@@ -104,13 +105,16 @@ public class DatasetEditorStatusBarWidget extends AbstractProjectComponent imple
         updateAlarm.cancelAllRequests();
         updateAlarm.addRequest(() -> {
             DatasetEditorTable editorTable = getEditorTable();
-            if (editorTable == null || editorTable.getSelectionSum() == null) {
+            MathResult mathResult = Safe.call(editorTable, table -> table.getSelectionMath());
+
+            if (mathResult == null) {
                 textLabel.setText("");
                 textLabel.setIcon(null);
             } else {
-                BigDecimal selectionSum = editorTable.getSelectionSum();
-                BigDecimal selectionAverage = editorTable.getSelectionAverage();
-                textLabel.setText(" Sum " + selectionSum + "   Average " + selectionAverage);
+                textLabel.setText(" " +
+                        "Sum " +  mathResult.getSum() + "   " +
+                        "Count " + mathResult.getCount() + "   " +
+                        "Average " + mathResult.getAverage());
                 textLabel.setIcon(Icons.COMMON_DATA_GRID);
             }
             GUIUtil.repaint(getComponent());

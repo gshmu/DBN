@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTableWithGutter;
 import com.dci.intellij.dbn.common.ui.table.TableSelectionRestorer;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.MathResult;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -33,7 +34,6 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.JTableHeader;
@@ -53,8 +53,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     private RegionalSettings regionalSettings;
     private DataGridSettings dataGridSettings;
     private TableSelectionRestorer selectionRestorer = createSelectionRestorer();
-    private BigDecimal selectionSum;
-    private BigDecimal selectionAverage;
+    private MathResult selectionMath;
 
     public BasicTable(Project project, T dataModel) {
         super(project, dataModel, true);
@@ -102,8 +101,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
             BigDecimal total = BigDecimal.ZERO;
             BigDecimal count = BigDecimal.ZERO;
             if (!e.getValueIsAdjusting()) {
-                selectionSum = null;
-                selectionAverage = null;
+                selectionMath = null;
                 int rows = getSelectedRowCount();
                 int columns = getSelectedColumnCount();
                 if (columns == 1 && rows > 1 && rows < 100) {
@@ -129,8 +127,8 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
                         }
                     }
                     if (count.compareTo(BigDecimal.ZERO) > 0) {
-                        selectionSum = total;
-                        selectionAverage = total.divide(count, total.scale(), RoundingMode.HALF_UP);
+                        BigDecimal average = total.divide(count, total.scale(), RoundingMode.HALF_UP);
+                        selectionMath = new MathResult(total, count, average);
                         showSelectionTooltip();
                     }
                 }
@@ -141,7 +139,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
             private Alarm runner = new Alarm(BasicTable.this);
             @Override
             public void mouseMoved(MouseEvent e) {
-                if (selectionSum != null && isCellSelected(e.getPoint())) {
+                if (selectionMath != null && isCellSelected(e.getPoint())) {
                     runner.cancelAllRequests();
                     runner.addRequest(() -> showSelectionTooltip(), 100);
                 }
@@ -166,12 +164,10 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     }
 
     private void showSelectionTooltip() {
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(new JLabel("Sum: " + selectionSum), BorderLayout.CENTER);
-        panel.add(new JLabel("Avg: " + selectionAverage), BorderLayout.SOUTH);
+        MathPanel mathPanel = new MathPanel(getProject(), selectionMath);
         Point mousePosition = getMousePosition();
         if (mousePosition != null && isCellSelected(mousePosition)) {
-            IdeTooltip tooltip = new IdeTooltip(this, mousePosition, panel);
+            IdeTooltip tooltip = new IdeTooltip(this, mousePosition, mathPanel.getComponent());
             tooltip.setFont(UIUtil.getLabelFont().deriveFont((float) 16));
             IdeTooltipManager.getInstance().show(tooltip, true);
         }
@@ -389,12 +385,9 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         return true;
     }
 
-    public BigDecimal getSelectionSum() {
-        return selectionSum;
-    }
-
-    public BigDecimal getSelectionAverage() {
-        return selectionAverage;
+    @Nullable
+    public MathResult getSelectionMath() {
+        return selectionMath;
     }
 
     private boolean canDisplayCompleteValue(int rowIndex, int columnIndex) {
