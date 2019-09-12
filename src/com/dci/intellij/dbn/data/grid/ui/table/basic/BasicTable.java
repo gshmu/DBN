@@ -128,9 +128,11 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
                             return;
                         }
                     }
-                    selectionSum = total;
-                    selectionAverage = total.divide(count, total.scale(), RoundingMode.HALF_UP);
-                    showSelectionTooltip();
+                    if (count.compareTo(BigDecimal.ZERO) > 0) {
+                        selectionSum = total;
+                        selectionAverage = total.divide(count, total.scale(), RoundingMode.HALF_UP);
+                        showSelectionTooltip();
+                    }
                 }
             }
         });
