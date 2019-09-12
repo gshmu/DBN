@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.object.action;
 
+import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.compiler.action.CompileActionGroup;
@@ -101,9 +102,10 @@ public class ObjectActionGroup extends DefaultActionGroup implements DumbAware {
             add(new ConsoleRenameAction(console));
             add(new ConsoleDeleteAction(console));
             addSeparator();
-            add(new ConsoleCreateAction(DBConsoleType.STANDARD));
-            if (DatabaseFeature.DEBUGGING.isSupported(console)) {
-                add(new ConsoleCreateAction(DBConsoleType.DEBUG));
+            ConnectionHandler connectionHandler = object.getConnectionHandler();
+            add(new ConsoleCreateAction(connectionHandler, DBConsoleType.STANDARD));
+            if (DatabaseFeature.DEBUGGING.isSupported(connectionHandler)) {
+                add(new ConsoleCreateAction(connectionHandler, DBConsoleType.DEBUG));
             }
         }
         
