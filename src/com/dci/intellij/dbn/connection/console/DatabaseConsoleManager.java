@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -18,6 +19,8 @@ import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.connection.session.SessionManagerListener;
 import com.dci.intellij.dbn.object.DBConsole;
+import com.dci.intellij.dbn.object.common.list.DBObjectList;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
 import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
@@ -26,11 +29,6 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileEvent;
-import com.intellij.openapi.vfs.VirtualFileListener;
-import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
-import com.intellij.util.EventDispatcher;
 import org.jdom.CDATA;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
@@ -47,8 +45,6 @@ import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 )
 public class DatabaseConsoleManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DatabaseConsoleManager";
-
-    private final EventDispatcher<VirtualFileListener> eventDispatcher = EventDispatcher.create(VirtualFileListener.class);
 
     private DatabaseConsoleManager(final Project project) {
         super(project);
@@ -79,24 +75,6 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
         });
     }
 
-    public void createConsole(ConnectionHandler connectionHandler, String name, DBConsoleType type) {
-        DBConsole console = connectionHandler.getConsoleBundle().createConsole(name, type);
-        DBConsoleVirtualFile consoleFile = console.getVirtualFile();
-        consoleFile.setText("");
-        FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
-        fileEditorManager.openFile(consoleFile, true);
-        VirtualFileEvent fileEvent = new VirtualFileEvent(this, consoleFile, name, null);
-        eventDispatcher.getMulticaster().fileCreated(fileEvent);
-    }
-
-    public void renameConsole(DBConsoleVirtualFile consoleFile, String newName) {
-        ConnectionHandler connectionHandler = consoleFile.getConnectionHandler();
-        String oldName = consoleFile.getName();
-        connectionHandler.getConsoleBundle().renameConsole(oldName, newName);
-        VirtualFilePropertyEvent event = new VirtualFilePropertyEvent(this, consoleFile, VirtualFile.PROP_NAME, oldName, newName);
-        eventDispatcher.getMulticaster().propertyChanged(event);
-    }
-
     @Override
     @NonNls
     @NotNull
@@ -104,8 +82,26 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
         return COMPONENT_NAME;
     }
 
+    public void createConsole(ConnectionHandler connectionHandler, String name, DBConsoleType type) {
+        DBConsole console = connectionHandler.getConsoleBundle().createConsole(name, type);
+        DBConsoleVirtualFile consoleFile = console.getVirtualFile();
+        consoleFile.setText("");
+        FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
+        fileEditorManager.openFile(consoleFile, true);
+
+        reloadConsoles(connectionHandler);
+    }
+
+    public void renameConsole(DBConsoleVirtualFile consoleFile, String newName) {
+        ConnectionHandler connectionHandler = consoleFile.getConnectionHandler();
+        String oldName = consoleFile.getName();
+        connectionHandler.getConsoleBundle().renameConsole(oldName, newName);
+
+        reloadConsoles(connectionHandler);
+    }
+
     public void deleteConsole(final DBConsoleVirtualFile consoleFile) {
-        final Project project = getProject();
+        Project project = getProject();
         MessageUtil.showQuestionDialog(
                 project,
                 "Delete console",
@@ -118,11 +114,15 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                             ConnectionHandler connectionHandler = consoleFile.getConnectionHandler();
                             String fileName = consoleFile.getName();
                             connectionHandler.getConsoleBundle().removeConsole(fileName);
-                            VirtualFileEvent fileEvent = new VirtualFileEvent(this, consoleFile, fileName, null);
-                            eventDispatcher.getMulticaster().fileDeleted(fileEvent);
+                            reloadConsoles(connectionHandler);
                         }));
+
     }
 
+    private void reloadConsoles(@NotNull ConnectionHandler connectionHandler) {
+        DBObjectList objectList = connectionHandler.getObjectBundle().getObjectListContainer().getObjectList(DBObjectType.CONSOLE);
+        Safe.run(objectList, target -> target.markDirty());
+    }
 
     /***************************************
      *         SessionManagerListener      *
@@ -237,4 +237,5 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
 
         super.projectOpened();
     }
+
 }

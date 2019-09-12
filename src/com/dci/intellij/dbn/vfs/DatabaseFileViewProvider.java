@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.language.common.DBLanguageParserDefinition;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectPsiFacade;
+import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
@@ -49,7 +50,9 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
         try {
             if (language instanceof DBLanguage || language instanceof DBLanguageDialect) {
                 VirtualFile virtualFile = getVirtualFile();
-                if (virtualFile instanceof DBObjectVirtualFile) {
+                if (virtualFile instanceof DBConsoleVirtualFile) {
+                    // do not use psi facade
+                } else  if (virtualFile instanceof DBObjectVirtualFile) {
                     DBObjectVirtualFile objectFile = (DBObjectVirtualFile) virtualFile;
                     DBObject object = objectFile.getObject();
                     return DBObjectPsiFacade.asPsiFile(object);
