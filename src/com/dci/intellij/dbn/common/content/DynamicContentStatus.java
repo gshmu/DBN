@@ -8,6 +8,7 @@ public enum DynamicContentStatus implements Property {
     CONCURRENT,
 
     DIRTY,
+    ERROR,
     LOADED,
 
     CHANGING,

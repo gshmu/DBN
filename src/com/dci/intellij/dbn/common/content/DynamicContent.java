@@ -44,7 +44,7 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
     /**
      * The timestamp of the last change on the content.
      */
-    long getChangeTimestamp();
+    short getChangeSignature();
 
     /**
      * A load attempt has been made already
@@ -108,7 +108,7 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
 
     void loadInBackground();
 
-    void updateChangeTimestamp();
+    void updateChangeSignature();
 
     String getName();
 }
