@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.impl;
 
-import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.database.common.metadata.def.DBClusterMetadata;
 import com.dci.intellij.dbn.object.DBCluster;
@@ -10,7 +9,6 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
-import java.util.List;
 
 public class DBClusterImpl extends DBSchemaObjectImpl<DBClusterMetadata> implements DBCluster {
     DBClusterImpl(DBSchema parent, DBClusterMetadata resultSet) throws SQLException {
@@ -44,9 +42,4 @@ public class DBClusterImpl extends DBSchemaObjectImpl<DBClusterMetadata> impleme
         return true;
     }
 
-    @Override
-    @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return EMPTY_TREE_NODE_LIST;
-    }
 }

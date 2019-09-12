@@ -67,6 +67,10 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
 
     boolean isEmpty();
 
+    boolean isMutable();
+
+    boolean isPassive();
+
     void markDirty();
 
     DynamicContentType getContentType();

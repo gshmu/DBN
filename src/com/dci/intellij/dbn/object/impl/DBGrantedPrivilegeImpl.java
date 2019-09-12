@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.impl;
 
-import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.database.common.metadata.def.DBGrantedPrivilegeMetadata;
 import com.dci.intellij.dbn.object.DBGrantedPrivilege;
 import com.dci.intellij.dbn.object.DBPrivilege;
@@ -13,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
-import java.util.List;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ADMIN_OPTION;
 
@@ -65,13 +63,6 @@ public class DBGrantedPrivilegeImpl extends DBObjectImpl<DBGrantedPrivilegeMetad
     @Override
     public boolean isLeaf() {
         return true;
-    }
-
-
-    @Override
-    @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return EMPTY_TREE_NODE_LIST;
     }
 
 }

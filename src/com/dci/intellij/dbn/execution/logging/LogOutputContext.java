@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.logging;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -74,7 +74,7 @@ public class LogOutputContext {
 
     public boolean matches(LogOutputContext context) {
         return getConnectionHandler() == context.getConnectionHandler() &&
-                CommonUtil.safeEqual(getSourceFile(), context.getSourceFile());
+                Safe.equal(getSourceFile(), context.getSourceFile());
     }
 
     public void start() {

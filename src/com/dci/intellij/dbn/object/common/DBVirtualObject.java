@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.common;
 
-import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
@@ -223,7 +222,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         }
 
         if (objectList == null) {
-            objectList = childObjects.createObjectList(objectType, this, DynamicContentStatus.CONCURRENT);
+            objectList = childObjects.createObjectList(objectType, this, DynamicContentStatus.MUTABLE);
             if (objectList != null) {
                 // mark as loaded so default loading mechanism does not kick in.
                 objectList.set(DynamicContentStatus.LOADED, true);
@@ -328,12 +327,6 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     @Override
     public DBObjectType getObjectType() {
         return objectRef.objectType;
-    }
-
-    @Override
-    @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return EMPTY_TREE_NODE_LIST;
     }
 
     @Override

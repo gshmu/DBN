@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.script.options.ui;
 
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
@@ -67,7 +67,7 @@ public class CmdLineInterfacesTableModel extends DBNEditableTableModel {
     @Override
     public void setValueAt(Object o, int rowIndex, int columnIndex) {
         Object actualValue = getValueAt(rowIndex, columnIndex);
-        if (!CommonUtil.safeEqual(actualValue, o)) {
+        if (!Safe.equal(actualValue, o)) {
             CmdLineInterface cmdLineInterface = bundle.get(rowIndex);
             if (columnIndex == 0) {
                 DatabaseType databaseType = (DatabaseType) o;

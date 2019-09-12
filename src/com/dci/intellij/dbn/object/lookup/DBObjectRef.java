@@ -74,6 +74,14 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
 
     }
 
+    public String getObjectName() {
+        return objectName;
+    }
+
+    public void setObjectName(String objectName) {
+        this.objectName = objectName;
+    }
+
     public DBObject getParentObject(DBObjectType objectType) {
         DBObjectRef parentRef = getParentRef(objectType);
         return DBObjectRef.get(parentRef);

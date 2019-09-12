@@ -334,7 +334,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         DBObject underlyingObject = getUnderlyingObject();
         if (underlyingObject != null) {
             DBObject parentObject = underlyingObject.getParentObject();
-            return DBObjectPsiFacade.getPsiDirectory(parentObject);
+            return DBObjectPsiFacade.asPsiDirectory(parentObject);
 
         }
         return Read.call(() -> DBLanguagePsiFile.super.getParent());

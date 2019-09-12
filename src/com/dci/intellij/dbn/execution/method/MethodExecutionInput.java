@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.method;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.util.Cloneable;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -183,7 +183,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
     private ArgumentValue getArgumentValue(@NotNull DBArgument argument) {
         for (ArgumentValue argumentValue : inputArgumentValues) {
-            if (CommonUtil.safeEqual(argument, argumentValue.getArgument())) {
+            if (Safe.equal(argument, argumentValue.getArgument())) {
                 return argumentValue;
             }
         }
@@ -195,8 +195,8 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
     private ArgumentValue getArgumentValue(DBArgument argument, DBTypeAttribute attribute) {
         for (ArgumentValue argumentValue : inputArgumentValues) {
-            if (CommonUtil.safeEqual(argumentValue.getArgument(), argument) &&
-                    CommonUtil.safeEqual(argumentValue.getAttribute(), attribute)) {
+            if (Safe.equal(argumentValue.getArgument(), argument) &&
+                    Safe.equal(argumentValue.getAttribute(), attribute)) {
                 return argumentValue;
             }
         }

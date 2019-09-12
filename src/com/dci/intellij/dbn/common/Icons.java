@@ -322,6 +322,9 @@ public class Icons {
     public static final Icon DBO_ARGUMENT_IN                     = load("/img/object/ArgumentIn.png");
     public static final Icon DBO_ARGUMENT_OUT                    = load("/img/object/ArgumentOut.png");
     public static final Icon DBO_ARGUMENT_IN_OUT                 = load("/img/object/ArgumentInOut.png");
+    public static final Icon DBO_CONSOLE                         = load("/img/object/Console.png");
+    public static final Icon DBO_CONSOLES                        = load("/img/object/Consoles.png");
+    public static final Icon DBO_CONSOLE_DEBUG                   = load("/img/object/ConsoleDebug.png");
     public static final Icon DBO_CLUSTER                         = load("/img/object/Cluster.png");
     public static final Icon DBO_CLUSTERS                        = load("/img/object/Clusters.png");
     public static final Icon DBO_COLUMN                          = load("/img/object/Column.png");

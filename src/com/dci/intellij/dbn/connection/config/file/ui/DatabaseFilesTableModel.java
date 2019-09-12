@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.config.file.ui;
 
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 
@@ -59,7 +59,7 @@ public class DatabaseFilesTableModel extends DBNEditableTableModel {
     @Override
     public void setValueAt(Object o, int rowIndex, int columnIndex) {
         Object actualValue = getValueAt(rowIndex, columnIndex);
-        if (!CommonUtil.safeEqual(actualValue, o)) {
+        if (!Safe.equal(actualValue, o)) {
             DatabaseFile filePathOption = databaseFiles.get(rowIndex);
             if (columnIndex == 0) {
                 filePathOption.setPath((String) o);

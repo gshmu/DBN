@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
@@ -78,8 +78,8 @@ public class DatasetEditorError {
     public boolean equals(Object obj) {
         if(obj instanceof DatasetEditorError) {
             DatasetEditorError error = (DatasetEditorError) obj;
-            return CommonUtil.safeEqual(error.message, message) &&
-                   CommonUtil.safeEqual(error.messageObject, messageObject);
+            return Safe.equal(error.message, message) &&
+                   Safe.equal(error.messageObject, messageObject);
         }
 
         return false;

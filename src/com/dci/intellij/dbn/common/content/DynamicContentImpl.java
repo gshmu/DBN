@@ -132,6 +132,16 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     }
 
     @Override
+    public boolean isMutable() {
+        return is(MUTABLE);
+    }
+
+    @Override
+    public boolean isPassive() {
+        return is(PASSIVE);
+    }
+
+    @Override
     public void markDirty() {
         set(DIRTY, true);
     }
@@ -139,6 +149,10 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     private boolean shouldLoad() {
         if (isDisposed() || isLoading()) {
             return false;
+        }
+
+        if (isPassive()) {
+            return true;
         }
 
         ConnectionHandler connectionHandler = getConnectionHandler();
@@ -154,7 +168,15 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     }
 
     private boolean shouldReload() {
-        return !isDisposed() && isLoaded() && !isLoading();
+        if (isDisposed() || isLoading()) {
+            return false;
+        }
+
+        if(isPassive()) {
+            return true;
+        }
+
+        return isLoaded();
     }
 
     private boolean shouldRefresh() {

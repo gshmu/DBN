@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.impl;
 
-import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.common.metadata.def.DBPrivilegeMetadata;
 import com.dci.intellij.dbn.object.DBPrivilege;
@@ -10,7 +9,6 @@ import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationListImpl;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -62,10 +60,4 @@ public abstract class DBPrivilegeImpl<M extends DBPrivilegeMetadata> extends DBO
         return true;
     }
 
-
-    @Override
-    @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return EMPTY_TREE_NODE_LIST;
-    }
 }

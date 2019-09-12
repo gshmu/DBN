@@ -106,7 +106,7 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
             GenericDatabaseElement parent = objectList.getParentElement();
             if (parent instanceof DBObject) {
                 DBObject parentObject = (DBObject) parent;
-                return DBObjectPsiFacade.getPsiDirectory(parentObject).getVirtualFile();
+                return DBObjectPsiFacade.asPsiDirectory(parentObject).getVirtualFile();
             }
 
             if (parent instanceof DBObjectBundle) {

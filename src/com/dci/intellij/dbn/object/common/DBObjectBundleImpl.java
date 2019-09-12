@@ -10,7 +10,9 @@ import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContent;
+import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
+import com.dci.intellij.dbn.common.content.loader.DynamicContentLoaderImpl;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
@@ -43,6 +45,7 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
+import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBCharsetMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBGrantedPrivilegeMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBGrantedRoleMetadata;
@@ -59,6 +62,7 @@ import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBCharset;
+import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.object.DBGrantedPrivilege;
 import com.dci.intellij.dbn.object.DBGrantedRole;
 import com.dci.intellij.dbn.object.DBObjectPrivilege;
@@ -115,6 +119,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     private List<BrowserTreeNode> visibleTreeChildren;
     private boolean treeChildrenLoaded;
 
+    private DBObjectList<DBConsole> consoles;
     private DBObjectList<DBSchema> schemas;
     private DBObjectList<DBUser> users;
     private DBObjectList<DBRole> roles;
@@ -157,12 +162,13 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         connectionConfigHash = connectionHandler.getSettings().getDatabaseSettings().hashCode();
 
         objectLists = new DBObjectListContainer(this);
+        consoles = objectLists.createObjectList(CONSOLE, this, DynamicContentStatus.PASSIVE);
         users = objectLists.createObjectList(USER, this);
         schemas = objectLists.createObjectList(SCHEMA, this);
         roles = objectLists.createObjectList(ROLE, this);
         systemPrivileges = objectLists.createObjectList(SYSTEM_PRIVILEGE, this);
         charsets = objectLists.createObjectList(CHARSET, this);
-        allPossibleTreeChildren = DatabaseBrowserUtils.createList(schemas, users, roles, systemPrivileges, charsets);
+        allPossibleTreeChildren = DatabaseBrowserUtils.createList(consoles, schemas, users, roles, systemPrivileges, charsets);
 
         objectRelationLists = new DBObjectRelationListContainer(this);
         objectRelationLists.createObjectRelationList(
@@ -800,6 +806,16 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
      *                         Loaders                       *
      *********************************************************/
     static {
+        new DynamicContentLoaderImpl<DBConsole, DBObjectMetadata>(null, CONSOLE, true){
+
+            @Override
+            public void loadContent(DynamicContent<DBConsole> dynamicContent, boolean forceReload) throws SQLException {
+                ConnectionHandler connectionHandler = dynamicContent.getConnectionHandler();
+                List<DBConsole> consoles = connectionHandler.getConsoleBundle().getConsoles();
+                dynamicContent.setElements(consoles);
+            }
+        };
+
         new DynamicContentResultSetLoader<DBSchema, DBSchemaMetadata>(null, SCHEMA, true, true) {
             @Override
             public ResultSet createResultSet(DynamicContent<DBSchema> dynamicContent, DBNConnection connection) throws SQLException {

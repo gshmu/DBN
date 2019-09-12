@@ -40,7 +40,7 @@ public abstract class DynamicSubcontentCustomLoader<
             if (element != null) {
                 dynamicContent.checkDisposed();
                 if (list == null) {
-                    list = dynamicContent.is(DynamicContentStatus.CONCURRENT) ?
+                    list = dynamicContent.isMutable() ?
                             CollectionUtil.createConcurrentList() :
                             new ArrayList<T>();
                 }

@@ -452,7 +452,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     private boolean updateReference(@Nullable BasePsiElement parent, IdentifierElementType elementType, DBObject referenceObject) {
         if (isValidReference(referenceObject)) {
             ref.setParent(parent);
-            ref.setReferencedElement(DBObjectPsiFacade.getPsiElement(referenceObject));
+            ref.setReferencedElement(DBObjectPsiFacade.asPsiElement(referenceObject));
             this.elementType = elementType;
             return true;
         }

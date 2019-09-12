@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.data.structure;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.language.psql.structure.PSQLStructureViewElement;
 import com.intellij.ide.util.treeView.smartTree.ActionPresentation;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
@@ -61,7 +61,7 @@ public class DatasetEditorStructureViewModelSorter implements Sorter {
                 DatasetEditorStructureViewElement structureViewElement2 = (DatasetEditorStructureViewElement) object2;
                 BrowserTreeNode treeNode1 = structureViewElement1.getValue();
                 BrowserTreeNode treeNode2 = structureViewElement2.getValue();
-                return CommonUtil.safeCompare(
+                return Safe.compare(
                         treeNode1.getName(),
                         treeNode2.getName());
             } else {

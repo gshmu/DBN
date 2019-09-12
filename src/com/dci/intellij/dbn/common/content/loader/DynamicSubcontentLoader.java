@@ -62,7 +62,7 @@ public abstract class DynamicSubcontentLoader<
                 if (match(element, dynamicContent)) {
                     matchedOnce = true;
                     if (list == null) {
-                        list = dynamicContent.is(DynamicContentStatus.CONCURRENT) ?
+                        list = dynamicContent.isMutable() ?
                                 CollectionUtil.createConcurrentList() :
                                 new ArrayList<T>();
                     }

@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.common;
 
-import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.util.TextRange;
@@ -10,7 +9,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
-import java.util.List;
 
 public class DBFictiveObject extends DBObjectImpl implements PsiReference {
     private String name;
@@ -39,11 +37,6 @@ public class DBFictiveObject extends DBObjectImpl implements PsiReference {
         return getRef().objectType;
     }
 
-    @Override
-    @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return EMPTY_TREE_NODE_LIST;
-    }
 
     @Override
     public void navigate(boolean requestFocus) {
