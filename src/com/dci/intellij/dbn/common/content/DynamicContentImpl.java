@@ -269,6 +269,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         } catch (SQLFeatureNotSupportedException e) {
             // unsupported feature: log in notification area
             elements = EMPTY_CONTENT;
+            set(LOADED, true);
             sendWarningNotification(
                     NotificationGroup.METADATA,
                     "Failed to load {0}. Feature not supported: {1}",
