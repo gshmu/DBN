@@ -3,14 +3,18 @@ package com.dci.intellij.dbn.connection.config.tns;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
+import oracle.net.jdbc.nl.NLException;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TnsNamesParser {
     public static final FileChooserDescriptor FILE_CHOOSER_DESCRIPTOR = new FileChooserDescriptor(true, false, false, false, false, false).
@@ -112,4 +116,118 @@ public class TnsNamesParser {
 
         return tnsNames;
     }
+
+
+    public static class TNSNamesList {
+
+        public static void main(String[] args) throws NLException, IOException {
+            //String value = "[._A-Z0-9]+";
+            String value = "[^\\s\\(\\)=]+";
+            String protocol = block(keyValue("PROTOCOL", value, "protocol"));
+            String host = block(keyValue("HOST", value, "host"));
+            String port = block(keyValue("PORT", value, "port"));
+
+            String sid = block(keyValue("SID", value, "sid"));
+            String server = block(keyValue("SERVER", value, "server"));
+            String serviceName = block(keyValue("SERVICE_NAME", value, "service_name"));
+            String globalName = block(keyValue("GLOBAL_NAME", value, "global_name"));
+            String any = block(keyValue("[_A-Z]+", value));
+
+            String address = block(keyValue("ADDRESS", iteration(protocol, host, port/*, any*/)));
+            String addressList = block(keyValue("ADDRESS_LIST", iteration(address)));
+            String connectData = block(keyValue("CONNECT_DATA", iteration(sid, server, serviceName, globalName/*, any*/)));
+            String description = block(keyValue("DESCRIPTION", iteration(address, addressList, connectData)));
+            String block = keyValue(group("schema", value), description);
+            String group = "^" + block + "$";
+
+            Pattern pattern = Pattern.compile(group, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(TNS);
+
+            int start = 0;
+            while (matcher.find(start)) {
+                System.out.println(matcher.group("schema"));
+                start = matcher.end();
+                System.out.println(matcher.end());
+            }
+
+            System.out.println(matcher.matches());
+        }
+
+        private static String block(String content) {
+            return "\\(\\s*" + content + "\\s*\\)";
+        }
+
+        private static String keyValue(String key, String value) {
+            return keyValue(key, value, null);
+        }
+
+        private static String keyValue(String key, String value, String group) {
+            return group == null ?
+                    key + "\\s*=\\s*" + value:
+                    key + "\\s*=\\s*" + group(group, value);
+        }
+
+        private static String group(String name, String content) {
+            return "(?<" + name + ">" + content + ")";
+        }
+
+        private static String iteration(String ... contents) {
+            StringBuilder result = new StringBuilder();
+            for (String content : contents) {
+                if (result.length() > 0) {
+                    result.append("|");
+                }
+                result.append(content);
+            }
+
+            return "[" + result + "]*";
+        }
+    }
+
+    private static String TNS = "SOMESCHEMA =\n" +
+            "  (DESCRIPTION =\n" +
+            "    (ADDRESS_LIST =\n" +
+            "      (ADDRESS = (PROTOCOL = TCP)(HOST = REMOTEHOST)(PORT = 1234))\n" +
+            "    )\n" +
+            "    (CONNECT_DATA = (SERVICE_NAME = REMOTE)\n" +
+            "    )\n" +
+            "  )\n" +
+            "\n" +
+            "MYSCHEMA =\n" +
+            "  (DESCRIPTION =\n" +
+            "    (ADDRESS = (PROTOCOL = TCP)(HOST = MYHOST)(PORT = 1234))\n" +
+            "    (CONNECT_DATA =\n" +
+            "      (SERVER = DEDICATED)\n" +
+            "      (SERVICE_NAME = MYSERVICE.LOCAL )\n" +
+            "    )\n" +
+            "  )\n" +
+            "\n" +
+            "MYOTHERSCHEMA =\n" +
+            "  (DESCRIPTION =\n" +
+            "    (ADDRESS_LIST =\n" +
+            "      (ADDRESS = (PROTOCOL = TCP)(HOST = MYHOST)(PORT = 1234))\n" +
+            "    )\n" +
+            "    (CONNECT_DATA = \n" +
+            "      (SERVICE_NAME = MYSERVICE.REMOTE)\n" +
+            "    )\n" +
+            "\n" +
+            "  )\n" +
+            "\n" +
+            "SOMEOTHERSCHEMA = \n" +
+            "  (DESCRIPTION =\n" +
+            "    (ADDRESS_LIST =\n" +
+            "      (ADDRESS = (PROTOCOL = TCP)(HOST = LOCALHOST)(PORT = 1234))\n" +
+            "    )\n" +
+            "    (CONNECT_DATA =\n" +
+            "      (SERVICE_NAME = LOCAL)\n" +
+            "    )\n" +
+            "  )";
+    private static String TNS1 = "APYREQ1A.EQ =\n" +
+            "  (DESCRIPTION =\n" +
+            "    (ADDRESS = (PROTOCOL = TCP)(Host = sb007538.equateplus.net)(Port = 49350))\n" +
+            "    (CONNECT_DATA =\n" +
+            "      (SID = APYREQ1A)\n" +
+            "      (GLOBAL_NAME = APYREQ1A.EQ)\n" +
+            "    )\n" +
+            "  )";
 }
