@@ -15,8 +15,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 
-public class EnableDisableAction extends AnObjectAction<DBSchemaObject> {
-    EnableDisableAction(DBSchemaObject object) {
+public class ObjectEnableDisableAction extends AnObjectAction<DBSchemaObject> {
+    ObjectEnableDisableAction(DBSchemaObject object) {
         super("Enable/Disable", null, object);
     }
 

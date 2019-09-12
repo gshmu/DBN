@@ -8,10 +8,10 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import org.jetbrains.annotations.NotNull;
 
-public class DropObjectAction extends DumbAwareAction {
+public class ObjectDropAction extends DumbAwareAction {
     private DBObjectRef<DBSchemaObject> objectRef;
 
-    public DropObjectAction(DBSchemaObject object) {
+    public ObjectDropAction(DBSchemaObject object) {
         super("Drop...", null, Icons.ACTION_CLOSE);
         objectRef = DBObjectRef.from(object);
     }

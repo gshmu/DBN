@@ -7,11 +7,11 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import org.jetbrains.annotations.NotNull;
 
-public class ReloadObjectsAction extends DumbAwareAction {
+public class ObjectsReloadAction extends DumbAwareAction {
 
     private DBObjectList objectList;
 
-    ReloadObjectsAction(DBObjectList objectList) {
+    ObjectsReloadAction(DBObjectList objectList) {
         super((objectList.isLoaded() ? "Reload " : "Load ") + objectList.getName());
         this.objectList = objectList;
     }

@@ -9,18 +9,22 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import org.jetbrains.annotations.NotNull;
 
-public class EditObjectCodeAction extends DumbAwareAction {
+public class ObjectEditDataAction extends DumbAwareAction {
     private DBObjectRef<DBSchemaObject> objectRef;
-    EditObjectCodeAction(DBSchemaObject object) {
-        super("Edit Code", null, Icons.OBEJCT_EDIT_SOURCE);
+    public ObjectEditDataAction(DBSchemaObject object) {
+        super("Edit Data", null, Icons.OBEJCT_EDIT_DATA);
         objectRef = DBObjectRef.from(object);
         setDefaultIcon(true);
     }
 
+    public DBSchemaObject getObject() {
+        return DBObjectRef.ensure(objectRef);
+    }
+
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        DBSchemaObject schemaObject = DBObjectRef.ensure(objectRef);
+        DBSchemaObject object = getObject();
         DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-        databaseFileSystem.connectAndOpenEditor(schemaObject, EditorProviderId.CODE, false, true);
+        databaseFileSystem.connectAndOpenEditor(object, EditorProviderId.DATA, false, true);
     }
 }
