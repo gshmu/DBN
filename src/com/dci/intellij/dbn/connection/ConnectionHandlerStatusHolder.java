@@ -131,15 +131,23 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
     }
 
     public boolean isConnected() {
-        return canConnect() ?
-                connected.check() :
-                connected.get();
+        if (isActive()) {
+            return true;
+        } else {
+            return canConnect() ?
+                    connected.check() :
+                    connected.get();
+        }
     }
 
     public boolean isValid() {
-        return canConnect() ?
-                valid.check() :
-                valid.get();
+        if (isActive()) {
+            return true;
+        } else {
+            return canConnect() ?
+                    valid.check() :
+                    valid.get();
+        }
     }
 
     public String getStatusMessage() {
