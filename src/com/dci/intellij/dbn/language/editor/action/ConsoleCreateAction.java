@@ -16,6 +16,7 @@ public class ConsoleCreateAction extends DumbAwareProjectAction {
     ConsoleCreateAction(DBConsoleType consoleType) {
         super("New " + consoleType.getName() + "...");
         this.consoleType = consoleType;
+
     }
 
     @Override
@@ -23,16 +24,13 @@ public class ConsoleCreateAction extends DumbAwareProjectAction {
         VirtualFile virtualFile = Lookup.getVirtualFile(e);
         if (virtualFile instanceof DBConsoleVirtualFile) {
             DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
-            DatabaseConsoleManager consoleManager = DatabaseConsoleManager.getInstance(project);
+        DatabaseConsoleManager consoleManager = DatabaseConsoleManager.getInstance(project);
             consoleManager.showCreateConsoleDialog(consoleVirtualFile.getConnectionHandler(), consoleType);
         }
     }
-
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         Presentation presentation = e.getPresentation();
         presentation.setText("New " + consoleType.getName() + "...");
     }
-
-
 }
