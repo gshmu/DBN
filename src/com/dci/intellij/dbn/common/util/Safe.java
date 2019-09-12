@@ -2,10 +2,12 @@ package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.routine.ParametricCallable;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface Safe {
-    static <R, S, E extends Throwable> R call(S target, ParametricCallable<S, R, E> callable) throws E{
+    @Nullable
+    static <R, S, E extends Throwable> R call(@Nullable S target, @NotNull ParametricCallable<S, R, E> callable) throws E{
         if (target == null) {
             return null;
         } else {
@@ -13,7 +15,7 @@ public interface Safe {
         }
     }
 
-    static <S, E extends Throwable> void run(S target, ParametricRunnable<S, E> runnable) throws E{
+    static <S, E extends Throwable> void run(@Nullable S target, @NotNull ParametricRunnable<S, E> runnable) throws E{
         if (target != null) {
             runnable.run(target);
         }
