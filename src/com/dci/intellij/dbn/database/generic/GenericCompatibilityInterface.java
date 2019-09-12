@@ -19,6 +19,7 @@ public class GenericCompatibilityInterface extends DatabaseCompatibilityInterfac
     @Override
     public boolean supportsObjectType(DatabaseObjectTypeId objectTypeId) {
         return
+            objectTypeId == DatabaseObjectTypeId.CONSOLE ||
             objectTypeId == DatabaseObjectTypeId.SCHEMA ||
             objectTypeId == DatabaseObjectTypeId.TABLE ||
             objectTypeId == DatabaseObjectTypeId.VIEW ||
