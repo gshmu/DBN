@@ -52,7 +52,7 @@ public class VoidDynamicContent extends DisposableBase implements DynamicContent
     }
 
     @Override
-    public long getChangeTimestamp() {
+    public short getChangeSignature() {
         return 0;
     }
 
@@ -166,7 +166,7 @@ public class VoidDynamicContent extends DisposableBase implements DynamicContent
     }
 
     @Override
-    public void updateChangeTimestamp() {
+    public void updateChangeSignature() {
 
     }
 
