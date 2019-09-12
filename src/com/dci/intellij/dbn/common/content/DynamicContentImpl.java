@@ -171,10 +171,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
             set(LOADING, true);
             try {
                 performLoad(false);
-                set(LOADED, true);
-            } catch (Throwable e) {
-                setElements(EMPTY_CONTENT);
-                set(DIRTY, true);
             } finally {
                 set(LOADING, false);
                 updateChangeTimestamp();
@@ -188,20 +184,15 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
             set(LOADING, true);
             try {
                 performLoad(true);
-                List<T> elements = getAllElements();
-                CollectionUtil.forEach(elements,
-                        (element) -> {
-                            checkDisposed();
-                            element.refresh();
-                        });
-                set(LOADED, true);
-            } catch (Throwable e) {
-                setElements(EMPTY_CONTENT);
-                set(DIRTY, true);
             } finally {
                 set(LOADING, false);
                 updateChangeTimestamp();
             }
+            CollectionUtil.forEach(elements,
+                    (element) -> {
+                        checkDisposed();
+                        element.refresh();
+                    });
         }
     }
 
@@ -224,7 +215,11 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
                 markDirty();
                 dependencyAdapter.refreshSources();
                 if (!is(INTERNAL)){
-                    CollectionUtil.forEach(elements, element -> element.refresh());
+                    CollectionUtil.forEach(elements,
+                            (element) -> {
+                                checkDisposed();
+                                element.refresh();
+                            });
                 }
             } finally {
                 set(REFRESHING, false);
@@ -263,6 +258,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
             set(DIRTY, false);
             DynamicContentLoader<T, ?> loader = getLoader();
             loader.loadContent(this, force);
+            set(LOADED, true);
 
             // refresh inner elements
             if (force) elements.forEach(t -> t.refresh());
