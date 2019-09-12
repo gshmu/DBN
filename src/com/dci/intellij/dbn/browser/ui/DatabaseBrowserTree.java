@@ -35,6 +35,7 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.tree.TreeUtil;
 
 import javax.swing.*;
@@ -237,15 +238,23 @@ public class DatabaseBrowserTree extends DBNTree {
             if (lastPathEntity instanceof DBObject) {
                 DBObject object = (DBObject) lastPathEntity;
                 DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-                if (object.is(DBObjectProperty.EDITABLE)) {
+                Project project = getProject();
+                if (object instanceof DBConsole) {
+                    DBConsole console = (DBConsole) object;
+                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                    fileEditorManager.openFile(console.getVirtualFile(), true);
+                    event.consume();
+                } else if (object.is(DBObjectProperty.EDITABLE)) {
                     DBSchemaObject schemaObject = (DBSchemaObject) object;
                     databaseFileSystem.connectAndOpenEditor(schemaObject, null, false, deliberate);
                     event.consume();
+
                 } else if (object.is(DBObjectProperty.NAVIGABLE)) {
                     databaseFileSystem.connectAndOpenEditor(object, null, false, deliberate);
                     event.consume();
+
                 } else if (deliberate) {
-                    Progress.prompt(getProject(), "Loading object reference", true,
+                    Progress.prompt(project, "Loading object reference", true,
                             (progress) -> {
                                 DBObject navigationObject = object.getDefaultNavigationObject();
                                 if (navigationObject != null) {
