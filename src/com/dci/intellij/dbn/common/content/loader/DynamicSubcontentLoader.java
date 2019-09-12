@@ -86,7 +86,7 @@ public abstract class DynamicSubcontentLoader<
             return false;
         } else {
             //ThreadInfo thread = ThreadMonitor.current();
-            if (/*thread.is(ThreadProperty.CODE_ANNOTATING) || */ThreadMonitor.getProcessCount(ThreadProperty.PROGRESS) > 10) {
+            if (/*thread.is(ThreadProperty.CODE_ANNOTATING) || */ThreadMonitor.getProcessCount(ThreadProperty.PROGRESS) > 20) {
                 return false;
             } else {
                 return true;
