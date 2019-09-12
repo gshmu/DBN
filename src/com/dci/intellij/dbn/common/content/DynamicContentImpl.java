@@ -29,14 +29,7 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.CHANGING;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DIRTY;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADED;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING_IN_BACKGROUND;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.MASTER;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.REFRESHING;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement>
         extends DisposablePropertyHolder<DynamicContentStatus>
@@ -244,10 +237,9 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         if (shouldLoadInBackground()) {
             set(LOADING_IN_BACKGROUND, true);
             ConnectionHandler connectionHandler = getConnectionHandler();
-            String connectionString = " (" + connectionHandler.getName() + ')';
             Progress.background(
                     getProject(),
-                    "Loading data dictionary" + connectionString, false,
+                    connectionHandler.getMetaLoadTitle(), false,
                     (progress) -> {
                         try{
                             progress.setText("Loading " + getContentDescription());

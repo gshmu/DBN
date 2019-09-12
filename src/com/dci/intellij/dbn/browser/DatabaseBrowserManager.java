@@ -272,7 +272,8 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
                         Progress.background(
                                 getProject(),
-                                "Loading data dictionary", false,
+                                connectionHandler.getMetaLoadTitle(),
+                                false,
                                 (progress) -> {
                                     BrowserTreeNode treeNode = schemaId == null ?
                                             connectionHandler.getObjectBundle() :
@@ -394,7 +395,6 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                     ConnectionDetailSettings settings = connectionHandler.getSettings().getDetailSettings();
                     if (settings.isRestoreWorkspaceDeep()) {
                         DBObjectBundle objectBundle = connectionHandler.getObjectBundle();
-                        String connectionString = " (" + connectionHandler.getName() + ")";
                         List<Element> schemaElements = connectionElement.getChildren();
 
                         schemaElements.forEach(schemaElement -> {
@@ -402,7 +402,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                             DBSchema schema = objectBundle.getSchema(schemaName);
                             if (schema != null) {
                                 Progress.background(project,
-                                        "Loading data dictionary" + connectionString, true,
+                                        connectionHandler.getMetaLoadTitle(), true,
                                         (progress) -> {
                                             String objectTypesAttr = schemaElement.getAttributeValue("object-types");
                                             List<DBObjectType> objectTypes = DBObjectType.fromCsv(objectTypesAttr);

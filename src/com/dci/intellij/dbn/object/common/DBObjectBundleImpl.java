@@ -445,7 +445,11 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         treeChildren = CommonUtil.nvl(treeChildren, Collections.emptyList());
 
         treeChildren.forEach(objectList -> {
-            objectList.initTreeElement();
+            Progress.background(
+                    getProject(),
+                    getConnectionHandler().getMetaLoadTitle(),
+                    true,
+                    progress -> objectList.initTreeElement());
             checkDisposed();});
 
         if (visibleTreeChildren.size() == 1 && visibleTreeChildren.get(0) instanceof LoadInProgressTreeNode) {

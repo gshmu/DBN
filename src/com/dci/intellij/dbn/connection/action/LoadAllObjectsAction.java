@@ -19,10 +19,9 @@ public class LoadAllObjectsAction extends AbstractConnectionAction {
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
-        String connectionName = connectionHandler.getName();
         Progress.prompt(
                 project,
-                "Loading data dictionary (" + connectionName + ")", true,
+                connectionHandler.getMetaLoadTitle(), true,
                 (progress) -> {
                     DBObjectListContainer objectListContainer = connectionHandler.getObjectBundle().getObjectListContainer();
                     objectListContainer.visitLists(DBObjectRecursiveLoaderVisitor.INSTANCE, false);
