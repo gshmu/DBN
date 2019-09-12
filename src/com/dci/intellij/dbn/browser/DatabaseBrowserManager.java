@@ -32,6 +32,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
+import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -243,6 +244,11 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                 if (file instanceof DBEditableObjectVirtualFile) {
                     DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) file;
                     navigateToElement(databaseFile.getObject(), true);
+
+                } else if (file instanceof DBConsoleVirtualFile) {
+                    DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) file;
+                    navigateToElement(consoleVirtualFile.getObject(), true);
+
                 }
                 else  if (file instanceof DBVirtualFileImpl) {
                     DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) file;
@@ -262,8 +268,12 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                     if (newFile instanceof DBEditableObjectVirtualFile) {
                         DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) newFile;
                         navigateToElement(databaseFile.getObject(), true);
-                    }
-                    else  if (newFile instanceof DBVirtualFileImpl) {
+
+                    } else if (newFile instanceof DBConsoleVirtualFile) {
+                        DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) newFile;
+                        navigateToElement(consoleVirtualFile.getObject(), true);
+
+                    } else if (newFile instanceof DBVirtualFileImpl) {
                         DBVirtualFileImpl databaseVirtualFile = (DBVirtualFileImpl) newFile;
                         ConnectionHandler connectionHandler = databaseVirtualFile.getConnectionHandler();
                         FileEditor oldEditor = event.getOldEditor();
