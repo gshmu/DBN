@@ -725,6 +725,8 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                                 progress.setText("Updating object status in schema " + schema.getName() + "... ");
                                 schema.refreshObjectsStatus();
                             }
+                        } catch (IndexOutOfBoundsException ignore) {
+                            // underlying list may mutate
                         } catch (SQLException e) {
                             sendErrorNotification(
                                     NotificationGroup.BROWSER,
