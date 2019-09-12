@@ -172,4 +172,8 @@ public interface ConnectionHandler extends RegisteredDisposable, EnvironmentType
     DatabaseCompatibility getCompatibility();
 
     default void resetCompatibilityMonitor(){};
+
+    default String getMetaLoadTitle() {
+        return "Loading data dictionary (" + getName() + ")";
+    }
 }

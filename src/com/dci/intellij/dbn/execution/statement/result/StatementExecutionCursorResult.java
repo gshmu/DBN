@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -58,38 +59,41 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
     }
 
     public void reload() {
-        Progress.background(getProject(), "Reloading data", false,
-                (progress) -> {
-                    StatementExecutionResultForm resultForm = getForm();
-                    if (Failsafe.check(resultForm)) {
-                        progress.setText("Reloading results for " + getExecutionProcessor().getStatementName());
-                        ExecutionContext context = getExecutionProcessor().initExecutionContext();
-                        context.set(EXECUTING, true);
+        StatementExecutionCursorProcessor executionProcessor = getExecutionProcessor();
+        ConnectionAction.invoke("Reload data", false, executionProcessor, (action) -> {
+            Progress.background(getProject(), "Reloading data", false,
+                    (progress) -> {
+                        StatementExecutionResultForm resultForm = getForm();
+                        if (Failsafe.check(resultForm)) {
+                            progress.setText("Reloading results for " + executionProcessor.getStatementName());
+                            ExecutionContext context = executionProcessor.initExecutionContext();
+                            context.set(EXECUTING, true);
 
-                        try {
-                            resultForm.highlightLoading(true);
-                            StatementExecutionInput executionInput = getExecutionInput();
                             try {
-                                ConnectionHandler connectionHandler = getConnectionHandler();
-                                SchemaId currentSchema = getDatabaseSchema();
-                                DBNConnection connection = connectionHandler.getMainConnection(currentSchema);
-                                DBNStatement statement = connection.createStatement();
-                                statement.setQueryTimeout(executionInput.getExecutionTimeout());
-                                statement.execute(executionInput.getExecutableStatementText());
-                                DBNResultSet resultSet = statement.getResultSet();
-                                if (resultSet != null) {
-                                    loadResultSet(resultSet);
+                                resultForm.highlightLoading(true);
+                                StatementExecutionInput executionInput = getExecutionInput();
+                                try {
+                                    ConnectionHandler connectionHandler = getConnectionHandler();
+                                    SchemaId currentSchema = getDatabaseSchema();
+                                    DBNConnection connection = connectionHandler.getMainConnection(currentSchema);
+                                    DBNStatement statement = connection.createStatement();
+                                    statement.setQueryTimeout(executionInput.getExecutionTimeout());
+                                    statement.execute(executionInput.getExecutableStatementText());
+                                    DBNResultSet resultSet = statement.getResultSet();
+                                    if (resultSet != null) {
+                                        loadResultSet(resultSet);
+                                    }
+                                } catch (final SQLException e) {
+                                    MessageUtil.showErrorDialog(getProject(), "Could not perform reload operation.", e);
                                 }
-                            } catch (final SQLException e) {
-                                MessageUtil.showErrorDialog(getProject(), "Could not perform reload operation.", e);
+                            } finally {
+                                calculateExecDuration();
+                                resultForm.highlightLoading(false);
+                                context.reset();
                             }
-                        } finally {
-                            calculateExecDuration();
-                            resultForm.highlightLoading(false);
-                            context.reset();
                         }
-                    }
-                });
+                    });
+        });
     }
 
     public void loadResultSet(DBNResultSet resultSet) throws SQLException {

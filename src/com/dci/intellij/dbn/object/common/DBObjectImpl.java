@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.Background;
+import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -742,8 +743,13 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         treeChildren = CommonUtil.nvl(treeChildren, Collections.emptyList());
 
         treeChildren.forEach(objectList -> {
-            objectList.initTreeElement();
-            checkDisposed();});
+            Progress.background(
+                    getProject(),
+                    getConnectionHandler().getMetaLoadTitle(),
+                    true,
+                    progress -> objectList.initTreeElement());
+            checkDisposed();
+        });
 
         if (visibleTreeChildren.size() == 1 && visibleTreeChildren.get(0) instanceof LoadInProgressTreeNode) {
             visibleTreeChildren.get(0).dispose();
