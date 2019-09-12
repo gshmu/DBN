@@ -41,7 +41,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     protected static final List EMPTY_DISPOSED_CONTENT = java.util.Collections.unmodifiableList(Collections.emptyList());
     protected static final List EMPTY_UNTOUCHED_CONTENT = java.util.Collections.unmodifiableList(Collections.emptyList());
 
-    private long changeTimestamp = 0;
+    private short changeSignature = 0;
 
     private GenericDatabaseElement parent;
     private ContentDependencyAdapter dependencyAdapter;
@@ -99,8 +99,8 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     }
 
     @Override
-    public long getChangeTimestamp() {
-        return changeTimestamp;
+    public short getChangeSignature() {
+        return changeSignature;
     }
 
     @Override
@@ -173,7 +173,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
                 performLoad(false);
             } finally {
                 set(LOADING, false);
-                updateChangeTimestamp();
+                updateChangeSignature();
             }
         }
     }
@@ -186,7 +186,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
                 performLoad(true);
             } finally {
                 set(LOADING, false);
-                updateChangeTimestamp();
+                updateChangeSignature();
             }
             CollectionUtil.forEach(elements,
                     (element) -> {
@@ -270,6 +270,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
             // unsupported feature: log in notification area
             elements = EMPTY_CONTENT;
             set(LOADED, true);
+            set(ERROR, true);
             sendWarningNotification(
                     NotificationGroup.METADATA,
                     "Failed to load {0}. Feature not supported: {1}",
@@ -292,8 +293,8 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     }
 
     @Override
-    public void updateChangeTimestamp() {
-        changeTimestamp = System.currentTimeMillis();
+    public void updateChangeSignature() {
+        changeSignature = (short) (System.currentTimeMillis() % 10000);
     }
 
 
