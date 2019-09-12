@@ -46,7 +46,7 @@ import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 public class DatabaseConsoleManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DatabaseConsoleManager";
 
-    private DatabaseConsoleManager(final Project project) {
+    private DatabaseConsoleManager(Project project) {
         super(project);
         EventUtil.subscribe(getProject(), this, SessionManagerListener.TOPIC, sessionManagerListener);
     }
@@ -59,17 +59,20 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
         showCreateRenameConsoleDialog(connectionHandler, null, consoleType);
     }
 
-    public void showRenameConsoleDialog(@NotNull DBConsoleVirtualFile consoleVirtualFile) {
+    public void showRenameConsoleDialog(@NotNull DBConsole console) {
+        ConnectionHandler connectionHandler = console.getConnectionHandler();
         showCreateRenameConsoleDialog(
-                consoleVirtualFile.getConnectionHandler(), consoleVirtualFile, consoleVirtualFile.getType());
+                connectionHandler,
+                console,
+                console.getConsoleType());
     }
 
 
-    private void showCreateRenameConsoleDialog(final ConnectionHandler connectionHandler, final DBConsoleVirtualFile consoleVirtualFile, final DBConsoleType consoleType) {
+    private void showCreateRenameConsoleDialog(ConnectionHandler connectionHandler, DBConsole console, DBConsoleType consoleType) {
         Dispatch.run(() -> {
-            CreateRenameConsoleDialog createConsoleDialog = consoleVirtualFile == null ?
+            CreateRenameConsoleDialog createConsoleDialog = console == null ?
                     new CreateRenameConsoleDialog(connectionHandler, consoleType) :
-                    new CreateRenameConsoleDialog(connectionHandler, consoleVirtualFile);
+                    new CreateRenameConsoleDialog(connectionHandler, console);
             createConsoleDialog.setModal(true);
             createConsoleDialog.show();
         });
@@ -92,15 +95,15 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
         reloadConsoles(connectionHandler);
     }
 
-    public void renameConsole(DBConsoleVirtualFile consoleFile, String newName) {
-        ConnectionHandler connectionHandler = consoleFile.getConnectionHandler();
-        String oldName = consoleFile.getName();
+    public void renameConsole(DBConsole console, String newName) {
+        ConnectionHandler connectionHandler = console.getConnectionHandler();
+        String oldName = console.getName();
         connectionHandler.getConsoleBundle().renameConsole(oldName, newName);
 
         reloadConsoles(connectionHandler);
     }
 
-    public void deleteConsole(final DBConsoleVirtualFile consoleFile) {
+    public void deleteConsole(DBConsole console) {
         Project project = getProject();
         MessageUtil.showQuestionDialog(
                 project,
@@ -110,9 +113,9 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                 MessageUtil.OPTIONS_YES_NO, 0,
                 (option) -> conditional(option == 0,
                         () -> {
-                            DatabaseFileManager.getInstance(project).closeFile(consoleFile);
-                            ConnectionHandler connectionHandler = consoleFile.getConnectionHandler();
-                            String fileName = consoleFile.getName();
+                            DatabaseFileManager.getInstance(project).closeFile(console.getVirtualFile());
+                            ConnectionHandler connectionHandler = console.getConnectionHandler();
+                            String fileName = console.getName();
                             connectionHandler.getConsoleBundle().removeConsole(fileName);
                             reloadConsoles(connectionHandler);
                         }));
