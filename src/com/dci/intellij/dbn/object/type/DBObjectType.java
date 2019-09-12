@@ -99,10 +99,13 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
     LABEL(DatabaseObjectTypeId.LABEL, "label", "labels", null, null, null, false),
     WINDOW(DatabaseObjectTypeId.WINDOW, "window", "windows", null, null, null, false),
 
-    NON_EXISTENT(DatabaseObjectTypeId.NON_EXISTENT, "non-existent", null, null, null, null, true),
+    CONSOLE(DatabaseObjectTypeId.CONSOLE, "console", "consoles", Icons.DBO_CONSOLE, null, Icons.DBO_CONSOLES, false),
     UNKNOWN(DatabaseObjectTypeId.UNKNOWN, "unknown", null, null, null, null, true),
     NONE(DatabaseObjectTypeId.NONE, "none", null, null, null, null, true),
     ANY(DatabaseObjectTypeId.ANY, "any", "dependencies", null, null, null, true),
+
+    // from oracle synonym to dropped object (??)
+    NON_EXISTENT(DatabaseObjectTypeId.NON_EXISTENT, "non-existent", null, null, null, null, true),
 
     INCOMING_DEPENDENCY(DatabaseObjectTypeId.INCOMING_DEPENDENCY, "incoming dependency", "incoming dependencies", null, null, null, true),
     OUTGOING_DEPENDENCY(DatabaseObjectTypeId.INCOMING_DEPENDENCY, "outgoing dependency", "outgoing dependencies", null, null, null, true);

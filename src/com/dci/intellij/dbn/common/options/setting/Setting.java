@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.options.setting;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.intellij.openapi.options.ConfigurationException;
 
 public abstract class Setting<T, E> {
@@ -21,7 +21,7 @@ public abstract class Setting<T, E> {
     }
 
     public boolean setValue(T value) {
-        boolean response = !CommonUtil.safeEqual(this.value, value);
+        boolean response = !Safe.equal(this.value, value);
         this.value = value;
         return response;
     }

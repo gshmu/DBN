@@ -6,8 +6,8 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentConfigLocalListener;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
-import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -99,7 +99,7 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
     @Override
     public void setValueAt(Object o, int rowIndex, int columnIndex) {
         Object actualValue = getValueAt(rowIndex, columnIndex);
-        if (!CommonUtil.safeEqual(actualValue, o)) {
+        if (!Safe.equal(actualValue, o)) {
             EnvironmentType environmentType = environmentTypes.get(rowIndex);
             if (columnIndex == 0) {
                 environmentType.setName((String) o);

@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.impl;
 
-import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.database.common.metadata.def.DBTypeAttributeMetadata;
@@ -108,12 +107,5 @@ public class DBTypeAttributeImpl extends DBObjectImpl<DBTypeAttributeMetadata> i
     public boolean isLeaf() {
         return true;
     }
-
-    @Override
-    @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return EMPTY_TREE_NODE_LIST;
-    }
-
 
 }

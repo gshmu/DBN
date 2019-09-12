@@ -24,7 +24,7 @@ public class SubcontentDependencyAdapterImpl extends BasicDependencyAdapter impl
     @Override
     public boolean isSourceContentReady() {
         DynamicContent sourceContent = getSourceContent();
-        return sourceContent.isLoaded() && !sourceContent.isLoading() && !sourceContent.isDirty();
+        return sourceContent.isLoaded() /*&& !sourceContent.isLoading() && !sourceContent.isDirty()*/;
     }
 
     @Override

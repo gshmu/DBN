@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.action.ConnectionActionGroup;
+import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.object.action.ObjectActionGroup;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
@@ -257,7 +258,8 @@ public class DatabaseBrowserTree extends DBNTree {
                 DBObjectBundle objectBundle = (DBObjectBundle) lastPathEntity;
                 ConnectionHandler connectionHandler = objectBundle.getConnectionHandler();
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
-                fileEditorManager.openFile(connectionHandler.getConsoleBundle().getDefaultConsole(), deliberate);
+                DBConsole defaultConsole = connectionHandler.getConsoleBundle().getDefaultConsole();
+                fileEditorManager.openFile(defaultConsole.getVirtualFile(), deliberate);
             }
         }
     }

@@ -8,8 +8,8 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionAction;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
-import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -49,8 +49,8 @@ public class SQLConsoleOpenAction extends GroupPopupAction {
         ConnectionHandler connectionHandler = getConnectionHandler(e);
         List<AnAction> actions = new ArrayList<>();
         if (connectionHandler != null) {
-            Collection<DBConsoleVirtualFile> consoles = connectionHandler.getConsoleBundle().getConsoles();
-            for (DBConsoleVirtualFile console : consoles) {
+            Collection<DBConsole> consoles = connectionHandler.getConsoleBundle().getConsoles();
+            for (DBConsole console : consoles) {
                 actions.add(new SelectConsoleAction(console));
             }
             actions.add(Separator.getInstance());
@@ -64,7 +64,7 @@ public class SQLConsoleOpenAction extends GroupPopupAction {
 
 
     private static class SelectConsoleAction extends AbstractConnectionAction{
-        private DBConsoleVirtualFile consoleVirtualFile;
+        private DBConsole console;
         private DBConsoleType consoleType;
 
         SelectConsoleAction(@NotNull ConnectionHandler connectionHandler, @NotNull DBConsoleType consoleType) {
@@ -72,19 +72,19 @@ public class SQLConsoleOpenAction extends GroupPopupAction {
             this.consoleType = consoleType;
         }
 
-        SelectConsoleAction(DBConsoleVirtualFile consoleVirtualFile) {
-            super(consoleVirtualFile.getName().replaceAll("_", "__"), null, consoleVirtualFile.getIcon(), consoleVirtualFile.getConnectionHandler());
-            this.consoleVirtualFile = consoleVirtualFile;
+        SelectConsoleAction(DBConsole console) {
+            super(console.getName().replaceAll("_", "__"), null, console.getIcon(), console.getConnectionHandler());
+            this.console = console;
         }
 
         @Override
         protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project, @NotNull ConnectionHandler connectionHandler) {
-            if (consoleVirtualFile == null) {
+            if (console == null) {
                 DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(project);
                 databaseConsoleManager.showCreateConsoleDialog(connectionHandler, consoleType);
             } else {
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
-                fileEditorManager.openFile(consoleVirtualFile, true);
+                fileEditorManager.openFile(console.getVirtualFile(), true);
             }
         }
     }

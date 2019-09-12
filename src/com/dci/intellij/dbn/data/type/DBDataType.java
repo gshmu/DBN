@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.type;
 
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.value.ComplexValue;
 import com.dci.intellij.dbn.database.common.metadata.def.DBDataTypeMetadata;
@@ -304,9 +304,9 @@ public class DBDataType {
 
         protected DBDataType find(List<DBDataType> cachedDataTypes, String name, DBType declaredType, DBNativeDataType nativeDataType) {
             for (DBDataType dataType : cachedDataTypes) {
-                if (CommonUtil.safeEqual(dataType.declaredType, declaredType) &&
-                        CommonUtil.safeEqual(dataType.nativeDataType, nativeDataType) &&
-                        CommonUtil.safeEqual(dataType.name, name) &&
+                if (Safe.equal(dataType.declaredType, declaredType) &&
+                        Safe.equal(dataType.nativeDataType, nativeDataType) &&
+                        Safe.equal(dataType.name, name) &&
                         dataType.length == length &&
                         dataType.precision == precision &&
                         dataType.scale == scale &&

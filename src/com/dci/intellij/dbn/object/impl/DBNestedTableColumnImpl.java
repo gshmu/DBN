@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.impl;
 
-import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.object.DBNestedTable;
 import com.dci.intellij.dbn.object.DBNestedTableColumn;
@@ -9,7 +8,6 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
-import java.util.List;
 
 public class DBNestedTableColumnImpl extends DBObjectImpl<DBObjectMetadata> implements DBNestedTableColumn {
 
@@ -41,11 +39,5 @@ public class DBNestedTableColumnImpl extends DBObjectImpl<DBObjectMetadata> impl
     @Override
     public boolean isLeaf() {
         return true;
-    }
-
-    @Override
-    @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return EMPTY_TREE_NODE_LIST;
     }
 }

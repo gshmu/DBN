@@ -10,10 +10,10 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleManager;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
-import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -112,8 +112,8 @@ public class SQLConsoleOpenAction extends DumbAwareProjectAction {
         public AnAction[] getChildren(AnActionEvent e) {
             ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
             List<AnAction> actions = new ArrayList<>();
-            Collection<DBConsoleVirtualFile> consoles = connectionHandler.getConsoleBundle().getConsoles();
-            for (DBConsoleVirtualFile console : consoles) {
+            Collection<DBConsole> consoles = connectionHandler.getConsoleBundle().getConsoles();
+            for (DBConsole console : consoles) {
                 actions.add(new SelectConsoleAction(console));
             }
             actions.add(Separator.getInstance());
@@ -126,9 +126,9 @@ public class SQLConsoleOpenAction extends DumbAwareProjectAction {
         }
     }
 
-    private class SelectConsoleAction extends AnAction{
+    private static class SelectConsoleAction extends AnAction{
         private ConnectionHandlerRef connectionHandlerRef;
-        private DBConsoleVirtualFile consoleVirtualFile;
+        private DBConsole console;
         private DBConsoleType consoleType;
 
 
@@ -138,27 +138,28 @@ public class SQLConsoleOpenAction extends DumbAwareProjectAction {
             this.consoleType = consoleType;
         }
 
-        SelectConsoleAction(DBConsoleVirtualFile consoleVirtualFile) {
-            super(consoleVirtualFile.getName().replaceAll("_", "__"), null, consoleVirtualFile.getIcon());
-            this.consoleVirtualFile = consoleVirtualFile;
+        SelectConsoleAction(DBConsole console) {
+            super(console.getName().replaceAll("_", "__"), null, console.getIcon());
+            this.console = console;
         }
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            if (consoleVirtualFile == null) {
+            if (console == null) {
                 ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
                 DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(connectionHandler.getProject());
                 databaseConsoleManager.showCreateConsoleDialog(connectionHandler, consoleType);
             } else {
-                ConnectionHandler connectionHandler = Failsafe.nn(consoleVirtualFile.getConnectionHandler());
+                ConnectionHandler connectionHandler = Failsafe.nn(console.getConnectionHandler());
                 FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
-                fileEditorManager.openFile(consoleVirtualFile, true);
+                fileEditorManager.openFile(console.getVirtualFile(), true);
             }
         }
     }
 
     private static void openSQLConsole(ConnectionHandler connectionHandler) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(connectionHandler.getProject());
-        fileEditorManager.openFile(connectionHandler.getConsoleBundle().getDefaultConsole(), true);
+        DBConsole defaultConsole = connectionHandler.getConsoleBundle().getDefaultConsole();
+        fileEditorManager.openFile(defaultConsole.getVirtualFile(), true);
     }
 }

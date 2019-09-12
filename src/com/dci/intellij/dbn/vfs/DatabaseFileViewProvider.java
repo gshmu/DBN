@@ -52,7 +52,7 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
                 if (virtualFile instanceof DBObjectVirtualFile) {
                     DBObjectVirtualFile objectFile = (DBObjectVirtualFile) virtualFile;
                     DBObject object = objectFile.getObject();
-                    return DBObjectPsiFacade.getPsiFile(object);
+                    return DBObjectPsiFacade.asPsiFile(object);
                 }
 
                 Language baseLanguage = getBaseLanguage();

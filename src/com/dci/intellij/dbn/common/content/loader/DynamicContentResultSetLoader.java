@@ -123,7 +123,7 @@ public abstract class DynamicContentResultSetLoader<
                                 dynamicContent.checkDisposed();
                                 if (element != null) {
                                     if (list == null) {
-                                        list = dynamicContent.is(DynamicContentStatus.CONCURRENT) ?
+                                        list = dynamicContent.isMutable() ?
                                                 CollectionUtil.createConcurrentList() :
                                                 new ArrayList<T>();
                                     }

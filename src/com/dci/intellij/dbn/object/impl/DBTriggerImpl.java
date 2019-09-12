@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.impl;
 
-import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.database.common.metadata.def.DBTriggerMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.DBDataset;
@@ -15,7 +14,6 @@ import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.properties.SimplePresentableProperty;
 import com.dci.intellij.dbn.object.type.DBTriggerEvent;
 import com.dci.intellij.dbn.object.type.DBTriggerType;
-import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -134,12 +132,6 @@ public abstract class DBTriggerImpl extends DBSchemaObjectImpl<DBTriggerMetadata
     @Override
     public boolean isLeaf() {
         return true;
-    }
-
-    @Override
-    @NotNull
-    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
-        return EMPTY_TREE_NODE_LIST;
     }
 
     @Override

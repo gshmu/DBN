@@ -787,7 +787,9 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     }
 
     @NotNull
-    public abstract List<BrowserTreeNode> buildAllPossibleTreeChildren();
+    public List<BrowserTreeNode> buildAllPossibleTreeChildren() {
+        return EMPTY_TREE_NODE_LIST;
+    }
 
     @Override
     public boolean isLeaf() {
@@ -902,7 +904,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     //@Override
     public PsiFile getContainingFile() throws PsiInvalidElementAccessException {
-        return DBObjectPsiFacade.getPsiFile(this);
+        return DBObjectPsiFacade.asPsiFile(this);
     }
 
     @Override

@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentCustomLoader;
-import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
@@ -33,10 +33,10 @@ public class DBObjectListFromRelationListLoader<
         DBObjectRelation objectRelation = (DBObjectRelation) sourceElement;
         DBObject object = (DBObject) objectList.getParent();
 
-        if (CommonUtil.safeEqual(object, objectRelation.getSourceObject())) {
+        if (Safe.equal(object, objectRelation.getSourceObject())) {
             return (T) objectRelation.getTargetObject();
         }
-        if (CommonUtil.safeEqual(object, objectRelation.getTargetObject())) {
+        if (Safe.equal(object, objectRelation.getTargetObject())) {
             return (T) objectRelation.getSourceObject();
         }
 
