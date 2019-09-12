@@ -7,8 +7,8 @@ import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.vfs.DBConsoleType;
-import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
@@ -26,10 +26,10 @@ public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDial
     private JLabel errorLabel;
 
     private ConnectionHandlerRef connectionHandlerRef;
-    private DBConsoleVirtualFile console;
+    private DBConsole console;
     private DBConsoleType consoleType;
 
-    public CreateRenameConsoleForm(final CreateRenameConsoleDialog parentComponent, @NotNull ConnectionHandler connectionHandler, @Nullable final DBConsoleVirtualFile console, DBConsoleType consoleType) {
+    CreateRenameConsoleForm(final CreateRenameConsoleDialog parentComponent, @NotNull ConnectionHandler connectionHandler, @Nullable final DBConsole console, DBConsoleType consoleType) {
         super(parentComponent);
         this.connectionHandlerRef = connectionHandler.getRef();
         this.console = console;
@@ -60,7 +60,7 @@ public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDial
 
         consoleNameTextField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
-            protected void textChanged(DocumentEvent e) {
+            protected void textChanged(@NotNull DocumentEvent e) {
                 String errorText = null;
                 String text = StringUtil.trim(consoleNameTextField.getText());
 
@@ -92,14 +92,14 @@ public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDial
     }
 
     public DBConsoleType getConsoleType() {
-        return console == null ? consoleType : console.getType();
+        return console == null ? consoleType : console.getConsoleType();
     }
 
     public ConnectionHandler getConnectionHandler() {
         return connectionHandlerRef.ensure();
     }
 
-    public DBConsoleVirtualFile getConsole() {
+    public DBConsole getConsole() {
         return console;
     }
 

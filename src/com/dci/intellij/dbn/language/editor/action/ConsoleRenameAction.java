@@ -23,7 +23,7 @@ public class ConsoleRenameAction extends DumbAwareProjectAction {
         if (virtualFile instanceof DBConsoleVirtualFile) {
             DBConsoleVirtualFile consoleVirtualFile = (DBConsoleVirtualFile) virtualFile;
             DatabaseConsoleManager consoleManager = DatabaseConsoleManager.getInstance(project);
-            consoleManager.showRenameConsoleDialog(consoleVirtualFile);
+            consoleManager.showRenameConsoleDialog(consoleVirtualFile.getConsole());
         }
     }
 
