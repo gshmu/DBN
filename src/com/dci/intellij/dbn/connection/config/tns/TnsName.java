@@ -13,8 +13,11 @@ public class TnsName implements Comparable<TnsName> {
     private String sid;
     private String serviceName;
     private String globalName;
+    private String failover;
+    private String failoverType;
+    private String failoverMethod;
 
-    public TnsName(
+    TnsName(
             String name,
             String protocol,
             String host,
@@ -22,7 +25,10 @@ public class TnsName implements Comparable<TnsName> {
             String server,
             String sid,
             String serviceName,
-            String globalName) {
+            String globalName,
+            String failover,
+            String failoverType,
+            String failoverMethod) {
         this.name = name;
         this.protocol = protocol;
         this.host = host;
@@ -31,6 +37,9 @@ public class TnsName implements Comparable<TnsName> {
         this.sid = sid;
         this.serviceName = serviceName;
         this.globalName = globalName;
+        this.failover = failover;
+        this.failoverType = failoverType;
+        this.failoverMethod = failoverMethod;
     }
 
     public String getName() {
@@ -63,6 +72,18 @@ public class TnsName implements Comparable<TnsName> {
 
     public String getGlobalName() {
         return globalName;
+    }
+
+    public String getFailover() {
+        return failover;
+    }
+
+    public String getFailoverType() {
+        return failoverType;
+    }
+
+    public String getFailoverMethod() {
+        return failoverMethod;
     }
 
     public String toString() {

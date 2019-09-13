@@ -39,18 +39,32 @@ public class TnsNamesParser {
 
         int start = 0;
         while (matcher.find(start)) {
-            String schema       = matcher.group("schema");
-            String protocol     = nvln(matcher.group("protocol"), matcher.group("lprotocol"));
-            String host         = nvln(matcher.group("host"), matcher.group("lhost"));
-            String port         = nvln(matcher.group("port"), matcher.group("lport"));
-            String server       = matcher.group("server");
-            String sid          = matcher.group("sid");
-            String serviceName = matcher.group("servicename");
-            String globalName  = matcher.group("globalname");
+            String schema         = matcher.group("schema");
+            String protocol       = nvln(matcher.group("protocol"), matcher.group("lprotocol"));
+            String host           = nvln(matcher.group("host"), matcher.group("lhost"));
+            String port           = nvln(matcher.group("port"), matcher.group("lport"));
+            String server         = matcher.group("server");
+            String sid            = matcher.group("sid");
+            String serviceName    = matcher.group("servicename");
+            String globalName     = matcher.group("globalname");
+            String failover   = matcher.group("failover");
+            String failoverType   = matcher.group("failovertype");
+            String failoverMethod = matcher.group("failovermethod");
             start = matcher.end();
 
             if (StringUtil.isNotEmpty(schema)) {
-                TnsName tnsName = new TnsName(schema, protocol, host, port, server, sid, serviceName, globalName);
+                TnsName tnsName = new TnsName(
+                        schema,
+                        protocol,
+                        host,
+                        port,
+                        server,
+                        sid,
+                        serviceName,
+                        globalName,
+                        failover,
+                        failoverType,
+                        failoverMethod);
                 tnsNames.add(tnsName);
             }
        }

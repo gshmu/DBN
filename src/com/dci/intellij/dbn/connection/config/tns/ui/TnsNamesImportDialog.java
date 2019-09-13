@@ -44,11 +44,6 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
     }
 
     @Override
-    protected String getDimensionServiceKey() {
-        return null;
-    }
-
-    @Override
     @NotNull
     protected final Action[] createActions() {
         return new Action[]{
