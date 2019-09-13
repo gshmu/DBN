@@ -1,20 +1,21 @@
 package com.dci.intellij.dbn.connection.config.tns;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import oracle.net.jdbc.nl.NLException;
+import org.apache.commons.io.FileUtils;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Stack;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.dci.intellij.dbn.common.util.CommonUtil.nvln;
 
 public class TnsNamesParser {
     public static final FileChooserDescriptor FILE_CHOOSER_DESCRIPTOR = new FileChooserDescriptor(true, false, false, false, false, false).
@@ -28,160 +29,69 @@ public class TnsNamesParser {
                 }
             });
 
-    public static TnsName[] parse(File file) throws Exception {
-        // Begin by treating the file as separate lines to throw out the comments
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        String line;
-        StringBuilder tnsText = new StringBuilder();
-        while ((line = reader.readLine()) != null) {
-            line = line.trim();
-            if (!line.startsWith("#") && !line.equals("")) {
-                tnsText.append(line);
+
+    public static List<TnsName> parse(File file) throws Exception {
+        List<TnsName> tnsNames = new ArrayList<>();
+        String tnsContent = FileUtils.readFileToString(file, Charset.defaultCharset());
+
+        Pattern pattern = TnsNamesPattern.INSTANCE.get();
+        Matcher matcher = pattern.matcher(tnsContent);
+
+        int start = 0;
+        while (matcher.find(start)) {
+            String schema       = matcher.group("schema");
+            String protocol     = nvln(matcher.group("protocol"), matcher.group("lprotocol"));
+            String host         = nvln(matcher.group("host"), matcher.group("lhost"));
+            String port         = nvln(matcher.group("port"), matcher.group("lport"));
+            String server       = matcher.group("server");
+            String sid          = matcher.group("sid");
+            String serviceName = matcher.group("servicename");
+            String globalName  = matcher.group("globalname");
+            start = matcher.end();
+
+            if (StringUtil.isNotEmpty(schema)) {
+                TnsName tnsName = new TnsName(schema, protocol, host, port, server, sid, serviceName, globalName);
+                tnsNames.add(tnsName);
             }
-        }
-
-        // Now switch to a streaming parser to get the actual data
-        Map tnsNamesMap = new HashMap();
-
-        // used to ascertain whether we are awaiting the RHS of an =
-        boolean parsingValue = false;
-        // used to indicate that we have finished a block and should either start
-        // a new sibling block, or start a new tns block
-        boolean endBlock = false;
-        StringBuilder currentTnsKey = new StringBuilder();
-        StringBuilder currentTnsValue = new StringBuilder();
-        Map currentMap = tnsNamesMap;
-        char[] tnsChars = tnsText.toString().toCharArray();
-        Stack<Map> mapStack = new Stack<Map>();
-        for (char ch : tnsChars) {
-            switch (ch) {
-                case ' ': {
-                    break;
-                }
-                case '=': {
-                    parsingValue = true;
-                    break;
-                }
-                case '(': {
-                    if (endBlock) {
-                        endBlock = false;
-                    }
-                    if (parsingValue) {
-                        Map newMap = new HashMap();
-                        currentMap.put(currentTnsKey.toString().toUpperCase(), newMap);
-                        currentTnsKey.setLength(0);
-                        mapStack.push(currentMap);
-                        currentMap = newMap;
-                        parsingValue = false;
-                    }
-                    break;
-                }
-                case ')': {
-                    if (parsingValue) {
-                        currentMap.put(currentTnsKey.toString().toUpperCase(), currentTnsValue.toString());
-                        currentTnsKey.setLength(0);
-                        currentTnsValue.setLength(0);
-                        parsingValue = false;
-                        endBlock = true;
-                    } else {
-                        currentMap = mapStack.pop();
-                    }
-                    break;
-                }
-                default: {
-                    if (parsingValue) {
-                        currentTnsValue.append(ch);
-                    } else {
-                        if (endBlock) {
-                            currentMap = mapStack.pop();
-                            endBlock = false;
-                        }
-                        currentTnsKey.append(ch);
-                    }
-                    break;
-                }
-            }
-        }
-
-        TnsName[] tnsNames = new TnsName[tnsNamesMap.size()];
-
-        Iterator iterator = tnsNamesMap.keySet().iterator();
-        int i = 0;
-        while (iterator.hasNext()) {
-            String name = (String) iterator.next();
-            Map details = (Map) tnsNamesMap.get(name);
-            tnsNames[i] = TnsName.createTnsName(name, details);
-            i++;
-        }
-
+       }
         return tnsNames;
     }
 
 
     public static class TNSNamesList {
-
         public static void main(String[] args) throws NLException, IOException {
-            //String value = "[._A-Z0-9]+";
-            String value = "[^\\s\\(\\)=]+";
-            String protocol = block(keyValue("PROTOCOL", value, "protocol"));
-            String host = block(keyValue("HOST", value, "host"));
-            String port = block(keyValue("PORT", value, "port"));
 
-            String sid = block(keyValue("SID", value, "sid"));
-            String server = block(keyValue("SERVER", value, "server"));
-            String serviceName = block(keyValue("SERVICE_NAME", value, "service_name"));
-            String globalName = block(keyValue("GLOBAL_NAME", value, "global_name"));
-            String any = block(keyValue("[_A-Z]+", value));
-
-            String address = block(keyValue("ADDRESS", iteration(protocol, host, port/*, any*/)));
-            String addressList = block(keyValue("ADDRESS_LIST", iteration(address)));
-            String connectData = block(keyValue("CONNECT_DATA", iteration(sid, server, serviceName, globalName/*, any*/)));
-            String description = block(keyValue("DESCRIPTION", iteration(address, addressList, connectData)));
-            String block = keyValue(group("schema", value), description);
-            String group = "^" + block + "$";
-
-            Pattern pattern = Pattern.compile(group, Pattern.CASE_INSENSITIVE);
-            Matcher matcher = pattern.matcher(TNS);
+            Pattern pattern = TnsNamesPattern.INSTANCE.get();
+            Matcher matcher = pattern.matcher(TNS1);
 
             int start = 0;
             while (matcher.find(start)) {
-                System.out.println(matcher.group("schema"));
+                int count = matcher.groupCount();
+/*
+                for (int i=0; i<count; i++) {
+                    System.out.println("------------------------");
+                    System.out.println(matcher.group(i));
+                }
+*/
+                System.out.println("SCHEMA:       " + matcher.group("schema"));
+                System.out.println("PROTOCOL:     " + matcher.group("protocol"));
+                System.out.println("HOST:         " + matcher.group("host"));
+                System.out.println("PORT:         " + matcher.group("port"));
+                System.out.println("PROTOCOL:     " + matcher.group("lprotocol"));
+                System.out.println("HOST:         " + matcher.group("lhost"));
+                System.out.println("PORT:         " + matcher.group("lport"));
+                System.out.println("SERVER:       " + matcher.group("server"));
+                System.out.println("SID:          " + matcher.group("sid"));
+                System.out.println("SERVICE_NAME: " + matcher.group("servicename"));
+                System.out.println("GLOBAL_NAME:  " + matcher.group("globalname"));
+                System.out.println("------------------------\n");
                 start = matcher.end();
-                System.out.println(matcher.end());
             }
 
             System.out.println(matcher.matches());
         }
 
-        private static String block(String content) {
-            return "\\(\\s*" + content + "\\s*\\)";
-        }
 
-        private static String keyValue(String key, String value) {
-            return keyValue(key, value, null);
-        }
-
-        private static String keyValue(String key, String value, String group) {
-            return group == null ?
-                    key + "\\s*=\\s*" + value:
-                    key + "\\s*=\\s*" + group(group, value);
-        }
-
-        private static String group(String name, String content) {
-            return "(?<" + name + ">" + content + ")";
-        }
-
-        private static String iteration(String ... contents) {
-            StringBuilder result = new StringBuilder();
-            for (String content : contents) {
-                if (result.length() > 0) {
-                    result.append("|");
-                }
-                result.append(content);
-            }
-
-            return "[" + result + "]*";
-        }
     }
 
     private static String TNS = "SOMESCHEMA =\n" +
@@ -217,6 +127,7 @@ public class TnsNamesParser {
             "  (DESCRIPTION =\n" +
             "    (ADDRESS_LIST =\n" +
             "      (ADDRESS = (PROTOCOL = TCP)(HOST = LOCALHOST)(PORT = 1234))\n" +
+            "      (ADDRESS = (PROTOCOL = TCP)(HOST = LOCALHOST1)(PORT = 12345))\n" +
             "    )\n" +
             "    (CONNECT_DATA =\n" +
             "      (SERVICE_NAME = LOCAL)\n" +
@@ -228,6 +139,9 @@ public class TnsNamesParser {
             "    (CONNECT_DATA =\n" +
             "      (SID = APYREQ1A)\n" +
             "      (GLOBAL_NAME = APYREQ1A.EQ)\n" +
+            "      (GLOBAL_ABC = APYREQ1A.EQ)\n" +
             "    )\n" +
             "  )";
+
+    private static String TNSBLA = "SOME_NAME_OF_AN_ENTRY=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=HOST_NAME)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=DB_NAME)))";
 }

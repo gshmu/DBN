@@ -11,8 +11,10 @@ import com.dci.intellij.dbn.common.util.ClipboardUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigListCellRenderer;
 import com.dci.intellij.dbn.connection.config.ConnectionConfigType;
@@ -309,17 +311,17 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         }
     }
 
-    public void importTnsNames(TnsName[] tnsNames) {
+    public void importTnsNames(List<TnsName> tnsNames) {
         ConnectionBundleSettings configuration = getConfiguration();
         ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
         int index = connectionsList.getModel().getSize();
         List<Integer> selectedIndexes = new ArrayList<Integer>();
 
         for (TnsName tnsName : tnsNames) {
-            ConnectionSettings clone = new ConnectionSettings(configuration);
-            clone.setNew(true);
-            clone.generateNewId();
-            ConnectionDatabaseSettings databaseSettings = clone.getDatabaseSettings();
+            ConnectionSettings connectionSettings = new ConnectionSettings(configuration, DatabaseType.ORACLE, ConnectionConfigType.BASIC);
+            connectionSettings.setNew(true);
+            connectionSettings.generateNewId();
+            ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
             String name = tnsName.getName();
             while (model.getConnectionConfig(name) != null) {
                 name = NamingUtil.getNextNumberedName(name, true);
@@ -328,12 +330,22 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             DatabaseInfo databaseInfo = databaseSettings.getDatabaseInfo();
             databaseInfo.setHost(tnsName.getHost());
             databaseInfo.setPort(tnsName.getPort());
-            databaseInfo.setDatabase(tnsName.getSid());
+
+
+            String sid = tnsName.getSid();
+            String service = tnsName.getServiceName();
+            if (StringUtil.isNotEmpty(sid)) {
+                databaseInfo.setDatabase(sid);
+                databaseInfo.setUrlType(DatabaseUrlType.SID);
+            } else if (StringUtil.isNotEmpty(service)) {
+                databaseInfo.setDatabase(service);
+                databaseInfo.setUrlType(DatabaseUrlType.SERVICE);
+            }
             databaseSettings.setName(name);
             databaseSettings.setDatabaseType(DatabaseType.ORACLE);
             databaseSettings.setDriverSource(DriverSource.BUILTIN);
 
-            model.add(index, clone);
+            model.add(index, connectionSettings);
             selectedIndexes.add(index);
             configuration.setModified(true);
             index++;
