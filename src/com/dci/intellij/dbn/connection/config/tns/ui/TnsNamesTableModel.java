@@ -16,13 +16,13 @@ public class TnsNamesTableModel extends DisposableBase implements DBNTableModel 
     private List<TnsName> tnsNames;
     private Set<TableModelListener> listeners = new HashSet<>();
 
-    public TnsNamesTableModel(List<TnsName> tnsNames) {
+    TnsNamesTableModel(List<TnsName> tnsNames) {
         super();
         Collections.sort(tnsNames);
         this.tnsNames = tnsNames;
     }
 
-    public List<TnsName> getTnsNames() {
+    List<TnsName> getTnsNames() {
         return tnsNames;
     }
 
@@ -33,7 +33,7 @@ public class TnsNamesTableModel extends DisposableBase implements DBNTableModel 
 
     @Override
     public int getColumnCount() {
-        return 7;
+        return 10;
     }
 
     @Override
@@ -46,6 +46,9 @@ public class TnsNamesTableModel extends DisposableBase implements DBNTableModel 
             case 4: return "SID";
             case 5: return "Service Name";
             case 6: return "Global Name";
+            case 7: return "Failover";
+            case 8: return "Failover Type";
+            case 9: return "Failover Method";
             default: return "";
         }
     }
@@ -72,6 +75,9 @@ public class TnsNamesTableModel extends DisposableBase implements DBNTableModel 
             case 4: return tnsName.getSid();
             case 5: return tnsName.getServiceName();
             case 6: return tnsName.getGlobalName();
+            case 7: return tnsName.getFailover();
+            case 8: return tnsName.getFailoverType();
+            case 9: return tnsName.getFailoverMethod();
             default: return "";
         }
     }
