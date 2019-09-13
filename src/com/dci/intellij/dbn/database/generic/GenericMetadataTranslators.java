@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.database.generic;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.Unsafe;
@@ -23,8 +24,8 @@ import static java.sql.DatabaseMetaData.*;
 public interface GenericMetadataTranslators {
     Logger LOGGER = LoggerFactory.createLogger();
 
-    Latent<Map<Integer, String>> DATA_TYPE_NAMES =
-            Latent.basic(
+    RuntimeLatent<Map<Integer, String>> DATA_TYPE_NAMES =
+            Latent.runtime(
                     () -> Unsafe.call(() -> {
                         Map<Integer, String> result = new HashMap<>();
                         for (Field field : Types.class.getFields()) {

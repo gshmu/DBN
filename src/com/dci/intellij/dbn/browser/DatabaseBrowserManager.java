@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -67,7 +68,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     private BooleanSetting autoscrollToEditor   = new BooleanSetting("autoscroll-to-editor", false);
     private BooleanSetting showObjectProperties = new BooleanSetting("show-object-properties", true);
     public static final ThreadLocal<Boolean> AUTOSCROLL_FROM_EDITOR = new ThreadLocal<>();
-    private Latent<BrowserToolWindowForm> toolWindowForm =
+    private RuntimeLatent<BrowserToolWindowForm> toolWindowForm =
             Latent.disposable(this, () -> new BrowserToolWindowForm(getProject()));
 
     private DatabaseBrowserManager(Project project) {

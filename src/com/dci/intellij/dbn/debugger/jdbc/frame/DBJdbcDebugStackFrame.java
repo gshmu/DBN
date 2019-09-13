@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.debugger.jdbc.frame;
 
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.database.common.debug.DebuggerRuntimeInfo;
 import com.dci.intellij.dbn.debugger.common.frame.DBDebugSourcePosition;
 import com.dci.intellij.dbn.debugger.common.frame.DBDebugStackFrame;
@@ -19,7 +20,8 @@ import java.util.Set;
 
 public class DBJdbcDebugStackFrame extends DBDebugStackFrame<DBJdbcDebugProcess, DBJdbcDebugValue> {
     private DebuggerRuntimeInfo runtimeInfo;
-    private Latent<DBJdbcDebuggerEvaluator> evaluator = Latent.basic(() -> new DBJdbcDebuggerEvaluator(DBJdbcDebugStackFrame.this));
+    private RuntimeLatent<DBJdbcDebuggerEvaluator> evaluator =
+            Latent.runtime(() -> new DBJdbcDebuggerEvaluator(DBJdbcDebugStackFrame.this));
 
     DBJdbcDebugStackFrame(DBJdbcDebugProcess debugProcess, DebuggerRuntimeInfo runtimeInfo, int index) {
         super(debugProcess, index);

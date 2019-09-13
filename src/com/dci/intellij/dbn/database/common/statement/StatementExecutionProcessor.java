@@ -5,6 +5,8 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNPreparedStatement;
+import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.database.DatabaseActivityTrace;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
 import com.dci.intellij.dbn.database.DatabaseInterface;
@@ -15,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.CallableStatement;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -122,7 +123,7 @@ public class StatementExecutionProcessor {
                     timeout,
                     statementRef,
                     () -> {
-                        Statement statement = null;
+                        DBNStatement statement = null;
                         ResultSet resultSet = null;
                         String statementText = null;
                         try {
@@ -132,7 +133,7 @@ public class StatementExecutionProcessor {
                                 LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
                             }
                             if (prepared) {
-                                PreparedStatement preparedStatement = statementDefinition.prepareStatement(connection, arguments);
+                                DBNPreparedStatement preparedStatement = statementDefinition.prepareStatement(connection, arguments);
                                 statement = preparedStatement;
                                 preparedStatement.setQueryTimeout(timeout);
                                 resultSet = preparedStatement.executeQuery();
@@ -171,7 +172,7 @@ public class StatementExecutionProcessor {
                             throw exception;
                         } finally {
                             activityTrace.release();
-                            if (resultSet == null) {
+                            if (resultSet == null && statement != null && !statement.isCached()) {
                                 ResourceUtil.close(statement);
                             }
                         }

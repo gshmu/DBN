@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.lookup.IterationElementTypeLookupCache;
@@ -25,7 +26,7 @@ public class IterationElementType extends ElementTypeBase {
     private int[] elementsCountVariants;
     private int minIterations;
 
-    private Latent<Boolean> followedBySeparator = Latent.basic(() -> {
+    private RuntimeLatent<Boolean> followedBySeparator = Latent.runtime(() -> {
         if (separatorTokens != null) {
             Set<TokenType> nextPossibleTokens = lookupCache.getNextPossibleTokens();
             for (TokenElementType separatorToken : separatorTokens) {

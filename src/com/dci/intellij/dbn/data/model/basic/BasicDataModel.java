@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableListImpl;
 import com.dci.intellij.dbn.common.locale.Formatter;
@@ -49,8 +50,11 @@ public class BasicDataModel<
     private List<R> rows = new ArrayList<>();
     private ProjectRef projectRef;
     private Filter<R> filter;
-    private Latent<Formatter> formatter;
-    private boolean isEnvironmentReadonly;
+    private boolean environmentReadonly;
+    private RuntimeLatent<Formatter> formatter;
+    private RuntimeLatent<BasicDataGutterModel> listModel = Latent.disposable(this, () -> new BasicDataGutterModel(BasicDataModel.this));
+    private RuntimeLatent<DataSearchResult> searchResult = Latent.disposable(this, () -> new DataSearchResult());
+
 
     private RegionalSettingsListener regionalSettingsListener = new RegionalSettingsListener() {
         @Override
@@ -63,8 +67,6 @@ public class BasicDataModel<
         }
     };
 
-    private Latent<BasicDataGutterModel> listModel = Latent.disposable(this, () -> new BasicDataGutterModel(BasicDataModel.this));
-    private Latent<DataSearchResult> searchResult = Latent.disposable(this, () -> new DataSearchResult());
 
     public BasicDataModel(Project project) {
         this.projectRef = ProjectRef.from(project);
@@ -78,11 +80,11 @@ public class BasicDataModel<
     }
 
     public boolean isEnvironmentReadonly() {
-        return isEnvironmentReadonly;
+        return environmentReadonly;
     }
 
     public void setEnvironmentReadonly(boolean environmentReadonly) {
-        isEnvironmentReadonly = environmentReadonly;
+        this.environmentReadonly = environmentReadonly;
     }
 
     @Override

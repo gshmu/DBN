@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.config;
 
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -30,7 +31,7 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
     private static final Filter<DBSchema> EMPTY_SCHEMAS_FILTER = schema -> !schema.isEmptySchema();
     private static final Filter<DBColumn> PSEUDO_COLUMNS_FILTER = column -> !column.isHidden();
 
-    private Latent<Filter<DBSchema>> schemaFilter = Latent.mutable(
+    private RuntimeLatent<Filter<DBSchema>> schemaFilter = Latent.mutable(
             () -> hideEmptySchemas,
             () -> {
                 Filter<DBObject> filter = objectNameFilterSettings.getFilter(DBObjectType.SCHEMA);
@@ -47,7 +48,7 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
                 }
             });
 
-    private Latent<Filter<DBColumn>> columnFilter = Latent.mutable(
+    private RuntimeLatent<Filter<DBColumn>> columnFilter = Latent.mutable(
         () -> hidePseudoColumns,
         () -> {
             Filter<DBObject> filter = objectNameFilterSettings.getFilter(DBObjectType.COLUMN);

@@ -45,7 +45,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     private JPanel editorPanel;
     private SessionBrowserTable editorTable;
 
-    private Latent<DataSearchComponent> dataSearchComponent = Latent.disposable(this, () -> {
+    private Latent<DataSearchComponent, RuntimeException> dataSearchComponent = Latent.disposable(this, () -> {
         DataSearchComponent dataSearchComponent = new DataSearchComponent(SessionBrowserForm.this);
         searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
         DataManager.registerDataProvider(dataSearchComponent.getSearchField(), this);

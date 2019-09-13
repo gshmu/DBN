@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 public abstract class ElementTypeLookupCache<T extends ElementTypeBase>/* implements ElementTypeLookupCache<T>*/ {
-    private Latent<Set<TokenType>> nextPossibleTokens = Latent.basic(() -> computeNextPossibleTokens());
+    private RuntimeLatent<Set<TokenType>> nextPossibleTokens = Latent.runtime(() -> computeNextPossibleTokens());
     public final T elementType;
 
     ElementTypeLookupCache(T elementType) {

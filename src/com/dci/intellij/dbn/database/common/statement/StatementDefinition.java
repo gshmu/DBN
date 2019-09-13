@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.database.common.statement;
 
 import com.dci.intellij.dbn.common.util.TransientId;
+import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
+import com.dci.intellij.dbn.connection.jdbc.DBNPreparedStatement;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,8 +59,8 @@ public class StatementDefinition {
         return hasFallback;
     }
 
-    PreparedStatement prepareStatement(Connection connection, Object[] arguments) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(statementText);
+    DBNPreparedStatement prepareStatement(DBNConnection connection, Object[] arguments) throws SQLException {
+        DBNPreparedStatement preparedStatement = connection.prepareStatementCached(statementText);
         for (int i = 0; i < placeholderIndexes.length; i++) {
             Integer argumentIndex = placeholderIndexes[i];
             Object argumentValue = arguments[argumentIndex];

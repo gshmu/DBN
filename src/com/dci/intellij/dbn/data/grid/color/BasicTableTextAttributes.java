@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.grid.color;
 
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
 import com.intellij.openapi.editor.colors.EditorColors;
@@ -43,7 +44,7 @@ public class BasicTableTextAttributes extends CommonUtil implements DataGridText
 
     private Color caretRowBgColor;
 
-    private static final Latent<BasicTableTextAttributes> INSTANCE = Latent.laf(
+    private static final RuntimeLatent<BasicTableTextAttributes> INSTANCE = Latent.laf(
             () -> new BasicTableTextAttributes());
 
     private BasicTableTextAttributes() {

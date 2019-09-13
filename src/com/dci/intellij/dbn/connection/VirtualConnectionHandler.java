@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
@@ -51,7 +52,7 @@ public class VirtualConnectionHandler extends DisposableBase implements Connecti
     private ConnectionInstructions instructions = new ConnectionInstructions();
     private DatabaseCompatibility compatibility = DatabaseCompatibility.noFeatures();
 
-    private Latent<ConnectionSettings> connectionSettings = Latent.basic(() -> {
+    private RuntimeLatent<ConnectionSettings> connectionSettings = Latent.runtime(() -> {
         ConnectionBundleSettings connectionBundleSettings = ConnectionBundleSettings.getInstance(getProject());
         return new ConnectionSettings(connectionBundleSettings);
     });
