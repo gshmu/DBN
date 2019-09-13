@@ -126,7 +126,7 @@ public class DBNConnection extends DBNConnectionBase {
         try {
             return cachedStatements.get(sql);
         } finally {
-            System.out.println(getName() + " - " + cachedStatements.hitCount());
+            //System.out.println(getName() + " - " + cachedStatements.hitCount());
         }
     }
 
