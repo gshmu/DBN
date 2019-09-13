@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.options;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class DefaultProjectSettingsManager implements ApplicationComponent, PersistentStateComponent<Element> {
-    private Latent<ProjectSettings> defaultProjectSettings = Latent.basic(() -> {
+    private RuntimeLatent<ProjectSettings> defaultProjectSettings = Latent.runtime(() -> {
         ProjectManager projectManager = ProjectManager.getInstance();
         Project defaultProject = projectManager.getDefaultProject();
         return new ProjectSettings(defaultProject);

@@ -58,7 +58,7 @@ public class DBNResultSet extends DBNResource<ResultSet> implements ResultSet, C
         } finally {
             if (this.statement != null) {
                 DBNStatement statement = this.statement.get();
-                if (statement != null) {
+                if (statement != null && !statement.isCached()) {
                     statement.close();
                 }
             }

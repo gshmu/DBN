@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.data.options;
 
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataEditorQualifiedEditorSettings extends BasicConfiguration<DataEditorSettings, DataEditorQualifiedEditorSettingsForm> {
-    private Latent<List<TextContentType>> contentTypes = Latent.basic(() -> {
+    private RuntimeLatent<List<TextContentType>> contentTypes = Latent.runtime(() -> {
         List<TextContentType> contentTypes = new ArrayList<>();
         createContentType("Text", "PLAIN_TEXT", contentTypes);
         createContentType("Properties", "Properties", contentTypes);

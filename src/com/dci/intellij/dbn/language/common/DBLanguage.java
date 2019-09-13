@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
@@ -16,8 +17,8 @@ import org.jetbrains.annotations.NotNull;
 public abstract class DBLanguage<D extends DBLanguageDialect> extends Language implements DBFileElementTypeProvider {
 
     private SharedTokenTypeBundle sharedTokenTypes;
-    private Latent<D[]> languageDialects = Latent.basic(() -> createLanguageDialects());
-    private Latent<IFileElementType> fileElementType = Latent.basic(() -> createFileElementType(DBLanguage.this));
+    private RuntimeLatent<D[]> languageDialects = Latent.runtime(() -> createLanguageDialects());
+    private RuntimeLatent<IFileElementType> fileElementType = Latent.runtime(() -> createFileElementType(DBLanguage.this));
 
     protected DBLanguage(final @NonNls String id, final @NonNls String... mimeTypes){
         super(id, mimeTypes);

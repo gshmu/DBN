@@ -77,7 +77,8 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     private boolean loadingChildren;
     private WeakRef<BasePsiElement> relevantPsiElement;
     private DBObjectPsiFacade psiFacade;
-    private MapLatent<DBLanguage, ObjectLookupItemBuilder> lookupItemBuilder = MapLatent.create(key -> new ObjectLookupItemBuilder(getRef(), key));
+    private MapLatent<DBLanguage, ObjectLookupItemBuilder, RuntimeException> lookupItemBuilder =
+            MapLatent.create(key -> new ObjectLookupItemBuilder(getRef(), key));
 
     private BasicProperty<Boolean> valid = new BasicProperty<Boolean>(true) {
         @Override

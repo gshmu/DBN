@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.sql.dialect;
 
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
@@ -12,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class SQLLanguageDialect extends DBLanguageDialect {
-    private Latent<ChameleonElementType> psqlChameleonElementType = Latent.basic(() -> {
-
+    private RuntimeLatent<ChameleonElementType> psqlChameleonElementType = Latent.runtime(() -> {
         DBLanguageDialectIdentifier chameleonDialectIdentifier = getChameleonDialectIdentifier();
         if (chameleonDialectIdentifier != null) {
             DBLanguageDialect plsqlDialect = DBLanguageDialect.getLanguageDialect(chameleonDialectIdentifier);

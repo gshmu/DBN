@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.debugger.jdwp.frame;
 
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
 import com.intellij.xdebugger.frame.XSuspendContext;
 
@@ -8,7 +9,7 @@ public class DBJdwpDebugSuspendContext extends XSuspendContext{
     private DBJdwpDebugProcess debugProcess;
     private XSuspendContext underlyingContext;
 
-    private Latent<DBJdwpDebugExecutionStack> executionStack = Latent.basic(() -> new DBJdwpDebugExecutionStack(DBJdwpDebugSuspendContext.this));
+    private RuntimeLatent<DBJdwpDebugExecutionStack> executionStack = Latent.runtime(() -> new DBJdwpDebugExecutionStack(DBJdwpDebugSuspendContext.this));
 
     public DBJdwpDebugSuspendContext(DBJdwpDebugProcess debugProcess, XSuspendContext underlyingContext) {
         this.debugProcess = debugProcess;

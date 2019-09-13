@@ -35,7 +35,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
     private Set<ValueSelectorListener<T>> listeners = new HashSet<ValueSelectorListener<T>>();
     private ListPopup popup;
     private PresentableFactory<T> valueFactory;
-    private Loader<List<T>> valueLoader;
+    private Loader<List<T>, RuntimeException> valueLoader;
 
     private PropertyHolder<ValueSelectorOption> options = new PropertyHolderImpl<ValueSelectorOption>() {
         @Override
@@ -137,7 +137,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
         this.valueFactory = valueFactory;
     }
 
-    public void setValueLoader(Loader<List<T>> valueLoader) {
+    public void setValueLoader(Loader<List<T>, RuntimeException> valueLoader) {
         this.valueLoader = valueLoader;
         setValues(valueLoader.load());
     }

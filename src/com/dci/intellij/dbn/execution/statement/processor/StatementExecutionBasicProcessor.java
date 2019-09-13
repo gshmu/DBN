@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
@@ -93,7 +94,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     private String name;
     private Icon icon;
 
-    private Latent<String> resultName = Latent.basic(() -> {
+    private RuntimeLatent<String> resultName = Latent.runtime(() -> {
         String resultName = null;
         ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
         if (executablePsiElement!= null) {

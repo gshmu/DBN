@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
@@ -54,10 +55,10 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
     private int frameIndex;
     private Map<String, V> valuesMap;
 
-    private Latent<VirtualFile> virtualFile = Latent.basic(this::resolveVirtualFile);
-    private Latent<XSourcePosition> sourcePosition = Latent.basic(this::resolveSourcePosition);
+    private RuntimeLatent<VirtualFile> virtualFile = Latent.runtime(() -> resolveVirtualFile());
+    private RuntimeLatent<XSourcePosition> sourcePosition = Latent.runtime(() -> resolveSourcePosition());
 
-    private Latent<IdentifierPsiElement> subject = Latent.basic(() -> {
+    private RuntimeLatent<IdentifierPsiElement> subject = Latent.runtime(() -> {
         Project project = getDebugProcess().getProject();
         XSourcePosition sourcePosition = getSourcePosition();
         VirtualFile virtualFile = getVirtualFile();

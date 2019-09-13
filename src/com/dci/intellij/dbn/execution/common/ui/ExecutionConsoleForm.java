@@ -64,7 +64,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     private JPanel mainPanel;
     //private Map<Component, ExecutionResult> executionResultsMap = new HashMap<Component, ExecutionResult>();
     private TabbedPane resultTabs;
-    private Latent<ExecutionMessagesPanel> executionMessagesPanel = Latent.disposable(this, () -> new ExecutionMessagesPanel(ExecutionConsoleForm.this));
+    private Latent<ExecutionMessagesPanel, RuntimeException> executionMessagesPanel = Latent.disposable(this, () -> new ExecutionMessagesPanel(ExecutionConsoleForm.this));
 
     private boolean canScrollToSource;
 

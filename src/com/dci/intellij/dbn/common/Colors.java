@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common;
 
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
@@ -24,7 +25,7 @@ public interface Colors {
     Color COMPONENT_BORDER_COLOR = new JBColor(new Color(0x8C8C8C), new Color(0x656565));
     Color HINT_COLOR = new JBColor(new Color(-12029286), new Color(-10058060));
 
-    Latent<ColorsImpl> COLORS = Latent.basic(() -> new ColorsImpl());
+    RuntimeLatent<ColorsImpl> COLORS = Latent.runtime(() -> new ColorsImpl());
 
     static Color tableHeaderBorderColor() {
         return get().tableHeaderBorderColor;
