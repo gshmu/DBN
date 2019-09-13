@@ -3,56 +3,66 @@ package com.dci.intellij.dbn.connection.config.tns;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-
-public class TnsName implements Comparable<TnsName>{
+public class TnsName implements Comparable<TnsName> {
 
     private String name;
+    private String protocol;
     private String host;
     private String port;
+    private String server;
     private String sid;
+    private String serviceName;
+    private String globalName;
 
-    public static TnsName createTnsName(String name, Map details) {
-        TnsName tns = new TnsName();
-        tns.name = name;
-        tns.host = get( new String[] { "DESCRIPTION", "ADDRESS_LIST", "ADDRESS", "HOST" }, details);
-        if(tns.host == null) {
-            tns.host = get( new String[] { "DESCRIPTION", "ADDRESS", "HOST" }, details);
-        }
-        tns.port = get( new String[] { "DESCRIPTION", "ADDRESS_LIST", "ADDRESS", "PORT" }, details);
-        if(tns.port == null) {
-            tns.port = get( new String[] { "DESCRIPTION", "ADDRESS", "PORT" }, details);
-        }
-        tns.sid = get( new String[] { "DESCRIPTION", "CONNECT_DATA", "SID" }, details);
-        if(tns.sid == null) {
-            tns.sid = get( new String[] { "DESCRIPTION", "CONNECT_DATA", "SERVICE_NAME" }, details);
-            int endIndex = tns.sid.indexOf('.');
-            tns.sid = endIndex == -1 ? tns.sid.substring( 0) : tns.sid.substring( 0, endIndex);
-        }
-        return tns;
+    public TnsName(
+            String name,
+            String protocol,
+            String host,
+            String port,
+            String server,
+            String sid,
+            String serviceName,
+            String globalName) {
+        this.name = name;
+        this.protocol = protocol;
+        this.host = host;
+        this.port = port;
+        this.server = server;
+        this.sid = sid;
+        this.serviceName = serviceName;
+        this.globalName = globalName;
     }
 
-    private static String get(String[] keys, Map map) {
-        for(int i=0; i<(keys.length-1); i++) {
-            map = (Map) map.get(keys[i]);
-            if(map == null) {
-                return null;
-            }
-        }
-        return (String) map.get(keys[keys.length-1]);
+    public String getName() {
+        return name;
+    }
+
+    public String getProtocol() {
+        return protocol;
     }
 
     public String getHost() {
         return host;
     }
-    public String getName() {
-        return name;
-    }
+
     public String getPort() {
         return port;
     }
+
+    public String getServer() {
+        return server;
+    }
+
     public String getSid() {
         return sid;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    public String getGlobalName() {
+        return globalName;
     }
 
     public String toString() {

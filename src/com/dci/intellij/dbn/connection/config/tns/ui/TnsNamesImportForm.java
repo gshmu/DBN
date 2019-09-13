@@ -16,6 +16,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class TnsNamesImportForm extends DBNFormImpl<TnsNamesImportDialog>{
@@ -29,7 +30,7 @@ public class TnsNamesImportForm extends DBNFormImpl<TnsNamesImportDialog>{
     TnsNamesImportForm(@NotNull TnsNamesImportDialog parentComponent, @Nullable File file) {
         super(parentComponent);
         final Project project = parentComponent.getProject();
-        tnsNamesTable = new TnsNamesTable(project, new TnsName[0]);
+        tnsNamesTable = new TnsNamesTable(project, Collections.emptyList());
         tnsNamesScrollPanel.setViewportView(tnsNamesTable);
         tnsNamesScrollPanel.getViewport().setBackground(tnsNamesTable.getBackground());
         errorLabel.setIcon(Icons.COMMON_ERROR);
@@ -67,13 +68,13 @@ public class TnsNamesImportForm extends DBNFormImpl<TnsNamesImportDialog>{
         try {
             String fileName = tnsNamesFileTextField.getTextField().getText();
             if (StringUtil.isNotEmpty(fileName)) {
-                TnsName[] tnsNames = TnsNamesParser.parse(new File(fileName));
+                List<TnsName> tnsNames = TnsNamesParser.parse(new File(fileName));
                 tnsNamesTable.setModel(new TnsNamesTableModel(tnsNames));
                 tnsNamesTable.accommodateColumnsSize();
             }
             errorLabel.setVisible(false);
         } catch (Exception ex) {
-            tnsNamesTable.setModel(new TnsNamesTableModel(new TnsName[0]));
+            tnsNamesTable.setModel(new TnsNamesTableModel(Collections.emptyList()));
             tnsNamesTable.accommodateColumnsSize();
 
             errorLabel.setVisible(true);
@@ -89,17 +90,17 @@ public class TnsNamesImportForm extends DBNFormImpl<TnsNamesImportDialog>{
         return mainPanel;
     }
 
-    TnsName[] getAllTnsNames() {
+    List<TnsName> getAllTnsNames() {
         return tnsNamesTable.getModel().getTnsNames();
     }
 
-    TnsName[] getSelectedTnsNames() {
+    List<TnsName> getSelectedTnsNames() {
         List<TnsName> selectedTnsNames = new ArrayList<>();
-        TnsName[] tnsNames = tnsNamesTable.getModel().getTnsNames();
+        List<TnsName> tnsNames = tnsNamesTable.getModel().getTnsNames();
         int[] selectedRows = tnsNamesTable.getSelectedRows();
         for (int selectedRow : selectedRows) {
-            selectedTnsNames.add(tnsNames[selectedRow]);
+            selectedTnsNames.add(tnsNames.get(selectedRow));
         }
-        return selectedTnsNames.toArray(new TnsName[0]);
+        return selectedTnsNames;
     }
 }

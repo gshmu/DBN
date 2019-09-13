@@ -10,9 +10,10 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.List;
 
 public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
-    private WeakRef<TnsName[]> tnsNames;  // TODO dialog result - Disposable.nullify(...)
+    private WeakRef<List<TnsName>> tnsNames;  // TODO dialog result - Disposable.nullify(...)
     private ImportAllAction importAllAction = new ImportAllAction();
     private ImportSelectedAction importSelectedAction = new ImportSelectedAction();
     private File file;
@@ -38,7 +39,7 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
         return importAllAction;
     }
 
-    public TnsName[] getTnsNames() {
+    public List<TnsName> getTnsNames() {
         return WeakRef.get(tnsNames);
     }
 
