@@ -9,25 +9,29 @@ public class TnsNamesPattern {
 
     private TnsNamesPattern() {
         String value = "[A-Z0-9._]+";
-        String protocol =   keyValue("PROTOCOL", group("protocol", value) );
-        String host =       keyValue("HOST",     group("host", value));
-        String port =       keyValue("PORT",     group("port", value));
-        String l_protocol = keyValue("PROTOCOL", group("lprotocol", value));
-        String l_host =     keyValue("HOST",     group("lhost", value));
-        String l_port =     keyValue("PORT",     group("lport", value));
+        String protocol =     keyValue("PROTOCOL", group("protocol", value) );
+        String host =         keyValue("HOST",     group("host", value));
+        String port =         keyValue("PORT",     group("port", value));
+        String l_protocol =   keyValue("PROTOCOL", group("lprotocol", value));
+        String l_host =       keyValue("HOST",     group("lhost", value));
+        String l_port =       keyValue("PORT",     group("lport", value));
 
-        String sid =         keyValue("SID",          group("sid", value));
-        String server =      keyValue("SERVER",       group("server", value));
-        String serviceName = keyValue("SERVICE_NAME", group("servicename", value) );
-        String globalName =  keyValue("GLOBAL_NAME",  group("globalname", value));
-        String any =         keyValue("[_A-Z]+",      value);
+        String sid =          keyValue("SID",          group("sid", value));
+        String server =       keyValue("SERVER",       group("server", value));
+        String serviceName =  keyValue("SERVICE_NAME", group("servicename", value) );
+        String globalName =   keyValue("GLOBAL_NAME",  group("globalname", value));
+        String any =          keyValue("[_A-Z]+",      value);
+        String type =         keyValue("TYPE",         group("failovertype", value));
+        String method =       keyValue("METHOD",       group("failovermethod", value));
 
-        String address =     keyValue("ADDRESS",      iteration(block(oneOf(protocol, host, port, any))));
-        String l_address =   keyValue("ADDRESS",      iteration(block(oneOf(l_protocol, l_host, l_port, any))));
-        String addressList = keyValue("ADDRESS_LIST", iteration(block(l_address)));
-        String connectData = keyValue("CONNECT_DATA", iteration(block(oneOf(sid, server, serviceName, globalName, any))));
-        String description = keyValue("DESCRIPTION",  iteration(block(oneOf(address, addressList, connectData))));
-        String block =       keyValue(group("schema", value), block(description));
+        String failover =     keyValue("FAILOVER",      group("failover", value));
+        String failoverMode = keyValue("FAILOVER_MODE", iteration(block(oneOf(type, method, any))));
+        String address =      keyValue("ADDRESS",       iteration(block(oneOf(protocol, host, port, any))));
+        String l_address =    keyValue("ADDRESS",       iteration(block(oneOf(l_protocol, l_host, l_port, any))));
+        String addressList =  keyValue("ADDRESS_LIST",  iteration(block(l_address)));
+        String connectData =  keyValue("CONNECT_DATA",  iteration(block(oneOf(sid, server, serviceName, globalName, failoverMode, any))));
+        String description =  keyValue("DESCRIPTION",   iteration(block(oneOf(failover, address, addressList, connectData))));
+        String block =        keyValue(group("schema", value), block(description));
 
         pattern = Pattern.compile(block, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
     }
