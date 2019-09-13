@@ -47,8 +47,8 @@ public class TnsNamesTableModel extends DisposableBase implements DBNTableModel 
             case 5: return "Service Name";
             case 6: return "Global Name";
             case 7: return "Failover";
-            case 8: return "Failover Type";
-            case 9: return "Failover Method";
+            case 8: return "Type";
+            case 9: return "Method";
             default: return "";
         }
     }
