@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.dci.intellij.dbn.common.util.CommonUtil.nvln;
+import static com.dci.intellij.dbn.common.util.CommonUtil.nvlf;
 
 public class TnsNamesParser {
     public static final FileChooserDescriptor FILE_CHOOSER_DESCRIPTOR = new FileChooserDescriptor(true, false, false, false, false, false).
@@ -40,9 +40,9 @@ public class TnsNamesParser {
         int start = 0;
         while (matcher.find(start)) {
             String schema         = matcher.group("schema");
-            String protocol       = nvln(matcher.group("protocol"), matcher.group("lprotocol"));
-            String host           = nvln(matcher.group("host"), matcher.group("lhost"));
-            String port           = nvln(matcher.group("port"), matcher.group("lport"));
+            String protocol       = nvlf(matcher.group("protocol1"), matcher.group("protocol2"), matcher.group("protocol3"));
+            String host           = nvlf(matcher.group("host1"), matcher.group("host2"), matcher.group("host3"));
+            String port           = nvlf(matcher.group("port1"), matcher.group("port2"), matcher.group("port3"));
             String server         = matcher.group("server");
             String sid            = matcher.group("sid");
             String serviceName    = matcher.group("servicename");
