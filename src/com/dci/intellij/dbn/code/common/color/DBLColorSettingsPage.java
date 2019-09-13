@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.code.common.color;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
@@ -16,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class DBLColorSettingsPage implements ColorSettingsPage {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
+
     private String demoText;
     protected final List<AttributesDescriptor> attributeDescriptors = new ArrayList<AttributesDescriptor>();
 
@@ -24,11 +28,11 @@ public abstract class DBLColorSettingsPage implements ColorSettingsPage {
     @NotNull
     public final String getDemoText() {
         if (demoText == null) {
-            InputStream inputStream = getClass().getResourceAsStream(getDemoTextFileName());
-            try {
+            String demoTextFileName = getDemoTextFileName();
+            try (InputStream inputStream = getClass().getResourceAsStream(demoTextFileName)) {
                 demoText = CommonUtil.readInputStream(inputStream);
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error("Failed to load file " + demoTextFileName, e);
             }
         }
         return demoText.replace("\r\n", "\n");

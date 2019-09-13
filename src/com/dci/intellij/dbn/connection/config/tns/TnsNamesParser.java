@@ -5,11 +5,11 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import oracle.net.jdbc.nl.NLException;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -32,7 +32,7 @@ public class TnsNamesParser {
 
     public static List<TnsName> parse(File file) throws Exception {
         List<TnsName> tnsNames = new ArrayList<>();
-        String tnsContent = FileUtils.readFileToString(file, Charset.defaultCharset());
+        String tnsContent = new String(Files.readAllBytes(Paths.get(file.getPath())));
 
         Pattern pattern = TnsNamesPattern.INSTANCE.get();
         Matcher matcher = pattern.matcher(tnsContent);
