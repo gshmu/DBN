@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.2.0217.0</version>
+    <version>3.2.0254.0</version>
     <category>Database</category>
     <depends>com.intellij.modules.lang</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
@@ -29,10 +29,11 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.2.0217</b>
+            <li><b>3.2.0254</b>
             <ul>
+                <li>SQL Console list in object browser
                 <li>Resolved broken JIRA issue reporting framework
-                <li>New datagrid numeric functions on selection (Sum / Average)
+                <li>New data-grid numeric functions on selection (Sum / Count / Average)
                 <li>Bug fixes
             </ul>
             <li><b>3.2.0163</b>

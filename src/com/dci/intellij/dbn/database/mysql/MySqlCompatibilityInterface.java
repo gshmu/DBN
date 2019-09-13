@@ -21,6 +21,7 @@ public class MySqlCompatibilityInterface extends DatabaseCompatibilityInterface 
     @Override
     public boolean supportsObjectType(DatabaseObjectTypeId objectTypeId) {
         return
+            objectTypeId == DatabaseObjectTypeId.CONSOLE ||
             objectTypeId == DatabaseObjectTypeId.CHARSET ||
             objectTypeId == DatabaseObjectTypeId.USER ||
             objectTypeId == DatabaseObjectTypeId.SCHEMA ||
