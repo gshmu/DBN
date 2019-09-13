@@ -41,7 +41,7 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
         }
     };
 
-    private MapLatent<Condition, CachedResultSet> filtered = MapLatent.create(condition -> {
+    private MapLatent<Condition, CachedResultSet, RuntimeException> filtered = MapLatent.create(condition -> {
         if (rows.isEmpty()) {
             return this;
         } else {
@@ -60,7 +60,7 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
         }
     });
 
-    private MapLatent<Columns, CachedResultSet> grouped = MapLatent.create(columns -> {
+    private MapLatent<Columns, CachedResultSet, RuntimeException> grouped = MapLatent.create(columns -> {
         if (rows.isEmpty()) {
             return this;
         } else {

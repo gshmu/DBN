@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.session.color;
 
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
@@ -32,7 +33,7 @@ public class SessionBrowserTextAttributes extends CommonUtil implements DataGrid
 
     private Color caretRowBgColor;
 
-    private static final Latent<SessionBrowserTextAttributes> INSTANCE = Latent.laf(
+    private static final RuntimeLatent<SessionBrowserTextAttributes> INSTANCE = Latent.laf(
             () -> new SessionBrowserTextAttributes());
 
     private SessionBrowserTextAttributes() {

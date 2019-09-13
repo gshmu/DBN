@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.common.latent;
 
-abstract class ThreadLocalLatent<T> implements Latent<T>{
-    private Loader<T> loader;
+abstract class ThreadLocalLatent<T> implements RuntimeLatent<T>{
+    private Loader<T, RuntimeException> loader;
     private ThreadLocal<T> value = new ThreadLocal<>();
 
-    ThreadLocalLatent(Loader<T> loader) {
+    ThreadLocalLatent(Loader<T, RuntimeException> loader) {
         this.loader = loader;
     }
 
@@ -23,7 +23,7 @@ abstract class ThreadLocalLatent<T> implements Latent<T>{
         return this.value.get() != null;
     }
 
-    public final T get() {
+    public final T get(){
         T value = this.value.get();
         if (value == null) {
             value = loader.load();

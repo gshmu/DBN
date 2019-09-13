@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.parser.TokenPairRangeMonitor;
@@ -19,9 +20,9 @@ import java.util.Set;
 public abstract class DBLanguageDialect extends Language implements DBFileElementTypeProvider {
     private DBLanguageDialectIdentifier identifier;
 
-    private Latent<DBLanguageSyntaxHighlighter> syntaxHighlighter = Latent.basic(this::createSyntaxHighlighter);
-    private Latent<DBLanguageParserDefinition> parserDefinition = Latent.basic(this::createParserDefinition);
-    private Latent<IFileElementType> fileElementType = Latent.basic(this::createFileElementType);
+    private RuntimeLatent<DBLanguageSyntaxHighlighter> syntaxHighlighter = Latent.runtime(() -> createSyntaxHighlighter());
+    private RuntimeLatent<DBLanguageParserDefinition> parserDefinition = Latent.runtime(() -> createParserDefinition());
+    private RuntimeLatent<IFileElementType> fileElementType = Latent.runtime(() -> createFileElementType());
 
     private Set<ChameleonTokenType> chameleonTokens;
     private static Map<DBLanguageDialectIdentifier, DBLanguageDialect> register = new EnumMap<>(DBLanguageDialectIdentifier.class);

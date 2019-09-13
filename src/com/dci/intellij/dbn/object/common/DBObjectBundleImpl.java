@@ -20,6 +20,7 @@ import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MapLatent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
@@ -127,31 +128,31 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     private DBObjectList<DBObjectPrivilege> objectPrivileges;
     private DBObjectList<DBCharset> charsets;
 
-    private Latent<List<DBNativeDataType>> nativeDataTypes = Latent.basic(() -> computeNativeDataTypes());
+    private RuntimeLatent<List<DBNativeDataType>> nativeDataTypes = Latent.runtime(() -> computeNativeDataTypes());
     private List<DBDataType> cachedDataTypes = CollectionUtil.createConcurrentList();
 
     private DBObjectListContainer objectLists;
     private DBObjectRelationListContainer objectRelationLists;
     private int connectionConfigHash;
 
-    private MapLatent<DBObjectRef, LookupItemBuilder> sqlLookupItemBuilders =
+    private MapLatent<DBObjectRef, LookupItemBuilder, RuntimeException> sqlLookupItemBuilders =
             MapLatent.create((objectRef) ->
                     new ObjectLookupItemBuilder(objectRef, SQLLanguage.INSTANCE));
 
-    private MapLatent<DBObjectRef, LookupItemBuilder> psqlLookupItemBuilders =
+    private MapLatent<DBObjectRef, LookupItemBuilder, RuntimeException> psqlLookupItemBuilders =
             MapLatent.create((objectRef) ->
                     new ObjectLookupItemBuilder(objectRef, PSQLLanguage.INSTANCE));
 
-    private MapLatent<DBObjectRef, DBObjectPsiFacade> objectPsiFacades =
+    private MapLatent<DBObjectRef, DBObjectPsiFacade, RuntimeException> objectPsiFacades =
             MapLatent.create((objectRef) ->
                     new DBObjectPsiFacade(objectRef));
 
-    private MapLatent<DBObjectRef, DBObjectVirtualFile> virtualFiles =
+    private MapLatent<DBObjectRef, DBObjectVirtualFile, RuntimeException> virtualFiles =
             MapLatent.create((objectRef) ->
                     new DBObjectVirtualFile(getProject(), objectRef));
 
 
-    private Latent<PsiFile> fakeObjectFile = Latent.basic(() -> {
+    private RuntimeLatent<PsiFile> fakeObjectFile = Latent.runtime(() -> {
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
         return psiFileFactory.createFileFromText("object", SQLLanguage.INSTANCE, "");
     });

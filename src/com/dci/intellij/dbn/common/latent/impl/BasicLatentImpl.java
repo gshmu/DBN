@@ -1,25 +1,28 @@
-package com.dci.intellij.dbn.common.latent;
+package com.dci.intellij.dbn.common.latent.impl;
 
-abstract class BasicLatent<T> implements Latent<T> {
+import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.Loader;
+
+public abstract class BasicLatentImpl<T, E extends Throwable> implements Latent<T, E> {
     private T value;
     private boolean loaded;
     protected boolean loading;
 
-    BasicLatent() {}
+    protected BasicLatentImpl() {}
 
-    public final T get() {
+    public final T get() throws E{
         if (shouldLoad()) {
             synchronized (this) {
                 if (shouldLoad()) {
                     try {
                         loading = true;
-                        loading();
-                        Loader<T> loader = getLoader();
+                        beforeLoad();
+                        Loader<T, E> loader = getLoader();
                         T newValue = loader == null ? null : loader.load();
                         if (value != newValue) {
                             value = newValue;
                         }
-                        loaded(newValue);
+                        afterLoad(newValue);
                     } finally {
                         loading = false;
                     }
@@ -29,12 +32,16 @@ abstract class BasicLatent<T> implements Latent<T> {
         return value;
     }
 
-    public abstract Loader<T> getLoader();
+    public abstract Loader<T, E> getLoader();
 
-    protected void loading(){};
-
-    protected boolean shouldLoad() {
+    protected boolean shouldLoad() throws E {
         return !loaded;
+    }
+
+    protected void beforeLoad() throws E {};
+
+    protected void afterLoad(T value)throws E {
+        loaded = true;
     }
 
     public final void set(T value) {
@@ -44,10 +51,6 @@ abstract class BasicLatent<T> implements Latent<T> {
 
     public final boolean loaded() {
         return loaded;
-    }
-
-    public void loaded(T value) {
-        loaded = true;
     }
 
     @Override

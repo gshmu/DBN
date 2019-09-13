@@ -8,7 +8,7 @@ public interface Unsafe {
         try {
             runnable.run();
         } catch (Throwable e) {
-            throw ExceptionUtil.toRuntimeException(e);
+            throw new UnsafeRuntimeException(e);
         }
     }
 
@@ -16,7 +16,20 @@ public interface Unsafe {
         try {
             return callable.call();
         } catch (Throwable e) {
-            throw ExceptionUtil.toRuntimeException(e);
+            throw new UnsafeRuntimeException(e);
         }
+    }
+
+    class UnsafeRuntimeException extends RuntimeException {
+        UnsafeRuntimeException(Throwable cause) {
+            super(cause.getMessage(), cause);
+        }
+    }
+
+    static Throwable cause(Throwable throwable) {
+        if (throwable instanceof UnsafeRuntimeException) {
+            return throwable.getCause();
+        }
+        return throwable;
     }
 }

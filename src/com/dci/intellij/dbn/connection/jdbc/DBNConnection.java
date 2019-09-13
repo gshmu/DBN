@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection.jdbc;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionCache;
@@ -11,6 +12,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerStatusHolder;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionType;
+import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
@@ -26,6 +28,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,10 +43,17 @@ public class DBNConnection extends DBNConnectionBase {
     private SessionId sessionId;
 
     private long lastAccess = System.currentTimeMillis();
-    private Set<DBNStatement> statements = new HashSet<DBNStatement>();
     private PendingTransactionBundle dataChanges;
     private SchemaId currentSchema;
     private ProjectRef projectRef;
+
+    private Set<DBNStatement> activeStatements = new HashSet<>();
+    private MapLatent<String, DBNPreparedStatement, SQLException> cachedStatements =
+            MapLatent.create(sql -> {
+                DBNPreparedStatement preparedStatement = prepareStatement(sql);
+                preparedStatement.setCached(true);
+                return preparedStatement;
+            });
 
     private IncrementalResourceStatusAdapter<DBNConnection> active =
             IncrementalResourceStatusAdapter.create(
@@ -111,6 +121,15 @@ public class DBNConnection extends DBNConnectionBase {
         this.sessionId = sessionId;
     }
 
+
+    public DBNPreparedStatement prepareStatementCached(String sql) throws SQLException {
+        try {
+            return cachedStatements.get(sql);
+        } finally {
+            System.out.println(getName() + " - " + cachedStatements.hitCount());
+        }
+    }
+
     @Override
     protected <S extends Statement> S wrap(S statement) {
         updateLastAccess();
@@ -126,12 +145,17 @@ public class DBNConnection extends DBNConnectionBase {
             statement = (S) new DBNStatement<Statement>(statement, this);
         }
 
-        statements.add((DBNStatement) statement);
+        activeStatements.add((DBNStatement) statement);
         return statement;
     }
 
     protected void release(DBNStatement statement) {
-        statements.remove(statement);
+        activeStatements.remove(statement);
+        if (statement.isCached() && statement instanceof DBNPreparedStatement) {
+            DBNPreparedStatement preparedStatement = (DBNPreparedStatement) statement;
+            cachedStatements.removeValue(preparedStatement);
+        }
+
         updateLastAccess();
     }
 
@@ -259,11 +283,16 @@ public class DBNConnection extends DBNConnectionBase {
 
     @Override
     public void close() throws SQLException {
-        updateLastAccess();
-
-        super.close();
-        resetDataChanges();
-        notifyStatusChange();
+        try {
+            updateLastAccess();
+            Collection<DBNPreparedStatement> statements = cachedStatements.values();
+            cachedStatements.reset();
+            ResourceUtil.close(statements);
+            super.close();
+        } finally {
+            resetDataChanges();
+            notifyStatusChange();
+        }
     }
 
     private void notifyStatusChange() {

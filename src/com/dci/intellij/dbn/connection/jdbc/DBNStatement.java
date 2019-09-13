@@ -1,11 +1,9 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.language.common.WeakRef;
-import com.intellij.openapi.diagnostic.Logger;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,15 +14,13 @@ import java.util.concurrent.atomic.AtomicLong;
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
 
 public class DBNStatement<T extends Statement> extends DBNResource<T> implements Statement, CloseableResource, CancellableResource {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
-
-    protected SQLException exception;
-
     private WeakRef<DBNConnection> connection;
     private WeakRef<DBNResultSet> resultSet;
 
     /** last execution time. -1 unknown */
     private final AtomicLong executeDuration = new AtomicLong(-1);
+
+    private boolean cached;
 
     DBNStatement(T inner, DBNConnection connection) {
         super(inner, ResourceType.STATEMENT);
@@ -98,38 +94,33 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
         return object;
     }
 
-    private abstract class ManagedExecutor<R> {
-        protected R run() throws SQLException {
-            DBNConnection connection = getConnection();
-            connection.updateLastAccess();
-            try {
-                connection.set(ACTIVE, true);
-                return execute();
-            } catch (SQLException e) {
-                ResourceUtil.close(DBNStatement.this);
-                exception = e;
-                throw exception;
-            } finally {
-                connection.updateLastAccess();
-                connection.set(ACTIVE, false);
-            }
-        }
-        protected abstract R execute() throws SQLException;
+    public boolean isCached() {
+        return cached;
+    }
+
+    public void setCached(boolean cached) {
+        this.cached = cached;
     }
 
     protected <R> R managed(ThrowableCallable<R, SQLException> callable) throws SQLException {
-        return new ManagedExecutor<R>() {
-            @Override
-            protected R execute() throws SQLException {
-                executeDuration.set(-1);
-                long init = System.currentTimeMillis();
-                try {
-                    return callable.call();
-                } finally {
-                    executeDuration.set(System.currentTimeMillis() - init);
-                }
+        DBNConnection connection = getConnection();
+        connection.updateLastAccess();
+        try {
+            connection.set(ACTIVE, true);
+            executeDuration.set(-1);
+            long init = System.currentTimeMillis();
+            try {
+                return callable.call();
+            } finally {
+                executeDuration.set(System.currentTimeMillis() - init);
             }
-        }.run();
+        } catch (SQLException e) {
+            ResourceUtil.close(DBNStatement.this);
+            throw e;
+        } finally {
+            connection.updateLastAccess();
+            connection.set(ACTIVE, false);
+        }
     }
 
     /********************************************************************

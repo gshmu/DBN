@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.object.common;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.language.common.PsiElementRef;
 import com.dci.intellij.dbn.navigation.psi.DBObjectPsiDirectory;
 import com.dci.intellij.dbn.navigation.psi.DBObjectPsiFile;
@@ -17,9 +18,9 @@ public final class DBObjectPsiFacade extends DisposableBase {
     private DBObjectRef objectRef;
     private PsiElementRef<PsiElement> psiElementRef;
 
-    private Latent<PsiFile> psiFile = Latent.basic(() -> new DBObjectPsiFile(objectRef));
-    private Latent<PsiElement> psiElement = Latent.basic(() -> new DBObjectPsiElement(objectRef));
-    private Latent<PsiDirectory> psiDirectory = Latent.basic(() -> new DBObjectPsiDirectory(objectRef));
+    private RuntimeLatent<PsiFile> psiFile = Latent.runtime(() -> new DBObjectPsiFile(objectRef));
+    private RuntimeLatent<PsiElement> psiElement = Latent.runtime(() -> new DBObjectPsiElement(objectRef));
+    private RuntimeLatent<PsiDirectory> psiDirectory = Latent.runtime(() -> new DBObjectPsiDirectory(objectRef));
 
     public DBObjectPsiFacade() {
     }

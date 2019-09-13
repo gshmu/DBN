@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.sql.Savepoint;
+import java.util.Collection;
 
 import static com.dci.intellij.dbn.DatabaseNavigator.DEBUG;
 
@@ -67,6 +68,12 @@ public class ResourceUtil {
             } catch (Throwable e) {
                 LOGGER.warn("Failed to close resource (" + resource + ")", e);
             }
+        }
+    }
+
+    public static <T extends AutoCloseable> void close(Collection<T> resources) {
+        for (T resource : resources) {
+            close(resource);
         }
     }
 

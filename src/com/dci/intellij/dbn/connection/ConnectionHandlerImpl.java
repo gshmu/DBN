@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MapLatent;
+import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Synchronized;
@@ -66,7 +67,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private DatabaseInterfaceProvider interfaceProvider;
     private DatabaseConsoleBundle consoleBundle;
     private DatabaseSessionBundle sessionBundle;
-    private Latent<DBSessionBrowserVirtualFile> sessionBrowserFile =
+    private RuntimeLatent<DBSessionBrowserVirtualFile> sessionBrowserFile =
             Latent.disposable(this, () -> new DBSessionBrowserVirtualFile(this));
 
     private ConnectionInstructions instructions = new ConnectionInstructions();
@@ -74,20 +75,24 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private boolean enabled;
     private ConnectionHandlerRef ref;
     private ConnectionInfo connectionInfo;
-    private Latent<Cache> metaDataCache = Latent.basic(() -> new Cache(getConnectionId().id(), TimeUtil.ONE_MINUTE));
     private DatabaseCompatibility compatibility = DatabaseCompatibility.allFeatures();
 
-    private Latent<AuthenticationInfo> temporaryAuthenticationInfo = Latent.basic(() -> {
-        ConnectionDatabaseSettings databaseSettings = getSettings().getDatabaseSettings();
-        return new AuthenticationInfo(databaseSettings, true);
-    });
+    private RuntimeLatent<Cache> metaDataCache =
+            Latent.runtime(() -> new Cache(getConnectionId().id(), TimeUtil.ONE_MINUTE));
 
-    private MapLatent<SessionId, StatementExecutionQueue> executionQueues =
+    private RuntimeLatent<AuthenticationInfo> temporaryAuthenticationInfo =
+            Latent.runtime(() -> {
+                ConnectionDatabaseSettings databaseSettings = getSettings().getDatabaseSettings();
+                return new AuthenticationInfo(databaseSettings, true);
+            });
+
+    private MapLatent<SessionId, StatementExecutionQueue, RuntimeException> executionQueues =
             MapLatent.create(key -> new StatementExecutionQueue(ConnectionHandlerImpl.this));
 
-    private Latent<DBConnectionPsiDirectory> psiDirectory = Latent.basic(() -> new DBConnectionPsiDirectory(this));
+    private RuntimeLatent<DBConnectionPsiDirectory> psiDirectory =
+            Latent.runtime(() -> new DBConnectionPsiDirectory(this));
 
-    private Latent<DBObjectBundle> objectBundle =
+    private RuntimeLatent<DBObjectBundle> objectBundle =
             Latent.disposable(this, () -> new DBObjectBundleImpl(this, getConnectionBundle()));
 
 

@@ -18,7 +18,7 @@ public interface Borders {
     Border COMPONENT_LINE_BORDER = new LineBorder(Colors.COMPONENT_BORDER_COLOR);
     Border BOTTOM_LINE_BORDER = new CustomLineBorder(JBColor.border(),0,0, 1,0);
 
-    MapLatent<Color, Border> LINE_BORDERS = MapLatent.create(color -> new LineBorder(color, 1));
+    MapLatent<Color, Border, RuntimeException> LINE_BORDERS = MapLatent.create(color -> new LineBorder(color, 1));
 
     static Border getLineBorder(Color color) {
         return LINE_BORDERS.get(color);
