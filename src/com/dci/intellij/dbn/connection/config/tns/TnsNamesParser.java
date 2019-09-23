@@ -4,10 +4,8 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
-import oracle.net.jdbc.nl.NLException;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -70,92 +68,4 @@ public class TnsNamesParser {
        }
         return tnsNames;
     }
-
-
-    public static class TNSNamesList {
-        public static void main(String[] args) throws NLException, IOException {
-
-            Pattern pattern = TnsNamesPattern.INSTANCE.get();
-            Matcher matcher = pattern.matcher(TNS1);
-
-            int start = 0;
-            while (matcher.find(start)) {
-                int count = matcher.groupCount();
-/*
-                for (int i=0; i<count; i++) {
-                    System.out.println("------------------------");
-                    System.out.println(matcher.group(i));
-                }
-*/
-                System.out.println("SCHEMA:       " + matcher.group("schema"));
-                System.out.println("PROTOCOL:     " + matcher.group("protocol"));
-                System.out.println("HOST:         " + matcher.group("host"));
-                System.out.println("PORT:         " + matcher.group("port"));
-                System.out.println("PROTOCOL:     " + matcher.group("lprotocol"));
-                System.out.println("HOST:         " + matcher.group("lhost"));
-                System.out.println("PORT:         " + matcher.group("lport"));
-                System.out.println("SERVER:       " + matcher.group("server"));
-                System.out.println("SID:          " + matcher.group("sid"));
-                System.out.println("SERVICE_NAME: " + matcher.group("servicename"));
-                System.out.println("GLOBAL_NAME:  " + matcher.group("globalname"));
-                System.out.println("------------------------\n");
-                start = matcher.end();
-            }
-
-            System.out.println(matcher.matches());
-        }
-
-
-    }
-
-    private static String TNS = "SOMESCHEMA =\n" +
-            "  (DESCRIPTION =\n" +
-            "    (ADDRESS_LIST =\n" +
-            "      (ADDRESS = (PROTOCOL = TCP)(HOST = REMOTEHOST)(PORT = 1234))\n" +
-            "    )\n" +
-            "    (CONNECT_DATA = (SERVICE_NAME = REMOTE)\n" +
-            "    )\n" +
-            "  )\n" +
-            "\n" +
-            "MYSCHEMA =\n" +
-            "  (DESCRIPTION =\n" +
-            "    (ADDRESS = (PROTOCOL = TCP)(HOST = MYHOST)(PORT = 1234))\n" +
-            "    (CONNECT_DATA =\n" +
-            "      (SERVER = DEDICATED)\n" +
-            "      (SERVICE_NAME = MYSERVICE.LOCAL )\n" +
-            "    )\n" +
-            "  )\n" +
-            "\n" +
-            "MYOTHERSCHEMA =\n" +
-            "  (DESCRIPTION =\n" +
-            "    (ADDRESS_LIST =\n" +
-            "      (ADDRESS = (PROTOCOL = TCP)(HOST = MYHOST)(PORT = 1234))\n" +
-            "    )\n" +
-            "    (CONNECT_DATA = \n" +
-            "      (SERVICE_NAME = MYSERVICE.REMOTE)\n" +
-            "    )\n" +
-            "\n" +
-            "  )\n" +
-            "\n" +
-            "SOMEOTHERSCHEMA = \n" +
-            "  (DESCRIPTION =\n" +
-            "    (ADDRESS_LIST =\n" +
-            "      (ADDRESS = (PROTOCOL = TCP)(HOST = LOCALHOST)(PORT = 1234))\n" +
-            "      (ADDRESS = (PROTOCOL = TCP)(HOST = LOCALHOST1)(PORT = 12345))\n" +
-            "    )\n" +
-            "    (CONNECT_DATA =\n" +
-            "      (SERVICE_NAME = LOCAL)\n" +
-            "    )\n" +
-            "  )";
-    private static String TNS1 = "APYREQ1A.EQ =\n" +
-            "  (DESCRIPTION =\n" +
-            "    (ADDRESS = (PROTOCOL = TCP)(Host = sb007538.equateplus.net)(Port = 49350))\n" +
-            "    (CONNECT_DATA =\n" +
-            "      (SID = APYREQ1A)\n" +
-            "      (GLOBAL_NAME = APYREQ1A.EQ)\n" +
-            "      (GLOBAL_ABC = APYREQ1A.EQ)\n" +
-            "    )\n" +
-            "  )";
-
-    private static String TNSBLA = "SOME_NAME_OF_AN_ENTRY=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=HOST_NAME)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=DB_NAME)))";
 }
