@@ -19,7 +19,7 @@ import java.util.List;
 
 public class DBTypeAttributeImpl extends DBObjectImpl<DBTypeAttributeMetadata> implements DBTypeAttribute {
     private DBDataType dataType;
-    private int position;
+    private short position;
 
     DBTypeAttributeImpl(DBType parent, DBTypeAttributeMetadata metadata) throws SQLException {
         super(parent, metadata);
@@ -35,7 +35,7 @@ public class DBTypeAttributeImpl extends DBObjectImpl<DBTypeAttributeMetadata> i
 
 
     @Override
-    public int getPosition() {
+    public short getPosition() {
         return position;
     }
 
@@ -79,7 +79,7 @@ public class DBTypeAttributeImpl extends DBObjectImpl<DBTypeAttributeMetadata> i
 
     @Override
     protected List<DBObjectNavigationList> createNavigationLists() {
-        List<DBObjectNavigationList> objectNavigationLists = new ArrayList<DBObjectNavigationList>();
+        List<DBObjectNavigationList> objectNavigationLists = new ArrayList<>();
 
         if (dataType.isDeclared()) {
             objectNavigationLists.add(new DBObjectNavigationListImpl("Type", dataType.getDeclaredType()));

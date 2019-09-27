@@ -17,6 +17,6 @@ public interface DBConstraint extends DBSchemaObject {
     DBConstraint getForeignKeyConstraint();
 
     List<DBColumn> getColumns();
-    int getColumnPosition(DBColumn constraint);
-    @Nullable DBColumn getColumnForPosition(int position);
+    short getColumnPosition(DBColumn constraint);
+    @Nullable DBColumn getColumnForPosition(short position);
 }

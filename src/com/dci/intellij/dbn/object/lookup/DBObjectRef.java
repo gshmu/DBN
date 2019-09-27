@@ -28,7 +28,7 @@ import java.util.StringTokenizer;
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.PS;
 
 public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>, PersistentStateElement, ConnectionProvider {
-    public int overload;
+    public short overload;
     public DBObjectRef parent;
     public DBObjectType objectType;
     public String objectName;
@@ -130,7 +130,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
                 if (objectType == null) {
                     if (i == tokens.length -1) {
                         // last optional "overload" numeric token
-                        this.overload = Integer.parseInt(token);
+                        this.overload = Short.parseShort(token);
                     } else {
                         objectType = DBObjectType.forListName(token, objectRef == null ? null : objectRef.objectType);
                     }
@@ -172,7 +172,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
             } else {
                 if (objectNames.hasMoreTokens()) {
                     String overloadToken = objectNames.nextToken();
-                    this.overload = Integer.parseInt(overloadToken);
+                    this.overload = Short.parseShort(overloadToken);
                 }
                 this.parent = objectRef;
                 this.objectType = objectType;
@@ -390,7 +390,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
 
 
     @Nullable
-    protected T lookup(@NotNull ConnectionHandler connectionHandler) {
+    private T lookup(@NotNull ConnectionHandler connectionHandler) {
         DBObject object = null;
         if (parent == null) {
             DBObjectBundle objectBundle = connectionHandler.getObjectBundle();

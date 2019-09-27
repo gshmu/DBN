@@ -188,7 +188,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     }
 
     @Override
-    public DBObject getChildObject(DBObjectType objectType, String name, int overload, boolean lookupHidden) {
+    public DBObject getChildObject(DBObjectType objectType, String name, short overload, boolean lookupHidden) {
         DBObjectList<DBObject> childObjectList = getChildObjectList(objectType);
         return childObjectList == null ? null : childObjectList.getObject(name, overload);
     }

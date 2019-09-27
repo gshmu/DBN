@@ -334,7 +334,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         DBObjectType objectType = object.getObjectType();
         String schemaName = object.getSchema().getName();
         String objectName = object.getName();
-        int objectOverload = object.getOverload();
+        short objectOverload = object.getOverload();
 
         switch (objectType) {
             case VIEW:

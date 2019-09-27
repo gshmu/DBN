@@ -73,7 +73,7 @@ public class DatasetColumnSetupForm extends DBNFormImpl {
         for(int i=0; i<model.getSize(); i++ ) {
             ColumnStateSelectable columnState = columnList.getElementAt(i);
             changed = changed || columnState.getPosition() != i;
-            columnState.setPosition(i);
+            columnState.setPosition((short) i);
         }
         Collections.sort(columnSetup.getColumnStates());
         return changed;

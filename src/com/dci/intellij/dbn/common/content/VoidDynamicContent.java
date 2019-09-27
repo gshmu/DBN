@@ -140,7 +140,7 @@ public class VoidDynamicContent extends DisposableBase implements DynamicContent
     }
 
     @Override
-    public DynamicContentElement getElement(String name, int overload) {
+    public DynamicContentElement getElement(String name, short overload) {
         return null;
     }
 

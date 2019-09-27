@@ -97,7 +97,7 @@ public class DatasetColumnSetup implements PersistentStateElement, Cloneable<Dat
         DatasetColumnState columnState = columnStates.remove(visibleFromIndex);
         columnStates.add(visibleToIndex, columnState);
         for (int i=0; i< columnStates.size(); i++) {
-            columnStates.get(i).setPosition(i);
+            columnStates.get(i).setPosition((short) i);
         }
     }
 

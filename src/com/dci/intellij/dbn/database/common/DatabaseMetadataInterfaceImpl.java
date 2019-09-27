@@ -275,12 +275,12 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
     }
 
     @Override
-    public ResultSet loadProgramMethodArguments(String ownerName, String programName, String methodName, int overload, DBNConnection connection) throws SQLException {
+    public ResultSet loadProgramMethodArguments(String ownerName, String programName, String methodName, short overload, DBNConnection connection) throws SQLException {
         return executeQuery(connection, "program-method-arguments", ownerName, programName, methodName, overload);
     }
 
     @Override
-    public ResultSet loadMethodArguments(String ownerName, String methodName, String methodType, int overload, DBNConnection connection) throws SQLException {
+    public ResultSet loadMethodArguments(String ownerName, String methodName, String methodType, short overload, DBNConnection connection) throws SQLException {
         return executeQuery(connection, "method-arguments", ownerName, methodName, methodType, overload);
     }
 
@@ -361,10 +361,10 @@ public abstract class DatabaseMetadataInterfaceImpl extends DatabaseInterfaceImp
 
     @Override
     public ResultSet loadObjectSourceCode(String ownerName, String objectName, String objectType, DBNConnection connection) throws SQLException {
-        return loadObjectSourceCode(ownerName, objectName, objectType, 0, connection);
+        return loadObjectSourceCode(ownerName, objectName, objectType, (short) 0, connection);
     }
     @Override
-    public ResultSet loadObjectSourceCode(String ownerName, String objectName, String objectType, int overload, DBNConnection connection) throws SQLException {
+    public ResultSet loadObjectSourceCode(String ownerName, String objectName, String objectType, short overload, DBNConnection connection) throws SQLException {
         return executeQuery(connection, "object-source-code", ownerName, objectName, objectType, overload);
     }
 

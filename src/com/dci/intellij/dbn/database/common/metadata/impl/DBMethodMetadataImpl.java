@@ -27,13 +27,13 @@ public abstract class DBMethodMetadataImpl extends DBObjectMetadataBase implemen
     }
 
     @Override
-    public int getOverload() throws SQLException {
-        return resultSet.getInt("OVERLOAD");
+    public short getOverload() throws SQLException {
+        return resultSet.getShort("OVERLOAD");
     }
 
     @Override
-    public int getPosition() throws SQLException {
-        return resultSet.getInt("POSITION");
+    public short getPosition() throws SQLException {
+        return resultSet.getShort("POSITION");
     }
 
     @Override

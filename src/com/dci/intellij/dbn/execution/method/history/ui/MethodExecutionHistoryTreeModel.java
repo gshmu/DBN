@@ -147,7 +147,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
         MethodTreeNode getMethodNode(MethodExecutionInput executionInput) {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
             String methodName = methodRef.objectName;
-            int overload = methodRef.overload;
+            short overload = methodRef.overload;
             if (!isLeaf())
                 for (TreeNode node : getChildren()) {
                     MethodTreeNode methodNode = (MethodTreeNode) node;
@@ -169,7 +169,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
             this.executionInput = executionInput;
         }
 
-        int getOverload() {
+        short getOverload() {
             return executionInput.getMethodRef().overload;
         }
 

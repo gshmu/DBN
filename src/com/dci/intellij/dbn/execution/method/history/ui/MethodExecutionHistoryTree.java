@@ -89,7 +89,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
                 append(node.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
                 if (node instanceof MethodExecutionHistoryTreeModel.MethodTreeNode) {
                     MethodExecutionHistoryTreeModel.MethodTreeNode methodTreeNode = (MethodExecutionHistoryTreeModel.MethodTreeNode) node;
-                    int overload = methodTreeNode.getOverload();
+                    short overload = methodTreeNode.getOverload();
                     if (overload > 0) {
                         append(" #" + overload, SimpleTextAttributes.GRAY_ATTRIBUTES);
                     }

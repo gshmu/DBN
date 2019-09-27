@@ -8,5 +8,5 @@ public interface DBCharsetMetadata extends DBObjectMetadata {
 
     String getCharsetName() throws SQLException;
 
-    int getMaxLength() throws SQLException;
+    short getMaxLength() throws SQLException;
 }

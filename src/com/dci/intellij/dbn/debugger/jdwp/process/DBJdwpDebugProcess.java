@@ -63,12 +63,7 @@ import java.net.Inet4Address;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.BREAKPOINT_SETTING_ALLOWED;
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.DEBUGGER_STOPPING;
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.SESSION_INITIALIZATION_THREW_EXCEPTION;
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.TARGET_EXECUTION_STARTED;
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.TARGET_EXECUTION_TERMINATED;
-import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.TARGET_EXECUTION_THREW_EXCEPTION;
+import static com.dci.intellij.dbn.debugger.common.process.DBDebugProcessStatus.*;
 
 public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
         extends JavaDebugProcess
@@ -386,7 +381,7 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
                             DBContentType contentType = "PackageBody".equals(programType) ? DBContentType.CODE_BODY : DBContentType.CODE_SPEC;
                             return editableVirtualFile.getContentFile(contentType);
                         } else {
-                            DBMethod method = schema.getMethod(programName, 0);
+                            DBMethod method = schema.getMethod(programName, (short) 0);
                             if (method != null) {
                                 return method.getEditableVirtualFile().getContentFile(DBContentType.CODE);
                             }

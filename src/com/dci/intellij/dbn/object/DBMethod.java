@@ -14,7 +14,7 @@ public interface DBMethod extends DBSchemaObject {
     DBProgram getProgram();
     DBMethodType getMethodType();
 
-    int getPosition();
+    short getPosition();
 
     boolean isProgramMethod();
     boolean isDeterministic();

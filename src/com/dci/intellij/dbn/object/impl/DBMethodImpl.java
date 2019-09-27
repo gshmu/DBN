@@ -28,17 +28,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DEBUGABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DETERMINISTIC;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.INVALIDABLE;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 import static com.dci.intellij.dbn.object.type.DBObjectType.ARGUMENT;
 import static com.dci.intellij.dbn.object.type.DBObjectType.METHOD;
 
 public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaObjectImpl<M> implements DBMethod {
     protected DBObjectList<DBArgument> arguments;
-    protected int position;
-    protected int overload;
+    protected short position;
+    protected short overload;
     private DBLanguage language;
 
     DBMethodImpl(DBSchemaObject parent, M resultSet) throws SQLException {
@@ -124,12 +121,12 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
     }
 
     @Override
-    public int getOverload() {
+    public short getOverload() {
         return overload;
     }
 
     @Override
-    public int getPosition() {
+    public short getPosition() {
         return position;
     }
 
@@ -192,7 +189,7 @@ public abstract class DBMethodImpl<M extends DBMethodMetadata> extends DBSchemaO
                         DatabaseMetadataInterface metadataInterface = dynamicContent.getMetadataInterface();
                         DBMethod method = (DBMethod) dynamicContent.getParentElement();
                         String ownerName = method.getSchema().getName();
-                        int overload = method.getOverload();
+                        short overload = method.getOverload();
                         DBProgram program = method.getProgram();
                         if (program == null) {
                             return metadataInterface.loadMethodArguments(

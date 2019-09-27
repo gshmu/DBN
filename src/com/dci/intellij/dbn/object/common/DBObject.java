@@ -55,7 +55,7 @@ public interface DBObject extends
     @NotNull
     String getName();
     @Override
-    int getOverload();
+    short getOverload();
     String getQuotedName(boolean quoteAlways);
     boolean needsNameQuoting();
     String getQualifiedName();
@@ -90,13 +90,13 @@ public interface DBObject extends
 
     DBObject getChildObject(DBObjectType objectType, String name, boolean lookupHidden);
 
-    DBObject getChildObject(DBObjectType objectType, String name, int overload, boolean lookupHidden);
+    DBObject getChildObject(DBObjectType objectType, String name, short overload, boolean lookupHidden);
 
     @Nullable
     DBObject getChildObject(String name, boolean lookupHidden);
 
     @Nullable
-    DBObject getChildObject(String name, int overload, boolean lookupHidden);
+    DBObject getChildObject(String name, short overload, boolean lookupHidden);
 
     List<String> getChildObjectNames(DBObjectType objectType);
 

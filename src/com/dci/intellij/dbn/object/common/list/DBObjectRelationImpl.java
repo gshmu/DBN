@@ -59,7 +59,7 @@ public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObjec
     }
 
     @Override
-    public int getOverload() {
+    public short getOverload() {
         return 0;
     }
 

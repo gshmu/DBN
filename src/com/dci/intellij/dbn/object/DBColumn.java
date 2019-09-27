@@ -15,7 +15,7 @@ public interface DBColumn extends DBObject {
     boolean isNullable();
     boolean isHidden();
     DBDataset getDataset();
-    int getPosition();
+    short getPosition();
 
     @Nullable
     DBColumn getForeignKeyColumn();
@@ -23,8 +23,8 @@ public interface DBColumn extends DBObject {
     List<DBIndex> getIndexes();
     List<DBConstraint> getConstraints();
 
-    int getConstraintPosition(DBConstraint constraint);
-    DBConstraint getConstraintForPosition(int position);
+    short getConstraintPosition(DBConstraint constraint);
+    DBConstraint getConstraintForPosition(short position);
 
 
 }

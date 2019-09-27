@@ -25,7 +25,7 @@ public class DBConstraintColumnMetadataImpl extends DBObjectMetadataBase impleme
         return resultSet.getString("DATASET_NAME");
     }
 
-    public int getPosition() throws SQLException {
-        return resultSet.getInt("POSITION");
+    public short getPosition() throws SQLException {
+        return resultSet.getShort("POSITION");
     }
 }
