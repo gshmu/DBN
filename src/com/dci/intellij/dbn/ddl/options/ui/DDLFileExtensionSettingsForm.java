@@ -110,7 +110,8 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
         applySetting(typeBodyTextField, DDLFileTypeId.TYPE_BODY, changed);
 
         if (changed.get()) {
-            DDLFileManager.registerExtensions(getConfiguration());
+            DDLFileManager ddlFileManager = DDLFileManager.getInstance(getProject());
+            ddlFileManager.registerExtensions(getConfiguration());
         }
     }
 
