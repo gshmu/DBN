@@ -51,11 +51,11 @@ public class SimpleTokenType extends IElementType implements TokenType {
     }*/
 
     public SimpleTokenType(Element element, Language language, boolean register) {
-        super(element.getAttributeValue("id"), language, register);
+        super(element.getAttributeValue("id").intern(), language, register);
         idx = INDEXER.incrementAndGet();
-        id = element.getAttributeValue("id");
-        value = element.getAttributeValue("value");
-        description = element.getAttributeValue("description");
+        id = element.getAttributeValue("id").intern();
+        value = StringUtil.intern(element.getAttributeValue("value"));
+        description = StringUtil.intern(element.getAttributeValue("description"));
 
         if (register) {
             int count = REGISTERED_COUNT.incrementAndGet();

@@ -24,7 +24,7 @@ public abstract class PseudoConstant<T extends PseudoConstant<T>> implements Con
     private String id;
 
     public PseudoConstant(String id) {
-        this.id = id;
+        this.id = id.intern();
         getRegistry(getClass()).put(id, this);
     }
 

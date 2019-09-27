@@ -61,7 +61,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
     ElementTypeBase(@NotNull ElementTypeBundle bundle, ElementTypeBase parent, String id, @Nullable String description) {
         super(id, bundle.getLanguageDialect(), false);
         idx = TokenType.INDEXER.incrementAndGet();
-        this.id = id;
+        this.id = id.intern();
         this.hashCode = id.hashCode();
         this.description = description;
         this.bundle = bundle;
@@ -78,7 +78,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
             def.setAttribute("id", defId);
             bundle.markIndexesDirty();
         }
-        this.id = defId;
+        this.id = defId.intern();
         this.bundle = bundle;
         this.parent = parent;
         if (StringUtil.isNotEmpty(def.getAttributeValue("exit")) && !(parent instanceof SequenceElementType)) {
