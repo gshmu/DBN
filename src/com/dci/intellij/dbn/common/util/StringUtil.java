@@ -197,5 +197,9 @@ public class StringUtil extends com.intellij.openapi.util.text.StringUtil {
 
         return answer == null ? s : answer.toString();
     }
+
+    public static String intern(String value) {
+        return value == null ? null : value.intern();
+    }
 }
 

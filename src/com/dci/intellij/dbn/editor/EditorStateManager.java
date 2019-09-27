@@ -46,7 +46,7 @@ import java.util.Map;
 public class EditorStateManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.EditorStateManager";
 
-    private Map<DBObjectType, EditorProviderId> lastUsedEditorProviders = new THashMap<DBObjectType, EditorProviderId>();
+    private Map<DBObjectType, EditorProviderId> lastUsedEditorProviders = new THashMap<>();
     private EditorStateManager(Project project) {
         super(project);
         EventUtil.subscribe(project, project, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);

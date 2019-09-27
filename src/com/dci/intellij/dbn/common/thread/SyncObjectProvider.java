@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SyncObjectProvider {
-	private Map<String, AtomicInteger> SYNC_OBJECTS = new THashMap<String, AtomicInteger>();
+	private Map<String, AtomicInteger> SYNC_OBJECTS = new THashMap<>();
 
 	public Object get(String key) {
 		if (key != null) {

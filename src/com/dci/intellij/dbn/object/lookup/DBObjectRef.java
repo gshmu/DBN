@@ -46,7 +46,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
     public DBObjectRef(T object, DBObjectType objectType, String name) {
         this.reference = WeakRef.from(object);
-        this.objectName = name;
+        this.objectName = name.intern();
         this.objectType = objectType;
         this.overload = object.getOverload();
         DBObject parentObj = object.getParentObject();
@@ -61,13 +61,13 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     public DBObjectRef(DBObjectRef parent, DBObjectType objectType, String objectName) {
         this.parent = parent;
         this.objectType = objectType;
-        this.objectName = objectName;
+        this.objectName = objectName.intern();
     }
 
     public DBObjectRef(ConnectionId connectionId, DBObjectType objectType, String objectName) {
         this.connectionId = connectionId;
         this.objectType = objectType;
-        this.objectName = objectName;
+        this.objectName = objectName.intern();
     }
 
     public DBObjectRef() {

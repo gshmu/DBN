@@ -36,7 +36,7 @@ public abstract class DBLanguageTokenTypeBundle {
     private Map<String, SimpleTokenType> charactersMap;
     private Map<String, SimpleTokenType> operatorsMap;
 
-    private Map<String, SimpleTokenType> tokenTypes = new THashMap<String, SimpleTokenType>();
+    private Map<String, SimpleTokenType> tokenTypes = new THashMap<>();
     private Map<String, TokenSet> tokenSets = new THashMap<String, TokenSet>();
 
     public Map<String, SimpleTokenType> getTokenTypes() {
@@ -78,7 +78,7 @@ public abstract class DBLanguageTokenTypeBundle {
         List<SimpleTokenType> operatorList = new ArrayList<SimpleTokenType>();
         for (Object o : tokenDefs.getChildren()) {
             Element element = (Element) o;
-            String tokenTypeId = element.getAttributeValue("id");
+            String tokenTypeId = element.getAttributeValue("id").intern();
             SimpleTokenType tokenType = new SimpleTokenType(element, language, isRegisteredToken(tokenSetIds, tokenTypeId));
             log.debug("Creating token type '" + tokenType.getId() + "'");
             tokenTypes.put(tokenType.getId(), tokenType);
@@ -185,7 +185,7 @@ public abstract class DBLanguageTokenTypeBundle {
         Map<String, Set<String>> tokenSetDef = new HashMap<String, Set<String>>();
         for (Object o : tokenSetDefs.getChildren()) {
             Element element = (Element) o;
-            String tokenSetId = element.getAttributeValue("id");
+            String tokenSetId = element.getAttributeValue("id").intern();
             Set<String> tokenIds = new HashSet<String>();
 
             for (String tokenId : element.getText().split(",")) {
