@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 
 public class SshTunnelManager implements ApplicationComponent{
-    private Map<String, SshTunnelConnector> sshTunnelConnectors = new THashMap<String, SshTunnelConnector>();
+    private Map<String, SshTunnelConnector> sshTunnelConnectors = new THashMap<>();
 
     public static SshTunnelManager getInstance() {
         return ApplicationManager.getApplication().getComponent(SshTunnelManager.class);
