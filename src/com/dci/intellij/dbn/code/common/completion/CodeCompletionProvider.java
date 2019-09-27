@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.common.util.NamingUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -46,7 +47,6 @@ import com.intellij.psi.impl.source.tree.FileElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ProcessingContext;
 import gnu.trove.THashMap;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -122,7 +122,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             TokenElementType tokenElementType = (TokenElementType) leaf;
             String text = tokenElementType.getText();
             String id = tokenElementType.tokenType.getId();
-            return StringUtils.isEmpty(text) ? id : id + text;
+            return StringUtil.isEmpty(text) ? id : id + text;
         } else if (leaf instanceof IdentifierElementType){
             IdentifierElementType identifierElementType = (IdentifierElementType) leaf;
             return identifierElementType.getQualifiedObjectTypeName();

@@ -53,6 +53,7 @@ import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -95,7 +96,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         set(PUBLIC_SCHEMA, metadata.isPublic());
         set(SYSTEM_SCHEMA, metadata.isSystem());
         set(EMPTY_SCHEMA, metadata.isEmpty());
-        set(USER_SCHEMA, name.equalsIgnoreCase(getConnectionHandler().getUserName()));
+        set(USER_SCHEMA, StringUtil.equalsIgnoreCase(name, getConnectionHandler().getUserName()));
         return name;
     }
 

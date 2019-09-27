@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
@@ -17,7 +18,6 @@ import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.intellij.openapi.util.text.StringUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -112,7 +112,7 @@ public class StatementExecutionVariablesBundle extends DisposableBase implements
     @Nullable
     public StatementExecutionVariable getVariable(String name) {
         for (StatementExecutionVariable variable : variables) {
-            if (variable.getName().equalsIgnoreCase(name)) {
+            if (StringUtil.equalsIgnoreCase(variable.getName(), name)) {
                 return variable;
             }
         }

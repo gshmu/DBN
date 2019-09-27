@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
@@ -96,7 +97,8 @@ public class DatasetEditorSortingForm extends DBNFormImpl<DatasetEditorSortingDi
         @Override
         public boolean isVisible(DBColumn value) {
             for (DatasetSortingColumnForm sortingColumnForm : sortingInstructionForms) {
-                if (sortingColumnForm.getSortingInstruction().getColumnName().equalsIgnoreCase(value.getName())) {
+                String columnName = sortingColumnForm.getSortingInstruction().getColumnName();
+                if (StringUtil.equalsIgnoreCase(columnName, value.getName())) {
                     return false;
                 }
             }

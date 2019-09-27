@@ -54,7 +54,7 @@ public class StatementExecutionVariablesCache implements PersistentStateElement 
         if (virtualFile != null) {
             Set<StatementExecutionVariable> variables = getVariables(virtualFile);
             for (StatementExecutionVariable variable : variables) {
-                if (variable.getName().equalsIgnoreCase(name)) {
+                if (StringUtil.equalsIgnoreCase(variable.getName(), name)) {
                     return variable;
                 }
             }

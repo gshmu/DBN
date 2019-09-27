@@ -19,7 +19,7 @@ public class MethodExecutionArgumentValuesCache implements PersistentStateElemen
 
         if (argumentValues != null) {
             for (MethodExecutionArgumentValue argumentValue : argumentValues) {
-                if (argumentValue.getName().equalsIgnoreCase(name)) {
+                if (StringUtil.equalsIgnoreCase(argumentValue.getName(), name)) {
                     return argumentValue;
                 }
             }

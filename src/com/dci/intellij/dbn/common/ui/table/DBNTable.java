@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableHeaderRenderer;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolder;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.keyFMap.KeyFMap;
 import com.intellij.util.ui.UIUtil;
@@ -322,7 +323,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
             TableColumn column = columnModel.getColumn(i);
             Object modelColumnIdentifier = column.getIdentifier();
             String modelColumnName = modelColumnIdentifier == null ? null : modelColumnIdentifier.toString();
-            if (columnName.equalsIgnoreCase(modelColumnName)) {
+            if (StringUtil.equalsIgnoreCase(columnName, modelColumnName)) {
                 return column;
             }
         }

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.database.common;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -122,7 +123,7 @@ public class DatabaseObjectIdentifierImpl implements DatabaseObjectIdentifier {
         int index = objectTypes.length - 1;
         while (object != null && index > -1) {
             if (object.getObjectType() == objectTypes[index] &&
-                object.getName().equalsIgnoreCase(objectNames[index])) {
+                StringUtil.equalsIgnoreCase(object.getName(), objectNames[index])){
                 object = object.getParentObject();
                 index--;
             } else {

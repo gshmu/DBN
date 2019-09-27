@@ -4,11 +4,11 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
 import com.intellij.openapi.diagnostic.Logger;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
@@ -109,7 +109,7 @@ public class DBNativeDataType extends DisposableBase implements DynamicContentEl
             try {
                 Object object = resultSet.getObject(columnIndex);
                 String objectClass = object == null ? "" : object.getClass().getName();
-                if (object instanceof String && StringUtils.isEmpty((String) object)) {
+                if (object instanceof String && StringUtil.isEmpty((String) object)) {
                     return null;
                 }
                 else if (object instanceof Long && java.util.Date.class.isAssignableFrom(clazz)) {

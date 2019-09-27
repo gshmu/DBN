@@ -162,4 +162,18 @@ public class CollectionUtil {
         }
         return null;
     }
+
+    public static int indexOf(@NotNull List<String> where, @NotNull String what, boolean ignoreCase) {
+        int index = where.indexOf(what);
+        if (index == -1) {
+            for (int i=0; i < where.size(); i++ ) {
+                String string = where.get(i);
+                if (ignoreCase && StringUtil.equalsIgnoreCase(string, what) ||
+                        (!ignoreCase && StringUtil.equals(string, what))) {
+                    return i;
+                }
+            }
+        }
+        return index;
+    }
 }

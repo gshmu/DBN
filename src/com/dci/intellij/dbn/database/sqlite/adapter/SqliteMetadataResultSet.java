@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.common.util.ResultSetStub;
+import com.intellij.openapi.util.text.StringUtil;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class SqliteMetadataResultSet<T extends SqliteMetadataResultSetRow>
 
     protected T row(String name) {
         for (T element : rows) {
-            if (element.identifier().equalsIgnoreCase(name)) {
+            if (StringUtil.equalsIgnoreCase(element.identifier(), name)) {
                 return element;
             }
         }

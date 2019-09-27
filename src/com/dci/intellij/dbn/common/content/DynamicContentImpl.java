@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
@@ -407,13 +408,14 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     }
 
     protected boolean matchElement(T element, String name, int overload) {
-        return (overload == 0 || overload == element.getOverload()) && element.getName().equalsIgnoreCase(name);
+        return (overload == 0 || overload == element.getOverload()) &&
+                StringUtil.equalsIgnoreCase(element.getName(), name);
     }
 
     @Override
     @Nullable
     public List<T> getElements(String name) {
-        return CollectionUtil.filter(getAllElements(), false, false, (element) -> element.getName().equalsIgnoreCase(name));
+        return CollectionUtil.filter(getAllElements(), false, false, (element) -> StringUtil.equalsIgnoreCase(element.getName(), name));
     }
 
     @Override
