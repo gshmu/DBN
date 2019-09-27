@@ -16,13 +16,12 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class DBLanguage<D extends DBLanguageDialect> extends Language implements DBFileElementTypeProvider {
 
-    private SharedTokenTypeBundle sharedTokenTypes;
+    private RuntimeLatent<SharedTokenTypeBundle> sharedTokenTypes = Latent.runtime(() -> new SharedTokenTypeBundle(this));
     private RuntimeLatent<D[]> languageDialects = Latent.runtime(() -> createLanguageDialects());
     private RuntimeLatent<IFileElementType> fileElementType = Latent.runtime(() -> createFileElementType(DBLanguage.this));
 
     protected DBLanguage(final @NonNls String id, final @NonNls String... mimeTypes){
         super(id, mimeTypes);
-        sharedTokenTypes = new SharedTokenTypeBundle(this);
     }
 
     @Override
@@ -34,14 +33,15 @@ public abstract class DBLanguage<D extends DBLanguageDialect> extends Language i
 
 
     public SharedTokenTypeBundle getSharedTokenTypes() {
-        return sharedTokenTypes;
+        return sharedTokenTypes.get();
     }
 
     protected abstract D[] createLanguageDialects();
     public abstract D getMainLanguageDialect();
 
     public D getLanguageDialect(Project project, VirtualFile virtualFile) {
-        ConnectionHandler connectionHandler = FileConnectionMappingManager.getInstance(project).getConnectionHandler(virtualFile);
+        FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
+        ConnectionHandler connectionHandler = connectionMappingManager.getConnectionHandler(virtualFile);
         if (connectionHandler != null) {
             return (D) connectionHandler.getLanguageDialect(this);
         }
