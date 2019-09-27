@@ -75,8 +75,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
 
     public final ASTNode node;
 
-    private RuntimeLatent<BasePsiElement> enclosingScopePsiElement = Latent.mutable(
-            () -> getTextOffset(),
+    private RuntimeLatent<BasePsiElement> enclosingScopePsiElement = Latent.weak(
             () -> findEnclosingScopePsiElement());
 
     public enum MatchType {

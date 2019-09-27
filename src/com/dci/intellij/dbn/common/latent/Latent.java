@@ -63,6 +63,15 @@ public interface Latent<T, E extends Throwable> {
         return latent;
     }
 
+    static <T> WeakRefLatent<T> weak(Loader<T, RuntimeException> loader) {
+        return new WeakRefLatent<T>() {
+            @Override
+            public Loader<T, RuntimeException> getLoader() {
+                return loader;
+            }
+        };
+    }
+
 
     static <T> ThreadLocalLatent<T> thread(Loader<T, RuntimeException> loader) {
         return new ThreadLocalLatent<T>(loader){};
