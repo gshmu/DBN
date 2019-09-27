@@ -42,7 +42,7 @@ import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBColumn {
     private DBDataType dataType;
-    private int position;
+    private short position;
 
     private DBObjectList<DBConstraint> constraints;
     private DBObjectList<DBIndex> indexes;
@@ -93,7 +93,7 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
     }
 
     @Override
-    public int getPosition() {
+    public short getPosition() {
         return position;
     }
 
@@ -190,7 +190,7 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
     }
 
     @Override
-    public int getConstraintPosition(DBConstraint constraint) {
+    public short getConstraintPosition(DBConstraint constraint) {
         DBObjectRelationListContainer childObjectRelations = getDataset().getChildObjectRelations();
         if (childObjectRelations != null) {
             DBObjectRelationList<DBConstraintColumnRelation> constraintColumnRelations =
@@ -208,7 +208,7 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
     }
 
     @Override
-    public DBConstraint getConstraintForPosition(int position) {
+    public DBConstraint getConstraintForPosition(short position) {
         DBObjectRelationListContainer childObjectRelations = getDataset().getChildObjectRelations();
         if (childObjectRelations != null) {
             DBObjectRelationList<DBConstraintColumnRelation> constraintColumnRelations =
@@ -230,7 +230,7 @@ public class DBColumnImpl extends DBObjectImpl<DBColumnMetadata> implements DBCo
     public DBColumn getForeignKeyColumn() {
         for (DBConstraint constraint : getConstraints()) {
             if (constraint.isForeignKey()) {
-                int position = getConstraintPosition(constraint);
+                short position = getConstraintPosition(constraint);
                 DBConstraint foreignKeyConstraint = constraint.getForeignKeyConstraint();
                 if (foreignKeyConstraint != null) {
                     return foreignKeyConstraint.getColumnForPosition(position);

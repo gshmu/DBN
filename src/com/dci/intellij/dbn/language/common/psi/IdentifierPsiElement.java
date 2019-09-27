@@ -383,7 +383,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
                 if (parentPsiElement != null) {
                     DBObject object = parentPsiElement.resolveUnderlyingObject();
                     if (object != null && object != getFile().getUnderlyingObject()) {
-                        DBObject referencedObject = object.getChildObject(refText.toString(), 0, false);
+                        DBObject referencedObject = object.getChildObject(refText.toString(), (short) 0, false);
                         if (updateReference(null, elementType, referencedObject)) return;
                     }
                 }
@@ -410,7 +410,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
                 }
 
                 DBObjectBundle objectBundle = activeConnection.getObjectBundle();
-                DBObject referencedObject = objectBundle.getObject(objectType, objectName, 0);
+                DBObject referencedObject = objectBundle.getObject(objectType, objectName, (short) 0);
                 if (updateReference(null, elementType, referencedObject)) {
                     return;
                 }

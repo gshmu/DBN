@@ -520,7 +520,7 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
      *  <li> SEQUENCE (number)
      *  <li> IN_OUT ('IN', 'OUT', 'IN/OUT')
      */
-    ResultSet loadMethodArguments(String ownerName, String methodName, String methodType, int overload, DBNConnection connection) throws SQLException;
+    ResultSet loadMethodArguments(String ownerName, String methodName, String methodType, short overload, DBNConnection connection) throws SQLException;
 
     /**
      * Loads all arguments for a given program method (function or procedure of a package or type).<br>
@@ -530,7 +530,7 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
      *  <li> SEQUENCE (number)
      *  <li> IN_OUT ('IN', 'OUT', 'IN/OUT')
      */
-    ResultSet loadProgramMethodArguments(String ownerName, String programName, String methodName, int overload, DBNConnection connection) throws SQLException;
+    ResultSet loadProgramMethodArguments(String ownerName, String programName, String methodName, short overload, DBNConnection connection) throws SQLException;
 
     /**
      * Loads all method (function/procedure) arguments for a given owner.<br>
@@ -599,7 +599,7 @@ public interface DatabaseMetadataInterface extends DatabaseInterface{
      * View source-code may be split on more than one line.
      */
     ResultSet loadObjectSourceCode(String ownerName, String objectName, String objectType, DBNConnection connection) throws SQLException;
-    ResultSet loadObjectSourceCode(String ownerName, String objectName, String objectType, int overload, DBNConnection connection) throws SQLException;
+    ResultSet loadObjectSourceCode(String ownerName, String objectName, String objectType, short overload, DBNConnection connection) throws SQLException;
 
     /**
      * Loads a actions of invalid object names for the given owner.

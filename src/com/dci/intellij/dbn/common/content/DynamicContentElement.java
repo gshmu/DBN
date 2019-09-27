@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.ui.Presentable;
 
 public interface DynamicContentElement extends Disposable, Comparable, Presentable {
-    int getOverload();
+    short getOverload();
     void reload();
     void refresh();
     DynamicContentType getDynamicContentType();

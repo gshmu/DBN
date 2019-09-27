@@ -24,14 +24,14 @@ public class SqliteRawMetaData {
 
         public static class Row {
             int id;
-            int seq;
+            short seq;
             String table;
             String from;
             String to;
 
             Row (ResultSet resultSet) throws SQLException {
                 id = resultSet.getInt("id");
-                seq = resultSet.getInt("seq");
+                seq = resultSet.getShort("seq");
                 table = resultSet.getString("table");
                 from = resultSet.getString("from");
                 to = resultSet.getString("to");
@@ -41,7 +41,7 @@ public class SqliteRawMetaData {
                 return id;
             }
 
-            public int getSeq() {
+            public short getSeq() {
                 return seq;
             }
 
@@ -119,7 +119,7 @@ public class SqliteRawMetaData {
         }
 
         public static class Row {
-            int seqno;
+            short seqno;
             int cid;
             int desc;
             int key;
@@ -127,7 +127,7 @@ public class SqliteRawMetaData {
             String coll;
 
             Row (ResultSet resultSet) throws SQLException {
-                seqno = resultSet.getInt("seqno");
+                seqno = resultSet.getShort("seqno");
                 cid = resultSet.getInt("cid");
                 key = resultSet.getInt("key");
                 name = resultSet.getString("name");
@@ -135,7 +135,7 @@ public class SqliteRawMetaData {
                 coll = resultSet.getString("coll");
             }
 
-            public int getSeqno() {
+            public short getSeqno() {
                 return seqno;
             }
 

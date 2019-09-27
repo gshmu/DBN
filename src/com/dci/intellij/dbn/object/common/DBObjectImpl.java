@@ -222,7 +222,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     }
 
     @Override
-    public int getOverload() {
+    public short getOverload() {
         return 0;
     }
 
@@ -407,7 +407,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Override
     public DBObject getChildObject(DBObjectType objectType, String name, boolean lookupHidden) {
-        return getChildObject(objectType, name, 0, lookupHidden);
+        return getChildObject(objectType, name, (short) 0, lookupHidden);
     }
 
     @Override
@@ -427,7 +427,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     }
 
     @Override
-    public DBObject getChildObject(DBObjectType objectType, String name, int overload, boolean lookupHidden) {
+    public DBObject getChildObject(DBObjectType objectType, String name, short overload, boolean lookupHidden) {
         if (childObjects == null) {
             return null;
         } else {
@@ -442,21 +442,21 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @Override
     @Nullable
     public DBObject getChildObject(String name, boolean lookupHidden) {
-        return getChildObject(name, 0, lookupHidden);
+        return getChildObject(name, (short) 0, lookupHidden);
     }
 
     @Override
     @Nullable
-    public DBObject getChildObject(String name, int overload, boolean lookupHidden) {
+    public DBObject getChildObject(String name, short overload, boolean lookupHidden) {
         return childObjects == null ? null :
                 childObjects.getObjectForParentType(this.getObjectType(), name, overload, lookupHidden);
     }
 
     public DBObject getChildObjectNoLoad(String name) {
-        return getChildObjectNoLoad(name, 0);
+        return getChildObjectNoLoad(name, (short) 0);
     }
 
-    public DBObject getChildObjectNoLoad(String name, int overload) {
+    public DBObject getChildObjectNoLoad(String name, short overload) {
         return childObjects == null ? null : childObjects.getObjectNoLoad(name, overload);
     }
 
@@ -464,7 +464,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @NotNull
     public List<DBObject> getChildObjects(DBObjectType objectType) {
         if (objectType.getFamilyTypes().size() > 1) {
-            List<DBObject> list = new ArrayList<DBObject>();
+            List<DBObject> list = new ArrayList<>();
             for (DBObjectType childObjectType : objectType.getFamilyTypes()) {
                 if (objectType != childObjectType) {
                     List<DBObject> childObjects = getChildObjects(childObjectType);

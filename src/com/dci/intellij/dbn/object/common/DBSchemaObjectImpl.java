@@ -206,7 +206,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
                     cache.setObject(objectOwner,  schema);
                 }
 
-                return schema == null ? null : schema.getChildObject(objectType, objectName, 0, true);
+                return schema == null ? null : schema.getChildObject(objectType, objectName, (short) 0, true);
             }
         };
 
@@ -234,7 +234,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
                     schema = connectionHandler.getObjectBundle().getSchema(objectOwner);
                     cache.setObject(objectOwner,  schema);
                 }
-                return schema == null ? null : schema.getChildObject(objectType, objectName, 0, true);
+                return schema == null ? null : schema.getChildObject(objectType, objectName, (short) 0, true);
             }
         };
     }

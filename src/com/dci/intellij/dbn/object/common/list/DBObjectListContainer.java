@@ -106,7 +106,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
     }
 
 
-    public DBObject getObject(DBObjectType objectType, String name, int overload) {
+    public DBObject getObject(DBObjectType objectType, String name, short overload) {
         DBObjectList objectList = getObjectList(objectType);
         if (objectList == null) {
             objectList = getInternalObjectList(objectType);
@@ -128,7 +128,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
         return null;
     }
 
-    public <T extends DBObject> T getInternalObject(DBObjectType objectType, String name, int overload) {
+    public <T extends DBObject> T getInternalObject(DBObjectType objectType, String name, short overload) {
         if (objectType.isGeneric()) {
             Set<DBObjectType> objectTypes = objectType.getInheritingTypes();
             for (DBObjectType objType : objectTypes) {
@@ -149,7 +149,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
         return null;
     }
 
-    public DBObject getObject(String name, int overload) {
+    public DBObject getObject(String name, short overload) {
         if (objectLists != null) {
             for (DBObjectList objectList : objectLists.values()) {
                 DBObject object = objectList.getObject(name, overload);
@@ -162,7 +162,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
     }
 
     @Nullable
-    public DBObject getObjectForParentType(DBObjectType parentObjectType, String name, int overload, boolean lookupInternal) {
+    public DBObject getObjectForParentType(DBObjectType parentObjectType, String name, short overload, boolean lookupInternal) {
         if (objectLists != null) {
             for (DBObjectList objectList : objectLists.values()) {
                 if ((!objectList.isInternal() || lookupInternal) && check(objectList)) {
@@ -187,7 +187,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
         return compatibilityInterface.supportsObjectType(objectType.getTypeId());
     }
 
-    public DBObject getObjectNoLoad(String name, int overload) {
+    public DBObject getObjectNoLoad(String name, short overload) {
         if (objectLists != null) {
             for (DBObjectList objectList : objectLists.values()) {
                 if (check(objectList) && objectList.isLoaded() && !objectList.isDirty()) {

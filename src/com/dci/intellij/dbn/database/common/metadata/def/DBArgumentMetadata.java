@@ -16,11 +16,11 @@ public interface DBArgumentMetadata extends DBObjectMetadata {
 
     String getInOut() throws SQLException;
 
-    int getOverload() throws SQLException;
+    short getOverload() throws SQLException;
 
-    int getPosition() throws SQLException;
+    short getPosition() throws SQLException;
 
-    int getSequence() throws SQLException;
+    short getSequence() throws SQLException;
 
     DBDataTypeMetadata getDataType();
 }

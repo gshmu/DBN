@@ -26,8 +26,8 @@ public class DBTypeAttributeMetadataImpl extends DBObjectMetadataBase implements
     }
 
     @Override
-    public int getPosition() throws SQLException {
-        return resultSet.getInt("POSITION");
+    public short getPosition() throws SQLException {
+        return resultSet.getShort("POSITION");
     }
 
     public DBDataTypeMetadata getDataType() {

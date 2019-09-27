@@ -26,9 +26,9 @@ import java.util.List;
 
 public class DBArgumentImpl extends DBObjectImpl<DBArgumentMetadata> implements DBArgument {
     private DBDataType dataType;
-    private int overload;
-    private int position;
-    private int sequence;
+    private short overload;
+    private short position;
+    private short sequence;
 
     DBArgumentImpl(@NotNull DBMethod method, DBArgumentMetadata metadata) throws SQLException {
         super(method, metadata);
@@ -66,17 +66,17 @@ public class DBArgumentImpl extends DBObjectImpl<DBArgumentMetadata> implements 
     }
 
     @Override
-    public int getOverload() {
+    public short getOverload() {
         return overload;
     }
 
     @Override
-    public int getPosition() {
+    public short getPosition() {
         return position;
     }
 
     @Override
-    public int getSequence() {
+    public short getSequence() {
         return sequence;
     }
 

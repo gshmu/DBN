@@ -89,7 +89,7 @@ public interface DynamicContent<T extends DynamicContentElement> extends Disposa
     Filter<T> getFilter();
 
 
-    T getElement(String name, int overload);
+    T getElement(String name, short overload);
 
     void setElements(@Nullable List<T> elements);
 

@@ -10,7 +10,7 @@ public interface DBTypeAttributeMetadata extends DBObjectMetadata {
 
     String getTypeName() throws SQLException;
 
-    int getPosition() throws SQLException;
+    short getPosition() throws SQLException;
 
     DBDataTypeMetadata getDataType();
 }

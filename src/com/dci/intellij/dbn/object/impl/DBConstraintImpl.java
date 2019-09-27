@@ -152,7 +152,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
     }
 
     @Override
-    public int getColumnPosition(DBColumn column) {
+    public short getColumnPosition(DBColumn column) {
         DBObjectRelationListContainer childObjectRelations = getDataset().getChildObjectRelations();
         if (childObjectRelations != null) {
             DBObjectRelationList<DBConstraintColumnRelation> relations = childObjectRelations.getObjectRelationList(DBObjectRelationType.CONSTRAINT_COLUMN);
@@ -169,7 +169,7 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
 
     @Override
     @Nullable
-    public DBColumn getColumnForPosition(int position) {
+    public DBColumn getColumnForPosition(short position) {
         DBObjectRelationListContainer childObjectRelations = getDataset().getChildObjectRelations();
         if (childObjectRelations != null) {
             DBObjectRelationList<DBConstraintColumnRelation> relations = childObjectRelations.getObjectRelationList(DBObjectRelationType.CONSTRAINT_COLUMN);
