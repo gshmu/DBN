@@ -83,12 +83,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
      */
     @Override
     public String getPresentableText() {
-        StringBuilder builder = new StringBuilder();
-        StringUtil.appendToUpperCase(builder,  getUnquotedText());
-        builder.append(" (");
-        builder.append(getObjectType());
-        builder.append(")");
-        return builder.toString();
+        return StringUtil.toUpperCase(getUnquotedText()) + " (" + getObjectType() + ")";
     }
 
     @Override

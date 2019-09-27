@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.method.history.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -92,7 +93,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
             if (!isLeaf())
                 for (TreeNode node : getChildren()) {
                     SchemaTreeNode schemaNode = (SchemaTreeNode) node;
-                    if (schemaNode.getName().equalsIgnoreCase(executionInput.getMethodRef().getSchemaName())) {
+                    if (StringUtil.equalsIgnoreCase(schemaNode.getName(), executionInput.getMethodRef().getSchemaName())) {
                         return schemaNode;
                     }
                 }
@@ -113,7 +114,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
                 for (TreeNode node : getChildren()) {
                     if (node instanceof ProgramTreeNode) {
                         ProgramTreeNode programNode = (ProgramTreeNode) node;
-                        if (programNode.getName().equalsIgnoreCase(programName)) {
+                        if (StringUtil.equalsIgnoreCase(programNode.getName(), programName)) {
                             return programNode;
                         }
                     }
@@ -150,7 +151,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
             if (!isLeaf())
                 for (TreeNode node : getChildren()) {
                     MethodTreeNode methodNode = (MethodTreeNode) node;
-                    if (methodNode.getName().equalsIgnoreCase(methodName) && methodNode.getOverload() == overload) {
+                    if (StringUtil.equalsIgnoreCase(methodNode.getName(), methodName) && methodNode.getOverload() == overload) {
                         return methodNode;
                     }
                 }

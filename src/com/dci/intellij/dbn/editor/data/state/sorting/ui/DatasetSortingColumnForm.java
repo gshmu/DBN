@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.editor.data.state.sorting.action.DeleteSortingCriter
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -75,7 +76,8 @@ public class DatasetSortingColumnForm extends DBNFormImpl<DatasetEditorSortingFo
         public boolean isVisible(DBColumn value) {
             List<DatasetSortingColumnForm> sortingInstructionForms = ensureParentComponent().getSortingInstructionForms();
             for (DatasetSortingColumnForm sortingColumnForm : sortingInstructionForms) {
-                if (sortingColumnForm.getSortingInstruction().getColumnName().equalsIgnoreCase(value.getName())) {
+                String columnName = sortingColumnForm.getSortingInstruction().getColumnName();
+                if (StringUtil.equalsIgnoreCase(columnName, value.getName())) {
                     return false;
                 }
             }

@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,12 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getDouble;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getEnum;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getString;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setDouble;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setEnum;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setString;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSettings, ConnectionDatabaseSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
@@ -197,7 +191,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         if (databaseInfo.getUrlType() == DatabaseUrlType.FILE) {
             // only for file based databases
             String file = databaseInfo.getMainFile();
-            return StringUtils.isNotEmpty(file) && new File(file).exists();
+            return StringUtil.isNotEmpty(file) && new File(file).exists();
         }
         return true;
     }

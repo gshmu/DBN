@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.Safe;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -209,7 +210,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
     private synchronized MethodExecutionArgumentValue getExecutionVariable(String name) {
         for (MethodExecutionArgumentValue executionVariable : argumentValues) {
-            if (executionVariable.getName().equalsIgnoreCase(name)) {
+            if (StringUtil.equalsIgnoreCase(executionVariable.getName(), name)) {
                 return executionVariable;
             }
         }

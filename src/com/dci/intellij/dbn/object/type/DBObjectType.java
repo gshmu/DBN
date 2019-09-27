@@ -452,7 +452,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
         } catch (IllegalArgumentException e) {
             typeName = typeName.replace('_', ' ');
             for (DBObjectType objectType: values()) {
-                if (objectType.name.equalsIgnoreCase(typeName)) {
+                if (StringUtil.equalsIgnoreCase(objectType.name, typeName)) {
                     return objectType;
                 }
             }

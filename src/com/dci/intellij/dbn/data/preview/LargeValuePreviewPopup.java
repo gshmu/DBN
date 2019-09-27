@@ -63,7 +63,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
 
         loadContent(true);
         String value = valueTextArea.getText();
-        int maxRowLength = StringUtil.computeMaxRowLength(value);
+        int maxRowLength = StringUtil.textMaxRowLength(value);
         preferredWidth = Math.max(preferredWidth, Math.min(maxRowLength * 8, 600));
         isLargeTextLayout = preferredWidth > 500;
 

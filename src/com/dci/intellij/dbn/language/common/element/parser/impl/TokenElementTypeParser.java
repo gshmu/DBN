@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.language.common.element.parser.ParserBuilder;
 import com.dci.intellij.dbn.language.common.element.parser.ParserContext;
 import com.dci.intellij.dbn.language.common.element.path.ParsePathNode;
 import com.intellij.lang.PsiBuilder;
-import org.apache.commons.lang.StringUtils;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> {
@@ -28,7 +28,7 @@ public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> 
         if (tokenType == elementType.tokenType || isDummyToken(builder.getTokenText())) {
 
             String text = elementType.getText();
-            if (StringUtils.isNotEmpty(text) && builder.getTokenText().equalsIgnoreCase(text)) {
+            if (StringUtil.isNotEmpty(text) && StringUtil.equalsIgnoreCase(builder.getTokenText(), text)) {
                 PsiBuilder.Marker marker = builder.mark(null);
                 builder.advanceLexer(parentNode);
                 return stepOut(marker, null, context, depth, ParseResultType.FULL_MATCH, 1);

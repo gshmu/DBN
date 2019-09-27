@@ -32,6 +32,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -191,8 +192,8 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
             String elementName = element.getName();
             String elementParentName = element.getParentObject().getName();
 
-            if (elementName.equalsIgnoreCase(name) &&
-                    elementParentName.equalsIgnoreCase(parentName)) {
+            if (StringUtil.equalsIgnoreCase(elementName, name) &&
+                    StringUtil.equalsIgnoreCase(elementParentName, parentName)) {
                 return element;
             }
         }
