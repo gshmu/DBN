@@ -91,10 +91,10 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Nullable
     public static <E extends DBObject> E getObject(@Nullable DBObjectList<E> objectList, String name) {
-        return getObject(objectList, name, 0);
+        return getObject(objectList, name, (short) 0);
     }
 
-    public static <E extends DBObject> E getObject(@Nullable DBObjectList<E> objectList, String name, int overload) {
+    public static <E extends DBObject> E getObject(@Nullable DBObjectList<E> objectList, String name, short overload) {
         return objectList == null ? null : objectList.getObject(name, overload);
     }
 
@@ -178,11 +178,11 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Override
     public T getObject(String name) {
-        return getElement(name, 0);
+        return getElement(name, (short) 0);
     }
 
     @Override
-    public T getObject(String name, int overload) {
+    public T getObject(String name, short overload) {
         return getElement(name, overload);
     }
 

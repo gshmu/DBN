@@ -12,9 +12,9 @@ public interface DBMethodMetadata extends DBObjectMetadata {
 
     boolean isDebug() throws SQLException;
 
-    int getOverload() throws SQLException;
+    short getOverload() throws SQLException;
 
-    int getPosition() throws SQLException;
+    short getPosition() throws SQLException;
 
     String getLanguage() throws SQLException;
 

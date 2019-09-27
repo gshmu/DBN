@@ -312,7 +312,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
 
                         String columnName = metadata.getColumnName();
                         String constraintName = metadata.getConstraintName();
-                        int position = metadata.getPosition();
+                        short position = metadata.getPosition();
 
                         DBDataset dataset = (DBDataset) content.getParentElement();
                         DBColumn column = dataset.getColumn(columnName);

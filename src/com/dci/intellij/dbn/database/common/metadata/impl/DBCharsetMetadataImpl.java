@@ -18,7 +18,7 @@ public class DBCharsetMetadataImpl extends DBObjectMetadataBase implements DBCha
     }
 
     @Override
-    public int getMaxLength() throws SQLException {
-        return resultSet.getInt("MAX_LENGTH");
+    public short getMaxLength() throws SQLException {
+        return resultSet.getShort("MAX_LENGTH");
     }
 }

@@ -41,18 +41,18 @@ public class DBArgumentMetadataImpl extends DBObjectMetadataBase implements DBAr
     }
 
     @Override
-    public int getOverload() throws SQLException {
-        return resultSet.getInt("OVERLOAD");
+    public short getOverload() throws SQLException {
+        return resultSet.getShort("OVERLOAD");
     }
 
     @Override
-    public int getPosition() throws SQLException {
-        return resultSet.getInt("POSITION");
+    public short getPosition() throws SQLException {
+        return resultSet.getShort("POSITION");
     }
 
     @Override
-    public int getSequence() throws SQLException {
-        return resultSet.getInt("SEQUENCE");
+    public short getSequence() throws SQLException {
+        return resultSet.getShort("SEQUENCE");
     }
 
     public DBDataTypeMetadata getDataType() {

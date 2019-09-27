@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.ThreadProperty;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Numbers;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -317,7 +318,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
 
     @Override
     public void updateChangeSignature() {
-        changeSignature = (short) (System.currentTimeMillis() % 10000);
+        changeSignature = Numbers.timeSignature();
     }
 
 
@@ -398,7 +399,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     }
 
     @Override
-    public T getElement(String name, int overload) {
+    public T getElement(String name, short overload) {
         if (name != null) {
             List<T> elements = getAllElements();
             return CollectionUtil.first(elements,
@@ -407,7 +408,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         return null;
     }
 
-    protected boolean matchElement(T element, String name, int overload) {
+    protected boolean matchElement(T element, String name, short overload) {
         return (overload == 0 || overload == element.getOverload()) &&
                 StringUtil.equalsIgnoreCase(element.getName(), name);
     }

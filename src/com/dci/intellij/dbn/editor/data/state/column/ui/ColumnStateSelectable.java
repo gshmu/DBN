@@ -95,7 +95,7 @@ public class ColumnStateSelectable implements Selectable {
         return state.getPosition();
     }
 
-    public void setPosition(int position) {
+    public void setPosition(short position) {
         state.setPosition(position);
     }
 }

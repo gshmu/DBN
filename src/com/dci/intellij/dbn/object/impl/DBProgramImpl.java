@@ -80,7 +80,7 @@ public abstract class DBProgramImpl<M extends DBProgramMetadata, P extends DBPro
     }
 
     @Override
-    public F getFunction(String name, int overload) {
+    public F getFunction(String name, short overload) {
         for (F function : functions.getObjects()){
             if (function.getName().equals(name) && function.getOverload() == overload) {
                 return function;
@@ -90,7 +90,7 @@ public abstract class DBProgramImpl<M extends DBProgramMetadata, P extends DBPro
     }
 
     @Override
-    public P getProcedure(String name, int overload) {
+    public P getProcedure(String name, short overload) {
         for (P procedure : procedures.getObjects()){
             if (procedure.getName().equals(name) && procedure.getOverload() == overload) {
                 return procedure;
@@ -100,7 +100,7 @@ public abstract class DBProgramImpl<M extends DBProgramMetadata, P extends DBPro
     }
 
     @Override
-    public DBMethod getMethod(String name, int overload) {
+    public DBMethod getMethod(String name, short overload) {
         DBMethod method = getProcedure(name, overload);
         if (method == null) method = getFunction(name, overload);
         return method;

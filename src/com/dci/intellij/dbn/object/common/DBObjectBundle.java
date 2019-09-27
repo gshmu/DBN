@@ -81,7 +81,7 @@ public interface DBObjectBundle extends BrowserTreeNode, Disposable {
     DBObject getObject(DBObjectType objectType, String name);
 
     @Nullable
-    DBObject getObject(DBObjectType objectType, String name, int overload);
+    DBObject getObject(DBObjectType objectType, String name, short overload);
 
     void lookupObjectsOfType(LookupConsumer consumer, DBObjectType objectType) throws ConsumerStoppedException;
     void lookupChildObjectsOfType(LookupConsumer consumer, DBObject parentObject, DBObjectType objectType, ObjectTypeFilter filter, DBSchema currentSchema) throws ConsumerStoppedException;

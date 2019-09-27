@@ -149,7 +149,7 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
 
     @Nullable
     @Override
-    public DBObject getObject(DBObjectType objectType, String name, int overload) {
+    public DBObject getObject(DBObjectType objectType, String name, short overload) {
         return null;
     }
 

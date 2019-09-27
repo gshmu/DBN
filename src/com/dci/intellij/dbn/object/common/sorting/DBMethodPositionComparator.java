@@ -13,8 +13,8 @@ public abstract class DBMethodPositionComparator<T extends DBMethod> extends DBO
     public int compare(DBMethod method1, DBMethod method2) {
         DBProgram program1 = method1.getProgram();
         DBProgram program2 = method2.getProgram();
-        int position1 = method1.getPosition();
-        int position2 = method2.getPosition();
+        short position1 = method1.getPosition();
+        short position2 = method2.getPosition();
         if (program1 != null && program2 != null) {
             if (program1.equals(program2)) {
                 return position1 - position2;
@@ -23,8 +23,8 @@ public abstract class DBMethodPositionComparator<T extends DBMethod> extends DBO
             }
         } else {
             if (position1 == position2) {
-                int overload1 = method1.getOverload();
-                int overload2 = method2.getOverload();
+                short overload1 = method1.getOverload();
+                short overload2 = method2.getOverload();
                 int nameComparison = method1.getName().compareTo(method2.getName());
                 if (nameComparison == 0) {
                     return overload1 - overload2;

@@ -12,6 +12,6 @@ public interface DBConstraintColumnMetadata extends DBObjectMetadata {
 
     String getDatasetName() throws SQLException;
 
-    int getPosition() throws SQLException;
+    short getPosition() throws SQLException;
 
 }

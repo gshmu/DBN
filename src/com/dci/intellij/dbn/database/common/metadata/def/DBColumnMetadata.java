@@ -20,7 +20,7 @@ public interface DBColumnMetadata extends DBObjectMetadata {
 
     boolean isHidden() throws SQLException;
 
-    int getPosition() throws SQLException;
+    short getPosition() throws SQLException;
 
     DBDataTypeMetadata getDataType();
 }

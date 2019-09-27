@@ -624,12 +624,12 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Override
     @Nullable
     public DBObject getObject(DBObjectType objectType, String name) {
-        return getObject(objectType, name, 0);
+        return getObject(objectType, name, (short) 0);
     }
 
     @Override
     @Nullable
-    public DBObject getObject(DBObjectType objectType, String name, int overload) {
+    public DBObject getObject(DBObjectType objectType, String name, short overload) {
         if (objectType == SCHEMA) return getSchema(name);
         if (objectType == USER) return getUser(name);
         if (objectType == ROLE) return getRole(name);
@@ -810,7 +810,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         new DynamicContentLoaderImpl<DBConsole, DBObjectMetadata>(null, CONSOLE, true){
 
             @Override
-            public void loadContent(DynamicContent<DBConsole> dynamicContent, boolean forceReload) throws SQLException {
+            public void loadContent(DynamicContent<DBConsole> dynamicContent, boolean forceReload) {
                 ConnectionHandler connectionHandler = dynamicContent.getConnectionHandler();
                 List<DBConsole> consoles = connectionHandler.getConsoleBundle().getConsoles();
                 dynamicContent.setElements(consoles);

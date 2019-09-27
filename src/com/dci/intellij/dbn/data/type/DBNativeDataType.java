@@ -36,7 +36,7 @@ public class DBNativeDataType extends DisposableBase implements DynamicContentEl
     }
 
     @Override
-    public int getOverload() {
+    public short getOverload() {
         return 0;
     }
 

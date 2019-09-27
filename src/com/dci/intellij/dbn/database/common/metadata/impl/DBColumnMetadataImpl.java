@@ -43,8 +43,8 @@ public class DBColumnMetadataImpl extends DBObjectMetadataBase implements DBColu
         return "Y".equals(resultSet.getString("IS_HIDDEN"));
     }
 
-    public int getPosition() throws SQLException {
-        return resultSet.getInt("POSITION");
+    public short getPosition() throws SQLException {
+        return resultSet.getShort("POSITION");
     }
 
     public DBDataTypeMetadata getDataType() {

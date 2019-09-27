@@ -6,13 +6,13 @@ import com.dci.intellij.dbn.object.common.list.DBObjectRelationImpl;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 
 public class DBConstraintColumnRelation extends DBObjectRelationImpl<DBConstraint, DBColumn> {
-    private int position;
-    DBConstraintColumnRelation(DBConstraint constraint, DBColumn column, int position) {
+    private short position;
+    DBConstraintColumnRelation(DBConstraint constraint, DBColumn column, short position) {
         super(DBObjectRelationType.CONSTRAINT_COLUMN, constraint, column);
         this.position = position;
     }
 
-    public int getPosition() {
+    public short getPosition() {
         return position;
     }
 

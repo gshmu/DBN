@@ -100,6 +100,14 @@ public interface SettingsSupport {
         element.setAttribute(attributeName, Boolean.toString(value));
     }
 
+    static short getShortAttribute(Element element, String attributeName, short staticValue) {
+        String attributeValue = element.getAttributeValue(attributeName);
+        if (attributeValue == null || attributeValue.trim().length() == 0) {
+            return staticValue;
+        }
+        return Short.parseShort(attributeValue);
+    }
+
     static int getIntegerAttribute(Element element, String attributeName, int staticValue) {
         String attributeValue = element.getAttributeValue(attributeName);
         if (attributeValue == null || attributeValue.trim().length() == 0) {

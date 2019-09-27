@@ -6,8 +6,8 @@ import com.dci.intellij.dbn.object.common.DBObject;
 public interface DBArgument extends DBObject {
     DBDataType getDataType();
     DBMethod getMethod();
-    int getPosition();
-    int getSequence();
+    short getPosition();
+    short getSequence();
     boolean isInput();
     boolean isOutput();
 }

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class DatasetColumnState implements Comparable<DatasetColumnState>, PersistentStateElement {
     private String name;
-    private int position = -1;
+    private short position = -1;
     private boolean visible = true;
 
     private DatasetColumnState(DatasetColumnState columnState) {
@@ -25,7 +25,7 @@ public class DatasetColumnState implements Comparable<DatasetColumnState>, Persi
         if (StringUtil.isEmpty(name)) {
             // not initialized yet
             name = column.getName();
-            position = column.getPosition() -1;
+            position = (short) (column.getPosition() -1);
             visible = true;
         }
     }
@@ -37,7 +37,7 @@ public class DatasetColumnState implements Comparable<DatasetColumnState>, Persi
     @Override
     public void readState(Element element) {
         name = element.getAttributeValue("name");
-        position = SettingsSupport.getIntegerAttribute(element, "position", -1);
+        position = SettingsSupport.getShortAttribute(element, "position", (short) -1);
         visible = SettingsSupport.getBooleanAttribute(element, "visible", true);
     }
 
@@ -60,7 +60,7 @@ public class DatasetColumnState implements Comparable<DatasetColumnState>, Persi
         return position;
     }
 
-    public void setPosition(int position) {
+    public void setPosition(short position) {
         this.position = position;
     }
 
