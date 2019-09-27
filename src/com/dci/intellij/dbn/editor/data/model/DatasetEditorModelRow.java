@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data.model;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.util.MessageUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -15,7 +16,6 @@ import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.diagnostic.Logger;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -196,7 +196,7 @@ public class DatasetEditorModelRow
             if (userValue != null) {
                 if (userValue instanceof String) {
                     String stringUserValue = (String) userValue;
-                    if (StringUtils.isNotEmpty(stringUserValue)) {
+                    if (StringUtil.isNotEmpty(stringUserValue)) {
                         return false;
                     }
                 } else {

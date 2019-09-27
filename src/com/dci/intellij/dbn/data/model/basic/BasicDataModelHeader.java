@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelHeader;
 import com.dci.intellij.dbn.data.type.DBDataType;
+import com.intellij.openapi.util.text.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public class BasicDataModelHeader<T extends ColumnInfo> extends DisposableBase i
     public int getColumnIndex(String name) {
         for (int i=0; i<columnInfos.size(); i++) {
             T columnInfo = columnInfos.get(i);
-            if (columnInfo.getName().equalsIgnoreCase(name)) {
+            if (StringUtil.equalsIgnoreCase(columnInfo.getName(), name)) {
                 return i;
             }
         }

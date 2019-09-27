@@ -37,7 +37,7 @@ public class DatasetEditorErrorForm extends DBNFormImpl implements ChangeListene
         error.addChangeListener(this);
         errorIconLabel.setIcon(Icons.EXEC_MESSAGES_ERROR);
         errorIconLabel.setText("");
-        errorMessageTextArea.setText(StringUtil.wrap(error.getMessage(), 60, ": ,."));
+        errorMessageTextArea.setText(StringUtil.textWrap(error.getMessage(), 60, ": ,."));
         Color backgroundColor = BACKGROUND_COLOR;
         errorMessageTextArea.setBackground(backgroundColor);
         errorMessageTextArea.setFont(mainPanel.getFont());

@@ -89,7 +89,7 @@ public class VirtualFileUtil {
                 if (virtualFile.isDirectory() ) {
                     collectFilesForName(virtualFile, name, bucket);
                 } else {
-                    if (virtualFile.getName().equalsIgnoreCase(name)) {
+                    if (StringUtil.equalsIgnoreCase(virtualFile.getName(), name)) {
                         bucket.add(virtualFile);
                     }
                 }

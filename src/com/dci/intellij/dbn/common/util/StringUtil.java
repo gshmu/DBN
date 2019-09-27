@@ -56,10 +56,6 @@ public class StringUtil extends com.intellij.openapi.util.text.StringUtil {
     }
 
 
-    public static boolean isEmptyOrSpaces(String string) {
-        return string == null || string.length() == 0 || string.trim().length() == 0;
-    }
-
     public static boolean isNotEmptyOrSpaces(String string) {
         return !isEmptyOrSpaces(string);
     }
@@ -73,7 +69,7 @@ public class StringUtil extends com.intellij.openapi.util.text.StringUtil {
 
     public static boolean isOneOfIgnoreCase(String string, String ... values) {
         for (String value : values) {
-            if (value.equalsIgnoreCase(string)) return true;
+            if (equalsIgnoreCase(value, string)) return true;
         }
         return false;
     }
@@ -121,7 +117,7 @@ public class StringUtil extends com.intellij.openapi.util.text.StringUtil {
             int endIndex = index;
             StringBuilder buffer = new StringBuilder();
             while (endIndex > -1) {
-                if (beginIndex < endIndex) buffer.append(content.substring(beginIndex, endIndex));
+                if (beginIndex < endIndex) buffer.append(content, beginIndex, endIndex);
                 beginIndex = endIndex + 1;
                 endIndex = content.indexOf(c, beginIndex);
             }
@@ -133,39 +129,11 @@ public class StringUtil extends com.intellij.openapi.util.text.StringUtil {
         return content;
     }
 
-    public static String toUnicodeRepresentation(String str) {
-        if (str == null) return str;
-        StringBuilder unicodeString = new StringBuilder();
-
-        for (int i = 0; i < str.length(); i++) {
-            char ch = str.charAt(i);
-
-            if ((ch >= 0x0020) && (ch <= 0x007e)) {
-                // no need to convert to unicode
-                unicodeString.append(ch);
-            } else {
-                // standard unicode format.
-                unicodeString.append("\\u");
-
-                // Get hex value of the char.
-                String hex = Integer.toHexString(str.charAt(i) & 0xFFFF);
-
-                // Prepend zeros because unicode requires 4 digits
-                for (int j = 0; j < 4 - hex.length(); j++)
-                    unicodeString.append("0");
-                unicodeString.append(hex.toLowerCase());        // standard unicode format.
-                //ostr.append(hex.toLowerCase(Locale.ENGLISH));
-            }
-        }
-
-        return unicodeString.toString();
-    }
-
     public static @NotNull String trim(@Nullable String message) {
         return isEmptyOrSpaces(message) ? "" : message.trim();
     }
 
-    public static String wrap(String string, int maxRowLength, String wrapCharacters) {
+    public static String textWrap(String string, int maxRowLength, String wrapCharacters) {
         StringBuilder builder = new StringBuilder();
         if (string != null) {
             StringTokenizer tokenizer = new StringTokenizer(string, wrapCharacters, true);
@@ -193,7 +161,7 @@ public class StringUtil extends com.intellij.openapi.util.text.StringUtil {
         return builder.toString().trim();
     }
 
-    public static int computeMaxRowLength(String string) {
+    public static int textMaxRowLength(String string) {
         int offset = 0;
         int maxLength = 0;
         while (true) {
@@ -210,90 +178,6 @@ public class StringUtil extends com.intellij.openapi.util.text.StringUtil {
         }
         return maxLength;
     }
-
-    public static void main(String[] args) {
-
-        System.out.println(computeMaxRowLength("\ntest\ntest2342345345345\n234\n2324444444444444444444444444444444444\n1"));
-    }
-
-    public static boolean containsIgnoreCase(@NotNull CharSequence where, @NotNull CharSequence what){
-        return indexOfIgnoreCase(where, what, 0) > -1;
-    }
-
-    public static int indexOfIgnoreCase(@NotNull CharSequence where, @NotNull CharSequence what, int fromIndex) {
-        int targetCount = what.length();
-        int sourceCount = where.length();
-
-        if (fromIndex >= sourceCount) {
-            return targetCount == 0 ? sourceCount : -1;
-        }
-
-        if (fromIndex < 0) {
-            fromIndex = 0;
-        }
-
-        if (targetCount == 0) {
-            return fromIndex;
-        }
-
-        char first = what.charAt(0);
-        int max = sourceCount - targetCount;
-
-        for (int i = fromIndex; i <= max; i++) {
-      /* Look for first character. */
-            if (!charsEqualIgnoreCase(where.charAt(i), first)) {
-                while (++i <= max && !charsEqualIgnoreCase(where.charAt(i), first)) ;
-            }
-
-      /* Found first character, now look at the rest of v2 */
-            if (i <= max) {
-                int j = i + 1;
-                int end = j + targetCount - 1;
-                for (int k = 1; j < end && charsEqualIgnoreCase(where.charAt(j), what.charAt(k)); j++, k++) ;
-
-                if (j == end) {
-          /* Found whole string. */
-                    return i;
-                }
-            }
-        }
-
-        return -1;
-    }
-
-    public static int indexOfIgnoreCase(@NotNull List<String> where, @NotNull String what) {
-        int index = where.indexOf(what);
-        if (index == -1) {
-            for (int i=0; i < where.size(); i++ ) {
-                String string = where.get(i);
-                if (string.equalsIgnoreCase(what)) {
-                    return i;
-                }
-            }
-        }
-        return index;
-    }
-
-    public static StringBuilder appendToUpperCase(StringBuilder builder, CharSequence s) {
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-            char upCased = toUpperCase(c);
-            builder.append(upCased);
-        }
-
-        return builder;
-    }
-
-    public static StringBuilder appendToLowerCase(StringBuilder builder, CharSequence s) {
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
-            char lowCased = toLowerCase(c);
-            builder.append(lowCased);
-        }
-
-        return builder;
-    }
-
 
     public static CharSequence toUpperCase(CharSequence s) {
         StringBuilder answer = null;
@@ -312,51 +196,6 @@ public class StringUtil extends com.intellij.openapi.util.text.StringUtil {
         }
 
         return answer == null ? s : answer.toString();
-    }
-
-    public static boolean equalsIgnoreCase(@Nullable CharSequence s1, @Nullable CharSequence s2) {
-        if (s1 == null ^ s2 == null) {
-            return false;
-        }
-
-        if (s1 == null) {
-            return true;
-        }
-
-        if (s1.length() != s2.length()) {
-            return false;
-        }
-        for (int i = 0; i < s1.length(); i++) {
-            if (!charsEqualIgnoreCase(s1.charAt(i),s2.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static String[] toStringArray(String separatedValues, String separator) {
-        String[] array = null;
-        if (separatedValues != null) {
-            StringTokenizer tokenizer = new StringTokenizer(separatedValues, separator);
-            array = new String[tokenizer.countTokens()];
-            int index = 0;
-            while (tokenizer.hasMoreTokens()) {
-                array[index] = tokenizer.nextToken().trim();
-                index++;
-            }
-        }
-        return array;
-    }
-    public static List<String> toStringList(String separatedValues, String separator) {
-        List<String> list = null;
-        if (separatedValues != null) {
-            StringTokenizer tokenizer = new StringTokenizer(separatedValues, separator);
-            list = new ArrayList<String>(tokenizer.countTokens());
-            while (tokenizer.hasMoreTokens()) {
-                list.add(tokenizer.nextToken().trim());
-            }
-        }
-        return list;
     }
 }
 

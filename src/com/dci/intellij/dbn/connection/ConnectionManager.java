@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
@@ -44,7 +45,6 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.apache.commons.lang.StringUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -285,7 +285,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         if (databaseInfo.getUrlType() == DatabaseUrlType.FILE) {
             String file = databaseInfo.getFiles().getMainFile().getPath();
             Project project = databaseSettings.getProject();
-            if (StringUtils.isEmpty(file)) {
+            if (StringUtil.isEmpty(file)) {
                 showErrorDialog(project, "Wrong database configuration", "Database file not specified");
             } else if (!new File(file).exists()) {
                 showWarningDialog(

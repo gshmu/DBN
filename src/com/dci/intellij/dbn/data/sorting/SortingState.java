@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.data.sorting;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.Cloneable;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import org.jdom.Element;
 
 import java.util.ArrayList;
@@ -86,7 +87,7 @@ public class SortingState implements PersistentStateElement, Cloneable<SortingSt
 
     public SortingInstruction getSortingInstruction(String columnName) {
         for (SortingInstruction sortingInstruction :  sortingInstructions) {
-            if (sortingInstruction.getColumnName().equalsIgnoreCase(columnName)) {
+            if (StringUtil.equalsIgnoreCase(sortingInstruction.getColumnName(), columnName)) {
                 return sortingInstruction;
             }
         }

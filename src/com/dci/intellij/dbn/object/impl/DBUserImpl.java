@@ -24,6 +24,7 @@ import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationLi
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,7 +55,7 @@ public class DBUserImpl extends DBObjectImpl<DBUserMetadata> implements DBUser {
         String name = metadata.getUserName();
         set(DBObjectProperty.EXPIRED, metadata.isExpired());
         set(DBObjectProperty.LOCKED, metadata.isLocked());
-        set(SESSION_USER, name.equalsIgnoreCase(getConnectionHandler().getUserName()));
+        set(SESSION_USER, StringUtil.equalsIgnoreCase(name, getConnectionHandler().getUserName()));
         return name;
     }
 
