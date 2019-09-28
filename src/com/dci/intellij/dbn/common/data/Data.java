@@ -64,6 +64,26 @@ public interface Data {
         return integer == null ? 0 : integer;
     }
 
+    static Short asShort(@Nullable Object object) {
+        if (object != null) {
+            if (object instanceof Short) {
+                return (Short) object;
+
+            } else if (object instanceof Number) {
+                Number number = (Number) object;
+                return number.shortValue();
+            }
+
+            return Short.valueOf(object.toString());
+        }
+        return null;
+    }
+
+    static short asShrt(@Nullable Object object) {
+        Short shrt = asShort(object);
+        return shrt == null ? 0 : shrt;
+    }
+
     @Nullable
     static Long asLong(@Nullable Object object) {
         if (object != null) {
