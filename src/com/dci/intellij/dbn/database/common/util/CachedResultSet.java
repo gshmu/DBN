@@ -374,6 +374,12 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
     }
 
     @Override
+    public short getShort(String columnLabel) throws SQLException {
+        Object value = getObject(columnLabel);
+        return Data.asShrt(value);
+    }
+
+    @Override
     public int getInt(String columnLabel) throws SQLException {
         Object value = getObject(columnLabel);
         return Data.asInt(value);
