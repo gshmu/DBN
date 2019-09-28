@@ -94,6 +94,17 @@ public abstract class SqliteColumnsResultSet extends SqliteDatasetInfoResultSetS
     }
 
     @Override
+    public short getShort(String columnLabel) throws SQLException {
+        Column element = current();
+        return(short) (
+                columnLabel.equals("POSITION") ? element.position :
+                columnLabel.equals("DATA_LENGTH") ? element.dataLength :
+                columnLabel.equals("DATA_PRECISION") ? element.dataPrecision :
+                columnLabel.equals("DATA_SCALE") ? element.dataScale : 0);
+    }
+
+
+    @Override
     public int getInt(String columnLabel) throws SQLException {
         Column element = current();
         return

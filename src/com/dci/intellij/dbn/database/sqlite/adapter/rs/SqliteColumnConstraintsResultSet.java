@@ -7,7 +7,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintInfoResultSetStub.SqliteConstraintsLoader.*;
+import static com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintInfoResultSetStub.SqliteConstraintsLoader.ConstraintColumnInfo;
+import static com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintInfoResultSetStub.SqliteConstraintsLoader.ConstraintType;
+import static com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintInfoResultSetStub.SqliteConstraintsLoader.getConstraintName;
 
 /**
  * COLUMN_NAME
@@ -73,6 +75,12 @@ public abstract class SqliteColumnConstraintsResultSet extends SqliteConstraintI
         return columnLabel.equals("CONSTRAINT_NAME") ? element.constraintName :
                columnLabel.equals("COLUMN_NAME") ? element.columnName :
                columnLabel.equals("DATASET_NAME") ? element.datasetName : null;
+    }
+
+    @Override
+    public short getShort(String columnLabel) throws SQLException {
+        ConstraintColumn element = current();
+        return (short) (columnLabel.equals("POSITION") ? element.position : 0);
     }
 
     @Override
