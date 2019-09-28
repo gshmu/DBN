@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -293,7 +293,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
 
     public void addObjectList(DBObjectList objectList) {
         if (objectList != null) {
-            if (objectLists == null) objectLists = new EnumMap<>(DBObjectType.class);
+            if (objectLists == null) objectLists = new HashMap<>();
             objectLists.put(objectList.getObjectType(), objectList);
         }
     }
