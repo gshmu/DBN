@@ -183,6 +183,15 @@ public class MySqlArgumentsResultSet extends DisposableBase implements ResultSet
     }
 
     @Override
+    public short getShort(String columnLabel) throws SQLException {
+        return
+                columnLabel.equals("POSITION") ? currentArgument.position :
+                (short) (columnLabel.equals("SEQUENCE") ? currentArgument.position :
+                columnLabel.equals("DATA_PRECISION") ? (currentArgument.dataPrecision == null ? 0 : currentArgument.dataPrecision) :
+                columnLabel.equals("DATA_SCALE") ? (currentArgument.dataScale == null ? 0 : currentArgument.dataScale) : 0);
+    }
+
+    @Override
     public long getLong(String columnLabel) throws SQLException {
         return getInt(columnLabel);
     }

@@ -72,6 +72,12 @@ public abstract class SqliteColumnIndexesResultSet extends SqliteDatasetInfoResu
     }
 
     @Override
+    public short getShort(String columnLabel) throws SQLException {
+        IndexColumn element = current();
+        return (short) (columnLabel.equals("POSITION") ? element.position : 0);
+    }
+
+    @Override
     public int getInt(String columnLabel) throws SQLException {
         IndexColumn element = current();
         return columnLabel.equals("POSITION") ? element.position : 0;
