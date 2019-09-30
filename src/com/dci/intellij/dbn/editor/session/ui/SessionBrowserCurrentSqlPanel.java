@@ -105,10 +105,11 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
                     checkCancelled(sessionId);
                     SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(project);
                     String sql = sessionBrowserManager.loadSessionCurrentSql(connectionHandler, sessionId);
+                    sql = sql.trim().replaceAll("\r\n", "\n").replaceAll("\r", "\n");
 
                     checkCancelled(sessionId);
                     setSchemaId(SchemaId.from(schema));
-                    setPreviewText(sql.replace("\r\n", "\n"));
+                    setPreviewText(sql);
                 });
             } else {
                 setPreviewText("");
