@@ -109,6 +109,7 @@ public class DatabaseBrowserTree extends DBNTree {
     public void scrollToSelectedElement() {
         if (getProject().isOpen() && targetSelection != null) {
             Background.run(() -> {
+                BrowserTreeNode targetSelection = this.targetSelection;
                 if (targetSelection != null) {
                     targetSelection = (BrowserTreeNode) targetSelection.getUndisposedElement();
                     TreePath treePath = DatabaseBrowserUtils.createTreePath(targetSelection);
@@ -116,7 +117,7 @@ public class DatabaseBrowserTree extends DBNTree {
                         for (Object object : treePath.getPath()) {
                             BrowserTreeNode treeNode = (BrowserTreeNode) object;
                             if (!Failsafe.check(treeNode)) {
-                                targetSelection = null;
+                                this.targetSelection = null;
                                 return;
                             }
 
@@ -132,7 +133,7 @@ public class DatabaseBrowserTree extends DBNTree {
                             }
                         }
 
-                        targetSelection = null;
+                        this.targetSelection = null;
                         selectPath(treePath);
                     }
                 }
