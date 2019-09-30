@@ -38,8 +38,8 @@ public class SelectDDLFileForm extends DBNFormImpl {
         if (!isFileOpenEvent) mainPanel.remove(doNotPromptCheckBox);
     }
 
-    public Object[] getSelection() {
-        return filesList.getSelectedValues();
+    public List<VirtualFile> getSelection() {
+        return filesList.getSelectedValuesList();
     }
 
     public void selectAll() {
