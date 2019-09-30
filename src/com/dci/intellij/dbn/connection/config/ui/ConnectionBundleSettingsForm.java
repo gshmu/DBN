@@ -58,7 +58,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     private JPanel actionsPanel;
     private JPanel connectionSetupPanel;
     private JBScrollPane connectionListScrollPane;
-    private JList connectionsList;
+    private JList<ConnectionSettings> connectionsList;
 
     private String currentPanelId;
 
@@ -71,7 +71,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
     public ConnectionBundleSettingsForm(ConnectionBundleSettings configuration) {
         super(configuration);
-        connectionsList = new JBList(new ConnectionListModel(configuration));
+        connectionsList = new JBList<>(new ConnectionListModel(configuration));
         connectionsList.addListSelectionListener(this);
         connectionsList.setCellRenderer(new ConnectionConfigListCellRenderer());
         connectionsList.setFont(com.intellij.util.ui.UIUtil.getLabelFont());
@@ -146,9 +146,9 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     @Override
     public void valueChanged(ListSelectionEvent listSelectionEvent) {
         try {
-            Object[] selectedValues = connectionsList.getSelectedValues();
-            if (selectedValues.length == 1) {
-                ConnectionSettings connectionSettings = (ConnectionSettings) selectedValues[0];
+            List<ConnectionSettings> selectedValues = connectionsList.getSelectedValuesList();
+            if (selectedValues.size() == 1) {
+                ConnectionSettings connectionSettings = selectedValues.get(0);
                 switchSettingsPanel(connectionSettings);
             } else {
                 switchSettingsPanel(null);
@@ -174,7 +174,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             String selectedTabName = currentForm == null ? null : currentForm.getSelectedTabName();
 
             currentPanelId = connectionSettings.getConnectionId().id();
-            if (!cachedForms.keySet().contains(currentPanelId)) {
+            if (!cachedForms.containsKey(currentPanelId)) {
                 JComponent setupPanel = connectionSettings.createComponent();
                 this.connectionSetupPanel.add(setupPanel, currentPanelId);
                 cachedForms.put(currentPanelId, connectionSettings.getSettingsEditor());
@@ -211,7 +211,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     }
 
     public void duplicateSelectedConnection() {
-        ConnectionSettings connectionSettings = (ConnectionSettings) connectionsList.getSelectedValue();
+        ConnectionSettings connectionSettings = connectionsList.getSelectedValue();
         if (connectionSettings != null) {
             getConfiguration().setModified(true);
             ConnectionSettingsForm settingsEditor = connectionSettings.getSettingsEditor();
@@ -252,12 +252,11 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     }
 
     public void copyConnectionsToClipboard() {
-        Object[] configurations = connectionsList.getSelectedValues();
+        List<ConnectionSettings> configurations = connectionsList.getSelectedValuesList();
         try {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             Element rootElement = new Element("connection-configurations");
-            for (Object o : configurations) {
-                ConnectionSettings configuration = (ConnectionSettings) o;
+            for (ConnectionSettings configuration : configurations) {
                 Element configElement = new Element("config");
                 configuration.writeConfiguration(configElement);
                 rootElement.addContent(configElement);
@@ -364,6 +363,6 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     }
 
     public int getSelectionSize() {
-        return connectionsList.getSelectedValues().length;
+        return connectionsList.getSelectedValuesList().size();
     }
 }

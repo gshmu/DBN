@@ -70,9 +70,8 @@ public class DetachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
     @Override
     protected void doOKAction() {
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(getProject());
-        Object[] selectedPsiFiles = getComponent().getSelection();
-        for (Object selectedPsiFile : selectedPsiFiles) {
-            VirtualFile virtualFile = (VirtualFile) selectedPsiFile;
+        List<VirtualFile> virtualFiles = getComponent().getSelection();
+        for (VirtualFile virtualFile : virtualFiles) {
             fileAttachmentManager.detachDDLFile(virtualFile);
         }
         super.doOKAction();
