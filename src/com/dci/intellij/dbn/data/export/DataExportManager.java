@@ -126,8 +126,6 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
 
         } catch (DataExportException e) {
             MessageUtil.showErrorDialog(project, "Error performing data export.", e);
-        } catch (InterruptedException ignore) {
-
         }
     }
 

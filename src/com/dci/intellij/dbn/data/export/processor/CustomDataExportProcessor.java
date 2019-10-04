@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.export.processor;
 
+import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.DataExportException;
 import com.dci.intellij.dbn.data.export.DataExportFormat;
@@ -38,7 +39,7 @@ public class CustomDataExportProcessor extends DataExportProcessor{
     }
 
     @Override
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
         StringBuilder buffer = new StringBuilder();
         if (instructions.createHeader()) {
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
@@ -76,12 +77,13 @@ public class CustomDataExportProcessor extends DataExportProcessor{
             buffer.append('\n');
         }
 
+        Formatter formatter = getFormatter(connectionHandler.getProject());
         for (int rowIndex=0; rowIndex < model.getRowCount(); rowIndex++) {
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
                 checkCancelled();
                 String columnName = model.getColumnName(columnIndex);
                 Object object = model.getValue(rowIndex, columnIndex);
-                String value = object == null ? "" : object.toString();
+                String value = formatValue(formatter, object);
                 String separator = instructions.getValueSeparator();
 
                 boolean containsSeparator = value.contains(separator);

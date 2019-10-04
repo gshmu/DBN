@@ -54,6 +54,12 @@ public class ArrayValue extends ValueAdapter<List<String>>{
         return values;
     }
 
+    @Nullable
+    @Override
+    public String export() throws SQLException {
+        return values == null ? null : values.toString();
+    }
+
     @Override
     public void write(Connection connection, PreparedStatement preparedStatement, int parameterIndex, @Nullable List<String> values) throws SQLException {
         try {

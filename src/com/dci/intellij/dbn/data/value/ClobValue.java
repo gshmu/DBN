@@ -112,6 +112,12 @@ public class ClobValue extends LargeObjectValue {
         return read(0);
     }
 
+    @Nullable
+    @Override
+    public String export() throws SQLException {
+        return read();
+    }
+
     @Override
     public String read(int maxSize) throws SQLException {
         if (clob == null) {            return null;

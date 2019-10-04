@@ -37,6 +37,12 @@ public class ComplexValue extends ValueAdapter<String>{
         return displayValue;
     }
 
+    @Nullable
+    @Override
+    public String export() throws SQLException {
+        return read();
+    }
+
     @Override
     public void write(Connection connection, PreparedStatement preparedStatement, int parameterIndex, @Nullable String value) throws SQLException {
         try {

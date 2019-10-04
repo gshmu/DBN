@@ -1,12 +1,16 @@
 package com.dci.intellij.dbn.data.export.processor;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.locale.Formatter;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.export.DataExportException;
 import com.dci.intellij.dbn.data.export.DataExportFormat;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportModel;
+import com.dci.intellij.dbn.data.value.ValueAdapter;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 
@@ -20,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -29,7 +34,7 @@ public abstract class DataExportProcessor {
     public abstract boolean canExportToClipboard();
     public abstract boolean canQuoteValues();
     public abstract boolean supportsFileEncoding();
-    public abstract void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException;
+    public abstract void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException;
 
     Formatter getFormatter(Project project) {
         return Formatter.getInstance(project).clone();
@@ -38,7 +43,7 @@ public abstract class DataExportProcessor {
     public abstract String getFileExtension();
 
     public void export(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler)
-            throws DataExportException, InterruptedException {
+            throws DataExportException {
         try {
             if ((model.getColumnCount() == 0 || model.getRowCount() == 0) &&
                     instructions.getScope() == DataExportInstructions.Scope.SELECTION) {
@@ -47,8 +52,6 @@ public abstract class DataExportProcessor {
             String fileName = adjustFileName(instructions.getFileName());
             instructions.setFileName(fileName);
             performExport(model, instructions, connectionHandler);
-        } catch (InterruptedException e) {
-            throw e;
         } catch (DataExportException e) {
             throw e;
         } catch (Exception e) {
@@ -103,13 +106,37 @@ public abstract class DataExportProcessor {
             calendar.get(Calendar.MILLISECOND) != 0;
     }
 
-    void checkCancelled() throws InterruptedException {
+    void checkCancelled() throws ProcessCanceledException {
         ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
         if (progressIndicator != null) {
             if (progressIndicator.isCanceled()) {
-                throw new InterruptedException();
+                throw AlreadyDisposedException.INSTANCE;
             }
         }
+    }
+
+    protected String formatValue(Formatter formatter, Object value) throws DataExportException {
+        if (value != null) {
+            if (value instanceof Number) {
+                Number number = (Number) value;
+                return formatter.formatNumber(number);
+            } else if (value instanceof Date) {
+                Date date = (Date) value;
+                return hasTimeComponent(date) ?
+                        formatter.formatDateTime(date) :
+                        formatter.formatDate(date);
+            } else if (value instanceof ValueAdapter){
+                ValueAdapter valueAdapter = (ValueAdapter) value;
+                try {
+                    return CommonUtil.nvl(valueAdapter.export(), "");
+                } catch (SQLException e) {
+                    throw new DataExportException("Failed to export " + valueAdapter.getGenericDataType() + " cell. Cause: "  + e.getMessage());
+                }
+            } else {
+                return value.toString();
+            }
+        }
+        return "";
     }
 
 }
