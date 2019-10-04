@@ -13,7 +13,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import java.util.Date;
 
 
 public class HTMLDataExportProcessor extends DataExportProcessor{
@@ -98,7 +97,7 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
 
 
     @Override
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
         StringBuilder buffer = new StringBuilder();
         buffer.append("<html>\n");
         buffer.append("    <head>\n");
@@ -129,28 +128,10 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
                 checkCancelled();
                 GenericDataType genericDataType = model.getGenericDataType(columnIndex);
-                String value = null;
-                if (genericDataType == GenericDataType.LITERAL ||
-                        genericDataType == GenericDataType.NUMERIC ||
-                        genericDataType == GenericDataType.DATE_TIME) {
-
-                    Object object = model.getValue(rowIndex, columnIndex);
-
-                    if (object != null) {
-                        if (object instanceof Number) {
-                            Number number = (Number) object;
-                            value = formatter.formatNumber(number);
-                        } else if (object instanceof Date) {
-                            Date date = (Date) object;
-                            value = hasTimeComponent(date) ?
-                                    formatter.formatDateTime(date) :
-                                    formatter.formatDate(date);
-                        } else {
-                            value = object.toString();
-                        }
-                    }
-
-                }
+                Object object = model.getValue(rowIndex, columnIndex);
+                String value = formatValue(formatter, object);
+                value = value.replaceAll("<", "&lt;");
+                value = value.replaceAll(">", "&gt;");
 
                 if (StringUtil.isEmptyOrSpaces(value)) value = "&nbsp;";
 

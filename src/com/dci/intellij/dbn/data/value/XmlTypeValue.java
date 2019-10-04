@@ -54,6 +54,12 @@ public class XmlTypeValue extends LargeObjectValue{
         return read(0);
     }
 
+    @Nullable
+    @Override
+    public String export() throws SQLException {
+        return read();
+    }
+
     @Override
     @Nullable
     public String read(int maxSize) throws SQLException {

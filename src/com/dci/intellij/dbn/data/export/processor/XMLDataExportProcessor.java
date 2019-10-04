@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.data.export.DataExportModel;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 
 import java.awt.datatransfer.Transferable;
-import java.util.Date;
 
 
 public class XMLDataExportProcessor extends DataExportProcessor{
@@ -59,7 +58,7 @@ public class XMLDataExportProcessor extends DataExportProcessor{
     }
 
     @Override
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
         StringBuilder buffer = new StringBuilder();
         buffer.append("<table name=\"");
         buffer.append(model.getTableName());
@@ -74,29 +73,26 @@ public class XMLDataExportProcessor extends DataExportProcessor{
                 checkCancelled();
                 String columnName = model.getColumnName(columnIndex);
                 GenericDataType genericDataType = model.getGenericDataType(columnIndex);
+
                 String value = null;
-                if (genericDataType == GenericDataType.LITERAL ||
-                        genericDataType == GenericDataType.NUMERIC ||
-                        genericDataType == GenericDataType.DATE_TIME) {
+                if (genericDataType.isOneOf(
+                        GenericDataType.BOOLEAN,
+                        GenericDataType.LITERAL,
+                        GenericDataType.NUMERIC,
+                        GenericDataType.ROWID,
+                        GenericDataType.DATE_TIME,
+                        GenericDataType.XMLTYPE,
+                        GenericDataType.CLOB,
+                        GenericDataType.BLOB)) {
 
                     Object object = model.getValue(rowIndex, columnIndex);
-
-                    if (object != null) {
-                        if (object instanceof Number) {
-                            Number number = (Number) object;
-                            value = formatter.formatNumber(number);
-                        } else if (object instanceof Date) {
-                            Date date = (Date) object;
-                            value = hasTimeComponent(date) ?
-                                    formatter.formatDateTime(date) :
-                                    formatter.formatDate(date);
-                        } else {
-                            value = object.toString();
-                        }
-                    }
+                    value = formatValue(formatter, object);
                 }
 
                 if (value == null) value = "";
+                if (value.contains("<") || value.contains(">")) {
+                    value = "<![CDATA[\n" + value + "\n]]>";
+                }
 
                 boolean isCDATA = StringUtil.containsOneOf(value, "\n", "<", ">");
                 boolean isWrap = value.length() > 100 || isCDATA;

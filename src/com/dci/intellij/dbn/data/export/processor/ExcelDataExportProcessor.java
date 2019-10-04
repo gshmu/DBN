@@ -66,7 +66,7 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
     }
 
     @Override
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
         Workbook workbook = createWorkbook();
         try {
             String sheetName = model.getTableName();
@@ -89,8 +89,8 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
                 }
             }
 
+            Formatter formatter = getFormatter(connectionHandler.getProject());
             CellStyleCache cellStyleCache = new CellStyleCache(workbook, model.getProject());
-
             for (short rowIndex = 0; rowIndex < model.getRowCount(); rowIndex++) {
                 Row row = sheet.createRow(rowIndex + 1);
                 for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++){
@@ -115,7 +115,8 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
                                     cellStyleCache.getDatetimeStyle() :
                                     cellStyleCache.getDateStyle());
                         } else {
-                            cell.setCellValue(value.toString());
+                            String stringValue = formatValue(formatter, value);
+                            cell.setCellValue(stringValue);
                         }
                     }
                 }
@@ -132,7 +133,6 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
                 fileOutputStream.flush();
                 fileOutputStream.close();
             } catch (IOException e) {
-                e.printStackTrace();
                 throw new DataExportException(
                         "Could not write file " + file.getPath() +".\n" +
                                 "Reason: " + e.getMessage());
