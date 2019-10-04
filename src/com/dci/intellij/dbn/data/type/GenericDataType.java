@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.data.type;
 
+import com.dci.intellij.dbn.common.constant.Constant;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import org.jetbrains.annotations.NotNull;
 
-public enum GenericDataType implements Presentable{
+public enum GenericDataType implements Presentable, Constant<GenericDataType> {
     LITERAL("Literal"),
     NUMERIC("Numeric"),
     DATE_TIME("Date/Time"),
@@ -22,7 +23,7 @@ public enum GenericDataType implements Presentable{
 
     private String name;
 
-    private GenericDataType(String name) {
+    GenericDataType(String name) {
         this.name = name;
     }
     @Override
@@ -41,4 +42,6 @@ public enum GenericDataType implements Presentable{
     public boolean isLOB() {
         return is(BLOB, CLOB, XMLTYPE);
     }
+
+
 }

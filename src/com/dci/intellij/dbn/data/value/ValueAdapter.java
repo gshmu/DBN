@@ -20,6 +20,7 @@ public abstract class ValueAdapter<T> {
 
     public abstract GenericDataType getGenericDataType();
     public abstract @Nullable T read() throws SQLException;
+    public abstract @Nullable String export() throws SQLException;
     public abstract void write(Connection connection, PreparedStatement preparedStatement, int parameterIndex, @Nullable T value) throws SQLException;
     public abstract void write(Connection connection, ResultSet resultSet, int columnIndex, @Nullable T value) throws SQLException;
     public abstract String getDisplayValue();

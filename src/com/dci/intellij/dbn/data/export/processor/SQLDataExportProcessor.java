@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.data.export.DataExportFormat;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportModel;
 import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -57,7 +58,7 @@ public class SQLDataExportProcessor extends DataExportProcessor{
 
 
     @Override
-    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException, InterruptedException {
+    public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
         Project project = connectionHandler.getProject();
         CodeStyleCaseSettings styleCaseSettings = DBLCodeStyleManager.getInstance(project).getCodeStyleCaseSettings(SQLLanguage.INSTANCE);
         CodeStyleCaseOption kco = styleCaseSettings.getKeywordCaseOption();
@@ -104,7 +105,8 @@ public class SQLDataExportProcessor extends DataExportProcessor{
                             buffer.append(value);
                         } else if (genericDataType == GenericDataType.DATE_TIME) {
                             Date date = (Date) object;
-                            String dateString = connectionHandler.getInterfaceProvider().getMetadataInterface().createDateString(date);
+                            DatabaseMetadataInterface metadataInterface = connectionHandler.getInterfaceProvider().getMetadataInterface();
+                            String dateString = metadataInterface.createDateString(date);
                             buffer.append(dateString);
                         }
                     }
