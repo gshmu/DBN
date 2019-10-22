@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -47,33 +46,29 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
     @Override
     @Nullable
     protected PsiFile getPsiInner(@NotNull Language language) {
-        try {
-            if (language instanceof DBLanguage || language instanceof DBLanguageDialect) {
-                VirtualFile virtualFile = getVirtualFile();
-                if (virtualFile instanceof DBConsoleVirtualFile) {
-                    // do not use psi facade
-                } else  if (virtualFile instanceof DBObjectVirtualFile) {
-                    DBObjectVirtualFile objectFile = (DBObjectVirtualFile) virtualFile;
-                    DBObject object = objectFile.getObject();
-                    return DBObjectPsiFacade.asPsiFile(object);
-                }
-
-                Language baseLanguage = getBaseLanguage();
-                PsiFile psiFile = super.getPsiInner(baseLanguage);
-                if (psiFile == null) {
-                    DBParseableVirtualFile parseableFile = getParseableFile(virtualFile);
-                    if (parseableFile != null) {
-                        parseableFile.initializePsiFile(this, language);
-                    }
-                } else {
-                    return psiFile;
-                }
+        if (language instanceof DBLanguage || language instanceof DBLanguageDialect) {
+            VirtualFile virtualFile = getVirtualFile();
+            if (virtualFile instanceof DBConsoleVirtualFile) {
+                // do not use psi facade
+            } else  if (virtualFile instanceof DBObjectVirtualFile) {
+                DBObjectVirtualFile objectFile = (DBObjectVirtualFile) virtualFile;
+                DBObject object = objectFile.getObject();
+                return DBObjectPsiFacade.asPsiFile(object);
             }
 
-            return super.getPsiInner(language);
-        } catch (ProcessCanceledException ignore) {
-            return null;
+            Language baseLanguage = getBaseLanguage();
+            PsiFile psiFile = super.getPsiInner(baseLanguage);
+            if (psiFile == null) {
+                DBParseableVirtualFile parseableFile = getParseableFile(virtualFile);
+                if (parseableFile != null) {
+                    parseableFile.initializePsiFile(this, language);
+                }
+            } else {
+                return psiFile;
+            }
         }
+
+        return super.getPsiInner(language);
     }
 
     @NotNull
