@@ -164,12 +164,15 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     }
 
     private void showSelectionTooltip() {
-        MathPanel mathPanel = new MathPanel(getProject(), selectionMath);
-        Point mousePosition = getMousePosition();
-        if (mousePosition != null && isCellSelected(mousePosition)) {
-            IdeTooltip tooltip = new IdeTooltip(this, mousePosition, mathPanel.getComponent());
-            tooltip.setFont(UIUtil.getLabelFont().deriveFont((float) 16));
-            IdeTooltipManager.getInstance().show(tooltip, true);
+        MathResult mathResult = this.selectionMath;
+        if (mathResult != null) {
+            MathPanel mathPanel = new MathPanel(getProject(), mathResult);
+            Point mousePosition = getMousePosition();
+            if (mousePosition != null && isCellSelected(mousePosition)) {
+                IdeTooltip tooltip = new IdeTooltip(this, mousePosition, mathPanel.getComponent());
+                tooltip.setFont(UIUtil.getLabelFont().deriveFont((float) 16));
+                IdeTooltipManager.getInstance().show(tooltip, true);
+            }
         }
     }
 
