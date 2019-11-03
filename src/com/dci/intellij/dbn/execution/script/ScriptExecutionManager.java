@@ -90,8 +90,8 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     }
 
 
-    public void executeScript(final VirtualFile virtualFile) {
-        final Project project = getProject();
+    public void executeScript(VirtualFile virtualFile) {
+        Project project = getProject();
         if (activeProcesses.containsKey(virtualFile)) {
             MessageUtil.showInfoDialog(project, "Information", "SQL Script \"" + virtualFile.getPath() + "\" is already running. \nWait for the execution to finish before running again.");
         } else {
@@ -131,18 +131,18 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         }
     }
 
-    private void doExecuteScript(final ScriptExecutionInput input) throws Exception {
+    private void doExecuteScript(ScriptExecutionInput input) throws Exception {
         ExecutionContext context = input.getExecutionContext();
         context.set(EXECUTING, true);
         ConnectionHandler connectionHandler = Failsafe.nn(input.getConnectionHandler());
-        final VirtualFile sourceFile = input.getSourceFile();
+        VirtualFile sourceFile = input.getSourceFile();
         activeProcesses.put(sourceFile, null);
 
-        final Project project = getProject();
-        final AtomicReference<File> tempScriptFile = new AtomicReference<>();
-        final LogOutputContext outputContext = new LogOutputContext(connectionHandler, sourceFile, null);
-        final ExecutionManager executionManager = ExecutionManager.getInstance(project);
-        final int timeout = input.getExecutionTimeout();
+        Project project = getProject();
+        AtomicReference<File> tempScriptFile = new AtomicReference<>();
+        LogOutputContext outputContext = new LogOutputContext(connectionHandler, sourceFile, null);
+        ExecutionManager executionManager = ExecutionManager.getInstance(project);
+        int timeout = input.getExecutionTimeout();
         executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Initializing script execution", input.isClearOutput()));
 
         try {
@@ -195,7 +195,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                     executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Script execution started", false));
 
                     try (InputStream inputStream = process.getInputStream()) {
-                        final LineReader lineReader = new LineReader(inputStream);
+                        LineReader lineReader = new LineReader(inputStream);
                         while (outputContext.isProcessAlive()) {
                             while (outputContext.isActive()) {
                                 byte[] bytes = lineReader.readLine();
@@ -238,7 +238,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 }
 
                 @Override
-                public void handleException(final Throwable e) throws SQLException {
+                public void handleException(Throwable e) throws SQLException {
                     MessageUtil.showErrorDialog(project,
                             "Script execution error",
                             "Error executing SQL script \"" + sourceFile.getPath() + "\". \nDetails: " + e.getMessage(),
@@ -371,7 +371,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     }
 
     @Override
-    public void loadState(@NotNull final Element element) {
+    public void loadState(@NotNull Element element) {
         recentlyUsedInterfaces.clear();
         clearOutputOption = SettingsSupport.getBooleanAttribute(element, "clear-outputs", clearOutputOption);
         Element interfacesElement = element.getChild("recently-used-interfaces");
