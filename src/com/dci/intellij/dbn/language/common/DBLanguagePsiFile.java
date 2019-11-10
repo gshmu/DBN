@@ -370,11 +370,14 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         return connectionHandler == null ? ElementLookupContext.MAX_DB_VERSION : connectionHandler.getDatabaseVersion();
     }
 
+    @Nullable
     public static DBLanguagePsiFile createFromText(Project project, String fileName, DBLanguageDialect languageDialect, String text, ConnectionHandler activeConnection, SchemaId currentSchema) {
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(project);
         DBLanguagePsiFile psiFile = (DBLanguagePsiFile) psiFileFactory.createFileFromText(fileName, languageDialect, text);
-        psiFile.setConnectionHandler(activeConnection);
-        psiFile.setDatabaseSchema(currentSchema);
+        if (psiFile != null) {
+            psiFile.setConnectionHandler(activeConnection);
+            psiFile.setDatabaseSchema(currentSchema);
+        }
         return psiFile;
     }
 
