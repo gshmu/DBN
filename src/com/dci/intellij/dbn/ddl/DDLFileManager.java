@@ -3,10 +3,11 @@ package com.dci.intellij.dbn.ddl;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
+import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.EventUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.ddl.options.DDLFileExtensionSettings;
@@ -32,13 +33,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @State(
     name = DDLFileManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class DDLFileManager extends AbstractProjectComponent implements PersistentStateComponent<Element>{
+public class DDLFileManager extends AbstractProjectComponent implements PersistentStateComponent<Element>, NotificationSupport {
 
     public static final String COMPONENT_NAME = "DBNavigator.Project.DDLFileManager";
 
@@ -105,6 +107,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
         return ddlFileTypeId == null ? null : getDDLFileType(ddlFileTypeId);
     }
 
+    @NotNull
     List<DDLFileType> getDDLFileTypes(DBObjectType objectType) {
         Collection<DDLFileTypeId> ddlFileTypeIds = objectType.getDdlFileTypeIds();
         if (ddlFileTypeIds != null) {
@@ -112,7 +115,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
             ddlFileTypeIds.forEach(ddlFileTypeId -> ddlFileTypes.add(getDDLFileType(ddlFileTypeId)));
             return ddlFileTypes;
         }
-        return null;
+        return Collections.emptyList();
     }
 
 
@@ -151,11 +154,11 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
                 }
             }
             if (restoredAssociations != null) {
-                String message =
+                sendInfoNotification(
+                        NotificationGroup.DDL,
                         "Following file associations have been restored: \"" + restoredAssociations + "\". " +
                                 "They are registered as DDL file types in project \"" + getProject().getName() + "\".\n" +
-                                "Please remove them from project DDL configuration first (Project Settings > DB Navigator > DDL File Settings).";
-                MessageUtil.showWarningDialog(getProject(), "Restored file extensions", message);
+                                "Please remove them from project DDL configuration first (Project Settings > DB Navigator > DDL File Settings).");
             }
         }
     };
