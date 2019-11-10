@@ -21,7 +21,7 @@ public class ProjectSettingsOpenAction extends DumbAwareProjectAction {
     }
 
     @Override
-    protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
+    protected final void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
         ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(project);
 
         if (configId == ConfigId.CONNECTIONS) {
