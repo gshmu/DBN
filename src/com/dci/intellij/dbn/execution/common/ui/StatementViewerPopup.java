@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.common.ui;
 
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.execution.ExecutionResult;
@@ -32,8 +33,8 @@ public class StatementViewerPopup implements Disposable {
         this.resultName = executionResult.getName();
         Project project = executionResult.getProject();
 
-        PsiFile previewFile = executionResult.createPreviewFile();
-        Document document = DocumentUtil.getDocument(previewFile);
+        PsiFile previewFile = Failsafe.nn(executionResult.createPreviewFile());
+        Document document = Failsafe.nn(DocumentUtil.getDocument(previewFile));
         viewer = (EditorEx) EditorFactory.getInstance().createViewer(document, project);
         viewer.setEmbeddedIntoDialogWrapper(true);
         viewer.getScrollPane().setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
