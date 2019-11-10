@@ -54,11 +54,13 @@ public class StatementExecutionInput extends LocalExecutionInput {
                         connectionHandler,
                         currentSchema);
 
-                PsiElement firstChild = previewFile.getFirstChild();
-                if (firstChild instanceof ExecutableBundlePsiElement) {
-                    ExecutableBundlePsiElement rootPsiElement = (ExecutableBundlePsiElement) firstChild;
-                    List<ExecutablePsiElement> executablePsiElements = rootPsiElement.getExecutablePsiElements();
-                    return executablePsiElements.isEmpty() ? null : executablePsiElements.get(0);
+                if (previewFile != null) {
+                    PsiElement firstChild = previewFile.getFirstChild();
+                    if (firstChild instanceof ExecutableBundlePsiElement) {
+                        ExecutableBundlePsiElement rootPsiElement = (ExecutableBundlePsiElement) firstChild;
+                        List<ExecutablePsiElement> executablePsiElements = rootPsiElement.getExecutablePsiElements();
+                        return executablePsiElements.isEmpty() ? null : executablePsiElements.get(0);
+                    }
                 }
                 return null;
             });
