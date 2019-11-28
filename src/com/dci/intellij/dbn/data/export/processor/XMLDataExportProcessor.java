@@ -90,24 +90,21 @@ public class XMLDataExportProcessor extends DataExportProcessor{
                 }
 
                 if (value == null) value = "";
-                if (value.contains("<") || value.contains(">")) {
-                    value = "<![CDATA[\n" + value + "\n]]>";
-                }
 
                 boolean isCDATA = StringUtil.containsOneOf(value, "\n", "<", ">");
-                boolean isWrap = value.length() > 100 || isCDATA;
+                boolean isWrap = isCDATA || value.length() > 100;
 
                 buffer.append("        <column name=\"");
                 buffer.append(columnName);
                 buffer.append("\">");
                 if (isWrap) {
-                    value = ("\n" + value);//.replace("\n", "\n            ");
+                    buffer.append("\n");
                 }
                 
                 if (isCDATA) {
-                    buffer.append("\n            <![CDATA[");
+                    buffer.append("<![CDATA[");
                     buffer.append(value);
-                    buffer.append("\n            ]]>");
+                    buffer.append("]]>");
                 } else {
                     buffer.append(value);
                 }
