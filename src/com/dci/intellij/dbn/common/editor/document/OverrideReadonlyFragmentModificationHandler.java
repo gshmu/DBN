@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.editor.ReadOnlyFragmentModificationException;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.editor.actionSystem.ReadonlyFragmentModificationHandler;
@@ -26,16 +27,19 @@ public class OverrideReadonlyFragmentModificationHandler implements
 
     @Override
     public void handle(final ReadOnlyFragmentModificationException e) {
-        Document document = e.getGuardedBlock().getDocument();
-        String message = document.getUserData(GUARDED_BLOCK_REASON);
-        if (message != null) {
-            MessageUtil.showErrorDialog(null, "Action denied", message);
-        } else {
-            VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
-            if (virtualFile instanceof DBSourceCodeVirtualFile || virtualFile instanceof LightVirtualFile || virtualFile instanceof DBConsoleVirtualFile) {
-                //Messages.showErrorDialog("You're not allowed to change name and type of the edited component.", "Action denied");
+        RangeMarker guardedBlock = e.getGuardedBlock();
+        if (guardedBlock != null) {
+            Document document = guardedBlock.getDocument();
+            String message = document.getUserData(GUARDED_BLOCK_REASON);
+            if (message != null) {
+                MessageUtil.showErrorDialog(null, "Action denied", message);
             } else {
-                Dispatch.run(() -> originalHandler.handle(e));
+                VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
+                if (virtualFile instanceof DBSourceCodeVirtualFile || virtualFile instanceof LightVirtualFile || virtualFile instanceof DBConsoleVirtualFile) {
+                    //Messages.showErrorDialog("You're not allowed to change name and type of the edited component.", "Action denied");
+                } else {
+                    Dispatch.run(() -> originalHandler.handle(e));
+                }
             }
         }
     }
