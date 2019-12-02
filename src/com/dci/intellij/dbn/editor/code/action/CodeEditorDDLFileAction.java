@@ -6,11 +6,13 @@ import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.ddl.action.DDLFileAttachAction;
 import com.dci.intellij.dbn.ddl.action.DDLFileCreateAction;
 import com.dci.intellij.dbn.ddl.action.DDLFileDetachAction;
+import com.dci.intellij.dbn.ddl.action.DDLFileSettingsAction;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +39,9 @@ public class CodeEditorDDLFileAction extends GroupPopupAction {
             return new AnAction[]{
                     new DDLFileCreateAction(object),
                     new DDLFileAttachAction(object),
-                    new DDLFileDetachAction(object)
+                    new DDLFileDetachAction(object),
+                    new Separator(),
+                    new DDLFileSettingsAction()
             };
         }
         return new AnAction[0];

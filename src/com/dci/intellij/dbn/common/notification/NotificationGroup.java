@@ -15,6 +15,7 @@ public enum NotificationGroup {
     BROWSER("Browser"),
     METADATA("Metadata"),
     DATA("Data"),
+    DDL("DDL"),
     ;
 
     private String title;
