@@ -106,14 +106,9 @@
                 u.USERNAME as SCHEMA_NAME,
                 'N' as IS_PUBLIC,
                 decode(u.USERNAME, 'SYS', 'Y', 'SYSTEM', 'Y', 'N') as IS_SYSTEM,
-                decode(o.OWNER, null, 'Y', 'N') as IS_EMPTY
+                case when exists (select 1 from [PREFIX]_OBJECTS o where o.OWNER = u.USERNAME and rownum = 1) then 'N' else 'Y' end as IS_EMPTY
             from
-                [PREFIX]_USERS u,
-                [PREFIX]_OBJECTS o
-            where u.USERNAME = o.OWNER (+)
-            group by
-                u.USERNAME,
-                o.OWNER
+                [PREFIX]_USERS u
             union all(
             select
                 'PUBLIC',
