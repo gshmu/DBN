@@ -164,7 +164,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
             public boolean match(DBConstraint constraint, DynamicContent dynamicContent) {
                 DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
                 DBDataset constraintDataset = constraint.getDataset();
-                return constraintDataset != null && constraintDataset.equals(dataset);
+                return Safe.equal(constraintDataset, dataset);
             }
 
             @Override
@@ -193,7 +193,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
             @Override
             public boolean match(DBDatasetTrigger trigger, DynamicContent dynamicContent) {
                 DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-                return trigger.getDataset().equals(dataset);
+                return Safe.equal(trigger.getDataset(), dataset);
             }
 
             @Override
@@ -222,7 +222,7 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
             public boolean match(DBIndex index, DynamicContent dynamicContent) {
                 DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
                 DBDataset indexDataset = index.getDataset();
-                return indexDataset != null && indexDataset.equals(dataset);
+                return Safe.equal(indexDataset, dataset);
             }
 
             @Override
@@ -250,7 +250,8 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
             public boolean match(DynamicContentElement sourceElement, DynamicContent dynamicContent) {
                 DBIndexColumnRelation indexColumnRelation = (DBIndexColumnRelation) sourceElement;
                 DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-                return indexColumnRelation.getColumn().getDataset().equals(dataset);
+                DBDataset columnDataset = indexColumnRelation.getColumn().getDataset();
+                return Safe.equal(columnDataset, dataset);
             }
 
             @Override
@@ -288,7 +289,8 @@ public abstract class DBDatasetImpl<M extends DBObjectMetadata> extends DBSchema
             public boolean match(DynamicContentElement sourceElement, DynamicContent dynamicContent) {
                 DBConstraintColumnRelation constraintColumnRelation = (DBConstraintColumnRelation) sourceElement;
                 DBDataset dataset = (DBDataset) dynamicContent.getParentElement();
-                return constraintColumnRelation.getColumn().getDataset() == dataset;
+                DBDataset columnDataset = constraintColumnRelation.getColumn().getDataset();
+                return Safe.equal(columnDataset, dataset);
             }
 
             @Override

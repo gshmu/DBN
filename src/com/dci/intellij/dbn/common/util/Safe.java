@@ -25,6 +25,11 @@ public interface Safe {
         if (value1 == null && value2 == null) {
             return true;
         }
+
+        if (value1 == value2) {
+            return true;
+        }
+
         if (value1 != null) {
             return value1.equals(value2);
         }
