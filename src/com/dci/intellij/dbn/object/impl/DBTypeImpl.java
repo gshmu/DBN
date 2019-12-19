@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.content.loader.DynamicSubcontentLoader;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -227,7 +228,7 @@ public class DBTypeImpl
             @Override
             public boolean match(DBTypeAttribute typeAttribute, DynamicContent dynamicContent) {
                 DBType type = (DBType) dynamicContent.getParentElement();
-                return typeAttribute.getType().equals(type);
+                return Safe.equal(typeAttribute.getType(), type);
             }
 
             @Override
@@ -256,7 +257,7 @@ public class DBTypeImpl
             @Override
             public boolean match(DBTypeFunction function, DynamicContent dynamicContent) {
                 DBType type = (DBType) dynamicContent.getParentElement();
-                return function.getType() == type;
+                return Safe.equal(function.getType(), type);
             }
 
             @Override
@@ -284,7 +285,7 @@ public class DBTypeImpl
             @Override
             public boolean match(DBTypeProcedure procedure, DynamicContent dynamicContent) {
                 DBType type = (DBType) dynamicContent.getParentElement();
-                return procedure.getType() == type;
+                return Safe.equal(procedure.getType(), type);
             }
 
             @Override
@@ -313,7 +314,7 @@ public class DBTypeImpl
             public boolean match(DBType type, DynamicContent dynamicContent) {
                 DBType superType = type.getSuperType();
                 DBType thisType = (DBType) dynamicContent.getParentElement();
-                return superType != null && superType.equals(thisType);
+                return Safe.equal(superType, thisType);
             }
 
             @Override
