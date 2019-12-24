@@ -222,7 +222,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                             Progress.prompt(getProject(), "Compiling invalid objects", true,
                                     (progress) -> {
                                         Project project = getProject();
-                                        progress.setIndeterminate(true);
+                                        progress.setIndeterminate(false);
                                         doCompileInvalidObjects(schema.getPackages(), "packages", progress, selectedCompileType);
                                         doCompileInvalidObjects(schema.getFunctions(), "functions", progress, selectedCompileType);
                                         doCompileInvalidObjects(schema.getProcedures(), "procedures", progress, selectedCompileType);
