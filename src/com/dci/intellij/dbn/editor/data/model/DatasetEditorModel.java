@@ -46,12 +46,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DELETED;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DIRTY;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTED;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.UPDATING;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
 public class DatasetEditorModel
         extends ResultSetDataModel<DatasetEditorModelRow, DatasetEditorModelCell>
@@ -359,6 +354,7 @@ public class DatasetEditorModel
         editorTable.fireEditingCancel();
         Progress.prompt(getProject(), "Deleting records", true,
                 (progress) -> {
+                    progress.setIndeterminate(false);
                     for (int index : rowIndexes) {
                         progress.setFraction(CommonUtil.getProgressPercentage(index, rowIndexes.length));
                         DatasetEditorModelRow row = getRowAtIndex(index);
@@ -377,7 +373,7 @@ public class DatasetEditorModel
                     DBDataset dataset = getDataset();
                     DBNConnection connection = getConnection();
                     connection.notifyDataChanges(dataset.getVirtualFile());
-                } );
+                });
     }
 
     public void insertRecord(int rowIndex) {
