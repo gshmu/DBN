@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -183,6 +184,11 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
 
     @NotNull
     DBNConnection allocateConnection(boolean readonly) throws SQLException {
+        return allocateConnection(readonly, 0);
+    }
+
+    @NotNull
+    private DBNConnection allocateConnection(boolean readonly, int attempts) throws SQLException {
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionManager.setLastUsedConnection(connectionHandler);
 
@@ -191,8 +197,11 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
             ConnectionDetailSettings detailSettings = connectionHandler.getSettings().getDetailSettings();
             if (poolConnections.size() >= detailSettings.getMaxConnectionPoolSize() && !ApplicationManager.getApplication().isDispatchThread()) {
                 try {
+                    if (attempts > 30) {
+                        throw new SQLTimeoutException("Busy connection pool");
+                    }
                     Thread.sleep(TimeUtil.ONE_SECOND);
-                    return allocateConnection(readonly);
+                    return allocateConnection(readonly, attempts + 1);
                 } catch (SQLException e) {
                     throw e;
                 } catch (Throwable e) {
