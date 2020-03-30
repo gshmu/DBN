@@ -29,6 +29,8 @@ public class DataEditorQualifiedEditorSettings extends BasicConfiguration<DataEd
         createContentType("PL/SQL", "DBN-PSQL", contentTypes);
         createContentType("JPA QL", "JPA QL", contentTypes);
         createContentType("JavaScript", "JavaScript", contentTypes);
+        createContentType("JSON", "JSON", contentTypes);
+        createContentType("JSON5", "JSON5", contentTypes);
         createContentType("PHP", "PHP", contentTypes);
         createContentType("JSP", "JSP", contentTypes);
         createContentType("JSPx", "JSPX", contentTypes);
