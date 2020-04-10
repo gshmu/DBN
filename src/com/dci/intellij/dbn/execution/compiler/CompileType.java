@@ -13,9 +13,9 @@ public enum CompileType implements InteractiveOption {
     KEEP("Keep existing", null/*Icons.OBEJCT_COMPILE_KEEP*/, true),
     ASK("Ask", null/*Icons.OBEJCT_COMPILE_ASK*/, false);
 
-    private String name;
-    private Icon icon;
-    private boolean persistable;
+    private final String name;
+    private final Icon icon;
+    private final boolean persistable;
 
     CompileType(String name, Icon icon, boolean persistable) {
         this.name = name;

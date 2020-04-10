@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class ExplainPlanMessage extends ConsoleMessage {
-    private ExplainPlanResult explainPlanResult;
+    private final ExplainPlanResult explainPlanResult;
 
     public ExplainPlanMessage(ExplainPlanResult explainPlanResult, MessageType messageType) {
         super(messageType, explainPlanResult.getErrorMessage());
