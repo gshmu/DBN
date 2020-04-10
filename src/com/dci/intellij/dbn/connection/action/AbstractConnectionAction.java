@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public abstract class AbstractConnectionAction extends DumbAwareContextAction<ConnectionHandler> {
-    private ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connectionHandlerRef;
 
     public AbstractConnectionAction(String text, @NotNull ConnectionHandler connectionHandler) {
         this(text, null, connectionHandler);

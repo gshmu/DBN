@@ -37,9 +37,9 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
             connectionHandler -> connectionHandler != null && connectionHandler.isEnabled();
 
 
-    private ProjectRef projectRef;
+    private final ProjectRef projectRef;
+    private final List<ConnectionHandler> virtualConnections = new ArrayList<>();
     private AbstractFiltrableList<ConnectionHandler> connectionHandlers = new FiltrableListImpl<>(ACTIVE_CONNECTIONS_FILTER);
-    private List<ConnectionHandler> virtualConnections = new ArrayList<>();
 
     public ConnectionBundle(Project project) {
         this.projectRef = ProjectRef.from(project);

@@ -1,18 +1,15 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.common.util.Traceable;
-import com.intellij.openapi.diagnostic.Logger;
 
 import java.sql.SQLException;
 
 public abstract class DBNResource<T> extends ResourceStatusHolder implements Resource{
-    private static final Logger LOGGER = LoggerFactory.createLogger();
-    private long initTimestamp = System.currentTimeMillis();
+    private final long initTimestamp = System.currentTimeMillis();
+    private final ResourceType type;
     protected T inner;
-    private ResourceType type;
 
     private ResourceStatusAdapter<CloseableResource> closed;
     private ResourceStatusAdapter<CancellableResource> cancelled;

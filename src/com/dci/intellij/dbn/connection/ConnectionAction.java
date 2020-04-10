@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 public abstract class ConnectionAction implements Runnable{
     static final String[] OPTIONS_CONNECT_CANCEL = CommonUtil.list("Connect", "Cancel");
 
-    private String description;
-    private boolean interactive;
-    private ConnectionProvider connectionProvider;
+    private final String description;
+    private final boolean interactive;
+    private final ConnectionProvider connectionProvider;
     private boolean cancelled;
 
     private ConnectionAction(String description, boolean interactive, ConnectionProvider connectionProvider) {

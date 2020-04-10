@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ConnectionHandlerRef implements Reference<ConnectionHandler> {
     private WeakRef<ConnectionHandler> reference;
-    private ConnectionId connectionId;
+    private final ConnectionId connectionId;
 
     public ConnectionHandlerRef(ConnectionHandler connectionHandler) {
         reference = WeakRef.from(connectionHandler);

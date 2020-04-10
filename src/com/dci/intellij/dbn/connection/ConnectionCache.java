@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ConnectionCache implements ApplicationComponent{
-    private static Map<ConnectionId, ConnectionHandler> CACHE = new THashMap<>();
+    private static final Map<ConnectionId, ConnectionHandler> CACHE = new THashMap<>();
 
     @Nullable
     public static ConnectionHandler findConnectionHandler(ConnectionId connectionId) {
@@ -57,7 +57,7 @@ public class ConnectionCache implements ApplicationComponent{
     /*********************************************************
      *              ProjectLifecycleListener                 *
      *********************************************************/
-    private ProjectLifecycleListener projectLifecycleListener = new ProjectLifecycleListener() {
+    private final ProjectLifecycleListener projectLifecycleListener = new ProjectLifecycleListener() {
 
         @Override
         public void beforeProjectLoaded(@NotNull Project project) {

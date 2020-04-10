@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConnectionBundleSettings extends BasicProjectConfiguration<ProjectSettings, ConnectionBundleSettingsForm> implements TopLevelConfig {
-    public static ThreadLocalFlag IS_IMPORT_EXPORT_ACTION = new ThreadLocalFlag(false);
+    public static final ThreadLocalFlag IS_IMPORT_EXPORT_ACTION = new ThreadLocalFlag(false);
     public List<ConnectionSettings> connections = new ArrayList<>();
 
     public ConnectionBundleSettings(ProjectSettings parent) {
