@@ -70,14 +70,13 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
         implements DBDebugProcess {
 
     public static final Key<DBJdwpDebugProcess> KEY = new Key<DBJdwpDebugProcess>("DBNavigator.JdwpDebugProcess");
+    private final ConnectionHandlerRef connectionHandlerRef;
+    private final DBDebugProcessStatusHolder status = new DBDebugProcessStatusHolder();
+    private final DBBreakpointHandler<DBJdwpDebugProcess>[] breakpointHandlers;
+    private final DBDebugConsoleLogger console;
+    private final String declaredBlockIdentifier;
     protected DBNConnection targetConnection;
-    private ConnectionHandlerRef connectionHandlerRef;
-    private DBDebugProcessStatusHolder status = new DBDebugProcessStatusHolder();
     private int localTcpPort = 4000;
-    private String declaredBlockIdentifier;
-
-    private DBBreakpointHandler<DBJdwpDebugProcess>[] breakpointHandlers;
-    private DBDebugConsoleLogger console;
 
     private transient XSuspendContext lastSuspendContext;
 

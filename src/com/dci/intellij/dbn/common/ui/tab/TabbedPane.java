@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class TabbedPane extends JBEditorTabs implements RegisteredDisposable {
+    private boolean disposed;
+
     public TabbedPane(@NotNull Disposable disposable) {
         super(null, ActionManager.getInstance(), null, disposable);
     }
@@ -73,7 +75,14 @@ public class TabbedPane extends JBEditorTabs implements RegisteredDisposable {
     }
 
     @Override
-    public void markDisposed() {}
+    public void markDisposed() {
+        disposed = true;
+    }
+
+    @Override
+    public boolean isDisposed() {
+        return disposed;
+    }
 
     @Override
     public void dispose() {

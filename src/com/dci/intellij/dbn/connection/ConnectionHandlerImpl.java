@@ -61,38 +61,38 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private ConnectionSettings connectionSettings;
-    private WeakRef<ConnectionBundle> connectionBundleRef;
-    private ConnectionHandlerStatusHolder connectionStatus;
-    private ConnectionPool connectionPool;
     private DatabaseInterfaceProvider interfaceProvider;
-    private DatabaseConsoleBundle consoleBundle;
-    private DatabaseSessionBundle sessionBundle;
-    private RuntimeLatent<DBSessionBrowserVirtualFile> sessionBrowserFile =
-            Latent.disposable(this, () -> new DBSessionBrowserVirtualFile(this));
-
-    private ConnectionInstructions instructions = new ConnectionInstructions();
+    private final WeakRef<ConnectionBundle> connectionBundleRef;
+    private final ConnectionHandlerStatusHolder connectionStatus;
+    private final ConnectionPool connectionPool;
+    private final DatabaseConsoleBundle consoleBundle;
+    private final DatabaseSessionBundle sessionBundle;
+    private final ConnectionInstructions instructions = new ConnectionInstructions();
 
     private boolean enabled;
-    private ConnectionHandlerRef ref;
+    private final ConnectionHandlerRef ref;
     private ConnectionInfo connectionInfo;
     private DatabaseCompatibility compatibility = DatabaseCompatibility.allFeatures();
 
-    private RuntimeLatent<Cache> metaDataCache =
+    private final RuntimeLatent<DBSessionBrowserVirtualFile> sessionBrowserFile =
+            Latent.disposable(this, () -> new DBSessionBrowserVirtualFile(this));
+
+    private final RuntimeLatent<Cache> metaDataCache =
             Latent.runtime(() -> new Cache(getConnectionId().id(), TimeUtil.ONE_MINUTE));
 
-    private RuntimeLatent<AuthenticationInfo> temporaryAuthenticationInfo =
+    private final RuntimeLatent<AuthenticationInfo> temporaryAuthenticationInfo =
             Latent.runtime(() -> {
                 ConnectionDatabaseSettings databaseSettings = getSettings().getDatabaseSettings();
                 return new AuthenticationInfo(databaseSettings, true);
             });
 
-    private MapLatent<SessionId, StatementExecutionQueue, RuntimeException> executionQueues =
+    private final MapLatent<SessionId, StatementExecutionQueue, RuntimeException> executionQueues =
             MapLatent.create(key -> new StatementExecutionQueue(ConnectionHandlerImpl.this));
 
-    private RuntimeLatent<DBConnectionPsiDirectory> psiDirectory =
+    private final RuntimeLatent<DBConnectionPsiDirectory> psiDirectory =
             Latent.runtime(() -> new DBConnectionPsiDirectory(this));
 
-    private RuntimeLatent<DBObjectBundle> objectBundle =
+    private final RuntimeLatent<DBObjectBundle> objectBundle =
             Latent.disposable(this, () -> new DBObjectBundleImpl(this, getConnectionBundle()));
 
 
@@ -122,7 +122,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @Override
     public void setTemporaryAuthenticationInfo(AuthenticationInfo temporaryAuthenticationInfo) {
         temporaryAuthenticationInfo.setTemporary(true);
-        this.temporaryAuthenticationInfo.set(temporaryAuthenticationInfo);;
+        this.temporaryAuthenticationInfo.set(temporaryAuthenticationInfo);
     }
 
     @Override
