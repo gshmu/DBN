@@ -17,21 +17,21 @@ import java.util.List;
 @Nullifiable
 public class ExplainPlanEntry extends DisposableBase {
     private DBObjectRef objectRef;
-    private String operation;
-    private String operationOptions;
-    private String optimizer;
-    private Integer id;
+    private final String operation;
+    private final String operationOptions;
+    private final String optimizer;
+    private final Integer id;
     private Integer parentId;
-    private BigDecimal depth;
-    private BigDecimal position;
-    private BigDecimal cost;
-    private BigDecimal cardinality;
-    private BigDecimal bytes;
-    private BigDecimal cpuCost;
-    private BigDecimal ioCost;
-    private String accessPredicates;
-    private String filterPredicates;
-    private String projection;
+    private final BigDecimal depth;
+    private final BigDecimal position;
+    private final BigDecimal cost;
+    private final BigDecimal cardinality;
+    private final BigDecimal bytes;
+    private final BigDecimal cpuCost;
+    private final BigDecimal ioCost;
+    private final String accessPredicates;
+    private final String filterPredicates;
+    private final String projection;
 
     private ExplainPlanEntry parent;
     private List<ExplainPlanEntry> children;

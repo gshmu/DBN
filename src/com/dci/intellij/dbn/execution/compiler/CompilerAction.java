@@ -10,8 +10,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
 
 public class CompilerAction {
-    private CompilerActionSource source;
-    private DBContentType contentType;
+    private final CompilerActionSource source;
+    private final DBContentType contentType;
     private WeakRef<VirtualFile> virtualFileRef;
     private WeakRef<FileEditor> fileEditorRef;
     private EditorProviderId editorProviderId;

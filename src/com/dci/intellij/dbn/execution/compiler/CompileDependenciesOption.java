@@ -8,8 +8,8 @@ public enum CompileDependenciesOption implements InteractiveOption {
     NO("No", true),
     ASK("Ask", false);
 
-    private String name;
-    private boolean persistable;
+    private final String name;
+    private final boolean persistable;
 
     CompileDependenciesOption(String name, boolean persistable) {
         this.name = name;
