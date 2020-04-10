@@ -37,37 +37,38 @@ import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.RESERVED;
 
 public class DBNConnection extends DBNConnectionBase {
     private static final Logger LOGGER = LoggerFactory.createLogger();
-    private String name;
-    private ConnectionType type;
-    private ConnectionId id;
-    private SessionId sessionId;
+    private final String name;
+    private final ConnectionType type;
+    private final ConnectionId id;
+    private final SessionId sessionId;
+    private final ProjectRef projectRef;
 
     private long lastAccess = System.currentTimeMillis();
     private PendingTransactionBundle dataChanges;
     private SchemaId currentSchema;
-    private ProjectRef projectRef;
 
-    private Set<DBNStatement> activeStatements = new HashSet<>();
-    private MapLatent<String, DBNPreparedStatement, SQLException> cachedStatements =
+
+    private final Set<DBNStatement> activeStatements = new HashSet<>();
+    private final MapLatent<String, DBNPreparedStatement, SQLException> cachedStatements =
             MapLatent.create(sql -> {
                 DBNPreparedStatement preparedStatement = prepareStatement(sql);
                 preparedStatement.setCached(true);
                 return preparedStatement;
             });
 
-    private IncrementalResourceStatusAdapter<DBNConnection> active =
+    private final IncrementalResourceStatusAdapter<DBNConnection> active =
             IncrementalResourceStatusAdapter.create(
                     DBNConnection.this,
                     ResourceStatus.ACTIVE,
                     (status, value) -> DBNConnection.super.set(status, value));
 
-    private IncrementalResourceStatusAdapter<DBNConnection> reserved =
+    private final IncrementalResourceStatusAdapter<DBNConnection> reserved =
             IncrementalResourceStatusAdapter.create(
                     DBNConnection.this,
                     ResourceStatus.RESERVED,
                     (status, value) -> DBNConnection.super.set(status, value));
 
-    private ResourceStatusAdapter<DBNConnection> valid =
+    private final ResourceStatusAdapter<DBNConnection> valid =
             new ResourceStatusAdapterImpl<DBNConnection>(this,
                     ResourceStatus.VALID,
                     ResourceStatus.VALID_SETTING,
@@ -85,7 +86,7 @@ public class DBNConnection extends DBNConnectionBase {
                 }
             };
 
-    private ResourceStatusAdapter<DBNConnection> autoCommit =
+    private final ResourceStatusAdapter<DBNConnection> autoCommit =
             new ResourceStatusAdapterImpl<DBNConnection>(this,
                     ResourceStatus.AUTO_COMMIT,
                     ResourceStatus.AUTO_COMMIT_SETTING,

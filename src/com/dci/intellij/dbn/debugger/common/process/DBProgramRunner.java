@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -48,10 +49,16 @@ import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericProgramRunner {
     public static final String INVALID_RUNNER_ID = "DBNInvalidRunner";
 
+    @Nullable
+    @Override
+    protected RunContentDescriptor doExecute(@NotNull RunProfileState state, @NotNull ExecutionEnvironment environment) throws ExecutionException {
+        return doExecute(environment.getProject(), environment.getExecutor(), state, null, environment);
+    }
+
     @Override
     @Nullable
-    protected RunContentDescriptor doExecute(@NotNull Project project, @NotNull RunProfileState state, RunContentDescriptor contentToReuse, @NotNull ExecutionEnvironment env) throws ExecutionException {
-        return doExecute(project, env.getExecutor(), state, contentToReuse, env);
+    protected RunContentDescriptor doExecute(@NotNull Project project, @NotNull RunProfileState state, RunContentDescriptor contentToReuse, @NotNull ExecutionEnvironment env) {
+        return Unsafe.call(() -> doExecute(project, env.getExecutor(), state, contentToReuse, env));
     }
 
     private RunContentDescriptor doExecute(

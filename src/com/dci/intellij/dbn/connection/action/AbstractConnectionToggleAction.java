@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public abstract class AbstractConnectionToggleAction extends ToggleAction {
-    private ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connectionHandlerRef;
 
     public AbstractConnectionToggleAction(String text, @NotNull ConnectionHandler connectionHandler) {
         this(text, null, connectionHandler);

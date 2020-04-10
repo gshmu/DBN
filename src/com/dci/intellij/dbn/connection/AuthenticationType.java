@@ -10,7 +10,7 @@ public enum AuthenticationType implements Constant<AuthenticationType>, Presenta
     USER_PASSWORD("User / Password"),
     OS_CREDENTIALS("OS Credentials");
 
-    private String name;
+    private final String name;
 
     AuthenticationType(String name) {
         this.name = name;
