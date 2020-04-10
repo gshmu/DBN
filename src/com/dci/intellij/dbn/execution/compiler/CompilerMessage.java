@@ -14,14 +14,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class CompilerMessage extends ConsoleMessage implements Comparable<CompilerMessage> {
-    private CompilerResult compilerResult;
+    private final CompilerResult compilerResult;
+    private final DBContentType contentType;
+    private String subjectIdentifier;
     private int line;
     private int position;
-    private DBContentType contentType;
+    private boolean echo;
     private DBEditableObjectVirtualFile databaseFile;
     private DBContentVirtualFile contentFile;
-    private boolean isEcho;
-    private String subjectIdentifier;
 
     public CompilerMessage(CompilerResult compilerResult, DBContentType contentType, String text, MessageType type) {
         super(type, text);
@@ -52,8 +52,8 @@ public class CompilerMessage extends ConsoleMessage implements Comparable<Compil
             contentType = objectContentType;
         }
 
-        isEcho = !text.startsWith("PLS") && !text.contains("ORA");
-        if (isEcho) {
+        echo = !text.startsWith("PLS") && !text.contains("ORA");
+        if (echo) {
             setType(MessageType.WARNING);
         }
 
@@ -135,7 +135,7 @@ public class CompilerMessage extends ConsoleMessage implements Comparable<Compil
     }
 
     public boolean isEcho() {
-        return isEcho;
+        return echo;
     }
 
     public Project getProject() {

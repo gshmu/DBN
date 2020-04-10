@@ -28,7 +28,7 @@ public class ExecutionMessagesPanel extends DBNFormImpl<ExecutionConsoleForm>{
     private JScrollPane messagesScrollPane;
     private JPanel messagesPanel;
 
-    private MessagesTree messagesTree;
+    private final MessagesTree messagesTree;
 
     public ExecutionMessagesPanel(ExecutionConsoleForm parentForm) {
         super(parentForm);

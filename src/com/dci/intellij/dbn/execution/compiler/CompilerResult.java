@@ -26,10 +26,10 @@ import java.util.List;
 public class CompilerResult implements Disposable, NotificationSupport {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private DBObjectRef<DBSchemaObject> objectRef;
-    private List<CompilerMessage> compilerMessages = new ArrayList<>();
-    private boolean isError = false;
+    private final DBObjectRef<DBSchemaObject> objectRef;
+    private final List<CompilerMessage> compilerMessages = new ArrayList<>();
     private CompilerAction compilerAction;
+    private boolean error = false;
 
     public CompilerResult(CompilerAction compilerAction, ConnectionHandler connectionHandler, DBSchema schema, DBObjectType objectType, String objectName) {
         objectRef = new DBObjectRef<>(schema.getRef(), objectType, objectName);
@@ -65,7 +65,7 @@ public class CompilerResult implements Disposable, NotificationSupport {
 
                             while (resultSet != null && resultSet.next()) {
                                 CompilerMessage errorMessage = new CompilerMessage(this, resultSet);
-                                isError = true;
+                                error = true;
                                 if (/*!compilerAction.isDDL() || */contentType.isBundle() || contentType == errorMessage.getContentType()) {
                                     compilerMessages.add(errorMessage);
                                 }
@@ -99,7 +99,7 @@ public class CompilerResult implements Disposable, NotificationSupport {
     }
 
     public boolean isError() {
-        return isError;
+        return error;
     }
 
     public List<CompilerMessage> getCompilerMessages() {

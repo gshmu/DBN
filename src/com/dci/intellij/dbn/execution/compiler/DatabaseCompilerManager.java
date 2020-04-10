@@ -46,7 +46,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
         return Failsafe.getComponent(project, DatabaseCompilerManager.class);
     }
 
-    private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
+    private final SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
         public void sourceCodeSaved(DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
             Project project = getProject();

@@ -36,12 +36,12 @@ public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm
     private String planId;
     private Date timestamp;
     private ExplainPlanEntry root;
-    private ConnectionHandlerRef connectionHandlerRef;
-    private SchemaId currentSchema;
-    private String statementText;
-    private String resultName;
-    private String errorMessage;
-    private VirtualFile virtualFile;
+    private final ConnectionHandlerRef connectionHandlerRef;
+    private final SchemaId currentSchema;
+    private final String statementText;
+    private final String resultName;
+    private final String errorMessage;
+    private final VirtualFile virtualFile;
 
     public ExplainPlanResult(ExecutablePsiElement executablePsiElement, ResultSet resultSet) throws SQLException {
         this(executablePsiElement, (String) null);
