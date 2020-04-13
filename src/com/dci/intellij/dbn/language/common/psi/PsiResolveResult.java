@@ -16,7 +16,11 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.*;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.CONNECTION_ACTIVE;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.CONNECTION_VALID;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.NEW;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.RESOLVING;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.RESOLVING_OBJECT_TYPE;
 
 public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
     private ConnectionHandlerRef connectionHandlerRef;
@@ -102,7 +106,7 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
             }
         }
 
-        PsiElement referencedElement = this.referencedElement == null ? null : this.referencedElement.get();
+        PsiElement referencedElement = getReferencedElement();
         if (referencedElement == null &&
                 resolveTrials > 3 &&
                 !elementTextChanged() &&
@@ -132,7 +136,7 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
     }
 
     private BasePsiElement getParent() {
-        return parent == null ? null : parent.get();
+        return Safe.call(parent, source -> source.get());
     }
 
     private boolean elementTextChanged() {
@@ -206,8 +210,9 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
         return text;
     }
 
+    @Nullable
     public PsiElement getReferencedElement() {
-        return this.referencedElement == null ? null : this.referencedElement.get();
+        return Safe.call(referencedElement, source -> source.get());
     }
 
     public ConnectionHandler getConnectionHandler() {

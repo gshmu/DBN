@@ -46,9 +46,13 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFilePermission;
 import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -348,6 +352,19 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 FileUtil.createIfDoesntExist(tempFile);
             }
         }
+        PosixFileAttributeView view = Files.getFileAttributeView(tempFile.toPath(), PosixFileAttributeView.class);
+        if (view != null) {
+            Set<PosixFilePermission> permissions = new HashSet<>();
+            permissions.add(PosixFilePermission.OWNER_READ);
+            permissions.add(PosixFilePermission.OWNER_WRITE);
+            permissions.add(PosixFilePermission.OWNER_EXECUTE);
+            permissions.add(PosixFilePermission.OTHERS_READ);
+            permissions.add(PosixFilePermission.OTHERS_EXECUTE);
+            permissions.add(PosixFilePermission.GROUP_READ);
+            permissions.add(PosixFilePermission.GROUP_EXECUTE);
+            view.setPermissions(permissions);
+        }
+
         return tempFile;
     }
 
