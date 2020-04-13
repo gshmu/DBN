@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.dispose;
 
 public interface Disposable extends com.intellij.openapi.Disposable {
-    boolean isDisposed();
+    default boolean isDisposed() {return false;};
     void markDisposed();
 
     @Override
