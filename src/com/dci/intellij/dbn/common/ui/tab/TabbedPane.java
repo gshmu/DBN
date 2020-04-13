@@ -79,10 +79,12 @@ public class TabbedPane extends JBEditorTabs implements RegisteredDisposable {
         disposed = true;
     }
 
+/*
     @Override
     public boolean isDisposed() {
         return disposed;
     }
+*/
 
     @Override
     public void dispose() {
