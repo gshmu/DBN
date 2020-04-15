@@ -30,6 +30,7 @@ public enum DBDebuggerType implements Presentable {
             case JDWP: {
                 try {
                     Class.forName("com.intellij.debugger.engine.JavaStackFrame");
+                    Class.forName("com.intellij.debugger.PositionManagerFactory");
                     return true;
                 } catch (ClassNotFoundException e) {
                     return false;
