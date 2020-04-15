@@ -7,14 +7,15 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class DBRunConfigFactory<T extends DBRunConfigType, C extends DBRunConfig> extends ConfigurationFactory {
-    private DBDebuggerType debuggerType;
+    private final DBDebuggerType debuggerType;
     protected DBRunConfigFactory(T type, DBDebuggerType debuggerType) {
         super(type);
         this.debuggerType = debuggerType;
     }
 
+    @NotNull
     @Override
-    public RunConfiguration createConfiguration(String name, RunConfiguration template) {
+    public RunConfiguration createConfiguration(String name, @NotNull RunConfiguration template) {
         RunConfiguration configuration = super.createConfiguration(name, template);
         if (template instanceof DBRunConfig) {
             DBRunConfig templateConfig = (DBRunConfig) template;

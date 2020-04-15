@@ -4,7 +4,9 @@
     <!--3050 -->
     <version>3.2.0589.0</version>
     <category>Database</category>
+    <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
+    <depends optional="true" config-file="JavaPlugin.xml">com.intellij.modules.java</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
     <idea-version since-build="181.0001" until-build="201.*"/>
     <description><![CDATA[
