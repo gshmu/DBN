@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection.config.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.ComboBoxUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
@@ -11,6 +12,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.JBColor;
+import com.intellij.util.ui.TimerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,7 +22,9 @@ import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 
 
 public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabaseSettingsForm>{
@@ -65,17 +69,23 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
         reloadDriversLink.addHyperlinkListener(e -> {
             reloadDriversLink.setVisible(false);
             DatabaseDriverManager driverManager = DatabaseDriverManager.getInstance();
-            String driverLibrary = driverLibraryTextField.getText();
-            List<Driver> drivers = driverManager.loadDrivers(driverLibrary, true);
-            if (drivers == null || drivers.isEmpty()) {
+            File driverLibrary = new File(driverLibraryTextField.getText());
+            List<Driver> drivers = null;
+            try {
+                drivers = driverManager.loadDrivers(driverLibrary, true);
+                if (drivers == null || drivers.isEmpty()) {
+                    reloadDriversCheckLabel.setIcon(Icons.COMMON_WARNING);
+                    reloadDriversCheckLabel.setText("No drivers found");
+                } else {
+                    reloadDriversCheckLabel.setIcon(Icons.COMMON_CHECK);
+                    reloadDriversCheckLabel.setText("Drivers reloaded");
+                }
+            } catch (Exception ex) {
                 reloadDriversCheckLabel.setIcon(Icons.COMMON_WARNING);
-                reloadDriversCheckLabel.setText("No drivers found");
-            } else {
-                reloadDriversCheckLabel.setIcon(Icons.COMMON_CHECK);
-                reloadDriversCheckLabel.setText("Drivers reloaded");
+                reloadDriversCheckLabel.setText(ex.getMessage());
             }
             reloadDriversCheckLabel.setVisible(true);
-            Timer timer = UIUtil.createNamedTimer(
+            Timer timer = TimerUtil.createNamedTimer(
                     "TemporaryLabelTimeout",
                     3000,
                     listener -> {
@@ -119,7 +129,13 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
                     setSelection(driverComboBox, null);
                 } else {
                     DatabaseDriverManager driverManager = DatabaseDriverManager.getInstance();
-                    List<Driver> drivers = driverManager.loadDrivers(driverLibrary, false);
+                    List<Driver> drivers = null;
+                    try {
+                        drivers = driverManager.loadDrivers(new File(driverLibrary), false);
+                    } catch (Exception e) {
+                        MessageUtil.showErrorDialog(getProject(), "");
+                        e.printStackTrace(); // TODO
+                    }
                     DriverOption selectedOption = getSelection(driverComboBox);
                     initComboBox(driverComboBox);
                     //driverComboBox.addItem("");

@@ -20,6 +20,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.sql.DatabaseMetaData;
 import java.sql.Driver;
 import java.sql.ResultSet;
@@ -165,16 +166,20 @@ public class ResourceUtil {
         Driver driver = null;
         DatabaseDriverManager driverManager = DatabaseDriverManager.getInstance();
         DriverSource driverSource = databaseSettings.getDriverSource();
+        String driverClassName = databaseSettings.getDriver();
         if (driverSource == DriverSource.EXTERNAL) {
             driver = driverManager.getDriver(
-                    databaseSettings.getDriverLibrary(),
-                    databaseSettings.getDriver());
+                    new File(databaseSettings.getDriverLibrary()),
+                    driverClassName);
         } else if (driverSource == DriverSource.BUILTIN) {
-            driver = driverManager.getDriver(databaseSettings.getDriver());
+            DatabaseType databaseType = databaseSettings.getDatabaseType();
+            boolean internal = databaseType == DatabaseType.ORACLE;
+            driver = driverManager.getDriver(driverClassName, internal);
+
             if (driver == null) {
-                String driverLibrary = driverManager.getInternalDriverLibrary(databaseSettings.getDatabaseType());
+                File driverLibrary = driverManager.getInternalDriverLibrary(databaseType);
                 if (driverLibrary != null) {
-                    return driverManager.getDriver(driverLibrary, databaseSettings.getDriver());
+                    return driverManager.getDriver(driverLibrary, driverClassName);
                 }
             }
         }

@@ -28,7 +28,7 @@ import java.util.List;
 
 public class DDLMappedNotificationProvider extends EditorNotifications.Provider<DDLMappedNotificationPanel> {
     private static final Key<DDLMappedNotificationPanel> KEY = Key.create("DBNavigator.DDLMappedNotificationPanel");
-    private ProjectRef projectRef;
+    private final ProjectRef projectRef;
 
     public DDLMappedNotificationProvider(@NotNull Project project) {
         this(project, FrameStateManager.getInstance());
