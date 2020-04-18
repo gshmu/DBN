@@ -18,10 +18,11 @@ import com.intellij.openapi.fileEditor.impl.text.CodeFoldingState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
+import lombok.Data;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Data
 public class BasicTextEditorState implements FileEditorState {
     private int line;
     private int column;
@@ -33,14 +34,6 @@ public class BasicTextEditorState implements FileEditorState {
     @Override
     public boolean canBeMergedWith(FileEditorState fileEditorState, FileEditorStateLevel fileEditorStateLevel) {
         return fileEditorState instanceof BasicTextEditorState;
-    }
-
-    public CodeFoldingState getFoldingState() {
-        return foldingState;
-    }
-
-    public void setFoldingState(CodeFoldingState foldingState) {
-        this.foldingState = foldingState;
     }
 
     public void readState(@NotNull Element sourceElement, final Project project, final VirtualFile virtualFile) {
@@ -143,7 +136,7 @@ public class BasicTextEditorState implements FileEditorState {
         if (foldingState != null) {
             Write.run(() -> {
                 Project project = Failsafe.nd(editor.getProject());
-                PsiDocumentManager.getInstance(project).commitDocument(document);
+                //PsiDocumentManager.getInstance(project).commitDocument(document);
                 editor.getFoldingModel().runBatchFoldingOperation(
                         () -> {
                             CodeFoldingManager foldingManager = CodeFoldingManager.getInstance(project);
@@ -153,36 +146,5 @@ public class BasicTextEditorState implements FileEditorState {
             });
             //editor.getFoldingModel().runBatchFoldingOperation(runnable);
         }
-    }
-
-    /*****************************************************************
-     *                     equals / hashCode                         *
-     *****************************************************************/
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        BasicTextEditorState that = (BasicTextEditorState) o;
-
-        if (line != that.line) return false;
-        if (column != that.column) return false;
-        if (selectionStart != that.selectionStart) return false;
-        if (selectionEnd != that.selectionEnd) return false;
-        if (Float.compare(that.verticalScrollProportion, verticalScrollProportion) != 0) return false;
-        if (foldingState != null ? !foldingState.equals(that.foldingState) : that.foldingState != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = line;
-        result = 31 * result + column;
-        result = 31 * result + selectionStart;
-        result = 31 * result + selectionEnd;
-        result = 31 * result + (verticalScrollProportion != +0.0f ? Float.floatToIntBits(verticalScrollProportion) : 0);
-        result = 31 * result + (foldingState != null ? foldingState.hashCode() : 0);
-        return result;
     }
 }
