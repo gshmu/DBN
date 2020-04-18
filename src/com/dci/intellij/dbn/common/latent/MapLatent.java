@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MapLatent<K, V, E extends Throwable> extends DisposableBase {
-    private MapLoader<K, V, E> loader;
-    private Map<K, V> map = new HashMap<>();
-    private AtomicInteger hitCount = new AtomicInteger();
+    private final MapLoader<K, V, E> loader;
+    private final Map<K, V> map = new HashMap<>();
+    private final AtomicInteger hitCount = new AtomicInteger();
 
     private MapLatent(MapLoader<K, V, E> loader) {
         this.loader = loader;
