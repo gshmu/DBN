@@ -23,7 +23,6 @@ import com.intellij.openapi.diagnostic.ErrorReportSubmitter;
 import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.diagnostic.SubmittedReportInfo;
-import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NonNls;
@@ -51,7 +50,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
     public IdeaPluginDescriptor getPluginDescriptor() {
         IdeaPluginDescriptor pluginDescriptor = (IdeaPluginDescriptor) super.getPluginDescriptor();
         if (pluginDescriptor == null) {
-            pluginDescriptor = PluginManager.getPlugin(PluginId.getId(DatabaseNavigator.DBN_PLUGIN_ID));
+            pluginDescriptor = PluginManager.getPlugin(DatabaseNavigator.DBN_PLUGIN_ID);
             setPluginDescriptor(pluginDescriptor);
         }
         return pluginDescriptor;
