@@ -12,7 +12,6 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.JBColor;
-import com.intellij.util.ui.TimerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -85,7 +84,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
                 reloadDriversCheckLabel.setText(ex.getMessage());
             }
             reloadDriversCheckLabel.setVisible(true);
-            Timer timer = TimerUtil.createNamedTimer(
+            Timer timer = UIUtil.createNamedTimer(
                     "TemporaryLabelTimeout",
                     3000,
                     listener -> {
