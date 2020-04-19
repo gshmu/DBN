@@ -38,4 +38,10 @@ public abstract class DBRunConfigFactory<T extends DBRunConfigType, C extends DB
     public DBDebuggerType getDebuggerType(){
         return debuggerType;
     }
+
+    @NotNull
+    @Override
+    public String getId() {
+        return getName();
+    }
 }
