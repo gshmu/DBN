@@ -32,7 +32,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
     public static final String STORAGE_FILE = "dbnavigator.xml";
 
     private static final String SQL_PLUGIN_ID = "com.intellij.sql";
-    public static final String DBN_PLUGIN_ID = "DBN";
+    public static final PluginId DBN_PLUGIN_ID = PluginId.getId("DBN");
     /*static {
         Extensions.getRootArea().
                 getExtensionPoint(CodeStyleSettingsProvider.EXTENSION_POINT_NAME).
@@ -80,7 +80,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
     }
 
     public void setSlowDatabaseModeEnabled(boolean slowDatabaseModeEnabled) {
-        this.SLOW = slowDatabaseModeEnabled;
+        SLOW = slowDatabaseModeEnabled;
     }
 
     @Override
@@ -92,7 +92,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
     }
 
     public String getPluginVersion() {
-        IdeaPluginDescriptor pluginDescriptor = PluginManager.getPlugin(PluginId.getId(DatabaseNavigator.DBN_PLUGIN_ID));
+        IdeaPluginDescriptor pluginDescriptor = PluginManager.getPlugin(DatabaseNavigator.DBN_PLUGIN_ID);
         return pluginDescriptor != null ? pluginDescriptor.getVersion() : null;
     }
 
@@ -146,7 +146,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
                 int exitCode = Messages.showDialog(message, title, options, 0, icon);
                 if (exitCode == 0 || exitCode == 1) {
                     try {
-                        disabledList.add(exitCode == 1 ? DBN_PLUGIN_ID : SQL_PLUGIN_ID);
+                        disabledList.add(exitCode == 1 ? DBN_PLUGIN_ID.getIdString() : SQL_PLUGIN_ID);
                         PluginManager.saveDisabledPlugins(disabledList, false);
                         ApplicationManager.getApplication().restart();
                     } catch (IOException e) {

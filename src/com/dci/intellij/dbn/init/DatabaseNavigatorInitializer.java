@@ -37,7 +37,7 @@ public class DatabaseNavigatorInitializer /*implements com.intellij.ide.Applicat
                 List<IdeaPluginDescriptor> descriptors = RepositoryHelper.loadCachedPlugins();
                 if (descriptors != null) {
                     for (IdeaPluginDescriptor descriptor : descriptors) {
-                        if (descriptor.getPluginId().toString().equals(DatabaseNavigator.DBN_PLUGIN_ID)) {
+                        if (descriptor.getPluginId().equals(DatabaseNavigator.DBN_PLUGIN_ID)) {
                             DatabaseNavigator databaseNavigator = DatabaseNavigator.getInstance();
                             databaseNavigator.setRepositoryPluginVersion(descriptor.getVersion());
                             break;

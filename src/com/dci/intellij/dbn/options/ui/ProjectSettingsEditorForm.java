@@ -123,7 +123,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
                                     if (descriptors != null) {
                                         for (IdeaPluginDescriptor descriptor : descriptors) {
                                             pluginIds.add(descriptor.getPluginId());
-                                            if (descriptor.getPluginId().toString().equals(DatabaseNavigator.DBN_PLUGIN_ID)) {
+                                            if (descriptor.getPluginId().equals(DatabaseNavigator.DBN_PLUGIN_ID)) {
                                                 PluginNode pluginNode = new PluginNode(descriptor.getPluginId());
                                                 pluginNode.setName(descriptor.getName());
                                                 pluginNode.setSize("-1");
