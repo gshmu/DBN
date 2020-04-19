@@ -36,5 +36,4 @@ public class DBMethodJdbcRunConfigFactory extends DBMethodRunConfigFactory<DBMet
         runConfiguration.setExecutionInput(executionInput);
         return runConfiguration;
     }
-
 }
