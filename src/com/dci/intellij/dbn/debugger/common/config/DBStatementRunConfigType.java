@@ -15,6 +15,7 @@ public class DBStatementRunConfigType extends DBRunConfigType<DBStatementRunConf
             new DBStatementJdwpRunConfigFactory(this)};
 
 
+    @NotNull
     @Override
     public String getDisplayName() {
         return "DB Statement";
