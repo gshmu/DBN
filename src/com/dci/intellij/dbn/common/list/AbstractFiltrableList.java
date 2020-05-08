@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
-    private List<T> list;
+    private final List<T> list;
 
     public AbstractFiltrableList() {
         list = new ArrayList<T>();
@@ -29,28 +29,42 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
     // update methods should not be affected by filtering
     @Override
     public void sort(Comparator<? super T> comparator)          {
-        java.util.Collections.sort(list, comparator);}
+        list.sort(comparator);}
 
     @Override
-    public boolean add(T o)                             {return list.add(o);}
+    public boolean add(T o) {
+        return list.add(o);
+    }
 
     @Override
-    public boolean addAll(@NotNull Collection<? extends T> c)    {return list.addAll(c);}
+    public boolean addAll(@NotNull Collection<? extends T> c) {
+        return list.addAll(c);
+    }
 
     @Override
-    public boolean remove(Object o)                     {return list.remove(o);}
+    public boolean remove(Object o) {
+        return list.remove(o);
+    }
 
     @Override
-    public boolean removeAll(@NotNull Collection c)              {return list.removeAll(c);}
+    public boolean removeAll(@NotNull Collection c) {
+        return list.removeAll(c);
+    }
 
     @Override
-    public boolean retainAll(@NotNull Collection c)              {return list.retainAll(c);}
+    public boolean retainAll(@NotNull Collection c) {
+        return list.retainAll(c);
+    }
 
     @Override
-    public void clear()                                 {if (!list.isEmpty()) list.clear();}
+    public void clear() {
+        if (!list.isEmpty()) list.clear();
+    }
 
     @Override
-    public boolean isEmpty()                            {return size() == 0;}
+    public boolean isEmpty() {
+        return size() == 0;
+    }
 
     private boolean isFiltered() {
         return getFilter() != null;
@@ -75,7 +89,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
         final Filter<T> filter = getFilter();
         if (filter != null) {
             return new Iterator<T>() {
-                private Iterator<T> iterator = list.iterator();
+                private final Iterator<T> iterator = list.iterator();
                 private T next = findNext();
                 private T findNext() {
                     while (iterator.hasNext()) {
@@ -261,15 +275,21 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
 
     @Override
     @NotNull
-    public ListIterator<T> listIterator()               {throw new UnsupportedOperationException("List iterator not implemented in filtrable actions");}
+    public ListIterator<T> listIterator() {
+        throw new UnsupportedOperationException("List iterator not implemented in filtrable actions");
+    }
 
     @Override
     @NotNull
-    public ListIterator<T> listIterator(int index)      {throw new UnsupportedOperationException("List iterator not implemented in filtrable actions");}
+    public ListIterator<T> listIterator(int index) {
+        throw new UnsupportedOperationException("List iterator not implemented in filtrable actions");
+    }
 
     @Override
     @NotNull
-    public List<T> subList(int fromIndex, int toIndex)  {throw new UnsupportedOperationException("Sublist not implemented in filtrable actions");}
+    public List<T> subList(int fromIndex, int toIndex) {
+        throw new UnsupportedOperationException("Sublist not implemented in filtrable actions");
+    }
 
     @Override
     public void trimToSize() {
