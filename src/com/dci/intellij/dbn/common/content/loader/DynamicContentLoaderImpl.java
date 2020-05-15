@@ -17,7 +17,7 @@ public abstract class DynamicContentLoaderImpl<
 
     private static final Map<DynamicContentType, Map<DynamicContentType, DynamicContentLoader>> LOADERS = new HashMap<>();
 
-    private static DynamicContentType NULL = new DynamicContentType() {
+    private static final DynamicContentType NULL = new DynamicContentType() {
         @Override
         public boolean matches(DynamicContentType contentType) {
             return contentType == this;
