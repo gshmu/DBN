@@ -40,7 +40,7 @@ public abstract class DynamicContentResultSetLoader<
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private boolean master;
+    private final boolean master;
 
     public DynamicContentResultSetLoader(
             @Nullable DynamicContentType parentContentType,
@@ -56,8 +56,8 @@ public abstract class DynamicContentResultSetLoader<
     public abstract T createElement(DynamicContent<T> content, M metadata, LoaderCache cache) throws SQLException;
 
     private static class DebugInfo {
-        private String id = UUID.randomUUID().toString();
-        private long startTimestamp = System.currentTimeMillis();
+        private final String id = UUID.randomUUID().toString();
+        private final long startTimestamp = System.currentTimeMillis();
     }
 
     private DebugInfo preLoadContent(DynamicContent dynamicContent) {

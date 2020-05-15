@@ -26,8 +26,8 @@ public abstract class DynamicSubcontentLoader<
         extends DynamicContentLoaderImpl<T, M>
         implements DynamicContentLoader<T, M> {
 
-    private DynamicContentLoader<T, M> alternativeLoader = createAlternativeLoader();
-    private boolean optimized;
+    private final DynamicContentLoader<T, M> alternativeLoader = createAlternativeLoader();
+    private final boolean optimized;
 
     protected DynamicSubcontentLoader(@Nullable DynamicContentType parentContentType, @NotNull DynamicContentType contentType, boolean optimized) {
         super(parentContentType, contentType, true);
