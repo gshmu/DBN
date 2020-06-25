@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusHolder;
 import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectionProperties;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.ResourceUtil;
@@ -42,6 +43,7 @@ public class DBNConnection extends DBNConnectionBase {
     private final ConnectionId id;
     private final SessionId sessionId;
     private final ProjectRef projectRef;
+    private final ConnectionProperties properties;
 
     private long lastAccess = System.currentTimeMillis();
     private PendingTransactionBundle dataChanges;
@@ -113,13 +115,14 @@ public class DBNConnection extends DBNConnectionBase {
                 }
             };
 
-    public DBNConnection(Project project, Connection connection, String name, ConnectionType type, ConnectionId id, SessionId sessionId) {
+    public DBNConnection(Project project, Connection connection, String name, ConnectionType type, ConnectionId id, SessionId sessionId) throws SQLException {
         super(connection);
         this.projectRef = ProjectRef.from(project);
         this.name = name;
         this.type = type;
         this.id = id;
         this.sessionId = sessionId;
+        this.properties = new ConnectionProperties(connection);
     }
 
 
@@ -249,6 +252,11 @@ public class DBNConnection extends DBNConnectionBase {
 
     public String getName() {
         return name;
+    }
+
+    @NotNull
+    public ConnectionProperties getProperties() {
+        return properties;
     }
 
     /********************************************************************

@@ -19,12 +19,12 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
     private boolean isActive = true;
     private boolean isNew;
 
-    private ConnectionDatabaseSettings databaseSettings;
-    private ConnectionPropertiesSettings propertiesSettings = new ConnectionPropertiesSettings(this);
-    private ConnectionSshTunnelSettings sshTunnelSettings   = new ConnectionSshTunnelSettings(this);
-    private ConnectionSslSettings sslSettings               = new ConnectionSslSettings(this);
-    private ConnectionDetailSettings detailSettings         = new ConnectionDetailSettings(this);
-    private ConnectionFilterSettings filterSettings         = new ConnectionFilterSettings(this);
+    private final ConnectionDatabaseSettings databaseSettings;
+    private final ConnectionPropertiesSettings propertiesSettings = new ConnectionPropertiesSettings(this);
+    private final ConnectionSshTunnelSettings sshTunnelSettings   = new ConnectionSshTunnelSettings(this);
+    private final ConnectionSslSettings sslSettings               = new ConnectionSslSettings(this);
+    private final ConnectionDetailSettings detailSettings         = new ConnectionDetailSettings(this);
+    private final ConnectionFilterSettings filterSettings         = new ConnectionFilterSettings(this);
 
     public ConnectionSettings(ConnectionBundleSettings parent) {
         this(parent, DatabaseType.GENERIC, ConnectionConfigType.CUSTOM);
