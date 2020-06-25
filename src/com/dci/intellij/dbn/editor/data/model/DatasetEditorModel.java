@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionProperties;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -38,7 +39,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -46,6 +46,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static com.dci.intellij.dbn.connection.ConnectionProperty.RS_TYPE_FORWARD_ONLY;
+import static com.dci.intellij.dbn.connection.ConnectionProperty.RS_TYPE_SCROLL_INSENSITIVE;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
 public class DatasetEditorModel
@@ -173,8 +175,8 @@ public class DatasetEditorModel
             statement = connection.createStatement();
         } else {
             // ensure we always get a statement,
-            DatabaseMetaData metaData = connection.getMetaData();
-            if (metaData.supportsResultSetType(ResultSet.TYPE_SCROLL_INSENSITIVE)) {
+            ConnectionProperties properties = connection.getProperties();
+            if (properties.is(RS_TYPE_SCROLL_INSENSITIVE)) {
                 try {
                     statement = connection.createStatement(
                             ResultSet.TYPE_SCROLL_INSENSITIVE,
@@ -185,7 +187,7 @@ public class DatasetEditorModel
                 }
             }
 
-            if (statement == null && metaData.supportsResultSetType(ResultSet.TYPE_FORWARD_ONLY)) {
+            if (statement == null && properties.is(RS_TYPE_FORWARD_ONLY)) {
                 try {
                     statement = connection.createStatement(
                             ResultSet.TYPE_FORWARD_ONLY,
