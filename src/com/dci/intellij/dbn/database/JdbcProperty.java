@@ -33,8 +33,8 @@ public enum JdbcProperty implements Property {
         return index;
     }
 
-    private String description;
-    private boolean feature;
+    private final String description;
+    private final boolean feature;
 
     JdbcProperty(String description, boolean feature) {
         this.description = description;
