@@ -45,10 +45,12 @@ public class DatabaseOpenFileDescriptor extends OpenFileDescriptor {
         return super.navigateInEditor(project, requestFocus);
     }
 
+/*
     @Override
     protected boolean navigateInAnyFileEditor(Project project, boolean focusEditor) {
         return super.navigateInAnyFileEditor(project, focusEditor);
     }
+*/
 
     @NotNull
     @Override

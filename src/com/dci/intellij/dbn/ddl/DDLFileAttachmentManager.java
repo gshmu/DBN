@@ -187,15 +187,17 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     public void detachDDLFile(VirtualFile virtualFile) {
         DBObjectRef<DBSchemaObject> objectRef = mappings.remove(virtualFile.getUrl());
 
-        // map last used connection/schema
-        FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
-        ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(virtualFile);
-        if (activeConnection == null) {
-            DBSchemaObject schemaObject = objectRef.get();
-            if (schemaObject != null) {
-                ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
-                connectionMappingManager.setConnectionHandler(virtualFile, connectionHandler);
-                connectionMappingManager.setDatabaseSchema(virtualFile, schemaObject.getSchemaIdentifier());
+        if (objectRef != null) {
+            // map last used connection/schema
+            FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
+            ConnectionHandler activeConnection = connectionMappingManager.getConnectionHandler(virtualFile);
+            if (activeConnection == null) {
+                DBSchemaObject schemaObject = objectRef.get();
+                if (schemaObject != null) {
+                    ConnectionHandler connectionHandler = schemaObject.getConnectionHandler();
+                    connectionMappingManager.setConnectionHandler(virtualFile, connectionHandler);
+                    connectionMappingManager.setDatabaseSchema(virtualFile, schemaObject.getSchemaIdentifier());
+                }
             }
         }
 

@@ -33,8 +33,8 @@ public class CommonUtil {
         try {
             for (int i = 3; i < stackTraceElements.length; i++) {
                 StackTraceElement stackTraceElement = stackTraceElements[i];
-                Class stackTraceClass = Class.forName(stackTraceElement.getClassName());
-                if (clazz.isAssignableFrom(stackTraceClass)) {
+                String className = stackTraceElement.getClassName();
+                if (clazz.getName().equals(className) /*|| clazz.isAssignableFrom(Class.forName(className))*/) {
                     return true;
                 }
             }
