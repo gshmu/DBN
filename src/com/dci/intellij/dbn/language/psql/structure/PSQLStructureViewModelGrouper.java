@@ -24,9 +24,9 @@ public class PSQLStructureViewModelGrouper implements Grouper {
 
     private static final Collection<Group> EMPTY_GROUPS = new ArrayList<>(0);
 
-    @Override
     @NotNull
-    public Collection<Group> group(@NotNull AbstractTreeNode abstractTreeNode, @NotNull Collection<TreeElement> treeElements) {
+    @Override
+    public Collection<Group> group(@NotNull AbstractTreeNode<?> abstractTreeNode, @NotNull Collection<TreeElement> treeElements) {
         Map<DBObjectType, Group> groups = null;
         if (abstractTreeNode.getValue() instanceof PSQLStructureViewElement) {
             PSQLStructureViewElement structureViewElement = (PSQLStructureViewElement) abstractTreeNode.getValue();
