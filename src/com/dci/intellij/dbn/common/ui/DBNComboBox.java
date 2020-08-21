@@ -32,12 +32,12 @@ import java.util.List;
 import java.util.Set;
 
 public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements PropertyHolder<ValueSelectorOption> {
-    private Set<ValueSelectorListener<T>> listeners = new HashSet<ValueSelectorListener<T>>();
+    private final Set<ValueSelectorListener<T>> listeners = new HashSet<ValueSelectorListener<T>>();
     private ListPopup popup;
     private PresentableFactory<T> valueFactory;
     private Loader<List<T>, RuntimeException> valueLoader;
 
-    private PropertyHolder<ValueSelectorOption> options = new PropertyHolderImpl<ValueSelectorOption>() {
+    private final PropertyHolder<ValueSelectorOption> options = new PropertyHolderImpl<ValueSelectorOption>() {
         @Override
         protected ValueSelectorOption[] properties() {
             return ValueSelectorOption.values();
@@ -165,10 +165,10 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
     }
 
     public class SelectValueAction extends DumbAwareAction {
-        private T value;
+        private final T value;
 
         SelectValueAction(T value) {
-            super(getOptionDisplayName(value), null, options != null && options.is(ValueSelectorOption.HIDE_ICON) ? null : value.getIcon());
+            super(getOptionDisplayName(value), null, options != null && options.is(ValueSelectorOption.HIDE_ICON) ? null : value == null ? null : value.getIcon());
             this.value = value;
         }
 
