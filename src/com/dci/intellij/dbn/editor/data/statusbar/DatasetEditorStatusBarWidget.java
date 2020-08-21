@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MathResult;
@@ -75,9 +76,11 @@ public class DatasetEditorStatusBarWidget extends AbstractProjectComponent imple
 
     @Override
     public void projectOpened() {
-        Project project = getProject();
-        StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
-        statusBar.addWidget(this, project);
+        Dispatch.run(() -> {
+            Project project = getProject();
+            StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
+            statusBar.addWidget(this, project);
+        });
     }
 
     @Override
