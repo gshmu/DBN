@@ -62,9 +62,10 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
     private JComboBox<CharsetOption> encodingComboBox;
     private JLabel encodingLabel;
 
-    private DataExportInstructions instructions;
-    private ConnectionHandlerRef connectionHandlerRef;
-    private DBObjectRef sourceObjectRef;
+    private final DataExportInstructions instructions;
+    private final ConnectionHandlerRef connectionHandlerRef;
+    private final DBObjectRef sourceObjectRef;
+    private final ActionListener actionListener = e -> enableDisableFields();
 
     ExportDataForm(ExportDataDialog parentComponent, DataExportInstructions instructions, boolean hasSelection, @NotNull ConnectionHandler connectionHandler, @Nullable DBObject sourceObject) {
         super(parentComponent);
@@ -110,8 +111,9 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
         formatCustomRadioButton.setSelected(format == DataExportFormat.CUSTOM);
 
         valueSeparatorTextField.setText(instructions.getValueSeparator());
-        createHeaderCheckBox.setSelected(instructions.createHeader());
-
+        quoteValuesCheckBox.setSelected(instructions.isQuoteValuesContainingSeparator());
+        quoteAllValuesCheckBox.setSelected(instructions.isQuoteAllValues());
+        createHeaderCheckBox.setSelected(instructions.isCreateHeader());
 
         DataExportInstructions.Destination destination = instructions.getDestination();
         if (destinationClipboardRadioButton.isEnabled()) {
@@ -163,7 +165,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
                 DataExportInstructions.Scope.SELECTION  :
                 DataExportInstructions.Scope.GLOBAL);
         instructions.setCreateHeader(createHeaderCheckBox.isSelected());
-        instructions.quoteValuesContainingSeparator(quoteValuesCheckBox.isSelected());
+        instructions.setQuoteValuesContainingSeparator(quoteValuesCheckBox.isSelected());
         instructions.setQuoteAllValues(quoteAllValuesCheckBox.isSelected());
         instructions.setValueSeparator(valueSeparatorTextField.isEnabled() ? valueSeparatorTextField.getText().trim() : null);
         if (destinationFileRadioButton.isSelected()) {
@@ -234,8 +236,6 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
 
         callback.run();
     }
-
-    private ActionListener actionListener = e -> enableDisableFields();
 
     private void enableDisableFields() {
         DataExportProcessor processor = DataExportManager.getExportProcessor(getExportInstructions().getFormat());

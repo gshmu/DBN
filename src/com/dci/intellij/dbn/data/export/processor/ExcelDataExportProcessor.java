@@ -72,7 +72,7 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
             String sheetName = model.getTableName();
             Sheet sheet = StringUtil.isEmpty(sheetName) ? workbook.createSheet() : workbook.createSheet(sheetName);
 
-            if (instructions.createHeader()) {
+            if (instructions.isCreateHeader()) {
                 Row headerRow = sheet.createRow(0);
 
                 for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++){

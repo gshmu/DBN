@@ -41,14 +41,14 @@ public class CustomDataExportProcessor extends DataExportProcessor{
     @Override
     public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
         StringBuilder buffer = new StringBuilder();
-        if (instructions.createHeader()) {
+        if (instructions.isCreateHeader()) {
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
                 String columnName = model.getColumnName(columnIndex);
                 String separator = instructions.getValueSeparator();
                 boolean containsSeparator = columnName.contains(separator);
                 boolean quote =
-                        instructions.quoteAllValues() || (
-                        instructions.quoteValuesContainingSeparator() && containsSeparator);
+                        instructions.isQuoteAllValues() || (
+                        instructions.isQuoteValuesContainingSeparator() && containsSeparator);
 
                 if (containsSeparator && !quote) {
                     throw new DataExportException(
@@ -88,8 +88,8 @@ public class CustomDataExportProcessor extends DataExportProcessor{
 
                 boolean containsSeparator = value.contains(separator);
                 boolean quote =
-                        instructions.quoteAllValues() || (
-                        instructions.quoteValuesContainingSeparator() && containsSeparator);
+                        instructions.isQuoteAllValues() || (
+                        instructions.isQuoteValuesContainingSeparator() && containsSeparator);
 
                 if (containsSeparator && !quote) {
                     throw new DataExportException(

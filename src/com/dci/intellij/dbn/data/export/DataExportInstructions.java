@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.data.export;
 
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.Cloneable;
+import lombok.Data;
 import org.jdom.Element;
 
 import java.io.File;
@@ -9,6 +10,7 @@ import java.nio.charset.Charset;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
+@Data
 public class DataExportInstructions implements PersistentStateElement, Cloneable {
     private boolean createHeader = true;
     private boolean quoteValuesContainingSeparator = true;
@@ -22,96 +24,8 @@ public class DataExportInstructions implements PersistentStateElement, Cloneable
     private String baseName;
     private Charset charset = Charset.defaultCharset();
 
-    public boolean createHeader() {
-        return createHeader;
-    }
-
-    public void setCreateHeader(boolean createHeader) {
-        this.createHeader = createHeader;
-    }
-
-    public boolean quoteValuesContainingSeparator() {
-        return quoteValuesContainingSeparator;
-    }
-
-    public void quoteValuesContainingSeparator(boolean quoteValuesContainingSeparator) {
-        this.quoteValuesContainingSeparator = quoteValuesContainingSeparator;
-    }
-
-    public boolean quoteAllValues() {
-        return quoteAllValues;
-    }
-
-    public void setQuoteAllValues(boolean quoteAllValues) {
-        this.quoteAllValues = quoteAllValues;
-    }
-
-    public DataExportFormat getFormat() {
-        return format;
-    }
-
-    public void setFormat(DataExportFormat format) {
-        this.format = format;
-    }
-
-    public Scope getScope() {
-        return scope;
-    }
-
-    public void setScope(Scope scope) {
-        this.scope = scope;
-    }
-
-    public Destination getDestination() {
-        return destination;
-    }
-
-    public void setDestination(Destination destination) {
-        this.destination = destination;
-    }
-
-    public String getValueSeparator() {
-        return valueSeparator;
-    }
-
-    public void setValueSeparator(String valueSeparator) {
-        this.valueSeparator = valueSeparator;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public String getFileLocation() {
-        return fileLocation;
-    }
-
-    public void setFileLocation(String fileLocation) {
-        this.fileLocation = fileLocation;
-    }
-
     public File getFile() {
         return new File(fileLocation, fileName);
-    }
-
-    public String getBaseName() {
-        return baseName;
-    }
-
-    public void setBaseName(String baseName) {
-        this.baseName = baseName;
-    }
-
-    public Charset getCharset() {
-        return charset;
-    }
-
-    public void setCharset(Charset charset) {
-        this.charset = charset;
     }
 
     public enum Scope{
