@@ -111,7 +111,7 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
         buffer.append("        <table border=\"1\" cellspacing=\"0\" cellpadding=\"2\">\n");
         buffer.append("            <tr bgcolor=\"#d3d3d3\">\n");
 
-        if (instructions.createHeader()) {
+        if (instructions.isCreateHeader()) {
             for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++){
                 String columnName = model.getColumnName(columnIndex);
                 buffer.append("                <td><b>").append(columnName).append("</b></td>\n");

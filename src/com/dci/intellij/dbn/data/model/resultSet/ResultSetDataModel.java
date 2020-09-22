@@ -11,6 +11,8 @@ import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
 import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModel;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,13 +26,18 @@ public class ResultSetDataModel<
         C extends ResultSetDataModelCell<R, ? extends ResultSetDataModel<R, C>>>
         extends SortableDataModel<R, C> {
 
+    private final ConnectionHandler connectionHandler;
     private DBNResultSet resultSet;
-    private ConnectionHandler connectionHandler;
+
+    @Getter
+    @Setter
     private boolean resultSetExhausted = false;
 
     /** execute duration, -1 unknown */
+    @Getter
     private long executeDuration = -1;
     /** fetch duration, -1 unknown */
+    @Getter
     private long fetchDuration = -1;
 
     public ResultSetDataModel(ConnectionHandler connectionHandler) {
@@ -139,14 +146,6 @@ public class ResultSetDataModel<
         return newRowCount;
     }
 
-    public long getFetchDuration() {
-        return fetchDuration;
-    }
-
-    public long getExecuteDuration(){
-        return executeDuration;
-    }
-
     private void disposeRows(final List<R> oldRows) {
         Background.run(() -> {
             // dispose old content
@@ -158,14 +157,6 @@ public class ResultSetDataModel<
 
     protected void disposeRow(R row) {
         Disposer.dispose(row);
-    }
-
-    public boolean isResultSetExhausted() {
-        return resultSetExhausted;
-    }
-
-    public void setResultSetExhausted(boolean resultSetExhausted) {
-        this.resultSetExhausted = resultSetExhausted;
     }
 
     public void closeResultSet() {
