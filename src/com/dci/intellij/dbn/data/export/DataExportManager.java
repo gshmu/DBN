@@ -45,7 +45,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
         return Failsafe.getComponent(project, DataExportManager.class);
     }
 
-    private static DataExportProcessor[] PROCESSORS =  new DataExportProcessor[] {
+    private static final DataExportProcessor[] PROCESSORS =  new DataExportProcessor[] {
             new SQLDataExportProcessor(),
             new ExcelDataExportProcessor(),
             new ExcelXDataExportProcessor(),
