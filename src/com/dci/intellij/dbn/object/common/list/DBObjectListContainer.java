@@ -21,11 +21,11 @@ import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -293,7 +293,8 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
 
     public void addObjectList(DBObjectList objectList) {
         if (objectList != null) {
-            if (objectLists == null) objectLists = new HashMap<>();
+            // enum map holds an array of all enum elements!!
+            if (objectLists == null) objectLists = new THashMap<>();
             objectLists.put(objectList.getObjectType(), objectList);
         }
     }
