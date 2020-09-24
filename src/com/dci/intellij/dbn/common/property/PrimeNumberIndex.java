@@ -1,5 +1,9 @@
 package com.dci.intellij.dbn.common.property;
 
+/**
+ * @deprecated intended for smaller footprint property holder
+ * exceeds int max value after 9th prime
+ */
 public class PrimeNumberIndex {
     private final int[] index;
 
