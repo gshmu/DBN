@@ -33,16 +33,17 @@ import java.util.concurrent.TimeUnit;
 
 public class ConnectionPool extends DisposableBase implements NotificationSupport, Disposable {
 
-    private static Logger LOGGER = LoggerFactory.createLogger();
+    private static final Logger LOGGER = LoggerFactory.createLogger();
+    private static final ConnectionPoolCleanTask POOL_CLEANER_TASK = new ConnectionPoolCleanTask();
     private int peakPoolSize = 0;
 
     protected final Logger log = Logger.getInstance(getClass().getName());
-    private ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connectionHandlerRef;
 
-    private List<DBNConnection> poolConnections = ContainerUtil.createLockFreeCopyOnWriteList();
-    private Map<SessionId, DBNConnection> dedicatedConnections = ContainerUtil.newConcurrentMap();
+    private final List<DBNConnection> poolConnections = ContainerUtil.createLockFreeCopyOnWriteList();
+    private final Map<SessionId, DBNConnection> dedicatedConnections = ContainerUtil.newConcurrentMap();
 
-    private IntervalLoader<Long> lastAccessTimestamp = new IntervalLoader<Long>(TimeUtil.TEN_SECONDS) {
+    private final IntervalLoader<Long> lastAccessTimestamp = new IntervalLoader<Long>(TimeUtil.Millis.TEN_SECONDS) {
         @Override
         protected Long load() {
             if (poolConnections.size() > 0) {
@@ -200,7 +201,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
                     if (attempts > 30) {
                         throw new SQLTimeoutException("Busy connection pool");
                     }
-                    Thread.sleep(TimeUtil.ONE_SECOND);
+                    Thread.sleep(TimeUtil.Millis.ONE_SECOND);
                     return allocateConnection(readonly, attempts + 1);
                 } catch (SQLException e) {
                     throw e;
@@ -413,9 +414,8 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
         }
     }
 
-    private static ConnectionPoolCleanTask POOL_CLEANER_TASK = new ConnectionPoolCleanTask();
     static {
         Timer poolCleaner = new Timer("DBN - Idle Connection Pool Cleaner");
-        poolCleaner.schedule(POOL_CLEANER_TASK, TimeUtil.ONE_MINUTE, TimeUtil.ONE_MINUTE);
+        poolCleaner.schedule(POOL_CLEANER_TASK, TimeUtil.Millis.ONE_MINUTE, TimeUtil.Millis.ONE_MINUTE);
     }
 }

@@ -5,8 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import java.sql.Timestamp;
 
 public class ChangeTimestamp {
-    private Timestamp value;
-    private long captureTime;
+    private final Timestamp value;
+    private final long captureTime;
 
     public ChangeTimestamp() {
         this.captureTime = System.currentTimeMillis();
@@ -23,7 +23,7 @@ public class ChangeTimestamp {
     }
 
     public boolean isDirty() {
-        return TimeUtil.isOlderThan(captureTime, 30 * TimeUtil.ONE_SECOND);
+        return TimeUtil.isOlderThan(captureTime, 30 * TimeUtil.Millis.ONE_SECOND);
     }
 
     public boolean isOlderThan(ChangeTimestamp changeTimestampCheck) {

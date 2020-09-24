@@ -75,7 +75,7 @@ public class DBNConnection extends DBNConnectionBase {
                     ResourceStatus.VALID,
                     ResourceStatus.VALID_SETTING,
                     ResourceStatus.VALID_CHECKING,
-                    TimeUtil.TEN_SECONDS,
+                    TimeUtil.Millis.TEN_SECONDS,
                     Boolean.TRUE,
                     Boolean.FALSE) { // false is terminal status
                 @Override
@@ -93,7 +93,7 @@ public class DBNConnection extends DBNConnectionBase {
                     ResourceStatus.AUTO_COMMIT,
                     ResourceStatus.AUTO_COMMIT_SETTING,
                     ResourceStatus.AUTO_COMMIT_CHECKING,
-                    TimeUtil.TEN_SECONDS,
+                    TimeUtil.Millis.TEN_SECONDS,
                     Boolean.FALSE,
                     null) { // no terminal status
                 @Override
@@ -234,7 +234,7 @@ public class DBNConnection extends DBNConnectionBase {
 
     public int getIdleMinutes() {
         long idleTimeMillis = System.currentTimeMillis() - lastAccess;
-        return (int) (idleTimeMillis / TimeUtil.ONE_MINUTE);
+        return (int) (idleTimeMillis / TimeUtil.Millis.ONE_MINUTE);
     }
 
     public static Connection getInner(Connection connection) {

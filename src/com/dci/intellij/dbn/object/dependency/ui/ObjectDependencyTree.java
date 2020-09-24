@@ -34,10 +34,10 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 
 public class ObjectDependencyTree extends DBNTree{
-    private DBObjectSelectionHistory selectionHistory =  new DBObjectSelectionHistory();
-    private ObjectDependencyTreeSpeedSearch speedSearch;
+    private final DBObjectSelectionHistory selectionHistory =  new DBObjectSelectionHistory();
+    private final ObjectDependencyTreeSpeedSearch speedSearch;
 
-    private LoadInProgressRegistry<ObjectDependencyTreeNode> loadInProgressRegistry =
+    private final LoadInProgressRegistry<ObjectDependencyTreeNode> loadInProgressRegistry =
             LoadInProgressRegistry.create(this,
                     node -> getModel().refreshLoadInProgressNode(node));
 
@@ -118,7 +118,7 @@ public class ObjectDependencyTree extends DBNTree{
                 }
             } else if (clickCount == 2) {
                 DBObject object = getMouseEventObject(e);
-                if (object != null && TimeUtil.isOlderThan(selectionTimestamp, TimeUtil.ONE_SECOND)) {
+                if (object != null && TimeUtil.isOlderThan(selectionTimestamp, TimeUtil.Millis.ONE_SECOND)) {
                     selectionTimestamp = System.currentTimeMillis();
                     setRootObject((DBSchemaObject) object, true);
                     e.consume();
@@ -155,7 +155,7 @@ public class ObjectDependencyTree extends DBNTree{
     }
 
     public class SelectObjectAction extends DumbAwareAction {
-        private DBObjectRef<DBSchemaObject> objectRef;
+        private final DBObjectRef<DBSchemaObject> objectRef;
         SelectObjectAction(DBSchemaObject object) {
             super("Select");
             objectRef = DBObjectRef.from(object);

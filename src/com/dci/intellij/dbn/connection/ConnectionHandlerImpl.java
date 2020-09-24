@@ -78,7 +78,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
             Latent.disposable(this, () -> new DBSessionBrowserVirtualFile(this));
 
     private final RuntimeLatent<Cache> metaDataCache =
-            Latent.runtime(() -> new Cache(getConnectionId().id(), TimeUtil.ONE_MINUTE));
+            Latent.runtime(() -> new Cache(getConnectionId().id(), TimeUtil.Millis.ONE_MINUTE));
 
     private final RuntimeLatent<AuthenticationInfo> temporaryAuthenticationInfo =
             Latent.runtime(() -> {
@@ -576,8 +576,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         return asc ? ASC_COMPARATOR : DESC_COMPARATOR;
     }
 
-    private static final Comparator<ConnectionHandler> ASC_COMPARATOR = (connection1, connection2) -> connection1.getPresentableText().toLowerCase().compareTo(connection2.getPresentableText().toLowerCase());
-
+    private static final Comparator<ConnectionHandler> ASC_COMPARATOR = Comparator.comparing(connection -> connection.getPresentableText().toLowerCase());
     private static final Comparator<ConnectionHandler> DESC_COMPARATOR = (connection1, connection2) -> connection2.getPresentableText().toLowerCase().compareTo(connection1.getPresentableText().toLowerCase());
 
     /*********************************************************
