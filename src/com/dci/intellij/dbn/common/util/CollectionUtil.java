@@ -11,13 +11,17 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static com.dci.intellij.dbn.common.util.Unsafe.cast;
 
 public class CollectionUtil {
     public static <T extends Cloneable<T>> void cloneElements(Collection<T> source, Collection<T> target) {
@@ -39,45 +43,75 @@ public class CollectionUtil {
         }
     }
 
-    public static void compactRecursive(@Nullable List<? extends Compactable> elements) {
+    public static <T extends Collection<E>, E extends Compactable> T compactRecursive(@Nullable T elements) {
         if (elements != null) {
-            compact(elements);
+            elements = compact(elements);
             for (Compactable element : elements) {
                 element.compact();
             }
         }
+        return elements;
     }
 
     public static void compact(Compactable compactable) {
         if (compactable != null) compactable.compact();
     }
 
-    public static void compact(@Nullable Collection elements) {
+
+    public static <T extends Collection<E>, E> T compact(@Nullable T elements) {
         if (elements != null) {
-            if (elements instanceof ArrayList) {
-                ArrayList arrayList = (ArrayList) elements;
-                arrayList.trimToSize();
-            } else if (elements instanceof FiltrableList) {
+            int size = elements.size();
+            boolean empty = size == 0;
+            boolean single = size == 1;
+
+            if (elements instanceof FiltrableList) {
                 FiltrableList filtrableList = (FiltrableList) elements;
                 filtrableList.trimToSize();
-            } else if (elements instanceof THashSet) {
-                THashSet hashSet = (THashSet) elements;
-                hashSet.trimToSize();
-            }  else if (elements instanceof THashMap) {
-                THashMap hashMap = (THashMap) elements;
-                hashMap.trimToSize();
-            }
 
+            } else  if (elements instanceof List) {
+                if (empty) {
+                    return cast(Collections.emptyList());
+                } else if (single) {
+                    return cast(Collections.singletonList(elements.stream().findFirst().orElse(null)));
+                } else if (elements instanceof ArrayList){
+                    ArrayList arrayList = (ArrayList) elements;
+                    arrayList.trimToSize();
+                    return cast(arrayList);
+                }
+            }  else if (elements instanceof Set) {
+                if (empty) {
+                    return cast(Collections.emptySet());
+                } else if (single) {
+                    return cast(Collections.singleton(elements.stream().findFirst().orElse(null)));
+                } else if (elements instanceof THashSet){
+                    THashSet hashSet = (THashSet) elements;
+                    hashSet.trimToSize();
+                    return cast(hashSet);
+                }
+            }
         }
+        return elements;
     }
 
-    public static void compact(@Nullable Map elements) {
+    public static <T extends Map<K, V>, K, V> T compact(@Nullable T elements) {
         if (elements != null) {
-            if (elements instanceof THashMap) {
+            int size = elements.size();
+            boolean empty = size == 0;
+            boolean single = size == 1;
+
+            if (empty) {
+                return cast(Collections.emptyMap());
+            } else if (single) {
+                K key = elements.keySet().stream().findFirst().orElse(null);
+                V value = elements.get(key);
+                return cast(Collections.singletonMap(key, value));
+            }
+            else if (elements instanceof THashMap) {
                 THashMap hashMap = (THashMap) elements;
                 hashMap.trimToSize();
             }
         }
+        return elements;
     }
 
     public static <T> void forEach(@Nullable Iterable<T> iterable, @NotNull Consumer<? super T> action) {
