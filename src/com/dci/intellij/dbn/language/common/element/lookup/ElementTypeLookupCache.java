@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 
 public abstract class ElementTypeLookupCache<T extends ElementTypeBase>/* implements ElementTypeLookupCache<T>*/ {
-    private RuntimeLatent<Set<TokenType>> nextPossibleTokens = Latent.runtime(() -> computeNextPossibleTokens());
+    private final RuntimeLatent<Set<TokenType>> nextPossibleTokens = Latent.runtime(() -> computeNextPossibleTokens());
     public final T elementType;
 
     ElementTypeLookupCache(T elementType) {
@@ -32,7 +32,9 @@ public abstract class ElementTypeLookupCache<T extends ElementTypeBase>/* implem
     }
 
     public void cleanup() {
-        CollectionUtil.compact(nextPossibleTokens.get());
+        Set<TokenType> tokenTypes = nextPossibleTokens.get();
+        tokenTypes = CollectionUtil.compact(tokenTypes);
+        nextPossibleTokens.set(tokenTypes);
     }
 
     /**

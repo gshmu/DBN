@@ -32,4 +32,17 @@ public interface Unsafe {
         }
         return throwable;
     }
+
+    static <T> T cast(Object o) {
+        return (T) o;
+    }
+
+    static void silent(Runnable runnable) {
+        try {
+            runnable.run();
+        } catch (Throwable ignore) {
+
+        }
+    }
+
 }
