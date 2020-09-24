@@ -17,7 +17,7 @@ public class LoadInProgressIcon implements Icon{
     public static int ROLL_INTERVAL = 50;
     private static int ROLL_ELEMENTS = 12;
 
-    private static Icon[] ICONS;
+    private static final Icon[] ICONS;
     static {
         try {
             // TODO workaround for spinner change from 12 to 8 (go standard api if possible)
@@ -47,7 +47,7 @@ public class LoadInProgressIcon implements Icon{
                 iconIndex++;
             }
 
-            if (ICON_ROLLER != null && TimeUtil.isOlderThan(lastAccessTimestamp, TimeUtil.TEN_SECONDS)) {
+            if (ICON_ROLLER != null && TimeUtil.isOlderThan(lastAccessTimestamp, TimeUtil.Millis.TEN_SECONDS)) {
                 synchronized (IconRollerTimerTask.class) {
                     Timer cachedIconRoller = ICON_ROLLER;
                     ICON_ROLLER = null;

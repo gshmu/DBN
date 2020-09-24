@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.cache;
 
 public class CacheValue<T> {
-    private T value;
-    private long timestamp;
+    private final T value;
+    private final long timestamp;
 
     CacheValue(T value) {
         this.value = value;
@@ -17,7 +17,7 @@ public class CacheValue<T> {
         return timestamp;
     }
 
-    public boolean isOlderThan(int expiryTimeMillis) {
+    public boolean isOlderThan(long expiryTimeMillis) {
         return expiryTimeMillis > 0 && timestamp + expiryTimeMillis < System.currentTimeMillis();
     }
 }

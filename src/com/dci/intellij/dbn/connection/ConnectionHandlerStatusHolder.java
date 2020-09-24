@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<ConnectionHandlerStatus> {
-    private ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef  connectionHandlerRef;
 
     private AuthenticationError authenticationError;
     private Throwable connectionException;
@@ -23,7 +23,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
         return ConnectionHandlerStatus.values();
     }
 
-    private LatentConnectionStatus active = new LatentConnectionStatus(ConnectionHandlerStatus.ACTIVE, true, TimeUtil.ONE_SECOND) {
+    private final LatentConnectionStatus active = new LatentConnectionStatus(ConnectionHandlerStatus.ACTIVE, true, TimeUtil.Millis.ONE_SECOND) {
         @Override
         protected boolean doCheck() {
             ConnectionHandler connectionHandler = getConnectionHandler();
@@ -37,7 +37,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
         }
     };
 
-    private LatentConnectionStatus busy = new LatentConnectionStatus(ConnectionHandlerStatus.BUSY, true, TimeUtil.ONE_SECOND) {
+    private final LatentConnectionStatus busy = new LatentConnectionStatus(ConnectionHandlerStatus.BUSY, true, TimeUtil.Millis.ONE_SECOND) {
         @Override
         protected boolean doCheck() {
             ConnectionHandler connectionHandler = getConnectionHandler();
@@ -51,7 +51,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
         }
     };
 
-    private LatentConnectionStatus valid = new LatentConnectionStatus(ConnectionHandlerStatus.VALID, true, TimeUtil.THIRTY_SECONDS) {
+    private final LatentConnectionStatus valid = new LatentConnectionStatus(ConnectionHandlerStatus.VALID, true, TimeUtil.Millis.THIRTY_SECONDS) {
         @Override
         protected boolean doCheck() {
             DBNConnection poolConnection = null;
@@ -71,7 +71,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
         }
     };
 
-    private LatentConnectionStatus connected = new LatentConnectionStatus(ConnectionHandlerStatus.CONNECTED, false, TimeUtil.TEN_SECONDS) {
+    private final LatentConnectionStatus connected = new LatentConnectionStatus(ConnectionHandlerStatus.CONNECTED, false, TimeUtil.Millis.TEN_SECONDS) {
         @Override
         protected boolean doCheck() {
             try {
@@ -89,7 +89,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
         }
     };
 
-    private IncrementalStatusAdapter<ConnectionHandlerStatusHolder, ConnectionHandlerStatus> loading =
+    private final IncrementalStatusAdapter<ConnectionHandlerStatusHolder, ConnectionHandlerStatus> loading =
             new IncrementalStatusAdapter<ConnectionHandlerStatusHolder, ConnectionHandlerStatus>(this, ConnectionHandlerStatus.LOADING) {
                 @Override
                 protected boolean setInner(ConnectionHandlerStatus status, boolean value) {

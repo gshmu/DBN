@@ -31,7 +31,7 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
                     ResourceStatus.CLOSED,
                     ResourceStatus.CLOSED_SETTING,
                     ResourceStatus.CLOSED_CHECKING,
-                    TimeUtil.FIVE_SECONDS,
+                    TimeUtil.Millis.FIVE_SECONDS,
                     Boolean.FALSE,
                     Boolean.TRUE) {
                 @Override
@@ -52,7 +52,7 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
                     ResourceStatus.CANCELLED,
                     ResourceStatus.CANCELLED_SETTING,
                     ResourceStatus.CANCELLED_CHECKING,
-                    TimeUtil.FIVE_SECONDS,
+                    TimeUtil.Millis.FIVE_SECONDS,
                     Boolean.FALSE,
                     Boolean.TRUE) {
                 @Override

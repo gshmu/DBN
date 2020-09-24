@@ -3,15 +3,17 @@ package com.dci.intellij.dbn.common.util;
 import java.util.concurrent.TimeUnit;
 
 public class TimeUtil {
-    public static int ONE_SECOND = 1000;
-    public static int FIVE_SECONDS = 5 * ONE_SECOND;
-    public static int TEN_SECONDS = 10 * ONE_SECOND;
-    public static int THIRTY_SECONDS = 30 * ONE_SECOND;
-    public static int ONE_MINUTE = 60 * ONE_SECOND;
-    public static int ONE_HOUR = 60 * ONE_MINUTE;
-    public static int THREE_MINUTES = 3 * ONE_MINUTE;
-    public static int FIVE_MINUTES = 5 * ONE_MINUTE;
-    public static int TEN_MINUTES = 10 * ONE_MINUTE;
+    public interface Millis{
+        long ONE_SECOND = 1000;
+        long FIVE_SECONDS = 5 * ONE_SECOND;
+        long TEN_SECONDS = 10 * ONE_SECOND;
+        long THIRTY_SECONDS = 30 * ONE_SECOND;
+        long ONE_MINUTE = 60 * ONE_SECOND;
+        long ONE_HOUR = 60 * ONE_MINUTE;
+        long THREE_MINUTES = 3 * ONE_MINUTE;
+        long FIVE_MINUTES = 5 * ONE_MINUTE;
+        long TEN_MINUTES = 10 * ONE_MINUTE;
+    }
 
     public static int getMinutes(int seconds) {
         return seconds / 60;
@@ -29,4 +31,7 @@ public class TimeUtil {
         return System.currentTimeMillis() - timeUnit.toMillis(time) > timestamp;
     }
 
+    public static long millisSince(long start) {
+        return System.currentTimeMillis() - start;
+    }
 }

@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.util.TimeUtil;
 import java.sql.SQLException;
 
 public class AuthenticationError {
-    public static final int THREE_MINUTES = TimeUtil.ONE_MINUTE * 3;
+    public static final long THREE_MINUTES = TimeUtil.Millis.ONE_MINUTE * 3;
     private final AuthenticationInfo authenticationInfo;
     private final SQLException exception;
     private final long timestamp;

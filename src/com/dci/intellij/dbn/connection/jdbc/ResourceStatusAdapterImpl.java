@@ -22,12 +22,12 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
     private final ResourceStatus subject;
     private final ResourceStatus changing;
     private final ResourceStatus checking;
+    private final Boolean terminalStatus;
     private final long checkInterval;
     private long checkTimestamp;
-    private Boolean terminalStatus;
 
     ResourceStatusAdapterImpl(T resource, ResourceStatus subject, ResourceStatus changing, ResourceStatus checking, long checkInterval, @NotNull Boolean initialStatus, @Nullable Boolean terminalStatus) {
-        this.resource = new FailsafeWeakRef<T>(resource);
+        this.resource = new FailsafeWeakRef<>(resource);
         this.subject = subject;
         this.changing = changing;
         this.checking = checking;
@@ -118,7 +118,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
         } else {
             if (checkInterval > 0) {
                 checkTimestamp =
-                    System.currentTimeMillis() - checkInterval + TimeUtil.FIVE_SECONDS; // retry in 5 seconds
+                    System.currentTimeMillis() - checkInterval + TimeUtil.Millis.FIVE_SECONDS; // retry in 5 seconds
             }
 
         }
