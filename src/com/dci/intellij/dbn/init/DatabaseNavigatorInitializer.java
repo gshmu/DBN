@@ -20,7 +20,7 @@ public class DatabaseNavigatorInitializer /*implements com.intellij.ide.Applicat
         new NotificationGroup("Database Navigator", NotificationDisplayType.TOOL_WINDOW, true, ExecutionManager.TOOL_WINDOW_ID);
 
         Timer updateChecker = new Timer("DBN - Plugin Update (check timer)");
-        updateChecker.schedule(new PluginUpdateChecker(), TimeUtil.ONE_SECOND, TimeUtil.ONE_HOUR);
+        updateChecker.schedule(new PluginUpdateChecker(), TimeUtil.Millis.ONE_SECOND, TimeUtil.Millis.ONE_HOUR);
     }
 
     private static class PluginUpdateChecker extends TimerTask {

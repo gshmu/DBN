@@ -12,14 +12,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public abstract class DialogWithTimeout extends DBNDialog<DialogWithTimeoutForm>{
-    private Timer timeoutTimer;
+    private final Timer timeoutTimer;
     private int secondsLeft;
 
     protected DialogWithTimeout(Project project, String title, boolean canBeParent, int timeoutSeconds) {
         super(project, title, canBeParent);
         secondsLeft = timeoutSeconds;
         timeoutTimer = new Timer("DBN - Timeout Dialog Task [" + getProject().getName() + "]");
-        timeoutTimer.schedule(new TimeoutTask(), TimeUtil.ONE_SECOND, TimeUtil.ONE_SECOND);
+        timeoutTimer.schedule(new TimeoutTask(), TimeUtil.Millis.ONE_SECOND, TimeUtil.Millis.ONE_SECOND);
     }
 
     @NotNull

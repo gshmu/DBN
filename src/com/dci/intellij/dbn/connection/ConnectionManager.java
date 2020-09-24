@@ -73,7 +73,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     public static final String COMPONENT_NAME = "DBNavigator.Project.ConnectionManager";
 
     private Timer idleConnectionCleaner;
-    private ConnectionBundle connectionBundle;
+    private final ConnectionBundle connectionBundle;
     private static ConnectionHandlerRef lastUsedConnection;
 
     public static ConnectionManager getInstance(@NotNull Project project) {
@@ -96,7 +96,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         Project project = getProject();
         EventUtil.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
         idleConnectionCleaner = new Timer("DBN - Idle Connection Cleaner [" + project.getName() + "]");
-        idleConnectionCleaner.schedule(new CloseIdleConnectionTask(), TimeUtil.ONE_MINUTE, TimeUtil.ONE_MINUTE);
+        idleConnectionCleaner.schedule(new CloseIdleConnectionTask(), TimeUtil.Millis.ONE_MINUTE, TimeUtil.Millis.ONE_MINUTE);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     @Nullable
     private static ConnectionHandler getLastUsedConnection() {
-        return ConnectionHandlerRef.get(lastUsedConnection);
+        return lastUsedConnection.get();
     }
 
     @Nullable
@@ -124,7 +124,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     *                       Listeners                        *
     *********************************************************/
 
-    private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
+    private final ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
         @Override
         public void connectionChanged(ConnectionId connectionId) {
             ConnectionHandler connectionHandler = getConnectionHandler(connectionId);

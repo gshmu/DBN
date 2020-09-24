@@ -15,12 +15,12 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Cache {
-    private Map<String, CacheValue> elements = new ConcurrentHashMap<>();
-    private int expiryMillis;
-    private String qualifier;
+    private final Map<String, CacheValue> elements = new ConcurrentHashMap<>();
+    private final String qualifier;
+    private final long expiryMillis;
 
 
-    public Cache(String qualifier, int expiryMillis) {
+    public Cache(String qualifier, long expiryMillis) {
         this.qualifier = qualifier;
         this.expiryMillis = expiryMillis;
         CACHE_CLEANUP_TASK.register(this);
@@ -91,9 +91,9 @@ public class Cache {
         }
     }
 
-    private static ConnectionCacheCleanupTask CACHE_CLEANUP_TASK = new ConnectionCacheCleanupTask();
+    private static final ConnectionCacheCleanupTask CACHE_CLEANUP_TASK = new ConnectionCacheCleanupTask();
     static {
         Timer poolCleaner = new Timer("DBN - Connection Cache Cleaner");
-        poolCleaner.schedule(CACHE_CLEANUP_TASK, TimeUtil.THREE_MINUTES, TimeUtil.THREE_MINUTES);
+        poolCleaner.schedule(CACHE_CLEANUP_TASK, TimeUtil.Millis.THREE_MINUTES, TimeUtil.Millis.THREE_MINUTES);
     }
 }
