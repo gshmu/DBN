@@ -173,7 +173,8 @@
 
     <statement-execution-processor id="dataset-columns" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
-            select distinct
+            select DISTINCT
+                col.TABLE_NAME as DATASET_NAME,
                 col.COLUMN_NAME,
                 col.COLUMN_ID as POSITION,
                 null as DATA_TYPE_PACKAGE,
@@ -188,64 +189,48 @@
                 decode (pk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_PRIMARY_KEY,
                 decode (fk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_FOREIGN_KEY,
                 decode (uk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_UNIQUE_KEY
-            from [PREFIX]_TAB_COLS col,
-                (select
-                     cc.OWNER,
-                     cc.TABLE_NAME,
-                     cc.CONSTRAINT_NAME,
-                     cc.COLUMN_NAME
-                 from
-                      [PREFIX]_CONSTRAINTS con,
-                      [PREFIX]_CONS_COLUMNS cc
-                 where
-                      cc.OWNER = {0} and
-                      cc.TABLE_NAME = {1} and
-                      con.OWNER = cc.OWNER and
-                      con.TABLE_NAME = cc.TABLE_NAME and
-                      con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
-                      con.CONSTRAINT_TYPE = 'P') pk,
-                (select
-                     cc.OWNER,
-                     cc.TABLE_NAME,
-                     cc.CONSTRAINT_NAME,
-                     cc.COLUMN_NAME
-                 from
-                      [PREFIX]_CONSTRAINTS con,
-                      [PREFIX]_CONS_COLUMNS cc
-                 where
-                      cc.OWNER = {0} and
-                      cc.TABLE_NAME = {1} and
-                      con.OWNER = cc.OWNER and
-                      con.TABLE_NAME = cc.TABLE_NAME and
-                      con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
-                      con.CONSTRAINT_TYPE = 'R') fk,
-                 (select
-                     cc.OWNER,
-                     cc.TABLE_NAME,
-                     cc.CONSTRAINT_NAME,
-                     cc.COLUMN_NAME
-                 from
-                      [PREFIX]_CONSTRAINTS con,
-                      [PREFIX]_CONS_COLUMNS cc
-                 where
-                      cc.OWNER = {0} and
-                      cc.TABLE_NAME = {1} and
-                      con.OWNER = cc.OWNER and
-                      con.TABLE_NAME = cc.TABLE_NAME and
-                      con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
-                      con.CONSTRAINT_TYPE = 'U') uk
+            from [PREFIX]_TAB_COLS col
+                 inner join [PREFIX]_OBJECTS o
+                         on o.OWNER = col.OWNER
+                        and o.OBJECT_NAME = col.TABLE_NAME
+                        and o.OBJECT_NAME = {1}
+                        and o.OBJECT_TYPE in ('TABLE', 'VIEW', 'MATERIALIZED VIEW')
+                  left join [PREFIX]_CONSTRAINTS pk
+                 inner join [PREFIX]_CONS_COLUMNS pkcc
+                         on pkcc.OWNER = pk.owner
+                        and pkcc.TABLE_NAME = pk.TABLE_NAME
+                        and pkcc.TABLE_NAME = {1}
+                        and pkcc.CONSTRAINT_NAME = pk.CONSTRAINT_NAME
+                         on pk.CONSTRAINT_TYPE = 'P'
+                        and pk.OWNER = col.OWNER
+                        and pk.TABLE_NAME = col.TABLE_NAME
+                        and pk.TABLE_NAME = {1}
+                        and pkcc.COLUMN_NAME = col.COLUMN_NAME
+                  left join [PREFIX]_CONSTRAINTS fk
+                 inner join [PREFIX]_CONS_COLUMNS fkcc
+                         on fkcc.OWNER = fk.owner
+                        and fkcc.TABLE_NAME = fk.TABLE_NAME
+                        and fkcc.TABLE_NAME = {1}
+                        and fkcc.CONSTRAINT_NAME = fk.CONSTRAINT_NAME
+                         on fk.CONSTRAINT_TYPE = 'R'
+                        and fk.OWNER = col.OWNER
+                        and fk.TABLE_NAME = col.TABLE_NAME
+                        and fk.TABLE_NAME = {0}
+                        and fkcc.COLUMN_NAME = col.COLUMN_NAME
+                  left join [PREFIX]_CONSTRAINTS uk
+                 inner join [PREFIX]_CONS_COLUMNS ukcc
+                         on ukcc.OWNER = uk.owner
+                        and ukcc.TABLE_NAME = uk.TABLE_NAME
+                        and ukcc.TABLE_NAME = {1}
+                        and ukcc.CONSTRAINT_NAME = uk.CONSTRAINT_NAME
+                         on uk.CONSTRAINT_TYPE = 'U'
+                        and uk.OWNER = col.OWNER
+                        and uk.TABLE_NAME = col.TABLE_NAME
+                        and uk.TABLE_NAME = {1}
+                        and ukcc.COLUMN_NAME = col.COLUMN_NAME
             where
                 col.OWNER = {0} and
-                col.TABLE_NAME = {1} and
-                col.OWNER = pk.OWNER(+) and
-                col.TABLE_NAME = pk.TABLE_NAME(+) and
-                col.COLUMN_NAME = pk.COLUMN_NAME(+) and
-                col.OWNER = fk.OWNER(+) and
-                col.TABLE_NAME = fk.TABLE_NAME(+) and
-                col.COLUMN_NAME = fk.COLUMN_NAME(+) and
-                col.OWNER = uk.OWNER(+) and
-                col.TABLE_NAME = uk.TABLE_NAME(+) and
-                col.COLUMN_NAME = uk.COLUMN_NAME(+)
+                col.TABLE_NAME = {1}
             order by col.COLUMN_NAME asc
         </statement>
         <statement prefixes="DBA, ALL" comment="Oracle 8.0">
@@ -328,14 +313,7 @@
 
     <statement-execution-processor id="all-dataset-columns" is-query="true" is-prepared-statement="true" timeout="90">
         <statement prefixes="DBA, ALL">
-            with obj as (select
-                             o.OWNER,
-                             o.OBJECT_NAME
-                         from [PREFIX]_OBJECTS o
-                         where
-                             o.OWNER = {0} and
-                             o.OBJECT_TYPE in ('TABLE', 'VIEW', 'MATERIALIZED VIEW'))
-            select distinct
+            select DISTINCT
                 col.TABLE_NAME as DATASET_NAME,
                 col.COLUMN_NAME,
                 col.COLUMN_ID as POSITION,
@@ -351,68 +329,39 @@
                 decode (pk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_PRIMARY_KEY,
                 decode (fk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_FOREIGN_KEY,
                 decode (uk.CONSTRAINT_NAME, null, 'N', 'Y') as IS_UNIQUE_KEY
-            from [PREFIX]_TAB_COLS col, obj,
-                (select
-                     cc.OWNER,
-                     cc.TABLE_NAME,
-                     cc.CONSTRAINT_NAME,
-                     cc.COLUMN_NAME
-                 from
-                      [PREFIX]_CONSTRAINTS con,
-                      [PREFIX]_CONS_COLUMNS cc, obj
-                 where
-                      cc.OWNER = {0} and
-                      cc.OWNER = obj.OWNER and
-                      cc.TABLE_NAME = obj.OBJECT_NAME and
-                      con.OWNER = cc.OWNER and
-                      con.TABLE_NAME = cc.TABLE_NAME and
-                      con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
-                      con.CONSTRAINT_TYPE = 'P') pk,
-                (select
-                     cc.OWNER,
-                     cc.TABLE_NAME,
-                     cc.CONSTRAINT_NAME,
-                     cc.COLUMN_NAME
-                 from
-                      [PREFIX]_CONSTRAINTS con,
-                      [PREFIX]_CONS_COLUMNS cc, obj
-                 where
-                      cc.OWNER = {0} and
-                      cc.OWNER = obj.OWNER and
-                      cc.TABLE_NAME = obj.OBJECT_NAME and
-                      con.OWNER = cc.OWNER and
-                      con.TABLE_NAME = cc.TABLE_NAME and
-                      con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
-                      con.CONSTRAINT_TYPE = 'R') fk,
-                (select
-                     cc.OWNER,
-                     cc.TABLE_NAME,
-                     cc.CONSTRAINT_NAME,
-                     cc.COLUMN_NAME
-                 from
-                      [PREFIX]_CONSTRAINTS con,
-                      [PREFIX]_CONS_COLUMNS cc, obj
-                 where
-                      cc.OWNER = {0} and
-                      cc.OWNER = obj.OWNER and
-                      cc.TABLE_NAME = obj.OBJECT_NAME and
-                      con.OWNER = cc.OWNER and
-                      con.TABLE_NAME = cc.TABLE_NAME and
-                      con.CONSTRAINT_NAME = cc.CONSTRAINT_NAME and
-                      con.CONSTRAINT_TYPE = 'U') uk
-            where
-                col.OWNER = {0} and
-                col.OWNER = obj.OWNER and
-                col.TABLE_NAME = obj.OBJECT_NAME and
-                col.OWNER = pk.OWNER(+) and
-                col.TABLE_NAME = pk.TABLE_NAME(+) and
-                col.COLUMN_NAME = pk.COLUMN_NAME(+) and
-                col.OWNER = fk.OWNER(+) and
-                col.TABLE_NAME = fk.TABLE_NAME(+) and
-                col.COLUMN_NAME = fk.COLUMN_NAME(+) and
-                col.OWNER = uk.OWNER(+) and
-                col.TABLE_NAME = uk.TABLE_NAME(+) and
-                col.COLUMN_NAME = uk.COLUMN_NAME(+)
+            from [PREFIX]_TAB_COLS col
+                 inner join [PREFIX]_OBJECTS o
+                         on o.OWNER = col.OWNER
+                        and o.OBJECT_NAME = col.TABLE_NAME
+                        and o.OBJECT_TYPE in ('TABLE', 'VIEW', 'MATERIALIZED VIEW')
+                  left join [PREFIX]_CONSTRAINTS pk
+                 inner join [PREFIX]_CONS_COLUMNS pkcc
+                         on pkcc.OWNER = pk.owner
+                        and pkcc.TABLE_NAME = pk.TABLE_NAME
+                        and pkcc.CONSTRAINT_NAME = pk.CONSTRAINT_NAME
+                         on pk.CONSTRAINT_TYPE = 'P'
+                        and pk.OWNER = col.OWNER
+                        and pk.TABLE_NAME = col.TABLE_NAME
+                        and pkcc.COLUMN_NAME = col.COLUMN_NAME
+                  left join [PREFIX]_CONSTRAINTS fk
+                 inner join [PREFIX]_CONS_COLUMNS fkcc
+                         on fkcc.OWNER = fk.owner
+                        and fkcc.TABLE_NAME = fk.TABLE_NAME
+                        and fkcc.CONSTRAINT_NAME = fk.CONSTRAINT_NAME
+                         on fk.CONSTRAINT_TYPE = 'R'
+                        and fk.OWNER = col.OWNER
+                        and fk.TABLE_NAME = col.TABLE_NAME
+                        and fkcc.COLUMN_NAME = col.COLUMN_NAME
+                  left join [PREFIX]_CONSTRAINTS uk
+                 inner join [PREFIX]_CONS_COLUMNS ukcc
+                         on ukcc.OWNER = uk.owner
+                        and ukcc.TABLE_NAME = uk.TABLE_NAME
+                        and ukcc.CONSTRAINT_NAME = uk.CONSTRAINT_NAME
+                         on uk.CONSTRAINT_TYPE = 'U'
+                        and uk.OWNER = col.OWNER
+                        and uk.TABLE_NAME = col.TABLE_NAME
+                        and ukcc.COLUMN_NAME = col.COLUMN_NAME
+            where col.OWNER = {0}
             order by col.TABLE_NAME asc
         </statement>
         <statement prefixes="DBA, ALL" comment="Oracle 8.0">
@@ -569,13 +518,6 @@
 
     <statement-execution-processor id="all-constraints" is-query="true" is-prepared-statement="true" timeout="90">
         <statement prefixes="DBA, ALL">
-            with obj as (select
-                            o.OWNER,
-                            o.OBJECT_NAME
-                         from [PREFIX]_OBJECTS o
-                         where
-                            o.OWNER = {0} and
-                            o.OBJECT_TYPE in ('TABLE', 'VIEW', 'MATERIALIZED VIEW'))
             select
                 c.TABLE_NAME as DATASET_NAME,
                 c.CONSTRAINT_NAME,
@@ -591,11 +533,13 @@
                 c.R_CONSTRAINT_NAME as FK_CONSTRAINT_NAME,
                 decode(c.STATUS, 'ENABLED', 'Y', 'N') as IS_ENABLED,
                 c.SEARCH_CONDITION as CHECK_CONDITION
-            from [PREFIX]_CONSTRAINTS c, obj
+            from [PREFIX]_CONSTRAINTS c
+                 inner join [PREFIX]_OBJECTS obj
+                         on obj.OWNER = c.owner
+                        and obj.OBJECT_NAME = c.TABLE_NAME
+                        and obj.OBJECT_TYPE in ('TABLE', 'VIEW', 'MATERIALIZED VIEW')
             where
-                c.OWNER = {0} and
-                c.OWNER = obj.OWNER and
-                c.TABLE_NAME = obj.OBJECT_NAME
+                c.OWNER = {0}
             order by
                 c.TABLE_NAME,
                 c.CONSTRAINT_NAME asc
@@ -605,8 +549,9 @@
     <statement-execution-processor id="constraints" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
             select
-                CONSTRAINT_NAME,
-                case CONSTRAINT_TYPE
+                c.TABLE_NAME as DATASET_NAME,
+                c.CONSTRAINT_NAME,
+                case c.CONSTRAINT_TYPE
                     when 'C' then 'CHECK'
                     when 'P' then 'PRIMARY KEY'
                     when 'U' then 'UNIQUE'
@@ -614,15 +559,20 @@
                     when 'V' then 'VIEW CHECK'
                     when 'O' then 'VIEW READONLY'
                 end as CONSTRAINT_TYPE,
-                R_OWNER as FK_CONSTRAINT_OWNER,
-                R_CONSTRAINT_NAME as FK_CONSTRAINT_NAME,
-                decode(STATUS, 'ENABLED', 'Y', 'N') as IS_ENABLED,
-                SEARCH_CONDITION as CHECK_CONDITION
-            from [PREFIX]_CONSTRAINTS
+                c.R_OWNER as FK_CONSTRAINT_OWNER,
+                c.R_CONSTRAINT_NAME as FK_CONSTRAINT_NAME,
+                decode(c.STATUS, 'ENABLED', 'Y', 'N') as IS_ENABLED,
+                c.SEARCH_CONDITION as CHECK_CONDITION
+            from [PREFIX]_CONSTRAINTS c
+                 inner join [PREFIX]_OBJECTS obj
+                         on obj.OWNER = c.owner
+                        and obj.OBJECT_NAME = c.TABLE_NAME
+                        and obj.OBJECT_TYPE in ('TABLE', 'VIEW', 'MATERIALIZED VIEW')
             where
-                OWNER = {0} and
-                TABLE_NAME = {1}
-            order by CONSTRAINT_NAME asc
+                c.OWNER = {0} and
+                c.TABLE_NAME = {1}
+            order by
+                c.CONSTRAINT_NAME asc
         </statement>
     </statement-execution-processor>
 
