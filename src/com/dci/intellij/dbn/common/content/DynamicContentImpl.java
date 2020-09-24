@@ -67,7 +67,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     @Override
     public void compact() {
          if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
-             CollectionUtil.compact(elements);
+             elements = CollectionUtil.compact(elements);
          }
     }
 

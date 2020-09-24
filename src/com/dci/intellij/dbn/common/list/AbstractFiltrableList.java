@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
-    private final List<T> list;
+    private List<T> list;
 
     public AbstractFiltrableList() {
         list = new ArrayList<T>();
@@ -293,6 +293,6 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
 
     @Override
     public void trimToSize() {
-        CollectionUtil.compact(list);
+        list = CollectionUtil.compact(list);
     }
 }

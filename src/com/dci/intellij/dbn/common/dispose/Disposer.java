@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.NamedComponent;
 import com.intellij.openapi.diagnostic.Logger;
@@ -100,17 +101,25 @@ public class Disposer {
         }
         if (collection != null && collection.size()> 0) {
             Collection disposableCollection = new ArrayList(collection);
-            collection.clear();
+            clearCollection(collection);
             for (Object object : disposableCollection) {
                 dispose(object);
             }
         }
     }
 
+    private static void clearCollection(Collection collection) {
+        Unsafe.silent(() -> collection.clear());
+    }
+
+    private static void clearMap(Map map) {
+        Unsafe.silent(() -> map.clear());
+    }
+
     public static void dispose(Map map) {
         if (map != null) {
             Collection disposableCollection = new ArrayList(map.values());
-            map.clear();
+            clearMap(map);
             for (Object disposable : disposableCollection) {
                 dispose(disposable);
             }
@@ -137,10 +146,10 @@ public class Disposer {
                     if ( fieldValue != null) {
                         if (fieldValue instanceof Collection<?>) {
                             Collection collection = (Collection) fieldValue;
-                            collection.clear();
+                            clearCollection(collection);
                         } else if (fieldValue instanceof Map) {
                             Map map = (Map) fieldValue;
-                            map.clear();
+                            clearMap(map);
                         } else if (fieldValue instanceof Latent){
                             Latent latent = (Latent) fieldValue;
                             latent.reset();

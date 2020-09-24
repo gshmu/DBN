@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.lookup;
 
 import com.dci.intellij.dbn.common.index.IndexedContainer;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.language.common.SharedTokenTypeBundle;
 import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
@@ -11,6 +10,8 @@ import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import gnu.trove.THashSet;
 
 import java.util.Set;
+
+import static com.dci.intellij.dbn.common.util.CollectionUtil.compact;
 
 public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> extends ElementTypeLookupCache<T> {
 
@@ -38,13 +39,13 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> e
     @Override
     public void cleanup() {
         super.cleanup();
-        CollectionUtil.compact(allPossibleLeafs);
-        CollectionUtil.compact(firstPossibleLeafs);
-        CollectionUtil.compact(firstRequiredLeafs);
+        compact(allPossibleLeafs);
+        firstPossibleLeafs = compact(firstPossibleLeafs);
+        firstRequiredLeafs = compact(firstRequiredLeafs);
 
-        CollectionUtil.compact(allPossibleTokens);
-        CollectionUtil.compact(firstPossibleTokens);
-        CollectionUtil.compact(firstRequiredTokens);
+        compact(allPossibleTokens);
+        firstPossibleTokens = compact(firstPossibleTokens);
+        firstRequiredTokens = compact(firstRequiredTokens);
     }
 
     @Override

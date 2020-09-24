@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.util.Compactable;
 import gnu.trove.TIntArrayList;
 
 public class IndexedContainer<T extends Indexable> implements Compactable {
-    private TIntArrayList INDEX = new TIntArrayList();
+    private final TIntArrayList INDEX = new TIntArrayList();
 
     public void put(T indexable) {
         int index = indexable.getIdx();

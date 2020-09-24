@@ -20,7 +20,6 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -74,6 +73,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.util.CollectionUtil.*;
+
 @Nullifiable
 public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTreeNodeBase implements DBObject, ToolTipProvider {
 
@@ -90,7 +91,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     private DBObjectListContainer childObjects;
     private DBObjectRelationListContainer childObjectRelations;
 
-    private ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connectionHandlerRef;
 
     private static final DBOperationExecutor NULL_OPERATION_EXECUTOR = operationType -> {
         throw new DBOperationNotSupportedException(operationType);
@@ -120,8 +121,8 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         initProperties();
         initLists();
 
-        CollectionUtil.compact(childObjects);
-        CollectionUtil.compact(childObjectRelations);
+        compact(childObjects);
+        compact(childObjectRelations);
     }
 
     protected abstract String initObject(M metadata) throws SQLException;
@@ -480,7 +481,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
             if (objectType == DBObjectType.ANY) {
                 if (childObjects != null) {
                     List<DBObject> objects = new ArrayList<DBObject>();
-                    CollectionUtil.forEach(
+                    forEach(
                             childObjects.getObjectLists(),
                             objectList -> {
                                 if (!objectList.isInternal() && Failsafe.check(objectList)) {
@@ -709,7 +710,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
             synchronized (this) {
                 if (allPossibleTreeChildren == null) {
                     allPossibleTreeChildren = buildAllPossibleTreeChildren();
-                    CollectionUtil.compact(allPossibleTreeChildren);
+                    allPossibleTreeChildren = compact(allPossibleTreeChildren);
                 }
             }
         }
@@ -738,7 +739,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         ConnectionHandler connectionHandler = getConnectionHandler();
         Filter<BrowserTreeNode> objectTypeFilter = connectionHandler.getObjectTypeFilter();
 
-        List<BrowserTreeNode> treeChildren = CollectionUtil.filter(getAllPossibleTreeChildren(), false, true, objectTypeFilter);
+        List<BrowserTreeNode> treeChildren = filter(getAllPossibleTreeChildren(), false, true, objectTypeFilter);
         treeChildren = CommonUtil.nvl(treeChildren, Collections.emptyList());
 
         treeChildren.forEach(objectList -> {
@@ -751,7 +752,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         }
 
         visibleTreeChildren = treeChildren;
-        CollectionUtil.compact(visibleTreeChildren);
+        visibleTreeChildren = compact(visibleTreeChildren);
         set(DBObjectProperty.TREE_LOADED, true);
 
 
@@ -764,7 +765,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Override
     public void refreshTreeChildren(@NotNull DBObjectType... objectTypes) {
-        CollectionUtil.forEach(
+        forEach(
                 visibleTreeChildren,
                 treeNode -> treeNode.refreshTreeChildren(objectTypes));
     }
@@ -776,7 +777,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         if (visibleTreeChildren != null && DatabaseBrowserUtils.treeVisibilityChanged(getAllPossibleTreeChildren(), visibleTreeChildren, filter)) {
             buildTreeChildren();
         }
-        CollectionUtil.forEach(
+        forEach(
                 visibleTreeChildren,
                 treeNode -> treeNode.rebuildTreeChildren());
     }

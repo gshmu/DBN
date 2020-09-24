@@ -33,8 +33,8 @@ import java.util.Set;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.check;
 
 public class DBObjectListContainer extends DisposableBase implements Disposable, Compactable {
+    private final WeakRef<GenericDatabaseElement> owner;
     private Map<DBObjectType, DBObjectList<DBObject>> objectLists;
-    private WeakRef<GenericDatabaseElement> owner;
 
     public DBObjectListContainer(@NotNull GenericDatabaseElement owner) {
         this.owner = WeakRef.from(owner);
@@ -42,7 +42,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
 
     @Override
     public void compact() {
-        CollectionUtil.compact(objectLists);
+        objectLists = CollectionUtil.compact(objectLists);
     }
 
     @Nullable
