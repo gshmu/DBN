@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.database.common.statement;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ResourceUtil;
@@ -38,7 +39,6 @@ public class StatementExecutionProcessor {
     private final boolean prepared;
     private int timeout = 30;
     private List<StatementDefinition> statementDefinitions = new ArrayList<>();
-    private StatementDefinition statementDefinition;
 
     public StatementExecutionProcessor(Element element, DatabaseInterfaceProvider interfaceProvider) {
         this.interfaceProvider = interfaceProvider;
@@ -61,11 +61,7 @@ public class StatementExecutionProcessor {
                 readStatements(statementText, prefixes);
             }
         }
-        if (statementDefinitions.size() == 1) {
-            statementDefinition = statementDefinitions.get(0);
-            statementDefinitions.clear();
-            statementDefinitions = null;
-        }
+        statementDefinitions = CollectionUtil.compact(statementDefinitions);
     }
 
     private void readStatements(String statementText, String prefixes) {
@@ -92,8 +88,8 @@ public class StatementExecutionProcessor {
     }
 
     public ResultSet executeQuery(@NotNull DBNConnection connection, boolean forceExecution, Object... arguments) throws SQLException {
-        if (statementDefinition != null) {
-            return executeQuery(statementDefinition, connection, forceExecution, arguments);
+        if (statementDefinitions.size() == 1) {
+            return executeQuery(statementDefinitions.get(0), connection, forceExecution, arguments);
         } else {
             SQLException exception = NO_STATEMENT_DEFINITION_EXCEPTION;
             for (StatementDefinition statementDefinition : statementDefinitions) {
@@ -189,8 +185,8 @@ public class StatementExecutionProcessor {
             @Nullable T outputReader,
             Object... arguments) throws SQLException {
 
-        if (statementDefinition != null) {
-            return executeCall(statementDefinition, connection, outputReader, arguments);
+        if (statementDefinitions.size() == 1) {
+            return executeCall(statementDefinitions.get(0), connection, outputReader, arguments);
         } else {
             SQLException exception = NO_STATEMENT_DEFINITION_EXCEPTION;
             for (StatementDefinition statementDefinition : statementDefinitions) {
@@ -241,8 +237,8 @@ public class StatementExecutionProcessor {
     }
 
     public void executeUpdate(DBNConnection connection, Object... arguments) throws SQLException {
-        if (statementDefinition != null) {
-            executeUpdate(statementDefinition, connection, arguments);
+        if (statementDefinitions.size() == 1) {
+            executeUpdate(statementDefinitions.get(0), connection, arguments);
         } else {
             SQLException exception = NO_STATEMENT_DEFINITION_EXCEPTION;
             for (StatementDefinition statementDefinition : statementDefinitions) {
@@ -291,8 +287,8 @@ public class StatementExecutionProcessor {
     }
 
     public boolean executeStatement(@NotNull DBNConnection connection, Object... arguments) throws SQLException {
-        if (statementDefinition != null) {
-            return executeStatement(statementDefinition, connection, arguments);
+        if (statementDefinitions.size() == 1) {
+            return executeStatement(statementDefinitions.get(0), connection, arguments);
         } else {
             SQLException exception = NO_STATEMENT_DEFINITION_EXCEPTION;
             for (StatementDefinition statementDefinition : statementDefinitions) {

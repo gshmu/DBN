@@ -23,11 +23,11 @@ public class StatementDefinition {
         this.prepared = prepared;
         statementText = statementText.replaceAll("\\s+", " ").trim();
         if (prefix != null) {
-            statementText = statementText.replaceAll("\\[PREFIX\\]", prefix);
+            statementText = statementText.replaceAll("\\[PREFIX]", prefix);
         }
 
         StringBuilder buffer = new StringBuilder();
-        List<Integer> placeholders = new ArrayList<Integer>();
+        List<Integer> placeholders = new ArrayList<>();
         int startIndex = statementText.indexOf('{');
         if (startIndex == -1) {
             buffer.append(statementText);
