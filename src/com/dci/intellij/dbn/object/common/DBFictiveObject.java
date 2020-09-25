@@ -22,6 +22,13 @@ public class DBFictiveObject extends DBObjectImpl implements PsiReference {
     }
 
     @Override
+    public boolean isVirtual() {
+        return true;
+    }
+
+
+
+    @Override
     protected String initObject(DBObjectMetadata metadata) throws SQLException {
         throw new UnsupportedOperationException();
     }

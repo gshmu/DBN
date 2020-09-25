@@ -871,6 +871,11 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         return !isDisposed();
     }
 
+    @Override
+    public boolean isVirtual() {
+        return false;
+    }
+
     /*********************************************************
     *               DynamicContentElement                    *
     *********************************************************/

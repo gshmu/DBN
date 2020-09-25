@@ -181,6 +181,11 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     }
 
     @Override
+    public boolean isVirtual() {
+        return true;
+    }
+
+    @Override
     @NotNull
     public List<DBObject> getChildObjects(DBObjectType objectType) {
         DBObjectList<DBObject> childObjectList = getChildObjectList(objectType);

@@ -84,7 +84,7 @@ public class SQLLanguageAnnotator implements Annotator {
     }
 
     private static void annotateAliasRef(@NotNull IdentifierPsiElement aliasReference, AnnotationHolder holder) {
-        if (aliasReference.resolve() == null &&  aliasReference.getResolveTrialsCount() > 3) {
+        if (aliasReference.resolve() == null &&  aliasReference.getResolveAttempts() > 3) {
             Annotation annotation = holder.createWarningAnnotation(aliasReference, "Unknown identifier");
             annotation.setTextAttributes(SQLTextAttributesKeys.UNKNOWN_IDENTIFIER);
         } else {
@@ -107,7 +107,7 @@ public class SQLLanguageAnnotator implements Annotator {
     private static void annotateObject(@NotNull IdentifierPsiElement objectReference, AnnotationHolder holder) {
         if (!objectReference.isResolving() && !objectReference.isDefinition()) {
             PsiElement reference = objectReference.resolve();
-            if (reference == null && objectReference.getResolveTrialsCount() > 3 && checkConnection(objectReference)) {
+            if (reference == null && objectReference.getResolveAttempts() > 3 && checkConnection(objectReference)) {
                 if (!objectReference.getLanguageDialect().getParserTokenTypes().isFunction(objectReference.getText())) {
                     Annotation annotation = holder.createWarningAnnotation(objectReference.node,
                             "Unknown identifier");

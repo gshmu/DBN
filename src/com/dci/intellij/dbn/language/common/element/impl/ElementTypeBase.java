@@ -37,7 +37,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
     private static final Logger LOGGER = LoggerFactory.createLogger();
     private static final FormattingDefinition STATEMENT_FORMATTING = new FormattingDefinition(null, IndentDefinition.NORMAL, SpacingDefinition.MIN_LINE_BREAK, null);
 
-    private int idx;
+    private final int idx;
 
     private final String id;
     private final int hashCode;
