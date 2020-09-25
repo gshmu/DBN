@@ -126,10 +126,6 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
         return attribute;
     }
 
-    public void setAttribute(ElementTypeAttribute attribute) {
-        this.attribute = attribute;
-    }
-
     public String toString() {
         return "IdentifierLookupAdapter{" +
                 "identifierType=" + identifierType +
