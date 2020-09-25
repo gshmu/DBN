@@ -5,8 +5,8 @@ public class QuotePair {
     private static String POSSIBLE_END_QUOTES = "";
 
     public static final QuotePair DEFAULT_IDENTIFIER_QUOTE_PAIR = new QuotePair('"', '"');
-    private char beginChar;
-    private char endChar;
+    private final char beginChar;
+    private final char endChar;
 
     public QuotePair(char beginChar, char endChar) {
         this.beginChar = beginChar;

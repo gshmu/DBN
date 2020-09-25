@@ -526,6 +526,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
             return ref.getReferencedElement();
         }
         if (ref.isDirty()) {
+            //System.out.println("resolving " + getTextOffset() + " " + getText() + " - attempt " + ref.getResolveAttempts());
             try {
                 ref.preResolve(this);
                 if (getParent() instanceof QualifiedIdentifierPsiElement) {
@@ -585,15 +586,15 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     }
 
     public boolean isResolved() {
-        return ref != null && !ref.isDirty();
+        return ref != null && ref.getReferencedElement() != null;
     }
 
     public boolean isResolving() {
         return ref != null && ref.isResolving();
     }
 
-    public int getResolveTrialsCount() {
-        return ref == null ? 0 : ref.getOverallResolveTrials();
+    public int getResolveAttempts() {
+        return ref == null ? 0 : ref.getResolveAttempts();
     }
 
     public IdentifierType getIdentifierType() {

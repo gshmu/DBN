@@ -124,6 +124,7 @@ public interface DBObject extends
     DBObjectRef getRef();
 
     boolean isValid();
+    boolean isVirtual();
 
     boolean isParentOf(DBObject object);
 
