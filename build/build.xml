@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="dbnavigator" default="all">
-
+    <echo level="info" message="java.home = ${java.home}"/>
     <property file="build.properties"/>
     <property name="skip.tests" value="true"/>
 
