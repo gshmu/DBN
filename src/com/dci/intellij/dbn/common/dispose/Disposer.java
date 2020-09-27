@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.Timer;
 
 public class Disposer {
-    private static MapLatent<Class, List<Field>, RuntimeException> CLASS_FIELDS = MapLatent.create(clazz -> ReflectionUtil.collectFields(clazz));
-    private static MapLatent<Class, Nullifiable, RuntimeException> NULLIFIABLE = MapLatent.create(clazz -> (Nullifiable) clazz.getAnnotation(Nullifiable.class));
+    private static final MapLatent<Class<?>, List<Field>, RuntimeException> CLASS_FIELDS = MapLatent.create(clazz -> ReflectionUtil.collectFields(clazz));
+    private static final MapLatent<Class<?>, Nullifiable, RuntimeException> NULLIFIABLE = MapLatent.create(clazz -> (Nullifiable) clazz.getAnnotation(Nullifiable.class));
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
