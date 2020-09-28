@@ -21,6 +21,7 @@
             <element branch-check="-br_with" ref-id="truncate_statement" />
             <element branch-check="-br_with" ref-id="explain_statement" />
             <element branch-check="-br_with" ref-id="savepoint_statement" />
+            <element branch-check="-br_with" ref-id="comment_on_statement" />
         </one-of>
         <element optional="true" ref-id="end" />
     </element-def>
@@ -102,6 +103,33 @@
     <element-def attributes="SPECIFIC" description="SAVEPOINT statement" id="savepoint_statement">
         <token id="000000036" type-id="KW_SAVEPOINT" />
         <object-def attributes="SUBJECT" id="000000037" type="SAVEPOINT" />
+    </element-def>
+    <!-- ========= SAVEPOINT ========= -->
+    <element-def attributes="SPECIFIC" description="COMMENT ON statement" id="comment_on_statement">
+        <token id="000000036" type-id="KW_COMMENT" />
+        <token id="000000036" type-id="KW_ON" />
+        <one-of>
+            <sequence>
+                <token id="000000036" type-id="KW_ACCESS" />
+                <token id="000000036" type-id="KW_METHOD" />
+                <qualified-identifier id="000000482" separator="CHR_DOT" original-name="object_name">
+                    <variant>
+                        <object-ref id="000000483" optional="true" type="SCHEMA" />
+                        <object-ref attributes="SUBJECT" id="000000037" type="ANY" />
+                    </variant>
+                </qualified-identifier>
+            </sequence>
+            <sequence>
+                <token id="000000036" type-id="KW_AGGREGATE" />
+                <wrapper template="PARENTHESES">
+                    <one-of>
+                        <token type-id="CHR_STAR"/>
+                    </one-of>
+                </wrapper>
+            </sequence>
+        </one-of>
+        <token id="000000036" type-id="KW_IS" />
+        <token id="000000961" type-id="STRING" original-name="text"/>
     </element-def>
 
     <!-- ========= CREATE ========= -->
