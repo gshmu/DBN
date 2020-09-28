@@ -120,8 +120,8 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
                 }
                 DBObject parentObject = objectPsiElement.ensureObject().getParentObject();
                 DBObject underlyingObject = parent.resolveUnderlyingObject();
-                return !parentObject.isVirtual() &&
-                        !underlyingObject.isVirtual() &&
+                return parentObject != null && !parentObject.isVirtual() &&
+                        underlyingObject != null && !underlyingObject.isVirtual() &&
                         !Objects.equals(parentObject, underlyingObject);
             }
         } else {
