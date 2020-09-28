@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -30,6 +31,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
     }
 
     @Override
+    @Nullable
     public RootTreeNode getRoot() {
         return (RootTreeNode) super.getRoot();
     }
