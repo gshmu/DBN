@@ -31,9 +31,9 @@ public class DatasetEditorStatusBarWidget extends AbstractProjectComponent imple
     private static final String WIDGET_ID = DatasetEditorStatusBarWidget.class.getName();
     public static final String COMPONENT_NAME = "DBNavigator.Project.DatasetEditorStatusBarWidget";
 
-    private JLabel textLabel;
-    private Alarm updateAlarm = new Alarm(this);
-    private JPanel component = new JPanel(new BorderLayout());
+    private final JLabel textLabel;
+    private final Alarm updateAlarm = new Alarm(this);
+    private final JPanel component = new JPanel(new BorderLayout());
 
     DatasetEditorStatusBarWidget(@NotNull Project project) {
         super(project);
