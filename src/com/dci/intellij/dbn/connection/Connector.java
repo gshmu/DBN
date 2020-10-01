@@ -29,12 +29,12 @@ import java.util.Properties;
 class Connector {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private SessionId sessionId;
-    private AuthenticationInfo authenticationInfo;
-    private ConnectionSettings connectionSettings;
-    private ConnectionHandlerStatusHolder connectionStatus;
-    private DatabaseAttachmentHandler databaseAttachmentHandler;
-    private boolean autoCommit;
+    private final SessionId sessionId;
+    private final AuthenticationInfo authenticationInfo;
+    private final ConnectionSettings connectionSettings;
+    private final ConnectionHandlerStatusHolder connectionStatus;
+    private final DatabaseAttachmentHandler databaseAttachmentHandler;
+    private final boolean autoCommit;
 
     Connector(
             SessionId sessionId,
