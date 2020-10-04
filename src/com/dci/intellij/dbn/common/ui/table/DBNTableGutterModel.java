@@ -14,8 +14,8 @@ import java.util.Set;
 
 @Nullifiable
 public class DBNTableGutterModel<T extends DBNTableWithGutterModel> extends DisposableBase implements ListModel, Disposable{
-    private T tableModel;
-    private Set<ListDataListener> listeners = new HashSet<ListDataListener>();
+    private final T tableModel;
+    private final Set<ListDataListener> listeners = new HashSet<ListDataListener>();
 
     public DBNTableGutterModel(T tableModel) {
         this.tableModel = tableModel;
