@@ -63,13 +63,8 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
 
     @Override
     public SubmittedReportInfo submit(IdeaLoggingEvent[] events, Component parentComponent) {
-        final SubmittedReportInfo[] reportInfo = new SubmittedReportInfo[1];
-        Consumer<SubmittedReportInfo> consumer = new Consumer<SubmittedReportInfo>() {
-            @Override
-            public void consume(SubmittedReportInfo submittedReportInfo) {
-                reportInfo[0] = submittedReportInfo;
-            }
-        };
+        SubmittedReportInfo[] reportInfo = new SubmittedReportInfo[1];
+        Consumer<SubmittedReportInfo> consumer = submittedReportInfo -> reportInfo[0] = submittedReportInfo;
         LogMessage data = (LogMessage) events[0].getData();
         String additionalInfo = data == null ? null : data.getAdditionalInfo();
         submit(events, additionalInfo, parentComponent, consumer);
