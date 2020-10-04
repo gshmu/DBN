@@ -12,8 +12,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class DBNEditableTableModel extends DisposableBase implements DBNTableWithGutterModel {
-    private Set<TableModelListener> tableModelListeners = new HashSet<TableModelListener>();
-    private RuntimeLatent<DBNTableGutterModel> listModel =
+    private final Set<TableModelListener> tableModelListeners = new HashSet<TableModelListener>();
+    private final RuntimeLatent<DBNTableGutterModel> listModel =
             Latent.disposable(this, () -> new DBNTableGutterModel<>(DBNEditableTableModel.this));
 
     @Override
