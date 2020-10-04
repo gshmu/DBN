@@ -325,6 +325,7 @@ public class ResourceUtil {
             }
         } catch (SQLRecoverableException ignore) {
         } catch (Exception e) {
+            LOGGER.warn("Unable to set auto-commit to " + autoCommit +". Maybe your database does not support transactions...", e);
             sentWarningNotification(
                     NotificationGroup.CONNECTION,
                     "Failed to change auto-commit status for",
