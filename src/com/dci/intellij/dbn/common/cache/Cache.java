@@ -87,7 +87,7 @@ public class Cache {
         }
 
         void register(Cache cache) {
-            caches.add(WeakRef.from(cache));
+            caches.add(WeakRef.of(cache));
         }
     }
 

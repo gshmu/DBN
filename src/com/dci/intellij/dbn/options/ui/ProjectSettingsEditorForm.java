@@ -161,7 +161,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
     }
 
     public void setDialog(ProjectSettingsDialog dialog) {
-        this.dialogRef = WeakRef.from(dialog);
+        this.dialogRef = WeakRef.of(dialog);
     }
 
     private void addSettingsPanel(Configuration configuration) {

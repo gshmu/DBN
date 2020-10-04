@@ -31,7 +31,7 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
 
     public DBNFormImpl(@NotNull P parentComponent) {
         super(parentComponent);
-        this.parentComponent = WeakRef.from(parentComponent);
+        this.parentComponent = WeakRef.of(parentComponent);
     }
 
     public DBNFormImpl(Project project) {
@@ -61,7 +61,7 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
     }
 
     public void setParentComponent(P parentComponent) {
-        this.parentComponent = WeakRef.from(parentComponent);
+        this.parentComponent = WeakRef.of(parentComponent);
     }
 
     @NotNull

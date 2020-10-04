@@ -40,7 +40,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Disposa
     public BasicTextEditorImpl(Project project, T virtualFile, String name, EditorProviderId editorProviderId) {
         this.projectRef = ProjectRef.from(project);
         this.name = name;
-        this.virtualFileRef = WeakRef.from(virtualFile);
+        this.virtualFileRef = WeakRef.of(virtualFile);
         this.editorProviderId = editorProviderId;
 
         TextEditorProvider textEditorProvider = TextEditorProvider.getInstance();

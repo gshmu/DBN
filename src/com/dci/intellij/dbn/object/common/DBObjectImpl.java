@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -73,7 +74,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.util.CollectionUtil.*;
+import static com.dci.intellij.dbn.common.util.CollectionUtil.compact;
+import static com.dci.intellij.dbn.common.util.CollectionUtil.filter;
+import static com.dci.intellij.dbn.common.util.CollectionUtil.forEach;
 
 @Nullifiable
 public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTreeNodeBase implements DBObject, ToolTipProvider {
@@ -789,18 +792,20 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Override
     public boolean isLeaf() {
-        if (visibleTreeChildren == null) {
-            ConnectionHandler connectionHandler = getConnectionHandler();
-            Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
-            for (BrowserTreeNode treeNode : getAllPossibleTreeChildren() ) {
-                if (treeNode != null && filter.accepts(treeNode)) {
-                    return false;
+        return Safe.call(true, () -> {
+            if (visibleTreeChildren == null) {
+                ConnectionHandler connectionHandler = getConnectionHandler();
+                Filter<BrowserTreeNode> filter = connectionHandler.getObjectTypeFilter();
+                for (BrowserTreeNode treeNode : getAllPossibleTreeChildren() ) {
+                    if (treeNode != null && filter.accepts(treeNode)) {
+                        return false;
+                    }
                 }
+                return true;
+            } else {
+                return visibleTreeChildren.size() == 0;
             }
-            return true;
-        } else {
-            return visibleTreeChildren.size() == 0;
-        }
+        });
     }
 
     @Override

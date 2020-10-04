@@ -40,7 +40,7 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
 
     public DBContentVirtualFile(@NotNull DBEditableObjectVirtualFile mainDatabaseFile, DBContentType contentType) {
         super(mainDatabaseFile.getProject());
-        this.mainDatabaseFile = WeakRef.from(mainDatabaseFile);
+        this.mainDatabaseFile = WeakRef.of(mainDatabaseFile);
         this.contentType = contentType;
 
         DBObjectRef<DBSchemaObject> objectRef = mainDatabaseFile.getObjectRef();

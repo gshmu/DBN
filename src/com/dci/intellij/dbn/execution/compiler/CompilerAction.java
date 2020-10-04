@@ -25,8 +25,8 @@ public class CompilerAction {
     public CompilerAction(CompilerActionSource source, DBContentType contentType, @Nullable VirtualFile virtualFile, @Nullable FileEditor fileEditor) {
         this.source = source;
         this.contentType = contentType;
-        this.virtualFileRef = WeakRef.from(virtualFile);
-        this.fileEditorRef = fileEditor == null ? null : WeakRef.from(fileEditor);
+        this.virtualFileRef = WeakRef.of(virtualFile);
+        this.fileEditorRef = fileEditor == null ? null : WeakRef.of(fileEditor);
         this.editorProviderId = contentType.getEditorProviderId();
     }
 

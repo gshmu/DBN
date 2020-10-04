@@ -29,8 +29,8 @@ public class LogOutputContext {
 
     public LogOutputContext(@NotNull ConnectionHandler connectionHandler, @Nullable VirtualFile sourceFile, @Nullable Process process) {
         this.connectionHandlerRef = connectionHandler.getRef();
-        this.sourceFile = WeakRef.from(sourceFile);
-        this.process = WeakRef.from(process);
+        this.sourceFile = WeakRef.of(sourceFile);
+        this.process = WeakRef.of(process);
     }
 
     @NotNull
@@ -49,7 +49,7 @@ public class LogOutputContext {
     }
 
     public void setProcess(Process process) {
-        this.process = WeakRef.from(process);
+        this.process = WeakRef.of(process);
     }
 
     public boolean isProcessAlive() {

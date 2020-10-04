@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -29,13 +30,7 @@ public interface Dispatch {
     static void run(ModalityState modalityState, Runnable runnable) {
         Application application = ApplicationManager.getApplication();
         modalityState = CommonUtil.nvl(modalityState, application.getDefaultModalityState());
-        application.invokeLater(
-                () -> {
-                    try {
-                        runnable.run();
-                    } catch (ProcessCanceledException ignore) {}
-                },
-                modalityState/*, ModalityState.NON_MODAL*/);
+        application.invokeLater(() -> Safe.run(runnable), modalityState/*, ModalityState.NON_MODAL*/);
     }
 
     static void invokeNonModal(Runnable runnable) {

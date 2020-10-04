@@ -24,7 +24,7 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
 
     DBNStatement(T inner, DBNConnection connection) {
         super(inner, ResourceType.STATEMENT);
-        this.connection = WeakRef.from(connection);
+        this.connection = WeakRef.of(connection);
     }
 
     @Override
@@ -71,11 +71,11 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
             resultSet = null;
         } else {
             if (resultSet == null) {
-                resultSet = WeakRef.from(new DBNResultSet(original, this));
+                resultSet = WeakRef.of(new DBNResultSet(original, this));
             } else {
                 DBNResultSet wrapped = resultSet.get();
                 if (wrapped == null || wrapped.inner != original) {
-                    resultSet = WeakRef.from(new DBNResultSet(original, this));
+                    resultSet = WeakRef.of(new DBNResultSet(original, this));
                 }
             }
         }

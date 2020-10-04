@@ -84,7 +84,7 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
     @Override
     protected void doOKAction() {
         DBObjectRef<DBSchemaObject>[] schemaObjectRefs = getComponent().getSelection().toArray(new DBObjectRef[0]);
-        selection = WeakRef.from(schemaObjectRefs);
+        selection = WeakRef.of(schemaObjectRefs);
         runConfiguration.setCompileDependencies(!isRememberSelection());
         super.doOKAction();
     }

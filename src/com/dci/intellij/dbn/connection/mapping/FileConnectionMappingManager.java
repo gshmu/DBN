@@ -71,7 +71,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.common.action.UserDataKeys.*;
+import static com.dci.intellij.dbn.common.action.UserDataKeys.CONNECTION_HANDLER;
+import static com.dci.intellij.dbn.common.action.UserDataKeys.DATABASE_SCHEMA;
+import static com.dci.intellij.dbn.common.action.UserDataKeys.DATABASE_SESSION;
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.common.util.MessageUtil.options;
 import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
@@ -755,7 +757,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         private SessionSelectAction(DBLanguagePsiFile file, DatabaseSession session, Runnable callback) {
             super(session.getName(), null, session.getIcon());
             this.fileRef = PsiFileRef.from(file);
-            this.sessionRef = WeakRef.from(session);
+            this.sessionRef = WeakRef.of(session);
             this.callback = callback;
         }
 

@@ -60,7 +60,7 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            tnsNames = WeakRef.from(getComponent().getAllTnsNames());
+            tnsNames = WeakRef.of(getComponent().getAllTnsNames());
             doOKAction();
         }
     }
@@ -72,7 +72,7 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            tnsNames = WeakRef.from(getComponent().getSelectedTnsNames());
+            tnsNames = WeakRef.of(getComponent().getSelectedTnsNames());
             doOKAction();
         }
     }
