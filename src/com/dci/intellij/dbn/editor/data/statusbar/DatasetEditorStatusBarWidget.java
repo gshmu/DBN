@@ -57,12 +57,6 @@ public class DatasetEditorStatusBarWidget extends AbstractProjectComponent imple
     }
 
     @Nullable
-    @Override
-    public WidgetPresentation getPresentation(@NotNull PlatformType type) {
-        return null;
-    }
-
-    @Nullable
     private DatasetEditor getSelectedEditor() {
         Project project = getProject();
         FileEditor selectedEditor = CompatibilityUtil.getSelectedEditor(project);
