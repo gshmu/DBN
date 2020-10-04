@@ -115,7 +115,7 @@ public class DBNConnection extends DBNConnectionBase {
                 }
             };
 
-    public DBNConnection(Project project, Connection connection, String name, ConnectionType type, ConnectionId id, SessionId sessionId) throws SQLException {
+    private DBNConnection(Project project, Connection connection, String name, ConnectionType type, ConnectionId id, SessionId sessionId) throws SQLException {
         super(connection);
         this.projectRef = ProjectRef.from(project);
         this.name = name;
@@ -123,6 +123,10 @@ public class DBNConnection extends DBNConnectionBase {
         this.id = id;
         this.sessionId = sessionId;
         this.properties = new ConnectionProperties(connection);
+    }
+
+    public static DBNConnection wrap(Project project, Connection connection, String name, ConnectionType type, ConnectionId id, SessionId sessionId) throws SQLException {
+        return new DBNConnection(project, connection, name, type, id, sessionId);
     }
 
 
@@ -293,11 +297,11 @@ public class DBNConnection extends DBNConnectionBase {
     @Override
     public void close() throws SQLException {
         try {
+            super.close();
             updateLastAccess();
             Collection<DBNPreparedStatement> statements = cachedStatements.values();
             cachedStatements.reset();
             ResourceUtil.close(statements);
-            super.close();
         } finally {
             resetDataChanges();
             notifyStatusChange();
