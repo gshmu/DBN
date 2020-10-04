@@ -31,7 +31,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
             boolean debug) {
 
         super(project, "Method execution history", true);
-        this.selectedExecutionInput = WeakRef.from(executionInput);
+        this.selectedExecutionInput = WeakRef.of(executionInput);
         this.editable = editable;
         this.debug = debug;
         setModal(true);
@@ -80,7 +80,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     }
 
     public void setSelectedExecutionInput(MethodExecutionInput selectedExecutionInput) {
-        this.selectedExecutionInput = WeakRef.from(selectedExecutionInput);
+        this.selectedExecutionInput = WeakRef.of(selectedExecutionInput);
     }
 
     @Nullable

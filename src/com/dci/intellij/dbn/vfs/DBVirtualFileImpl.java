@@ -39,7 +39,7 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
         //id = ID_STORE.getAndIncrement();
         id = DummyFileIdGenerator.next();
         projectRef = ProjectRef.from(project);
-        fileSystem = WeakRef.from(DatabaseFileSystem.getInstance());
+        fileSystem = WeakRef.of(DatabaseFileSystem.getInstance());
     }
 
 

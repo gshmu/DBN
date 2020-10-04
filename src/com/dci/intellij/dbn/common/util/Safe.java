@@ -1,11 +1,29 @@
 package com.dci.intellij.dbn.common.util;
 
+import com.dci.intellij.dbn.common.routine.BasicCallable;
 import com.dci.intellij.dbn.common.routine.ParametricCallable;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface Safe {
+    @NotNull
+    static <R> R call(@NotNull R defaultValue, @NotNull BasicCallable<R> callable){
+        try {
+            return callable.call();
+        } catch (ProcessCanceledException e){
+            return defaultValue;
+        }
+    }
+
+    static void run(@NotNull Runnable runnable){
+        try {
+            runnable.run();
+        } catch (ProcessCanceledException ignore){}
+    }
+
+
     @Nullable
     static <R, S, E extends Throwable> R call(@Nullable S target, @NotNull ParametricCallable<S, R, E> callable) throws E{
         if (target == null) {

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.session;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Presentable;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionType;
@@ -49,27 +50,29 @@ public class DatabaseSession implements Comparable<DatabaseSession>, Presentable
     @Nullable
     @Override
     public Icon getIcon() {
-        if (isPool()) {
-            return Icons.SESSION_POOL;
-        } else {
-            DBNConnection connection = getConnectionHandler().getConnectionPool().getSessionConnection(id);
-            if (connection == null || !connection.isValid()) {
-                return
-                    isMain() ?  Icons.SESSION_MAIN :
-                    isDebug() ? Icons.SESSION_DEBUG :
-                            Icons.SESSION_CUSTOM;
-            } else if (connection.hasDataChanges()) {
-                return
-                    isMain() ? Icons.SESSION_MAIN_TRANSACTIONAL :
-                    isDebug() ? Icons.SESSION_DEBUG_TRANSACTIONAL :
-                            Icons.SESSION_CUSTOM_TRANSACTIONAL;
+        return Safe.call(Icons.SESSION_CUSTOM, () -> {
+            if (isPool()) {
+                return Icons.SESSION_POOL;
             } else {
-                return
-                    isMain() ? Icons.SESSION_MAIN :
-                    isDebug() ? Icons.SESSION_DEBUG :
-                        Icons.SESSION_CUSTOM;
+                DBNConnection connection = getConnectionHandler().getConnectionPool().getSessionConnection(id);
+                if (connection == null || !connection.isValid()) {
+                    return
+                            isMain() ?  Icons.SESSION_MAIN :
+                            isDebug() ? Icons.SESSION_DEBUG :
+                                            Icons.SESSION_CUSTOM;
+                } else if (connection.hasDataChanges()) {
+                    return
+                            isMain() ? Icons.SESSION_MAIN_TRANSACTIONAL :
+                            isDebug() ? Icons.SESSION_DEBUG_TRANSACTIONAL :
+                                        Icons.SESSION_CUSTOM_TRANSACTIONAL;
+                } else {
+                    return
+                            isMain() ? Icons.SESSION_MAIN :
+                            isDebug() ? Icons.SESSION_DEBUG :
+                                        Icons.SESSION_CUSTOM;
+                }
             }
-        }
+        });
     }
 
     public boolean isMain() {

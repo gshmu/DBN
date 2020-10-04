@@ -45,7 +45,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         this(object, object.getObjectType(), name);
     }
     public DBObjectRef(T object, DBObjectType objectType, String name) {
-        this.reference = WeakRef.from(object);
+        this.reference = WeakRef.of(object);
         this.objectName = name.intern();
         this.objectType = objectType;
         this.overload = object.getOverload();
@@ -360,7 +360,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
                     if (Failsafe.check(connectionHandler) && connectionHandler.isEnabled()) {
                         object = lookup(connectionHandler);
                         if (object != null) {
-                            reference = WeakRef.from(object);
+                            reference = WeakRef.of(object);
                         }
                     }
                 }

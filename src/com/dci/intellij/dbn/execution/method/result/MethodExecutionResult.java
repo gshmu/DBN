@@ -43,7 +43,7 @@ public class MethodExecutionResult extends ExecutionResultBase<MethodExecutionRe
     private int executionDuration;
 
     public MethodExecutionResult(MethodExecutionInput executionInput, DBDebuggerType debuggerType) {
-        this.executionInput = WeakRef.from(executionInput);
+        this.executionInput = WeakRef.of(executionInput);
         this.debuggerType = debuggerType;
     }
 

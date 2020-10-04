@@ -44,7 +44,7 @@ import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 public class ProjectSettingsManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.Settings";
 
-    private ProjectSettings projectSettings;
+    private final ProjectSettings projectSettings;
     private ConfigId lastConfigId;
 
     private ProjectSettingsManager(Project project) {

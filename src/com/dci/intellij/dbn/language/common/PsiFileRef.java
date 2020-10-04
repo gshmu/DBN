@@ -14,7 +14,7 @@ public class PsiFileRef<T extends PsiFile>{
     private WeakRef<T> psiFileRef;
 
     private PsiFileRef(T psiFile) {
-        this.psiFileRef = WeakRef.from(psiFile);
+        this.psiFileRef = WeakRef.of(psiFile);
     }
 
     @Nullable
@@ -32,7 +32,7 @@ public class PsiFileRef<T extends PsiFile>{
                         newPsiFile.getClass() == psiFile.getClass()) {
 
                     psiFile = (T) newPsiFile;
-                    psiFileRef = WeakRef.from(psiFile);
+                    psiFileRef = WeakRef.of(psiFile);
                 } else {
                     psiFile = null;
                 }

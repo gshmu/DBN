@@ -21,7 +21,7 @@ public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterC
 
     public ObjectNameFilterConditionDialog(Project project, CompoundFilterCondition parentCondition, SimpleNameFilterCondition condition, DBObjectType objectType, ObjectNameFilterConditionForm.Operation operation) {
         super(project, getTitle(operation), true);
-        this.condition = WeakRef.from(condition);
+        this.condition = WeakRef.of(condition);
         this.parentCondition = parentCondition;
         this.objectType = objectType;
         this.operation = operation;
@@ -52,7 +52,7 @@ public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterC
     @Override
     public void doOKAction() {
         ObjectNameFilterConditionForm component = getComponent();
-        condition = WeakRef.from(component.getCondition());
+        condition = WeakRef.of(component.getCondition());
         joinType = component.getJoinType();
         super.doOKAction();
     }

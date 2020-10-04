@@ -13,7 +13,7 @@ public class SchemaSelectAction extends AnObjectAction<DBSchema> {
 
     SchemaSelectAction(MethodExecutionBrowserForm browserComponent, DBSchema schema) {
         super(schema);
-        this.browserComponent = WeakRef.from(browserComponent);
+        this.browserComponent = WeakRef.of(browserComponent);
     }
 
     @Override

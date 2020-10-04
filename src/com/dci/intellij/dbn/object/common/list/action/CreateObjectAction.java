@@ -16,7 +16,7 @@ public class CreateObjectAction extends AnAction {
 
     CreateObjectAction(DBObjectList objectList) {
         super("New " + objectList.getObjectType().getName() + "...");
-        this.objectList = WeakRef.from(objectList);
+        this.objectList = WeakRef.of(objectList);
     }
 
     @Override

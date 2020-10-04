@@ -24,7 +24,7 @@ public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm
     public CreateRenameSessionDialog(ConnectionHandler connectionHandler, @NotNull DatabaseSession session) {
         super(connectionHandler.getProject(), "Rename session", true);
         connectionHandlerRef = connectionHandler.getRef();
-        this.sessionRef = WeakRef.from(session);
+        this.sessionRef = WeakRef.of(session);
         getOKAction().putValue(Action.NAME, "Rename");
         init();
     }
@@ -53,7 +53,7 @@ public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm
             DatabaseSession session = databaseSessionManager.createSession(
                     component.getConnectionHandler(),
                     component.getSessionName());
-            sessionRef = WeakRef.from(session);
+            sessionRef = WeakRef.of(session);
             component.setSession(session);
 
         } else {

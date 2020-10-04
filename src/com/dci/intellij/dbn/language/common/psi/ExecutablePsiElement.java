@@ -75,7 +75,7 @@ public class ExecutablePsiElement extends NamedPsiElement implements Cloneable<E
     }
 
     public void setExecutionProcessor(StatementExecutionProcessor executionProcessor) {
-        this.executionProcessor = WeakRef.from(executionProcessor);
+        this.executionProcessor = WeakRef.of(executionProcessor);
     }
 
     @Override

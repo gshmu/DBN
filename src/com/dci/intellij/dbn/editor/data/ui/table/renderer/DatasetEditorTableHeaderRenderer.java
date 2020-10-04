@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.editor.data.ui.table.renderer;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRendererBase;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.sorting.SortingInstruction;
@@ -26,56 +27,56 @@ public class DatasetEditorTableHeaderRenderer extends DBNTableHeaderRendererBase
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int columnIndex) {
-        DatasetEditorModel model = (DatasetEditorModel) table.getModel();
-        sortingLabel.setText(null);
-        int width = 0;
-        String columnName = value.toString();
-        SortingState sortingState = model.getSortingState();
-        SortingInstruction sortingInstruction = sortingState.getSortingInstruction(columnName);
+        return Safe.call(mainPanel, () -> {
+            DatasetEditorModel model = (DatasetEditorModel) table.getModel();
+            sortingLabel.setText(null);
+            int width = 0;
+            String columnName = value.toString();
+            SortingState sortingState = model.getSortingState();
+            SortingInstruction sortingInstruction = sortingState.getSortingInstruction(columnName);
 
-        if (sortingInstruction != null) {
-            Icon icon = sortingInstruction.getDirection() == SortDirection.ASCENDING ?
-                    Icons.DATA_EDITOR_SORT_ASC :
-                    Icons.DATA_EDITOR_SORT_DESC;
-            sortingLabel.setIcon(icon);
-            width += icon.getIconWidth();
-            if (sortingState.size() > 1) {
-                sortingLabel.setText(Integer.toString(sortingInstruction.getIndex()));
-            }
-        } else {
-            sortingLabel.setIcon(null);
-        }
-
-        nameLabel.setText(columnName);
-        DBDataset dataset = model.getDataset();
-        DBColumn column = dataset.getColumn(columnName);
-        if (column != null) {
-            boolean primaryKey = column.isPrimaryKey();
-            boolean foreignKey = column.isForeignKey();
-            Icon icon = null;
-            if (primaryKey && foreignKey) {
-                icon = Icons.DBO_LABEL_PK_FK;
-            } else if (primaryKey) {
-                icon = Icons.DBO_LABEL_PK;
-            } else if (foreignKey) {
-                icon = Icons.DBO_LABEL_FK;
-            }
-            nameLabel.setIcon(icon);
-            if (icon != null) {
+            if (sortingInstruction != null) {
+                Icon icon = sortingInstruction.getDirection() == SortDirection.ASCENDING ?
+                        Icons.DATA_EDITOR_SORT_ASC :
+                        Icons.DATA_EDITOR_SORT_DESC;
+                sortingLabel.setIcon(icon);
                 width += icon.getIconWidth();
+                if (sortingState.size() > 1) {
+                    sortingLabel.setText(Integer.toString(sortingInstruction.getIndex()));
+                }
+            } else {
+                sortingLabel.setIcon(null);
             }
-        }
-        nameLabel.setForeground(UIUtil.getLabelForeground());
 
-        FontMetrics fontMetrics = getFontMetrics();
-        width += fontMetrics.stringWidth(columnName) + 20;
-        int height = fontMetrics.getHeight() + 6;
-        mainPanel.setPreferredSize(new Dimension(width, height));
-        mainPanel.setBorder(columnIndex == 0 ? BORDER_TLBR.get() : BORDER_TBR.get());
-        updateTooltip(column);
+            nameLabel.setText(columnName);
+            DBDataset dataset = model.getDataset();
+            DBColumn column = dataset.getColumn(columnName);
+            if (column != null) {
+                boolean primaryKey = column.isPrimaryKey();
+                boolean foreignKey = column.isForeignKey();
+                Icon icon = null;
+                if (primaryKey && foreignKey) {
+                    icon = Icons.DBO_LABEL_PK_FK;
+                } else if (primaryKey) {
+                    icon = Icons.DBO_LABEL_PK;
+                } else if (foreignKey) {
+                    icon = Icons.DBO_LABEL_FK;
+                }
+                nameLabel.setIcon(icon);
+                if (icon != null) {
+                    width += icon.getIconWidth();
+                }
+            }
+            nameLabel.setForeground(UIUtil.getLabelForeground());
 
-
-        return mainPanel;
+            FontMetrics fontMetrics = getFontMetrics();
+            width += fontMetrics.stringWidth(columnName) + 20;
+            int height = fontMetrics.getHeight() + 6;
+            mainPanel.setPreferredSize(new Dimension(width, height));
+            mainPanel.setBorder(columnIndex == 0 ? BORDER_TLBR.get() : BORDER_TBR.get());
+            updateTooltip(column);
+            return mainPanel;
+        });
     }
 
     @Override

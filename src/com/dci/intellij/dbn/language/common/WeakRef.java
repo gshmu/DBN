@@ -13,7 +13,7 @@ public class WeakRef<T> extends WeakReference<T> {
     }
 
     @Nullable
-    public static <T> WeakRef<T> from(@Nullable T element) {
+    public static <T> WeakRef<T> of(@Nullable T element) {
         return element == null ? null : new WeakRef<T>(element);
     }
 

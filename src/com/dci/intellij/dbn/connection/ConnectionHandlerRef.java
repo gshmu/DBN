@@ -11,7 +11,7 @@ public class ConnectionHandlerRef implements Reference<ConnectionHandler> {
     private final ConnectionId connectionId;
 
     public ConnectionHandlerRef(ConnectionHandler connectionHandler) {
-        reference = WeakRef.from(connectionHandler);
+        reference = WeakRef.of(connectionHandler);
         connectionId = connectionHandler == null ? null : connectionHandler.getConnectionId();
     }
 
@@ -34,7 +34,7 @@ public class ConnectionHandlerRef implements Reference<ConnectionHandler> {
         ConnectionHandler connectionHandler = reference == null ? null : reference.get();
         if (!Failsafe.check(connectionHandler) && connectionId != null) {
             connectionHandler = ConnectionCache.findConnectionHandler(connectionId);
-            reference = WeakRef.from(connectionHandler);
+            reference = WeakRef.of(connectionHandler);
         }
         return connectionHandler;
     }

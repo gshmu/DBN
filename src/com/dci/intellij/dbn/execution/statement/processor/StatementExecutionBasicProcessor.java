@@ -75,7 +75,9 @@ import javax.swing.*;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
-import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
 
 @Nullifiable
@@ -110,7 +112,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         DBLanguagePsiFile psiFile = psiElement.getFile();
 
         this.projectRef = ProjectRef.from(project);
-        this.fileEditorRef = WeakRef.from(fileEditor);
+        this.fileEditorRef = WeakRef.of(fileEditor);
         this.psiFileRef = PsiFileRef.from(psiFile);
 
         this.cachedExecutableRef = PsiElementRef.from(psiElement);
@@ -123,7 +125,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     StatementExecutionBasicProcessor(@NotNull Project project, @NotNull FileEditor fileEditor, @NotNull DBLanguagePsiFile psiFile, String sqlStatement, int index) {
         this.projectRef = ProjectRef.from(project);
-        this.fileEditorRef = WeakRef.from(fileEditor);
+        this.fileEditorRef = WeakRef.of(fileEditor);
         this.psiFileRef = PsiFileRef.from(psiFile);
         this.name = psiFile.getName();
         this.icon = psiFile.getIcon();
