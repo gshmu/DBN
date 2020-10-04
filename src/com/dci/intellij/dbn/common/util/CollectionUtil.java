@@ -31,15 +31,19 @@ public class CollectionUtil {
         }
     }
 
-    public static void clear(Collection collection) {
+    public static void clear(Collection<?> collection) {
         if (collection != null && collection.size() > 0) {
-            collection.clear();
+            try {
+                collection.clear();
+            } catch (UnsupportedOperationException ignore) {}
         }
     }
 
-    public static void clear(@Nullable Map map) {
+    public static void clear(@Nullable Map<?, ?> map) {
         if (map != null) {
-            map.clear();
+            try {
+                map.clear();
+            } catch (UnsupportedOperationException ignore) {}
         }
     }
 
@@ -65,7 +69,7 @@ public class CollectionUtil {
             boolean single = size == 1;
 
             if (elements instanceof FiltrableList) {
-                FiltrableList filtrableList = (FiltrableList) elements;
+                FiltrableList<?> filtrableList = (FiltrableList<?>) elements;
                 filtrableList.trimToSize();
 
             } else  if (elements instanceof List) {
@@ -74,7 +78,7 @@ public class CollectionUtil {
                 } else if (single) {
                     return cast(Collections.singletonList(elements.stream().findFirst().orElse(null)));
                 } else if (elements instanceof ArrayList){
-                    ArrayList arrayList = (ArrayList) elements;
+                    ArrayList<?> arrayList = (ArrayList<?>) elements;
                     arrayList.trimToSize();
                     return cast(arrayList);
                 }
@@ -84,7 +88,7 @@ public class CollectionUtil {
                 } else if (single) {
                     return cast(Collections.singleton(elements.stream().findFirst().orElse(null)));
                 } else if (elements instanceof THashSet){
-                    THashSet hashSet = (THashSet) elements;
+                    THashSet<?> hashSet = (THashSet<?>) elements;
                     hashSet.trimToSize();
                     return cast(hashSet);
                 }

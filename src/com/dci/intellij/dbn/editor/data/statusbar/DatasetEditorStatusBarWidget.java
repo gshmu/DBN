@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MathResult;
@@ -19,7 +18,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.CustomStatusBarWidget;
 import com.intellij.openapi.wm.StatusBar;
-import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -75,13 +73,7 @@ public class DatasetEditorStatusBarWidget extends AbstractProjectComponent imple
     }
 
     @Override
-    public void projectOpened() {
-        Dispatch.run(() -> {
-            Project project = getProject();
-            StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
-            statusBar.addWidget(this, project);
-        });
-    }
+    public void projectOpened() {}
 
     @Override
     public void selectionChanged(@NotNull FileEditorManagerEvent event) {

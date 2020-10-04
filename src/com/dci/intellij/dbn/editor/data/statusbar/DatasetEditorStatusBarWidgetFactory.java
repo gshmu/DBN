@@ -25,7 +25,7 @@ public class DatasetEditorStatusBarWidgetFactory implements StatusBarWidgetFacto
 
     @Override
     public boolean isAvailable(@NotNull Project project) {
-        return false;
+        return !project.isDefault();
     }
 
     @NotNull
@@ -41,6 +41,6 @@ public class DatasetEditorStatusBarWidgetFactory implements StatusBarWidgetFacto
 
     @Override
     public boolean canBeEnabledOn(@NotNull StatusBar statusBar) {
-        return false;
+        return true;
     }
 }
