@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.intellij.notification.NotificationType;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -80,52 +81,24 @@ public enum TransactionAction implements Serializable, Constant<TransactionActio
             (connectionHandler, connection) -> connection.setAutoCommit(false));
 
 
-    private NotificationGroup group;
-    private String name;
-    private String successNotificationMessage;
-    private String failureNotificationMessage;
-    private NotificationType notificationType;
-    private NotificationType failureNotificationType;
-    private Executor executor;
-    private boolean isStatusChange;
+    private final @Getter NotificationGroup group;
+    private final @Getter String name;
+    private final @Getter String successNotificationMessage;
+    private final @Getter String failureNotificationMessage;
+    private final @Getter NotificationType notificationType;
+    private final @Getter NotificationType failureNotificationType;
+    private final @Getter Executor executor;
+    private final @Getter boolean statusChange;
 
-    TransactionAction(String name, NotificationGroup group, NotificationType notificationType, String successNotificationMessage, NotificationType failureNotificationType, String failureNotificationMessage, boolean isStatusChange, Executor executor) {
+    TransactionAction(String name, NotificationGroup group, NotificationType notificationType, String successNotificationMessage, NotificationType failureNotificationType, String failureNotificationMessage, boolean statusChange, Executor executor) {
         this.group = group;
         this.name = name;
         this.failureNotificationMessage = failureNotificationMessage;
         this.successNotificationMessage = successNotificationMessage;
         this.executor = executor;
-        this.isStatusChange = isStatusChange;
+        this.statusChange = statusChange;
         this.notificationType = notificationType;
         this.failureNotificationType = failureNotificationType;
-    }
-
-    public NotificationGroup getGroup() {
-        return group;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getSuccessNotificationMessage() {
-        return successNotificationMessage;
-    }
-
-    public String getFailureNotificationMessage() {
-        return failureNotificationMessage;
-    }
-
-    public NotificationType getNotificationType() {
-        return notificationType;
-    }
-
-    public NotificationType getFailureNotificationType() {
-        return failureNotificationType;
-    }
-
-    public boolean isStatusChange() {
-        return isStatusChange;
     }
 
     @FunctionalInterface
