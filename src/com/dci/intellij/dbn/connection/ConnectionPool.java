@@ -410,7 +410,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
         }
 
         void register(ConnectionPool connectionPool) {
-            connectionPools.add(WeakRef.from(connectionPool));
+            connectionPools.add(WeakRef.of(connectionPool));
         }
     }
 

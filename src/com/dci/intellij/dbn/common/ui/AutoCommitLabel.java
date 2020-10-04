@@ -58,7 +58,7 @@ public class AutoCommitLabel extends JPanel implements Disposable {
     }
 
     public void init(Project project, VirtualFile virtualFile, ConnectionHandler connectionHandler, SessionId sessionId) {
-        this.virtualFileRef = WeakRef.from(virtualFile);
+        this.virtualFileRef = WeakRef.of(virtualFile);
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
         this.sessionId = nvl(sessionId, SessionId.MAIN);
         if (!subscribed) {

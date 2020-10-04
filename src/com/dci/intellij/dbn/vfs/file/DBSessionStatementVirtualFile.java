@@ -38,7 +38,7 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
 
     public DBSessionStatementVirtualFile(SessionBrowser sessionBrowser, String content) {
         super(sessionBrowser.getProject());
-        this.sessionBrowser = WeakRef.from(sessionBrowser);
+        this.sessionBrowser = WeakRef.of(sessionBrowser);
         this.content = content;
         ConnectionHandler connectionHandler = Failsafe.nn(sessionBrowser.getConnectionHandler());
         name = connectionHandler.getName();

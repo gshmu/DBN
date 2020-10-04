@@ -30,7 +30,7 @@ public class BasicDataModelCell<
 
     public BasicDataModelCell(Object userValue, R row, int index) {
         this.userValue = userValue;
-        this.row = WeakRef.from(row);
+        this.row = WeakRef.of(row);
         this.index = index;
     }
 

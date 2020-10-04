@@ -18,7 +18,7 @@ public class ConnectionAuthenticationDialog extends DBNDialog<ConnectionAuthenti
 
     public ConnectionAuthenticationDialog(Project project, @Nullable ConnectionHandler connectionHandler, @NotNull AuthenticationInfo authenticationInfo) {
         super(project, "Enter password", true);
-        this.authenticationInfo = WeakRef.from(authenticationInfo);
+        this.authenticationInfo = WeakRef.of(authenticationInfo);
         setModal(true);
         setResizable(false);
         connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);

@@ -24,7 +24,7 @@ public abstract class BasicConfiguration<P extends Configuration, E extends Conf
     private WeakRef<P> parent;
 
     public BasicConfiguration(P parent) {
-        this.parent = WeakRef.from(parent);
+        this.parent = WeakRef.of(parent);
     }
 
     public P getParent() {

@@ -97,7 +97,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
 
 
     ConnectionHandlerImpl(ConnectionBundle connectionBundle, ConnectionSettings connectionSettings) {
-        this.connectionBundleRef = WeakRef.from(connectionBundle);
+        this.connectionBundleRef = WeakRef.of(connectionBundle);
         this.connectionSettings = connectionSettings;
         this.enabled = connectionSettings.isActive();
         ref = new ConnectionHandlerRef(this);

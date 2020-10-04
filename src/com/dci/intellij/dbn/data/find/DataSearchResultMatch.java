@@ -10,7 +10,7 @@ public class DataSearchResultMatch {
     private int endOffset;
 
     public DataSearchResultMatch(DataModelCell cell, int startOffset, int endOffset) {
-        this.cell = WeakRef.from(cell);
+        this.cell = WeakRef.of(cell);
         this.startOffset = startOffset;
         this.endOffset = endOffset;
     }

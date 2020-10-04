@@ -14,7 +14,7 @@ abstract class AbstractExecutionMessagesAction extends DumbAwareContextAction<Me
 
     AbstractExecutionMessagesAction(MessagesTree messagesTree, String text, Icon icon) {
         super(text, null, icon);
-        this.messagesTree = WeakRef.from(messagesTree);
+        this.messagesTree = WeakRef.of(messagesTree);
     }
 
     @Nullable

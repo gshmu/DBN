@@ -45,8 +45,8 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
     };
 
     AbstractDatasetTableCellEditor(@NotNull DatasetEditorTable table, DataEditorComponent editorComponent) {
-        this.table = WeakRef.from(table);
-        this.editorComponent = WeakRef.from(editorComponent);
+        this.table = WeakRef.of(table);
+        this.editorComponent = WeakRef.of(editorComponent);
 
         Project project = table.getProject();
         this.settings = DataEditorSettings.getInstance(project);
@@ -78,7 +78,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
     }
 
     public void setCell(@Nullable DatasetEditorModelCell cell) {
-        this.cell = WeakRef.from(cell);
+        this.cell = WeakRef.of(cell);
     }
 
     @Nullable
@@ -117,7 +117,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        cell = WeakRef.from((DatasetEditorModelCell) value);
+        cell = WeakRef.of((DatasetEditorModelCell) value);
         setCellValueToEditor();
         return (Component) getEditorComponent();
     }

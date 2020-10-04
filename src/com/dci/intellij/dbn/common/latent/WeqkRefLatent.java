@@ -13,7 +13,7 @@ abstract class WeakRefLatent<T> implements RuntimeLatent<T>{
             synchronized (this) {
                 if (!loaded) {
                     T value = getLoader().load();
-                    valueRef = WeakRef.from(value);
+                    valueRef = WeakRef.of(value);
                     loaded = true;
                 }
             }
@@ -24,7 +24,7 @@ abstract class WeakRefLatent<T> implements RuntimeLatent<T>{
     public abstract Loader<T, RuntimeException> getLoader();
 
     public final void set(T value) {
-        this.valueRef = WeakRef.from(value);
+        this.valueRef = WeakRef.of(value);
         loaded = true;
     }
 

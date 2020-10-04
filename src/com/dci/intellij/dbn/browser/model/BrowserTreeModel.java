@@ -9,6 +9,8 @@ import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.util.Safe;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.project.Project;
 
 import javax.swing.event.TreeModelListener;
@@ -20,15 +22,15 @@ import java.util.Set;
 @Nullifiable
 public abstract class BrowserTreeModel extends DisposableBase implements TreeModel, RegisteredDisposable {
 
-    private Set<TreeModelListener> treeModelListeners = new HashSet<>();
-    private BrowserTreeNode root;
+    private final Set<TreeModelListener> treeModelListeners = new HashSet<>();
+    private final WeakRef<BrowserTreeNode> root;
 
-    private LoadInProgressRegistry<LoadInProgressTreeNode> loadInProgressRegistry =
+    private final LoadInProgressRegistry<LoadInProgressTreeNode> loadInProgressRegistry =
             LoadInProgressRegistry.create(this,
                     node -> BrowserTreeModel.this.notifyListeners(node, TreeEventType.NODES_CHANGED));
 
     BrowserTreeModel(BrowserTreeNode root) {
-        this.root = root;
+        this.root = WeakRef.of(root);
         Project project = root.getProject();
         EventUtil.subscribe(project, this, BrowserTreeEventListener.TOPIC, browserTreeEventListener);
     }
@@ -62,7 +64,7 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
      ***************************************/
     @Override
     public BrowserTreeNode getRoot() {
-        return Failsafe.nn(root);
+        return root.ensure();
     }
 
     @Override
@@ -76,17 +78,17 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
 
     @Override
     public int getChildCount(Object parent) {
-        return ((BrowserTreeNode) parent).getChildCount();
+        return Safe.call(0, () -> ((BrowserTreeNode) parent).getChildCount());
     }
 
     @Override
     public boolean isLeaf(Object node) {
-        return ((BrowserTreeNode) node).isLeaf();
+        return Safe.call(true, () -> ((BrowserTreeNode) node).isLeaf());
     }
 
     @Override
     public int getIndexOfChild(Object parent, Object child) {
-        return ((BrowserTreeNode) parent).getIndex((BrowserTreeNode) child);
+        return Safe.call(-1, () -> ((BrowserTreeNode) parent).getIndex((BrowserTreeNode) child));
     }
 
     @Override
@@ -102,7 +104,7 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
     /********************************************************
      *                       Listeners                      *
      ********************************************************/
-    private BrowserTreeEventListener browserTreeEventListener = new BrowserTreeEventAdapter() {
+    private final BrowserTreeEventListener browserTreeEventListener = new BrowserTreeEventAdapter() {
         @Override
         public void nodeChanged(BrowserTreeNode node, TreeEventType eventType) {
             if (contains(node)) {

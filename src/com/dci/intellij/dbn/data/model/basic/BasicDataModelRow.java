@@ -27,7 +27,7 @@ public class BasicDataModelRow<
 
     public BasicDataModelRow(M model) {
         cells = new ArrayList<C>(model.getColumnCount());
-        this.model = WeakRef.from(model);
+        this.model = WeakRef.of(model);
     }
 
     @Override

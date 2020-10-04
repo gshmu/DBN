@@ -37,7 +37,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
     private Map<DBObjectType, DBObjectList<DBObject>> objectLists;
 
     public DBObjectListContainer(@NotNull GenericDatabaseElement owner) {
-        this.owner = WeakRef.from(owner);
+        this.owner = WeakRef.of(owner);
     }
 
     @Override

@@ -67,7 +67,7 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
                 StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
                 StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(fileEditor, executable, false);
                 if (executionProcessor != null && executionProcessor.getExecutionResult() != null) {
-                    cachedExecutionProcessor = WeakRef.from(executionProcessor);
+                    cachedExecutionProcessor = WeakRef.of(executionProcessor);
                     return true;
                 }
             }

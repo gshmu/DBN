@@ -67,9 +67,9 @@ import java.util.Set;
 
 @Nullifiable
 public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConnectionMappingProvider, PresentableConnectionProvider, Disposable {
-    private Language language;
-    private DBLanguageFileType fileType;
-    private ParserDefinition parserDefinition;
+    private final Language language;
+    private final DBLanguageFileType fileType;
+    private final ParserDefinition parserDefinition;
     private ConnectionHandlerRef connectionHandlerRef;
     private DatabaseSession databaseSession;
     private DBObjectRef<DBSchema> databaseSchemaRef;
