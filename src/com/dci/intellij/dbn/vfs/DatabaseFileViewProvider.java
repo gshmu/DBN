@@ -57,15 +57,20 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
             }
 
             Language baseLanguage = getBaseLanguage();
+            return super.getPsiInner(baseLanguage);
+
+/*
+            // TODO cleanup
             PsiFile psiFile = super.getPsiInner(baseLanguage);
             if (psiFile == null) {
                 DBParseableVirtualFile parseableFile = getParseableFile(virtualFile);
-                if (parseableFile != null) {
-                    parseableFile.initializePsiFile(this, language);
-                }
+                    if (parseableFile != null) {
+                        parseableFile.initializePsiFile(this, language);
+                    }
             } else {
                 return psiFile;
             }
+*/
         }
 
         return super.getPsiInner(language);
