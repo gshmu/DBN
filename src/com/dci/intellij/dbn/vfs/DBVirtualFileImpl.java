@@ -27,13 +27,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Nullifiable
 public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtualFile, Presentable, VirtualFilePathWrapper {
     private static AtomicInteger ID_STORE = new AtomicInteger(0);
-    private int documentHashCode;
-    private int id;
+    private final int id;
+    private final ProjectRef projectRef;
+    private final WeakRef<DatabaseFileSystem> fileSystem;
+
     protected String name;
     protected String path;
     protected String url;
-    private ProjectRef projectRef;
-    private WeakRef<DatabaseFileSystem> fileSystem;
+    private int documentHashCode;
+    private boolean valid = true;
 
     public DBVirtualFileImpl(@NotNull Project project) {
         //id = ID_STORE.getAndIncrement();
@@ -185,7 +187,7 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
 
     @Override
     public boolean isValid() {
-        return !isDisposed();
+        return valid;
     }
 
     @Override
@@ -199,35 +201,23 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
         return getUserData(DatabaseFileViewProvider.CACHED_VIEW_PROVIDER);
     }
 
-
-    private boolean disposed;
-
-    @Override
-    public final boolean isDisposed() {
-        return disposed;
-    }
-
-    @Override
-    public final void markDisposed() {
-        disposed = true;
-    }
-
-    @Override
-    public void disposeInner() {
-        DatabaseFileViewProvider cachedViewProvider = getCachedViewProvider();
-        if (cachedViewProvider != null) {
-            DebugUtil.performPsiModification("disposing database view provider", () -> cachedViewProvider.markInvalidated());
-            List<PsiFile> cachedPsiFiles = cachedViewProvider.getCachedPsiFiles();
-            for (PsiFile cachedPsiFile: cachedPsiFiles) {
-                if (cachedPsiFile instanceof DBLanguagePsiFile) {
-                    Disposer.dispose((DBLanguagePsiFile) cachedPsiFile);
+    public void invalidate() {
+        if (valid) {
+            valid = false;
+            DatabaseFileViewProvider cachedViewProvider = getCachedViewProvider();
+            if (cachedViewProvider != null) {
+                DebugUtil.performPsiModification("disposing database view provider", () -> cachedViewProvider.markInvalidated());
+                List<PsiFile> cachedPsiFiles = cachedViewProvider.getCachedPsiFiles();
+                for (PsiFile cachedPsiFile: cachedPsiFiles) {
+                    if (cachedPsiFile instanceof DBLanguagePsiFile) {
+                        Disposer.dispose(cachedPsiFile);
+                    }
                 }
-            }
 
-            setCachedViewProvider(null);
+                setCachedViewProvider(null);
+            }
+            putUserData(FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY, null);
         }
-        putUserData(FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY, null);
-        DBVirtualFile.super.disposeInner();
     }
 
 }

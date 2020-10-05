@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.data.grid.color;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
 import com.intellij.openapi.editor.colors.EditorColors;
@@ -13,39 +12,38 @@ import com.intellij.util.ui.UIUtil;
 import java.awt.*;
 
 public class BasicTableTextAttributes extends CommonUtil implements DataGridTextAttributes {
-    private SimpleTextAttributes plainData;
-    private SimpleTextAttributes plainDataModified;
-    private SimpleTextAttributes plainDataAtCaretRow;
-    private SimpleTextAttributes plainDataAtCaretRowModified;
-    private SimpleTextAttributes trackingData;
-    private SimpleTextAttributes trackingDataModified;
-    private SimpleTextAttributes trackingDataAtCaretRow;
-    private SimpleTextAttributes trackingDataAtCaretRowModified;
-    private SimpleTextAttributes modifiedData;
-    private SimpleTextAttributes modifiedDataAtCaretRow;
-    private SimpleTextAttributes deletedData;
-    private SimpleTextAttributes errorData;
-    private SimpleTextAttributes readonlyData;
-    private SimpleTextAttributes readonlyDataModified;
-    private SimpleTextAttributes readonlyDataAtCaretRow;
-    private SimpleTextAttributes readonlyDataAtCaretRowModified;
-    private SimpleTextAttributes loadingData;
-    private SimpleTextAttributes loadingDataAtCaretRow;
-    private SimpleTextAttributes primaryKey;
-    private SimpleTextAttributes primaryKeyModified;
-    private SimpleTextAttributes primaryKeyAtCaretRow;
-    private SimpleTextAttributes primaryKeyAtCaretRowModified;
-    private SimpleTextAttributes foreignKey;
-    private SimpleTextAttributes foreignKeyModified;
-    private SimpleTextAttributes foreignKeyAtCaretRow;
-    private SimpleTextAttributes foreignKeyAtCaretRowModified;
-    private SimpleTextAttributes selection;
-    private SimpleTextAttributes searchResult;
+    private final SimpleTextAttributes plainData;
+    private final SimpleTextAttributes plainDataModified;
+    private final SimpleTextAttributes plainDataAtCaretRow;
+    private final SimpleTextAttributes plainDataAtCaretRowModified;
+    private final SimpleTextAttributes trackingData;
+    private final SimpleTextAttributes trackingDataModified;
+    private final SimpleTextAttributes trackingDataAtCaretRow;
+    private final SimpleTextAttributes trackingDataAtCaretRowModified;
+    private final SimpleTextAttributes modifiedData;
+    private final SimpleTextAttributes modifiedDataAtCaretRow;
+    private final SimpleTextAttributes deletedData;
+    private final SimpleTextAttributes errorData;
+    private final SimpleTextAttributes readonlyData;
+    private final SimpleTextAttributes readonlyDataModified;
+    private final SimpleTextAttributes readonlyDataAtCaretRow;
+    private final SimpleTextAttributes readonlyDataAtCaretRowModified;
+    private final SimpleTextAttributes loadingData;
+    private final SimpleTextAttributes loadingDataAtCaretRow;
+    private final SimpleTextAttributes primaryKey;
+    private final SimpleTextAttributes primaryKeyModified;
+    private final SimpleTextAttributes primaryKeyAtCaretRow;
+    private final SimpleTextAttributes primaryKeyAtCaretRowModified;
+    private final SimpleTextAttributes foreignKey;
+    private final SimpleTextAttributes foreignKeyModified;
+    private final SimpleTextAttributes foreignKeyAtCaretRow;
+    private final SimpleTextAttributes foreignKeyAtCaretRowModified;
+    private final SimpleTextAttributes selection;
+    private final SimpleTextAttributes searchResult;
 
-    private Color caretRowBgColor;
+    private final Color caretRowBgColor;
 
-    private static final RuntimeLatent<BasicTableTextAttributes> INSTANCE = Latent.laf(
-            () -> new BasicTableTextAttributes());
+    private static final Latent<BasicTableTextAttributes> INSTANCE = Latent.laf(() -> new BasicTableTextAttributes());
 
     private BasicTableTextAttributes() {
         EditorColorsScheme globalScheme = EditorColorsManager.getInstance().getGlobalScheme();
@@ -56,9 +54,7 @@ public class BasicTableTextAttributes extends CommonUtil implements DataGridText
         modifiedData = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.MODIFIED_DATA);
         modifiedDataAtCaretRow = new SimpleTextAttributes(caretRowBgColor, modifiedData.getFgColor(), null, modifiedData.getFontStyle());
 
-        plainData = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA);
-        if (plainData.getFgColor() == null) plainData = plainData.derive(plainData.getStyle(), UIUtil.getTextFieldForeground(), plainData.getBgColor(), null);
-        if (plainData.getBgColor() == null) plainData = plainData.derive(plainData.getStyle(), plainData.getFgColor(), UIUtil.getTextFieldBackground(), null);
+        plainData = createPlainData();
 
         plainDataModified = new SimpleTextAttributes(
                 nvln(modifiedData.getBgColor(), plainData.getBgColor()),
@@ -121,6 +117,13 @@ public class BasicTableTextAttributes extends CommonUtil implements DataGridText
 
         selection = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.SELECTION);
         searchResult = TextAttributesUtil.getSimpleTextAttributes(EditorColors.TEXT_SEARCH_RESULT_ATTRIBUTES);
+    }
+
+    private SimpleTextAttributes createPlainData() {
+        SimpleTextAttributes plainData = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA);
+        if (plainData.getFgColor() == null) plainData = plainData.derive(plainData.getStyle(), UIUtil.getTextFieldForeground(), plainData.getBgColor(), null);
+        if (plainData.getBgColor() == null) plainData = plainData.derive(plainData.getStyle(), plainData.getFgColor(), UIUtil.getTextFieldBackground(), null);
+        return plainData;
     }
 
     public static BasicTableTextAttributes get() {

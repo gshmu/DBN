@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.console.DatabaseConsoleBundle;
@@ -39,20 +38,21 @@ import java.util.List;
 import java.util.Map;
 
 public class VirtualConnectionHandler extends DisposableBase implements ConnectionHandler {
-    private ConnectionId id;
-    private String name;
-    private DatabaseType databaseType;
-    private double databaseVersion;
-    private ProjectRef projectRef;
-    private ConnectionHandlerStatusHolder connectionStatus;
-    private DatabaseInterfaceProvider interfaceProvider;
-    private Map<String, String> properties = new HashMap<>();
-    private ConnectionHandlerRef ref;
-    private DBObjectBundle objectBundle;
-    private ConnectionInstructions instructions = new ConnectionInstructions();
-    private DatabaseCompatibility compatibility = DatabaseCompatibility.noFeatures();
+    private final ConnectionId id;
+    private final String name;
+    private final DatabaseType databaseType;
+    private final double databaseVersion;
+    private final ProjectRef projectRef;
+    private final ConnectionHandlerStatusHolder connectionStatus;
+    private final Map<String, String> properties = new HashMap<>();
+    private final ConnectionHandlerRef ref;
+    private final DBObjectBundle objectBundle;
+    private final ConnectionInstructions instructions = new ConnectionInstructions();
+    private final DatabaseCompatibility compatibility = DatabaseCompatibility.noFeatures();
 
-    private RuntimeLatent<ConnectionSettings> connectionSettings = Latent.runtime(() -> {
+    private DatabaseInterfaceProvider interfaceProvider;
+
+    private final Latent<ConnectionSettings> connectionSettings = Latent.basic(() -> {
         ConnectionBundleSettings connectionBundleSettings = ConnectionBundleSettings.getInstance(getProject());
         return new ConnectionSettings(connectionBundleSettings);
     });

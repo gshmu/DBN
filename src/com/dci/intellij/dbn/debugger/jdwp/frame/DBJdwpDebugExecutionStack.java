@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.debugger.jdwp.frame;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.jdwp.ManagedThreadCommand;
@@ -19,10 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DBJdwpDebugExecutionStack extends XExecutionStack {
-    private DBJdwpDebugSuspendContext suspendContext;
-    private List<DBJdwpDebugStackFrame> stackFrames = CollectionUtil.createConcurrentList();
+    private final DBJdwpDebugSuspendContext suspendContext;
+    private final List<DBJdwpDebugStackFrame> stackFrames = CollectionUtil.createConcurrentList();
 
-    private RuntimeLatent<DBJdwpDebugStackFrame> topStackFrame = Latent.runtime(() -> {
+    private final Latent<DBJdwpDebugStackFrame> topStackFrame = Latent.basic(() -> {
         XExecutionStack underlyingStack = getUnderlyingStack();
         XStackFrame topFrame = underlyingStack == null ? null : underlyingStack.getTopFrame();
         return getFrame((JavaStackFrame) topFrame);

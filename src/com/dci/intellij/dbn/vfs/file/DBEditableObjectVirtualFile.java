@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -46,7 +45,7 @@ import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
 public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObject>/* implements VirtualFileWindow*/ {
     private static final List<DBContentVirtualFile> EMPTY_CONTENT_FILES = Collections.emptyList();
-    private RuntimeLatent<List<DBContentVirtualFile>> contentFiles = Latent.runtime(() -> computeContentFiles());
+    private final Latent<List<DBContentVirtualFile>> contentFiles = Latent.basic(() -> computeContentFiles());
     private transient EditorProviderId selectedEditorProviderId;
     private SessionId databaseSessionId;
 
@@ -262,10 +261,10 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
     }
 
     @Override
-    public void disposeInner() {
+    public void invalidate() {
         Disposer.dispose(contentFiles.value());
         contentFiles.set(EMPTY_CONTENT_FILES);
-        super.disposeInner();
+        super.invalidate();
     }
 
 

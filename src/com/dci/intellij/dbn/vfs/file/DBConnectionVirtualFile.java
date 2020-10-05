@@ -20,7 +20,7 @@ import java.io.OutputStream;
 
 public class DBConnectionVirtualFile extends DBVirtualFileImpl {
     private static final byte[] EMPTY_CONTENT = new byte[0];
-    private ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connectionHandlerRef;
 
     public DBConnectionVirtualFile(ConnectionHandler connectionHandler) {
         super(connectionHandler.getProject());

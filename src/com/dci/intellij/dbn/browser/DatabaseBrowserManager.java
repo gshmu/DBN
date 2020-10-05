@@ -14,7 +14,6 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -74,8 +73,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private final RuntimeLatent<BrowserToolWindowForm> toolWindowForm =
-            Latent.disposable(this, () -> new BrowserToolWindowForm(getProject()));
+    private final Latent<BrowserToolWindowForm> toolWindowForm = Latent.disposable(this, () -> new BrowserToolWindowForm(getProject()));
 
     private DatabaseBrowserManager(Project project) {
         super(project);

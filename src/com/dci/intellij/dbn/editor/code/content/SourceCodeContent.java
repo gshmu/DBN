@@ -19,7 +19,7 @@ import static com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker.START_
 public class SourceCodeContent{
     private static final String EMPTY_CONTENT = "";
     protected CharSequence text = EMPTY_CONTENT;
-    private SourceCodeOffsets offsets = new SourceCodeOffsets();
+    private final SourceCodeOffsets offsets = new SourceCodeOffsets();
 
     public SourceCodeContent() {
     }

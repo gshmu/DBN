@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class DBObjectPsiElement extends DisposableBase implements PsiNamedElement, NavigationItem {
-    private DBObjectRef objectRef;
+    private final DBObjectRef objectRef;
 
     public DBObjectPsiElement(DBObjectRef objectRef) {
         this.objectRef = objectRef;

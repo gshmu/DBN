@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -20,15 +19,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class ExecutionInput extends DisposableBase implements Disposable, ConnectionProvider, PersistentConfiguration {
-    private ExecutionTimeout executionTimeout;
-    private ExecutionTimeout debugExecutionTimeout;
-    private ExecutionTarget executionTarget;
+    private final ExecutionTimeout executionTimeout;
+    private final ExecutionTimeout debugExecutionTimeout;
+    private final ExecutionTarget executionTarget;
 
-    private ProjectRef projectRef;
+    private final ProjectRef projectRef;
     protected ConnectionHandlerRef targetConnectionRef;
     protected SchemaId targetSchemaId;
 
-    private RuntimeLatent<ExecutionContext> executionContext = Latent.runtime(() -> createExecutionContext());
+    private final Latent<ExecutionContext> executionContext = Latent.basic(() -> createExecutionContext());
 
     @NotNull
     public final ExecutionContext getExecutionContext() {

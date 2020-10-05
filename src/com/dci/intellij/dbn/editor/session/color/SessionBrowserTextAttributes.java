@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.session.color;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
@@ -14,26 +13,26 @@ import com.intellij.ui.SimpleTextAttributes;
 import java.awt.*;
 
 public class SessionBrowserTextAttributes extends CommonUtil implements DataGridTextAttributes {
-    private SimpleTextAttributes activeSession;
-    private SimpleTextAttributes inactiveSession;
-    private SimpleTextAttributes cachedSession;
-    private SimpleTextAttributes snipedSession;
-    private SimpleTextAttributes killedSession;
-    private SimpleTextAttributes selection;
-    private SimpleTextAttributes searchResult;
-    private SimpleTextAttributes activeSessionAtCaretRow;
-    private SimpleTextAttributes inactiveSessionAtCaretRow;
-    private SimpleTextAttributes cachedSessionAtCaretRow;
-    private SimpleTextAttributes snipedSessionAtCaretRow;
-    private SimpleTextAttributes killedSessionAtCaretRow;
+    private final SimpleTextAttributes activeSession;
+    private final SimpleTextAttributes inactiveSession;
+    private final SimpleTextAttributes cachedSession;
+    private final SimpleTextAttributes snipedSession;
+    private final SimpleTextAttributes killedSession;
+    private final SimpleTextAttributes selection;
+    private final SimpleTextAttributes searchResult;
+    private final SimpleTextAttributes activeSessionAtCaretRow;
+    private final SimpleTextAttributes inactiveSessionAtCaretRow;
+    private final SimpleTextAttributes cachedSessionAtCaretRow;
+    private final SimpleTextAttributes snipedSessionAtCaretRow;
+    private final SimpleTextAttributes killedSessionAtCaretRow;
 
-    private SimpleTextAttributes loadingData;
-    private SimpleTextAttributes loadingDataAtCaretRow;
+    private final SimpleTextAttributes loadingData;
+    private final SimpleTextAttributes loadingDataAtCaretRow;
 
 
-    private Color caretRowBgColor;
+    private final Color caretRowBgColor;
 
-    private static final RuntimeLatent<SessionBrowserTextAttributes> INSTANCE = Latent.laf(
+    private static final Latent<SessionBrowserTextAttributes> INSTANCE = Latent.laf(
             () -> new SessionBrowserTextAttributes());
 
     private SessionBrowserTextAttributes() {

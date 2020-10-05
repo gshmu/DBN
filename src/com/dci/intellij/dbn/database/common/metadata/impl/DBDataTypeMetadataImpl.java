@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.database.common.metadata.impl;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadataBase;
 import com.dci.intellij.dbn.database.common.metadata.def.DBDataTypeMetadata;
 
@@ -10,9 +9,8 @@ import java.sql.SQLException;
 
 public class DBDataTypeMetadataImpl extends DBObjectMetadataBase implements DBDataTypeMetadata {
     private static final String EMPTY_PREFIX = "";
-    private String prefix;
-    private RuntimeLatent<DBDataTypeMetadataImpl> collection = Latent.runtime(
-            () -> new DBDataTypeMetadataImpl(resultSet, "COLLECTION_"));
+    private final String prefix;
+    private final Latent<DBDataTypeMetadataImpl> collection = Latent.basic(() -> new DBDataTypeMetadataImpl(resultSet, "COLLECTION_"));
 
     DBDataTypeMetadataImpl(ResultSet resultSet) {
         this(resultSet, EMPTY_PREFIX);
