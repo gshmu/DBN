@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -39,7 +38,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
 
     private String originalStatementText;
     private String executableStatementText;
-    private RuntimeLatent<ExecutablePsiElement> executablePsiElement = Latent.runtime(() -> {
+    private final Latent<ExecutablePsiElement> executablePsiElement = Latent.basic(() -> {
         ConnectionHandler connectionHandler = getConnectionHandler();
         SchemaId currentSchema = getTargetSchemaId();
         if (connectionHandler != null) {

@@ -20,7 +20,6 @@ import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MapLatent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
@@ -28,6 +27,7 @@ import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Progress;
+import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -114,48 +114,45 @@ import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 @Nullifiable
 public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport {
-    private ConnectionHandlerRef connectionHandlerRef;
-    private BrowserTreeNode treeParent;
-    private List<BrowserTreeNode> allPossibleTreeChildren;
+    private final ConnectionHandlerRef connectionHandlerRef;
+    private final BrowserTreeNode treeParent;
+    private final List<BrowserTreeNode> allPossibleTreeChildren;
     private List<BrowserTreeNode> visibleTreeChildren;
     private boolean treeChildrenLoaded;
 
-    private DBObjectList<DBConsole> consoles;
-    private DBObjectList<DBSchema> schemas;
-    private DBObjectList<DBUser> users;
-    private DBObjectList<DBRole> roles;
-    private DBObjectList<DBSystemPrivilege> systemPrivileges;
+    private final DBObjectList<DBConsole> consoles;
+    private final DBObjectList<DBSchema> schemas;
+    private final DBObjectList<DBUser> users;
+    private final DBObjectList<DBRole> roles;
+    private final DBObjectList<DBSystemPrivilege> systemPrivileges;
     private DBObjectList<DBObjectPrivilege> objectPrivileges;
-    private DBObjectList<DBCharset> charsets;
+    private final DBObjectList<DBCharset> charsets;
 
-    private RuntimeLatent<List<DBNativeDataType>> nativeDataTypes = Latent.runtime(() -> computeNativeDataTypes());
-    private List<DBDataType> cachedDataTypes = CollectionUtil.createConcurrentList();
+    private final Latent<List<DBNativeDataType>> nativeDataTypes = Latent.basic(() -> computeNativeDataTypes());
+    private final List<DBDataType> cachedDataTypes = CollectionUtil.createConcurrentList();
 
-    private DBObjectListContainer objectLists;
-    private DBObjectRelationListContainer objectRelationLists;
-    private int connectionConfigHash;
+    private final DBObjectListContainer objectLists;
+    private final DBObjectRelationListContainer objectRelationLists;
+    private final int connectionConfigHash;
 
-    private MapLatent<DBObjectRef, LookupItemBuilder, RuntimeException> sqlLookupItemBuilders =
+    private final MapLatent<DBObjectRef, LookupItemBuilder, RuntimeException> sqlLookupItemBuilders =
             MapLatent.create((objectRef) ->
                     new ObjectLookupItemBuilder(objectRef, SQLLanguage.INSTANCE));
 
-    private MapLatent<DBObjectRef, LookupItemBuilder, RuntimeException> psqlLookupItemBuilders =
+    private final MapLatent<DBObjectRef, LookupItemBuilder, RuntimeException> psqlLookupItemBuilders =
             MapLatent.create((objectRef) ->
                     new ObjectLookupItemBuilder(objectRef, PSQLLanguage.INSTANCE));
 
-    private MapLatent<DBObjectRef, DBObjectPsiFacade, RuntimeException> objectPsiFacades =
+    private final MapLatent<DBObjectRef, DBObjectPsiFacade, RuntimeException> objectPsiFacades =
             MapLatent.create((objectRef) ->
                     new DBObjectPsiFacade(objectRef));
 
-    private MapLatent<DBObjectRef, DBObjectVirtualFile, RuntimeException> virtualFiles =
+    private final MapLatent<DBObjectRef, DBObjectVirtualFile, RuntimeException> virtualFiles =
             MapLatent.create((objectRef) ->
                     new DBObjectVirtualFile(getProject(), objectRef));
 
 
-    private RuntimeLatent<PsiFile> fakeObjectFile = Latent.runtime(() -> {
-        PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(getProject());
-        return psiFileFactory.createFileFromText("object", SQLLanguage.INSTANCE, "");
-    });
+    private final PsiFile fakeObjectFile;
 
     public DBObjectBundleImpl(ConnectionHandler connectionHandler, BrowserTreeNode treeParent) {
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
@@ -192,9 +189,15 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         objectRelationLists.compact();
 
         Project project = connectionHandler.getProject();
+
+        PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(project);
+        fakeObjectFile = Read.call(() -> psiFileFactory.createFileFromText("object", SQLLanguage.INSTANCE, ""));
+
         EventUtil.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
         EventUtil.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
         EventUtil.subscribe(project, this, CompileManagerListener.TOPIC, compileManagerListener);
+
+
     }
 
     private final DataDefinitionChangeListener dataDefinitionChangeListener = new DataDefinitionChangeListener() {
@@ -228,7 +231,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         }
     };
 
-    private CompileManagerListener compileManagerListener = (connectionHandler, object) -> {
+    private final CompileManagerListener compileManagerListener = (connectionHandler, object) -> {
         if (getConnectionHandler().equals(connectionHandler)) {
             refreshObjectsStatus(object);
         }
@@ -257,7 +260,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     public PsiFile getFakeObjectFile() {
-        return fakeObjectFile.get();
+        return fakeObjectFile;
     }
 
     @Override

@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MapLatent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Synchronized;
@@ -74,14 +73,14 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private ConnectionInfo connectionInfo;
     private DatabaseCompatibility compatibility = DatabaseCompatibility.allFeatures();
 
-    private final RuntimeLatent<DBSessionBrowserVirtualFile> sessionBrowserFile =
-            Latent.disposable(this, () -> new DBSessionBrowserVirtualFile(this));
+    private final Latent<DBSessionBrowserVirtualFile> sessionBrowserFile =
+            Latent.basic(() -> new DBSessionBrowserVirtualFile(this));
 
-    private final RuntimeLatent<Cache> metaDataCache =
-            Latent.runtime(() -> new Cache(getConnectionId().id(), TimeUtil.Millis.ONE_MINUTE));
+    private final Latent<Cache> metaDataCache =
+            Latent.basic(() -> new Cache(getConnectionId().id(), TimeUtil.Millis.ONE_MINUTE));
 
-    private final RuntimeLatent<AuthenticationInfo> temporaryAuthenticationInfo =
-            Latent.runtime(() -> {
+    private final Latent<AuthenticationInfo> temporaryAuthenticationInfo =
+            Latent.basic(() -> {
                 ConnectionDatabaseSettings databaseSettings = getSettings().getDatabaseSettings();
                 return new AuthenticationInfo(databaseSettings, true);
             });
@@ -89,10 +88,10 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     private final MapLatent<SessionId, StatementExecutionQueue, RuntimeException> executionQueues =
             MapLatent.create(key -> new StatementExecutionQueue(ConnectionHandlerImpl.this));
 
-    private final RuntimeLatent<DBConnectionPsiDirectory> psiDirectory =
-            Latent.runtime(() -> new DBConnectionPsiDirectory(this));
+    private final Latent<DBConnectionPsiDirectory> psiDirectory =
+            Latent.basic(() -> new DBConnectionPsiDirectory(this));
 
-    private final RuntimeLatent<DBObjectBundle> objectBundle =
+    private final Latent<DBObjectBundle> objectBundle =
             Latent.disposable(this, () -> new DBObjectBundleImpl(this, getConnectionBundle()));
 
 

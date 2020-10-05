@@ -24,7 +24,6 @@ import com.dci.intellij.dbn.vfs.VirtualFileStatusHolder;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,10 +32,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements PropertyHolder<VirtualFileStatus>  {
-    private WeakRef<DBEditableObjectVirtualFile> mainDatabaseFile;
+    private final WeakRef<DBEditableObjectVirtualFile> mainDatabaseFile;
+    private final FileType fileType;
+    private final VirtualFileStatusHolder status = new VirtualFileStatusHolder();
+
     protected DBContentType contentType;
-    private FileType fileType;
-    private VirtualFileStatusHolder status = new VirtualFileStatusHolder();
 
     public DBContentVirtualFile(@NotNull DBEditableObjectVirtualFile mainDatabaseFile, DBContentType contentType) {
         super(mainDatabaseFile.getProject());
@@ -115,12 +115,6 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
     /*********************************************************
      *                     VirtualFile                       *
      *********************************************************/
-    @Override
-    @NotNull
-    @NonNls
-    public String getName() {
-        return name;
-    }
 
     @Override
     @NotNull
@@ -141,7 +135,7 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
     @Override
     @Nullable
     public VirtualFile getParent() {
-        if (!isDisposed()) {
+        if (isValid()) {
             DBObject parentObject = getObject().getParentObject();
             if (parentObject != null) {
                 return parentObject.getVirtualFile();

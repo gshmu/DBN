@@ -293,8 +293,8 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     }
 
     @Override
-    public void disposeInner() {
-        super.disposeInner();
+    public void invalidate() {
+        super.invalidate();
         originalContent = new SourceCodeContent();
         localContent = new SourceCodeContent();
     }

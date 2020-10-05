@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
@@ -75,17 +74,15 @@ import javax.swing.*;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
-import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
 
 @Nullifiable
 public class StatementExecutionBasicProcessor extends DisposableBase implements StatementExecutionProcessor {
-    private ProjectRef projectRef;
+    private final ProjectRef projectRef;
+    private final WeakRef<FileEditor> fileEditorRef;
     private PsiFileRef<DBLanguagePsiFile> psiFileRef;
     private PsiElementRef<ExecutablePsiElement> cachedExecutableRef;
-    private WeakRef<FileEditor> fileEditorRef;
     private EditorProviderId editorProviderId;
     private transient CancellableDatabaseCall<StatementExecutionResult> databaseCall;
 
@@ -93,10 +90,10 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     private StatementExecutionResult executionResult;
     protected int index;
 
-    private String name;
-    private Icon icon;
+    private final String name;
+    private final Icon icon;
 
-    private RuntimeLatent<String> resultName = Latent.runtime(() -> {
+    private final Latent<String> resultName = Latent.basic(() -> {
         String resultName = null;
         ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
         if (executablePsiElement!= null) {

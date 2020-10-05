@@ -40,8 +40,8 @@ public class ConsoleSaveToFileAction extends DumbAwareProjectAction {
                     "Save content of the console \"" + consoleVirtualFile.getName() + "\" to file", "sql");
 
             FileSaverDialog fileSaverDialog = FileChooserFactory.getInstance().createSaveFileDialog(fileSaverDescriptor, project);
-            final Document document = DocumentUtil.getDocument(virtualFile);
-            final VirtualFileWrapper virtualFileWrapper = fileSaverDialog.save(null, consoleVirtualFile.getName());
+            Document document = DocumentUtil.getDocument(virtualFile);
+            VirtualFileWrapper virtualFileWrapper = fileSaverDialog.save((VirtualFile) null, consoleVirtualFile.getName());
             if (document != null && virtualFileWrapper != null) {
                 Write.run(() -> {
                     try {

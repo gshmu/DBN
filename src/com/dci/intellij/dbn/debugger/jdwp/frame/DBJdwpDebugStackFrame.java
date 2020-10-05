@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.debugger.jdwp.frame;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.common.frame.DBDebugSourcePosition;
 import com.dci.intellij.dbn.debugger.common.frame.DBDebugStackFrame;
@@ -27,9 +26,9 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
     private long childrenComputed = 0;
     private JavaStackFrame underlyingFrame;
 
-    private RuntimeLatent<DBJdwpDebuggerEvaluator> evaluator = Latent.runtime(() -> new DBJdwpDebuggerEvaluator(DBJdwpDebugStackFrame.this));
+    private final Latent<DBJdwpDebuggerEvaluator> evaluator = Latent.basic(() -> new DBJdwpDebuggerEvaluator(DBJdwpDebugStackFrame.this));
 
-    private RuntimeLatent<Location> location = Latent.runtime(() -> underlyingFrame == null ? null : underlyingFrame.getDescriptor().getLocation());
+    private final Latent<Location> location = Latent.basic(() -> underlyingFrame == null ? null : underlyingFrame.getDescriptor().getLocation());
 
     DBJdwpDebugStackFrame(DBJdwpDebugProcess debugProcess, JavaStackFrame underlyingFrame, int index) {
         super(debugProcess, index);

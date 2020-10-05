@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class GenerateSelectStatementAction extends GenerateStatementAction {
-    private List<DBObjectRef> selectedObjectRefs;
+    private final List<DBObjectRef<?>> selectedObjectRefs;
 
     GenerateSelectStatementAction(List<DBObject> selectedObjects) {
         super("SELECT Statement");

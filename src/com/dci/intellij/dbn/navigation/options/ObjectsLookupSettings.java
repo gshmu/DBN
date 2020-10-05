@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.navigation.options;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.ui.list.Selectable;
@@ -18,12 +17,12 @@ import java.util.List;
 import java.util.Set;
 
 public class ObjectsLookupSettings extends BasicProjectConfiguration<NavigationSettings, ObjectsLookupSettingsForm> {
-    private RuntimeLatent<List<ObjectTypeEntry>> lookupObjectTypes = Latent.runtime(() -> createLookupObjectTypes());
+    private final Latent<List<ObjectTypeEntry>> lookupObjectTypes = Latent.basic(() -> createLookupObjectTypes());
 
+    private final BooleanSetting forceDatabaseLoad = new BooleanSetting("force-database-load", false);
+    private final BooleanSetting promptConnectionSelection = new BooleanSetting("prompt-connection-selection", true);
+    private final BooleanSetting promptSchemaSelection = new BooleanSetting("prompt-schema-selection", true);
     private Set<DBObjectType> fastLookupObjectTypes;
-    private BooleanSetting forceDatabaseLoad = new BooleanSetting("force-database-load", false);
-    private BooleanSetting promptConnectionSelection = new BooleanSetting("prompt-connection-selection", true);
-    private BooleanSetting promptSchemaSelection = new BooleanSetting("prompt-schema-selection", true);
 
     public ObjectsLookupSettings(NavigationSettings parent) {
         super(parent);

@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.connection.config;
 
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -22,19 +21,19 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoo
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
 
 public class ConnectionFilterSettings extends CompositeProjectConfiguration<ConnectionSettings, ConnectionFilterSettingsForm> implements ConnectionIdProvider {
-    private ObjectTypeFilterSettings objectTypeFilterSettings;
-    private ObjectNameFilterSettings objectNameFilterSettings;
+    private final ObjectTypeFilterSettings objectTypeFilterSettings;
+    private final ObjectNameFilterSettings objectNameFilterSettings;
     private boolean hideEmptySchemas = false;
     private boolean hidePseudoColumns = false;
-    private ConnectionSettings connectionSettings;
+    private final ConnectionSettings connectionSettings;
 
     private static final Filter<DBSchema> EMPTY_SCHEMAS_FILTER = schema -> !schema.isEmptySchema();
     private static final Filter<DBColumn> PSEUDO_COLUMNS_FILTER = column -> !column.isHidden();
 
-    private RuntimeLatent<Filter<DBSchema>> schemaFilter = Latent.mutable(
+    private final Latent<Filter<DBSchema>> schemaFilter = Latent.mutable(
             () -> hideEmptySchemas,
             () -> {
-                Filter<DBObject> filter = objectNameFilterSettings.getFilter(DBObjectType.SCHEMA);
+                Filter<DBObject> filter = getObjectNameFilterSettings().getFilter(DBObjectType.SCHEMA);
                 if (filter == null) {
                     return hideEmptySchemas ? EMPTY_SCHEMAS_FILTER : null; // return null filter for optimization
                 } else {
@@ -48,10 +47,10 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
                 }
             });
 
-    private RuntimeLatent<Filter<DBColumn>> columnFilter = Latent.mutable(
+    private final Latent<Filter<DBColumn>> columnFilter = Latent.mutable(
         () -> hidePseudoColumns,
         () -> {
-            Filter<DBObject> filter = objectNameFilterSettings.getFilter(DBObjectType.COLUMN);
+            Filter<DBObject> filter = getObjectNameFilterSettings().getFilter(DBObjectType.COLUMN);
             if (filter == null) {
                 return PSEUDO_COLUMNS_FILTER;
             } else {

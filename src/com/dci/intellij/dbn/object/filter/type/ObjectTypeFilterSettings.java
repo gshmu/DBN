@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
@@ -22,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ObjectTypeFilterSettings extends BasicProjectConfiguration<ProjectConfiguration, ObjectTypeFilterSettingsForm> {
-    private final RuntimeLatent<List<ObjectTypeFilterSetting>> objectTypeFilterSettings = Latent.runtime(() -> {
+    private final Latent<List<ObjectTypeFilterSetting>> objectTypeFilterSettings = Latent.basic(() -> {
         List<ObjectTypeFilterSetting> objectTypeFilterSettings = new ArrayList<>();
         objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.SCHEMA));
         objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.USER));

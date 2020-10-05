@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableListImpl;
 import com.dci.intellij.dbn.common.locale.Formatter;
@@ -43,20 +42,21 @@ public class BasicDataModel<
         extends DisposablePropertyHolder<RecordStatus>
         implements DataModel<R,C> {
 
+    private final ProjectRef projectRef;
     private DataModelHeader<? extends ColumnInfo> header;
     private DataModelState state;
-    private Set<TableModelListener> tableModelListeners = new HashSet<>();
-    private Set<DataModelListener> dataModelListeners = new HashSet<>();
     private List<R> rows = new ArrayList<>();
-    private ProjectRef projectRef;
     private Filter<R> filter;
     private boolean environmentReadonly;
-    private RuntimeLatent<Formatter> formatter;
-    private RuntimeLatent<BasicDataGutterModel> listModel = Latent.disposable(this, () -> new BasicDataGutterModel(BasicDataModel.this));
-    private RuntimeLatent<DataSearchResult> searchResult = Latent.disposable(this, () -> new DataSearchResult());
+    private Latent<Formatter> formatter;
+
+    private final Set<TableModelListener> tableModelListeners = new HashSet<>();
+    private final Set<DataModelListener> dataModelListeners = new HashSet<>();
+    private final Latent<BasicDataGutterModel> listModel = Latent.disposable(this, () -> new BasicDataGutterModel(BasicDataModel.this));
+    private final Latent<DataSearchResult> searchResult = Latent.disposable(this, () -> new DataSearchResult());
 
 
-    private RegionalSettingsListener regionalSettingsListener = new RegionalSettingsListener() {
+    private final RegionalSettingsListener regionalSettingsListener = new RegionalSettingsListener() {
         @Override
         public void settingsChanged() {
             formatter = Latent.thread(() -> {

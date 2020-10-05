@@ -2,22 +2,24 @@ package com.dci.intellij.dbn.common.latent.impl;
 
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.Loader;
+import lombok.SneakyThrows;
 
-public abstract class BasicLatentImpl<T, E extends Throwable> implements Latent<T, E> {
+public abstract class BasicLatentImpl<T> implements Latent<T> {
     private T value;
     private boolean loaded;
     protected boolean loading;
 
     protected BasicLatentImpl() {}
 
-    public final T get() throws E{
+    @SneakyThrows
+    public final T get(){
         if (shouldLoad()) {
             synchronized (this) {
                 if (shouldLoad()) {
                     try {
                         loading = true;
                         beforeLoad();
-                        Loader<T, E> loader = getLoader();
+                        Loader<T> loader = getLoader();
                         T newValue = loader == null ? null : loader.load();
                         if (value != newValue) {
                             value = newValue;
@@ -32,15 +34,15 @@ public abstract class BasicLatentImpl<T, E extends Throwable> implements Latent<
         return value;
     }
 
-    public abstract Loader<T, E> getLoader();
+    public abstract Loader<T> getLoader();
 
-    protected boolean shouldLoad() throws E {
+    protected boolean shouldLoad() {
         return !loaded;
     }
 
-    protected void beforeLoad() throws E {};
+    protected void beforeLoad() {};
 
-    protected void afterLoad(T value)throws E {
+    protected void afterLoad(T value) {
         loaded = true;
     }
 
