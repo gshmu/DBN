@@ -9,8 +9,8 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
+import com.intellij.diagnostic.AbstractMessage;
 import com.intellij.diagnostic.LogMessage;
-import com.intellij.diagnostic.LogMessageEx;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
@@ -132,8 +132,8 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         description.append(getMarkupElement(MarkupElement.CODE));
 
         Object eventData = event.getData();
-        if (eventData instanceof LogMessageEx) {
-            List<Attachment> attachments = ((LogMessageEx) eventData).getAttachments();
+        if (eventData instanceof AbstractMessage) {
+            List<Attachment> attachments = ((AbstractMessage) eventData).getIncludedAttachments();
             if (attachments.size() > 0) {
                 Set<String> attachmentTexts = new HashSet<String>();
                 for (Attachment attachment : attachments) {

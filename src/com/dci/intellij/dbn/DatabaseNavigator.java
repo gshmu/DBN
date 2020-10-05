@@ -1,23 +1,22 @@
 package com.dci.intellij.dbn;
 
-import com.dci.intellij.dbn.common.Constants;
-import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.init.DatabaseNavigatorInitializer;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
+import com.intellij.ide.plugins.PluginManagerCore;
+import com.intellij.ide.plugins.PluginNode;
+import com.intellij.ide.plugins.marketplace.MarketplaceRequests;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.extensions.PluginId;
-import com.intellij.openapi.ui.Messages;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoolean;
@@ -124,7 +123,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
         showPluginConflictDialog = getBoolean(element, "show-plugin-conflict-dialog", true);
     }
 
-    private void resolvePluginConflict() {
+/*    private void resolvePluginConflict() {
         if (showPluginConflictDialog && sqlPluginActive()) {
             showPluginConflictDialog = false;
             Dispatch.run(() -> {
@@ -155,6 +154,19 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
                 }
             });
         }
+    }*/
+
+
+    @Nullable
+    public static PluginNode loadPluginNode() {
+        List<String> pluginIds = Collections.singletonList(DBN_PLUGIN_ID.getIdString());
+        MarketplaceRequests marketplaceRequests = MarketplaceRequests.getInstance();
+        List<PluginNode> pluginNodes = marketplaceRequests.loadLastCompatiblePluginDescriptors(pluginIds);
+        return pluginNodes.isEmpty() ? null : pluginNodes.get(0);
+    }
+
+    public static IdeaPluginDescriptor getPluginDescriptor() {
+        return PluginManagerCore.getPlugin(DBN_PLUGIN_ID);
     }
 }
 
