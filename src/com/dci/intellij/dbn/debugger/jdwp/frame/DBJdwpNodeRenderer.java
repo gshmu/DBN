@@ -20,6 +20,7 @@ import com.intellij.debugger.ui.tree.render.NodeRendererImpl;
 import com.intellij.psi.PsiExpression;
 import com.sun.jdi.ClassNotLoadedException;
 import com.sun.jdi.Field;
+import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Type;
 import com.sun.jdi.Value;
@@ -84,12 +85,12 @@ public class DBJdwpNodeRenderer extends NodeRendererImpl {
 
     @Override
     public String calcLabel(ValueDescriptor descriptor, EvaluationContext evaluationContext, DescriptorLabelListener listener) throws EvaluateException {
-        ObjectReferenceImpl value = (ObjectReferenceImpl) descriptor.getValue();
+        ObjectReference value = (ObjectReference) descriptor.getValue();
         List<Field> fields = ((ReferenceType) value.type()).fields();
         String stringValue = "";
         String typeIdentifier = value.type().name();
         DBJdwpDebugProcess debugProcess = evaluationContext.getDebugProcess().getUserData(DBJdwpDebugProcess.KEY);
-        String typeName = debugProcess.getDebuggerInterface().getJdwpTypeName(typeIdentifier);
+        String typeName = debugProcess == null ? null : debugProcess.getDebuggerInterface().getJdwpTypeName(typeIdentifier);
 
         String typeLength = null;
         for (Field field : fields) {
