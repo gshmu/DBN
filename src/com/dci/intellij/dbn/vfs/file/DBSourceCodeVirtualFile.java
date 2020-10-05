@@ -25,6 +25,7 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
+import com.intellij.notebook.editor.BackedVirtualFile;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
@@ -32,6 +33,7 @@ import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,7 +44,7 @@ import java.sql.Timestamp;
 
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
 
-public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, ConnectionProvider, DocumentListener {
+public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, ConnectionProvider, DocumentListener, BackedVirtualFile {
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
@@ -297,5 +299,11 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         super.invalidate();
         originalContent = new SourceCodeContent();
         localContent = new SourceCodeContent();
+    }
+
+    @NotNull
+    @Override
+    public VirtualFile getOriginFile() {
+        return getMainDatabaseFile();
     }
 }
