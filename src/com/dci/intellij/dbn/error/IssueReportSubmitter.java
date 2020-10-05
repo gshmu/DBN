@@ -75,7 +75,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
     public boolean submit(@NotNull IdeaLoggingEvent[] events,
                           @Nullable String additionalInfo,
                           @NotNull Component parentComponent,
-                          @NotNull Consumer<? super SubmittedReportInfo> consumer){
+                          @NotNull Consumer<SubmittedReportInfo> consumer){
 
         DataContext dataContext = DataManager.getInstance().getDataContext(parentComponent);
         Project project = PlatformDataKeys.PROJECT.getData(dataContext);
