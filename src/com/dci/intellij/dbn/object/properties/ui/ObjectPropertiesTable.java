@@ -30,7 +30,7 @@ public class ObjectPropertiesTable extends DBNTable {
         addKeyListener(keyListener);
     }
 
-    private MouseListener mouseListener = new MouseAdapter() {
+    private final MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent event) {
             if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
@@ -47,7 +47,7 @@ public class ObjectPropertiesTable extends DBNTable {
     };
 
 
-    private KeyListener keyListener = new KeyAdapter() {
+    private final KeyListener keyListener = new KeyAdapter() {
         @Override
         public void keyTyped(KeyEvent e) {
             if (e.getKeyChar() == 10) {  // ENTER
@@ -87,7 +87,7 @@ public class ObjectPropertiesTable extends DBNTable {
         return false;
     }
 
-    private TableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
+    private final TableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);

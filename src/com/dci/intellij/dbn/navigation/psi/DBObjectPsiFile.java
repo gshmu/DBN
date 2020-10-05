@@ -42,9 +42,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class DBObjectPsiFile implements PsiFile, Disposable {
-    private DBObjectRef objectRef;
+    private final DBObjectRef<?> objectRef;
 
-    public DBObjectPsiFile(DBObjectRef objectRef) {
+    public DBObjectPsiFile(DBObjectRef<?> objectRef) {
         this.objectRef = objectRef;
     }
 
@@ -93,7 +93,7 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
         DBObject object = getObject();
         GenericDatabaseElement parent = object.getParent();
         if (parent instanceof DBObjectList) {
-            DBObjectList objectList = (DBObjectList) parent;
+            DBObjectList<?> objectList = (DBObjectList<?>) parent;
             return objectList.getPsiDirectory();
         }
         return null;

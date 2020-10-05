@@ -14,8 +14,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class DatabaseSession implements Comparable<DatabaseSession>, Presentable {
-    private ConnectionHandlerRef connectionHandlerRef;
-    private ConnectionType connectionType;
+    private final ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionType connectionType;
     private final SessionId id;
     private String name;
 

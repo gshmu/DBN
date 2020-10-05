@@ -129,7 +129,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         VirtualFile virtualFile = getVirtualFile();
         if (virtualFile != null) {
             if (virtualFile instanceof DBObjectVirtualFile) {
-                DBObjectVirtualFile databaseObjectFile = (DBObjectVirtualFile) virtualFile;
+                DBObjectVirtualFile<?> databaseObjectFile = (DBObjectVirtualFile<?>) virtualFile;
                 return databaseObjectFile.getObject();
             }
 
@@ -148,7 +148,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         return DBObjectRef.get(underlyingObjectRef);
     }
 
-    public DBLanguagePsiFile(Project project, DBLanguageFileType fileType, @NotNull DBLanguage language) {
+    public DBLanguagePsiFile(Project project, DBLanguageFileType fileType, @NotNull DBLanguage<?> language) {
         this(createFileViewProvider(project), fileType, language);
     }
 
@@ -165,7 +165,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
             }
         }
         throw new AssertionError(
-                "Language " + baseLanguage + " doesn't participate in view provider " + viewProvider + ": " + new ArrayList<Language>(languages));
+                "Language " + baseLanguage + " doesn't participate in view provider " + viewProvider + ": " + new ArrayList<>(languages));
     }
 
     @Override
@@ -191,7 +191,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         }
         
         if (language instanceof DBLanguage) {
-            DBLanguage dbLanguage = (DBLanguage) language;
+            DBLanguage<?> dbLanguage = (DBLanguage<?>) language;
             ConnectionHandler connectionHandler = getConnectionHandler();
             if (connectionHandler != null) {
 
@@ -290,8 +290,8 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         return language;
     }
 
-    public DBLanguage getDBLanguage() {
-        return language instanceof DBLanguage ? (DBLanguage) language : null;
+    public DBLanguage<?> getDBLanguage() {
+        return language instanceof DBLanguage ? (DBLanguage<?>) language : null;
     }
 
     @Override
@@ -383,7 +383,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
 
     public Set<BasePsiElement> lookupVariableDefinition(int offset) {
         BasePsiElement scope = PsiUtil.lookupElementAtOffset(this, ElementTypeAttribute.SCOPE_DEMARCATION, offset);
-        Set<BasePsiElement> variableDefinitions = new THashSet<BasePsiElement>();
+        Set<BasePsiElement> variableDefinitions = new THashSet<>();
         while (scope != null) {
             PsiLookupAdapter lookupAdapter = new IdentifierDefinitionLookupAdapter(null, DBObjectType.ARGUMENT, null);
             variableDefinitions = scope.collectPsiElements(lookupAdapter, variableDefinitions, 0);
