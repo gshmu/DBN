@@ -1,20 +1,22 @@
 package com.dci.intellij.dbn.init;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.RepositoryHelper;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.proxy.CommonProxy;
 
 import java.net.ProxySelector;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class DatabaseNavigatorInitializer /*implements com.intellij.ide.ApplicationInitializedListener*/ {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
+
     //@Override
     public static void componentsInitialized() {
         new NotificationGroup("Database Navigator", NotificationDisplayType.TOOL_WINDOW, true, ExecutionManager.TOOL_WINDOW_ID);
@@ -34,17 +36,13 @@ public class DatabaseNavigatorInitializer /*implements com.intellij.ide.Applicat
                     ProxySelector.setDefault(defaultProxy);
                 }
 
-                List<IdeaPluginDescriptor> descriptors = RepositoryHelper.loadCachedPlugins();
-                if (descriptors != null) {
-                    for (IdeaPluginDescriptor descriptor : descriptors) {
-                        if (descriptor.getPluginId().equals(DatabaseNavigator.DBN_PLUGIN_ID)) {
-                            DatabaseNavigator databaseNavigator = DatabaseNavigator.getInstance();
-                            databaseNavigator.setRepositoryPluginVersion(descriptor.getVersion());
-                            break;
-                        }
-                    }
+                IdeaPluginDescriptor pluginDescriptor = DatabaseNavigator.getPluginDescriptor();
+                if (pluginDescriptor != null) {
+                    DatabaseNavigator databaseNavigator = DatabaseNavigator.getInstance();
+                    databaseNavigator.setRepositoryPluginVersion(pluginDescriptor.getVersion());
                 }
             } catch (Exception e) {
+                LOGGER.warn("Failed to load DBN plugin descriptor", e);
             } finally {
                 if (changeProxy) {
                     ProxySelector.setDefault(initialProxySelector);
