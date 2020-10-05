@@ -27,6 +27,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.io.UnsupportedEncodingException;
@@ -71,8 +72,11 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         return reportInfo[0];
     }
 
-    @Override
-    public boolean submit(@NotNull final IdeaLoggingEvent[] events, String additionalInfo, @NotNull Component parentComponent, @NotNull final Consumer<SubmittedReportInfo> consumer) {
+    public boolean submit(@NotNull IdeaLoggingEvent[] events,
+                          @Nullable String additionalInfo,
+                          @NotNull Component parentComponent,
+                          @NotNull Consumer<? super SubmittedReportInfo> consumer){
+
         DataContext dataContext = DataManager.getInstance().getDataContext(parentComponent);
         Project project = PlatformDataKeys.PROJECT.getData(dataContext);
 
@@ -91,7 +95,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
 
         IdeaLoggingEvent event = events[0];
         String eventSummary = event.getThrowableText();
-        final String summary = eventSummary.substring(0, Math.min(Math.max(100, eventSummary.length()), 100));
+        final String summary = eventSummary.substring(0, Math.min(eventSummary.length(), 100));
 
         String platformBuild = ApplicationInfo.getInstance().getBuild().asString();
         ConnectionInfo connectionInfo = ConnectionManager.getLastUsedConnectionInfo();

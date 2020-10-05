@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 
 import javax.swing.*;
 import javax.swing.event.ListDataEvent;
@@ -13,8 +12,7 @@ import java.util.Set;
 
 public abstract class DBNEditableTableModel extends DisposableBase implements DBNTableWithGutterModel {
     private final Set<TableModelListener> tableModelListeners = new HashSet<TableModelListener>();
-    private final RuntimeLatent<DBNTableGutterModel> listModel =
-            Latent.disposable(this, () -> new DBNTableGutterModel<>(DBNEditableTableModel.this));
+    private final Latent<DBNTableGutterModel> listModel = Latent.disposable(this, () -> new DBNTableGutterModel<>(DBNEditableTableModel.this));
 
     @Override
     public void addTableModelListener(TableModelListener listener) {

@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.language.common;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.language.common.element.ChameleonElementType;
 import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.language.common.element.parser.TokenPairRangeMonitor;
@@ -18,19 +17,20 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class DBLanguageDialect extends Language implements DBFileElementTypeProvider {
-    private DBLanguageDialectIdentifier identifier;
+    private static final Map<DBLanguageDialectIdentifier, DBLanguageDialect> REGISTRY = new EnumMap<>(DBLanguageDialectIdentifier.class);
 
-    private RuntimeLatent<DBLanguageSyntaxHighlighter> syntaxHighlighter = Latent.runtime(() -> createSyntaxHighlighter());
-    private RuntimeLatent<DBLanguageParserDefinition> parserDefinition = Latent.runtime(() -> createParserDefinition());
-    private RuntimeLatent<IFileElementType> fileElementType = Latent.runtime(() -> createFileElementType());
+    private final DBLanguageDialectIdentifier identifier;
+
+    private final Latent<DBLanguageSyntaxHighlighter> syntaxHighlighter = Latent.basic(() -> createSyntaxHighlighter());
+    private final Latent<DBLanguageParserDefinition> parserDefinition = Latent.basic(() -> createParserDefinition());
+    private final Latent<IFileElementType> fileElementType = Latent.basic(() -> createFileElementType());
 
     private Set<ChameleonTokenType> chameleonTokens;
-    private static Map<DBLanguageDialectIdentifier, DBLanguageDialect> register = new EnumMap<>(DBLanguageDialectIdentifier.class);
 
     public DBLanguageDialect(@NonNls @NotNull DBLanguageDialectIdentifier identifier, @NotNull DBLanguage baseLanguage) {
         super(baseLanguage, identifier.getValue());
         this.identifier = identifier;
-        register.put(identifier, this);
+        REGISTRY.put(identifier, this);
     }
 
     protected abstract Set<ChameleonTokenType> createChameleonTokenTypes();
@@ -42,7 +42,7 @@ public abstract class DBLanguageDialect extends Language implements DBFileElemen
     }
 
     public static DBLanguageDialect getLanguageDialect(DBLanguageDialectIdentifier identifier) {
-        return register.get(identifier);
+        return REGISTRY.get(identifier);
     }
 
     public DBLanguageDialectIdentifier getIdentifier() {

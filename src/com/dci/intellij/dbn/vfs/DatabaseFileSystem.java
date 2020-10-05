@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.routine.ProgressRunnable;
@@ -543,9 +542,9 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         while (objectRefs.hasNext()) {
             DBObjectRef objectRef = objectRefs.next();
             DBEditableObjectVirtualFile file = filesCache.get(objectRef);
-            if (file.isDisposed() || !file.isValid() || file.getProject() == project) {
+            if (file.getProject() == project) {
                 objectRefs.remove();
-                Disposer.dispose(file);
+                file.invalidate();
             }
         }
     }

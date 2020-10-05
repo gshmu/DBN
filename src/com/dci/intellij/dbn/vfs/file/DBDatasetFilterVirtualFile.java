@@ -30,9 +30,9 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBParseableVirtualFile {
+    private final DBObjectRef<DBDataset> datasetRef;
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
-    private DBObjectRef<DBDataset> datasetRef;
 
     public DBDatasetFilterVirtualFile(DBDataset dataset, String content) {
         super(dataset.getProject());
@@ -84,12 +84,6 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBP
     @Override
     public DatabaseSession getDatabaseSession() {
         return getConnectionHandler().getSessionBundle().getMainSession();
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return name;
     }
 
     @Override

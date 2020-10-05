@@ -45,7 +45,7 @@ import java.util.List;
 
 public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> implements DocumentListener, DBParseableVirtualFile, Comparable<DBConsoleVirtualFile> {
     private long modificationTimestamp = LocalTimeCounter.currentTime();
-    private SourceCodeContent content = new SourceCodeContent();
+    private final SourceCodeContent content = new SourceCodeContent();
     private SchemaId databaseSchema;
     private DatabaseSession databaseSession;
 
@@ -54,7 +54,6 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
         ConnectionHandler connectionHandler = console.getConnectionHandler();
         databaseSession = connectionHandler.getSessionBundle().getMainSession();
         setDatabaseSchema(connectionHandler.getDefaultSchema());
-        setName(name);
         setCharset(connectionHandler.getSettings().getDetailSettings().getCharset());
     }
 
@@ -149,12 +148,6 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
     @Nullable
     public SchemaId getSchemaId() {
         return databaseSchema;
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return name;
     }
 
     public DBConsoleType getType() {

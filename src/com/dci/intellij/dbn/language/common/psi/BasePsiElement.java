@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiEl
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -75,8 +74,7 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
 
     public final ASTNode node;
 
-    private RuntimeLatent<BasePsiElement> enclosingScopePsiElement = Latent.weak(
-            () -> findEnclosingScopePsiElement());
+    private final Latent<BasePsiElement> enclosingScopePsiElement = Latent.weak(() -> findEnclosingScopePsiElement());
 
     public enum MatchType {
         STRONG,

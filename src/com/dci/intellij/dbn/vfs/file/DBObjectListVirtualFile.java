@@ -16,7 +16,6 @@ import com.dci.intellij.dbn.vfs.DBVirtualFileImpl;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,12 +70,6 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
     /*********************************************************
      *                     VirtualFile                       *
      *********************************************************/
-    @Override
-    @NotNull
-    @NonNls
-    public String getName() {
-        return name;
-    }
 
     @Override
     public String getPresentableName() {

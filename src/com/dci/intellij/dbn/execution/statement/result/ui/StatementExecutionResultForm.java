@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.execution.statement.result.ui;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -45,7 +44,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private final RuntimeLatent<DataSearchComponent> dataSearchComponent = Latent.disposable(this, () -> {
+    private final Latent<DataSearchComponent> dataSearchComponent = Latent.disposable(this, () -> {
         DataSearchComponent dataSearchComponent = new DataSearchComponent(StatementExecutionResultForm.this);
         searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
         DataManager.registerDataProvider(dataSearchComponent.getSearchField(), this);

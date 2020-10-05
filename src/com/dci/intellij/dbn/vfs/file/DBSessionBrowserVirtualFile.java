@@ -23,9 +23,9 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Comparable<DBSessionBrowserVirtualFile> {
+    private final ConnectionHandlerRef connectionHandlerRef;
     private long modificationTimestamp = LocalTimeCounter.currentTime();
     private CharSequence content = "";
-    private ConnectionHandlerRef connectionHandlerRef;
 
     public DBSessionBrowserVirtualFile(ConnectionHandler connectionHandler) {
         super(connectionHandler.getProject());
@@ -61,12 +61,6 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
     @Override
     public DatabaseSession getDatabaseSession() {
         return getConnectionHandler().getSessionBundle().getPoolSession();
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return name;
     }
 
     @Override

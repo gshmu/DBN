@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.RuntimeLatent;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
 import com.dci.intellij.dbn.debugger.common.process.DBDebugProcess;
@@ -51,14 +50,14 @@ import java.util.Set;
 
 public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDebugValue> extends XStackFrame {
     private static final Logger LOGGER = LoggerFactory.createLogger();
-    private P debugProcess;
-    private int frameIndex;
+    private final P debugProcess;
+    private final int frameIndex;
     private Map<String, V> valuesMap;
 
-    private RuntimeLatent<VirtualFile> virtualFile = Latent.runtime(() -> resolveVirtualFile());
-    private RuntimeLatent<XSourcePosition> sourcePosition = Latent.runtime(() -> resolveSourcePosition());
+    private final Latent<VirtualFile> virtualFile = Latent.basic(() -> resolveVirtualFile());
+    private final Latent<XSourcePosition> sourcePosition = Latent.basic(() -> resolveSourcePosition());
 
-    private RuntimeLatent<IdentifierPsiElement> subject = Latent.runtime(() -> {
+    private final Latent<IdentifierPsiElement> subject = Latent.basic(() -> {
         Project project = getDebugProcess().getProject();
         XSourcePosition sourcePosition = getSourcePosition();
         VirtualFile virtualFile = getVirtualFile();

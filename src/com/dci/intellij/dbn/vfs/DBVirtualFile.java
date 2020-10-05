@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.vfs;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeProvider;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -12,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public interface DBVirtualFile extends /*VirtualFileWithId, */EnvironmentTypeProvider, FileConnectionMappingProvider, UserDataHolder, Disposable {
+public interface DBVirtualFile extends /*VirtualFileWithId, */EnvironmentTypeProvider, FileConnectionMappingProvider, UserDataHolder {
     @Nullable
     Project getProject();
 
@@ -32,4 +31,6 @@ public interface DBVirtualFile extends /*VirtualFileWithId, */EnvironmentTypePro
 
     @Nullable
     DatabaseFileViewProvider getCachedViewProvider();
+
+    void invalidate();
 }
