@@ -82,6 +82,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         return Failsafe.nn(parent);
     }
 
+    @NotNull
     public ConnectionId getConnectionId() {
         return getParentElement().getConnectionId();
     }

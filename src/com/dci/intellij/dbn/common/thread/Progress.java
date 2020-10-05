@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.thread;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ProgressRunnable;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.PerformInBackgroundOption;
@@ -24,7 +25,7 @@ public interface Progress {
                     ThreadMonitor.run(
                             invoker,
                             ThreadProperty.PROGRESS,
-                            () -> runnable.run(indicator));
+                            () -> Safe.run(() -> runnable.run(indicator)));
                 }
             };
             start(task);
@@ -40,7 +41,7 @@ public interface Progress {
                     ThreadMonitor.run(
                             invoker,
                             ThreadProperty.PROGRESS,
-                            () -> runnable.run(indicator));
+                            () -> Safe.run(() -> runnable.run(indicator)));
                 }
             };
             start(task);
@@ -56,7 +57,7 @@ public interface Progress {
                     ThreadMonitor.run(
                             invoker,
                             ThreadProperty.MODAL,
-                            () -> runnable.run(indicator));
+                            () -> Safe.run(() -> runnable.run(indicator)));
 
                 }
             };
