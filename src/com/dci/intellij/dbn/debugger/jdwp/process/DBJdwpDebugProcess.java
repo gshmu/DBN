@@ -271,16 +271,16 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
 
     private void overwriteSuspendContext(final @Nullable XSuspendContext suspendContext) {
         if (suspendContext != null && suspendContext != lastSuspendContext && !(suspendContext instanceof DBJdwpDebugSuspendContext)) {
-            lastSuspendContext = suspendContext;
-            final XDebugSession session = getSession();
-            if (shouldSuspend(suspendContext)) {
-                DebugProcessImpl debugProcess = getDebuggerSession().getProcess();
-                ManagedThreadCommand.schedule(debugProcess, PrioritizedTask.Priority.LOW, () -> {
+            DebugProcessImpl debugProcess = getDebuggerSession().getProcess();
+            ManagedThreadCommand.schedule(debugProcess, PrioritizedTask.Priority.LOW, () -> {
+                lastSuspendContext = suspendContext;
+                XDebugSession session = getSession();
+                if (shouldSuspend(suspendContext)) {
                     DBJdwpDebugSuspendContext dbSuspendContext = new DBJdwpDebugSuspendContext(DBJdwpDebugProcess.this, suspendContext);
                     session.positionReached(dbSuspendContext);
-                });
-                throw AlreadyDisposedException.INSTANCE;
-            }
+                    throw AlreadyDisposedException.INSTANCE;
+                }
+            });
         }
     }
 
