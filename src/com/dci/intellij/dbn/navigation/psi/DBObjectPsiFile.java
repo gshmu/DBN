@@ -385,7 +385,7 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
     }
 
     @Override
-    public boolean processChildren(@NotNull PsiElementProcessor<? super PsiFileSystemItem> processor) {
+    public boolean processChildren(@NotNull PsiElementProcessor processor) {
         return false;
     }
 
