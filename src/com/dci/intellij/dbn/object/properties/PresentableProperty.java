@@ -13,7 +13,7 @@ public abstract class PresentableProperty {
     public abstract Icon getIcon();
 
     public String toString() {
-        return Safe.call("", () -> getName() + ": " + getValue());
+        return Safe.call("DISPOSED", () -> getName() + ": " + getValue());
     }
 
     public abstract Navigatable getNavigatable();

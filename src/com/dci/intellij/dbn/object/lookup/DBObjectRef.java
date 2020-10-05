@@ -29,7 +29,7 @@ import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.PS;
 
 public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>, PersistentStateElement, ConnectionProvider {
     public short overload;
-    public DBObjectRef parent;
+    public DBObjectRef<?> parent;
     public DBObjectType objectType;
     public String objectName;
     protected ConnectionId connectionId;
@@ -58,7 +58,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         }
     }
 
-    public DBObjectRef(DBObjectRef parent, DBObjectType objectType, String objectName) {
+    public DBObjectRef(DBObjectRef<?> parent, DBObjectType objectType, String objectName) {
         this.parent = parent;
         this.objectType = objectType;
         this.objectName = objectName.intern();
@@ -87,12 +87,12 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     public DBObject getParentObject(DBObjectType objectType) {
-        DBObjectRef parentRef = getParentRef(objectType);
+        DBObjectRef<?> parentRef = getParentRef(objectType);
         return DBObjectRef.get(parentRef);
     }
 
-    public DBObjectRef getParentRef(DBObjectType objectType) {
-        DBObjectRef parent = this;
+    public DBObjectRef<?> getParentRef(DBObjectType objectType) {
+        DBObjectRef<?> parent = this;
         while (parent != null) {
             if (parent.objectType.matches(objectType)) {
                 return parent;
@@ -127,7 +127,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         } else {
             String[] tokens = objectIdentifier.split(PS);
 
-            DBObjectRef objectRef = null;
+            DBObjectRef<?> objectRef = null;
             DBObjectType objectType = null;
             for (int i=0; i<tokens.length; i++) {
                 String token = tokens[i];
@@ -141,8 +141,8 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
                 } else {
                     if (i < tokens.length - 2) {
                         objectRef = objectRef == null ?
-                                new DBObjectRef(connectionId, objectType, token) :
-                                new DBObjectRef(objectRef, objectType, token);
+                                new DBObjectRef<>(connectionId, objectType, token) :
+                                new DBObjectRef<>(objectRef, objectType, token);
                     } else {
                         this.parent = objectRef;
                         this.objectType = objectType;
@@ -164,15 +164,15 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
 
         StringTokenizer objectNames = new StringTokenizer(objectIdentifier.substring(objectStartIndex, objectEndIndex), PS);
 
-        DBObjectRef objectRef = null;
+        DBObjectRef<?> objectRef = null;
         while (objectTypes.hasMoreTokens()) {
             String objectTypeName = objectTypes.nextToken();
             String objectName = objectNames.nextToken();
             DBObjectType objectType = DBObjectType.get(objectTypeName);
             if (objectTypes.hasMoreTokens()) {
                 objectRef = objectRef == null ?
-                        new DBObjectRef(connectionId, objectType, objectName) :
-                        new DBObjectRef(objectRef, objectType, objectName);
+                        new DBObjectRef<>(connectionId, objectType, objectName) :
+                        new DBObjectRef<>(objectRef, objectType, objectName);
             } else {
                 if (objectNames.hasMoreTokens()) {
                     String overloadToken = objectNames.nextToken();
@@ -201,7 +201,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         builder.append(PS);
         builder.append(objectName);
 
-        DBObjectRef parent = this.parent;
+        DBObjectRef<?> parent = this.parent;
         while (parent != null) {
             builder.insert(0, PS);
             builder.insert(0, parent.objectName);
@@ -220,7 +220,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
 
 
     public String getPath() {
-        DBObjectRef parent = this.parent;
+        DBObjectRef<?> parent = this.parent;
         if (parent == null) {
             return objectName;
         } else {
@@ -242,7 +242,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
      * qualified object name without schema (e.g. PROGRAM.METHOD)
      */
     public String getQualifiedObjectName() {
-        DBObjectRef parent = this.parent;
+        DBObjectRef<?> parent = this.parent;
         if (parent == null || parent.objectType == DBObjectType.SCHEMA) {
             return objectName;
         } else {
@@ -260,7 +260,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     public String getTypePath() {
-        DBObjectRef parent = this.parent;
+        DBObjectRef<?> parent = this.parent;
         if (parent == null) {
             return objectType.getName();
         } else {
@@ -305,24 +305,24 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return Failsafe.nn(object);
     }
 
-    public static List<DBObject> get(List<DBObjectRef> objectRefs) {
-        List<DBObject> objects = new ArrayList<DBObject>(objectRefs.size());
-        for (DBObjectRef objectRef : objectRefs) {
+    public static List<DBObject> get(List<DBObjectRef<?>> objectRefs) {
+        List<DBObject> objects = new ArrayList<>(objectRefs.size());
+        for (DBObjectRef<?> objectRef : objectRefs) {
             objects.add(get(objectRef));
         }
         return objects;
     }
 
-    public static List<DBObject> ensure(List<DBObjectRef> objectRefs) {
-        List<DBObject> objects = new ArrayList<DBObject>(objectRefs.size());
-        for (DBObjectRef objectRef : objectRefs) {
+    public static List<DBObject> ensure(List<DBObjectRef<?>> objectRefs) {
+        List<DBObject> objects = new ArrayList<>(objectRefs.size());
+        for (DBObjectRef<?> objectRef : objectRefs) {
             objects.add(ensure(objectRef));
         }
         return objects;
     }
 
-    public static List<DBObjectRef> from(List<DBObject> objects) {
-        List<DBObjectRef> objectRefs = new ArrayList<DBObjectRef>(objects.size());
+    public static List<DBObjectRef<?>> from(List<DBObject> objects) {
+        List<DBObjectRef<?>> objectRefs = new ArrayList<>(objects.size());
         for (DBObject object : objects) {
             objectRefs.add(from(object));
         }
@@ -435,7 +435,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     @Override
     public int compareTo(@NotNull Object o) {
         if (o instanceof DBObjectRef) {
-            DBObjectRef that = (DBObjectRef) o;
+            DBObjectRef<?> that = (DBObjectRef<?>) o;
             int result = this.getConnectionId().id().compareTo(that.getConnectionId().id());
             if (result != 0) return result;
 
@@ -468,7 +468,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     public String getSchemaName() {
-        DBObjectRef schemaRef = getParentRef(DBObjectType.SCHEMA);
+        DBObjectRef<?> schemaRef = getParentRef(DBObjectType.SCHEMA);
         return schemaRef == null ? null : schemaRef.objectName;
     }
 
@@ -483,7 +483,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        DBObjectRef that = (DBObjectRef) o;
+        DBObjectRef<?> that = (DBObjectRef<?>) o;
         return this.hashCode() == that.hashCode();
     }
 
