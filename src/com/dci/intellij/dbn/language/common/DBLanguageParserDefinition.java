@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -15,7 +14,7 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class DBLanguageParserDefinition implements ParserDefinition {
-    private DBLanguageParser parser;
+    private final DBLanguageParser parser;
 
     public DBLanguageParserDefinition(DBLanguageParser parser) {
         this.parser = parser;
@@ -71,7 +70,8 @@ public abstract class DBLanguageParserDefinition implements ParserDefinition {
     public final PsiFile createFile(FileViewProvider viewProvider) {
         if (viewProvider instanceof DatabaseFileViewProvider) {
             // ensure the document is initialized
-            FileDocumentManager.getInstance().getDocument(viewProvider.getVirtualFile());
+            // TODO cleanup - causes SOE (may not be required any more)
+            //FileDocumentManager.getInstance().getDocument(viewProvider.getVirtualFile());
         }
         return createPsiFile(viewProvider);
     }
