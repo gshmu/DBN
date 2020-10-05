@@ -19,7 +19,7 @@ import java.awt.event.ActionEvent;
 
 public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> {
     private JButton bApply;
-    private ProjectSettings projectSettings;
+    private final ProjectSettings projectSettings;
 
     public ProjectSettingsDialog(Project project) {
         super(project, project.isDefault() ? "Default Settings" : "Settings", true);
@@ -70,16 +70,16 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> 
     @Override
     public void doCancelAction() {
         //projectSettings.reset();
-        projectSettings.disposeUIResources();
         super.doCancelAction();
+        projectSettings.disposeUIResources();
     }
 
     @Override
     public void doOKAction() {
         try {
             projectSettings.apply();
-            projectSettings.disposeUIResources();
             super.doOKAction();
+            projectSettings.disposeUIResources();
         } catch (ConfigurationException e) {
             MessageUtil.showErrorDialog(getProject(), e.getMessage());
         }
@@ -102,8 +102,8 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> 
     }
 
     private class ApplyAction extends AbstractAction {
-        private Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
-        private Runnable reloader = new Runnable() {
+        private final Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
+        private final Runnable reloader = new Runnable() {
             @Override
             public void run() {
                 if (isShowing()) {
