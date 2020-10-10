@@ -113,23 +113,24 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
                     Progress.prompt(project, "Updating plugin", false,
                             (progress) -> {
                                 try {
-                                    PluginNode pluginNode = DatabaseNavigator.loadPluginNode();
                                     IdeaPluginDescriptor pluginDescriptor = DatabaseNavigator.getPluginDescriptor();
-                                    if (pluginNode != null && pluginDescriptor != null) {
-                                        Dispatch.run(() -> {
-                                            try {
-                                                PluginManagerMain.downloadPlugins(
-                                                        Collections.singletonList(pluginNode),
-                                                        Collections.singletonList(pluginDescriptor),
-                                                        () -> PluginManagerMain.notifyPluginsUpdated(project),
-                                                        new PluginManagerMain.PluginEnabler.HEADLESS(), null);
-                                            } catch (IOException e1) {
-                                                sendErrorNotification(
-                                                        NotificationGroup.SOFTWARE,
-                                                        "Error updating plugin: {0}", e1);
-                                            }
-                                        });
-
+                                    if (pluginDescriptor != null) {
+                                        PluginNode pluginNode = DatabaseNavigator.loadPluginNode();
+                                        if (pluginNode != null) {
+                                            Dispatch.run(() -> {
+                                                try {
+                                                    PluginManagerMain.downloadPlugins(
+                                                            Collections.singletonList(pluginNode),
+                                                            Collections.singletonList(pluginDescriptor),
+                                                            () -> PluginManagerMain.notifyPluginsUpdated(project),
+                                                            new PluginManagerMain.PluginEnabler.HEADLESS(), null);
+                                                } catch (IOException e1) {
+                                                    sendErrorNotification(
+                                                            NotificationGroup.SOFTWARE,
+                                                            "Error updating plugin: {0}", e1);
+                                                }
+                                            });
+                                        }
                                     }
 
                                 } catch (Exception ex) {
