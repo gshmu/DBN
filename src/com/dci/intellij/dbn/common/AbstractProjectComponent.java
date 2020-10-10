@@ -23,7 +23,7 @@ public abstract class AbstractProjectComponent extends DisposableBase
         RegisteredDisposable,
         NotificationSupport {
 
-    private ProjectRef projectRef;
+    private final ProjectRef projectRef;
 
     protected AbstractProjectComponent(Project project) {
         this.projectRef = ProjectRef.from(project);
