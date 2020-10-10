@@ -60,6 +60,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
         DatabaseNavigatorInitializer.componentsInitialized();
     }
 
+/*
     private static boolean sqlPluginActive() {
         for (IdeaPluginDescriptor pluginDescriptor : PluginManager.getPlugins()) {
             if (pluginDescriptor.getPluginId().getIdString().equals(SQL_PLUGIN_ID)) {
@@ -68,6 +69,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
         }
         return false;
     }
+*/
 
     public static DatabaseNavigator getInstance() {
         return ApplicationManager.getApplication().getComponent(DatabaseNavigator.class);
@@ -158,6 +160,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
 
     @Nullable
     public static PluginNode loadPluginNode() throws IOException {
+        //TODO use RepositoryHelper (??)
         IdeaPluginDescriptor pluginDescriptor = getPluginDescriptor();
         if (pluginDescriptor != null) {
             PluginDownloader downloader = PluginDownloader.createDownloader(getPluginDescriptor());
@@ -168,6 +171,7 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
 
     @Nullable
     public static IdeaPluginDescriptor getPluginDescriptor() {
+        //TODO use RepositoryHelper (??)
         return PluginManagerCore.getPlugin(DBN_PLUGIN_ID);
     }
 }
