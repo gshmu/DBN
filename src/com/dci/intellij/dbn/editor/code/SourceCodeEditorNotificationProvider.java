@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.editor.code;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.EditorNotificationProvider;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.code.diff.MergeAction;
 import com.dci.intellij.dbn.editor.code.diff.SourceCodeDifManagerListener;
@@ -16,7 +15,6 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
-import com.intellij.ide.FrameStateManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
@@ -29,67 +27,67 @@ import org.jetbrains.annotations.Nullable;
 public class SourceCodeEditorNotificationProvider extends EditorNotificationProvider<SourceCodeEditorNotificationPanel> {
     private static final Key<SourceCodeEditorNotificationPanel> KEY = Key.create("DBNavigator.SourceCodeEditorNotificationPanel");
 
-    public SourceCodeEditorNotificationProvider(@NotNull Project project) {
-        this(project, FrameStateManager.getInstance());
+    public SourceCodeEditorNotificationProvider() {
+        this(null);
     }
 
-    public SourceCodeEditorNotificationProvider(@NotNull Project project, @NotNull FrameStateManager frameStateManager) {
+    public SourceCodeEditorNotificationProvider(@Nullable Project project) {
         super(project);
-        EventUtil.subscribe(project, project, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
-        EventUtil.subscribe(project, project, SourceCodeDifManagerListener.TOPIC, sourceCodeDifManagerListener);
-        EventUtil.subscribe(project, project, EnvironmentManagerListener.TOPIC, environmentManagerListener);
-        EventUtil.subscribe(project, project, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
-        EventUtil.subscribe(project, project, ScriptExecutionListener.TOPIC, scriptExecutionListener);
+        subscribe(SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+        subscribe(SourceCodeDifManagerListener.TOPIC, sourceCodeDifManagerListener);
+        subscribe(EnvironmentManagerListener.TOPIC, environmentManagerListener);
+        subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        subscribe(ScriptExecutionListener.TOPIC, scriptExecutionListener);
     }
 
-    private ScriptExecutionListener scriptExecutionListener = new ScriptExecutionListener() {
+    private final ScriptExecutionListener scriptExecutionListener = new ScriptExecutionListener() {
         @Override
-        public void scriptExecuted(VirtualFile virtualFile) {
-            updateEditorNotification(null);
+        public void scriptExecuted(Project project, VirtualFile virtualFile) {
+            updateEditorNotification(project, null);
         }
     };
 
-    private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
+    private final SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
-        public void sourceCodeLoaded(final DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
-            updateEditorNotification(sourceCodeFile);
+        public void sourceCodeLoaded(@NotNull DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
+            updateEditorNotification(sourceCodeFile.getProject(), sourceCodeFile);
         }
 
         @Override
-        public void sourceCodeSaved(DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
-            updateEditorNotification(sourceCodeFile);
+        public void sourceCodeSaved(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
+            updateEditorNotification(sourceCodeFile.getProject(), sourceCodeFile);
         }
     };
 
-    private SourceCodeDifManagerListener sourceCodeDifManagerListener = new SourceCodeDifManagerListener() {
+    private final SourceCodeDifManagerListener sourceCodeDifManagerListener = new SourceCodeDifManagerListener() {
         @Override
         public void contentMerged(DBSourceCodeVirtualFile sourceCodeFile, MergeAction mergeAction) {
-            updateEditorNotification(sourceCodeFile);
+            updateEditorNotification(sourceCodeFile.getProject(), sourceCodeFile);
         }
     };
 
-    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
+    private final EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
         @Override
-        public void configurationChanged() {
-            updateEditorNotification(null);
+        public void configurationChanged(Project project) {
+            updateEditorNotification(project, null);
         }
 
         @Override
-        public void editModeChanged(DBContentVirtualFile databaseContentFile) {
+        public void editModeChanged(Project project, DBContentVirtualFile databaseContentFile) {
             if (databaseContentFile instanceof DBSourceCodeVirtualFile) {
-                updateEditorNotification(databaseContentFile);
+                updateEditorNotification(project, databaseContentFile);
             }
         }
     };
 
-    private FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerListener() {
+    private final FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerListener() {
         @Override
         public void selectionChanged(@NotNull FileEditorManagerEvent event) {
             VirtualFile virtualFile = event.getNewFile();
             if (virtualFile instanceof DBEditableObjectVirtualFile) {
                 DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
                 for (DBSourceCodeVirtualFile sourceCodeFile : databaseFile.getSourceCodeFiles()) {
-                    updateEditorNotification(sourceCodeFile);
+                    updateEditorNotification(sourceCodeFile.getProject(), sourceCodeFile);
                 }
             }
         }
@@ -103,7 +101,7 @@ public class SourceCodeEditorNotificationProvider extends EditorNotificationProv
 
     @Nullable
     @Override
-    public SourceCodeEditorNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor) {
+    public SourceCodeEditorNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor, @NotNull Project project) {
         SourceCodeEditorNotificationPanel notificationPanel = null;
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
             if (fileEditor instanceof SourceCodeEditor && Failsafe.check(fileEditor)) {

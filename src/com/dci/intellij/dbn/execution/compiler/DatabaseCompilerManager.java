@@ -2,10 +2,10 @@ package com.dci.intellij.dbn.execution.compiler;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
@@ -39,7 +39,7 @@ import java.util.List;
 public class DatabaseCompilerManager extends AbstractProjectComponent {
     private DatabaseCompilerManager(Project project) {
         super(project);
-        EventUtil.subscribe(project, project, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+        subscribe(SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
     }
 
     public static DatabaseCompilerManager getInstance(@NotNull Project project) {
@@ -48,7 +48,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
 
     private final SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
-        public void sourceCodeSaved(DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
+        public void sourceCodeSaved(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
             Project project = getProject();
             DBSchemaObject object = sourceCodeFile.getObject();
             DBContentType contentType = sourceCodeFile.getContentType();
@@ -64,7 +64,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                         compileObject(object, compileType, compilerAction);
                     }
                     ConnectionHandler connectionHandler = object.getConnectionHandler();
-                    EventUtil.notify(project,
+                    EventNotifier.notify(project,
                             CompileManagerListener.TOPIC,
                             (listener) -> listener.compileFinished(connectionHandler, object));
 
@@ -140,7 +140,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                                 (progress) -> {
                                     doCompileObject(object, selectedCompileType, compilerAction);
                                     ConnectionHandler connectionHandler = object.getConnectionHandler();
-                                    EventUtil.notify(project,
+                                    EventNotifier.notify(project,
                                             CompileManagerListener.TOPIC,
                                             (listener) -> listener.compileFinished(connectionHandler, object));
 
@@ -228,7 +228,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                                         doCompileInvalidObjects(schema.getProcedures(), "procedures", progress, selectedCompileType);
                                         doCompileInvalidObjects(schema.getDatasetTriggers(), "dataset triggers", progress, selectedCompileType);
                                         doCompileInvalidObjects(schema.getDatabaseTriggers(), "database triggers", progress, selectedCompileType);
-                                        EventUtil.notify(project,
+                                        EventNotifier.notify(project,
                                                 CompileManagerListener.TOPIC,
                                                 (listener) -> listener.compileFinished(connectionHandler, null));
 

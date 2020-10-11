@@ -5,10 +5,10 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -49,7 +49,7 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
 
     public void applyFilter(DBObjectList objectList, @Nullable ObjectQuickFilter filter) {
         objectList.setQuickFilter(filter);
-        EventUtil.notify(getProject(),
+        EventNotifier.notify(getProject(),
                 BrowserTreeEventListener.TOPIC,
                 (listener) -> listener.nodeChanged(objectList, TreeEventType.STRUCTURE_CHANGED));
 

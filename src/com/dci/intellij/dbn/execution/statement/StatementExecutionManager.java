@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.UserDataUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -72,7 +71,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
 
 @State(
     name = StatementExecutionManager.COMPONENT_NAME,
@@ -90,7 +91,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     private StatementExecutionManager(Project project) {
         super(project);
         variablesCache = new StatementExecutionVariablesCache(project);
-        EventUtil.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
+        subscribe(PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
     }
 
     public StatementExecutionQueue getExecutionQueue(ConnectionId connectionId, SessionId sessionId) {

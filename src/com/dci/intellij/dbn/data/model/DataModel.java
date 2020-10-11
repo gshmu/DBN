@@ -16,6 +16,7 @@ public interface DataModel<
 
     boolean isReadonly();
 
+    @NotNull
     Project getProject();
 
     void setFilter(Filter<R> filter);

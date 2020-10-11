@@ -12,12 +12,12 @@ import com.dci.intellij.dbn.code.common.intention.SelectConnectionIntentionActio
 import com.dci.intellij.dbn.code.common.intention.SelectSchemaIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.SelectSessionIntentionAction;
 import com.dci.intellij.dbn.code.common.intention.ToggleDatabaseLoggingIntentionAction;
+import com.dci.intellij.dbn.common.component.ApplicationComponent;
 import com.intellij.codeInsight.intention.IntentionManager;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ApplicationComponent;
 import org.jetbrains.annotations.NotNull;
 
-public class EditorManager implements ApplicationComponent{
+public class EditorManager implements ApplicationComponent {
     public static EditorManager getInstance() {
         return ApplicationManager.getApplication().getComponent(EditorManager.class);
     }

@@ -12,11 +12,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public interface DBVirtualFile extends /*VirtualFileWithId, */EnvironmentTypeProvider, FileConnectionMappingProvider, UserDataHolder {
-    @Nullable
-    Project getProject();
-
     @NotNull
-    Project ensureProject();
+    Project getProject();
 
     Icon getIcon();
 

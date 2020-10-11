@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.properties.ui.PropertiesEditorForm;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionPropertiesSettings;
@@ -55,7 +55,7 @@ public class ConnectionPropertiesSettingsForm extends ConfigurationEditorForm<Co
         ConnectionId connectionId = configuration.getConnectionId();
         SettingsChangeNotifier.register(() -> {
             if (settingsChanged) {
-                EventUtil.notify(project,
+                EventNotifier.notify(project,
                         ConnectionHandlerStatusListener.TOPIC,
                         (listener) -> listener.statusChanged(connectionId));
             }

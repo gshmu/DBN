@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.data.ui.table;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -35,14 +34,17 @@ import com.dci.intellij.dbn.editor.data.ui.table.listener.DatasetEditorKeyListen
 import com.dci.intellij.dbn.editor.data.ui.table.listener.DatasetEditorMouseListener;
 import com.dci.intellij.dbn.editor.data.ui.table.renderer.DatasetEditorTableCellRenderer;
 import com.dci.intellij.dbn.editor.data.ui.table.renderer.DatasetEditorTableHeaderRenderer;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.awt.RelativePoint;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -68,10 +70,12 @@ import static com.dci.intellij.dbn.editor.data.model.RecordStatus.UPDATING;
 
 public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     private static final DatasetLoadInstructions SORT_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(USE_CURRENT_FILTER, PRESERVE_CHANGES, DELIBERATE_ACTION);
-    private DatasetTableCellEditorFactory cellEditorFactory = new DatasetTableCellEditorFactory();
-    private DatasetEditor datasetEditor;
-    private boolean isEditingEnabled = true;
-    private DatasetEditorMouseListener tableMouseListener = new DatasetEditorMouseListener(this);
+    private final WeakRef<DatasetEditor> datasetEditor;
+
+    private final DatasetTableCellEditorFactory cellEditorFactory = new DatasetTableCellEditorFactory();
+    private final DatasetEditorMouseListener tableMouseListener = new DatasetEditorMouseListener(this);
+
+    private @Getter @Setter boolean editingEnabled = true;
 
     public DatasetEditorTable(DatasetEditor datasetEditor) throws SQLException {
         super(createModel(datasetEditor), false,
@@ -80,7 +84,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                     datasetEditor.getDataset().getIcon()));
         getTableHeader().setDefaultRenderer(new DatasetEditorTableHeaderRenderer());
         setName(datasetEditor.getDataset().getName());
-        this.datasetEditor = datasetEditor;
+        this.datasetEditor = WeakRef.of(datasetEditor);
 
         getSelectionModel().addListSelectionListener(getModel());
         addKeyListener(new DatasetEditorKeyListener(this));
@@ -88,7 +92,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
         getTableHeader().addMouseListener(new DatasetEditorHeaderMouseListener(this));
 
-/*
+        Disposer.register(this, cellEditorFactory);
+        /*
         DataProvider dataProvider = datasetEditor.getDataProvider();
         ActionUtil.registerDataProvider(this, dataProvider, false);
         ActionUtil.registerDataProvider(getTableHeader(), dataProvider, false);
@@ -100,23 +105,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         return new DatasetEditorTableCellRenderer();
     }
 
-    @Override
-    @NotNull
-    public Project getProject() {
-        return datasetEditor.getProject();
-    }
-
-
     private static DatasetEditorModel createModel(DatasetEditor datasetEditor) throws SQLException {
         return new DatasetEditorModel(datasetEditor);
-    }
-
-    public boolean isEditingEnabled() {
-        return isEditingEnabled;
-    }
-
-    public void setEditingEnabled(boolean editingEnabled) {
-        isEditingEnabled = editingEnabled;
     }
 
     @NotNull
@@ -140,7 +130,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         columnModel.removeColumn(column);
 
         ColumnInfo columnInfo = getModel().getColumnInfo(columnIndex);
-        datasetEditor.getColumnSetup().getColumnState(columnInfo.getName()).setVisible(false);
+        getDatasetEditor().getColumnSetup().getColumnState(columnInfo.getName()).setVisible(false);
     }
 
     @Override
@@ -153,7 +143,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         int fromIndex = e.getFromIndex();
         int toIndex = e.getToIndex();
         if (fromIndex != toIndex) {
-            datasetEditor.getColumnSetup().moveColumn(fromIndex, toIndex);
+            getDatasetEditor().getColumnSetup().moveColumn(fromIndex, toIndex);
         }
         super.columnMoved(e);
     }
@@ -306,7 +296,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     @Override
     protected boolean isLargeValuePopupActive() {
-        DataEditorGeneralSettings generalSettings = datasetEditor.getSettings().getGeneralSettings();
+        DataEditorGeneralSettings generalSettings = getDatasetEditor().getSettings().getGeneralSettings();
         return generalSettings.getLargeValuePreviewActive().value();
     }
 
@@ -392,7 +382,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         if (!isLoading()) {
             super.sort();
             if (!getModel().isResultSetExhausted()) {
-                datasetEditor.loadData(SORT_LOAD_INSTRUCTIONS);
+                getDatasetEditor().loadData(SORT_LOAD_INSTRUCTIONS);
             }
             resizeAndRepaint();
         }
@@ -405,7 +395,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         if (columnInfo.isSortable()) {
             if (!isLoading() && super.sort(columnIndex, sortDirection, keepExisting)) {
                 if (!getModel().isResultSetExhausted()) {
-                    datasetEditor.loadData(SORT_LOAD_INSTRUCTIONS);
+                    getDatasetEditor().loadData(SORT_LOAD_INSTRUCTIONS);
                 }
                 return true;
             }
@@ -414,8 +404,9 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
         return false;
     }
 
+    @NotNull
     public DatasetEditor getDatasetEditor() {
-        return datasetEditor;
+        return datasetEditor.ensure();
     }
 
     @Override
@@ -525,7 +516,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                 getProject(),
                 "Loading column information", true,
                 (progress) -> {
-                    ActionGroup actionGroup = new DatasetEditorTableActionGroup(datasetEditor, cell, columnInfo);
+                    ActionGroup actionGroup = new DatasetEditorTableActionGroup(getDatasetEditor(), cell, columnInfo);
                     Progress.check(progress);
 
                     ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
@@ -541,18 +532,5 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
                         }
                     });
                 });
-    }
-
-
-    /********************************************************
-     *                     Disposable                       *
-     *******************************************************  */
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(
-                cellEditorFactory,
-                tableMouseListener);
-        super.disposeInner();
     }
 }

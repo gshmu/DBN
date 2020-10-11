@@ -4,17 +4,19 @@ import com.dci.intellij.dbn.browser.options.BrowserDisplayMode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserGeneralSettings;
 import com.dci.intellij.dbn.browser.options.listener.DisplayModeSettingsListener;
 import com.dci.intellij.dbn.browser.options.listener.ObjectDetailSettingsListener;
+import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<DatabaseBrowserGeneralSettings> {
@@ -60,12 +62,12 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
         Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (displayModeChanged) {
-                EventUtil.notify(project,
+                EventNotifier.notify(project,
                         DisplayModeSettingsListener.TOPIC,
                         (listener) -> listener.displayModeChanged(displayMode));
 
             } else if (repaintTree) {
-                EventUtil.notify(project,
+                EventNotifier.notify(project,
                         ObjectDetailSettingsListener.TOPIC,
                         (listener) -> listener.displayDetailsChanged());
             }

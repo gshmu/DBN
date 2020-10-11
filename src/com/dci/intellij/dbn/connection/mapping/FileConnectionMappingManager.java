@@ -6,11 +6,11 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -42,7 +42,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.editor.Document;
@@ -82,15 +81,15 @@ import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
     name = FileConnectionMappingManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class FileConnectionMappingManager extends AbstractProjectComponent implements ProjectComponent, PersistentStateComponent<Element> {
+public class FileConnectionMappingManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.FileConnectionMappingManager";
 
-    private Set<FileConnectionMapping> mappings = new THashSet<>();
+    private final Set<FileConnectionMapping> mappings = new THashSet<>();
 
     private FileConnectionMappingManager(Project project) {
         super(project);
         VirtualFileManager.getInstance().addVirtualFileListener(virtualFileListener);
-        EventUtil.subscribe(getProject(), this, SessionManagerListener.TOPIC, sessionManagerListener);
+        subscribe(SessionManagerListener.TOPIC, sessionManagerListener);
     }
 
     @NotNull
@@ -413,7 +412,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             if (changed) {
                 DocumentUtil.touchDocument(editor, true);
 
-                EventUtil.notify(getProject(),
+                EventNotifier.notify(getProject(),
                         FileConnectionMappingListener.TOPIC,
                         (listener) -> listener.connectionChanged(virtualFile, connectionHandler));
             }
@@ -428,7 +427,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             if (changed) {
                 DocumentUtil.touchDocument(editor, false);
 
-                EventUtil.notify(getProject(),
+                EventNotifier.notify(getProject(),
                         FileConnectionMappingListener.TOPIC,
                         (listener) -> listener.schemaChanged(virtualFile, schema));
             }
@@ -441,7 +440,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         if (isSessionSelectable(virtualFile)) {
             setDatabaseSession(virtualFile, session);
 
-            EventUtil.notify(getProject(),
+            EventNotifier.notify(getProject(),
                     FileConnectionMappingListener.TOPIC,
                     (listener) -> listener.sessionChanged(virtualFile, session));
         }

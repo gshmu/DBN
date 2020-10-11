@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -70,8 +69,8 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
     public ExecutionConsoleForm(Project project) {
         super(project);
-        EventUtil.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
-        EventUtil.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
+        subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
+        subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
     }
 
     private TabbedPane getResultTabs() {
@@ -96,13 +95,13 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         return getResultTabs().getTabCount();
     }
 
-    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
+    private final EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
         @Override
-        public void configurationChanged() {
+        public void configurationChanged(Project project) {
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(getProject()).getVisibilitySettings();
             TabbedPane resultTabs = getResultTabs();
             for (TabInfo tabInfo : resultTabs.getTabs()) {
-                ExecutionResult executionResult = getExecutionResult(tabInfo);
+                ExecutionResult<?> executionResult = getExecutionResult(tabInfo);
                 if (executionResult != null) {
                     ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
                     EnvironmentType environmentType = connectionHandler.getEnvironmentType();
@@ -116,7 +115,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         }
     };
 
-    private PsiDocumentTransactionListener psiDocumentTransactionListener = new PsiDocumentTransactionListener() {
+    private final PsiDocumentTransactionListener psiDocumentTransactionListener = new PsiDocumentTransactionListener() {
 
         @Override
         public void transactionStarted(@NotNull Document document, @NotNull PsiFile file) {
@@ -128,7 +127,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
             try {
                 TabbedPane resultTabs = getResultTabs();
                 for (TabInfo tabInfo : resultTabs.getTabs()) {
-                    ExecutionResult executionResult = getExecutionResult(tabInfo);
+                    ExecutionResult<?> executionResult = getExecutionResult(tabInfo);
                     if (executionResult instanceof StatementExecutionResult) {
                         StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
                         StatementExecutionProcessor executionProcessor = statementExecutionResult.getExecutionProcessor();
@@ -148,7 +147,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     };
 
 
-    private MouseListener mouseListener = new MouseAdapter() {
+    private final MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.isShiftDown() && (16 & e.getModifiers()) > 0 || ((8 & e.getModifiers()) > 0)) {
@@ -160,12 +159,12 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         }
     };
 
-    private TabsListener tabsListener = new TabsListener.Adapter() {
+    private final TabsListener tabsListener = new TabsListener.Adapter() {
         @Override
         public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
             if (canScrollToSource) {
                 if (newSelection != null) {
-                    ExecutionResult executionResult = getExecutionResult(newSelection);
+                    ExecutionResult<?> executionResult = getExecutionResult(newSelection);
                     if (executionResult instanceof StatementExecutionResult) {
                         StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
                         statementExecutionResult.navigateToEditor(NavigationInstruction.SCROLL);
@@ -188,7 +187,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     }
 
     public synchronized void removeTab(TabInfo tabInfo) {
-        ExecutionResult executionResult = getExecutionResult(tabInfo);
+        ExecutionResult<?> executionResult = getExecutionResult(tabInfo);
         if (executionResult == null) {
             removeMessagesTab();
         } else {
@@ -303,13 +302,13 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         }
     }
     
-    public ExecutionResult getSelectedExecutionResult() {
+    public ExecutionResult<?> getSelectedExecutionResult() {
         TabInfo selectedInfo = getResultTabs().getSelectedInfo();
         return selectedInfo == null ? null : getExecutionResult(selectedInfo);
     }
 
     @Nullable
-    private static ExecutionResult getExecutionResult(TabInfo tabInfo) {
+    private static ExecutionResult<?> getExecutionResult(TabInfo tabInfo) {
         ExecutionResultForm executionResultForm = (ExecutionResultForm) tabInfo.getObject();
         return executionResultForm == null ? null : executionResultForm.getExecutionResult();
     }

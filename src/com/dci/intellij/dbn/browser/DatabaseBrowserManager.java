@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -77,6 +76,9 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
     private DatabaseBrowserManager(Project project) {
         super(project);
+
+        subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        subscribe(ObjectFilterChangeListener.TOPIC, filterChangeListener);
     }
 
     @Nullable
@@ -183,9 +185,6 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
     @Override
     public void initComponent() {
-        Project project = getProject();
-        EventUtil.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
-        EventUtil.subscribe(project, this, ObjectFilterChangeListener.TOPIC, filterChangeListener);
     }
 
     public static void scrollToSelectedElement(ConnectionHandler connectionHandler) {
@@ -209,7 +208,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     /**********************************************************
      *                       Listeners                        *
      **********************************************************/
-    private ObjectFilterChangeListener filterChangeListener = new ObjectFilterChangeListener() {
+    private final ObjectFilterChangeListener filterChangeListener = new ObjectFilterChangeListener() {
         @Override
         public void typeFiltersChanged(ConnectionId connectionId) {
             if (toolWindowForm.loaded()) {
@@ -242,7 +241,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         return browserSettings.getFilterSettings().getObjectTypeFilterSettings().getElementFilter();
     }
 
-    private FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerListener() {
+    private final FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerListener() {
         @Override
         public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
             if (scroll()) {

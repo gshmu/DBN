@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.KeyAdapter;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -17,7 +16,6 @@ import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.keymap.KeymapUtil;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,20 +28,19 @@ import java.util.Set;
 
 public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements KeyAdapter, TextFieldPopupProvider {
     protected TextFieldWithPopup editorComponent;
-    private boolean autoPopup;
+    private final boolean autoPopup;
+    private final boolean buttonVisible;
     private boolean enabled = true;
-    private boolean buttonVisible;
     private JBPopup popup;
     private JLabel button;
-    private Set<AnAction> actions = new HashSet<>();
+    private final Set<AnAction> actions = new HashSet<>();
 
     TextFieldPopupProviderForm(TextFieldWithPopup editorComponent, boolean autoPopup, boolean buttonVisible) {
         super(editorComponent.getProject());
         this.editorComponent = editorComponent;
         this.autoPopup = autoPopup;
         this.buttonVisible = buttonVisible;
-        Project project = editorComponent.getProject();
-        EventUtil.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
     private FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerListener() {

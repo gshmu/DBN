@@ -3,10 +3,10 @@ package com.dci.intellij.dbn.ddl;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.ui.ListUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -68,23 +68,23 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
 
     public static final String COMPONENT_NAME = "DBNavigator.Project.DDLFileAttachmentManager";
 
-    private Map<String, DBObjectRef<DBSchemaObject>> mappings = new HashMap<>();
+    private final Map<String, DBObjectRef<DBSchemaObject>> mappings = new HashMap<>();
     private DDLFileAttachmentManager(Project project) {
         super(project);
         VirtualFileManager.getInstance().addVirtualFileListener(virtualFileListener);
-        EventUtil.subscribe(project, project, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+        subscribe(SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
     }
 
-    private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
+    private final SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
-        public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
+        public void sourceCodeLoaded(@NotNull DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
             if (!initialLoad && DatabaseFileSystem.isFileOpened(sourceCodeFile.getObject())) {
                 updateDDLFiles(sourceCodeFile.getMainDatabaseFile());
             }
         }
 
         @Override
-        public void sourceCodeSaved(DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
+        public void sourceCodeSaved(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
             updateDDLFiles(sourceCodeFile.getMainDatabaseFile());
         }
     };
@@ -178,9 +178,10 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     public void attachDDLFile(DBObjectRef<DBSchemaObject> objectRef, VirtualFile virtualFile) {
         if (objectRef != null) {
             mappings.put(virtualFile.getUrl(), objectRef);
-            EventUtil.notify(getProject(),
+            Project project = getProject();
+            EventNotifier.notify(project,
                     DDLFileAttachmentManagerListener.TOPIC,
-                    (listener) -> listener.ddlFileAttached(virtualFile));
+                    (listener) -> listener.ddlFileAttached(project, virtualFile));
         }
     }
 
@@ -201,9 +202,10 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
             }
         }
 
-        EventUtil.notify(getProject(),
+        Project project = getProject();
+        EventNotifier.notify(project,
                 DDLFileAttachmentManagerListener.TOPIC,
-                (listener) -> listener.ddlFileDetached(virtualFile));
+                (listener) -> listener.ddlFileDetached(project, virtualFile));
     }
 
     private List<VirtualFile> lookupApplicableDDLFiles(@NotNull DBObjectRef<DBSchemaObject> objectRef) {

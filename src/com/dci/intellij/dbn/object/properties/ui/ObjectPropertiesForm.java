@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -41,7 +40,7 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
         objectTypeLabel.setText("Object properties:");
         objectLabel.setText("(no object selected)");
 
-        EventUtil.subscribe(getProject(), this, BrowserTreeEventListener.TOPIC, browserTreeEventListener);
+        subscribe(getProject(), this, BrowserTreeEventListener.TOPIC, browserTreeEventListener);
     }
 
     @NotNull
@@ -50,7 +49,7 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
         return mainPanel;
     }
 
-    private BrowserTreeEventListener browserTreeEventListener = new BrowserTreeEventAdapter() {
+    private final BrowserTreeEventListener browserTreeEventListener = new BrowserTreeEventAdapter() {
         @Override
         public void selectionChanged() {
             DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(getProject());

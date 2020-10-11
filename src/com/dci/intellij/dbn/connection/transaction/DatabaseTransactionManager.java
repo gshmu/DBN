@@ -2,11 +2,11 @@ package com.dci.intellij.dbn.connection.transaction;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.routine.ProgressRunnable;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -34,7 +34,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.COMMIT;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.DISCONNECT;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.ROLLBACK;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.TURN_AUTO_COMMIT_OFF;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.TURN_AUTO_COMMIT_ON;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
 
 public class DatabaseTransactionManager extends AbstractProjectComponent implements ProjectManagerListener{
 
@@ -106,7 +111,7 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         AtomicBoolean success = new AtomicBoolean(true);
         try {
             // notify pre-action
-            EventUtil.notify(project,
+            EventNotifier.notify(project,
                     TransactionListener.TOPIC,
                     (listener) -> listener.beforeAction(connectionHandler, connection, action));
 
@@ -131,13 +136,13 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
         } finally {
             if (Failsafe.check(project)) {
                 // notify post-action
-                EventUtil.notify(project,
+                EventNotifier.notify(project,
                         TransactionListener.TOPIC,
                         (listener) -> listener.afterAction(connectionHandler, connection, action, success.get()));
 
                 if (action.isStatusChange()) {
                     ConnectionId connectionId = connectionHandler.getConnectionId();
-                    EventUtil.notify(project,
+                    EventNotifier.notify(project,
                             ConnectionHandlerStatusListener.TOPIC,
                             (listener) -> listener.statusChanged(connectionId));
                 }

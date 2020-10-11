@@ -60,7 +60,7 @@ public abstract class DynamicContentResultSetLoader<
         private final long startTimestamp = System.currentTimeMillis();
     }
 
-    private DebugInfo preLoadContent(DynamicContent dynamicContent) {
+    private DebugInfo preLoadContent(DynamicContent<T> dynamicContent) {
         if (DatabaseNavigator.DEBUG) {
             DebugInfo debugInfo = new DebugInfo();
             LOGGER.info(
@@ -71,7 +71,7 @@ public abstract class DynamicContentResultSetLoader<
         return null;
     }
 
-    private void postLoadContent(DynamicContent dynamicContent, DebugInfo debugInfo) {
+    private void postLoadContent(DynamicContent<T> dynamicContent, DebugInfo debugInfo) {
         if (debugInfo != null) {
             LOGGER.info(
                     "[DBN-INFO] Done loading " + dynamicContent.getContentDescription() +
@@ -99,7 +99,7 @@ public abstract class DynamicContentResultSetLoader<
                             dynamicContent.checkDisposed();
                             resultSet = createResultSet(dynamicContent, connection);
 
-                            DynamicContentType contentType = dynamicContent.getContentType();
+                            DynamicContentType<?> contentType = dynamicContent.getContentType();
                             M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
 
                             boolean addDelay = DatabaseNavigator.getInstance().isSlowDatabaseModeEnabled();

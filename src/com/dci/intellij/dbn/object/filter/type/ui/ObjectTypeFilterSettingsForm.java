@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.object.filter.type.ui;
 
 import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
+import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSetting;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
@@ -80,7 +80,7 @@ public class ObjectTypeFilterSettingsForm extends ConfigurationEditorForm<Object
         SettingsChangeNotifier.register(() -> {
              if (notifyFilterListeners) {
                  ConnectionId connectionId = configuration.getConnectionId();
-                 EventUtil.notify(project,
+                 EventNotifier.notify(project,
                          ObjectFilterChangeListener.TOPIC,
                          (listener) -> listener.typeFiltersChanged(connectionId));
              }

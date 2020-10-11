@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySett
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -27,7 +26,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class TabbedBrowserForm extends DatabaseBrowserForm{
-    private TabbedPane connectionTabs;
+    private final TabbedPane connectionTabs;
     private JPanel mainPanel;
 
     TabbedBrowserForm(BrowserToolWindowForm parentComponent, @Nullable TabbedBrowserForm previous) {
@@ -61,7 +60,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         });
 
         Project project = getProject();
-        EventUtil.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
+        subscribe(EnvironmentManagerListener.TOPIC, environmentManagerListener);
     }
 
 
@@ -193,10 +192,9 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
     /********************************************************
      *                       Listeners                      *
      ********************************************************/
-    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
+    private final EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
         @Override
-        public void configurationChanged() {
-            Project project = getProject();
+        public void configurationChanged(Project project) {
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
             for (TabInfo tabInfo : getConnectionTabs().getTabs()) {
                 try {

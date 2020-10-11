@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
+import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 @Nullifiable
-public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends DisposableBase implements DBNForm, NotificationSupport {
+public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends DisposableBase implements DBNForm, NotificationSupport, ProjectEventAdapter {
     private ProjectRef projectRef;
     private WeakRef<P> parentComponent;
     private boolean registeredDataProvider;

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
+import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
@@ -25,7 +25,7 @@ import java.awt.*;
 
 import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 
-public class AutoCommitLabel extends JPanel implements Disposable {
+public class AutoCommitLabel extends JPanel implements Disposable, ProjectEventAdapter {
     private interface Colors {
         Color DISCONNECTED = new JBColor(new Color(0x454545), new Color(0x808080));
         Color CONNECTED = new JBColor(new Color(0x454545), new Color(0x808080));
@@ -63,9 +63,9 @@ public class AutoCommitLabel extends JPanel implements Disposable {
         this.sessionId = nvl(sessionId, SessionId.MAIN);
         if (!subscribed) {
             subscribed = true;
-            EventUtil.subscribe(project, this, ConnectionStatusListener.TOPIC, connectionStatusListener);
-            EventUtil.subscribe(project, this, FileConnectionMappingListener.TOPIC, connectionMappingListener);
-            EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
+            subscribe(project, this, ConnectionStatusListener.TOPIC, connectionStatusListener);
+            subscribe(project, this, FileConnectionMappingListener.TOPIC, connectionMappingListener);
+            subscribe(project, this, TransactionListener.TOPIC, transactionListener);
         }
         update();
     }
@@ -114,14 +114,14 @@ public class AutoCommitLabel extends JPanel implements Disposable {
         }
     }
 
-    private ConnectionStatusListener connectionStatusListener = (connectionId, sessionId) -> {
+    private final ConnectionStatusListener connectionStatusListener = (connectionId, sessionId) -> {
         ConnectionHandler connectionHandler = getConnectionHandler();
         if (connectionHandler != null && connectionHandler.getConnectionId() == connectionId) {
             update();
         }
     };
 
-    private FileConnectionMappingListener connectionMappingListener = new FileConnectionMappingListener() {
+    private final FileConnectionMappingListener connectionMappingListener = new FileConnectionMappingListener() {
         @Override
         public void connectionChanged(VirtualFile virtualFile, ConnectionHandler connectionHandler) {
             VirtualFile localVirtualFile = getVirtualFile();
@@ -144,7 +144,7 @@ public class AutoCommitLabel extends JPanel implements Disposable {
     /********************************************************
      *                Transaction Listener                  *
      ********************************************************/
-    private TransactionListener transactionListener = new TransactionListener() {
+    private final TransactionListener transactionListener = new TransactionListener() {
         @Override
         public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
             if (action.isOneOf(

@@ -1,21 +1,18 @@
 package com.dci.intellij.dbn.connection.ssl;
 
-import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.component.ApplicationComponent;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSslSettings;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ApplicationComponent;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.impl.ProjectLifecycleListener;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Map;
 
-public class SslConnectionManager implements ApplicationComponent{
-    private Map<String, SslConnection> sslConnectors = new THashMap<String, SslConnection>();
+public class SslConnectionManager implements ApplicationComponent {
+    private final Map<String, SslConnection> sslConnectors = new THashMap<String, SslConnection>();
 
     public static SslConnectionManager getInstance() {
         return ApplicationManager.getApplication().getComponent(SslConnectionManager.class);
@@ -54,31 +51,9 @@ public class SslConnectionManager implements ApplicationComponent{
         return certificateAuthorityFile + "#" + clientCertificateFile + "#" + clientKeyFile;
     }
 
-    @Override
-    public void initComponent() {
-        EventUtil.subscribe(null, ProjectLifecycleListener.TOPIC, projectLifecycleListener);
-    }
-
-    @Override
-    public void disposeComponent() { }
-
     @NotNull
     @Override
     public String getComponentName() {
         return "DBNavigator.SslConnectionManager";
     }
-
-    /*********************************************************
-     *              ProjectLifecycleListener                 *
-     *********************************************************/
-    private ProjectLifecycleListener projectLifecycleListener = new ProjectLifecycleListener() {
-
-        @Override
-        public void projectComponentsInitialized(Project project) {
-        }
-
-        @Override
-        public void afterProjectClosed(@NotNull Project project) {
-        }
-    };
 }

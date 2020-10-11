@@ -16,7 +16,6 @@ import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
@@ -60,7 +59,10 @@ import java.util.stream.Collectors;
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
-import static com.dci.intellij.dbn.common.util.MessageUtil.*;
+import static com.dci.intellij.dbn.common.util.MessageUtil.options;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showErrorDialog;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showInfoDialog;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
 
 @State(
@@ -88,13 +90,13 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         super(project);
         connectionBundle = new ConnectionBundle(project);
         Disposer.register(this, connectionBundle);
+        subscribe(ConnectionSettingsListener.TOPIC, connectionSettingsListener);
     }
 
     @Override
     public void initComponent() {
         super.initComponent();
         Project project = getProject();
-        EventUtil.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
         idleConnectionCleaner = new Timer("DBN - Idle Connection Cleaner [" + project.getName() + "]");
         idleConnectionCleaner.schedule(new CloseIdleConnectionTask(), TimeUtil.Millis.ONE_MINUTE, TimeUtil.Millis.ONE_MINUTE);
     }

@@ -2,9 +2,9 @@ package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
+import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -30,15 +30,15 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.EventObject;
 
-public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor implements TableCellEditor, RegisteredDisposable {
-    private WeakRef<DataEditorComponent> editorComponent;
-    private WeakRef<DatasetEditorTable> table;
+public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor implements TableCellEditor, RegisteredDisposable, ProjectEventAdapter {
+    private final WeakRef<DataEditorComponent> editorComponent;
+    private final WeakRef<DatasetEditorTable> table;
     private WeakRef<DatasetEditorModelCell> cell;
     private int clickCountToStart = 1;
     protected DataEditorSettings settings;
 
 
-    private DatasetEditorModelCellValueListener cellValueListener = cell -> {
+    private final DatasetEditorModelCellValueListener cellValueListener = cell -> {
         if (cell == getCell()) {
             Dispatch.run(() -> setCellValueToEditor());
         }
@@ -53,7 +53,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
 
         this.clickCountToStart = 2;
         editorComponent.getTextField().addActionListener(new EditorDelegate());
-        EventUtil.subscribe(project, this, DatasetEditorModelCellValueListener.TOPIC, cellValueListener);
+        subscribe(project, this, DatasetEditorModelCellValueListener.TOPIC, cellValueListener);
 
         table.addPropertyChangeListener(evt -> {
             Object newValue = evt.getNewValue();

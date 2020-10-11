@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
+import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableHeaderRenderer;
 import com.intellij.openapi.project.Project;
@@ -38,11 +39,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 @Nullifiable
-public abstract class DBNTable<T extends DBNTableModel> extends JTable implements RegisteredDisposable, UserDataHolder {
+public abstract class DBNTable<T extends DBNTableModel> extends JTable implements RegisteredDisposable, UserDataHolder, ProjectEventAdapter.Provided {
     private static final int MAX_COLUMN_WIDTH = 300;
     private static final int MIN_COLUMN_WIDTH = 10;
+    private final ProjectRef projectRef;
     protected DBNTableGutter tableGutter;
-    private ProjectRef projectRef;
     private double scrollDistance;
     private JBScrollPane scrollPane;
     private Timer scrollTimer;
