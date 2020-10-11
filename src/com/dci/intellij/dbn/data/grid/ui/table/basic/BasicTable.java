@@ -175,12 +175,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         }
     }
 
-    private RegionalSettingsListener regionalSettingsListener = new RegionalSettingsListener() {
-        @Override
-        public void settingsChanged() {
-            regionalSettingsChanged();
-        }
-    };
+    private final RegionalSettingsListener regionalSettingsListener = () -> regionalSettingsChanged();
 
     protected void regionalSettingsChanged() {
         resizeAndRepaint();

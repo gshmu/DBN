@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.session.ui.table;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableSelectionRestorer;
@@ -16,15 +17,14 @@ import com.dci.intellij.dbn.editor.session.model.SessionBrowserColumnInfo;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelCell;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
-import com.intellij.openapi.project.Project;
 import com.intellij.ui.PopupMenuListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.table.TableCellRenderer;
@@ -34,7 +34,7 @@ import java.sql.SQLException;
 import java.util.EventObject;
 
 public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
-    private SessionBrowser sessionBrowser;
+    private final WeakRef<SessionBrowser> sessionBrowser;
 
     public SessionBrowserTable(SessionBrowser sessionBrowser) throws SQLException {
         super(new SessionBrowserModel(sessionBrowser.getConnectionHandler()), false, new RecordViewInfo(sessionBrowser.getConnectionHandler().getName(), null));
@@ -42,7 +42,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
         getTableHeader().addMouseListener(new SessionBrowserTableHeaderMouseListener(this));
         addMouseListener(new SessionBrowserTableMouseListener(this));
         getSelectionModel().addListSelectionListener(listSelectionListener);
-        this.sessionBrowser = sessionBrowser;
+        this.sessionBrowser = WeakRef.of(sessionBrowser);
 /*
         DataProvider dataProvider = sessionBrowser.getDataProvider();
         ActionUtil.registerDataProvider(this, dataProvider, false);
@@ -62,15 +62,8 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     }
 
     @Override
-    @NotNull
-    public Project getProject() {
-        return sessionBrowser.getProject();
-    }
-
-
-    @Override
     public String getName() {
-        return sessionBrowser == null ? "Disposed" : sessionBrowser.getConnectionHandler().getName();
+        return getSessionBrowser().getConnectionHandler().getName();
     }
 
     @Override
@@ -115,20 +108,19 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
         return 10;
     }
 
+    @NotNull
     public SessionBrowser getSessionBrowser() {
-        return sessionBrowser;
+        return sessionBrowser.ensure();
     }
 
-    private ListSelectionListener listSelectionListener = new ListSelectionListener() {
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
+    private final ListSelectionListener listSelectionListener = e -> {
+        Safe.run(() -> {
             if (!e.getValueIsAdjusting()) {
                 snapshotSelection();
-                if (sessionBrowser != null) {
-                    sessionBrowser.updateDetails();
-                }
+                SessionBrowser sessionBrowser = getSessionBrowser();
+                sessionBrowser.updateDetails();
             }
-        }
+        });
     };
 
     @Override
@@ -186,6 +178,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
             SessionBrowserColumnInfo columnInfo) {
         Component eventSource = (Component) event.getSource();
         if (eventSource.isShowing()) {
+            SessionBrowser sessionBrowser = getSessionBrowser();
             ActionGroup actionGroup = new SessionBrowserTableActionGroup(sessionBrowser, cell, columnInfo);
             ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
             JPopupMenu popupMenu = actionPopupMenu.getComponent();
