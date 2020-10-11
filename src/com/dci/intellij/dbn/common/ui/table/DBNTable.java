@@ -158,7 +158,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     }
 
     @NotNull
-    public Project getProject() {
+    public final Project getProject() {
         return projectRef.ensure();
     }
 
