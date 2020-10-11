@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MathResult;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
@@ -37,6 +36,7 @@ public class DatasetEditorStatusBarWidget extends AbstractProjectComponent imple
         super(project);
         textLabel = new JLabel();
         component.add(textLabel, BorderLayout.WEST);
+        subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, this);
     }
 
     public static DatasetEditorStatusBarWidget getInstance(@NotNull Project project) {
@@ -112,7 +112,7 @@ public class DatasetEditorStatusBarWidget extends AbstractProjectComponent imple
 
     @Override
     public void install(@NotNull StatusBar statusBar) {
-        EventUtil.subscribe(getProject(), this, FileEditorManagerListener.FILE_EDITOR_MANAGER, this);
+
     }
 
     @Override

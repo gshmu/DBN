@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.file.DBDatasetVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
-import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.NamedComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
 import com.intellij.openapi.fileEditor.FileEditorProvider;
@@ -23,7 +23,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public class DatasetEditorProvider implements FileEditorProvider, ApplicationComponent, DumbAware {
+public class DatasetEditorProvider implements FileEditorProvider, NamedComponent, DumbAware {
     /*********************************************************
      *                  FileEditorProvider                   *
      *********************************************************/
@@ -93,6 +93,7 @@ public class DatasetEditorProvider implements FileEditorProvider, ApplicationCom
         return FileEditorPolicy.HIDE_DEFAULT_EDITOR;
     }
 
+
     /*********************************************************
      *                ApplicationComponent                   *
      *********************************************************/
@@ -101,16 +102,6 @@ public class DatasetEditorProvider implements FileEditorProvider, ApplicationCom
     @NotNull
     public String getComponentName() {
         return "DBNavigator.DatasetEditorProvider";
-    }
-
-    @Override
-    public void initComponent() {
-
-    }
-
-    @Override
-    public void disposeComponent() {
-
     }
 }
 

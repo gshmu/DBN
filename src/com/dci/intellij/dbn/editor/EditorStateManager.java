@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
@@ -46,20 +45,22 @@ import java.util.Map;
 public class EditorStateManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.EditorStateManager";
 
-    private Map<DBObjectType, EditorProviderId> lastUsedEditorProviders = new THashMap<>();
+    private final Map<DBObjectType, EditorProviderId> lastUsedEditorProviders = new THashMap<>();
     private EditorStateManager(Project project) {
         super(project);
-        EventUtil.subscribe(project, project, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
-        EventUtil.subscribe(project, project, EnvironmentManagerListener.TOPIC, environmentManagerListener);
+
+        subscribe(SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+        subscribe(EnvironmentManagerListener.TOPIC, environmentManagerListener);
+        subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorListener);
     }
 
     public static EditorStateManager getInstance(@NotNull Project project) {
         return Failsafe.getComponent(project, EditorStateManager.class);
     }
 
-    private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
+    private final SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
-        public void sourceCodeLoaded(final DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
+        public void sourceCodeLoaded(@NotNull final DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
             Project project = getProject();
             EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
             boolean readonly = environmentManager.isReadonly(sourceCodeFile);
@@ -67,10 +68,9 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
         }
     };
 
-    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
+    private final EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
         @Override
-        public void configurationChanged() {
-            Project project = getProject();
+        public void configurationChanged(Project project) {
             FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
             EnvironmentManager environmentManager = EnvironmentManager.getInstance(project);
             VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
@@ -119,10 +119,9 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
 
     @Override
     public void initComponent() {
-        EventUtil.subscribe(getProject(), this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorListener);
     }
 
-    private FileEditorManagerListener fileEditorListener = new FileEditorManagerListener() {
+    private final FileEditorManagerListener fileEditorListener = new FileEditorManagerListener() {
         @Override
         public void selectionChanged(@NotNull FileEditorManagerEvent event) {
             DBObject oldObject = null;

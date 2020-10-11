@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.editor.session;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
-import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.NamedComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
 import com.intellij.openapi.fileEditor.FileEditorProvider;
@@ -15,7 +15,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public class SessionBrowserEditorProvider implements FileEditorProvider, ApplicationComponent, DumbAware {
+public class SessionBrowserEditorProvider implements FileEditorProvider, NamedComponent, DumbAware {
     /*********************************************************
      *                  FileEditorProvider                   *
      *********************************************************/
@@ -77,16 +77,6 @@ public class SessionBrowserEditorProvider implements FileEditorProvider, Applica
     @NotNull
     public String getComponentName() {
         return "DBNavigator.SessionBrowserProvider";
-    }
-
-    @Override
-    public void initComponent() {
-
-    }
-
-    @Override
-    public void disposeComponent() {
-
     }
 }
 

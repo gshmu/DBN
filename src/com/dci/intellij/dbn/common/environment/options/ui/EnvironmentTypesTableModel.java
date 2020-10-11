@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentConfigLocalListener;
+import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.openapi.options.ConfigurationException;
@@ -20,7 +20,7 @@ import java.awt.*;
 @Nullifiable
 public class EnvironmentTypesTableModel extends DBNEditableTableModel {
     private EnvironmentTypeBundle environmentTypes;
-    private ProjectRef projectRef;
+    private final ProjectRef projectRef;
 
     EnvironmentTypesTableModel(Project project, EnvironmentTypeBundle environmentTypes) {
         this.projectRef = ProjectRef.from(project);
@@ -42,11 +42,11 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
         return environmentTypes.size();
     }
     
-    private TableModelListener defaultModelListener = new TableModelListener() {
+    private final TableModelListener defaultModelListener = new TableModelListener() {
         @Override
         public void tableChanged(TableModelEvent e) {
             Project project = getProject();
-            EventUtil.notify(project,
+            EventNotifier.notify(project,
                     EnvironmentConfigLocalListener.TOPIC,
                     (listener) -> listener.settingsChanged(environmentTypes));
         }

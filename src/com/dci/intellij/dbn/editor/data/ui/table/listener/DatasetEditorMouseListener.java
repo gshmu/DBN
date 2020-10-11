@@ -5,28 +5,36 @@ import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBColumn;
-import com.intellij.openapi.Disposable;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class DatasetEditorMouseListener extends MouseAdapter implements Disposable {
-    private DatasetEditorTable table;
+public class DatasetEditorMouseListener extends MouseAdapter {
+    private final WeakRef<DatasetEditorTable> table;
 
     public DatasetEditorMouseListener(DatasetEditorTable table) {
-        this.table = table;
+        this.table = WeakRef.of(table);
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
     }
 
+
+    @NotNull
+    public DatasetEditorTable getTable() {
+        return table.ensure();
+    }
+
     @Override
     public void mouseReleased(final MouseEvent event) {
         if (event.getButton() == MouseEvent.BUTTON3) {
             Point mousePoint = event.getPoint();
+            DatasetEditorTable table = getTable();
             DatasetEditorModelCell cell = (DatasetEditorModelCell) table.getCellAtLocation(mousePoint);
             if (cell != null) {
 
@@ -46,6 +54,7 @@ public class DatasetEditorMouseListener extends MouseAdapter implements Disposab
     @Override
     public void mouseClicked(MouseEvent event) {
         if (MouseUtil.isNavigationEvent(event)) {
+            DatasetEditorTable table = getTable();
             DatasetEditorModelCell cell = (DatasetEditorModelCell) table.getCellAtLocation(event.getPoint());
             if (cell != null){
                 DBColumn column = cell.getColumnInfo().getColumn();
@@ -61,10 +70,5 @@ public class DatasetEditorMouseListener extends MouseAdapter implements Disposab
                 }
             }
         }
-    }
-
-    @Override
-    public void dispose() {
-        table = null;
     }
 }

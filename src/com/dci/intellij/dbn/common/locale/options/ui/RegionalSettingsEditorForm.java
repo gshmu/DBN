@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.locale.options.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.locale.DBDateFormat;
 import com.dci.intellij.dbn.common.locale.DBNumberFormat;
 import com.dci.intellij.dbn.common.locale.Formatter;
@@ -13,7 +14,6 @@ import com.dci.intellij.dbn.common.ui.DBNComboBox;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.ValueSelectorListener;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
@@ -205,7 +205,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (modified) {
-                EventUtil.notify(project,
+                EventNotifier.notify(project,
                         RegionalSettingsListener.TOPIC,
                         (listener) -> listener.settingsChanged());
             }});

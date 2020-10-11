@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.connection.transaction.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectionType;
@@ -19,10 +18,12 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.COMMIT;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.ROLLBACK;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
 
 public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm> {
-    private TransactionAction additionalOperation;
+    private final TransactionAction additionalOperation;
 
     public PendingTransactionsDialog(Project project, TransactionAction additionalOperation) {
         super(project, "Uncommitted changes overview", true);
@@ -30,7 +31,7 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
         setModal(false);
         setResizable(true);
         init();
-        EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
+        subscribe(TransactionListener.TOPIC, transactionListener);
     }
 
     @NotNull

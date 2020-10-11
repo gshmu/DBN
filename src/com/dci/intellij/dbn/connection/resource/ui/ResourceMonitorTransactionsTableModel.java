@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.PendingTransaction;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.TableModelListener;
@@ -27,6 +28,7 @@ public class ResourceMonitorTransactionsTableModel extends DisposableBase implem
         return connectionHandlerRef.ensure();
     }
 
+    @NotNull
     public Project getProject() {
         return getConnectionHandler().getProject();
     }

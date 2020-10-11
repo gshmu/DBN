@@ -23,8 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class ObjectLookupItemBuilder extends LookupItemBuilder {
-    private DBLanguage language;
-    private DBObjectRef objectRef;
+    private final DBLanguage language;
+    private final DBObjectRef objectRef;
 
     public ObjectLookupItemBuilder(DBObjectRef objectRef, DBLanguage language) {
         this.objectRef = objectRef;

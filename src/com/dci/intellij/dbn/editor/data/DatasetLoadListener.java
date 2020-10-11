@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.editor.data;
 
-import com.intellij.openapi.vfs.VirtualFile;
+import com.dci.intellij.dbn.vfs.DBVirtualFile;
 import com.intellij.util.messages.Topic;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EventListener;
 
 public interface DatasetLoadListener extends EventListener {
     Topic<DatasetLoadListener> TOPIC = Topic.create("Dataset loaded", DatasetLoadListener.class);
 
-    void datasetLoaded(VirtualFile virtualFile);
-    void datasetLoading(VirtualFile virtualFile);
+    void datasetLoaded(@NotNull DBVirtualFile virtualFile);
+    void datasetLoading(@NotNull DBVirtualFile virtualFile);
 }

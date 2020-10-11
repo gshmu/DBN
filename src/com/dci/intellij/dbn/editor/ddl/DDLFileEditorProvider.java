@@ -19,8 +19,8 @@ import java.util.List;
 
 public abstract class DDLFileEditorProvider extends BasicTextEditorProvider implements DumbAware {
 
-    private int index;
-    private String componentName;
+    private final int index;
+    private final String componentName;
 
     public DDLFileEditorProvider(int index, String componentName) {
         this.index = index;

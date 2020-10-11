@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.IncrementalStatusAdapter;
@@ -101,7 +101,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
                     if (true || getResource().isNot(ConnectionHandlerStatus.LOADING)) {
                         ConnectionHandler connectionHandler = Failsafe.nn(getConnectionHandler());
                         Project project = connectionHandler.getProject();
-                        EventUtil.notify(project,
+                        EventNotifier.notify(project,
                                 ConnectionLoadListener.TOPIC,
                                 (listener) -> listener.contentsLoaded(connectionHandler));
                     }
@@ -207,7 +207,7 @@ public class ConnectionHandlerStatusHolder extends PropertyHolderImpl<Connection
         public final void statusChanged(ConnectionHandlerStatus status) {
             ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
             Project project = connectionHandler.getProject();
-            EventUtil.notify(project,
+            EventNotifier.notify(project,
                     ConnectionHandlerStatusListener.TOPIC,
                     (listener) -> listener.statusChanged(connectionHandler.getConnectionId()));
         }

@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Write;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.ddl.options.DDLFileExtensionSettings;
@@ -46,10 +45,10 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
 
     private DDLFileManager(Project project) {
         super(project);
-        EventUtil.subscribe(this, FileTypeManager.TOPIC, fileTypeListener);
+        subscribe(FileTypeManager.TOPIC, fileTypeListener);
     }
 
-    private Alarm extensionRegisterer = new Alarm(DDLFileManager.this);
+    private final Alarm extensionRegisterer = new Alarm(DDLFileManager.this);
 
     public void registerExtensions(DDLFileExtensionSettings settings) {
         extensionRegisterer.addRequest(() -> {
@@ -123,7 +122,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
      *            FileTypeListener         *
      ***************************************/
 
-    private FileTypeListener fileTypeListener = new FileTypeListener() {
+    private final FileTypeListener fileTypeListener = new FileTypeListener() {
         @Override
         public void fileTypesChanged(@NotNull FileTypeEvent event) {
             StringBuilder restoredAssociations = null;

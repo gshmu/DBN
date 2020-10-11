@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPaneUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -25,7 +24,6 @@ import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSslSettings;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.tabs.TabInfo;
@@ -100,8 +98,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
         headerForm = new DBNHeaderForm(name, icon, color, this);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
-        Project project = databaseSettings.getProject();
-        EventUtil.subscribe(project, this, ConnectionPresentationChangeListener.TOPIC, connectionPresentationChangeListener);
+        subscribe(ConnectionPresentationChangeListener.TOPIC, connectionPresentationChangeListener);
 
         //databaseSettingsForm.notifyPresentationChanges();
         //detailSettingsForm.notifyPresentationChanges();

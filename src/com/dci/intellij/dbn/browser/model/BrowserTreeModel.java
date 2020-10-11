@@ -5,13 +5,14 @@ import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
+import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
 import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
@@ -20,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Nullifiable
-public abstract class BrowserTreeModel extends DisposableBase implements TreeModel, RegisteredDisposable {
+public abstract class BrowserTreeModel extends DisposableBase implements TreeModel, RegisteredDisposable, ProjectEventAdapter.Provided {
 
     private final Set<TreeModelListener> treeModelListeners = new HashSet<>();
     private final WeakRef<BrowserTreeNode> root;
@@ -31,8 +32,7 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
 
     BrowserTreeModel(BrowserTreeNode root) {
         this.root = WeakRef.of(root);
-        Project project = root.getProject();
-        EventUtil.subscribe(project, this, BrowserTreeEventListener.TOPIC, browserTreeEventListener);
+        subscribe(BrowserTreeEventListener.TOPIC, browserTreeEventListener);
     }
 
     @Override
@@ -52,6 +52,7 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
         }
     }
 
+    @NotNull
     public Project getProject() {
         return getRoot().getProject();
     }

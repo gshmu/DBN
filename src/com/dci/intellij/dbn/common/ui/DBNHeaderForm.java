@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.common.ui;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -67,7 +66,7 @@ public class DBNHeaderForm extends DBNFormImpl{
         ConnectionId id = connectionHandler.getConnectionId();
         Project project = connectionHandler.getProject();
 
-        EventUtil.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, (connectionId) -> {
+        subscribe(ConnectionHandlerStatusListener.TOPIC, (connectionId) -> {
             if (connectionId == id) {
                 ConnectionManager connectionManager = ConnectionManager.getInstance(project);
                 ConnectionHandler connHandler = connectionManager.getConnectionHandler(connectionId);

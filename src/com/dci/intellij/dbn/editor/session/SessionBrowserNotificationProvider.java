@@ -1,12 +1,10 @@
 package com.dci.intellij.dbn.editor.session;
 
-import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.util.EventUtil;
+import com.dci.intellij.dbn.common.compatibility.LegacyEditorNotificationsProvider;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.session.ui.SessionBrowserErrorNotificationPanel;
 import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
-import com.intellij.ide.FrameStateManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -15,17 +13,16 @@ import com.intellij.ui.EditorNotifications;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SessionBrowserNotificationProvider extends EditorNotifications.Provider<SessionBrowserErrorNotificationPanel> {
+public class SessionBrowserNotificationProvider extends LegacyEditorNotificationsProvider<SessionBrowserErrorNotificationPanel> {
     private static final Key<SessionBrowserErrorNotificationPanel> KEY = Key.create("DBNavigator.SessionBrowserErrorNotificationPanel");
-    private ProjectRef projectRef;
 
-    public SessionBrowserNotificationProvider(@NotNull Project project) {
-        this(project, FrameStateManager.getInstance());
+    public SessionBrowserNotificationProvider() {
+        this(null);
     }
 
-    public SessionBrowserNotificationProvider(@NotNull Project project, @NotNull FrameStateManager frameStateManager) {
-        this.projectRef = ProjectRef.from(project);
-        EventUtil.subscribe(project, project, SessionBrowserLoadListener.TOPIC, sessionsLoadListener);
+    public SessionBrowserNotificationProvider(@Nullable Project project) {
+        super(project);
+        subscribe(SessionBrowserLoadListener.TOPIC, sessionsLoadListener);
 
     }
 
@@ -48,7 +45,7 @@ public class SessionBrowserNotificationProvider extends EditorNotifications.Prov
 
     @Nullable
     @Override
-    public SessionBrowserErrorNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor) {
+    public SessionBrowserErrorNotificationPanel createNotificationPanel(@NotNull VirtualFile virtualFile, @NotNull FileEditor fileEditor, @NotNull Project project) {
         if (virtualFile instanceof DBSessionBrowserVirtualFile) {
             if (fileEditor instanceof SessionBrowser) {
                 SessionBrowser sessionBrowser = (SessionBrowser) fileEditor;
@@ -65,10 +62,5 @@ public class SessionBrowserNotificationProvider extends EditorNotifications.Prov
 
     private static SessionBrowserErrorNotificationPanel createPanel(ConnectionHandler connectionHandler, String sourceLoadError) {
         return new SessionBrowserErrorNotificationPanel(connectionHandler, sourceLoadError);
-    }
-
-    @NotNull
-    public Project getProject() {
-        return projectRef.ensure();
     }
 }

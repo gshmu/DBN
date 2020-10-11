@@ -30,8 +30,6 @@ public interface NotificationSupport {
     }
 
 
-
-
     static void sendInfoNotification(Project project, NotificationGroup group, String message, Object... args) {
         sendNotification(project, NotificationType.INFORMATION, group, message, args);
     }

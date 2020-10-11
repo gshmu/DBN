@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -14,9 +15,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 @Nullifiable
-public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper implements DisposableProjectComponent{
+public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper implements DisposableProjectComponent, ProjectEventAdapter.Provided {
     private C component;
-    private ProjectRef projectRef;
+    private final ProjectRef projectRef;
     private boolean disposed;
     private boolean rememberSelection;
 

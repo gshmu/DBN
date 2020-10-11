@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
@@ -31,7 +30,7 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
     public SourceCodeEditorActionsPanel(@NotNull SourceCodeEditor sourceCodeEditor) {
         this.sourceCodeEditor = sourceCodeEditor;
         Editor editor = sourceCodeEditor.getEditor();
-        Project project = editor.getProject();
+        Project project = sourceCodeEditor.getProject();
         JComponent editorComponent = editor.getComponent();
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.SourceEditor");
         actionToolbar.setTargetComponent(editorComponent);
@@ -39,12 +38,12 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
         loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);
         loadingDataPanel.setVisible(false);
 
-        EventUtil.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+        subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
     }
 
     private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
-        public void sourceCodeLoading(DBSourceCodeVirtualFile sourceCodeFile) {
+        public void sourceCodeLoading(@NotNull DBSourceCodeVirtualFile sourceCodeFile) {
             DBSourceCodeVirtualFile virtualFile = getSourceCodeEditor().getVirtualFile();
             if (virtualFile.equals(sourceCodeFile)) {
                 Dispatch.run(() -> loadingDataPanel.setVisible(true));
@@ -52,7 +51,7 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
         }
 
         @Override
-        public void sourceCodeLoaded(DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
+        public void sourceCodeLoaded(@NotNull DBSourceCodeVirtualFile sourceCodeFile, boolean initialLoad) {
             DBSourceCodeVirtualFile virtualFile = getSourceCodeEditor().getVirtualFile();
             if (virtualFile.equals(sourceCodeFile)) {
                 Dispatch.run(() -> loadingDataPanel.setVisible(false));

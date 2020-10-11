@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
-import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.NamedComponent;
 import com.intellij.openapi.fileEditor.FileEditorProvider;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.project.DumbAware;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public abstract class BasicTextEditorProvider implements FileEditorProvider, ApplicationComponent, DumbAware {
+public abstract class BasicTextEditorProvider implements FileEditorProvider, NamedComponent, DumbAware {
     @Override
     @NotNull
     public FileEditorState readState(@NotNull Element sourceElement, @NotNull Project project, @NotNull VirtualFile virtualFile) {
@@ -54,16 +54,4 @@ public abstract class BasicTextEditorProvider implements FileEditorProvider, App
     @NotNull
     public abstract EditorProviderId getEditorProviderId();
 
-
-    /*********************************************************
-     *                ApplicationComponent                   *
-     *********************************************************/
-    @Override
-    public void initComponent() {
-    }
-
-    @Override
-    public void disposeComponent() {
-
-    }
 }

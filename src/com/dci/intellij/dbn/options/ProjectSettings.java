@@ -24,6 +24,7 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
+import lombok.Getter;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -37,18 +38,18 @@ public class ProjectSettings
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private GeneralProjectSettings generalSettings           = new GeneralProjectSettings(this);
-    private DatabaseBrowserSettings browserSettings          = new DatabaseBrowserSettings(this);
-    private NavigationSettings navigationSettings            = new NavigationSettings(this);
-    private DataGridSettings dataGridSettings                = new DataGridSettings(this);
-    private DataEditorSettings dataEditorSettings            = new DataEditorSettings(this);
-    private CodeEditorSettings codeEditorSettings            = new CodeEditorSettings(this);
-    private CodeCompletionSettings codeCompletionSettings    = new CodeCompletionSettings(this);
-    private ProjectCodeStyleSettings codeStyleSettings       = new ProjectCodeStyleSettings(this);
-    private ExecutionEngineSettings executionEngineSettings  = new ExecutionEngineSettings(this);
-    private OperationSettings operationSettings              = new OperationSettings(this);
-    private DDLFileSettings ddlFileSettings                  = new DDLFileSettings(this);
-    private ConnectionBundleSettings connectionSettings      = new ConnectionBundleSettings(this);
+    private final @Getter GeneralProjectSettings generalSettings           = new GeneralProjectSettings(this);
+    private final @Getter DatabaseBrowserSettings browserSettings          = new DatabaseBrowserSettings(this);
+    private final @Getter NavigationSettings navigationSettings            = new NavigationSettings(this);
+    private final @Getter DataGridSettings dataGridSettings                = new DataGridSettings(this);
+    private final @Getter DataEditorSettings dataEditorSettings            = new DataEditorSettings(this);
+    private final @Getter CodeEditorSettings codeEditorSettings            = new CodeEditorSettings(this);
+    private final @Getter CodeCompletionSettings codeCompletionSettings    = new CodeCompletionSettings(this);
+    private final @Getter ProjectCodeStyleSettings codeStyleSettings       = new ProjectCodeStyleSettings(this);
+    private final @Getter ExecutionEngineSettings executionEngineSettings  = new ExecutionEngineSettings(this);
+    private final @Getter OperationSettings operationSettings              = new OperationSettings(this);
+    private final @Getter DDLFileSettings ddlFileSettings                  = new DDLFileSettings(this);
+    private final @Getter ConnectionBundleSettings connectionSettings      = new ConnectionBundleSettings(this);
 
     public ProjectSettings(Project project) {
         super(project);
@@ -80,58 +81,6 @@ public class ProjectSettings
         return super.createComponent();
     }
 
-
-
-    /*********************************************************
-    *                         Custom                        *
-    *********************************************************/
-    public GeneralProjectSettings getGeneralSettings() {
-        return generalSettings;
-    }
-
-    public DatabaseBrowserSettings getBrowserSettings() {
-        return browserSettings;
-    }
-
-    public NavigationSettings getNavigationSettings() {
-        return navigationSettings;
-    }
-
-    public ConnectionBundleSettings getConnectionSettings() {
-        return connectionSettings;
-    }
-
-    public DataGridSettings getDataGridSettings() {
-        return dataGridSettings;
-    }
-
-    public DataEditorSettings getDataEditorSettings() {
-        return dataEditorSettings;
-    }
-
-    public CodeEditorSettings getCodeEditorSettings() {
-        return codeEditorSettings;
-    }
-
-    public CodeCompletionSettings getCodeCompletionSettings() {
-        return codeCompletionSettings;
-    }
-
-    public ProjectCodeStyleSettings getCodeStyleSettings() {
-        return codeStyleSettings;
-    }
-
-    public ExecutionEngineSettings getExecutionEngineSettings() {
-        return executionEngineSettings;
-    }
-
-    public OperationSettings getOperationSettings() {
-        return operationSettings;
-    }
-
-    public DDLFileSettings getDdlFileSettings() {
-        return ddlFileSettings;
-    }
 
     @Override
     @Nls

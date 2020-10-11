@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.action.NavigateToObjectAction;
@@ -34,12 +35,12 @@ import java.awt.datatransfer.Transferable;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
 
 public class DatasetEditorTableActionGroup extends DefaultActionGroup {
-    private ColumnInfo columnInfo;
-    private Object columnValue;
+    private final ColumnInfo columnInfo;
+    private final Object columnValue;
     boolean isHeaderAction;
-    private DatasetEditor datasetEditor;
+    private final WeakRef<DatasetEditor> datasetEditor;
     public DatasetEditorTableActionGroup(DatasetEditor datasetEditor, @Nullable DatasetEditorModelCell cell, ColumnInfo columnInfo) {
-        this.datasetEditor = datasetEditor;
+        this.datasetEditor = WeakRef.of(datasetEditor);
         this.columnInfo = columnInfo;
         DatasetEditorTable table = datasetEditor.getEditorTable();
 
@@ -149,6 +150,11 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         return null;
     }
 
+    @NotNull
+    public DatasetEditor getDatasetEditor() {
+        return datasetEditor.ensure();
+    }
+
     private class HideColumnAction extends DumbAwareAction {
         private HideColumnAction() {
             super("Hide column");
@@ -156,7 +162,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            DatasetEditorTable editorTable = datasetEditor.getEditorTable();
+            DatasetEditorTable editorTable = getDatasetEditor().getEditorTable();
             int columnIndex = columnInfo.getColumnIndex();
             editorTable.hideColumn(columnIndex);
         }
@@ -169,7 +175,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            DatasetEditorTable editorTable = datasetEditor.getEditorTable();
+            DatasetEditorTable editorTable = getDatasetEditor().getEditorTable();
             int modelColumnIndex = columnInfo.getColumnIndex();
             int tableColumnIndex = editorTable.convertColumnIndexToView(modelColumnIndex);
             editorTable.sort(tableColumnIndex, SortDirection.ASCENDING, false);
@@ -183,7 +189,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            DatasetEditorTable editorTable = datasetEditor.getEditorTable();
+            DatasetEditorTable editorTable = getDatasetEditor().getEditorTable();
             int modelColumnIndex = columnInfo.getColumnIndex();
             int tableColumnIndex = editorTable.convertColumnIndexToView(modelColumnIndex);
             editorTable.sort(tableColumnIndex, SortDirection.DESCENDING, false);
@@ -199,7 +205,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
 
         @Override
         public void actionPerformed(AnActionEvent e) {
-            DBDataset dataset = datasetEditor.getDataset();
+            DBDataset dataset = getDatasetEditor().getDataset();
             DatasetFilterManager datasetFilterManager = DatasetFilterManager.getInstance(dataset.getProject());
             Object value = filterByValue ? columnValue : null;
             datasetFilterManager.createBasicFilter(dataset, columnInfo.getName(), value, ConditionOperator.EQUAL, !filterByValue);
@@ -207,7 +213,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
     }
 
     private class CreateClipboardFilterAction extends DumbAwareAction {
-        private String text;
+        private final String text;
         private boolean like;
         private CreateClipboardFilterAction(String text, boolean like) {
             super("Filter by clipboard value" + (like ? " (like)" : ""));
@@ -217,7 +223,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
 
         @Override
         public void actionPerformed(AnActionEvent e) {
-            DBDataset dataset = datasetEditor.getDataset();
+            DBDataset dataset = getDatasetEditor().getDataset();
             DatasetFilterManager datasetFilterManager = DatasetFilterManager.getInstance(dataset.getProject());
             String value = like ? '%' + text + '%' : text;
             ConditionOperator operator = like ? ConditionOperator.LIKE : ConditionOperator.EQUAL;
@@ -234,7 +240,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
 
         @Override
         public void actionPerformed(AnActionEvent e) {
-            DBDataset dataset = datasetEditor.getDataset();
+            DBDataset dataset = getDatasetEditor().getDataset();
             DatasetFilterManager filterManager = DatasetFilterManager.getInstance(dataset.getProject());
             DatasetBasicFilter basicFilter = (DatasetBasicFilter) filterManager.getActiveFilter(dataset);
             filterManager.addConditionToFilter(basicFilter, dataset, columnInfo, columnValue, isHeaderAction);

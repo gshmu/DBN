@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -14,7 +13,6 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
-import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.SimpleTextAttributes;
@@ -32,9 +30,9 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
     private JPanel actionsPanel;
     private JPanel detailsPanel;
     private JList connectionsList;
-    private List<ConnectionHandler> connectionHandlers = new ArrayList<ConnectionHandler>();
+    private final List<ConnectionHandler> connectionHandlers = new ArrayList<ConnectionHandler>();
 
-    private Map<ConnectionHandler, PendingTransactionsDetailForm> uncommittedChangeForms = new HashMap<ConnectionHandler, PendingTransactionsDetailForm>();
+    private final Map<ConnectionHandler, PendingTransactionsDetailForm> uncommittedChangeForms = new HashMap<ConnectionHandler, PendingTransactionsDetailForm>();
 
     PendingTransactionsForm(PendingTransactionsDialog parentComponent) {
         super(parentComponent);
@@ -50,8 +48,7 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
         connectionsList.setSelectedIndex(0);
         updateListModel();
 
-        Project project = getProject();
-        EventUtil.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
+        subscribe(TransactionListener.TOPIC, transactionListener);
     }
 
     private void updateListModel() {
