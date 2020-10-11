@@ -30,6 +30,7 @@ public class PendingTransactionsTableModel extends DisposableBase implements DBN
         return connectionHandlerRef.ensure();
     }
 
+    @NotNull
     public Project getProject() {
         return getConnectionHandler().getProject();
     }

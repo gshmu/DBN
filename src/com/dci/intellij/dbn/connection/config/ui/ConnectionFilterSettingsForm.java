@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
+import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionFilterSettings;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -51,12 +51,12 @@ public class ConnectionFilterSettingsForm extends CompositeConfigurationEditorFo
         SettingsChangeNotifier.register(() -> {
             ConnectionId connectionId = configuration.getConnectionId();
             if (notifyFilterListenersSchemas) {
-                EventUtil.notify(project,
+                EventNotifier.notify(project,
                         ObjectFilterChangeListener.TOPIC,
                         (listener) -> listener.nameFiltersChanged(connectionId, DBObjectType.SCHEMA));
             }
             if (notifyFilterListenersColumns) {
-                EventUtil.notify(project,
+                EventNotifier.notify(project,
                     ObjectFilterChangeListener.TOPIC,
                     (listener) -> listener.nameFiltersChanged(connectionId, DBObjectType.COLUMN));
             }

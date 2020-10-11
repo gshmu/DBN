@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.editor;
 
-import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.compatibility.LegacyEditorNotificationsProvider;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.intellij.openapi.project.Project;
@@ -8,16 +8,14 @@ import com.intellij.ui.EditorNotifications;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class EditorNotificationProvider<T extends EditorNotificationPanel> extends EditorNotifications.Provider<T> {
-    protected ProjectRef projectRef;
+public abstract class EditorNotificationProvider<T extends EditorNotificationPanel> extends LegacyEditorNotificationsProvider<T> {
 
-    public EditorNotificationProvider(@NotNull Project project) {
-        this.projectRef = ProjectRef.from(project);
+    public EditorNotificationProvider(Project project) {
+        super(project);
     }
 
-    public void updateEditorNotification(@Nullable DBContentVirtualFile databaseContentFile) {
+    public void updateEditorNotification(@NotNull Project project, @Nullable DBContentVirtualFile databaseContentFile) {
         Dispatch.run(() -> {
-            Project project = getProject();
             EditorNotifications notifications = EditorNotifications.getInstance(project);
             if (databaseContentFile ==  null) {
                 notifications.updateAllNotifications();
@@ -25,10 +23,5 @@ public abstract class EditorNotificationProvider<T extends EditorNotificationPan
                 notifications.updateNotifications(databaseContentFile.getMainDatabaseFile());
             }
         });
-    }
-
-    @NotNull
-    protected Project getProject() {
-        return projectRef.ensure();
     }
 }

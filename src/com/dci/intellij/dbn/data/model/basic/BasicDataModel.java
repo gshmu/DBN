@@ -12,7 +12,6 @@ import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.data.find.DataSearchResult;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModel;
@@ -71,7 +70,7 @@ public class BasicDataModel<
     public BasicDataModel(Project project) {
         this.projectRef = ProjectRef.from(project);
         formatter = Latent.thread(() -> Formatter.getInstance(project).clone());
-        EventUtil.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
+        subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
     }
 
     @Override

@@ -3,9 +3,9 @@ package com.dci.intellij.dbn.connection.session;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -74,7 +74,7 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
 
     public DatabaseSession createSession(ConnectionHandler connectionHandler, String name) {
         DatabaseSession session = connectionHandler.getSessionBundle().createSession(name);
-        EventUtil.notify(getProject(),
+        EventNotifier.notify(getProject(),
                 SessionManagerListener.TOPIC,
                 (listener) -> listener.sessionCreated(session));
         return session;
@@ -84,7 +84,7 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
         ConnectionHandler connectionHandler = session.getConnectionHandler();
         String oldName = session.getName();
         connectionHandler.getSessionBundle().renameSession(oldName, newName);
-        EventUtil.notify(getProject(),
+        EventNotifier.notify(getProject(),
                 SessionManagerListener.TOPIC,
                 (listener) -> listener.sessionChanged(session));
     }
@@ -113,7 +113,7 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
     public void deleteSession(@NotNull DatabaseSession session) {
         ConnectionHandler connectionHandler = session.getConnectionHandler();
         connectionHandler.getSessionBundle().deleteSession(session.getId());
-        EventUtil.notify(getProject(),
+        EventNotifier.notify(getProject(),
                 SessionManagerListener.TOPIC,
                 (listener) -> listener.sessionDeleted(session));
     }

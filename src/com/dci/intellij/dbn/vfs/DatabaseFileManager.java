@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -53,14 +52,19 @@ import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 public class DatabaseFileManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DatabaseFileManager";
 
-    private Set<DBEditableObjectVirtualFile> openFiles = ContainerUtil.newConcurrentSet();
+    private final Set<DBEditableObjectVirtualFile> openFiles = ContainerUtil.newConcurrentSet();
     private Map<ConnectionId, List<DBObjectRef<DBSchemaObject>>> pendingOpenFiles = new HashMap<>();
     private boolean projectInitialized = false;
-    private String sessionId;
+    private final String sessionId;
 
     private DatabaseFileManager(final Project project) {
         super(project);
         sessionId = UUID.randomUUID().toString();
+
+        subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        subscribe(FileEditorManagerListener.Before.FILE_EDITOR_MANAGER, fileEditorManagerListenerBefore);
+        subscribe(ConnectionSettingsListener.TOPIC, connectionSettingsListener);
+
 /*
         StartupManager.getInstance(project).registerPreStartupActivity(new Runnable() {
             @Override
@@ -69,12 +73,9 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
             }
         });
 */
-        StartupManager.getInstance(project).registerPostStartupActivity(new Runnable() {
-            @Override
-            public void run() {
-                projectInitialized = true;
-            }
-        });
+
+
+        StartupManager.getInstance(project).registerPostStartupActivity(() -> projectInitialized = true);
     }
 
     public static DatabaseFileManager getInstance(@NotNull Project project) {
@@ -111,7 +112,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         return COMPONENT_NAME;
     }
 
-    private ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
+    private final ConnectionSettingsListener connectionSettingsListener = new ConnectionSettingsListener() {
         @Override
         public void connectionChanged(ConnectionId connectionId) {
             closeFiles(connectionId);
@@ -119,7 +120,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     };
 
     private void closeFiles(ConnectionId connectionId) {
-        Set<DBEditableObjectVirtualFile> filesToClose = new HashSet<DBEditableObjectVirtualFile>();
+        Set<DBEditableObjectVirtualFile> filesToClose = new HashSet<>();
         for (DBEditableObjectVirtualFile openFile : openFiles) {
             if (openFile.getConnectionId() == connectionId) {
                 filesToClose.add(openFile);
@@ -146,7 +147,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     /*********************************************
      *            FileEditorManagerListener       *
      *********************************************/
-    private FileEditorManagerListener.Before fileEditorManagerListenerBefore = new FileEditorManagerListener.Before() {
+    private final FileEditorManagerListener.Before fileEditorManagerListenerBefore = new FileEditorManagerListener.Before() {
         @Override
         public void beforeFileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
             if (file instanceof DBEditableObjectVirtualFile) {
@@ -204,7 +205,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         }
     };
 
-    private FileEditorManagerListener fileEditorManagerListener  =new FileEditorManagerListener() {
+    private final FileEditorManagerListener fileEditorManagerListener  =new FileEditorManagerListener() {
         @Override
         public void fileOpened(@NotNull FileEditorManager source, @NotNull VirtualFile file) {
             if (file instanceof DBEditableObjectVirtualFile) {
@@ -242,10 +243,6 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
 
     @Override
     public void projectOpened() {
-        Project project = getProject();
-        EventUtil.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
-        EventUtil.subscribe(project, this, FileEditorManagerListener.Before.FILE_EDITOR_MANAGER, fileEditorManagerListenerBefore);
-        EventUtil.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
         reopenDatabaseEditors();
     }
 

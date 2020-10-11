@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.connection;
 
+import com.dci.intellij.dbn.common.component.ApplicationComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.EventUtil;
-import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.impl.ProjectLifecycleListener;
@@ -14,8 +13,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class ConnectionCache implements ApplicationComponent{
+public class ConnectionCache implements ApplicationComponent {
     private static final Map<ConnectionId, ConnectionHandler> CACHE = new THashMap<>();
+
+    public ConnectionCache() {
+        subscribe(ProjectLifecycleListener.TOPIC, projectLifecycleListener);
+    }
 
     @Nullable
     public static ConnectionHandler findConnectionHandler(ConnectionId connectionId) {
@@ -42,7 +45,6 @@ public class ConnectionCache implements ApplicationComponent{
 
     @Override
     public void initComponent() {
-        EventUtil.subscribe(null, ProjectLifecycleListener.TOPIC, projectLifecycleListener);
     }
 
     @Override

@@ -3,11 +3,11 @@ package com.dci.intellij.dbn.execution.script;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -219,9 +219,9 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                                     " - Script execution interrupted by user" :
                                     " - Script execution finished", false);
                     executionManager.writeLogOutput(outputContext, logOutput);
-                    EventUtil.notify(project,
+                    EventNotifier.notify(project,
                             ScriptExecutionListener.TOPIC,
-                            (listener) -> listener.scriptExecuted(sourceFile));
+                            (listener) -> listener.scriptExecuted(project, sourceFile));
                     return null;
                 }
 

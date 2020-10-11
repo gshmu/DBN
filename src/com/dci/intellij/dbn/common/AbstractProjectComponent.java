@@ -11,11 +11,13 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
+import com.intellij.util.messages.MessageBus;
+import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 
 @Nullifiable
-public abstract class AbstractProjectComponent extends DisposableBase
-        implements
+public abstract class AbstractProjectComponent extends DisposableBase implements
         SettingsSupport,
         ApplicationListener,
         ProjectComponent,
@@ -30,6 +32,14 @@ public abstract class AbstractProjectComponent extends DisposableBase
         ProjectManager projectManager = ProjectManager.getInstance();
         projectManager.addProjectManagerListener(project, this);
         ApplicationManager.getApplication().addApplicationListener(this);
+    }
+
+
+    protected <T> void subscribe(Topic<T> topic, T handler) {
+        Project project = getProject();
+        MessageBus messageBus = project.getMessageBus();
+        MessageBusConnection connection = messageBus.connect();
+        connection.subscribe(topic, handler);
     }
 
     @Override

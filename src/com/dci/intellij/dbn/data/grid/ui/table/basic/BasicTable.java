@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTableWithGutter;
 import com.dci.intellij.dbn.common.ui.table.TableSelectionRestorer;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MathResult;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
@@ -47,13 +46,13 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> implements EditorColorsListener, Disposable {
-    private BasicTableCellRenderer cellRenderer;
+    private final BasicTableCellRenderer cellRenderer;
+    private final RegionalSettings regionalSettings;
+    private final DataGridSettings dataGridSettings;
+    private final TableSelectionRestorer selectionRestorer = createSelectionRestorer();
     private JBPopup valuePopup;
-    private boolean isLoading;
-    private RegionalSettings regionalSettings;
-    private DataGridSettings dataGridSettings;
-    private TableSelectionRestorer selectionRestorer = createSelectionRestorer();
     private MathResult selectionMath;
+    private boolean loading;
 
     public BasicTable(Project project, T dataModel) {
         super(project, dataModel, true);
@@ -136,7 +135,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         });
 
         addMouseMotionListener(new MouseMotionAdapter() {
-            private Alarm runner = new Alarm(BasicTable.this);
+            private final Alarm runner = new Alarm(BasicTable.this);
             @Override
             public void mouseMoved(MouseEvent e) {
                 if (selectionMath != null && isCellSelected(e.getPoint())) {
@@ -146,7 +145,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
             }
         });
 
-        EventUtil.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
+        subscribe(RegionalSettingsListener.TOPIC, regionalSettingsListener);
         //EventUtil.subscribe(this, EditorColorsManager.TOPIC, this);
         EditorColorsManager.getInstance().addEditorColorsListener(this, this);
 
@@ -222,7 +221,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     }
 
     public void setLoading(boolean loading) {
-        isLoading = loading;
+        this.loading = loading;
         updateBackground(loading);
     }
 
@@ -243,7 +242,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     }
 
     public boolean isLoading() {
-        return isLoading;
+        return loading;
     }
 
     public void selectRow(int index) {
@@ -311,7 +310,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
      *********************************************************/
     @Override
     public void globalSchemeChange(EditorColorsScheme scheme) {
-        updateBackground(isLoading);
+        updateBackground(loading);
         resizeAndRepaint();
 /*        JBScrollPane scrollPane = UIUtil.getParentOfType(JBScrollPane.class, this);
         if (scrollPane != null) {

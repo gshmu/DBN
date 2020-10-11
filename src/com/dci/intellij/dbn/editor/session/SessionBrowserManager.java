@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -63,6 +62,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
 
     private SessionBrowserManager(Project project) {
         super(project);
+        subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
     public static SessionBrowserManager getInstance(@NotNull Project project) {
@@ -264,11 +264,6 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     @NotNull
     public String getComponentName() {
         return COMPONENT_NAME;
-    }
-
-    @Override
-    public void projectOpened() {
-        EventUtil.subscribe(getProject(), this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
     private final FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerListener() {

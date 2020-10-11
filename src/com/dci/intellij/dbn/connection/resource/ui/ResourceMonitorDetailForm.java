@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -18,6 +17,7 @@ import com.dci.intellij.dbn.connection.transaction.DatabaseTransactionManager;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.DumbAwareActionButton;
 import com.intellij.ui.GuiUtils;
@@ -36,8 +36,8 @@ import static com.dci.intellij.dbn.connection.transaction.TransactionAction.acti
 
 
 public class ResourceMonitorDetailForm extends DBNFormImpl {
-    private DBNTable sessionsTable;
-    private DBNTable transactionsTable;
+    private final DBNTable sessionsTable;
+    private final DBNTable transactionsTable;
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JPanel sessionsPanel;
@@ -46,7 +46,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     private JButton rollbackButton;
     private JLabel openTransactionsLabel;
 
-    private ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connectionHandlerRef;
     private ResourceMonitorTransactionsTableModel transactionsTableModel;
     private ResourceMonitorSessionsTableModel sessionsTableModel;
 
@@ -84,11 +84,12 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         commitButton.addActionListener(transactionActionListener);
         rollbackButton.addActionListener(transactionActionListener);
 
-        EventUtil.subscribe(getProject(), this, TransactionListener.TOPIC, transactionListener);
-        EventUtil.subscribe(getProject(), this, SessionManagerListener.TOPIC, sessionManagerListener);
+        Project project = getProject();
+        subscribe(TransactionListener.TOPIC, transactionListener);
+        subscribe(SessionManagerListener.TOPIC, sessionManagerListener);
     }
 
-    private AnActionButton commitAction = new DumbAwareActionButton("Commit", null, Icons.CONNECTION_COMMIT) {
+    private final AnActionButton commitAction = new DumbAwareActionButton("Commit", null, Icons.CONNECTION_COMMIT) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             DatabaseSession session = getSelectedSession();
@@ -121,7 +122,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         }
     };
 
-    private AnActionButton rollbackAction = new DumbAwareActionButton("Rollback", null, Icons.CONNECTION_ROLLBACK) {
+    private final AnActionButton rollbackAction = new DumbAwareActionButton("Rollback", null, Icons.CONNECTION_ROLLBACK) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             DatabaseSession session = getSelectedSession();
@@ -155,7 +156,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
 
     };
 
-    private AnActionButton disconnectAction = new DumbAwareActionButton("Disconnect", null, Icons.ACTION_DISCONNECT_SESSION) {
+    private final AnActionButton disconnectAction = new DumbAwareActionButton("Disconnect", null, Icons.ACTION_DISCONNECT_SESSION) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             DatabaseSession session = getSelectedSession();
@@ -189,7 +190,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
 
     };
 
-    private AnActionButton deleteSessionAction = new DumbAwareActionButton("Delete Session", null, Icons.ACTION_DELETE) {
+    private final AnActionButton deleteSessionAction = new DumbAwareActionButton("Delete Session", null, Icons.ACTION_DELETE) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
             DatabaseSession session = getSelectedSession();
@@ -230,7 +231,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     /********************************************************
      *                Transaction Listener                  *
      ********************************************************/
-    private TransactionListener transactionListener = new TransactionListener() {
+    private final TransactionListener transactionListener = new TransactionListener() {
         @Override
         public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
             if (connectionHandler == getConnectionHandler() && transactionsTableModel.getConnection() == connection && succeeded) {
@@ -239,7 +240,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         }
     };
 
-    private SessionManagerListener sessionManagerListener = new SessionManagerListener() {
+    private final SessionManagerListener sessionManagerListener = new SessionManagerListener() {
         @Override
         public void sessionCreated(DatabaseSession session) {
             if (session.getConnectionHandler() == getConnectionHandler()) {
@@ -262,7 +263,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         }
     };
 
-    private ActionListener transactionActionListener = new ActionListener() {
+    private final ActionListener transactionActionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             Object source = e.getSource();

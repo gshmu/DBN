@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -48,7 +47,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
 
     private DatabaseConsoleManager(Project project) {
         super(project);
-        EventUtil.subscribe(getProject(), this, SessionManagerListener.TOPIC, sessionManagerListener);
+        subscribe(SessionManagerListener.TOPIC, sessionManagerListener);
     }
 
     public static DatabaseConsoleManager getInstance(@NotNull Project project) {

@@ -83,13 +83,6 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     }
 
     @Override
-    @NotNull
-    public Project ensureProject() {
-        return projectRef.ensure();
-    }
-
-
-    @Override
     public abstract Icon getIcon();
 
     public int getId() {

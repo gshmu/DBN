@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
+import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -13,7 +14,6 @@ import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -71,9 +71,14 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
-import static com.dci.intellij.dbn.common.util.MessageUtil.*;
+import static com.dci.intellij.dbn.common.util.MessageUtil.options;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showErrorDialog;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showQuestionDialog;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 import static com.dci.intellij.dbn.common.util.NamingUtil.unquote;
-import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.LOADING;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
+import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 import static com.intellij.openapi.util.text.StringUtil.equalsIgnoreCase;
 
 @State(
@@ -83,8 +88,6 @@ import static com.intellij.openapi.util.text.StringUtil.equalsIgnoreCase;
 public class SourceCodeManager extends AbstractProjectComponent implements PersistentStateComponent<Element>, SettingsSavingComponent {
     public static final String COMPONENT_NAME = "DBNavigator.Project.SourceCodeManager";
 
-    private DBLanguageFileEditorListener fileEditorListener;
-
     public static SourceCodeManager getInstance(@NotNull Project project) {
         return Failsafe.getComponent(project, SourceCodeManager.class);
     }
@@ -92,10 +95,10 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     private SourceCodeManager(Project project) {
         super(project);
         EditorActionManager.getInstance().setReadonlyFragmentModificationHandler(OverrideReadonlyFragmentModificationHandler.INSTANCE);
-        fileEditorListener = new DBLanguageFileEditorListener();
-        EventUtil.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
-        EventUtil.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
-        EventUtil.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        subscribe(DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
+        subscribe(EnvironmentManagerListener.TOPIC, environmentManagerListener);
+        subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new DBLanguageFileEditorListener());
     }
 
 
@@ -124,9 +127,9 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         }
     };
 
-    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
+    private final EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
         @Override
-        public void editModeChanged(DBContentVirtualFile databaseContentFile) {
+        public void editModeChanged(Project project, DBContentVirtualFile databaseContentFile) {
             if (databaseContentFile instanceof DBSourceCodeVirtualFile) {
                 DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) databaseContentFile;
                 if (sourceCodeFile.is(MODIFIED)) {
@@ -136,7 +139,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         }
     };
 
-    private FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerListener() {
+    private final FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerListener() {
         @Override
         public void selectionChanged(@NotNull FileEditorManagerEvent event) {
             FileEditor newEditor = event.getNewEditor();
@@ -191,7 +194,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                         Project project = getProject();
                         DBSchemaObject object = sourceCodeFile.getObject();
 
-                        EventUtil.notify(project,
+                        EventNotifier.notify(project,
                                 SourceCodeManagerListener.TOPIC,
                                 (listener) -> listener.sourceCodeLoading(sourceCodeFile));
                         try {
@@ -207,7 +210,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                             }
                         } finally {
                             sourceCodeFile.set(LOADING, false);
-                            EventUtil.notify(project,
+                            EventNotifier.notify(project,
                                     SourceCodeManagerListener.TOPIC,
                                     (listener) -> listener.sourceCodeLoaded(sourceCodeFile, initialLoad));
                         }
@@ -515,10 +518,10 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     public void storeSourceToDatabase(DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor, @Nullable Runnable successCallback) {
         Project project = getProject();
-        Progress.prompt(getProject(), "Saving sources to database", false, (progress) -> {
+        Progress.prompt(project, "Saving sources to database", false, (progress) -> {
             try {
                 sourceCodeFile.saveSourceToDatabase();
-                EventUtil.notify(project,
+                EventNotifier.notify(project,
                         SourceCodeManagerListener.TOPIC,
                         (listener) -> listener.sourceCodeSaved(sourceCodeFile, fileEditor));
 
@@ -668,7 +671,6 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     @Override
     public void projectOpened() {
-        EventUtil.subscribe(getProject(), this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorListener);
     }
 
     @Override

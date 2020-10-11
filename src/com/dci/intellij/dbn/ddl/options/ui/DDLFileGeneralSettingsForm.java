@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.ddl.options.ui;
 
+import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
 import com.dci.intellij.dbn.ddl.options.listener.DDLFileSettingsChangeListener;
 import com.intellij.openapi.options.ConfigurationException;
@@ -76,9 +76,9 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
         Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (settingChanged) {
-                EventUtil.notify(project,
+                EventNotifier.notify(project,
                         DDLFileSettingsChangeListener.TOPIC,
-                        (listener) -> listener.settingsChanged());
+                        (listener) -> listener.settingsChanged(project));
 
             }
         });

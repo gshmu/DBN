@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.browser.model;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -16,7 +15,7 @@ public class SimpleBrowserTreeModel extends BrowserTreeModel {
 
     public SimpleBrowserTreeModel(Project project, ConnectionBundle connectionBundle) {
         super(new SimpleBrowserTreeRoot(project, connectionBundle));
-        EventUtil.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, connectionHandlerStatusListener);
+        subscribe(ConnectionHandlerStatusListener.TOPIC, connectionHandlerStatusListener);
     }
 
     @Override

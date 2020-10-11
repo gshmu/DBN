@@ -17,6 +17,8 @@ import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MapLatent;
@@ -31,7 +33,6 @@ import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -109,11 +110,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.object.type.DBObjectRelationType.*;
-import static com.dci.intellij.dbn.object.type.DBObjectType.*;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.ROLE_PRIVILEGE;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.ROLE_ROLE;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.USER_PRIVILEGE;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.USER_ROLE;
+import static com.dci.intellij.dbn.object.type.DBObjectType.CHARSET;
+import static com.dci.intellij.dbn.object.type.DBObjectType.CONSOLE;
+import static com.dci.intellij.dbn.object.type.DBObjectType.OBJECT_PRIVILEGE;
+import static com.dci.intellij.dbn.object.type.DBObjectType.ROLE;
+import static com.dci.intellij.dbn.object.type.DBObjectType.SCHEMA;
+import static com.dci.intellij.dbn.object.type.DBObjectType.SYNONYM;
+import static com.dci.intellij.dbn.object.type.DBObjectType.SYSTEM_PRIVILEGE;
+import static com.dci.intellij.dbn.object.type.DBObjectType.USER;
 
 @Nullifiable
-public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport {
+public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport, ProjectEventAdapter {
     private final ConnectionHandlerRef connectionHandlerRef;
     private final BrowserTreeNode treeParent;
     private final List<BrowserTreeNode> allPossibleTreeChildren;
@@ -193,11 +204,9 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(project);
         fakeObjectFile = Read.call(() -> psiFileFactory.createFileFromText("object", SQLLanguage.INSTANCE, ""));
 
-        EventUtil.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
-        EventUtil.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
-        EventUtil.subscribe(project, this, CompileManagerListener.TOPIC, compileManagerListener);
-
-
+        subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
+        subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+        subscribe(project, this, CompileManagerListener.TOPIC, compileManagerListener);
     }
 
     private final DataDefinitionChangeListener dataDefinitionChangeListener = new DataDefinitionChangeListener() {
@@ -220,7 +229,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     private final SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
-        public void sourceCodeSaved(DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
+        public void sourceCodeSaved(@NotNull DBSourceCodeVirtualFile sourceCodeFile, @Nullable SourceCodeEditor fileEditor) {
             if (sourceCodeFile.getConnectionId() == getConnectionId()) {
                 Progress.background(getProject(), "Reloading database object", false,
                         (progress) -> {
@@ -469,7 +478,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         visibleTreeChildren = treeChildren;
         treeChildrenLoaded = true;
 
-        EventUtil.notify(getProject(),
+        EventNotifier.notify(getProject(),
                 BrowserTreeEventListener.TOPIC,
                 (listener) -> listener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED));
 
@@ -770,10 +779,10 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
 
     @Override
     @Nullable
-    public DynamicContent getDynamicContent(DynamicContentType dynamicContentType) {
+    public DynamicContent<?> getDynamicContent(DynamicContentType<?> dynamicContentType) {
         if(dynamicContentType instanceof DBObjectType) {
             DBObjectType objectType = (DBObjectType) dynamicContentType;
-            DynamicContent dynamicContent = objectLists.getObjectList(objectType);
+            DynamicContent<?> dynamicContent = objectLists.getObjectList(objectType);
             if (dynamicContent == null) dynamicContent = objectLists.getInternalObjectList(objectType);
             return dynamicContent;
         }

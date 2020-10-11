@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
+import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
@@ -34,7 +34,7 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
 
     private EnvironmentManager(Project project) {
         super(project);
-        EventUtil.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
+        subscribe(EnvironmentManagerListener.TOPIC, environmentManagerListener);
 
     }
 
@@ -61,9 +61,11 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
         DBContentVirtualFile contentFile = schemaObject.getEditableVirtualFile().getContentFile(contentType);
         if (contentFile != null) {
             EditorUtil.setEditorsReadonly(contentFile, false);
-            EventUtil.notify(getProject(),
+
+            Project project = getProject();
+            EventNotifier.notify(project,
                     EnvironmentManagerListener.TOPIC,
-                    (listener) -> listener.editModeChanged(contentFile));
+                    (listener) -> listener.editModeChanged(project, contentFile));
         }
     }
 
@@ -73,9 +75,11 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
         DBContentVirtualFile contentFile = schemaObject.getEditableVirtualFile().getContentFile(contentType);
         if (contentFile != null) {
             EditorUtil.setEditorsReadonly(contentFile, readonly);
-            EventUtil.notify(getProject(),
+
+            Project project = getProject();
+            EventNotifier.notify(project,
                     EnvironmentManagerListener.TOPIC,
-                    (listener) -> listener.editModeChanged(contentFile));
+                    (listener) -> listener.editModeChanged(project, contentFile));
         }
     }
 
@@ -87,9 +91,9 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
         return COMPONENT_NAME;
     }
 
-    private EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
+    private final EnvironmentManagerListener environmentManagerListener = new EnvironmentManagerListener() {
         @Override
-        public void configurationChanged() {
+        public void configurationChanged(Project project) {
             FileEditorManagerImpl fileEditorManager = (FileEditorManagerImpl) FileEditorManager.getInstance(getProject());
             VirtualFile[] openFiles = fileEditorManager.getOpenFiles();
             for (VirtualFile virtualFile : openFiles) {

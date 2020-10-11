@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionLoadListener;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -21,12 +20,10 @@ import org.jetbrains.annotations.NotNull;
 public class DatabaseLoaderManager extends AbstractProjectComponent {
     private DatabaseLoaderQueue loaderQueue;
 
-    private DatabaseLoaderManager(final Project project) {
+    private DatabaseLoaderManager(Project project) {
         super(project);
-        EventUtil.subscribe(project, this,
-                ConnectionLoadListener.TOPIC,
+        subscribe(ConnectionLoadListener.TOPIC,
                 connectionHandler -> Dispatch.run(() -> {
-
                     checkDisposed();
                     Failsafe.nn(project);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);

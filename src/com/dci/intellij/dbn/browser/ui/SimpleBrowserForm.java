@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -22,7 +21,7 @@ import javax.swing.*;
 public class SimpleBrowserForm extends DatabaseBrowserForm{
     private JPanel mainPanel;
     private JScrollPane browserScrollPane;
-    private DatabaseBrowserTree browserTree;
+    private final DatabaseBrowserTree browserTree;
 
     SimpleBrowserForm(DisposableProjectComponent parentComponent) {
         this(parentComponent, new SimpleBrowserTreeModel(parentComponent.getProject(), ConnectionManager.getInstance(parentComponent.getProject()).getConnectionBundle()));
@@ -39,7 +38,7 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
         browserScrollPane.setBorder(JBUI.Borders.emptyTop(1));
         ToolTipManager.sharedInstance().registerComponent(browserTree);
 
-        EventUtil.subscribe(getProject(), this, ObjectDetailSettingsListener.TOPIC, objectDetailSettingsListener);
+        subscribe(ObjectDetailSettingsListener.TOPIC, objectDetailSettingsListener);
     }
     
     @Nullable

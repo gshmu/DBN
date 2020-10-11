@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
+import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
@@ -13,7 +14,6 @@ import com.dci.intellij.dbn.common.ui.ComboBoxUtil;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.EventUtil;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.AuthenticationType;
@@ -46,7 +46,10 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getElements;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 
 public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<ConnectionDatabaseSettings> {
     private JPanel mainPanel;
@@ -213,7 +216,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         ConnectionId connectionId = configuration.getConnectionId();
         DatabaseType databaseType = configuration.getDatabaseType();
 
-        EventUtil.notify(
+        EventNotifier.notify(
                 configuration.getProject(),
                 ConnectionPresentationChangeListener.TOPIC,
                 (listener) -> listener.presentationChanged(name, icon, color, connectionId, databaseType));
@@ -353,13 +356,13 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         SettingsChangeNotifier.register(() -> {
             ConnectionId connectionId = configuration.getConnectionId();
             if (nameChanged) {
-                EventUtil.notify(project,
+                EventNotifier.notify(project,
                         ConnectionSettingsListener.TOPIC,
                         (listener) -> listener.connectionNameChanged(connectionId));
             }
 
             if (settingsChanged) {
-                EventUtil.notify(project,
+                EventNotifier.notify(project,
                         ConnectionSettingsListener.TOPIC,
                         (listener) -> listener.connectionChanged(connectionId));
             }

@@ -44,9 +44,9 @@ import java.util.Set;
 
 public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implements TableModelListener {
     private static final Font BOLD = new Font(UIUtil.getMenuFont().getFontName(), Font.BOLD, UIUtil.getMenuFont().getSize());
-    private TableCellRenderer CELL_RENDERER = new CalendarTableCellRenderer();
-    private TableCellRenderer HEADER_CELL_RENDERER = new CalendarTableHeaderCellRenderer();
-    private TableModel CALENDER_HEADER_TABLE_MODEL = new CalendarHeaderTableModel();
+    private final TableCellRenderer CELL_RENDERER = new CalendarTableCellRenderer();
+    private final TableCellRenderer HEADER_CELL_RENDERER = new CalendarTableHeaderCellRenderer();
+    private final TableModel CALENDER_HEADER_TABLE_MODEL = new CalendarHeaderTableModel();
     private JPanel mainPanel;
     private JTable daysTable;
     private JTable weeksTable;
