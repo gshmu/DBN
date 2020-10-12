@@ -3,8 +3,7 @@ package com.dci.intellij.dbn.execution.method.history.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.Lookup;
-import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -21,7 +20,6 @@ import com.dci.intellij.dbn.execution.method.ui.MethodExecutionInputForm;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
@@ -35,23 +33,22 @@ import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeSelectionListener;
 import java.awt.*;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHistoryDialog> {
+public class MethodExecutionHistoryForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JTree executionInputsTree;
     private JPanel actionsPanel;
     private JPanel argumentsPanel;
     private JPanel contentPanel;
     private ChangeListener changeListener;
-    private boolean debug;
+    private final boolean debug;
 
-    private Map<MethodExecutionInput, MethodExecutionInputForm> methodExecutionForms;
+    private final Map<MethodExecutionInput, MethodExecutionInputForm> methodExecutionForms = DisposableContainer.map(this);
 
-    MethodExecutionHistoryForm(MethodExecutionHistoryDialog parentComponent, MethodExecutionInput selectedExecutionInput, boolean debug) {
-        super(parentComponent);
+    MethodExecutionHistoryForm(MethodExecutionHistoryDialog parent, MethodExecutionInput selectedExecutionInput, boolean debug) {
+        super(parent);
         this.debug = debug;
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true,
                 new ShowGroupedTreeAction(),
@@ -59,7 +56,6 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
                 ActionUtil.SEPARATOR,
                 new ProjectSettingsOpenAction());
         actionsPanel.add(actionToolbar.getComponent());
-        methodExecutionForms = new HashMap<>();
         mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
         GuiUtils.replaceJSplitPaneWithIDEASplitter(contentPanel);
         JBSplitter splitter = (JBSplitter) contentPanel.getComponent(0);
@@ -83,8 +79,13 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
     }
 
     @NotNull
+    MethodExecutionHistoryDialog getParentDialog() {
+        return (MethodExecutionHistoryDialog) ensureParentComponent();
+    }
+
+    @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -96,19 +97,11 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
     private void createUIComponents() {
         MethodExecutionHistory executionHistory = getExecutionHistory();
         boolean group = executionHistory.isGroupEntries();
-        MethodExecutionHistoryDialog dialog = Failsafe.nn(getParentComponent());
-        executionInputsTree = new MethodExecutionHistoryTree(dialog, group, debug);
-        Disposer.register(this, (Disposable) executionInputsTree);
+        executionInputsTree = new MethodExecutionHistoryTree(this, group, debug);
     }
 
     public MethodExecutionHistoryTree getTree() {
         return (MethodExecutionHistoryTree) executionInputsTree;
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(methodExecutionForms);
-        super.disposeInner();
     }
 
     private void showMethodExecutionPanel(MethodExecutionInput executionInput) {
@@ -130,7 +123,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
 
     private ChangeListener getChangeListener() {
         if (changeListener == null) {
-            changeListener = e -> ensureParentComponent().setSaveButtonEnabled(true);
+            changeListener = e -> getParentDialog().setSaveButtonEnabled(true);
         }
         return changeListener;
     }
@@ -159,7 +152,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
         protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
             Presentation presentation = e.getPresentation();
             presentation.setEnabled(!getTree().isSelectionEmpty());
-            presentation.setVisible(ensureParentComponent().isEditable());
+            presentation.setVisible(getParentDialog().isEditable());
         }
     }
 
@@ -215,7 +208,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl<MethodExecutionHisto
                                 }
 
                                 Dispatch.run(() -> {
-                                    MethodExecutionHistoryDialog dialog = ensureParentComponent();
+                                    MethodExecutionHistoryDialog dialog = getParentDialog();
                                     showMethodExecutionPanel(executionInput);
                                     dialog.setSelectedExecutionInput(executionInput);
                                     dialog.updateMainButtons(executionInput);

@@ -33,7 +33,7 @@ public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm
 
     @NotNull
     @Override
-    protected CreateRenameConsoleForm createComponent() {
+    protected CreateRenameConsoleForm createForm() {
         ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
         return console == null ?
                 new CreateRenameConsoleForm(this, connectionHandler, null, consoleType) :
@@ -52,7 +52,7 @@ public class CreateRenameConsoleDialog extends DBNDialog<CreateRenameConsoleForm
     @Override
     protected void doOKAction() {
         DatabaseConsoleManager databaseConsoleManager = DatabaseConsoleManager.getInstance(getProject());
-        CreateRenameConsoleForm component = getComponent();
+        CreateRenameConsoleForm component = getForm();
         DBConsole console = component.getConsole();
         if (console == null) {
             databaseConsoleManager.createConsole(

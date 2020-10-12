@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.common;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.lang.ASTNode;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class DBObjectPsiAbstraction extends DisposableBase implements PsiNamedElement {
+public class DBObjectPsiAbstraction extends StatefulDisposable.Base implements PsiNamedElement {
     private static PsiFile DUMMY_FILE;
     protected String name;
 
@@ -242,5 +242,10 @@ public class DBObjectPsiAbstraction extends DisposableBase implements PsiNamedEl
     @Override
     public Icon getIcon(int flags) {
         return null;
+    }
+
+    @Override
+    protected void disposeInner() {
+        nullify();
     }
 }

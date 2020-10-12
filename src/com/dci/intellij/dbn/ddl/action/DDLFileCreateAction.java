@@ -13,7 +13,7 @@ public class DDLFileCreateAction extends DumbAwareProjectAction {
     private DBObjectRef<DBSchemaObject> objectRef;
     public DDLFileCreateAction(DBSchemaObject object) {
         super("Create New...", null, Icons.CODE_EDITOR_DDL_FILE_NEW);
-        this.objectRef = DBObjectRef.from(object);
+        this.objectRef = DBObjectRef.of(object);
     }
 
     @Override

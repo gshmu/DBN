@@ -27,12 +27,11 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
     private JPanel mainPanel;
     private JPanel cmdLineInterfacesTablePanel;
     private JTextField executionTimeoutTextField;
-    private CmdLineInterfacesTable cmdLineInterfacesTable;
+    private final CmdLineInterfacesTable cmdLineInterfacesTable;
 
     public ScriptExecutionSettingsForm(ScriptExecutionSettings settings) {
         super(settings);
-        Project project = settings.getParent().getProject();
-        cmdLineInterfacesTable = new CmdLineInterfacesTable(project, settings.getCommandLineInterfaces());
+        cmdLineInterfacesTable = new CmdLineInterfacesTable(this, settings.getCommandLineInterfaces());
 
         ToolbarDecorator decorator = ToolbarDecorator.createDecorator(cmdLineInterfacesTable);
         decorator.setAddAction(anActionButton ->
@@ -93,7 +92,7 @@ public class ScriptExecutionSettingsForm extends ConfigurationEditorForm<ScriptE
     
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
     

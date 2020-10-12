@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.execution.statement.result;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -24,20 +23,19 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-@Nullifiable
 public class StatementExecutionBasicResult extends ExecutionResultBase<StatementExecutionResultForm> implements StatementExecutionResult{
-    private String resultName;
+    private final String resultName;
     private StatementExecutionMessage executionMessage;
     private StatementExecutionStatus executionStatus;
     private int executionDuration;
-    private int updateCount;
+    private final int updateCount;
     private CompilerResult compilerResult;
-    private StatementExecutionProcessor executionProcessor;
     private String loggingOutput;
     private boolean loggingActive;
 
-    private ConnectionHandlerRef connectionHandlerRef;
-    private SchemaId databaseSchema;
+    private StatementExecutionProcessor executionProcessor;
+    private final ConnectionHandlerRef connectionHandler;
+    private final SchemaId databaseSchema;
 
     public StatementExecutionBasicResult(
             @NotNull StatementExecutionProcessor executionProcessor,
@@ -46,7 +44,7 @@ public class StatementExecutionBasicResult extends ExecutionResultBase<Statement
         this.resultName = resultName;
         this.executionProcessor = executionProcessor;
         this.updateCount = updateCount;
-        this.connectionHandlerRef = Failsafe.nn(executionProcessor.getConnectionHandler()).getRef();
+        this.connectionHandler = Failsafe.nn(executionProcessor.getConnectionHandler()).getRef();
         this.databaseSchema = executionProcessor.getTargetSchema();
     }
 
@@ -132,7 +130,7 @@ public class StatementExecutionBasicResult extends ExecutionResultBase<Statement
     @Override
     public void clearExecutionMessage() {
         if (executionMessage != null) {
-            Disposer.dispose(executionMessage);
+            DisposeUtil.dispose(executionMessage);
             executionMessage = null;
         }
     }
@@ -151,7 +149,7 @@ public class StatementExecutionBasicResult extends ExecutionResultBase<Statement
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     @Nullable
@@ -202,5 +200,11 @@ public class StatementExecutionBasicResult extends ExecutionResultBase<Statement
     @Override
     public void setLoggingActive(boolean loggingActive) {
         this.loggingActive = loggingActive;
+    }
+
+    @Override
+    public void disposeInner() {
+        executionProcessor = null;
+        super.disposeInner();
     }
 }

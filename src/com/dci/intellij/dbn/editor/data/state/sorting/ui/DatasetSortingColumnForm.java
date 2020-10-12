@@ -23,14 +23,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DatasetSortingColumnForm extends DBNFormImpl<DatasetEditorSortingForm> {
+public class DatasetSortingColumnForm extends DBNFormImpl {
     private JPanel actionsPanel;
     private JPanel mainPanel;
     private JLabel indexLabel;
     private JLabel dataTypeLabel;
     private DBNComboBox<DBColumn> columnComboBox;
 
-    private SortingInstruction sortingInstruction;
+    private final SortingInstruction sortingInstruction;
 
     DatasetSortingColumnForm(DatasetEditorSortingForm parent, @NotNull SortingInstruction sortingInstruction) {
         super(parent);
@@ -52,6 +52,11 @@ public class DatasetSortingColumnForm extends DBNFormImpl<DatasetEditorSortingFo
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
     }
 
+    @NotNull
+    public DatasetEditorSortingForm getParentForm() {
+        return (DatasetEditorSortingForm) ensureParentComponent();
+    }
+
     private class ColumnSelector extends ValueSelector<DBColumn>{
         ColumnSelector(DBColumn selectedColumn) {
             super(Icons.DBO_COLUMN_HIDDEN, "Select column...", selectedColumn, ValueSelectorOption.HIDE_DESCRIPTION);
@@ -66,7 +71,7 @@ public class DatasetSortingColumnForm extends DBNFormImpl<DatasetEditorSortingFo
 
         @Override
         public List<DBColumn> loadValues() {
-            DBDataset dataset = ensureParentComponent().getDataset();
+            DBDataset dataset = getDataset();
             List<DBColumn> columns = new ArrayList<DBColumn>(dataset.getColumns());
             Collections.sort(columns);
             return columns;
@@ -74,7 +79,7 @@ public class DatasetSortingColumnForm extends DBNFormImpl<DatasetEditorSortingFo
 
         @Override
         public boolean isVisible(DBColumn value) {
-            List<DatasetSortingColumnForm> sortingInstructionForms = ensureParentComponent().getSortingInstructionForms();
+            List<DatasetSortingColumnForm> sortingInstructionForms = getParentForm().getSortingInstructionForms();
             for (DatasetSortingColumnForm sortingColumnForm : sortingInstructionForms) {
                 String columnName = sortingColumnForm.getSortingInstruction().getColumnName();
                 if (StringUtil.equalsIgnoreCase(columnName, value.getName())) {
@@ -93,7 +98,7 @@ public class DatasetSortingColumnForm extends DBNFormImpl<DatasetEditorSortingFo
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -102,10 +107,11 @@ public class DatasetSortingColumnForm extends DBNFormImpl<DatasetEditorSortingFo
     }
 
     public void remove() {
-        ensureParentComponent().removeSortingColumn(this);
+        getParentForm().removeSortingColumn(this);
     }
 
+    @NotNull
     public DBDataset getDataset() {
-        return ensureParentComponent().getDataset();
+        return getParentForm().getDataset();
     }
 }

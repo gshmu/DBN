@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
@@ -9,7 +9,7 @@ import javax.swing.tree.TreeNode;
 import java.util.Collections;
 import java.util.List;
 
-public interface MessagesTreeNode<P extends MessagesTreeNode, C extends MessagesTreeNode> extends TreeNode, Disposable {
+public interface MessagesTreeNode<P extends MessagesTreeNode, C extends MessagesTreeNode> extends TreeNode, StatefulDisposable {
     P getParent();
 
     default MessagesTreeModel getTreeModel() {

@@ -26,7 +26,7 @@ class ColumnValueTextField extends JTextField {
 
     ColumnValueTextField(DatasetRecord record, DBColumn column) {
         this.record = record;
-        this.columnRef = DBObjectRef.from(column);
+        this.columnRef = DBObjectRef.of(column);
         if (column.isPrimaryKey()) {
             SimpleTextAttributes textAttributes = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.PRIMARY_KEY);
             setForeground(textAttributes.getFgColor());

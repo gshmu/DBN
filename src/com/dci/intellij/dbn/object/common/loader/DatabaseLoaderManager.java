@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.common.loader;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -60,7 +60,7 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
 
     @Override
     public void disposeInner() {
-        Disposer.dispose(loaderQueue);
+        DisposeUtil.dispose(loaderQueue);
         super.disposeInner();
     }
 }

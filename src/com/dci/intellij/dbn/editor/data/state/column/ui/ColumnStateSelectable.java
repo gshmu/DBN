@@ -30,7 +30,7 @@ public class ColumnStateSelectable implements Selectable {
     private DBObjectRef<DBDataset> datasetRef;
 
     public ColumnStateSelectable(DBDataset dataset, DatasetColumnState state) {
-        this.datasetRef = DBObjectRef.from(dataset);
+        this.datasetRef = DBObjectRef.of(dataset);
         this.state = state;
     }
 

@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.transaction.ui;
 
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +15,8 @@ public class IdleConnectionDialogForm extends DBNFormImpl {
     private JPanel headerPanel;
     private JTextPane hintTextPane;
 
-    public IdleConnectionDialogForm(ConnectionHandler connectionHandler, DBNConnection connection, int timeoutMinutes) {
+    public IdleConnectionDialogForm(DBNDialog parent, ConnectionHandler connectionHandler, DBNConnection connection, int timeoutMinutes) {
+        super(parent);
         int idleMinutes = connection.getIdleMinutes();
         int idleMinutesToDisconnect = connectionHandler.getSettings().getDetailSettings().getIdleTimeToDisconnect();
 
@@ -26,14 +28,14 @@ public class IdleConnectionDialogForm extends DBNFormImpl {
         hintTextPane.setText(text);
 
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler, this);
+        DBNHeaderForm headerForm = new DBNHeaderForm(this, connectionHandler);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
     }
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 }

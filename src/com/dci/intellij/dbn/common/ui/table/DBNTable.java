@@ -1,21 +1,23 @@
 package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.Colors;
-import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
-import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableHeaderRenderer;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.keyFMap.KeyFMap;
 import com.intellij.util.ui.UIUtil;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,30 +40,23 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-@Nullifiable
-public abstract class DBNTable<T extends DBNTableModel> extends JTable implements RegisteredDisposable, UserDataHolder, ProjectEventAdapter.Provided {
+public abstract class DBNTable<T extends DBNTableModel> extends JTable implements StatefulDisposable, UserDataHolder, ProjectEventAdapter.Provided {
     private static final int MAX_COLUMN_WIDTH = 300;
     private static final int MIN_COLUMN_WIDTH = 10;
-    private final ProjectRef projectRef;
-    protected DBNTableGutter tableGutter;
-    private double scrollDistance;
+
+    private final WeakRef<DBNComponent> parentComponentRef;
+
+    private DBNTableGutter<?> tableGutter;
     private JBScrollPane scrollPane;
-    private Timer scrollTimer;
     private int rowVerticalPadding;
+    private double scrollDistance;
+    private Timer scrollTimer;
     private KeyFMap userData = KeyFMap.EMPTY_MAP;
 
-    @Override
-    public void setModel(@NotNull TableModel dataModel) {
-        super.setModel(dataModel);
-    }
-
-    public DBNTable(T tableModel, boolean showHeader) {
-        this(null, tableModel, showHeader);
-    }
-
-    public DBNTable(Project project, T tableModel, boolean showHeader) {
+    public DBNTable(@NotNull DBNComponent parent, @NotNull T tableModel, boolean showHeader) {
         super(tableModel);
-        projectRef = ProjectRef.from(project);
+        this.parentComponentRef = WeakRef.of(parent);
+
         setGridColor(Colors.tableGridColor());
         Font font = getFont();//UIUtil.getListFont();
         setFont(font);
@@ -93,7 +88,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     if (scrollTimer != null) {
-                        Disposer.dispose(scrollTimer);
+                        DisposeUtil.dispose(scrollTimer);
                         scrollTimer = null;
                     }
                 }
@@ -102,6 +97,16 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
 
         updateComponentColors();
         Colors.subscribe(() -> updateComponentColors());
+
+        Disposer.register(parent, this);
+        Disposer.register(this, tableModel);
+    }
+
+    @Override
+    public void setModel(@NotNull TableModel dataModel) {
+        T oldDataModel = (T) super.getModel();
+        super.setModel(dataModel);
+        DisposeUtil.disposeInBackground(oldDataModel);
     }
 
     private void updateComponentColors() {
@@ -159,7 +164,12 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
 
     @NotNull
     public final Project getProject() {
-        return projectRef.ensure();
+        return parentComponentRef.ensure().getProject();
+    }
+
+    @NotNull
+    public DBNComponent getParentComponent() {
+        return parentComponentRef.ensure();
     }
 
     protected Object getValueAtMouseLocation() {
@@ -287,16 +297,13 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
         }
     }
 
-    protected DBNTableGutter createTableGutter() {
+    protected DBNTableGutter<?> createTableGutter() {
         return null; // do not instructions gutter by default
     }
 
-    public final DBNTableGutter getTableGutter() {
+    public final DBNTableGutter<?> getTableGutter() {
         if (tableGutter == null) {
             tableGutter = createTableGutter();
-            if (tableGutter != null) {
-                Disposer.register(this, tableGutter);
-            }
         }
         return tableGutter;
     }
@@ -384,24 +391,17 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
+    @Getter
     private boolean disposed;
 
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
-    @Override
-    public void markDisposed() {
-        disposed = true;
-    }
-
-    public void disposeInner(){
-        Disposer.disposeInBackground(getModel());
-        listenerList = new EventListenerList();
-        columnModel = new DefaultTableColumnModel();
-        selectionModel = new DefaultListSelectionModel();
-        RegisteredDisposable.super.disposeInner();
-
+    public void dispose(){
+        if (!disposed) {
+            disposed = true;
+            DisposeUtil.disposeInBackground(getModel());
+            listenerList = new EventListenerList();
+            columnModel = new DefaultTableColumnModel();
+            selectionModel = new DefaultListSelectionModel();
+            nullify();
+        }
     }
 }

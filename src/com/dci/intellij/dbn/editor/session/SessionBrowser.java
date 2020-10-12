@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.session;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposableUserDataHolderBase;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
 import com.dci.intellij.dbn.editor.session.ui.SessionBrowserDetailsForm;
 import com.dci.intellij.dbn.editor.session.ui.SessionBrowserForm;
 import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.structureView.StructureViewBuilder;
@@ -28,6 +29,7 @@ import com.intellij.openapi.fileEditor.FileEditorLocation;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,16 +42,20 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class SessionBrowser extends DisposableUserDataHolderBase implements FileEditor, ConnectionProvider, DataProvider {
-    private DBSessionBrowserVirtualFile sessionBrowserFile;
+    private final WeakRef<DBSessionBrowserVirtualFile> databaseFile;
+
     private SessionBrowserForm editorForm;
     private boolean preventLoading = false;
     private boolean loading;
     private Timer refreshTimer;
     private FileEditorState cachedState;
 
-    public SessionBrowser(DBSessionBrowserVirtualFile sessionBrowserFile) {
-        this.sessionBrowserFile = sessionBrowserFile;
-        editorForm = new SessionBrowserForm(this);
+    public SessionBrowser(DBSessionBrowserVirtualFile databaseFile) {
+        this.databaseFile = WeakRef.of(databaseFile);
+        this.editorForm = new SessionBrowserForm(this);
+
+        Disposer.register(this, editorForm);
+
         loadSessions(true);
     }
 
@@ -85,25 +91,24 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
     public void loadSessions(boolean force) {
         if (shouldLoad(force)) {
             ConnectionAction.invoke("loading the sessions", false, this,
-                    (action) -> {
-                        Progress.background(getProject(), "Loading sessions", false,
-                                (progress) -> {
-                                    if (shouldLoad(force)) {
-                                        try {
-                                            setLoading(true);
-                                            SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
-                                            SessionBrowserModel model = sessionBrowserManager.loadSessions(sessionBrowserFile);
-                                            replaceModel(model);
-                                        } finally {
-                                            EventNotifier.notify(getProject(),
-                                                    SessionBrowserLoadListener.TOPIC,
-                                                    (listener) -> listener.sessionsLoaded(sessionBrowserFile));
-                                            setLoading(false);
-                                        }
+                    action -> Progress.background(getProject(), "Loading sessions", false,
+                            (progress) -> {
+                                if (shouldLoad(force)) {
+                                    DBSessionBrowserVirtualFile databaseFile = getDatabaseFile();
+                                    try {
+                                        setLoading(true);
+                                        SessionBrowserManager sessionBrowserManager = SessionBrowserManager.getInstance(getProject());
+                                        SessionBrowserModel model = sessionBrowserManager.loadSessions(databaseFile);
+                                        replaceModel(model);
+                                    } finally {
+                                        EventNotifier.notify(getProject(),
+                                                SessionBrowserLoadListener.TOPIC,
+                                                (listener) -> listener.sessionsLoaded(databaseFile));
+                                        setLoading(false);
                                     }
-                                });
-                    },
-                    (cancel) -> {
+                                }
+                            }),
+                    cancel -> {
                         setLoading(false);
                         setRefreshInterval(0);
                     },
@@ -124,7 +129,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
                 newModel.setState(state);
                 editorTable.setModel(newModel);
                 refreshTable();
-                Disposer.dispose(oldModel);
+                DisposeUtil.dispose(oldModel);
             });
         }
     }
@@ -186,12 +191,13 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
     }
 
 
+    @NotNull
     public DBSessionBrowserVirtualFile getDatabaseFile() {
-        return sessionBrowserFile;
+        return databaseFile.ensure();
     }
 
     public Project getProject() {
-        return Failsafe.nn(sessionBrowserFile.getProject());
+        return getDatabaseFile().getProject();
     }
 
     @Override
@@ -334,7 +340,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
     }
 
     private void stopRefreshTimer() {
-        Disposer.dispose(refreshTimer);
+        DisposeUtil.dispose(refreshTimer);
         refreshTimer = null;
     }
 
@@ -382,13 +388,13 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
 
     @NotNull
     public ConnectionId getConnectionId() {
-        return sessionBrowserFile.getConnectionId();
+        return getDatabaseFile().getConnectionId();
     }
 
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return sessionBrowserFile.getConnectionHandler();
+        return getDatabaseFile().getConnectionHandler();
     }
 
     /*******************************************************
@@ -404,11 +410,12 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
         return null;
     }
 
+
     @Override
-    public void disposeInner() {
+    public void dispose() {
         stopRefreshTimer();
-        Disposer.dispose(editorForm);
-        super.disposeInner();
+        editorForm = null;
+        super.dispose();
     }
 }
 

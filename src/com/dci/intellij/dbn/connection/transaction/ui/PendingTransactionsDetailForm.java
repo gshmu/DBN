@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -23,7 +23,7 @@ import static com.dci.intellij.dbn.connection.transaction.TransactionAction.acti
 
 
 public class PendingTransactionsDetailForm extends DBNFormImpl {
-    private DBNTable changesTable;
+    private final DBNTable<PendingTransactionsTableModel> changesTable;
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JScrollPane changesTableScrollPane;
@@ -31,26 +31,25 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
     private JButton rollbackButton;
     private JPanel transactionActionsPanel;
 
-    private ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connectionHandler;
     private PendingTransactionsTableModel tableModel;
 
-    PendingTransactionsDetailForm(ConnectionHandler connectionHandler, TransactionAction additionalOperation, boolean showActions) {
-        this.connectionHandlerRef = connectionHandler.getRef();
-        Project project = connectionHandler.getProject();
+    PendingTransactionsDetailForm(@NotNull DBNComponent parent, @NotNull ConnectionHandler connectionHandler, TransactionAction additionalOperation, boolean showActions) {
+        super(parent);
+        this.connectionHandler = connectionHandler.getRef();
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler, this);
+        DBNHeaderForm headerForm = new DBNHeaderForm(this, connectionHandler);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        tableModel = new PendingTransactionsTableModel(connectionHandler);
-        changesTable = new PendingTransactionsTable(tableModel);
+        changesTable = new PendingTransactionsTable(this, new PendingTransactionsTableModel(connectionHandler));
         changesTableScrollPane.setViewportView(changesTable);
         changesTableScrollPane.getViewport().setBackground(changesTable.getBackground());
 
         transactionActionsPanel.setVisible(showActions);
         if (showActions) {
             ActionListener actionListener = e -> {
-                Project project1 = connectionHandler.getProject();
-                DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project1);
+                Project project = connectionHandler.getProject();
+                DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
                 Object source = e.getSource();
                 if (source == commitButton) {
                     List<TransactionAction> actions = actions(TransactionAction.COMMIT, additionalOperation);
@@ -66,11 +65,10 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
 
         }
         subscribe(TransactionListener.TOPIC, transactionListener);
-        Disposer.register(this, changesTable);
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     @NotNull
@@ -80,14 +78,14 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
     /********************************************************
      *                Transaction Listener                  *
      ********************************************************/
-    private TransactionListener transactionListener = new TransactionListener() {
+    private final TransactionListener transactionListener = new TransactionListener() {
         @Override
         public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
             if (connectionHandler == getConnectionHandler() && succeeded) {
@@ -99,12 +97,10 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
     private void refreshForm(ConnectionHandler connectionHandler) {
         Dispatch.run(() -> {
             checkDisposed();
-            PendingTransactionsTableModel oldTableModel = tableModel;
             tableModel = new PendingTransactionsTableModel(connectionHandler);
             changesTable.setModel(tableModel);
             commitButton.setEnabled(false);
             rollbackButton.setEnabled(false);
-            Disposer.dispose(oldTableModel);
         });
     }
 }

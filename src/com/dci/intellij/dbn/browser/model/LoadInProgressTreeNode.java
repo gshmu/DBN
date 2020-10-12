@@ -2,11 +2,11 @@ package com.dci.intellij.dbn.browser.model;
 
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.load.LoadInProgressIcon;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.Disposable;
@@ -19,12 +19,11 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.ArrayList;
 
-@Nullifiable
 public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements BrowserTreeNode {
-    private BrowserTreeNode parent;
+    private final WeakRef<BrowserTreeNode> parent;
 
     public LoadInProgressTreeNode(@NotNull BrowserTreeNode parent) {
-        this.parent = parent;
+        this.parent = WeakRef.of(parent);
     }
 
     @Override
@@ -53,7 +52,7 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
     @Override
     @NotNull
     public BrowserTreeNode getParent() {
-        return Failsafe.nn(parent);
+        return parent.ensure();
     }
 
     @Override
@@ -189,5 +188,10 @@ public class LoadInProgressTreeNode extends BrowserTreeNodeBase implements Brows
                 clear();
             }
         }
+    }
+
+    @Override
+    protected void disposeInner() {
+
     }
 }

@@ -39,7 +39,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
     private DBObjectRef<T> methodRef;
 
     protected MethodExecutionProcessorImpl(T method) {
-        this.methodRef = DBObjectRef.from(method);
+        this.methodRef = DBObjectRef.of(method);
     }
 
     @Override

@@ -2,12 +2,14 @@ package com.dci.intellij.dbn.data.editor.ui;
 
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.common.ui.panel.DBNPanelImpl;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.JBUI;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,17 +26,15 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.List;
 
-@Nullifiable
-public class TextFieldWithPopup<T extends JComponent> extends JPanel implements DataEditorComponent {
-    private JTextField textField;
-    private JPanel buttonsPanel;
+public class TextFieldWithPopup<T extends JComponent> extends DBNPanelImpl implements DataEditorComponent {
+    private final JTextField textField;
+    private final JPanel buttonsPanel;
 
-    private List<TextFieldPopupProvider> popupProviders = new ArrayList<>();
-    private UserValueHolder userValueHolder;
-    private ProjectRef projectRef;
+    private @Getter @Setter UserValueHolder<?> userValueHolder;
+    private final List<TextFieldPopupProvider> popupProviders = DisposableContainer.list(this);
+    private final ProjectRef project;
     private T parentComponent;
 
     public TextFieldWithPopup(Project project) {
@@ -42,8 +42,8 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
 
     }
     public TextFieldWithPopup(Project project, @Nullable T parentComponent) {
-        super(new BorderLayout());
-        this.projectRef = ProjectRef.from(project);
+        setLayout(new BorderLayout());
+        this.project = ProjectRef.of(project);
         this.parentComponent = parentComponent;
 
         textField = new JTextField();
@@ -84,7 +84,7 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
 
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return project.ensure();
     }
 
     @Nullable
@@ -102,11 +102,6 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
         return textField.isEditable();
     }
                                                                                   
-    @Override
-    public void setUserValueHolder(UserValueHolder userValueHolder) {
-        this.userValueHolder = userValueHolder;
-    }
-
     public void customizeTextField(JTextField textField) {}
 
     public void customizeButton(JLabel button) {
@@ -203,7 +198,6 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
             popupProvider.setButton(button);
             Colors.subscribe(() -> customizeButton(button));
         }
-        Disposer.register(this, popupProvider);
     }
 
     public void setPopupEnabled(TextFieldPopupType popupType, boolean enabled) {
@@ -261,7 +255,7 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
     /********************************************************
      *                    FocusListener                     *
      ********************************************************/
-    private FocusListener focusListener = new FocusAdapter() {
+    private final FocusListener focusListener = new FocusAdapter() {
         @Override
         public void focusLost(FocusEvent focusEvent) {
             TextFieldPopupProvider popupProvider = getActivePopupProvider();
@@ -274,7 +268,7 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
     /********************************************************
      *                      KeyListener                     *
      ********************************************************/
-    private KeyListener keyListener = new KeyAdapter() {
+    private final KeyListener keyListener = new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent keyEvent) {
             TextFieldPopupProvider popupProvider = getActivePopupProvider();
@@ -302,7 +296,7 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
     /********************************************************
      *                    ActionListener                    *
      ********************************************************/
-    private ActionListener actionListener = e -> {
+    private final ActionListener actionListener = e -> {
         TextFieldPopupProvider defaultPopupProvider = getDefaultPopupProvider();
         TextFieldPopupProvider popupProvider = getActivePopupProvider();
         if (popupProvider == null || popupProvider != defaultPopupProvider) {
@@ -330,22 +324,7 @@ public class TextFieldWithPopup<T extends JComponent> extends JPanel implements 
     }
 
     @Override
-    public UserValueHolder getUserValueHolder() {
-        return userValueHolder;
-    }
-
-    /********************************************************
-     *                    Disposable                        *
-     ********************************************************/
-    private boolean disposed;
-
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
-    @Override
-    public void markDisposed() {
-        disposed = true;
+    protected void disposeInner() {
+        parentComponent = null;
     }
 }

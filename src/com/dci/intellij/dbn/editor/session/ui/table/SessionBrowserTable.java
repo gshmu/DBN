@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.editor.session.ui.table;
 
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableCellRenderer;
@@ -36,8 +37,8 @@ import java.util.EventObject;
 public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     private final WeakRef<SessionBrowser> sessionBrowser;
 
-    public SessionBrowserTable(SessionBrowser sessionBrowser) throws SQLException {
-        super(new SessionBrowserModel(sessionBrowser.getConnectionHandler()), false, new RecordViewInfo(sessionBrowser.getConnectionHandler().getName(), null));
+    public SessionBrowserTable(@NotNull DBNComponent parent, SessionBrowser sessionBrowser) throws SQLException {
+        super(parent, createModel(sessionBrowser), false, createRecordInfo(sessionBrowser));
         getTableHeader().setDefaultRenderer(new SortableTableHeaderRenderer());
         getTableHeader().addMouseListener(new SessionBrowserTableHeaderMouseListener(this));
         addMouseListener(new SessionBrowserTableMouseListener(this));
@@ -48,6 +49,16 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
         ActionUtil.registerDataProvider(this, dataProvider, false);
         ActionUtil.registerDataProvider(getTableHeader(), dataProvider, false);
 */
+    }
+
+    @NotNull
+    private static RecordViewInfo createRecordInfo(SessionBrowser sessionBrowser) {
+        return new RecordViewInfo(sessionBrowser.getConnectionHandler().getName(), null);
+    }
+
+    @NotNull
+    private static SessionBrowserModel createModel(SessionBrowser sessionBrowser) {
+        return new SessionBrowserModel(sessionBrowser.getConnectionHandler());
     }
 
     @Override
@@ -67,7 +78,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
     }
 
     @Override
-    protected BasicTableGutter createTableGutter() {
+    protected BasicTableGutter<?> createTableGutter() {
         return new SessionBrowserTableGutter(this);
     }
 
@@ -88,7 +99,7 @@ public class SessionBrowserTable extends ResultSetTable<SessionBrowserModel> {
 
     public void updateTableGutter() {
         Dispatch.run(() -> {
-            DBNTableGutter tableGutter = getTableGutter();
+            DBNTableGutter<?> tableGutter = getTableGutter();
             GUIUtil.repaint(tableGutter);
         });
     }

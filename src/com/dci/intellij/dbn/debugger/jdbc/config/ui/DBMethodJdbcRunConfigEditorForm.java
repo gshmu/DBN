@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.debugger.jdbc.config.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -41,7 +41,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
 
     private MethodExecutionInputForm methodExecutionInputForm;
 
-    public DBMethodJdbcRunConfigEditorForm(final DBMethodJdbcRunConfig configuration) {
+    public DBMethodJdbcRunConfigEditorForm(DBMethodJdbcRunConfig configuration) {
         super(configuration.getProject());
         readConfiguration(configuration);
         if (configuration.getCategory() != DBRunConfigCategory.CUSTOM) {
@@ -49,7 +49,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
             methodArgumentsPanel.setVisible(false);
             headerPanel.setVisible(false);
             hintPanel.setVisible(true);
-            DBNHintForm hintForm = new DBNHintForm(DatabaseDebuggerManager.GENERIC_METHOD_RUNNER_HINT, null, true);
+            DBNHintForm hintForm = new DBNHintForm(this, DatabaseDebuggerManager.GENERIC_METHOD_RUNNER_HINT, null, true);
             hintPanel.add(hintForm.getComponent());
         } else {
             ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, new SelectMethodAction());
@@ -60,7 +60,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -136,7 +136,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
 
                     Dispatch.run(() -> {
                         methodArgumentsPanel.removeAll();
-                        Disposer.dispose(methodExecutionInputForm);
+                        SafeDisposer.dispose(methodExecutionInputForm);
                         methodExecutionInputForm = null;
 
                         String headerTitle = "No method selected";
@@ -160,21 +160,15 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
                         }
 
                         DBNHeaderForm headerForm = new DBNHeaderForm(
-                                headerTitle,
+                                this, headerTitle,
                                 headerIcon,
-                                headerBackground,
-                                this);
+                                headerBackground
+                        );
                         headerPanel.removeAll();
                         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
                         GUIUtil.repaint(mainPanel);
                     });
                 });
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(methodExecutionInputForm);
-        super.disposeInner();
     }
 }

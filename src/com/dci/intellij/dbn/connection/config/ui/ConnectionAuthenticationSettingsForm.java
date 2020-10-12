@@ -9,9 +9,11 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 
-public class ConnectionAuthenticationSettingsForm extends DBNFormImpl<ConnectionDatabaseSettingsForm> {
+public class ConnectionAuthenticationSettingsForm extends DBNFormImpl {
     private JComboBox<AuthenticationType> authTypeComboBox;
     private JTextField userTextField;
     private JPasswordField passwordField;
@@ -80,7 +82,7 @@ public class ConnectionAuthenticationSettingsForm extends DBNFormImpl<Connection
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 }

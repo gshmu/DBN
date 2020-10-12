@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.common;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
-import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.intellij.openapi.application.ApplicationListener;
@@ -16,19 +14,18 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 
-@Nullifiable
-public abstract class AbstractProjectComponent extends DisposableBase implements
+public abstract class AbstractProjectComponent extends StatefulDisposable.Base implements
         SettingsSupport,
         ApplicationListener,
         ProjectComponent,
         ProjectManagerListener,
-        RegisteredDisposable,
+        StatefulDisposable,
         NotificationSupport {
 
-    private final ProjectRef projectRef;
+    private final ProjectRef project;
 
     protected AbstractProjectComponent(Project project) {
-        this.projectRef = ProjectRef.from(project);
+        this.project = ProjectRef.of(project);
         ProjectManager projectManager = ProjectManager.getInstance();
         projectManager.addProjectManagerListener(project, this);
         ApplicationManager.getApplication().addApplicationListener(this);
@@ -45,7 +42,7 @@ public abstract class AbstractProjectComponent extends DisposableBase implements
     @Override
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return project.ensure();
     }
 
     @Override
@@ -125,6 +122,11 @@ public abstract class AbstractProjectComponent extends DisposableBase implements
     @Override
     public void disposeComponent() {
         dispose();
+    }
+
+    @Override
+    protected void disposeInner() {
+        nullify();
     }
 
     protected void closeProject() {

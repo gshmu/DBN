@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
-import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
 import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface DBObjectBundle extends BrowserTreeNode, Disposable {
+public interface DBObjectBundle extends BrowserTreeNode, StatefulDisposable {
     List<DBSchema> getSchemas();
 
     @Nullable
@@ -89,11 +89,11 @@ public interface DBObjectBundle extends BrowserTreeNode, Disposable {
 
     DBObjectListContainer getObjectListContainer();
 
-    LookupItemBuilder getLookupItemBuilder(DBObjectRef objectRef, DBLanguage language);
+    LookupItemBuilder getLookupItemBuilder(DBObjectRef<?> objectRef, DBLanguage<?> language);
 
-    DBObjectPsiFacade getObjectPsiFacade(DBObjectRef objectRef);
+    DBObjectPsiFacade getObjectPsiFacade(DBObjectRef<?> objectRef);
 
-    DBObjectVirtualFile getObjectVirtualFile(DBObjectRef objectRef);
+    DBObjectVirtualFile<?> getObjectVirtualFile(DBObjectRef<?> objectRef);
 
     PsiFile getFakeObjectFile();
 

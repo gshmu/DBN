@@ -12,12 +12,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-public class DBNHintForm extends DBNFormImpl{
+public class DBNHintForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JLabel hintLabel;
     private JTextPane hintTextPane;
 
-    public DBNHintForm(String hintText, MessageType messageType, boolean boxed) {
+    public DBNHintForm(DBNForm parent, String hintText, MessageType messageType, boolean boxed) {
+        super(parent);
         hintLabel.setText("");
         if (messageType != null) {
             Icon icon = Icons.COMMON_INFO;
@@ -50,7 +51,7 @@ public class DBNHintForm extends DBNFormImpl{
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 }

@@ -17,12 +17,12 @@ public abstract class AnObjectAction<T extends DBObject> extends DumbAwareContex
 
     public AnObjectAction(String text, Icon icon, @NotNull T object) {
         super(text, null, icon);
-        objectRef = DBObjectRef.from(object);
+        objectRef = DBObjectRef.of(object);
         custom = true;
     }
     public AnObjectAction(@NotNull T object) {
         super(object.getName(), null, object.getIcon());
-        objectRef = DBObjectRef.from(object);
+        objectRef = DBObjectRef.of(object);
     }
 
     @Override

@@ -19,19 +19,19 @@ import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.util.Set;
 
-public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDialog>{
+public class CreateRenameConsoleForm extends DBNFormImpl{
     private JPanel headerPanel;
     private JPanel mainPanel;
     private JTextField consoleNameTextField;
     private JLabel errorLabel;
 
-    private ConnectionHandlerRef connectionHandlerRef;
-    private DBConsole console;
-    private DBConsoleType consoleType;
+    private final ConnectionHandlerRef connectionHandler;
+    private final DBConsoleType consoleType;
+    private final DBConsole console;
 
-    CreateRenameConsoleForm(final CreateRenameConsoleDialog parentComponent, @NotNull ConnectionHandler connectionHandler, @Nullable final DBConsole console, DBConsoleType consoleType) {
-        super(parentComponent);
-        this.connectionHandlerRef = connectionHandler.getRef();
+    CreateRenameConsoleForm(final CreateRenameConsoleDialog parent, @NotNull ConnectionHandler connectionHandler, @Nullable final DBConsole console, DBConsoleType consoleType) {
+        super(parent);
+        this.connectionHandler = connectionHandler.getRef();
         this.console = console;
         this.consoleType = consoleType;
         errorLabel.setForeground(JBColor.RED);
@@ -39,8 +39,8 @@ public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDial
         errorLabel.setVisible(false);
 
         DBNHeaderForm headerForm = console == null ?
-                new DBNHeaderForm("[New " + consoleType.getName() + "]", consoleType.getIcon(), connectionHandler.getEnvironmentType().getColor(), this) :
-                new DBNHeaderForm(console, this);
+                new DBNHeaderForm(this, "[New " + consoleType.getName() + "]", consoleType.getIcon(), connectionHandler.getEnvironmentType().getColor()) :
+                new DBNHeaderForm(this, console);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         final Set<String> consoleNames = connectionHandler.getConsoleBundle().getConsoleNames();
@@ -54,7 +54,7 @@ public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDial
         } else {
             name = console.getName();
             consoleNames.remove(name);
-            parentComponent.getOKAction().setEnabled(false);
+            parent.getOKAction().setEnabled(false);
         }
         consoleNameTextField.setText(name);
 
@@ -73,7 +73,7 @@ public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDial
 
 
                 errorLabel.setVisible(errorText != null);
-                parentComponent.getOKAction().setEnabled(errorText == null && (console == null || !console.getName().equals(text)));
+                parent.getOKAction().setEnabled(errorText == null && (console == null || !console.getName().equals(text)));
                 if (errorText != null) {
                     errorLabel.setText(errorText);
                 }
@@ -96,7 +96,7 @@ public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDial
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     public DBConsole getConsole() {
@@ -105,7 +105,7 @@ public class CreateRenameConsoleForm extends DBNFormImpl<CreateRenameConsoleDial
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

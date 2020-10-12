@@ -19,7 +19,7 @@ public class ResourceMonitorDialog extends DBNDialog<ResourceMonitorForm> {
 
     @NotNull
     @Override
-    protected ResourceMonitorForm createComponent() {
+    protected ResourceMonitorForm createForm() {
         return new ResourceMonitorForm(this);
     }
 

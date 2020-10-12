@@ -30,14 +30,14 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> 
         ProjectSettings projectSettings = ProjectSettingsManager.getSettings(project);
         this.projectSettings = projectSettings.clone();
         this.projectSettings.createCustomComponent();
-        ProjectSettingsEditorForm component = getComponent();
+        ProjectSettingsEditorForm component = getForm();
         component.setDialog(this);
         init();
     }
 
     @NotNull
     @Override
-    protected ProjectSettingsEditorForm createComponent() {
+    protected ProjectSettingsEditorForm createForm() {
         return projectSettings.ensureSettingsEditor();
     }
 

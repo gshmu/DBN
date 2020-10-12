@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.variables;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -31,8 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@Nullifiable
-public class StatementExecutionVariablesBundle extends DisposableBase implements Disposable{
+public class StatementExecutionVariablesBundle extends StatefulDisposable.Base implements StatefulDisposable {
     public static final Comparator<StatementExecutionVariable> NAME_COMPARATOR = (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName());
     public static final Comparator<StatementExecutionVariable> NAME_LENGTH_COMPARATOR = (o1, o2) -> o2.getName().length() - o1.getName().length();
     public static final Comparator<StatementExecutionVariable> OFFSET_COMPARATOR = (o1, o2) -> o1.getOffset() - o2.getOffset();
@@ -183,5 +180,10 @@ public class StatementExecutionVariablesBundle extends DisposableBase implements
 
     public String getError(StatementExecutionVariable variable) {
         return errorMap == null ? null : errorMap.get(variable);
+    }
+
+    @Override
+    protected void disposeInner() {
+        nullify();
     }
 }

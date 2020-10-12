@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
+import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -38,6 +40,7 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
@@ -46,14 +49,14 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class MessagesTree extends DBNTree implements Disposable {
     private boolean ignoreSelectionEvent = false;
-    public MessagesTree(Project project) {
-        super(project, new MessagesTreeModel());
+
+    public MessagesTree(@NotNull DBNComponent parent) {
+        super(parent, new MessagesTreeModel());
         setCellRenderer(new MessagesTreeCellRenderer());
         addTreeSelectionListener(treeSelectionListener);
         addMouseListener(mouseListener);
@@ -107,7 +110,7 @@ public class MessagesTree extends DBNTree implements Disposable {
     public void reset() {
         MessagesTreeModel oldModel = getModel();
         setModel(new MessagesTreeModel());
-        Disposer.dispose(oldModel);
+        DisposeUtil.dispose(oldModel);
     }
 
     public TreePath addExecutionMessage(StatementExecutionMessage message, boolean select, boolean focus) {
@@ -339,7 +342,7 @@ public class MessagesTree extends DBNTree implements Disposable {
     /*********************************************************
      *                   TreeSelectionListener               *
      *********************************************************/
-    private TreeSelectionListener treeSelectionListener = event -> {
+    private final TreeSelectionListener treeSelectionListener = event -> {
         if (event.isAddedPath() && !ignoreSelectionEvent) {
             Object object = event.getPath().getLastPathComponent();
             navigateToCode(object, NavigationInstruction.OPEN_SCROLL);
@@ -351,23 +354,20 @@ public class MessagesTree extends DBNTree implements Disposable {
     /*********************************************************
      *                        MouseListener                  *
      *********************************************************/
-    private MouseListener mouseListener = new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent event) {
-            if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() > 1) {
-                TreePath selectionPath = getSelectionPath();
-                if (selectionPath != null) {
-                    Object value = selectionPath.getLastPathComponent();
-                    navigateToCode(value, NavigationInstruction.OPEN_FOCUS_SCROLL);
-                }
+    private final MouseListener mouseListener = MouseClickedListener.create(e -> {
+        if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1) {
+            TreePath selectionPath = getSelectionPath();
+            if (selectionPath != null) {
+                Object value = selectionPath.getLastPathComponent();
+                navigateToCode(value, NavigationInstruction.OPEN_FOCUS_SCROLL);
             }
         }
-    };
+    });
 
     /*********************************************************
      *                        KeyListener                    *
      *********************************************************/
-    private KeyListener keyListener = new KeyAdapter() {
+    private final KeyListener keyListener = new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_ENTER ) {

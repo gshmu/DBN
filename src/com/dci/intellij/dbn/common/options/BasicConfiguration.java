@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.options;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.language.common.WeakRef;
@@ -20,8 +20,8 @@ public abstract class BasicConfiguration<P extends Configuration, E extends Conf
     private transient E configurationEditorForm;
 
     private boolean modified = false;
-    private boolean transitory = IS_TRANSITORY.get();
-    private WeakRef<P> parent;
+    private final boolean transitory = IS_TRANSITORY.get();
+    private final WeakRef<P> parent;
 
     public BasicConfiguration(P parent) {
         this.parent = WeakRef.of(parent);
@@ -129,7 +129,7 @@ public abstract class BasicConfiguration<P extends Configuration, E extends Conf
 
     @Override
     public void disposeUIResources() {
-        Disposer.dispose(configurationEditorForm);
+        SafeDisposer.dispose(configurationEditorForm);
         configurationEditorForm = null;
     }
 

@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -17,6 +16,7 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -36,7 +36,9 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.tree.TreeUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -54,12 +56,10 @@ import java.awt.event.MouseListener;
 public class DatabaseBrowserTree extends DBNTree {
     private BrowserTreeNode targetSelection;
     private JPopupMenu popupMenu;
-    private TreeNavigationHistory navigationHistory = new TreeNavigationHistory();
+    private final TreeNavigationHistory navigationHistory = new TreeNavigationHistory();
 
-    private DatabaseBrowserTreeSpeedSearch speedSearch;
-
-    public DatabaseBrowserTree(BrowserTreeModel treeModel) {
-        super(treeModel.getProject(), treeModel);
+    public DatabaseBrowserTree(@NotNull DBNComponent parent, BrowserTreeModel treeModel) {
+        super(parent, treeModel);
 
         addKeyListener(keyListener);
         addMouseListener(mouseListener);
@@ -72,7 +72,11 @@ public class DatabaseBrowserTree extends DBNTree {
         DatabaseBrowserTreeCellRenderer browserTreeCellRenderer = new DatabaseBrowserTreeCellRenderer(treeModel.getProject());
         setCellRenderer(browserTreeCellRenderer);
         //setExpandedState(DatabaseBrowserUtils.createTreePath(treeModel.getRoot()), false);
-        speedSearch = new DatabaseBrowserTreeSpeedSearch(this);
+
+        new DatabaseBrowserTreeSpeedSearch(this);
+
+        Disposer.register(parent, this);
+        Disposer.register(this, navigationHistory);
     }
 
     @Override
@@ -299,7 +303,7 @@ public class DatabaseBrowserTree extends DBNTree {
     /********************************************************
      *                 TreeSelectionListener                *
      ********************************************************/
-    private TreeSelectionListener treeSelectionListener = new TreeSelectionListener() {
+    private final TreeSelectionListener treeSelectionListener = new TreeSelectionListener() {
         @Override
         public void valueChanged(TreeSelectionEvent e) {
             if (Failsafe.check(this) && listenersEnabled) {
@@ -321,7 +325,7 @@ public class DatabaseBrowserTree extends DBNTree {
     /********************************************************
      *                      MouseListener                   *
      ********************************************************/
-    private MouseListener mouseListener = new MouseAdapter() {
+    private final MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent event) {
             if (event.getButton() == MouseEvent.BUTTON1) {
@@ -347,7 +351,7 @@ public class DatabaseBrowserTree extends DBNTree {
                             (progress) -> {
                                 ActionGroup actionGroup = null;
                                 if (lastPathEntity instanceof DBObjectList) {
-                                    DBObjectList objectList = (DBObjectList) lastPathEntity;
+                                    DBObjectList<?> objectList = (DBObjectList<?>) lastPathEntity;
                                     actionGroup = new ObjectListActionGroup(objectList);
                                 } else if (lastPathEntity instanceof DBObject) {
                                     DBObject object = (DBObject) lastPathEntity;
@@ -379,7 +383,7 @@ public class DatabaseBrowserTree extends DBNTree {
     /********************************************************
      *                      KeyListener                     *
      ********************************************************/
-    private KeyListener keyListener = new KeyAdapter() {
+    private final KeyListener keyListener = new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == 10) {  // ENTER
@@ -394,10 +398,7 @@ public class DatabaseBrowserTree extends DBNTree {
      *******************************************************  */
     @Override
     public void disposeInner() {
-        Disposer.dispose(
-                speedSearch,
-                navigationHistory);
-        super.disposeInner();
         setModel(new SimpleBrowserTreeModel());
+        super.disposeInner();
     }
 }

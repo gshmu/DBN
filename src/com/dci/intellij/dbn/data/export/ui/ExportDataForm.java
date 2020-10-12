@@ -29,10 +29,12 @@ import java.io.File;
 import java.nio.charset.Charset;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
-public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
+public class ExportDataForm extends DBNFormImpl {
     private static final FileChooserDescriptor DIRECTORY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, true, false, false, false, false);
 
     private JPanel mainPanel;
@@ -63,14 +65,14 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
     private JLabel encodingLabel;
 
     private final DataExportInstructions instructions;
-    private final ConnectionHandlerRef connectionHandlerRef;
-    private final DBObjectRef sourceObjectRef;
+    private final ConnectionHandlerRef connectionHandler;
+    private final DBObjectRef<?> sourceObject;
     private final ActionListener actionListener = e -> enableDisableFields();
 
     ExportDataForm(ExportDataDialog parentComponent, DataExportInstructions instructions, boolean hasSelection, @NotNull ConnectionHandler connectionHandler, @Nullable DBObject sourceObject) {
         super(parentComponent);
-        this.connectionHandlerRef = connectionHandler.getRef();
-        this.sourceObjectRef = DBObjectRef.from(sourceObject);
+        this.connectionHandler = connectionHandler.getRef();
+        this.sourceObject = DBObjectRef.of(sourceObject);
         this.instructions = instructions;
         updateBorderTitleForeground(scopePanel);
         updateBorderTitleForeground(formatPanel);
@@ -146,17 +148,17 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
             headerIcon = Icons.DBO_TABLE;
             headerTitle = instructions.getBaseName();
         }
-        DBNHeaderForm headerComponent = new DBNHeaderForm(headerTitle, headerIcon, headerBackground, this);
+        DBNHeaderForm headerComponent = new DBNHeaderForm(this, headerTitle, headerIcon, headerBackground);
         headerPanel.add(headerComponent.getComponent());
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -259,7 +261,7 @@ public class ExportDataForm extends DBNFormImpl<ExportDataDialog> {
         fileLocationTextField.setEnabled(destinationFileRadioButton.isSelected());
         encodingComboBox.setEnabled(destinationFileRadioButton.isSelected() && supportsFileEncoding);
 
-        String fileNameBase = sourceObjectRef == null ? instructions.getBaseName() : sourceObjectRef.objectName;
+        String fileNameBase = sourceObject == null ? instructions.getBaseName() : sourceObject.objectName;
         if (fileNameBase != null && processor != null) {
             String fileName = fileNameBase + "." + processor.getFileExtension();
             fileNameTextField.setText(fileName);

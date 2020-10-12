@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 
@@ -12,7 +12,7 @@ import java.util.List;
 public abstract class MessagesTreeBundleNode<P extends MessagesTreeNode, C extends MessagesTreeNode>
         extends MessagesTreeNodeBase<P, C> {
 
-    private List<C> children = CollectionUtil.createConcurrentList();
+    private final List<C> children = CollectionUtil.createConcurrentList();
 
     protected MessagesTreeBundleNode(P parent) {
         super(parent);
@@ -25,7 +25,7 @@ public abstract class MessagesTreeBundleNode<P extends MessagesTreeNode, C exten
     protected void clearChildren() {
         List<MessagesTreeNode> children = new ArrayList<>(this.children);
         this.children.clear();
-        Disposer.dispose(children);
+        DisposeUtil.dispose(children);
     }
 
     @Override
@@ -84,8 +84,8 @@ public abstract class MessagesTreeBundleNode<P extends MessagesTreeNode, C exten
      ********************************************************  */
     @Override
     public void disposeInner() {
-        Disposer.dispose(children);
-        super.disposeInner();
+        DisposeUtil.dispose(children);
+        nullify();
     }
 
 

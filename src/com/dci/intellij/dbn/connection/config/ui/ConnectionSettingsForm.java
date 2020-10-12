@@ -42,9 +42,9 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
     private JButton infoButton;
     private JButton testButton;
     private JCheckBox activeCheckBox;
-    private TabbedPane configTabbedPane;
 
-    private DBNHeaderForm headerForm;
+    private final TabbedPane configTabbedPane;
+    private final DBNHeaderForm headerForm;
 
     public ConnectionSettingsForm(ConnectionSettings connectionSettings) {
         super(connectionSettings);
@@ -96,7 +96,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         String name = connectionSettings.getDatabaseSettings().getName();
         JBColor color = detailSettings.getEnvironmentType().getColor();
 
-        headerForm = new DBNHeaderForm(name, icon, color, this);
+        headerForm = new DBNHeaderForm(this, name, icon, color);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         subscribe(ConnectionPresentationChangeListener.TOPIC, connectionPresentationChangeListener);
 
@@ -218,7 +218,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

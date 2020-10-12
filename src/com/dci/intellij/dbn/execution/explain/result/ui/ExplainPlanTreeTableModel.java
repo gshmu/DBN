@@ -2,8 +2,11 @@ package com.dci.intellij.dbn.execution.explain.result.ui;
 
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanEntry;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.treeStructure.treetable.TreeTableModel;
+import lombok.Getter;
 
 import javax.swing.*;
 import javax.swing.event.TreeModelListener;
@@ -11,14 +14,16 @@ import javax.swing.tree.TreePath;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class ExplainPlanTreeTableModel implements TreeTableModel{
-    private ExplainPlanResult result;
+public class ExplainPlanTreeTableModel implements TreeTableModel, Disposable {
+    private final ExplainPlanResult result;
 
     public ExplainPlanTreeTableModel(ExplainPlanResult result) {
         this.result = result;
+
+        Disposer.register(this, result);
     }
 
-    private Column[] COLUMNS = new Column[]{
+    private final Column[] COLUMNS = new Column[]{
             new Column("OPERATION", TreeTableModel.class) {
                 @Override
                 public Object getValue(ExplainPlanEntry entry) {
@@ -116,7 +121,7 @@ public class ExplainPlanTreeTableModel implements TreeTableModel{
     }
 
     @Override
-    public Class getColumnClass(int column) {
+    public Class<?> getColumnClass(int column) {
         return COLUMNS[column].getClazz();
     }
 
@@ -185,33 +190,25 @@ public class ExplainPlanTreeTableModel implements TreeTableModel{
     @Override public void removeTreeModelListener(TreeModelListener l) {}
 
     public static abstract class Column {
-        private String name;
-        private Class clazz;
-        private boolean large;
+        @Getter private final String name;
+        @Getter private final Class<?> clazz;
+        @Getter private boolean large;
 
-        public Column(String name, Class clazz) {
+        public Column(String name, Class<?> clazz) {
             this.name = name;
             this.clazz = clazz;
         }
 
-        public Column(String name, Class clazz, boolean large) {
+        public Column(String name, Class<?> clazz, boolean large) {
             this.name = name;
             this.clazz = clazz;
             this.large = large;
         }
 
-        public String getName() {
-            return name;
-        }
-
-        public Class getClazz() {
-            return clazz;
-        }
-
-        public boolean isLarge() {
-            return large;
-        }
-
         public abstract Object getValue(ExplainPlanEntry entry);
+    }
+
+    @Override
+    public void dispose() {
     }
 }

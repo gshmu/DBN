@@ -14,7 +14,7 @@ public class GenerateInsertStatementAction extends GenerateStatementAction {
 
     GenerateInsertStatementAction(DBTable table) {
         super("INSERT Statement");
-        tableRef = DBObjectRef.from(table);
+        tableRef = DBObjectRef.of(table);
     }
 
     @Override

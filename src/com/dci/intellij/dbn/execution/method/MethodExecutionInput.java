@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.method;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -31,13 +30,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-@Nullifiable
 public class MethodExecutionInput extends LocalExecutionInput implements Comparable<MethodExecutionInput>, Cloneable<MethodExecutionInput> {
     private DBObjectRef<DBMethod> methodRef;
     private Set<MethodExecutionArgumentValue> argumentValues = new THashSet<>();
 
     private MethodExecutionResult executionResult;
-    private List<ArgumentValue> inputArgumentValues = new ArrayList<>();
+    private final List<ArgumentValue> inputArgumentValues = new ArrayList<>();
 
     public MethodExecutionInput(Project project) {
         super(project, ExecutionTarget.METHOD);
@@ -50,7 +48,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
     public MethodExecutionInput(Project project, DBMethod method) {
         super(project, ExecutionTarget.METHOD);
-        this.methodRef = DBObjectRef.from(method);
+        this.methodRef = DBObjectRef.of(method);
         this.targetSchemaId = method.getSchemaIdentifier();
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {

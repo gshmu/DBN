@@ -1,8 +1,9 @@
 package com.dci.intellij.dbn.execution.explain.result.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
-import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
+import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
@@ -17,9 +18,11 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ColoredTableCellRenderer;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
@@ -27,6 +30,7 @@ import com.intellij.ui.treeStructure.treetable.TreeTable;
 import com.intellij.ui.treeStructure.treetable.TreeTableCellRenderer;
 import com.intellij.ui.treeStructure.treetable.TreeTableModel;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -43,17 +47,19 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.math.BigDecimal;
 
-@Nullifiable
-public class ExplainPlanTreeTable extends TreeTable implements RegisteredDisposable {
+public class ExplainPlanTreeTable extends TreeTable implements StatefulDisposable {
     private static final int MAX_TREE_COLUMN_WIDTH = 900;
     private static final int MAX_COLUMN_WIDTH = 250;
     private static final int MIN_COLUMN_WIDTH = 10;
 
-    private SimpleTextAttributes operationAttributes;
+    private final ProjectRef project;
+    private final SimpleTextAttributes operationAttributes;
     private JBPopup largeValuePopup;
 
-    ExplainPlanTreeTable(ExplainPlanTreeTableModel treeTableModel) {
+    ExplainPlanTreeTable(DBNForm parent, ExplainPlanTreeTableModel treeTableModel) {
         super(treeTableModel);
+        this.project = ProjectRef.of(parent.getProject());
+
         EditorColorsScheme scheme = EditorColorsManager.getInstance().getGlobalScheme();
         TextAttributes attributes = scheme.getAttributes(TemplateColors.TEMPLATE_VARIABLE_ATTRIBUTES);
         operationAttributes = new SimpleTextAttributes(null, attributes.getForegroundColor(), null, SimpleTextAttributes.STYLE_PLAIN);
@@ -97,12 +103,14 @@ public class ExplainPlanTreeTable extends TreeTable implements RegisteredDisposa
             }
         });
 
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                showCellValuePopup();
-            }
-        });
+        addMouseListener(MouseClickedListener.create(e -> showCellValuePopup()));
+
+        Disposer.register(parent, this);
+    }
+
+    @NotNull
+    Project getProject() {
+        return project.ensure();
     }
 
     private final ColoredTreeCellRenderer treeCellRenderer = new ColoredTreeCellRenderer() {
@@ -116,7 +124,7 @@ public class ExplainPlanTreeTable extends TreeTable implements RegisteredDisposa
             try {
                 ExplainPlanEntry entry = (ExplainPlanEntry) value;
 
-                DBObjectRef objectRef = entry.getObjectRef();
+                DBObjectRef<?> objectRef = entry.getObjectRef();
                 SimpleTextAttributes selectedCellAttributes = SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES;
                 if (objectRef != null) {
                     setIcon(objectRef.objectType.getIcon());
@@ -182,11 +190,11 @@ public class ExplainPlanTreeTable extends TreeTable implements RegisteredDisposa
                 Rectangle cellRect = getCellRect(rowIndex, columnIndex, true);
 
                 TableColumn column = getColumnModel().getColumn(columnIndex);
-                UserValueHolder userValueHolder = new UserValueHolderImpl(tableModel.getColumnName(columnIndex), DBObjectType.COLUMN, null, tableModel.getProject());
+                UserValueHolder<Object> userValueHolder = new UserValueHolderImpl<>(tableModel.getColumnName(columnIndex), DBObjectType.COLUMN, null, tableModel.getProject());
                 userValueHolder.setUserValue(value);
 
                 int preferredWidth = column.getWidth();
-                LargeValuePreviewPopup viewer = new LargeValuePreviewPopup(this, userValueHolder, preferredWidth);
+                LargeValuePreviewPopup viewer = new LargeValuePreviewPopup(getProject(), this, userValueHolder, preferredWidth);
                 Point location = cellRect.getLocation();
                 location.setLocation(location.getX() + 4, location.getY() + 20);
 
@@ -200,6 +208,7 @@ public class ExplainPlanTreeTable extends TreeTable implements RegisteredDisposa
                             }
                         }
                 );
+
                 Disposer.register(ExplainPlanTreeTable.this, largeValuePopup);
             }
         }
@@ -263,21 +272,14 @@ public class ExplainPlanTreeTable extends TreeTable implements RegisteredDisposa
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
+    @Getter
     private boolean disposed;
 
     @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
-    @Override
-    public void markDisposed() {
-        disposed = true;
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(largeValuePopup);
-        RegisteredDisposable.super.disposeInner();
+    public void dispose() {
+        if (!disposed) {
+            disposed = true;
+            nullify();
+        }
     }
 }

@@ -32,7 +32,7 @@ public class StatementExecutionInputsDialog extends DBNDialog<StatementExecution
 
     @NotNull
     @Override
-    protected StatementExecutionInputForm createComponent() {
+    protected StatementExecutionInputForm createForm() {
         return new StatementExecutionInputForm(this, executionProcessor, debuggerType, bulkExecution);
     }
 
@@ -63,7 +63,7 @@ public class StatementExecutionInputsDialog extends DBNDialog<StatementExecution
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            getComponent().updateExecutionInput();
+            getForm().updateExecutionInput();
             StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
             Project project = getProject();
             if (executionVariables != null) {

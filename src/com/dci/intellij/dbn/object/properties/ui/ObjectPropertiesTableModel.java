@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.object.properties.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 
@@ -8,7 +8,7 @@ import javax.swing.event.TableModelListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ObjectPropertiesTableModel extends DisposableBase implements DBNTableModel {
+public class ObjectPropertiesTableModel extends StatefulDisposable.Base implements DBNTableModel {
     private List<PresentableProperty> presentableProperties = new ArrayList<>();
 
     ObjectPropertiesTableModel() {}
@@ -47,4 +47,8 @@ public class ObjectPropertiesTableModel extends DisposableBase implements DBNTab
     @Override public void addTableModelListener(TableModelListener l) {}
     @Override public void removeTableModelListener(TableModelListener l) {}
 
+    @Override
+    protected void disposeInner() {
+        nullify();
+    }
 }

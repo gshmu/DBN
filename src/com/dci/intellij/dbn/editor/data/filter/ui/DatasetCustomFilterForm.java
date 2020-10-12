@@ -37,7 +37,7 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
 
     private Document document;
     private EditorEx editor;
-    private int conditionStartOffset;
+    private final int conditionStartOffset;
     private static final String COMMENT = "-- enter your custom conditions here";
 
     public DatasetCustomFilterForm(DBDataset dataset, DatasetCustomFilter filter) {
@@ -113,7 +113,7 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
     * @return*/
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

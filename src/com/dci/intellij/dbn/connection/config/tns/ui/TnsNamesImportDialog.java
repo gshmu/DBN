@@ -27,7 +27,7 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
 
     @NotNull
     @Override
-    protected TnsNamesImportForm createComponent() {
+    protected TnsNamesImportForm createForm() {
         return new TnsNamesImportForm(this, file);
     }
 
@@ -60,7 +60,7 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            tnsNames = WeakRef.of(getComponent().getAllTnsNames());
+            tnsNames = WeakRef.of(getForm().getAllTnsNames());
             doOKAction();
         }
     }
@@ -72,7 +72,7 @@ public class TnsNamesImportDialog extends DBNDialog<TnsNamesImportForm> {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            tnsNames = WeakRef.of(getComponent().getSelectedTnsNames());
+            tnsNames = WeakRef.of(getForm().getSelectedTnsNames());
             doOKAction();
         }
     }

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.filter.quick.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -26,22 +26,21 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> {
+public class ObjectQuickFilterForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JPanel conditionsPanel;
     private JPanel actionsPanel;
     private JPanel hintPanel;
 
-    private List<ObjectQuickFilterConditionForm> conditionForms = new ArrayList<ObjectQuickFilterConditionForm>();
-    private DBObjectList objectList;
+    private final List<ObjectQuickFilterConditionForm> conditionForms = DisposableContainer.list(this);
+    private final DBObjectList<?> objectList;
     private ObjectQuickFilter filter;
 
-    ObjectQuickFilterForm(@NotNull ObjectQuickFilterDialog parent, DBObjectList objectList) {
+    ObjectQuickFilterForm(@NotNull ObjectQuickFilterDialog parent, DBObjectList<?> objectList) {
         super(parent);
         this.objectList = objectList;
         conditionsPanel.setLayout(new BoxLayout(conditionsPanel, BoxLayout.Y_AXIS));
@@ -62,10 +61,10 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
             addConditionPanel(condition);*/
         }
 
-        Filter filter = objectList.getConfigFilter();
+        Filter<?> filter = objectList.getConfigFilter();
         if (filter != null) {
             String hintText = "NOTE: This actions is filtered according to connection \"Filter\" settings. Any additional condition will narrow down the already filtered actions." ;
-            DBNHintForm hintForm = new DBNHintForm(hintText, null, true);
+            DBNHintForm hintForm = new DBNHintForm(this, hintText, null, true);
             hintPanel.add(hintForm.getComponent());
         }
 
@@ -78,7 +77,7 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
                 (parentElement instanceof DBSchema ? (parentElement.getName() + " - ") : "") +
                 NamingUtil.capitalizeWords(objectList.getObjectType().getListName()) + " filter";
         Color headerBackground = connectionHandler.getEnvironmentType().getColor();
-        DBNHeaderForm headerForm = new DBNHeaderForm(headerText, headerIcon, headerBackground, this);
+        DBNHeaderForm headerForm = new DBNHeaderForm(this, headerText, headerIcon, headerBackground);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
     }
 
@@ -105,8 +104,6 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
             if (conditionForm.getCondition() == condition) {
                 conditionForms.remove(conditionForm);
                 conditionsPanel.remove(conditionForm.getComponent());
-                Disposer.dispose(conditionForm);
-
                 break;
             }
         }
@@ -143,19 +140,13 @@ public class ObjectQuickFilterForm extends DBNFormImpl<ObjectQuickFilterDialog> 
         return filter;
     }
 
-    public DBObjectList getObjectList() {
+    public DBObjectList<?> getObjectList() {
         return objectList;
     }
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(conditionForms);
-        super.disposeInner();
     }
 }

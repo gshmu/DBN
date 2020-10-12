@@ -290,7 +290,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     @Nullable
-    public static <T extends DBObject> DBObjectRef<T> from(T object) {
+    public static <T extends DBObject> DBObjectRef<T> of(T object) {
         return object == null ? null : object.getRef();
     }
 
@@ -324,7 +324,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     public static List<DBObjectRef<?>> from(List<DBObject> objects) {
         List<DBObjectRef<?>> objectRefs = new ArrayList<>(objects.size());
         for (DBObject object : objects) {
-            objectRefs.add(from(object));
+            objectRefs.add(of(object));
         }
         return objectRefs;
     }

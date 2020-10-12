@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.ui;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.ui.panel.DBNPanelImpl;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionStatusListener;
@@ -25,19 +26,20 @@ import java.awt.*;
 
 import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 
-public class AutoCommitLabel extends JPanel implements Disposable, ProjectEventAdapter {
+public class AutoCommitLabel extends DBNPanelImpl implements Disposable, ProjectEventAdapter {
     private interface Colors {
         Color DISCONNECTED = new JBColor(new Color(0x454545), new Color(0x808080));
         Color CONNECTED = new JBColor(new Color(0x454545), new Color(0x808080));
         Color AUTO_COMMIT_ON = new JBColor(new Color(0xFF0000), new Color(0xBC3F3C));
         Color AUTO_COMMIT_OFF = new JBColor(new Color(0x009600), new Color(0x629755));
     }
-    private ConnectionHandlerRef connectionHandlerRef;
+    private ConnectionHandlerRef connectionHandler;
+    private WeakRef<VirtualFile> virtualFile;
     private SessionId sessionId;
     private boolean subscribed = false;
-    private WeakRef<VirtualFile> virtualFileRef;
-    private JLabel connectionLabel;
-    private JLabel autoCommitLabel = new JLabel();
+
+    private final JLabel connectionLabel;
+    private final JLabel autoCommitLabel;
 
     public AutoCommitLabel() {
         setLayout(new BorderLayout());
@@ -58,8 +60,8 @@ public class AutoCommitLabel extends JPanel implements Disposable, ProjectEventA
     }
 
     public void init(Project project, VirtualFile virtualFile, ConnectionHandler connectionHandler, SessionId sessionId) {
-        this.virtualFileRef = WeakRef.of(virtualFile);
-        this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+        this.virtualFile = WeakRef.of(virtualFile);
+        this.connectionHandler = ConnectionHandlerRef.from(connectionHandler);
         this.sessionId = nvl(sessionId, SessionId.MAIN);
         if (!subscribed) {
             subscribed = true;
@@ -107,9 +109,9 @@ public class AutoCommitLabel extends JPanel implements Disposable, ProjectEventA
     @Nullable
     private ConnectionHandler getConnectionHandler() {
         try {
-            return ConnectionHandlerRef.get(connectionHandlerRef);
+            return ConnectionHandlerRef.get(connectionHandler);
         } catch (AlreadyDisposedException e) {
-            this.connectionHandlerRef = null;
+            this.connectionHandler = null;
             return null;
         }
     }
@@ -126,7 +128,7 @@ public class AutoCommitLabel extends JPanel implements Disposable, ProjectEventA
         public void connectionChanged(VirtualFile virtualFile, ConnectionHandler connectionHandler) {
             VirtualFile localVirtualFile = getVirtualFile();
             if (virtualFile.equals(localVirtualFile)) {
-                connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+                AutoCommitLabel.this.connectionHandler = ConnectionHandlerRef.from(connectionHandler);
                 update();
             }
         }
@@ -150,7 +152,7 @@ public class AutoCommitLabel extends JPanel implements Disposable, ProjectEventA
             if (action.isOneOf(
                     TransactionAction.TURN_AUTO_COMMIT_ON,
                     TransactionAction.TURN_AUTO_COMMIT_OFF) &&
-                    ConnectionHandlerRef.get(connectionHandlerRef) == connectionHandler) {
+                    ConnectionHandlerRef.get(AutoCommitLabel.this.connectionHandler) == connectionHandler) {
 
                 update();
             }
@@ -160,13 +162,11 @@ public class AutoCommitLabel extends JPanel implements Disposable, ProjectEventA
 
     @Nullable
     public VirtualFile getVirtualFile() {
-        return WeakRef.get(virtualFileRef);
+        return WeakRef.get(virtualFile);
     }
 
     @Override
-    public void dispose() {
-        connectionHandlerRef = null;
+    protected void disposeInner() {
+
     }
-
-
 }

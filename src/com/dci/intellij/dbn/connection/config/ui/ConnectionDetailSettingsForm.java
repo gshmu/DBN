@@ -67,7 +67,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         environmentTypesComboBox.addActionListener(e -> notifyPresentationChanges());
 
         String autoConnectHintText = "NOTE: If \"Connect automatically\" is not selected, the system will not restore the workspace the next time you open the project (i.e. all open editors for this connection will not be reopened automatically).";
-        DBNHintForm hintForm = new DBNHintForm(autoConnectHintText, MessageType.INFO, false);
+        DBNHintForm hintForm = new DBNHintForm(this, autoConnectHintText, MessageType.INFO, false);
         autoConnectHintPanel.add(hintForm.getComponent());
 
         boolean visibleHint = !autoConnectCheckBox.isSelected() && restoreWorkspaceCheckBox.isSelected();
@@ -116,7 +116,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

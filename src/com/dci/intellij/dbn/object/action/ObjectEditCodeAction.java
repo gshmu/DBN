@@ -13,7 +13,7 @@ public class ObjectEditCodeAction extends DumbAwareAction {
     private DBObjectRef<DBSchemaObject> objectRef;
     ObjectEditCodeAction(DBSchemaObject object) {
         super("Edit Code", null, Icons.OBEJCT_EDIT_SOURCE);
-        objectRef = DBObjectRef.from(object);
+        objectRef = DBObjectRef.of(object);
         setDefaultIcon(true);
     }
 

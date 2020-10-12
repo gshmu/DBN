@@ -35,7 +35,7 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
 
     public EnvironmentSettingsForm(EnvironmentSettings settings) {
         super(settings);
-        environmentTypesTable = new EnvironmentTypesEditorTable(settings.getProject(), settings.getEnvironmentTypes());
+        environmentTypesTable = new EnvironmentTypesEditorTable(this, settings.getEnvironmentTypes());
 
         updateBorderTitleForeground(environmentTypesPanel);
         updateBorderTitleForeground(environmentApplicabilityPanel);
@@ -72,7 +72,7 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
     
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
     

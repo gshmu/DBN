@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database.mysql;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.WordTokenizer;
 import com.dci.intellij.dbn.connection.ResourceUtil;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class MySqlArgumentsResultSet extends DisposableBase implements ResultSetStub {
+public class MySqlArgumentsResultSet extends StatefulDisposable.Base implements ResultSetStub {
     private class Argument {
         String name;
         String programName;
@@ -194,5 +194,10 @@ public class MySqlArgumentsResultSet extends DisposableBase implements ResultSet
     @Override
     public long getLong(String columnLabel) throws SQLException {
         return getInt(columnLabel);
+    }
+
+    @Override
+    protected void disposeInner() {
+        nullify();
     }
 }

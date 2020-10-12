@@ -41,6 +41,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -72,7 +73,11 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private final Latent<BrowserToolWindowForm> toolWindowForm = Latent.disposable(this, () -> new BrowserToolWindowForm(getProject()));
+    private final Latent<BrowserToolWindowForm> toolWindowForm = Latent.basic(() -> {
+        BrowserToolWindowForm form = new BrowserToolWindowForm(getProject());
+        Disposer.register(this, form);
+        return form;
+    });
 
     private DatabaseBrowserManager(Project project) {
         super(project);
@@ -439,4 +444,9 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     }
 
 
+    @Override
+    protected void disposeInner() {
+        toolWindowForm.set(null);
+        super.disposeInner();
+    }
 }

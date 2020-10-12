@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.routine.ThrowableConsumer;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 
@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResultSetUtil extends DisposableBase{
+public class ResultSetUtil extends StatefulDisposable.Base {
     public static void insertRow(ResultSet resultSet) throws SQLException {
         try {
             resultSet.insertRow();
@@ -118,5 +118,10 @@ public class ResultSetUtil extends DisposableBase{
 
             consumer.accept((T) object);
         });
+    }
+
+    @Override
+    protected void disposeInner() {
+        nullify();
     }
 }

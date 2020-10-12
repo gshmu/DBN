@@ -24,7 +24,7 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
 
     @Override
     @NotNull
-    public TextFieldWithPopup getEditorComponent() {
+    public TextFieldWithPopup<?> getEditorComponent() {
         return (TextFieldWithPopup) super.getEditorComponent();
     }
 
@@ -43,7 +43,7 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
                     e.printStackTrace();
                 }
 
-                if (!cell.isDisposed() && cell.isEditing()) {
+                if (cell.isEditing()) {
                     popupProvider.showPopup();
                 }
             });

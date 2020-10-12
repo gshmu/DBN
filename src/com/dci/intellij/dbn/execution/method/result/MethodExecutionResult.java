@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.execution.method.result;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
@@ -33,14 +32,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Nullifiable
 public class MethodExecutionResult extends ExecutionResultBase<MethodExecutionResultForm> {
-    private WeakRef<MethodExecutionInput> executionInput;
-    private List<ArgumentValue> argumentValues = new ArrayList<>();
-    private Map<DBObjectRef<DBArgument>, ResultSetDataModel> cursorModels;
-    private DBDebuggerType debuggerType;
+    private final WeakRef<MethodExecutionInput> executionInput;
+    private final List<ArgumentValue> argumentValues = new ArrayList<>();
+    private final DBDebuggerType debuggerType;
     private String logOutput;
     private int executionDuration;
+
+    private Map<DBObjectRef<DBArgument>, ResultSetDataModel> cursorModels = DisposableContainer.map(this);
 
     public MethodExecutionResult(MethodExecutionInput executionInput, DBDebuggerType debuggerType) {
         this.executionInput = WeakRef.of(executionInput);
@@ -68,7 +67,7 @@ public class MethodExecutionResult extends ExecutionResultBase<MethodExecutionRe
             ExecutionEngineSettings settings = ExecutionEngineSettings.getInstance(argument.getProject());
             int maxRecords = settings.getStatementExecutionSettings().getResultSetFetchBlockSize();
             ResultSetDataModel dataModel = new ResultSetDataModel(resultSet, getConnectionHandler(), maxRecords);
-            cursorModels.put(DBObjectRef.from(argument), dataModel);
+            cursorModels.put(DBObjectRef.of(argument), dataModel);
         }
     }
 
@@ -179,15 +178,6 @@ public class MethodExecutionResult extends ExecutionResultBase<MethodExecutionRe
 
     public void setLogOutput(String logOutput) {
         this.logOutput = logOutput;
-    }
-
-    /********************************************************
-     *                    Disposable                        *
-     *******************************************************  */
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(cursorModels);
-        super.disposeInner();
     }
 
     /********************************************************

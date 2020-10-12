@@ -1,22 +1,19 @@
 package com.dci.intellij.dbn.common.ui.tab;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
-import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.intellij.openapi.actionSystem.ActionManager;
+import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.ActionCallback;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.tabs.TabInfo;
 import com.intellij.ui.tabs.impl.JBEditorTabs;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class TabbedPane extends JBEditorTabs implements RegisteredDisposable {
-    private boolean disposed;
-
-    public TabbedPane(@NotNull Disposable disposable) {
-        super(null, ActionManager.getInstance(), null, disposable);
+public class TabbedPane extends JBEditorTabs implements Disposable {
+    public TabbedPane(@NotNull DBNForm form) {
+        super(form.getProject(), IdeFocusManager.findInstance(), form);
     }
 
     public void select(JComponent component, boolean requestFocus) {
@@ -75,20 +72,7 @@ public class TabbedPane extends JBEditorTabs implements RegisteredDisposable {
     }
 
     @Override
-    public void markDisposed() {
-        disposed = true;
-    }
-
-/*
-    @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-*/
-
-    @Override
     public void dispose() {
-        Dispatch.run(() -> TabbedPane.super.dispose());
-        RegisteredDisposable.super.disposeInner();
+        TabbedPane.super.dispose();
     }
 }

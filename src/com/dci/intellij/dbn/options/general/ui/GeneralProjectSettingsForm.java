@@ -44,7 +44,7 @@ public class GeneralProjectSettingsForm extends CompositeConfigurationEditorForm
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

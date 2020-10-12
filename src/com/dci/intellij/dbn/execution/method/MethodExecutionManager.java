@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.method;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -53,9 +53,9 @@ import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 public class MethodExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.MethodExecutionManager";
 
-    private MethodBrowserSettings browserSettings = new MethodBrowserSettings();
-    private MethodExecutionHistory executionHistory = new MethodExecutionHistory(getProject());
-    private MethodExecutionArgumentValuesCache argumentValuesCache = new MethodExecutionArgumentValuesCache();
+    private final MethodBrowserSettings browserSettings = new MethodBrowserSettings();
+    private final MethodExecutionHistory executionHistory = new MethodExecutionHistory(getProject());
+    private final MethodExecutionArgumentValuesCache argumentValuesCache = new MethodExecutionArgumentValuesCache();
 
     private MethodExecutionManager(Project project) {
         super(project);
@@ -307,12 +307,6 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     public void projectOpened() {
     }
 
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(executionHistory);
-        super.disposeInner();
-    }
-
     /****************************************
      *       PersistentStateComponent       *
      *****************************************/
@@ -339,5 +333,14 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
         executionHistory.readState(element);
         argumentValuesCache.readState(element);
+    }
+
+
+
+
+    @Override
+    public void disposeInner() {
+        DisposeUtil.dispose(executionHistory);
+        super.disposeInner();
     }
 }

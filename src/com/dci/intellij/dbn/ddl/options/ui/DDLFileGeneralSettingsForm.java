@@ -31,7 +31,7 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
         updateBorderTitleForeground(mainPanel);
 
         String hintText = "NOTE: When \"Synchronize\" option is enabled, the DDL file content gets overwritten with the source from the underlying database object whenever this gets saved to database.";
-        DBNHintForm hintForm = new DBNHintForm(hintText, MessageType.INFO, false);
+        DBNHintForm hintForm = new DBNHintForm(this, hintText, MessageType.INFO, false);
         hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 
         resetFormChanges();
@@ -60,7 +60,7 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

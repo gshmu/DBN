@@ -21,7 +21,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
     public AttachDDLFileDialog(List<VirtualFile> virtualFiles, @NotNull DBSchemaObject object, boolean showLookupOption) {
         super(object.getProject(), "Attach DDL file", true);
         this.virtualFiles = virtualFiles;
-        this.objectRef = DBObjectRef.from(object);
+        this.objectRef = DBObjectRef.of(object);
         this.showLookupOption = showLookupOption;
         getOKAction().putValue(Action.NAME, "Attach selected");
         init();
@@ -29,14 +29,14 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
 
     @NotNull
     @Override
-    protected SelectDDLFileForm createComponent() {
+    protected SelectDDLFileForm createForm() {
         DBSchemaObject object = getObject();
         String typeName = object.getTypeName();
         String hint =
                 "Following DDL files were found matching the name of the selected " + typeName + ". " +
                         "Select the files to attach to this object.\n" +
                         "NOTE: Attached DDL files will become readonly and their content will change automatically when the " + typeName + " is edited.";
-        return new SelectDDLFileForm(object, virtualFiles, hint, showLookupOption);
+        return new SelectDDLFileForm(this, object, virtualFiles, hint, showLookupOption);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            getComponent().selectAll();
+            getForm().selectAll();
             doOKAction();
         }
     }
@@ -74,7 +74,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            SelectDDLFileForm component = getComponent();
+            SelectDDLFileForm component = getForm();
             component.selectNone();
             if (showLookupOption && component.isDoNotPromptSelected()) {
                 ConnectionHandler connectionHandler = getObject().getConnectionHandler();
@@ -86,7 +86,7 @@ public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
 
     @Override
     protected void doOKAction() {
-        SelectDDLFileForm component = getComponent();
+        SelectDDLFileForm component = getForm();
         DBSchemaObject object = getObject();
         Project project = object.getProject();
         DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);

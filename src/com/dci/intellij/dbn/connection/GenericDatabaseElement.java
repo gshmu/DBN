@@ -2,12 +2,12 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface GenericDatabaseElement extends ConnectionProvider, Disposable {
+public interface GenericDatabaseElement extends ConnectionProvider, StatefulDisposable {
     @NotNull
     String getName();
 

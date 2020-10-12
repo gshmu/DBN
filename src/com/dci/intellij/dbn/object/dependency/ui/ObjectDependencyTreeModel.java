@@ -1,16 +1,15 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,36 +20,39 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Nullifiable
-public class ObjectDependencyTreeModel extends DisposableBase implements TreeModel, Disposable{
-    private Set<TreeModelListener> listeners = new HashSet<>();
-    private ObjectDependencyTreeNode root;
-    private ObjectDependencyType dependencyType;
-    private ObjectDependencyTree tree;
-    private DBObjectRef<DBSchemaObject> objectRef;
+public class ObjectDependencyTreeModel extends StatefulDisposable.Base implements TreeModel {
+    private final Set<TreeModelListener> listeners = new HashSet<>();
 
+    private ObjectDependencyTreeNode root;
+    private final ObjectDependencyType dependencyType;
+    private final DBObjectRef<DBSchemaObject> object;
+
+    private WeakRef<ObjectDependencyTree> tree;
 
     ObjectDependencyTreeModel(DBSchemaObject object, ObjectDependencyType dependencyType) {
-        this.objectRef = DBObjectRef.from(object);
+        this.object = DBObjectRef.of(object);
         this.root = new ObjectDependencyTreeNode(this, object);
         this.dependencyType = dependencyType;
+
+        Disposer.register(this, root);
     }
 
     public DBSchemaObject getObject() {
-        return DBObjectRef.get(objectRef);
+        return DBObjectRef.get(object);
     }
 
     public void setTree(ObjectDependencyTree tree) {
-        this.tree = tree;
+        this.tree = WeakRef.of(tree);
     }
 
+    @NotNull
     public ObjectDependencyTree getTree() {
-        return tree;
+        return tree.ensure();
     }
 
     @Nullable
     public Project getProject() {
-        return tree.getProject();
+        return getTree().getProject();
     }
 
     ObjectDependencyType getDependencyType() {
@@ -105,12 +107,6 @@ public class ObjectDependencyTreeModel extends DisposableBase implements TreeMod
         listeners.remove(l);
     }
 
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(root);
-        super.disposeInner();
-    }
-
     void refreshLoadInProgressNode(ObjectDependencyTreeNode node) {
         TreePath treePath = new TreePath(node.getTreePath());
         TreeUtil.notifyTreeModelListeners(node, listeners, treePath, TreeEventType.STRUCTURE_CHANGED);
@@ -119,5 +115,12 @@ public class ObjectDependencyTreeModel extends DisposableBase implements TreeMod
     void notifyNodeLoaded(ObjectDependencyTreeNode node) {
         TreePath treePath = new TreePath(node.getTreePath());
         TreeUtil.notifyTreeModelListeners(node, listeners, treePath, TreeEventType.STRUCTURE_CHANGED);
+    }
+
+    @Override
+    public void disposeInner() {
+        root = null;
+        listeners.clear();
+        nullify();
     }
 }

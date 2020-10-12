@@ -19,13 +19,13 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 
-public abstract class ConfigurationEditorForm<E extends BasicConfiguration> extends DBNFormImpl<ConfigurationEditorForm> {
+public abstract class ConfigurationEditorForm<E extends BasicConfiguration> extends DBNFormImpl {
     public static final String DBN_REGISTERED = "DBN_REGISTERED";
     private ItemListener itemListener;
     private ActionListener actionListener;
     private DocumentListener documentListener;
     private TableModelListener tableModelListener;
-    private E configuration;
+    private final E configuration;
 
     protected ConfigurationEditorForm(E configuration) {
         super(getProject(configuration));
@@ -36,6 +36,14 @@ public abstract class ConfigurationEditorForm<E extends BasicConfiguration> exte
         if (configuration instanceof ProjectSupplier) {
             ProjectSupplier projectSupplier = (ProjectSupplier) configuration;
             return projectSupplier.getProject();
+        }
+        Configuration parent = configuration.getParent();
+        while (parent != null) {
+            Project project = getProject(parent);
+            if (project != null) {
+                return project;
+            }
+            parent = parent.getParent();
         }
         return null;
     }
@@ -84,7 +92,7 @@ public abstract class ConfigurationEditorForm<E extends BasicConfiguration> exte
                 abstractButton.addActionListener(actionListener);
             }
             else if (component instanceof CheckBoxList) {
-                CheckBoxList checkBoxList = (CheckBoxList) component;
+                CheckBoxList<?> checkBoxList = (CheckBoxList<?>) component;
                 if (actionListener == null) actionListener = createActionListener();
                 checkBoxList.addActionListener(actionListener);
             } else if (component instanceof JTextField) {
@@ -92,7 +100,7 @@ public abstract class ConfigurationEditorForm<E extends BasicConfiguration> exte
                 if (documentListener == null) documentListener = createDocumentListener();
                 textField.getDocument().addDocumentListener(documentListener);
             } else if (component instanceof JComboBox) {
-                JComboBox comboBox = (JComboBox) component;
+                JComboBox<?> comboBox = (JComboBox<?>) component;
                 if (itemListener == null) itemListener = createItemListener();
                 comboBox.addItemListener(itemListener);
             } else if (component instanceof JTable) {
@@ -111,10 +119,4 @@ public abstract class ConfigurationEditorForm<E extends BasicConfiguration> exte
     }
 
     public void focus() {}
-
-    @Override
-    public void disposeInner() {
-        configuration.disposeUIResources();
-        super.disposeInner();
-    }
 }

@@ -15,7 +15,7 @@ import java.awt.*;
 
 public class BasicTableGutterCellRenderer extends JPanel implements ListCellRenderer {
 
-    private JLabel textLabel;
+    private final JLabel textLabel;
 
     public BasicTableGutterCellRenderer() {
         setBackground(UIUtil.getPanelBackground());

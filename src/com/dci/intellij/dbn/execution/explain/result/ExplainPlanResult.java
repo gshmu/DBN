@@ -2,9 +2,8 @@ package com.dci.intellij.dbn.execution.explain.result;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DataKeys;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -20,6 +19,7 @@ import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,22 +31,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Nullifiable
 public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm> {
     private String planId;
     private Date timestamp;
-    private ExplainPlanEntry root;
-    private final ConnectionHandlerRef connectionHandlerRef;
-    private final SchemaId currentSchema;
+    private @Getter ExplainPlanEntry root;
+    private final ConnectionHandlerRef connectionHandler;
+    private final @Getter VirtualFile virtualFile;
+    private final @Getter SchemaId currentSchema;
+    private final @Getter String errorMessage;
     private final String statementText;
     private final String resultName;
-    private final String errorMessage;
-    private final VirtualFile virtualFile;
 
     public ExplainPlanResult(ExecutablePsiElement executablePsiElement, ResultSet resultSet) throws SQLException {
         this(executablePsiElement, (String) null);
         // entries must be sorted by PARENT_ID NULLS FIRST, ID
-        Map<Integer, ExplainPlanEntry> entries = new HashMap<Integer, ExplainPlanEntry>();
+        Map<Integer, ExplainPlanEntry> entries = new HashMap<>();
         ConnectionHandler connectionHandler = getConnectionHandler();
         List<String> explainColumnNames = ResultSetUtil.getColumnNames(resultSet);
 
@@ -68,35 +67,23 @@ public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm
     public ExplainPlanResult(ExecutablePsiElement executablePsiElement, String errorMessage) {
         DBLanguagePsiFile psiFile = executablePsiElement.getFile();
         ConnectionHandler connectionHandler = Failsafe.nn(psiFile.getConnectionHandler());
-        connectionHandlerRef = connectionHandler.getRef();
-        currentSchema = psiFile.getSchemaId();
-        virtualFile = psiFile.getVirtualFile();
+        this.connectionHandler = connectionHandler.getRef();
+        this.currentSchema = psiFile.getSchemaId();
+        this.virtualFile = psiFile.getVirtualFile();
         this.resultName = CommonUtil.nvl(executablePsiElement.createSubjectList(), "Explain Plan");
         this.errorMessage = errorMessage;
         this.statementText = executablePsiElement.getText();
     }
 
-    public VirtualFile getVirtualFile() {
-        return virtualFile;
-    }
-
-    public ExplainPlanEntry getRoot() {
-        return root;
-    }
-
     @Override
     public ConnectionId getConnectionId() {
-        return connectionHandlerRef.getConnectionId();
+        return connectionHandler.getConnectionId();
     }
 
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return ConnectionHandlerRef.ensure(connectionHandlerRef);
-    }
-
-    public SchemaId getCurrentSchema() {
-        return currentSchema;
+        return ConnectionHandlerRef.ensure(connectionHandler);
     }
 
     @Override
@@ -140,10 +127,6 @@ public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm
         return errorMessage != null;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
     /********************************************************
      *                    Data Provider                     *
      ********************************************************/
@@ -161,7 +144,7 @@ public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm
      *******************************************************  */
     @Override
     public void disposeInner() {
-        Disposer.dispose(root);
+        DisposeUtil.dispose(root);
         super.disposeInner();
     }
 }

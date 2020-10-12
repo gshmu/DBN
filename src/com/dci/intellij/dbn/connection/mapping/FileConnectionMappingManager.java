@@ -568,7 +568,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
         private ConnectionSelectAction(ConnectionHandler connectionHandler, DBLanguagePsiFile file, boolean promptSchemaSelection, Runnable callback) {
             super(connectionHandler.getName(), null, connectionHandler.getIcon(), connectionHandler);
-            this.fileRef = PsiFileRef.from(file);
+            this.fileRef = PsiFileRef.of(file);
             this.callback = callback;
             this.promptSchemaSelection = promptSchemaSelection;
         }
@@ -608,7 +608,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         private ProjectRef projectRef;
         private ConnectionSetupAction(Project project) {
             super("Setup New Connection", null, Icons.CONNECTION_NEW);
-            this.projectRef = ProjectRef.from(project);
+            this.projectRef = ProjectRef.of(project);
         }
 
         @Override
@@ -673,7 +673,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
         private SchemaSelectAction(DBLanguagePsiFile file, DBSchema schema, Runnable callback) {
             super(schema);
-            this.fileRef = PsiFileRef.from(file);
+            this.fileRef = PsiFileRef.of(file);
             this.callback = callback;
         }
 
@@ -755,7 +755,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
         private SessionSelectAction(DBLanguagePsiFile file, DatabaseSession session, Runnable callback) {
             super(session.getName(), null, session.getIcon());
-            this.fileRef = PsiFileRef.from(file);
+            this.fileRef = PsiFileRef.of(file);
             this.sessionRef = WeakRef.of(session);
             this.callback = callback;
         }
@@ -788,7 +788,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
         private SessionCreateAction(DBLanguagePsiFile file, ConnectionHandler connectionHandler) {
             super("New session...");
-            this.fileRef = PsiFileRef.from(file);
+            this.fileRef = PsiFileRef.of(file);
             this.connectionHandlerRef = connectionHandler.getRef();
         }
 

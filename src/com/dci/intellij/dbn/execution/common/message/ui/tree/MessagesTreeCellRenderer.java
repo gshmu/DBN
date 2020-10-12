@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
@@ -40,8 +40,8 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
     @Override
     public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         try {
-            if (value instanceof Disposable) {
-                Disposable disposable = (Disposable) value;
+            if (value instanceof StatefulDisposable) {
+                StatefulDisposable disposable = (StatefulDisposable) value;
                 if (disposable.isDisposed()) return;;
             }
             Icon icon = null;

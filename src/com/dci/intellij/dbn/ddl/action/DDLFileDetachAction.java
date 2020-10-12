@@ -13,7 +13,7 @@ public class DDLFileDetachAction extends DumbAwareProjectAction {
     private DBObjectRef<DBSchemaObject> objectRef;
     public DDLFileDetachAction(DBSchemaObject object) {
         super("Detach files");
-        this.objectRef = DBObjectRef.from(object);
+        this.objectRef = DBObjectRef.of(object);
     }
 
 

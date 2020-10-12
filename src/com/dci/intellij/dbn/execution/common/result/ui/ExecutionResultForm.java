@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.execution.ExecutionResult;
 import org.jetbrains.annotations.NotNull;
 
-public interface ExecutionResultForm<E extends ExecutionResult> extends DBNForm {
+public interface ExecutionResultForm<E extends ExecutionResult<?>> extends DBNForm {
     @NotNull E getExecutionResult();
 
     void setExecutionResult(@NotNull E executionResult);

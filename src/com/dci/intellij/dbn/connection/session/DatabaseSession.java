@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class DatabaseSession implements Comparable<DatabaseSession>, Presentable {
-    private final ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connectionHandler;
     private final ConnectionType connectionType;
     private final SessionId id;
     private String name;
@@ -23,7 +23,7 @@ public class DatabaseSession implements Comparable<DatabaseSession>, Presentable
         this.id = id == null ? SessionId.create() : id;
         this.name = name;
         this.connectionType = connectionType;
-        this.connectionHandlerRef = connectionHandler.getRef();
+        this.connectionHandler = connectionHandler.getRef();
     }
 
     @NotNull
@@ -97,7 +97,7 @@ public class DatabaseSession implements Comparable<DatabaseSession>, Presentable
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     @Override

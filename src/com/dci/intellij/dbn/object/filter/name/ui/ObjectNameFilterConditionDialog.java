@@ -38,7 +38,7 @@ public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterC
 
     @NotNull
     @Override
-    protected ObjectNameFilterConditionForm createComponent() {
+    protected ObjectNameFilterConditionForm createForm() {
         return new ObjectNameFilterConditionForm(this, parentCondition, getCondition(),  objectType, operation);
     }
 
@@ -51,7 +51,7 @@ public class ObjectNameFilterConditionDialog extends DBNDialog<ObjectNameFilterC
 
     @Override
     public void doOKAction() {
-        ObjectNameFilterConditionForm component = getComponent();
+        ObjectNameFilterConditionForm component = getForm();
         condition = WeakRef.of(component.getCondition());
         joinType = component.getJoinType();
         super.doOKAction();

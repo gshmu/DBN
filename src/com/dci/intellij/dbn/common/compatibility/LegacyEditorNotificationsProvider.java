@@ -20,7 +20,7 @@ public abstract class LegacyEditorNotificationsProvider<T extends JComponent> ex
 
     @Deprecated // constructor injection
     public LegacyEditorNotificationsProvider(Project project) {
-        this.projectRef = ProjectRef.from(project);
+        this.projectRef = ProjectRef.of(project);
     }
 
 

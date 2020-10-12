@@ -23,7 +23,7 @@ import java.sql.SQLException;
 
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
-public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
+public class ConnectionInfoForm extends DBNFormImpl{
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JPanel setupPanel;
@@ -65,22 +65,22 @@ public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
     private JLabel infoConnectionUrlLabel;
     private JLabel infoUserNameLabel;
 
-    public ConnectionInfoForm(ConnectionInfoDialog parentComponent, ConnectionHandler connectionHandler) {
-        super(parentComponent);
+    public ConnectionInfoForm(ConnectionInfoDialog parent, ConnectionHandler connectionHandler) {
+        super(parent);
         initHeaderPanel(connectionHandler);
         initSetupPanel(connectionHandler);
         initInfoPanel(connectionHandler);
     }
 
-    public ConnectionInfoForm(@NotNull ConnectionInfoDialog parentComponent, ConnectionInfo connectionInfo, String connectionName, EnvironmentType environmentType) {
-        super(parentComponent);
+    public ConnectionInfoForm(@NotNull ConnectionInfoDialog parent, ConnectionInfo connectionInfo, String connectionName, EnvironmentType environmentType) {
+        super(parent);
         setupPanel.setVisible(false);
         initHeaderPanel(connectionName, environmentType);
         initInfoPanel(connectionInfo);
     }
 
     private void initHeaderPanel(ConnectionHandler connectionHandler) {
-        DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler, this);
+        DBNHeaderForm headerForm = new DBNHeaderForm(this, connectionHandler);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
     }
 
@@ -182,7 +182,7 @@ public class ConnectionInfoForm extends DBNFormImpl<ConnectionInfoDialog>{
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 }

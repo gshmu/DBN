@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -24,7 +23,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Nullifiable
 public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtualFile, Presentable, VirtualFilePathWrapper {
     private static AtomicInteger ID_STORE = new AtomicInteger(0);
     private final int id;
@@ -40,7 +38,7 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     public DBVirtualFileImpl(@NotNull Project project) {
         //id = ID_STORE.getAndIncrement();
         id = DummyFileIdGenerator.next();
-        projectRef = ProjectRef.from(project);
+        projectRef = ProjectRef.of(project);
         fileSystem = WeakRef.of(DatabaseFileSystem.getInstance());
     }
 
@@ -203,7 +201,7 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
                 List<PsiFile> cachedPsiFiles = cachedViewProvider.getCachedPsiFiles();
                 for (PsiFile cachedPsiFile: cachedPsiFiles) {
                     if (cachedPsiFile instanceof DBLanguagePsiFile) {
-                        Disposer.dispose(cachedPsiFile);
+                        DisposeUtil.dispose(cachedPsiFile);
                     }
                 }
 

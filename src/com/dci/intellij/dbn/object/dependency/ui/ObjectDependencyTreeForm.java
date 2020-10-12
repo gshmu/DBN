@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
@@ -23,9 +22,11 @@ import javax.swing.*;
 import javax.swing.tree.TreeModel;
 import java.awt.*;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 
-public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDialog>{
+public class ObjectDependencyTreeForm extends DBNFormImpl{
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel contentPanel;
@@ -33,16 +34,15 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
     private JComboBox<ObjectDependencyType> dependencyTypeComboBox;
     private JBScrollPane treeScrollPane;
 
+    private final DBNHeaderForm headerForm;
+    private final ObjectDependencyTree dependencyTree;
 
-    private DBNHeaderForm headerForm;
-    private ObjectDependencyTree dependencyTree;
-
-    private DBObjectRef<DBSchemaObject> objectRef;
+    private final DBObjectRef<DBSchemaObject> object;
 
     public ObjectDependencyTreeForm(ObjectDependencyTreeDialog parentComponent, final DBSchemaObject schemaObject) {
         super(parentComponent);
         Project project = getProject();
-        dependencyTree = new ObjectDependencyTree(project, schemaObject) {
+        dependencyTree = new ObjectDependencyTree(this, schemaObject) {
             @Override
             public void setModel(TreeModel model) {
                 super.setModel(model);
@@ -68,8 +68,8 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
             dependencyTree.setDependencyType(selection);
         });
 
-        this.objectRef = DBObjectRef.from(schemaObject);
-        headerForm = new DBNHeaderForm(schemaObject, this);
+        this.object = DBObjectRef.of(schemaObject);
+        headerForm = new DBNHeaderForm(this, schemaObject);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true,
@@ -79,19 +79,17 @@ public class ObjectDependencyTreeForm extends DBNFormImpl<ObjectDependencyTreeDi
                 new ExpandTreeAction(),
                 new CollapseTreeAction());
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
-
-        Disposer.register(this, dependencyTree);
     }
 
 
 
     private DBSchemaObject getObject() {
-        return DBObjectRef.get(objectRef);
+        return DBObjectRef.get(object);
     }
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

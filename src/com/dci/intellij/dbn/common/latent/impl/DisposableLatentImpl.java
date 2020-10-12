@@ -1,11 +1,10 @@
 package com.dci.intellij.dbn.common.latent.impl;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Disposer;
 
-public abstract class DisposableLatentImpl<T extends Disposable, P extends RegisteredDisposable> extends BasicLatentImpl<T> {
+public abstract class DisposableLatentImpl<T extends Disposable, P extends Disposable> extends BasicLatentImpl<T> {
     private final P parent;
 
     protected DisposableLatentImpl(P parent) {

@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -14,18 +13,17 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.event.TableModelListener;
 import java.util.List;
 
-@Nullifiable
-public class ResourceMonitorSessionsTableModel extends DisposableBase implements DBNTableModel {
-    private ConnectionHandlerRef connectionHandlerRef;
-    private List<DatabaseSession> sessions;
+public class ResourceMonitorSessionsTableModel extends StatefulDisposable.Base implements DBNTableModel {
+    private final ConnectionHandlerRef connectionHandler;
+    private final List<DatabaseSession> sessions;
 
     ResourceMonitorSessionsTableModel(ConnectionHandler connectionHandler) {
-        this.connectionHandlerRef = connectionHandler.getRef();
+        this.connectionHandler = connectionHandler.getRef();
         sessions = connectionHandler.getSessionBundle().getSessions();
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     @NotNull
@@ -87,4 +85,9 @@ public class ResourceMonitorSessionsTableModel extends DisposableBase implements
 
     @Override
     public void removeTableModelListener(TableModelListener l) {}
+
+    @Override
+    protected void disposeInner() {
+        nullify();
+    }
 }

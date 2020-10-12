@@ -27,7 +27,7 @@ public class StatementExecutionSettingsForm extends ConfigurationEditorForm<Stat
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

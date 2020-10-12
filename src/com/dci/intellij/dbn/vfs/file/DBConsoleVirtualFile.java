@@ -62,9 +62,10 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
     }
 
     public void setText(String text) {
-        ConnectionHandler connectionHandler = getConnectionHandler();
-        Project project = connectionHandler.getProject();
         if (getObject().getConsoleType() == DBConsoleType.DEBUG && StringUtil.isEmpty(text)) {
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            Project project = connectionHandler.getProject();
+
             DatabaseDebuggerInterface debuggerInterface = connectionHandler.getInterfaceProvider().getDebuggerInterface();
             CodeStyleCaseSettings styleCaseSettings = DBLCodeStyleManager.getInstance(project).getCodeStyleCaseSettings(PSQLLanguage.INSTANCE);
             text = debuggerInterface.getDebugConsoleTemplate(styleCaseSettings);

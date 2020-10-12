@@ -1,48 +1,50 @@
 package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-@Nullifiable
-public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends DisposableBase implements DBNForm, NotificationSupport, ProjectEventAdapter {
-    private ProjectRef projectRef;
-    private WeakRef<P> parentComponent;
+public abstract class DBNFormImpl
+        extends StatefulDisposable.Base
+        implements DBNForm, NotificationSupport, ProjectEventAdapter {
+
+    private ProjectRef project;
+    private WeakRef<DBNComponent> parentComponent;
     private boolean registeredDataProvider;
 
-    public DBNFormImpl() {
+    @Deprecated // no Disposer hierarchy
+    protected DBNFormImpl() {
     }
 
-
-    public DBNFormImpl(@NotNull P parentComponent) {
-        super(parentComponent);
-        this.parentComponent = WeakRef.of(parentComponent);
+    protected DBNFormImpl(@NotNull DBNComponent parent) {
+        this.parentComponent = WeakRef.of(parent);
+        Disposer.register(parent, this);
     }
 
-    public DBNFormImpl(Project project) {
-        this.projectRef = ProjectRef.from(project);
+    protected DBNFormImpl(@NotNull Project project) {
+        this.project = ProjectRef.of(project);
     }
 
     @NotNull
     @Override
     public final JComponent getComponent() {
-        JComponent component = ensureComponent();
+        JComponent component = getMainComponent();
         if (!registeredDataProvider) {
             registeredDataProvider = true;
             DataManager.registerDataProvider(component, this);
@@ -50,31 +52,27 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
         return component;
     }
 
-    protected abstract JComponent ensureComponent();
+    protected abstract JComponent getMainComponent();
 
     public EnvironmentSettings getEnvironmentSettings(Project project) {
         return GeneralProjectSettings.getInstance(project).getEnvironmentSettings();
     }
 
     @Nullable
-    public P getParentComponent() {
-        return parentComponent == null ? null : parentComponent.get();
+    public <T extends DBNComponent> T getParentComponent() {
+        return (T) WeakRef.get(parentComponent);
     }
 
-    public void setParentComponent(P parentComponent) {
+    public void setParentComponent(@NotNull DBNComponent parentComponent) {
         this.parentComponent = WeakRef.of(parentComponent);
-    }
-
-    @NotNull
-    public P ensureParentComponent() {
-        return Failsafe.nn(getParentComponent());
+        Disposer.register(parentComponent, this);
     }
 
     @Override
     @NotNull
     public final Project getProject() {
-        if (projectRef != null) {
-            return projectRef.ensure();
+        if (project != null) {
+            return project.ensure();
         }
 
         if (parentComponent != null) {
@@ -99,10 +97,10 @@ public abstract class DBNFormImpl<P extends DisposableProjectComponent> extends 
     }
 
     @Override
-    public void disposeInner() {
+    protected void disposeInner() {
         JComponent component = getComponent();
         DataManager.removeDataProvider(component);
-        Disposer.dispose(component);
-        super.disposeInner();
+        DisposeUtil.dispose(component);
+        nullify();
     }
 }

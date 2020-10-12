@@ -17,15 +17,15 @@ import java.util.Map;
 import java.util.Set;
 
 public class StatementExecutionVariablesCache implements PersistentStateElement {
-    private ProjectRef projectRef;
-    private Map<String, Set<StatementExecutionVariable>> fileVariablesMap = new THashMap<String, Set<StatementExecutionVariable>>();
+    private final ProjectRef project;
+    private final Map<String, Set<StatementExecutionVariable>> fileVariablesMap = new THashMap<String, Set<StatementExecutionVariable>>();
 
     public StatementExecutionVariablesCache(Project project) {
-        this.projectRef = ProjectRef.from(project);
+        this.project = ProjectRef.of(project);
     }
 
     public Project getProject() {
-        return projectRef.ensure();
+        return project.ensure();
     }
 
     public Set<StatementExecutionVariable> getVariables(@Nullable VirtualFile virtualFile) {
@@ -64,8 +64,8 @@ public class StatementExecutionVariablesCache implements PersistentStateElement 
 
     /*********************************************
      *            PersistentStateElement         *
-     ********************************************
-     * @param element*/
+     *********************************************/
+
     @Override
     public void readState(Element element) {
         Element variablesElement = element.getChild("execution-variables");

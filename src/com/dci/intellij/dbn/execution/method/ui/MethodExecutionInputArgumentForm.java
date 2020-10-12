@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutionInputForm> {
+public class MethodExecutionInputArgumentForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JLabel argumentLabel;
     private JLabel argumentTypeLabel;
@@ -42,12 +42,12 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
     private JTextField inputTextField;
     private UserValueHolderImpl<String> userValueHolder;
 
-    private DBObjectRef<DBArgument> argumentRef;
-    private List<MethodExecutionInputTypeAttributeForm> typeAttributeForms = new ArrayList<>();
+    private final DBObjectRef<DBArgument> argument;
+    private final List<MethodExecutionInputTypeAttributeForm> typeAttributeForms = DisposableContainer.list(this);
 
     MethodExecutionInputArgumentForm(MethodExecutionInputForm parentForm, final DBArgument argument) {
         super(parentForm);
-        this.argumentRef = DBObjectRef.from(argument);
+        this.argument = DBObjectRef.of(argument);
         String argumentName = argument.getName();
         argumentLabel.setText(argumentName);
         argumentLabel.setIcon(argument.getIcon());
@@ -56,7 +56,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
 
         argumentTypeLabel.setForeground(UIUtil.getInactiveTextColor());
 
-        DBType declaredType = dataType.getDeclaredType();
+        DBType<?, ?> declaredType = dataType.getDeclaredType();
 
         if (dataType.isNative()) {
             argumentTypeLabel.setText(dataType.getQualifiedName());
@@ -103,7 +103,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
                 inputTextField = inputField.getTextField();
                 inputFieldPanel.add(inputField, BorderLayout.CENTER);
             } else {
-                TextFieldWithPopup inputField = new TextFieldWithPopup(project);
+                TextFieldWithPopup<?> inputField = new TextFieldWithPopup<>(project);
                 inputField.setPreferredSize(new Dimension(240, -1));
                 if (genericDataType == GenericDataType.DATE_TIME) {
                     inputField.createCalendarPopup(false);
@@ -122,6 +122,11 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
     }
 
     @NotNull
+    public MethodExecutionInputForm getParentForm() {
+        return ensureParentComponent();
+    }
+
+    @NotNull
     private ListPopupValuesProvider createValuesProvider() {
         return new ListPopupValuesProvider() {
             @Override
@@ -133,7 +138,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
             public List<String> getValues() {
                 DBArgument argument = getArgument();
                 if (argument != null) {
-                    MethodExecutionInput executionInput = ensureParentComponent().getExecutionInput();
+                    MethodExecutionInput executionInput = getParentForm().getExecutionInput();
                     return executionInput.getInputValueHistory(argument, null);
                 }
 
@@ -170,19 +175,19 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
     }
 
     public DBArgument getArgument() {
-        return DBObjectRef.get(argumentRef);
+        return DBObjectRef.get(argument);
     }
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
     public void updateExecutionInput() {
         DBArgument argument = getArgument();
         if (argument != null) {
-            MethodExecutionInput executionInput = ensureParentComponent().getExecutionInput();
+            MethodExecutionInput executionInput = getParentForm().getExecutionInput();
             if (typeAttributeForms.size() >0 ) {
                 for (MethodExecutionInputTypeAttributeForm typeAttributeComponent : typeAttributeForms) {
                     typeAttributeComponent.updateExecutionInput();
@@ -229,12 +234,6 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl<MethodExecutio
         for (MethodExecutionInputTypeAttributeForm typeAttributeComponent : typeAttributeForms){
             typeAttributeComponent.addDocumentListener(documentListener);
         }
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(typeAttributeForms);
-        super.disposeInner();
     }
 
     public int getScrollUnitIncrement() {

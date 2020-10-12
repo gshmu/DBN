@@ -1,11 +1,13 @@
 package com.dci.intellij.dbn.object.factory.ui.common;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
+import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -18,18 +20,18 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFormImpl<DisposableProjectComponent> {
+public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFormImpl {
     private JPanel mainPanel;
     private JPanel listPanel;
     private JPanel actionsPanel;
     private JLabel newLabel;
-    private ConnectionHandler connectionHandler;
+    private final ConnectionHandlerRef connectionHandler;
 
-    private List<ObjectFactoryInputForm<T>> inputForms = new ArrayList<>();
+    private final List<ObjectFactoryInputForm<T>> inputForms = DisposableContainer.list(this);
 
-    public ObjectListForm(DisposableProjectComponent parentComponent, ConnectionHandler connectionHandler) {
-        super(parentComponent);
-        this.connectionHandler = connectionHandler;
+    public ObjectListForm(DBNComponent parent, @NotNull ConnectionHandler connectionHandler) {
+        super(parent);
+        this.connectionHandler = connectionHandler.getRef();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
@@ -42,12 +44,12 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFo
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandler;
+        return connectionHandler.ensure();
     }
 
     protected abstract ObjectFactoryInputForm<T> createObjectDetailsPanel(int index);

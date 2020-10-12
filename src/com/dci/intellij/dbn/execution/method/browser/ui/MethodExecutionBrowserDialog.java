@@ -25,13 +25,13 @@ public class MethodExecutionBrowserDialog extends DBNDialog<MethodExecutionBrows
         setResizable(true);
         this.objectTreeModel = objectTreeModel;
         this.debug = debug;
-        getComponent().addTreeSelectionListener(selectionListener);
+        getForm().addTreeSelectionListener(selectionListener);
         init();
     }
 
     @NotNull
     @Override
-    protected MethodExecutionBrowserForm createComponent() {
+    protected MethodExecutionBrowserForm createForm() {
         return new MethodExecutionBrowserForm(this, objectTreeModel, debug);
     }
 
@@ -51,7 +51,7 @@ public class MethodExecutionBrowserDialog extends DBNDialog<MethodExecutionBrows
     private TreeSelectionListener selectionListener = new TreeSelectionListener() {
         @Override
         public void valueChanged(TreeSelectionEvent e) {
-            selectAction.setEnabled(getComponent().getSelectedMethod() != null);
+            selectAction.setEnabled(getForm().getSelectedMethod() != null);
         }
     };
 
@@ -71,7 +71,7 @@ public class MethodExecutionBrowserDialog extends DBNDialog<MethodExecutionBrows
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            methodRef = DBObjectRef.from(getComponent().getSelectedMethod());
+            methodRef = DBObjectRef.of(getForm().getSelectedMethod());
             close(OK_EXIT_CODE);
         }
 

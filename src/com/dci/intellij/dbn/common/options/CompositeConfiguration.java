@@ -52,10 +52,10 @@ public abstract class CompositeConfiguration<P extends Configuration, E extends 
 
     @Override
     public final void disposeUIResources() {
+        super.disposeUIResources();
         for (Configuration configuration : getConfigurations()) {
             configuration.disposeUIResources();
         }
-        super.disposeUIResources();
     }
 
     @Override

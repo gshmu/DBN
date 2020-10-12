@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.language.common;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -58,6 +57,7 @@ import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.testFramework.LightVirtualFile;
 import gnu.trove.THashSet;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,15 +65,14 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Set;
 
-@Nullifiable
-public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConnectionMappingProvider, PresentableConnectionProvider, Disposable {
+public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConnectionMappingProvider, PresentableConnectionProvider, StatefulDisposable {
     private final Language language;
     private final DBLanguageFileType fileType;
     private final ParserDefinition parserDefinition;
-    private ConnectionHandlerRef connectionHandlerRef;
+    private ConnectionHandlerRef connectionHandler;
     private DatabaseSession databaseSession;
-    private DBObjectRef<DBSchema> databaseSchemaRef;
-    private DBObjectRef<DBSchemaObject> underlyingObjectRef;
+    private DBObjectRef<DBSchema> databaseSchema;
+    private DBObjectRef<DBSchemaObject> underlyingObject;
 
     @Override
     public PsiElement getPrevSibling() {
@@ -92,7 +91,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         VirtualFile virtualFile = viewProvider.getVirtualFile();
         if (virtualFile instanceof DBSourceCodeVirtualFile) {
             DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) virtualFile;
-            this.underlyingObjectRef = DBObjectRef.from(sourceCodeFile.getObject());
+            this.underlyingObject = DBObjectRef.of(sourceCodeFile.getObject());
         }
 
         IFileElementType nodeType = parserDefinition.getFileNodeType();
@@ -122,7 +121,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     }
 
     public void setUnderlyingObject(DBSchemaObject underlyingObject) {
-        this.underlyingObjectRef = DBObjectRef.from(underlyingObject);
+        this.underlyingObject = DBObjectRef.of(underlyingObject);
     }
 
     public DBObject getUnderlyingObject() {
@@ -145,7 +144,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
             }
         }
 
-        return DBObjectRef.get(underlyingObjectRef);
+        return DBObjectRef.get(underlyingObject);
     }
 
     public DBLanguagePsiFile(Project project, DBLanguageFileType fileType, @NotNull DBLanguage<?> language) {
@@ -406,29 +405,26 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
+    @Getter
     private boolean disposed;
 
     @Override
-    public final boolean isDisposed() {
-        return disposed;
-    }
+    public void dispose() {
+        if (!disposed) {
+            disposed = true;
+            markInvalidated();
+            nullify();
 
-    @Override
-    public void markDisposed() {
-        disposed = true;
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposable.super.disposeInner();
-        // TODO memory cleanup
-        //markInvalidated();
+            // TODO memory cleanup
+            //markInvalidated();
 /*
             FileElement treeElement = derefTreeElement();
             if (treeElement != null) {
                 treeElement.detachFromFile();
             }
 */
+
+        }
     }
 
     @NotNull

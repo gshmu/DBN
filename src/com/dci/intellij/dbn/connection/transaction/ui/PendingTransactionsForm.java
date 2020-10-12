@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -21,18 +21,17 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDialog> {
+public class PendingTransactionsForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel detailsPanel;
-    private JList connectionsList;
-    private final List<ConnectionHandler> connectionHandlers = new ArrayList<ConnectionHandler>();
+    private JList<ConnectionHandler> connectionsList;
+    private final List<ConnectionHandler> connectionHandlers = new ArrayList<>();
 
-    private final Map<ConnectionHandler, PendingTransactionsDetailForm> uncommittedChangeForms = new HashMap<ConnectionHandler, PendingTransactionsDetailForm>();
+    private final Map<ConnectionHandler, PendingTransactionsDetailForm> uncommittedChangeForms = DisposableContainer.map(this);
 
     PendingTransactionsForm(PendingTransactionsDialog parentComponent) {
         super(parentComponent);
@@ -40,7 +39,7 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
         mainPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
 
         connectionsList.addListSelectionListener(e -> {
-            ConnectionHandler connectionHandler = (ConnectionHandler) connectionsList.getSelectedValue();
+            ConnectionHandler connectionHandler = connectionsList.getSelectedValue();
             showChangesForm(connectionHandler);
         });
 
@@ -53,7 +52,7 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
 
     private void updateListModel() {
         checkDisposed();
-        DefaultListModel model = new DefaultListModel();
+        DefaultListModel<ConnectionHandler> model = new DefaultListModel<>();
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
         for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
@@ -79,14 +78,8 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(uncommittedChangeForms);
-        super.disposeInner();
     }
 
     public List<ConnectionHandler> getConnectionHandlers (){
@@ -98,7 +91,7 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
         if (connectionHandler != null) {
             PendingTransactionsDetailForm pendingTransactionsForm = uncommittedChangeForms.get(connectionHandler);
             if (pendingTransactionsForm == null) {
-                pendingTransactionsForm = new PendingTransactionsDetailForm(connectionHandler, null, true);
+                pendingTransactionsForm = new PendingTransactionsDetailForm(this, connectionHandler, null, true);
                 uncommittedChangeForms.put(connectionHandler, pendingTransactionsForm);
             }
             detailsPanel.add(pendingTransactionsForm.getComponent(), BorderLayout.CENTER);
@@ -107,8 +100,7 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
         GUIUtil.repaint(detailsPanel);
     }
 
-    private static class ListCellRenderer extends ColoredListCellRenderer {
-
+    private static class ListCellRenderer extends ColoredListCellRenderer<Object> {
         @Override
         protected void customizeCellRenderer(@NotNull JList list, Object value, int index, boolean selected, boolean hasFocus) {
             ConnectionHandler connectionHandler = (ConnectionHandler) value;
@@ -128,7 +120,7 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
     /********************************************************
      *                Transaction Listener                  *
      ********************************************************/
-    private TransactionListener transactionListener = new TransactionListener() {
+    private final TransactionListener transactionListener = new TransactionListener() {
         @Override
         public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
             refreshForm();
@@ -138,4 +130,12 @@ public class PendingTransactionsForm extends DBNFormImpl<PendingTransactionsDial
     private void refreshForm() {
         Dispatch.run(() -> updateListModel());
     }
+
+
+    @Override
+    public void disposeInner() {
+        connectionHandlers.clear();
+        super.disposeInner();
+    }
+
 }

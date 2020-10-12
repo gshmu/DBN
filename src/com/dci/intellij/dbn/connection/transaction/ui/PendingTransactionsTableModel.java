@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -16,18 +14,17 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.event.TableModelListener;
 import java.util.List;
 
-@Nullifiable
-public class PendingTransactionsTableModel extends DisposableBase implements DBNTableModel {
-    private ConnectionHandlerRef connectionHandlerRef;
-    private List<DBNConnection> connections;
+public class PendingTransactionsTableModel extends StatefulDisposable.Base implements DBNTableModel {
+    private final ConnectionHandlerRef connectionHandler;
+    private final List<DBNConnection> connections;
 
     PendingTransactionsTableModel(ConnectionHandler connectionHandler) {
-        this.connectionHandlerRef = connectionHandler.getRef();
-        connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
+        this.connectionHandler = connectionHandler.getRef();
+        this.connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     @NotNull
@@ -37,7 +34,7 @@ public class PendingTransactionsTableModel extends DisposableBase implements DBN
 
     @NotNull
     public List<DBNConnection> getConnections() {
-        return Failsafe.nn(connections);
+        return connections;
     }
 
     @Override
@@ -98,4 +95,9 @@ public class PendingTransactionsTableModel extends DisposableBase implements DBN
     @Override
     public void removeTableModelListener(TableModelListener l) {}
 
+
+    @Override
+    protected void disposeInner() {
+        connections.clear();
+    }
 }

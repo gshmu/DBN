@@ -27,8 +27,8 @@ public class DatasetColumnSetupForm extends DBNFormImpl {
     private JPanel actionPanel;
     private JScrollPane columnListScrollPane;
     private JPanel headerPanel;
-    private CheckBoxList<ColumnStateSelectable> columnList;
-    private DatasetColumnSetup columnSetup;
+    private final CheckBoxList<ColumnStateSelectable> columnList;
+    private final DatasetColumnSetup columnSetup;
 
     public DatasetColumnSetupForm(@NotNull DatasetEditor datasetEditor) {
         super(datasetEditor.getProject());
@@ -40,7 +40,7 @@ public class DatasetColumnSetupForm extends DBNFormImpl {
             columnStateSel.add(new ColumnStateSelectable(dataset, columnState));
         }
 
-        columnList = new CheckBoxList<ColumnStateSelectable>(columnStateSel, true);
+        columnList = new CheckBoxList<>(columnStateSel, true);
         columnListScrollPane.setViewportView(columnList);
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", false,
@@ -57,13 +57,13 @@ public class DatasetColumnSetupForm extends DBNFormImpl {
     }
 
     private void createHeaderForm(DBDataset dataset) {
-        DBNHeaderForm headerForm = new DBNHeaderForm(dataset, this);
+        DBNHeaderForm headerForm = new DBNHeaderForm(this, dataset);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
     }
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

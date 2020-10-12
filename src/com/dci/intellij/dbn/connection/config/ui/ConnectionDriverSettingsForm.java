@@ -26,7 +26,7 @@ import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
 import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 
 
-public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabaseSettingsForm>{
+public class ConnectionDriverSettingsForm extends DBNFormImpl{
     private TextFieldWithBrowseButton driverLibraryTextField;
     private JPanel mainPanel;
     private JPanel driverSetupPanel;
@@ -42,8 +42,8 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
     /** allow select a single jar file or a directory */
     private static final FileChooserDescriptor LIBRARY_FILE_DESCRIPTOR = new FileChooserDescriptor(false, true, true, true, false, false);
 
-    ConnectionDriverSettingsForm(@NotNull final ConnectionDatabaseSettingsForm parentComponent) {
-        super(parentComponent);
+    ConnectionDriverSettingsForm(@NotNull ConnectionDatabaseSettingsForm parent) {
+        super(parent);
 
         initComboBox(driverSourceComboBox, DriverSource.BUILTIN, DriverSource.EXTERNAL);
         driverSourceComboBox.addActionListener(e -> {
@@ -64,12 +64,12 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
         reloadDriversCheckLabel.setText("");
         reloadDriversCheckLabel.setIcon(Icons.COMMON_CHECK);
         reloadDriversCheckLabel.setVisible(false);
-        reloadDriversLink.setHyperlinkText("Reload Drivers");
+        reloadDriversLink.setHyperlinkText("Reload drivers");
         reloadDriversLink.addHyperlinkListener(e -> {
             reloadDriversLink.setVisible(false);
             DatabaseDriverManager driverManager = DatabaseDriverManager.getInstance();
             File driverLibrary = new File(driverLibraryTextField.getText());
-            List<Driver> drivers = null;
+            List<Driver> drivers;
             try {
                 drivers = driverManager.loadDrivers(driverLibrary, true);
                 if (drivers == null || drivers.isEmpty()) {
@@ -94,6 +94,10 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
             timer.setRepeats(false);
             timer.start();
         });
+    }
+
+    public ConnectionDatabaseSettingsForm getParentForm() {
+        return ensureParentComponent();
     }
 
     void updateDriverFields() {
@@ -139,7 +143,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
                     initComboBox(driverComboBox);
                     //driverComboBox.addItem("");
                     if (drivers != null && !drivers.isEmpty()) {
-                        List<DriverOption> driverOptions = new ArrayList<DriverOption>();
+                        List<DriverOption> driverOptions = new ArrayList<>();
                         for (Driver driver : drivers) {
                             DriverOption driverOption = new DriverOption(driver);
                             driverOptions.add(driverOption);
@@ -206,7 +210,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
     }
 
     private DatabaseType getDatabaseType() {
-        return ensureParentComponent().getSelectedDatabaseType();
+        return getParentForm().getSelectedDatabaseType();
     }
 
     private static boolean fileExists(String driverLibrary) {
@@ -227,7 +231,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl<ConnectionDatabase
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

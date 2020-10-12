@@ -1,17 +1,19 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.listener.PopupCloseListener;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.data.DatasetEditorError;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,11 +30,12 @@ public class DatasetEditorErrorForm extends DBNFormImpl implements ChangeListene
     private JLabel errorIconLabel;
     private JTextArea errorMessageTextArea;
 
-    private DatasetEditorModelCell cell;
-    private JBPopup popup;
+    private final WeakRef<DatasetEditorModelCell> cell;
+    private final JBPopup popup;
 
     public DatasetEditorErrorForm(@NotNull DatasetEditorModelCell cell) {
-        this.cell = cell;
+        super(cell.getProject());
+        this.cell = WeakRef.of(cell);
         DatasetEditorError error = cell.getError();
         error.addChangeListener(this);
         errorIconLabel.setIcon(Icons.EXEC_MESSAGES_ERROR);
@@ -45,9 +48,16 @@ public class DatasetEditorErrorForm extends DBNFormImpl implements ChangeListene
 
         ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(mainPanel, mainPanel);
         popup = popupBuilder.createPopup();
+        popup.addListener(PopupCloseListener.create(this));
+    }
+
+    @NotNull
+    public DatasetEditorModelCell getCell() {
+        return cell.ensure();
     }
 
     public void show() {
+        DatasetEditorModelCell cell = getCell();
         DatasetEditorModelRow row = cell.getRow();
         DatasetEditorTable table = row.getModel().getEditorTable();
         Rectangle rectangle = table.getCellRect(row.getIndex(), cell.getIndex(), false);
@@ -67,7 +77,7 @@ public class DatasetEditorErrorForm extends DBNFormImpl implements ChangeListene
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -81,6 +91,5 @@ public class DatasetEditorErrorForm extends DBNFormImpl implements ChangeListene
     @Override
     public void disposeInner() {
         Disposer.dispose(popup);
-        super.disposeInner();
     }
 }

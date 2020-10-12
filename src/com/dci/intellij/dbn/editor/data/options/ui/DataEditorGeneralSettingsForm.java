@@ -29,7 +29,7 @@ public class DataEditorGeneralSettingsForm extends ConfigurationEditorForm<DataE
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

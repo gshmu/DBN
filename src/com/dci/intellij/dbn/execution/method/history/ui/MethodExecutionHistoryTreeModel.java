@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -21,8 +22,8 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.connection.ConnectionId.UNKNOWN_CONNECTION;
 
-public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel implements Disposable {
-    List<MethodExecutionInput> executionInputs;
+public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel implements StatefulDisposable {
+    protected List<MethodExecutionInput> executionInputs;
 
     MethodExecutionHistoryTreeModel(List<MethodExecutionInput> executionInputs) {
         super(new DefaultMutableTreeNode());
@@ -162,7 +163,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
     }
 
     protected class MethodTreeNode extends MethodExecutionHistoryTreeNode {
-        private MethodExecutionInput executionInput;
+        private final MethodExecutionInput executionInput;
 
         MethodTreeNode(MethodExecutionHistoryTreeNode parent, MethodExecutionInput executionInput) {
             super(parent,
@@ -189,15 +190,13 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
+    @Getter
     private boolean disposed;
 
     @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
-    @Override
-    public void markDisposed() {
-        disposed = true;
+    public void dispose() {
+        if (!disposed) {
+            disposed = true;
+        }
     }
 }

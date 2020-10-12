@@ -6,9 +6,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNodeBase;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
-import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
@@ -23,6 +21,7 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,19 +29,18 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Nullifiable
-public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTreeNode, RegisteredDisposable {
+public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTreeNode, StatefulDisposable {
 
     private static final Filter<ConnectionHandler> ACTIVE_CONNECTIONS_FILTER =
             connectionHandler -> connectionHandler != null && connectionHandler.isEnabled();
 
 
-    private final ProjectRef projectRef;
+    private final ProjectRef project;
     private final List<ConnectionHandler> virtualConnections = new ArrayList<>();
     private AbstractFiltrableList<ConnectionHandler> connectionHandlers = new FiltrableListImpl<>(ACTIVE_CONNECTIONS_FILTER);
 
     public ConnectionBundle(Project project) {
-        this.projectRef = ProjectRef.from(project);
+        this.project = ProjectRef.of(project);
         virtualConnections.add(new VirtualConnectionHandler(
                 ConnectionId.VIRTUAL_ORACLE_CONNECTION,
                 "Virtual - Oracle 10.1",
@@ -148,7 +146,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     @Override
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return project.ensure();
     }
 
     @Nullable
@@ -338,5 +336,11 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
 
     public boolean isEmpty() {
         return connectionHandlers.getFullList().isEmpty();
+    }
+
+
+    @Override
+    protected void disposeInner() {
+        nullify();
     }
 }

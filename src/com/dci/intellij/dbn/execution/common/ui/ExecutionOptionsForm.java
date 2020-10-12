@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.execution.common.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
@@ -22,6 +20,7 @@ import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.ExecutionOption;
 import com.dci.intellij.dbn.execution.ExecutionOptions;
 import com.dci.intellij.dbn.execution.LocalExecutionInput;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -33,7 +32,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent> {
+public class ExecutionOptionsForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JPanel timeoutPanel;
     private JLabel connectionLabel;
@@ -46,9 +45,9 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
     private DBNComboBox<DatabaseSession> targetSessionComboBox;
     private AutoCommitLabel autoCommitLabel;
 
-    private LocalExecutionInput executionInput;
-    private Set<ChangeListener> changeListeners = new HashSet<ChangeListener>();
-    private DBDebuggerType debuggerType;
+    private final LocalExecutionInput executionInput;
+    private final Set<ChangeListener> changeListeners = new HashSet<>();
+    private final DBDebuggerType debuggerType;
 
     public ExecutionOptionsForm(DBNForm parent, LocalExecutionInput executionInput, @NotNull DBDebuggerType debuggerType) {
         super(parent);
@@ -122,7 +121,7 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
 
         Disposer.register(this, autoCommitLabel);
 
-        ExecutionTimeoutForm timeoutForm = new ExecutionTimeoutForm(executionInput, debuggerType) {
+        ExecutionTimeoutForm timeoutForm = new ExecutionTimeoutForm(this, executionInput, debuggerType) {
             @Override
             protected void handleChange(boolean hasError) {
                 super.handleChange(hasError);
@@ -136,7 +135,7 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -184,15 +183,19 @@ public class ExecutionOptionsForm extends DBNFormImpl<DisposableProjectComponent
         return Failsafe.nn(connectionHandler);
     }
 
-    private ActionListener actionListener = e -> {
-        if (changeListeners != null) {
-            for (ChangeListener changeListener : changeListeners) {
-                changeListener.stateChanged(new ChangeEvent(this));
-            }
+    private final ActionListener actionListener = e -> {
+        for (ChangeListener changeListener : changeListeners) {
+            changeListener.stateChanged(new ChangeEvent(this));
         }
     };
 
     public void addChangeListener(ChangeListener changeListener) {
         changeListeners.add(changeListener);
+    }
+
+    @Override
+    protected void disposeInner() {
+        super.disposeInner();
+        changeListeners.clear();
     }
 }

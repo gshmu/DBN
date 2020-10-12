@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.data.record.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
@@ -9,6 +8,7 @@ import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
 import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProviderImpl;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
 import com.dci.intellij.dbn.data.editor.ui.TextFieldWithTextEditor;
+import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.DataTypeDefinition;
@@ -21,6 +21,7 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorValueListPopupSettings;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
@@ -41,14 +42,14 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DELETED;
 
-public class DatasetRecordEditorColumnForm extends DBNFormImpl<DatasetRecordEditorForm> {
+public class DatasetRecordEditorColumnForm extends DBNFormImpl {
     private JLabel columnLabel;
     private JPanel valueFieldPanel;
     private JLabel dataTypeLabel;
     private JPanel mainPanel;
 
     private DatasetEditorModelCell cell;
-    private DataEditorComponent editorComponent;
+    private final DataEditorComponent editorComponent;
 
     public DatasetRecordEditorColumnForm(DatasetRecordEditorForm parentForm, DatasetEditorModelCell cell) {
         super(parentForm);
@@ -120,11 +121,18 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl<DatasetRecordEdit
         valueFieldPanel.add((Component) editorComponent, BorderLayout.CENTER);
         editorComponent.getTextField().setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
         setCell(cell);
+
+        Disposer.register(this, editorComponent);
+    }
+
+    @NotNull
+    public DatasetRecordEditorForm getParentForm() {
+        return ensureParentComponent();
     }
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -196,7 +204,8 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl<DatasetRecordEdit
             if (valueTextField.isEditable())  {
                 try {
                     Object value = getEditorValue();
-                    editorComponent.getUserValueHolder().updateUserValue(value, false);
+                    UserValueHolder<Object> userValueHolder = (UserValueHolder<Object>) editorComponent.getUserValueHolder();
+                    userValueHolder.updateUserValue(value, false);
                     valueTextField.setForeground(UIUtil.getTextFieldForeground());
                 } catch (ParseException e1) {
                     if (highlightError) {
@@ -213,15 +222,15 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl<DatasetRecordEdit
     /*********************************************************
      *                     Listeners                         *
      *********************************************************/
-    private DocumentListener documentListener = new DocumentAdapter() {
+    private final DocumentListener documentListener = new DocumentAdapter() {
         @Override
-        protected void textChanged(DocumentEvent documentEvent) {
+        protected void textChanged(@NotNull DocumentEvent e) {
             JTextField valueTextField = editorComponent.getTextField();
             valueTextField.setForeground(UIUtil.getTextFieldForeground());
         }
     };
 
-    private KeyListener keyAdapter = new KeyAdapter() {
+    private final KeyListener keyAdapter = new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent e) {
             if (!e.isConsumed()) {
@@ -238,7 +247,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl<DatasetRecordEdit
     };
 
 
-    private FocusListener focusListener = new FocusAdapter() {
+    private final FocusListener focusListener = new FocusAdapter() {
         @Override
         public void focusGained(FocusEvent e) {
             if (e.getOppositeComponent() != null) {
@@ -249,7 +258,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl<DatasetRecordEdit
                 }
 
                 Rectangle rectangle = new Rectangle(mainPanel.getLocation(), mainPanel.getSize());
-                ensureParentComponent().getColumnsPanel().scrollRectToVisible(rectangle);
+                getParentForm().getColumnsPanel().scrollRectToVisible(rectangle);
             }
         }
 
@@ -258,10 +267,4 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl<DatasetRecordEdit
             updateUserValue(true);
         }
     };
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(editorComponent);
-        super.disposeInner();
-    }
 }

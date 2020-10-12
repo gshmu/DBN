@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.object.common.list;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
@@ -9,19 +8,18 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 
-@Nullifiable
-public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObject> extends DisposableBase implements DBObjectRelation<S, T> {
+public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObject> extends StatefulDisposable.Base implements DBObjectRelation<S, T> {
 
-    private DBObjectRelationType objectRelationType;
-    private DBObjectRef<S> sourceObject;
-    private DBObjectRef<T> targetObject;
+    private final DBObjectRelationType objectRelationType;
+    private final DBObjectRef<S> sourceObject;
+    private final DBObjectRef<T> targetObject;
 
     public DBObjectRelationImpl(DBObjectRelationType objectRelationType, S sourceObject, T targetObject) {
         this.objectRelationType = objectRelationType;
         assert sourceObject.getObjectType() == objectRelationType.getSourceType();
         assert targetObject.getObjectType() == objectRelationType.getTargetType();
-        this.sourceObject = DBObjectRef.from(sourceObject);
-        this.targetObject = DBObjectRef.from(targetObject);
+        this.sourceObject = DBObjectRef.of(sourceObject);
+        this.targetObject = DBObjectRef.of(targetObject);
     }
 
 
@@ -83,4 +81,9 @@ public abstract class DBObjectRelationImpl<S extends DBObject, T extends DBObjec
         return sourceObject.compareTo(remote.sourceObject);
     }
 
+
+    @Override
+    protected void disposeInner() {
+        nullify();
+    }
 }

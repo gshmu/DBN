@@ -39,7 +39,7 @@ public class CodeStyleSettingsForm extends CompositeConfigurationEditorForm<Proj
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 }

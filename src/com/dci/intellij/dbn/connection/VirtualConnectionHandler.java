@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class VirtualConnectionHandler extends DisposableBase implements ConnectionHandler {
+public class VirtualConnectionHandler extends StatefulDisposable.Base implements ConnectionHandler {
     private final ConnectionId id;
     private final String name;
     private final DatabaseType databaseType;
@@ -60,7 +60,7 @@ public class VirtualConnectionHandler extends DisposableBase implements Connecti
     public VirtualConnectionHandler(ConnectionId id, String name, DatabaseType databaseType, double databaseVersion, @NotNull Project project){
         this.id = id;
         this.name = name;
-        this.projectRef = ProjectRef.from(project);
+        this.projectRef = ProjectRef.of(project);
         this.databaseType = databaseType;
         this.databaseVersion = databaseVersion;
         this.ref = new ConnectionHandlerRef(this);
@@ -341,5 +341,10 @@ public class VirtualConnectionHandler extends DisposableBase implements Connecti
     @Override
     public DatabaseCompatibility getCompatibility() {
         return compatibility;
+    }
+
+    @Override
+    protected void disposeInner() {
+        nullify();
     }
 }

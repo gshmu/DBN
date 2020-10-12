@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.property;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 
-public abstract class DisposablePropertyHolder<T extends Property> extends PropertyHolderImpl<T> implements Disposable {
+public abstract class DisposablePropertyHolder<T extends Property> extends PropertyHolderImpl<T> implements StatefulDisposable {
     private boolean disposed;
 
     @Override
@@ -11,11 +11,12 @@ public abstract class DisposablePropertyHolder<T extends Property> extends Prope
     }
 
     @Override
-    public final void markDisposed() {
-        disposed = true;
+    public void dispose() {
+        if (!disposed) {
+            disposed = true;
+            disposeInner();
+        }
     }
 
-    public void disposeInner(){
-        Disposable.super.disposeInner();
-    }
+    public abstract void disposeInner();
 }

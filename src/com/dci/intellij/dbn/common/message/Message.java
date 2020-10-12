@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.message;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 
-public class Message extends DisposableBase{
+public class Message extends StatefulDisposable.Base {
     protected MessageType type;
     protected String text;
 
@@ -49,5 +49,10 @@ public class Message extends DisposableBase{
         int result = type.hashCode();
         result = 31 * result + text.hashCode();
         return result;
+    }
+
+    @Override
+    protected void disposeInner() {
+        nullify();
     }
 }

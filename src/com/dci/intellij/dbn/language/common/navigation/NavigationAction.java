@@ -19,7 +19,7 @@ public abstract class NavigationAction extends AnAction {
 
     NavigationAction(String text, Icon icon, @Nullable DBObject parentObject, @NotNull BasePsiElement navigationElement) {
         super(text, null, icon);
-        this.parentObjectRef = DBObjectRef.from(parentObject);
+        this.parentObjectRef = DBObjectRef.of(parentObject);
         this.navigationElement = PsiElementRef.from(navigationElement);
     }
 

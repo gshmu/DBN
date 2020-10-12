@@ -18,10 +18,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
-import com.dci.intellij.dbn.object.factory.ui.FunctionFactoryInputForm;
-import com.dci.intellij.dbn.object.factory.ui.ProcedureFactoryInputForm;
 import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputDialog;
-import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputForm;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
@@ -64,15 +61,11 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
 
     public void openFactoryInputDialog(DBSchema schema, DBObjectType objectType) {
         Project project = getProject();
-        ObjectFactoryInputForm inputForm =
-            objectType == DBObjectType.FUNCTION ? new FunctionFactoryInputForm(project, schema, objectType, 0) :
-            objectType == DBObjectType.PROCEDURE ? new ProcedureFactoryInputForm(project, schema, objectType, 0) : null;
-
-        if (inputForm == null) {
-            MessageUtil.showErrorDialog(project, "Operation not supported", "Creation of " + objectType.getListName() + " is not supported yet.");
-        } else {
-            ObjectFactoryInputDialog dialog = new ObjectFactoryInputDialog(project, inputForm);
+        if (objectType.isOneOf(DBObjectType.FUNCTION, DBObjectType.PROCEDURE)) {
+            ObjectFactoryInputDialog dialog = new ObjectFactoryInputDialog(project, schema, objectType);
             dialog.show();
+        } else {
+            MessageUtil.showErrorDialog(project, "Operation not supported", "Creation of " + objectType.getListName() + " is not supported yet.");
         }
     }
 

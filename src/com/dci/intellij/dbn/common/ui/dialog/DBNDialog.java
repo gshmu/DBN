@@ -2,38 +2,37 @@ package com.dci.intellij.dbn.common.ui.dialog;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
 import com.dci.intellij.dbn.common.ui.DBNForm;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-@Nullifiable
-public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper implements DisposableProjectComponent, ProjectEventAdapter.Provided {
-    private C component;
+public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper implements DBNComponent, ProjectEventAdapter.Provided {
+    private F form;
     private final ProjectRef projectRef;
-    private boolean disposed;
     private boolean rememberSelection;
+    private boolean disposed;
 
     protected DBNDialog(Project project, String title, boolean canBeParent) {
         super(project, canBeParent);
         setTitle(Constants.DBN_TITLE_PREFIX + title);
-        projectRef = ProjectRef.from(project);
+        projectRef = ProjectRef.of(project);
         getHelpAction().setEnabled(false);
     }
 
     @NotNull
-    public final C getComponent() {
-        if (component == null && !isDisposed()) {
-            component = createComponent();
+    public final F getForm() {
+        if (form == null && !isDisposed()) {
+            form = createForm();
         }
-        return Failsafe.nn(component);
+        return Failsafe.nn(form);
     }
 
     @Override
@@ -44,10 +43,22 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
     @Override
     @NotNull
     protected final JComponent createCenterPanel() {
-        return getComponent().getComponent();
+        return getComponent();
     }
 
-    protected abstract @NotNull C createComponent();
+    @NotNull
+    protected abstract F createForm();
+
+    @Nullable
+    public final <T extends DBNComponent> T getParentComponent() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public final JComponent getComponent() {
+        return getForm().getComponent();
+    }
 
     @Override
     protected String getDimensionServiceKey() {
@@ -58,7 +69,7 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
     public JComponent getPreferredFocusedComponent() {
         JComponent focusComponent = null;
         if (!isDisposed()) {
-            focusComponent = getComponent().getPreferredFocusedComponent();
+            focusComponent = getForm().getPreferredFocusedComponent();
             if (focusComponent == null) {
                 focusComponent = super.getPreferredFocusedComponent();
 
@@ -97,23 +108,23 @@ public abstract class DBNDialog<C extends DBNForm> extends DialogWrapper impleme
     }
 
     @Override
-    public void dispose() {
-        DisposableProjectComponent.super.dispose();
-    }
-
-    public void disposeInner(){
-        super.dispose();
-        Disposer.dispose(component);
-        DisposableProjectComponent.super.disposeInner();
-    };
-
-    @Override
     public boolean isDisposed() {
         return disposed;
     }
 
     @Override
-    public void markDisposed() {
-        disposed = true;
+    public void dispose() {
+        if (!disposed) {
+            disposed = true;
+            super.dispose();
+            Disposer.dispose(form);
+            disposeInner();
+            nullify();
+        }
     }
+
+    protected void disposeInner() {
+    }
+
+
 }

@@ -129,4 +129,11 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
             dataType.setValueToResultSet(resultSet, columnIndex, value);
         }
     }
+
+
+    @Override
+    protected void disposeInner() {
+        resultSet = null;
+        super.disposeInner();
+    }
 }

@@ -5,10 +5,9 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.browser.options.listener.ObjectDetailSettingsListener;
-import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -23,17 +22,17 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
     private JScrollPane browserScrollPane;
     private final DatabaseBrowserTree browserTree;
 
-    SimpleBrowserForm(DisposableProjectComponent parentComponent) {
+    SimpleBrowserForm(DBNComponent parentComponent) {
         this(parentComponent, new SimpleBrowserTreeModel(parentComponent.getProject(), ConnectionManager.getInstance(parentComponent.getProject()).getConnectionBundle()));
     }
 
-    SimpleBrowserForm(DisposableProjectComponent parentComponent, ConnectionHandler connectionHandler) {
+    SimpleBrowserForm(DBNComponent parentComponent, ConnectionHandler connectionHandler) {
         this(parentComponent, new TabbedBrowserTreeModel(connectionHandler));
     }
 
-    private SimpleBrowserForm(DisposableProjectComponent parentComponent, BrowserTreeModel treeModel) {
-        super(parentComponent);
-        browserTree = new DatabaseBrowserTree(treeModel);
+    private SimpleBrowserForm(DBNComponent parent, BrowserTreeModel treeModel) {
+        super(parent);
+        browserTree = new DatabaseBrowserTree(parent, treeModel);
         browserScrollPane.setViewportView(browserTree);
         browserScrollPane.setBorder(JBUI.Borders.emptyTop(1));
         ToolTipManager.sharedInstance().registerComponent(browserTree);
@@ -59,7 +58,7 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -79,16 +78,10 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
         getBrowserTree().getModel().getRoot().rebuildTreeChildren();
     }
 
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(browserTree);
-        super.disposeInner();
-    }
-
     /********************************************************
      *                       Listeners                      *
      ********************************************************/
-    private ObjectDetailSettingsListener objectDetailSettingsListener = new ObjectDetailSettingsListener() {
+    private final ObjectDetailSettingsListener objectDetailSettingsListener = new ObjectDetailSettingsListener() {
         @Override
         public void displayDetailsChanged() {
             GUIUtil.repaint(browserTree);

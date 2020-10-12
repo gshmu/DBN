@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -26,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecutionResultForm> implements SearchableDataComponent {
+public class MethodExecutionCursorResultForm extends DBNFormImpl implements SearchableDataComponent {
     private JPanel actionsPanel;
     private JScrollPane resultScrollPane;
     private JPanel mainPanel;
@@ -34,27 +33,24 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
     private JPanel searchPanel;
 
     private final DBObjectRef<DBArgument> argumentRef;
-    private final ResultSetTable resultTable;
-    private final MethodExecutionResult executionResult;
+    private final ResultSetTable<ResultSetDataModel<?, ?>> resultTable;
 
-    private final Latent<DataSearchComponent> dataSearchComponent = Latent.disposable(this, () -> {
+    private final Latent<DataSearchComponent> dataSearchComponent = Latent.basic(() -> {
         DataSearchComponent dataSearchComponent = new DataSearchComponent(MethodExecutionCursorResultForm.this);
         searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
         DataManager.registerDataProvider(dataSearchComponent.getSearchField(), this);
         return dataSearchComponent;
     });
 
-
-    MethodExecutionCursorResultForm(MethodExecutionResultForm parentComponent, MethodExecutionResult executionResult, DBArgument argument) {
-        super(parentComponent);
-        this.executionResult = executionResult;
-        this.argumentRef = DBObjectRef.from(argument);
-        ResultSetDataModel dataModel = executionResult.getTableModel(argument);
+    MethodExecutionCursorResultForm(MethodExecutionResultForm parent, MethodExecutionResult executionResult, DBArgument argument) {
+        super(parent);
+        this.argumentRef = DBObjectRef.of(argument);
+        ResultSetDataModel<?, ?> dataModel = executionResult.getTableModel(argument);
         RecordViewInfo recordViewInfo = new RecordViewInfo(
                 executionResult.getName(),
                 executionResult.getIcon());
 
-        resultTable = new ResultSetTable(dataModel, true, recordViewInfo);
+        resultTable = new ResultSetTable<>(this, dataModel, true, recordViewInfo);
         resultTable.setPreferredScrollableViewportSize(new Dimension(500, -1));
 
         resultPanel.setBorder(IdeBorderFactory.createBorder());
@@ -70,8 +66,6 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
         actionToolbar.setTargetComponent(actionsPanel);
         actionsPanel.add(actionToolbar.getComponent());
         DataManager.registerDataProvider(actionToolbar.getComponent(), this);
-
-        Disposer.register(this, resultTable);
     }
 
     public DBArgument getArgument() {
@@ -80,7 +74,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -130,7 +124,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
 
     @NotNull
     @Override
-    public ResultSetTable getTable() {
+    public ResultSetTable<?> getTable() {
         return Failsafe.nn(resultTable);
     }
 
@@ -146,6 +140,6 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl<MethodExecution
         if (DataKeys.METHOD_EXECUTION_ARGUMENT.is(dataId)) {
             return DBObjectRef.get(argumentRef);
         }
-        return null;
+        return super.getData(dataId);
     }
 }

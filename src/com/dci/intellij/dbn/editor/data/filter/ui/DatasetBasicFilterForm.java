@@ -3,7 +3,8 @@ package com.dci.intellij.dbn.editor.data.filter.ui;
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -47,7 +48,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 
 public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasicFilter> {
     private JPanel conditionsPanel;
@@ -60,8 +63,8 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
     private JPanel filterNamePanel;
     private JComboBox<ConditionJoinType> joinTypeComboBox;
 
-    private DBObjectRef<DBDataset> datasetRef;
-    private List<DatasetBasicFilterConditionForm> conditionForms = new ArrayList<>();
+    private final DBObjectRef<DBDataset> datasetRef;
+    private List<DatasetBasicFilterConditionForm> conditionForms = DisposableContainer.list(this);
     private Document previewDocument;
     private boolean isCustomNamed;
     private EditorEx viewer;
@@ -70,7 +73,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
     public DatasetBasicFilterForm(DBDataset dataset, DatasetBasicFilter filter) {
         super(filter);
         conditionsPanel.setLayout(new BoxLayout(conditionsPanel, BoxLayout.Y_AXIS));
-        datasetRef = DBObjectRef.from(dataset);
+        datasetRef = DBObjectRef.of(dataset);
         nameTextField.setText(filter.getDisplayName());
 
         actionsPanel.add(new ColumnSelector(), BorderLayout.CENTER);
@@ -252,7 +255,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
     void removeConditionPanel(DatasetBasicFilterConditionForm conditionForm) {
         conditionForms.remove(conditionForm);
         conditionsPanel.remove(conditionForm.getComponent());
-        Disposer.dispose(conditionForm);
+        DisposeUtil.dispose(conditionForm);
         GUIUtil.repaint(conditionsPanel);
         updateNameAndPreview();
     }
@@ -260,11 +263,11 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
 
     /*************************************************
      *                  SettingsEditor               *
-     ************************************************
-     * @return*/
+     *************************************************/
+
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -290,7 +293,6 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
     @Override
     public void disposeInner() {
         EditorUtil.releaseEditor(viewer);
-        Disposer.dispose(conditionForms);
         super.disposeInner();
     }
 }

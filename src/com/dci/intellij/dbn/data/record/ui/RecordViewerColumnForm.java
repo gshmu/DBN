@@ -17,22 +17,22 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class RecordViewerColumnForm extends DBNFormImpl<RecordViewerForm> {
+public class RecordViewerColumnForm extends DBNFormImpl {
     private JLabel columnLabel;
     private JPanel valueFieldPanel;
     private JLabel dataTypeLabel;
     private JPanel mainPanel;
 
-    private JTextField valueTextField;
+    private final JTextField valueTextField;
 
-    private RegionalSettings regionalSettings;
-    private DatasetRecord record;
-    private DBObjectRef<DBColumn> columnRef;
+    private final DBObjectRef<DBColumn> columnRef;
+    private final RegionalSettings regionalSettings;
+    private final DatasetRecord record;
 
     RecordViewerColumnForm(RecordViewerForm parentForm, DatasetRecord record, DBColumn column) {
         super(parentForm);
         this.record = record;
-        this.columnRef = DBObjectRef.from(column);
+        this.columnRef = DBObjectRef.of(column);
         Project project = record.getDataset().getProject();
 
         DBDataType dataType = column.getDataType();
@@ -56,7 +56,7 @@ public class RecordViewerColumnForm extends DBNFormImpl<RecordViewerForm> {
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -111,11 +111,11 @@ public class RecordViewerColumnForm extends DBNFormImpl<RecordViewerForm> {
     /*********************************************************
      *                     Listeners                         *
      *********************************************************/
-    private KeyListener keyAdapter = new KeyAdapter() {
+    private final KeyListener keyAdapter = new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent e) {
             if (!e.isConsumed()) {
-                RecordViewerForm parentForm = ensureParentComponent();
+                RecordViewerForm parentForm = (RecordViewerForm) ensureParentComponent();
                 if (e.getKeyCode() == 38) {//UP
                     parentForm.focusPreviousColumnPanel(RecordViewerColumnForm.this);
                     e.consume();
