@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.execution.statement;
 
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.ExecutionContext;
@@ -14,18 +14,19 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
 
-@Nullifiable
-public final class StatementExecutionQueue extends DisposableBase{
+public final class StatementExecutionQueue extends StatefulDisposable.Base {
 
-    private ProjectRef projectRef;
+    private final ProjectRef project;
     private final Queue<StatementExecutionProcessor> processors = new ConcurrentLinkedQueue<>();
     private boolean executing = false;
 
     public StatementExecutionQueue(ConnectionHandler connectionHandler) {
         super(connectionHandler);
-        projectRef = ProjectRef.from(connectionHandler.getProject());
+        project = ProjectRef.of(connectionHandler.getProject());
     }
 
     void queue(StatementExecutionProcessor processor) {
@@ -40,7 +41,7 @@ public final class StatementExecutionQueue extends DisposableBase{
 
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return project.ensure();
     }
 
 
@@ -103,5 +104,10 @@ public final class StatementExecutionQueue extends DisposableBase{
         if (processors.size() == 0) {
             executing = false;
         }
+    }
+
+    @Override
+    protected void disposeInner() {
+        DisposeUtil.nullify(this);
     }
 }

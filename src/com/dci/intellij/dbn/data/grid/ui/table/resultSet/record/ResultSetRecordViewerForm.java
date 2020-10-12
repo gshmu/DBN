@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.grid.ui.table.resultSet.record;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -25,27 +25,26 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewerDialog> {
+public class ResultSetRecordViewerForm extends DBNFormImpl {
     private JPanel actionsPanel;
     private JPanel columnsPanel;
     private JPanel mainPanel;
     private JScrollPane columnsPanelScrollPane;
     private JPanel headerPanel;
 
-    private List<ResultSetRecordViewerColumnForm> columnForms = new ArrayList<>();
+    private final List<ResultSetRecordViewerColumnForm> columnForms = DisposableContainer.list(this);
 
-    private ResultSetTable table;
-    private ResultSetDataModelRow row;
+    private ResultSetTable<?> table;
+    private ResultSetDataModelRow<?, ?> row;
 
-    ResultSetRecordViewerForm(ResultSetRecordViewerDialog parentComponent, ResultSetTable<? extends ResultSetDataModel> table, boolean showDataTypes) {
-        super(parentComponent);
+    ResultSetRecordViewerForm(ResultSetRecordViewerDialog parent, ResultSetTable<? extends ResultSetDataModel<?, ?>> table, boolean showDataTypes) {
+        super(parent);
         this.table = table;
-        ResultSetDataModel model = table.getModel();
-        row = (ResultSetDataModelRow) model.getRowAtIndex(table.getSelectedRow());
+        ResultSetDataModel<?, ?> model = table.getModel();
+        row = model.getRowAtIndex(table.getSelectedRow());
         RecordViewInfo recordViewInfo = table.getRecordViewInfo();
 
         // HEADER
@@ -57,10 +56,10 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
             headerBackground = model.getConnectionHandler().getEnvironmentType().getColor();
         }
         DBNHeaderForm headerForm = new DBNHeaderForm(
-                headerTitle,
+                this, headerTitle,
                 headerIcon,
-                headerBackground,
-                this);
+                headerBackground
+        );
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
@@ -76,9 +75,9 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
 
         columnsPanel.setLayout(new BoxLayout(columnsPanel, BoxLayout.Y_AXIS));
 
-        ResultSetDataModelRow row = getRow();
+        ResultSetDataModelRow<?, ?> row = getRow();
         for (Object cell: row.getCells()) {
-            ResultSetRecordViewerColumnForm columnForm = new ResultSetRecordViewerColumnForm(this, (ResultSetDataModelCell) cell, showDataTypes);
+            ResultSetRecordViewerColumnForm columnForm = new ResultSetRecordViewerColumnForm(this, (ResultSetDataModelCell<?, ?>) cell, showDataTypes);
             columnForms.add(columnForm);
         }
         ColumnSortingType columnSortingType = DatasetEditorManager.getInstance(project).getRecordViewColumnSortingType();
@@ -110,7 +109,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -118,10 +117,10 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
         return columnsPanel;
     }
 
-    public void setRow(ResultSetDataModelRow row) {
+    public void setRow(ResultSetDataModelRow<?, ?> row) {
         this.row = row;
         for (Object o : row.getCells()) {
-            ResultSetDataModelCell cell = (ResultSetDataModelCell) o;
+            ResultSetDataModelCell<?, ?> cell = (ResultSetDataModelCell<?, ?>) o;
             ResultSetRecordViewerColumnForm columnForm = getColumnPanel(cell.getColumnInfo());
             if (columnForm != null) {
                 columnForm.setCell(cell);
@@ -143,8 +142,8 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
      *********************************************************/
     private void sortColumns(ColumnSortingType sortingType) {
         Comparator<ResultSetRecordViewerColumnForm> comparator =
-                sortingType == ColumnSortingType.ALPHABETICAL ? alphabeticComparator :
-                sortingType == ColumnSortingType.BY_INDEX ? indexedComparator : null;
+                sortingType == ColumnSortingType.ALPHABETICAL ? ALPHANUMERIC_COMPARATOR :
+                sortingType == ColumnSortingType.BY_INDEX ? INDEXED_COMPARATOR : null;
 
         if (comparator != null) {
             columnForms.sort(comparator);
@@ -157,13 +156,13 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
         }
     }
 
-    private static Comparator<ResultSetRecordViewerColumnForm> alphabeticComparator = (columnPanel1, columnPanel2) -> {
+    private static final Comparator<ResultSetRecordViewerColumnForm> ALPHANUMERIC_COMPARATOR = (columnPanel1, columnPanel2) -> {
         String name1 = columnPanel1.getCell().getColumnInfo().getName();
         String name2 = columnPanel2.getCell().getColumnInfo().getName();
         return name1.compareTo(name2);
     };
 
-    private static Comparator<ResultSetRecordViewerColumnForm> indexedComparator = (columnPanel1, columnPanel2) -> {
+    private static final Comparator<ResultSetRecordViewerColumnForm> INDEXED_COMPARATOR = (columnPanel1, columnPanel2) -> {
         int index1 = columnPanel1.getCell().getColumnInfo().getColumnIndex();
         int index2 = columnPanel2.getCell().getColumnInfo().getColumnIndex();
         return index1-index2;
@@ -190,7 +189,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
      *********************************************************/
     private class SortAlphabeticallyAction extends ToggleAction {
         private SortAlphabeticallyAction() {
-            super("Sort columns alphabetically", null, Icons.ACTION_SORT_ALPHA);
+            super("Sort Columns Alphabetically", null, Icons.ACTION_SORT_ALPHA);
         }
 
         @Override
@@ -216,8 +215,8 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            ResultSetDataModelRow row = getRow();
-            ResultSetDataModelRow firstRow = (ResultSetDataModelRow) row.getModel().getRowAtIndex(0);
+            ResultSetDataModelRow<?, ?> row = getRow();
+            ResultSetDataModelRow<?, ?> firstRow = row.getModel().getRowAtIndex(0);
             if (firstRow != null) {
                 setRow(firstRow);
                 table.selectRow(0);
@@ -226,7 +225,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
 
         @Override
         public void update(AnActionEvent anactionevent) {
-            ResultSetDataModelRow row = getRow();
+            ResultSetDataModelRow<?, ?> row = getRow();
             anactionevent.getPresentation().setEnabled(row.getIndex() > 0);
         }
     }
@@ -238,11 +237,11 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            ResultSetDataModelRow row = getRow();
+            ResultSetDataModelRow<?, ?> row = getRow();
             int index = row.getIndex();
             if (index > 0) {
                 index--;
-                ResultSetDataModelRow previousRow = (ResultSetDataModelRow) row.getModel().getRowAtIndex(index);
+                ResultSetDataModelRow<?, ?> previousRow = row.getModel().getRowAtIndex(index);
                 if (previousRow != null) {
                     setRow(previousRow);
                     table.selectRow(index);
@@ -252,23 +251,23 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
 
         @Override
         public void update(AnActionEvent anactionevent) {
-            ResultSetDataModelRow row = getRow();
+            ResultSetDataModelRow<?, ?> row = getRow();
             anactionevent.getPresentation().setEnabled(row.getIndex() > 0);
         }
     }
 
     private class NextRecordAction extends AnAction {
         private NextRecordAction() {
-            super("Next record", null, Icons.DATA_EDITOR_NEXT_RECORD);
+            super("Next Record", null, Icons.DATA_EDITOR_NEXT_RECORD);
         }
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            ResultSetDataModelRow row = getRow();
-            ResultSetDataModel model = row.getModel();
+            ResultSetDataModelRow<?, ?> row = getRow();
+            ResultSetDataModel<?, ?> model = row.getModel();
             if (row.getIndex() < model.getRowCount() -1) {
                 int index = row.getIndex() + 1;
-                ResultSetDataModelRow nextRow = (ResultSetDataModelRow) model.getRowAtIndex(index);
+                ResultSetDataModelRow<?, ?> nextRow = model.getRowAtIndex(index);
                 if (nextRow != null) {
                     setRow(nextRow);
                     table.selectRow(index);
@@ -278,21 +277,21 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
 
         @Override
         public void update(AnActionEvent anactionevent) {
-            ResultSetDataModelRow row = getRow();
+            ResultSetDataModelRow<?, ?> row = getRow();
             anactionevent.getPresentation().setEnabled(row.getIndex() < row.getModel().getRowCount() -1);
         }
     }
 
     private class LastRecordAction extends AnAction {
         private LastRecordAction() {
-            super("Last record", null, Icons.DATA_EDITOR_LAST_RECORD);
+            super("Last Record", null, Icons.DATA_EDITOR_LAST_RECORD);
         }
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            ResultSetDataModel model = getRow().getModel();
+            ResultSetDataModel<?, ?> model = getRow().getModel();
             int index = model.getRowCount() - 1 ;
-            ResultSetDataModelRow lastRow = (ResultSetDataModelRow) model.getRowAtIndex(index);
+            ResultSetDataModelRow<?, ?> lastRow = model.getRowAtIndex(index);
             if (lastRow != null) {
                 setRow(lastRow);
                 table.selectRow(index);
@@ -301,19 +300,21 @@ public class ResultSetRecordViewerForm extends DBNFormImpl<ResultSetRecordViewer
 
         @Override
         public void update(AnActionEvent anactionevent) {
-            ResultSetDataModelRow row = getRow();
+            ResultSetDataModelRow<?, ?> row = getRow();
             anactionevent.getPresentation().setEnabled(row.getIndex() < row.getModel().getRowCount() -1);
         }
     }
 
     @NotNull
-    public ResultSetDataModelRow getRow() {
+    public ResultSetDataModelRow<?, ?> getRow() {
         return Failsafe.nn(row);
     }
 
+
     @Override
-    public void disposeInner() {
-        Disposer.dispose(columnForms);
+    protected void disposeInner() {
         super.disposeInner();
+        table = null;
+        row = null;
     }
 }

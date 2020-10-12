@@ -26,7 +26,7 @@ public class OperationsSettingsForm extends CompositeConfigurationEditorForm<Ope
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 }

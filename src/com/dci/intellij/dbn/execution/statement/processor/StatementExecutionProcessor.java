@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.processor;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 
-public interface StatementExecutionProcessor extends ConnectionProvider, Disposable, Presentable {
+public interface StatementExecutionProcessor extends ConnectionProvider, StatefulDisposable, Presentable {
 
     boolean isDirty();
 

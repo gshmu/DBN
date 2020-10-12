@@ -9,7 +9,7 @@ public class ProjectRef extends WeakRef<Project> {
         super(project);
     }
 
-    public static ProjectRef from(Project project) {
+    public static ProjectRef of(Project project) {
         if (project == null) {
             return new ProjectRef(null);
         } else {

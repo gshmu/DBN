@@ -15,7 +15,7 @@ public class CompileInvalidObjectsAction extends DumbAwareAction {
     private DBObjectRef<DBSchema> schemaRef;
     public CompileInvalidObjectsAction(DBSchema schema) {
         super("Compile invalid objects");
-        this.schemaRef = DBObjectRef.from(schema);
+        this.schemaRef = DBObjectRef.of(schema);
     }
 
     @NotNull

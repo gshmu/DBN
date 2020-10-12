@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.data.type;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
@@ -20,10 +20,10 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 
-public class DBNativeDataType extends DisposableBase implements DynamicContentElement{
+public class DBNativeDataType extends StatefulDisposable.Base implements DynamicContentElement{
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private DataTypeDefinition dataTypeDefinition;
+    private final DataTypeDefinition dataTypeDefinition;
 
     public DBNativeDataType(DataTypeDefinition dataTypeDefinition) {
         this.dataTypeDefinition = dataTypeDefinition;
@@ -78,13 +78,14 @@ public class DBNativeDataType extends DisposableBase implements DynamicContentEl
         if (genericDataType == GenericDataType.ROWID) return "[ROWID]";
         if (genericDataType == GenericDataType.FILE) return "[FILE]";
 
-        Class clazz = dataTypeDefinition.getTypeClass();
-        if (Number.class.isAssignableFrom(clazz) && resultSet.getString(columnIndex) == null) {
-            // mysql converts null numbers to 0!!!
-            // FIXME make this database dependent (e.g. in CompatibilityInterface).
-            return null;
-        }
+        Class<?> clazz = dataTypeDefinition.getTypeClass();
         try {
+            if (Number.class.isAssignableFrom(clazz) && resultSet.getString(columnIndex) == null) {
+                // mysql converts null numbers to 0!!!
+                // FIXME make this database dependent (e.g. in CompatibilityInterface).
+                return null;
+            }
+
             DataTypeParseAdapter parseAdapter = dataTypeDefinition.getParseAdapter();
             if (parseAdapter != null) {
                 return parseAdapter.parse(resultSet.getString(columnIndex));
@@ -105,7 +106,7 @@ public class DBNativeDataType extends DisposableBase implements DynamicContentEl
                     clazz == Boolean.class ? resultSet.getBoolean(columnIndex) :
                     //clazz == Array.class ? resultSet.getArray(columnIndex) :
                             resultSet.getObject(columnIndex);
-        } catch (SQLException e) {
+        } catch (Throwable e) {
             try {
                 Object object = resultSet.getObject(columnIndex);
                 String objectClass = object == null ? "" : object.getClass().getName();
@@ -123,7 +124,7 @@ public class DBNativeDataType extends DisposableBase implements DynamicContentEl
                     LOGGER.error("Error resolving result-set value for " + objectClass + " \"" + object + "\". (data type definition " + dataTypeDefinition + ')', e);
                     return object;
                 }
-            } catch (SQLException e1) {
+            } catch (Throwable e1) {
                 return null;
             }
         }
@@ -257,5 +258,10 @@ public class DBNativeDataType extends DisposableBase implements DynamicContentEl
     public int compareTo(@NotNull Object o) {
         DBNativeDataType remote = (DBNativeDataType) o;
         return getName().compareTo(remote.getName());
+    }
+
+    @Override
+    protected void disposeInner() {
+        nullify();
     }
 }

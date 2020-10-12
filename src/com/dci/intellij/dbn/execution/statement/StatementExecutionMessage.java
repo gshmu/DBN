@@ -1,25 +1,23 @@
 package com.dci.intellij.dbn.execution.statement;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.intellij.openapi.vfs.VirtualFile;
+import lombok.Getter;
+import lombok.Setter;
 
 public class StatementExecutionMessage extends ConsoleMessage {
-    private String causeMessage;
-    private StatementExecutionResult executionResult;
+    private final String causeMessage;
+    private @Getter @Setter StatementExecutionResult executionResult;
 
     public StatementExecutionMessage(StatementExecutionResult executionResult, String message, String causeMessage, MessageType messageType) {
         super(messageType, message);
         this.executionResult = executionResult;
         this.causeMessage = causeMessage;
-    }
-
-    public StatementExecutionResult getExecutionResult() {
-        return executionResult;
     }
 
     public VirtualFile getVirtualFile() {
@@ -48,7 +46,7 @@ public class StatementExecutionMessage extends ConsoleMessage {
 
     @Override
     public void disposeInner() {
-        Disposer.dispose(executionResult);
+        DisposeUtil.dispose(executionResult);
         super.disposeInner();
     }
 }

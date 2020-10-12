@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.object.factory.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.ui.DataTypeEditor;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -12,7 +13,6 @@ import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
 import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputForm;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -34,11 +34,11 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
     private JLabel nameLabel;
 
     private ArgumentFactoryInputListForm argumentListPanel;
-    private DBObjectRef<DBSchema> schemaRef;
+    private final DBObjectRef<DBSchema> schema;
 
-    public MethodFactoryInputForm(Project project, DBSchema schema, DBObjectType objectType, int index) {
-        super(project, schema.getConnectionHandler(), objectType, index);
-        this.schemaRef = DBObjectRef.from(schema);
+    public MethodFactoryInputForm(DBNComponent parent, DBSchema schema, DBObjectType objectType, int index) {
+        super(parent, schema.getConnectionHandler(), objectType, index);
+        this.schema = DBObjectRef.of(schema);
         connectionLabel.setText(getConnectionHandler().getName());
         connectionLabel.setIcon(getConnectionHandler().getIcon());
 
@@ -61,7 +61,7 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
         final DBNHeaderForm headerForm = createHeaderForm(schema, objectType);
         nameTextField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
-            protected void textChanged(DocumentEvent e) {
+            protected void textChanged(@NotNull DocumentEvent e) {
                 headerForm.setTitle(getSchema().getName() + "." + nameTextField.getText().toUpperCase());
             }
         });
@@ -75,10 +75,10 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
             headerBackground = schema.getEnvironmentType().getColor();
         }
         DBNHeaderForm headerForm = new DBNHeaderForm(
-                headerTitle,
+                this, headerTitle,
                 headerIcon,
-                headerBackground,
-                this);
+                headerBackground
+        );
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         return headerForm;
     }
@@ -91,7 +91,7 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
     }
 
     DBSchema getSchema() {
-        return DBObjectRef.get(schemaRef);
+        return DBObjectRef.get(schema);
     }
 
     public abstract boolean hasReturnArgument();
@@ -111,7 +111,7 @@ public abstract class MethodFactoryInputForm extends ObjectFactoryInputForm<Meth
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 }

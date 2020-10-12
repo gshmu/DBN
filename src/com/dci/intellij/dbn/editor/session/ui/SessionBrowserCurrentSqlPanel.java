@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -18,6 +19,7 @@ import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.PsiFileRef;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
@@ -41,22 +43,22 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
-public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
+public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
     private JPanel actionsPanel;
     private JPanel viewerPanel;
     private JPanel mainPanel;
 
-
+    private final WeakRef<SessionBrowser> sessionBrowser;
+    private PsiFileRef<DBLanguagePsiFile> psiFile;
     private DBSessionStatementVirtualFile virtualFile;
-    private PsiFileRef<DBLanguagePsiFile> psiFileRef;
     private Document document;
     private EditorEx viewer;
-    private SessionBrowser sessionBrowser;
     private Object selectedSessionId;
 
 
-    SessionBrowserCurrentSqlPanel(SessionBrowser sessionBrowser) {
-        this.sessionBrowser = sessionBrowser;
+    SessionBrowserCurrentSqlPanel(DBNComponent parent, SessionBrowser sessionBrowser) {
+        super(parent);
+        this.sessionBrowser = WeakRef.of(sessionBrowser);
         createStatementViewer();
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, new RefreshAction(), new WrapUnwrapContentAction());
@@ -65,8 +67,13 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
     }
 
     @NotNull
+    public SessionBrowser getSessionBrowser() {
+        return sessionBrowser.ensure();
+    }
+
+    @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -84,6 +91,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
     }
 
     void loadCurrentStatement() {
+        SessionBrowser sessionBrowser = getSessionBrowser();
         SessionBrowserTable editorTable = sessionBrowser.getEditorTable();
         if (editorTable.getSelectedRowCount() == 1) {
             SessionBrowserModelRow selectedRow = editorTable.getModel().getRowAtIndex(editorTable.getSelectedRow());
@@ -127,20 +135,21 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
 
     @NotNull
     private ConnectionHandler getConnectionHandler() {
-        return Failsafe.nn(sessionBrowser.getConnectionHandler());
+        return getSessionBrowser().getConnectionHandler();
     }
 
     public DBLanguagePsiFile getPsiFile() {
-        return psiFileRef.get();
+        return psiFile.get();
     }
 
     private void createStatementViewer() {
+        SessionBrowser sessionBrowser = getSessionBrowser();
         Project project = sessionBrowser.getProject();
         ConnectionHandler connectionHandler = getConnectionHandler();
         virtualFile = new DBSessionStatementVirtualFile(sessionBrowser, "");
         DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(PsiManager.getInstance(project), virtualFile, true);
         DBLanguagePsiFile psiFile = (DBLanguagePsiFile) virtualFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
-        psiFileRef = PsiFileRef.from(psiFile);
+        this.psiFile = PsiFileRef.of(psiFile);
         document = DocumentUtil.getDocument(psiFile);
 
 
@@ -210,9 +219,12 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl{
         return viewer;
     }
 
+
     @Override
-    public void disposeInner() {
+    protected void disposeInner() {
         EditorUtil.releaseEditor(viewer);
+        virtualFile = null;
         super.disposeInner();
     }
+
 }

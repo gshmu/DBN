@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.environment.options.ui;
 
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentConfigLocalListener;
@@ -17,13 +16,12 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.*;
 
-@Nullifiable
 public class EnvironmentTypesTableModel extends DBNEditableTableModel {
     private EnvironmentTypeBundle environmentTypes;
-    private final ProjectRef projectRef;
+    private final ProjectRef project;
 
     EnvironmentTypesTableModel(Project project, EnvironmentTypeBundle environmentTypes) {
-        this.projectRef = ProjectRef.from(project);
+        this.project = ProjectRef.of(project);
         this.environmentTypes = new EnvironmentTypeBundle(environmentTypes);
         addTableModelListener(defaultModelListener);
     }
@@ -54,7 +52,7 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
 
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return project.ensure();
     }
 
     @Override

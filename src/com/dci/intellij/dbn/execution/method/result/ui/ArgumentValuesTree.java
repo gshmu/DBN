@@ -25,16 +25,19 @@ import java.sql.ResultSet;
 import java.util.List;
 
 class ArgumentValuesTree extends DBNTree{
-    private MethodExecutionResultForm parentForm;
 
-    ArgumentValuesTree(MethodExecutionResultForm parentForm, List<ArgumentValue> inputArgumentValues, List<ArgumentValue> outputArgumentValues) {
-        super(parentForm.getProject(), createModel(parentForm, inputArgumentValues, outputArgumentValues));
-        this.parentForm = parentForm;
+    ArgumentValuesTree(MethodExecutionResultForm parent, List<ArgumentValue> inputArgumentValues, List<ArgumentValue> outputArgumentValues) {
+        super(parent, createModel(parent, inputArgumentValues, outputArgumentValues));
         setCellRenderer(new CellRenderer());
         Color bgColor = TextAttributesUtil.getSimpleTextAttributes(DataGridTextAttributesKeys.PLAIN_DATA).getBgColor();
         setBackground(bgColor == null ? UIUtil.getTableBackground() : bgColor);
 
         addMouseListener(mouseAdapter);
+    }
+
+    @NotNull
+    public MethodExecutionResultForm getParentForm() {
+        return (MethodExecutionResultForm) getParentComponent();
     }
 
     @NotNull
@@ -55,7 +58,7 @@ class ArgumentValuesTree extends DBNTree{
                         if (argument != null && argument.isOutput()) {
                             Object value = argumentValue.getValue();
                             if (value instanceof ResultSet || argumentValue.isLargeObject()) {
-                                parentForm.selectArgumentOutputTab(argument);
+                                getParentForm().selectArgumentOutputTab(argument);
                             }
                         }
                     }
@@ -65,7 +68,7 @@ class ArgumentValuesTree extends DBNTree{
     };
 
 
-    class CellRenderer extends ColoredTreeCellRenderer {
+    static class CellRenderer extends ColoredTreeCellRenderer {
         @Override
         public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
             try {

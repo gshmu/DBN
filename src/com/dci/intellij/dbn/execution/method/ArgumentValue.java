@@ -15,13 +15,13 @@ public class ArgumentValue {
     private ArgumentValueHolder valueHolder;
 
     public ArgumentValue(@NotNull DBArgument argument, @Nullable DBTypeAttribute attributeRef, ArgumentValueHolder valueHolder) {
-        this.argumentRef = DBObjectRef.from(argument);
-        this.attributeRef = DBObjectRef.from(attributeRef);
+        this.argumentRef = DBObjectRef.of(argument);
+        this.attributeRef = DBObjectRef.of(attributeRef);
         this.valueHolder = valueHolder;
     }
 
     public ArgumentValue(@NotNull DBArgument argument, ArgumentValueHolder valueHolder) {
-        this.argumentRef = DBObjectRef.from(argument);
+        this.argumentRef = DBObjectRef.of(argument);
         this.valueHolder = valueHolder;
     }
 

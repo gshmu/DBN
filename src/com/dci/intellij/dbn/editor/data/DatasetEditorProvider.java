@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
@@ -52,7 +52,7 @@ public class DatasetEditorProvider implements FileEditorProvider, NamedComponent
     @Override
     public void disposeEditor(@NotNull final FileEditor editor) {
         // expensive task. start in background
-        Disposer.disposeInBackground(editor);
+        DisposeUtil.disposeInBackground(editor);
     }
 
     @Override

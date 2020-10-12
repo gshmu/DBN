@@ -31,7 +31,7 @@ public abstract class ObjectListShowAction extends DumbAwareAction {
 
     public ObjectListShowAction(String text, DBObject sourceObject) {
         super(text);
-        sourceObjectRef = DBObjectRef.from(sourceObject);
+        sourceObjectRef = DBObjectRef.of(sourceObject);
     }
 
     public void setPopupLocation(RelativePoint popupLocation) {

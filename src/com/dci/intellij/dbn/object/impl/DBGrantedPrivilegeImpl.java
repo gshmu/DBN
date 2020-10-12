@@ -25,7 +25,7 @@ public class DBGrantedPrivilegeImpl extends DBObjectImpl<DBGrantedPrivilegeMetad
     @Override
     protected String initObject(DBGrantedPrivilegeMetadata metadata) throws SQLException {
         String name = metadata.getGrantedPrivilegeName();
-        privilegeRef = DBObjectRef.from(getConnectionHandler().getObjectBundle().getPrivilege(name));
+        privilegeRef = DBObjectRef.of(getConnectionHandler().getObjectBundle().getPrivilege(name));
         set(ADMIN_OPTION, metadata.isAdminOption());
         return name;
     }

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.script.options.ui;
 
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
@@ -26,8 +27,8 @@ import java.util.Set;
 
 public class CmdLineInterfacesTable extends DBNTable<CmdLineInterfacesTableModel> {
 
-    CmdLineInterfacesTable(Project project, CmdLineInterfaceBundle environmentTypes) {
-        super(project, new CmdLineInterfacesTableModel(environmentTypes), true);
+    CmdLineInterfacesTable(DBNForm parent, CmdLineInterfaceBundle environmentTypes) {
+        super(parent, new CmdLineInterfacesTableModel(environmentTypes), true);
         setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         getSelectionModel().addListSelectionListener(selectionListener);
         setSelectionBackground(UIUtil.getTableBackground());

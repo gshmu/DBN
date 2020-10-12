@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectComponent> {
+public class MethodExecutionInputForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JPanel argumentsPanel;
     private JPanel headerPanel;
@@ -40,20 +40,21 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
     private JPanel argumentsContainerPanel;
 
 
-    private List<MethodExecutionInputArgumentForm> argumentForms = new ArrayList<>();
-    private ExecutionOptionsForm executionOptionsForm;
+    private final List<MethodExecutionInputArgumentForm> argumentForms = DisposableContainer.list(this);
+    private final ExecutionOptionsForm executionOptionsForm;
+    private final Set<ChangeListener> changeListeners = new HashSet<>();
+
     private MethodExecutionInput executionInput;
-    private Set<ChangeListener> changeListeners = new HashSet<>();
 
     public MethodExecutionInputForm(
-            DisposableProjectComponent parentComponent,
+            DBNComponent parentComponent,
             @NotNull MethodExecutionInput executionInput,
             boolean showHeader,
             @NotNull DBDebuggerType debuggerType) {
 
         super(parentComponent);
         this.executionInput = executionInput;
-        DBObjectRef methodRef = executionInput.getMethodRef();
+        DBObjectRef<?> methodRef = executionInput.getMethodRef();
 
         ConnectionHandler connectionHandler = executionInput.getConnectionHandler();
         if (connectionHandler != null && debuggerType.isDebug()) {
@@ -73,7 +74,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
         //objectPanel.add(new ObjectDetailsPanel(method).getComponent(), BorderLayout.NORTH);
 
         if (showHeader) {
-            DBNHeaderForm headerForm = new DBNHeaderForm(methodRef, this);
+            DBNHeaderForm headerForm = new DBNHeaderForm(this, methodRef);
             headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         }
         headerPanel.setVisible(showHeader);
@@ -131,7 +132,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -154,7 +155,7 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
         executionOptionsForm.addChangeListener(changeListener);
     }
 
-    private DocumentListener documentListener = new DocumentAdapter() {
+    private final DocumentListener documentListener = new DocumentAdapter() {
         @Override
         protected void textChanged(@NotNull DocumentEvent e) {
             notifyChangeListeners();
@@ -162,22 +163,13 @@ public class MethodExecutionInputForm extends DBNFormImpl<DisposableProjectCompo
     };
 
     private void notifyChangeListeners() {
-        if (changeListeners != null) {
-            for (ChangeListener changeListener : changeListeners) {
-                changeListener.stateChanged(new ChangeEvent(this));
-            }
+        for (ChangeListener changeListener : changeListeners) {
+            changeListener.stateChanged(new ChangeEvent(this));
         }
     }
 
     @Deprecated
     public void touch() {
         executionOptionsForm.touch();
-    }
-
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(argumentForms);
-        super.disposeInner();
     }
 }

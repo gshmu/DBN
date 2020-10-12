@@ -14,7 +14,7 @@ public class ObjectLazyNavigationListAction extends ObjectListShowAction {
     public ObjectLazyNavigationListAction(DBObject parentObject, DBObjectNavigationList navigationList) {
         super(navigationList.getName() + "...", parentObject);
         this.navigationList = navigationList;
-        this.parentObjectRef = DBObjectRef.from(parentObject);
+        this.parentObjectRef = DBObjectRef.of(parentObject);
     }
 
     @Override

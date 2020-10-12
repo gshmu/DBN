@@ -8,7 +8,7 @@ public class DatasetSortingState extends SortingState {
     private DBObjectRef<DBDataset> datasetRef;
 
     public DatasetSortingState(DBDataset dataset) {
-        this.datasetRef = DBObjectRef.from(dataset);
+        this.datasetRef = DBObjectRef.of(dataset);
     }
 
     public DBDataset getDataset() {

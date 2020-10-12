@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.browser.options.ui;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserEditorSettings;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
@@ -11,7 +12,6 @@ import com.dci.intellij.dbn.object.common.editor.DefaultEditorOption;
 import com.dci.intellij.dbn.object.common.editor.DefaultEditorType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBoxTableRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.components.JBScrollPane;
@@ -37,8 +37,7 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
     public DatabaseBrowserEditorSettingsForm(DatabaseBrowserEditorSettings settings) {
         super(settings);
         updateBorderTitleForeground(mainPanel);
-        Project project = settings.getProject();
-        editorTypeTable = new EditorTypeTable(project, settings.getOptions());
+        editorTypeTable = new EditorTypeTable(this, settings.getOptions());
         editorTypesScrollPanel.setViewportView(editorTypeTable);
         editorTypesScrollPanel.getViewport().setBackground(editorTypeTable.getBackground());
         registerComponent(editorTypeTable);
@@ -58,14 +57,14 @@ public class DatabaseBrowserEditorSettingsForm extends ConfigurationEditorForm<D
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
     public class EditorTypeTable extends DBNEditableTable<EditorTypeTableModel> {
 
-        EditorTypeTable(Project project, List<DefaultEditorOption> options) {
-            super(project, new EditorTypeTableModel(options), true);
+        EditorTypeTable(DBNForm parent, List<DefaultEditorOption> options) {
+            super(parent, new EditorTypeTableModel(options), true);
             setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             adjustRowHeight(3);
             setDefaultRenderer(DBObjectType.class, new DBNColoredTableCellRenderer() {

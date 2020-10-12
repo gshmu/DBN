@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.explain.result.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.execution.ExecutionManager;
@@ -19,8 +18,9 @@ public class ExplainPlanResultForm extends ExecutionResultFormBase<ExplainPlanRe
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JScrollPane resultScrollPane;
-    private ExplainPlanTreeTable explainPlanTreeTable;
     private JPanel resultPanel;
+
+    private final ExplainPlanTreeTable explainPlanTreeTable;
 
     public ExplainPlanResultForm(@NotNull ExplainPlanResult explainPlanResult) {
         super(explainPlanResult);
@@ -31,16 +31,13 @@ public class ExplainPlanResultForm extends ExecutionResultFormBase<ExplainPlanRe
 
         resultPanel.setBorder(IdeBorderFactory.createBorder());
         ExplainPlanTreeTableModel treeTableModel = new ExplainPlanTreeTableModel(explainPlanResult);
-        explainPlanTreeTable = new ExplainPlanTreeTable(treeTableModel);
+        explainPlanTreeTable = new ExplainPlanTreeTable(this, treeTableModel);
 
         resultScrollPane.setViewportView(explainPlanTreeTable);
         resultScrollPane.getViewport().setBackground(explainPlanTreeTable.getBackground());
 
         JPanel panel = new JPanel();
         panel.setBorder(UIUtil.getTableHeaderCellBorder());
-
-        Disposer.register(this, explainPlanResult);
-        Disposer.register(this, explainPlanTreeTable);
     }
 
     public ExplainPlanTreeTable getExplainPlanTreeTable() {
@@ -48,7 +45,7 @@ public class ExplainPlanResultForm extends ExecutionResultFormBase<ExplainPlanRe
     }
 
     public void show() {
-        ExecutionResult executionResult = getExecutionResult();
+        ExecutionResult<?> executionResult = getExecutionResult();
         Project project = executionResult.getProject();
         ExecutionManager executionManager = ExecutionManager.getInstance(project);
         executionManager.selectResultTab(executionResult);
@@ -56,7 +53,7 @@ public class ExplainPlanResultForm extends ExecutionResultFormBase<ExplainPlanRe
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

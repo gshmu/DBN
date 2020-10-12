@@ -8,15 +8,16 @@ import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 public class DataEditorSettings extends CompositeProjectConfiguration<ProjectSettings, DataEditorSettingsForm> implements TopLevelConfig {
-    private DataEditorPopupSettings popupSettings                       = new DataEditorPopupSettings(this);
-    private DataEditorValueListPopupSettings valueListPopupSettings     = new DataEditorValueListPopupSettings(this);
-    private DataEditorFilterSettings filterSettings                     = new DataEditorFilterSettings(this);
-    private DataEditorGeneralSettings generalSettings                   = new DataEditorGeneralSettings(this);
-    private DataEditorQualifiedEditorSettings qualifiedEditorSettings   = new DataEditorQualifiedEditorSettings(this);
-    private DataEditorRecordNavigationSettings recordNavigationSettings = new DataEditorRecordNavigationSettings(this);
+    private final @Getter DataEditorPopupSettings popupSettings                       = new DataEditorPopupSettings(this);
+    private final @Getter DataEditorValueListPopupSettings valueListPopupSettings     = new DataEditorValueListPopupSettings(this);
+    private final @Getter DataEditorFilterSettings filterSettings                     = new DataEditorFilterSettings(this);
+    private final @Getter DataEditorGeneralSettings generalSettings                   = new DataEditorGeneralSettings(this);
+    private final @Getter DataEditorQualifiedEditorSettings qualifiedEditorSettings   = new DataEditorQualifiedEditorSettings(this);
+    private final @Getter DataEditorRecordNavigationSettings recordNavigationSettings = new DataEditorRecordNavigationSettings(this);
 
     public DataEditorSettings(ProjectSettings parent) {
         super(parent);
@@ -51,34 +52,6 @@ public class DataEditorSettings extends CompositeProjectConfiguration<ProjectSet
     @Override
     public DataEditorSettings getOriginalSettings() {
         return getInstance(getProject());
-    }
-
-    /*********************************************************
-     *                        Custom                         *
-     *********************************************************/
-
-    public DataEditorValueListPopupSettings getValueListPopupSettings() {
-        return valueListPopupSettings;
-    }
-
-    public DataEditorPopupSettings getPopupSettings() {
-       return popupSettings;
-    }
-
-    public DataEditorGeneralSettings getGeneralSettings() {
-        return generalSettings;
-    }
-
-    public DataEditorFilterSettings getFilterSettings() {
-        return filterSettings;
-    }
-
-    public DataEditorQualifiedEditorSettings getQualifiedEditorSettings() {
-        return qualifiedEditorSettings;
-    }
-
-    public DataEditorRecordNavigationSettings getRecordNavigationSettings() {
-        return recordNavigationSettings;
     }
 
     /*********************************************************

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.execution.method.result.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
@@ -19,6 +18,7 @@ import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.components.JBScrollPane;
@@ -41,7 +41,8 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
     private JPanel argumentValuesPanel;
     private JPanel executionResultPanel;
     private JBScrollPane argumentValuesScrollPane;
-    private TabbedPane outputTabs;
+
+    private final TabbedPane outputTabs;
 
 
     public MethodExecutionResultForm(@NotNull MethodExecutionResult executionResult) {
@@ -207,13 +208,8 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(outputTabs);
-        super.disposeInner();
-    }
 }

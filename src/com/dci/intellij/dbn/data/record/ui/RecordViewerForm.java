@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.record.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -21,20 +21,19 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class RecordViewerForm extends DBNFormImpl<RecordViewerDialog> {
+public class RecordViewerForm extends DBNFormImpl {
     private JPanel actionsPanel;
     private JPanel columnsPanel;
     private JPanel mainPanel;
     private JScrollPane columnsPanelScrollPane;
     private JPanel headerPanel;
 
-    private List<RecordViewerColumnForm> columnForms = new ArrayList<RecordViewerColumnForm>();
+    private final List<RecordViewerColumnForm> columnForms = DisposableContainer.list(this);
 
-    private DatasetRecord record;
+    private final DatasetRecord record;
 
     RecordViewerForm(RecordViewerDialog parentComponent, DatasetRecord record) {
         super(parentComponent);
@@ -52,10 +51,10 @@ public class RecordViewerForm extends DBNFormImpl<RecordViewerDialog> {
             headerBackground = dataset.getEnvironmentType().getColor();
         }
         DBNHeaderForm headerForm = new DBNHeaderForm(
-                headerTitle,
+                this, headerTitle,
                 headerIcon,
-                headerBackground,
-                this);
+                headerBackground
+        );
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
@@ -100,7 +99,7 @@ public class RecordViewerForm extends DBNFormImpl<RecordViewerDialog> {
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -113,8 +112,8 @@ public class RecordViewerForm extends DBNFormImpl<RecordViewerDialog> {
      *********************************************************/
     private void sortColumns(ColumnSortingType sortingType) {
         Comparator<RecordViewerColumnForm> comparator =
-                sortingType == ColumnSortingType.ALPHABETICAL ? alphabeticComparator :
-                sortingType == ColumnSortingType.BY_INDEX ? indexedComparator : null;
+                sortingType == ColumnSortingType.ALPHABETICAL ? ALPHANUMERIC_COMPARATOR :
+                sortingType == ColumnSortingType.BY_INDEX ? INDEXED_COMPARATOR : null;
 
         if (comparator != null) {
             columnForms.sort(comparator);
@@ -126,13 +125,13 @@ public class RecordViewerForm extends DBNFormImpl<RecordViewerDialog> {
         }
     }
 
-    private static Comparator<RecordViewerColumnForm> alphabeticComparator = (columnPanel1, columnPanel2) -> {
+    private static final Comparator<RecordViewerColumnForm> ALPHANUMERIC_COMPARATOR = (columnPanel1, columnPanel2) -> {
         String name1 = columnPanel1.getColumn().getName();
         String name2 = columnPanel2.getColumn().getName();
         return name1.compareTo(name2);
     };
 
-    private static Comparator<RecordViewerColumnForm> indexedComparator = (columnPanel1, columnPanel2) -> {
+    private static final Comparator<RecordViewerColumnForm> INDEXED_COMPARATOR = (columnPanel1, columnPanel2) -> {
         int index1 = columnPanel1.getColumn().getPosition();
         int index2 = columnPanel2.getColumn().getPosition();
         return index1-index2;
@@ -159,7 +158,7 @@ public class RecordViewerForm extends DBNFormImpl<RecordViewerDialog> {
      *********************************************************/
     private class SortAlphabeticallyAction extends ToggleAction {
         private SortAlphabeticallyAction() {
-            super("Sort columns alphabetically", null, Icons.ACTION_SORT_ALPHA);
+            super("Sort Columns Alphabetically", null, Icons.ACTION_SORT_ALPHA);
         }
 
         @Override
@@ -176,11 +175,5 @@ public class RecordViewerForm extends DBNFormImpl<RecordViewerDialog> {
             DatasetEditorManager.getInstance(project).setRecordViewColumnSortingType(columnSorting);
             sortColumns(columnSorting);
         }
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(columnForms);
-        super.disposeInner();
     }
 }

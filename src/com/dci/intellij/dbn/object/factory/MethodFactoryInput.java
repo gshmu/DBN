@@ -17,7 +17,7 @@ public class MethodFactoryInput extends ObjectFactoryInput{
 
     public MethodFactoryInput(DBSchema schema, String objectName, DBObjectType methodType, int index) {
         super(objectName, methodType, null, index);
-        this.schemaRef = DBObjectRef.from(schema);
+        this.schemaRef = DBObjectRef.of(schema);
     }
 
     public DBSchema getSchema() {

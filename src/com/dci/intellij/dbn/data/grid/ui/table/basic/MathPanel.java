@@ -25,7 +25,7 @@ public class MathPanel extends DBNFormImpl {
 
 
     @Override
-    protected JComponent ensureComponent() {
+    protected JComponent getMainComponent() {
         return mainPanel;
     }
 }

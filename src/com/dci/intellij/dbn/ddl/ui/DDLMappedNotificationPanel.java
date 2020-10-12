@@ -15,7 +15,7 @@ public class DDLMappedNotificationPanel extends EditorNotificationPanel {
     public DDLMappedNotificationPanel(@NotNull final VirtualFile virtualFile, final DBSchemaObject editableObject) {
         super(MessageType.INFO);
         Project project = editableObject.getProject();
-        DBObjectRef<DBSchemaObject> editableObjectRef = DBObjectRef.from(editableObject);
+        DBObjectRef<DBSchemaObject> editableObjectRef = DBObjectRef.of(editableObject);
         String objectName = editableObject.getQualifiedNameWithType();
         String objectTypeName = editableObject.getObjectType().getName();
         setText("This DDL file is attached to the database " + objectName + ". " +

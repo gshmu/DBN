@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.result.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Read;
@@ -22,6 +22,7 @@ import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorR
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.UIUtil;
 import lombok.EqualsAndHashCode;
@@ -39,19 +40,19 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
     private JPanel searchPanel;
     private JPanel resultPanel;
     private JLabel statusLabel;
-    private ResultSetTable<ResultSetDataModel> resultTable;
+    private ResultSetTable<?> resultTable;
     private final RecordViewInfo recordViewInfo;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private final Latent<DataSearchComponent> dataSearchComponent = Latent.disposable(this, () -> {
+    private final Latent<DataSearchComponent> dataSearchComponent = Latent.basic(() -> {
         DataSearchComponent dataSearchComponent = new DataSearchComponent(StatementExecutionResultForm.this);
         searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
         DataManager.registerDataProvider(dataSearchComponent.getSearchField(), this);
         return dataSearchComponent;
     });
 
-    public StatementExecutionResultForm(StatementExecutionCursorResult executionResult) {
+    public StatementExecutionResultForm(@NotNull StatementExecutionCursorResult executionResult) {
         super(executionResult);
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", false, "DBNavigator.ActionGroup.StatementExecutionResult");
         actionToolbar.setTargetComponent(actionsPanel);
@@ -64,7 +65,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
                     executionResult.getIcon()));
 
         resultPanel.setBorder(IdeBorderFactory.createBorder());
-        resultTable = new ResultSetTable<>(executionResult.getTableModel(), true, recordViewInfo);
+        resultTable = new ResultSetTable<>(this, executionResult.getTableModel(), true, recordViewInfo);
         resultTable.setName(executionResult.getName());
 
         resultScrollPane.setViewportView(resultTable);
@@ -76,7 +77,6 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
         resultScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
 
         Disposer.register(this, executionResult);
-        Disposer.register(this, resultTable);
     }
 
     public void rebuildForm() {
@@ -84,7 +84,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
             StatementExecutionCursorResult executionResult = getExecutionResult();
             JScrollBar horizontalScrollBar = resultScrollPane.getHorizontalScrollBar();
             int horizontalScrolling = horizontalScrollBar.getValue();
-            resultTable = Disposer.replace(resultTable, new ResultSetTable<>(executionResult.getTableModel(), true, recordViewInfo));
+            resultTable = SafeDisposer.replace(resultTable, new ResultSetTable<>(this, executionResult.getTableModel(), true, recordViewInfo));
             resultScrollPane.setViewportView(resultTable);
             resultTable.initTableGutter();
             resultTable.setName(getExecutionResult().getName());
@@ -93,14 +93,14 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
     }
 
     @NotNull
-    public ResultSetTable getResultTable() {
+    public ResultSetTable<?> getResultTable() {
         return Failsafe.nn(resultTable);
     }
 
     public void updateVisibleComponents() {
         Dispatch.run(() -> {
             StatementExecutionCursorResult executionResult = getExecutionResult();
-            ResultSetDataModel dataModel = executionResult.getTableModel();
+            ResultSetDataModel<?, ?> dataModel = executionResult.getTableModel();
             ConnectionHandler connectionHandler = executionResult.getConnectionHandler();
             String connectionName = connectionHandler.getPresentableText();
             SessionId sessionId = executionResult.getExecutionInput().getTargetSessionId();
@@ -128,12 +128,12 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
     public void highlightLoading(boolean loading) {
-        ResultSetTable resultTable = getResultTable();
+        ResultSetTable<?> resultTable = getResultTable();
         resultTable.setLoading(loading);
         GUIUtil.repaint(resultTable);
     }

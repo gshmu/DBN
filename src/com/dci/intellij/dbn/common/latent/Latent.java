@@ -2,11 +2,8 @@ package com.dci.intellij.dbn.common.latent;
 
 
 import com.dci.intellij.dbn.common.Colors;
-import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.dci.intellij.dbn.common.latent.impl.BasicLatentImpl;
-import com.dci.intellij.dbn.common.latent.impl.DisposableLatentImpl;
 import com.dci.intellij.dbn.common.latent.impl.MutableLatentImpl;
-import com.intellij.openapi.Disposable;
 
 public interface Latent<T> {
     T get();
@@ -17,15 +14,6 @@ public interface Latent<T> {
 
     static <T> Latent<T> basic(Loader<T> loader) {
         return new BasicLatentImpl<T>() {
-            @Override
-            public Loader<T> getLoader() {
-                return loader;
-            }
-        };
-    }
-
-    static <T extends Disposable, P extends RegisteredDisposable> DisposableLatentImpl<T, P> disposable(P parent, Loader<T> loader) {
-        return new DisposableLatentImpl<T, P>(parent) {
             @Override
             public Loader<T> getLoader() {
                 return loader;

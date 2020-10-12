@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
 import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.transaction.PendingTransaction;
@@ -8,15 +9,16 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.SimpleTextAttributes;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class PendingTransactionsTable extends DBNTable {
-    public PendingTransactionsTable(PendingTransactionsTableModel model) {
-        super(model.getProject(), model, false);
+public class PendingTransactionsTable extends DBNTable<PendingTransactionsTableModel> {
+    public PendingTransactionsTable(@NotNull DBNComponent parent, @NotNull PendingTransactionsTableModel model) {
+        super(parent, model, false);
         setDefaultRenderer(PendingTransaction.class, new CellRenderer());
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setCellSelectionEnabled(true);

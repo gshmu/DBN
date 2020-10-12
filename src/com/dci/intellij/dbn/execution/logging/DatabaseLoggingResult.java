@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.execution.logging;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -21,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-@Nullifiable
 public class DatabaseLoggingResult extends ExecutionResultBase<DatabaseLoggingResultForm> {
 
     private LogOutputContext context;
@@ -122,4 +120,6 @@ public class DatabaseLoggingResult extends ExecutionResultBase<DatabaseLoggingRe
         }
         return null;
     }
+
+
 }

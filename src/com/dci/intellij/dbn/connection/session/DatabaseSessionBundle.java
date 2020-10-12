@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.connection.session;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -15,23 +14,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Nullifiable
-public class DatabaseSessionBundle extends DisposableBase implements Disposable{
-    private ConnectionHandlerRef connectionHandlerRef;
+public class DatabaseSessionBundle extends StatefulDisposable.Base implements Disposable{
+    private final ConnectionHandlerRef connectionHandler;
     private DatabaseSession mainSession;
     private DatabaseSession debugSession;
     private DatabaseSession debuggerSession;
     private DatabaseSession poolSession;
 
-    private List<DatabaseSession> sessions = CollectionUtil.createConcurrentList();
+    private final List<DatabaseSession> sessions = CollectionUtil.createConcurrentList();
 
     public DatabaseSessionBundle(ConnectionHandler connectionHandler) {
         super(connectionHandler);
-        this.connectionHandlerRef = connectionHandler.getRef();
+        this.connectionHandler = connectionHandler.getRef();
 
         mainSession = new DatabaseSession(SessionId.MAIN, "Main", ConnectionType.MAIN, connectionHandler);
         sessions.add(mainSession);
@@ -68,7 +67,7 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     public DatabaseSession getDebugSession() {
@@ -110,21 +109,21 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
 
     void addSession(SessionId id, String name) {
         sessions.add(new DatabaseSession(id, name, ConnectionType.SESSION, getConnectionHandler()));
-        java.util.Collections.sort(sessions);
+        Collections.sort(sessions);
     }
 
     DatabaseSession createSession(String name) {
         ConnectionHandler connectionHandler = getConnectionHandler();
         DatabaseSession session = new DatabaseSession(null, name, ConnectionType.SESSION, connectionHandler);
         sessions.add(session);
-        java.util.Collections.sort(sessions);
+        Collections.sort(sessions);
         return session;
     }
 
     void deleteSession(SessionId id) {
         DatabaseSession session = getSession(id);
         sessions.remove(session);
-        Disposer.dispose(session);
+        DisposeUtil.dispose(session);
     }
 
     void renameSession(String oldName, String newName) {
@@ -136,7 +135,10 @@ public class DatabaseSessionBundle extends DisposableBase implements Disposable{
 
     @Override
     public void disposeInner() {
-        Disposer.dispose(sessions);
-        super.disposeInner();
+        DisposeUtil.dispose(sessions);
+        mainSession = null;
+        debugSession = null;
+        debuggerSession = null;
+        poolSession = null;
     }
 }

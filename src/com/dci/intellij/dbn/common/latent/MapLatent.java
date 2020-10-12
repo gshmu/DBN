@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.latent;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MapLatent<K, V, E extends Throwable> extends DisposableBase {
+public class MapLatent<K, V, E extends Throwable> extends StatefulDisposable.Base {
     private final MapLoader<K, V, E> loader;
     private final Map<K, V> map = new HashMap<>();
     private final AtomicInteger hitCount = new AtomicInteger();
@@ -72,6 +72,5 @@ public class MapLatent<K, V, E extends Throwable> extends DisposableBase {
     @Override
     public void disposeInner() {
         map.clear();
-        super.disposeInner();
     }
 }

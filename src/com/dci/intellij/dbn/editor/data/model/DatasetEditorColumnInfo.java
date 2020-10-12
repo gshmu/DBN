@@ -35,7 +35,7 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
 
     DatasetEditorColumnInfo(DBColumn column, int columnIndex, int resultSetColumnIndex) {
         super(columnIndex, resultSetColumnIndex);
-        this.columnRef = DBObjectRef.from(column);
+        this.columnRef = DBObjectRef.of(column);
         this.columnIndex = columnIndex;
         this.isPrimaryKey = column.isPrimaryKey();
         this.isForeignKey = column.isForeignKey();

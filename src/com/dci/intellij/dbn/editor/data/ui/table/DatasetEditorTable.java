@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data.ui.table;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
+import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.MouseUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
@@ -77,8 +78,8 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
 
     private @Getter @Setter boolean editingEnabled = true;
 
-    public DatasetEditorTable(DatasetEditor datasetEditor) throws SQLException {
-        super(createModel(datasetEditor), false,
+    public DatasetEditorTable(DBNForm parent, DatasetEditor datasetEditor) throws SQLException {
+        super(parent, createModel(datasetEditor), false,
                 new RecordViewInfo(
                     datasetEditor.getDataset().getQualifiedName(),
                     datasetEditor.getDataset().getIcon()));
@@ -115,7 +116,7 @@ public class DatasetEditorTable extends ResultSetTable<DatasetEditorModel> {
     }
 
     @Override
-    protected BasicTableGutter createTableGutter() {
+    protected BasicTableGutter<?> createTableGutter() {
         return new DatasetEditorTableGutter(this);
     }
 

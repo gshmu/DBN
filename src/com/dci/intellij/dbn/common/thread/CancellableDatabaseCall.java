@@ -27,15 +27,14 @@ import java.util.concurrent.atomic.AtomicReference;
 public abstract class CancellableDatabaseCall<T> implements Callable<T> {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private long startTimestamp = System.currentTimeMillis();
-    private ThreadInfo invoker = ThreadMonitor.current();
-    private ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
+    private final long startTimestamp = System.currentTimeMillis();
+    private final ThreadInfo invoker = ThreadMonitor.current();
+    private final ProgressIndicator progressIndicator = ProgressMonitor.getProgressIndicator();
 
-
-    private DBNConnection connection;
-    private int timeout;
-    private TimeUnit timeUnit;
-    private boolean createSavepoint;
+    private final DBNConnection connection;
+    private final int timeout;
+    private final TimeUnit timeUnit;
+    private final boolean createSavepoint;
 
     private transient Future<T> future;
     private transient boolean cancelled = false;

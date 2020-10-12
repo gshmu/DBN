@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -32,7 +33,6 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -60,7 +60,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     private JPanel actionsPanelBottom;
     private JPanel headerSeparatorPanel;
 
-    CalendarPopupProviderForm(TextFieldWithPopup textField, boolean autoPopup) {
+    CalendarPopupProviderForm(TextFieldWithPopup<?> textField, boolean autoPopup) {
         super(textField, autoPopup, true);
         calendarPanel.setBackground(weeksTable.getBackground());
         daysTable.addKeyListener(this);
@@ -77,14 +77,12 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
         daysTable.getTableHeader().setDefaultRenderer(HEADER_CELL_RENDERER);
         daysTable.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         daysTable.setShowGrid(false);
-        daysTable.addMouseListener(new MouseAdapter(){
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    selectDate();
-                }
+        daysTable.addMouseListener(MouseClickedListener.create(e -> {
+            if (e.getButton() == MouseEvent.BUTTON1) {
+                selectDate();
             }
-        });
+        }));
+
         /*tDays.addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseMoved(MouseEvent e) {
                 final Point point = e.getPoint();
@@ -130,7 +128,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -294,10 +292,10 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     }
 
     private class CalendarTableModel implements TableModel {
-        private Set<TableModelListener> listeners = new HashSet<>();
-        private Calendar inputDate = new GregorianCalendar();
-        private Calendar activeMonth = new GregorianCalendar();
-        private Calendar previousMonth = new GregorianCalendar();
+        private final Set<TableModelListener> listeners = new HashSet<>();
+        private final Calendar inputDate = new GregorianCalendar();
+        private final Calendar activeMonth = new GregorianCalendar();
+        private final Calendar previousMonth = new GregorianCalendar();
 
         private CalendarTableModel(Date date) {
             if (date != null) {

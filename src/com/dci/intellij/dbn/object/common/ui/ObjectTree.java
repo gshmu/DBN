@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.object.common.ui;
 
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.tree.TreeModel;
 
 public class ObjectTree extends DBNTree {
 
-    public ObjectTree(@NotNull Project project) {
-        super(project, new ObjectTreeModel(null, null, null));
+    public ObjectTree(@NotNull DBNComponent parent) {
+        super(parent, new ObjectTreeModel(null, null, null));
         setCellRenderer(new ObjectTreeCellRenderer());
         new ObjectTreeSpeedSearch(this);
     }

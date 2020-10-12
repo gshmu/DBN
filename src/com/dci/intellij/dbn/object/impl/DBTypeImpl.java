@@ -47,7 +47,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.object.type.DBObjectType.*;
+import static com.dci.intellij.dbn.object.type.DBObjectType.TYPE;
+import static com.dci.intellij.dbn.object.type.DBObjectType.TYPE_ATTRIBUTE;
+import static com.dci.intellij.dbn.object.type.DBObjectType.TYPE_FUNCTION;
+import static com.dci.intellij.dbn.object.type.DBObjectType.TYPE_PROCEDURE;
 
 public class DBTypeImpl
         extends DBProgramImpl<DBTypeMetadata, DBTypeProcedure, DBTypeFunction>
@@ -146,7 +149,7 @@ public class DBTypeImpl
         if (superType == null && superTypeOwner != null && superTypeName != null) {
             DBSchema schema = connectionHandler.getObjectBundle().getSchema(superTypeOwner);
             DBType type = schema == null ? null : schema.getType(superTypeName);
-            superType = DBObjectRef.from(type);
+            superType = DBObjectRef.of(type);
             superTypeOwner = null;
             superTypeName = null;
         }

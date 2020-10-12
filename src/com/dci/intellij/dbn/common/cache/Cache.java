@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.cache;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -49,7 +49,7 @@ public class Cache {
                 CacheValue cacheValue = elements.get(key);
                 if (!isValid(cacheValue)) {
                     cacheValue = elements.remove(key);
-                    Disposer.dispose(cacheValue.getValue());
+                    DisposeUtil.dispose(cacheValue.getValue());
                 }
             }
         }

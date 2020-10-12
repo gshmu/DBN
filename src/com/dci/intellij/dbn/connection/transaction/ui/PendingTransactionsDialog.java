@@ -36,7 +36,7 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
 
     @NotNull
     @Override
-    protected PendingTransactionsForm createComponent() {
+    protected PendingTransactionsForm createForm() {
         return new PendingTransactionsForm(this);
     }
 
@@ -69,7 +69,7 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
 
         @Override
         public boolean isEnabled() {
-            return getComponent().hasUncommittedChanges();
+            return getForm().hasUncommittedChanges();
         }
     };
 
@@ -86,13 +86,13 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
 
         @Override
         public boolean isEnabled() {
-            return getComponent().hasUncommittedChanges();
+            return getForm().hasUncommittedChanges();
         }
     };
 
     private void executeActions(List<TransactionAction> actions) {
         DatabaseTransactionManager transactionManager = getTransactionManager();
-        List<ConnectionHandler> connectionHandlers = new ArrayList<>(getComponent().getConnectionHandlers());
+        List<ConnectionHandler> connectionHandlers = new ArrayList<>(getForm().getConnectionHandlers());
         for (ConnectionHandler connectionHandler : connectionHandlers) {
             List<DBNConnection> connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
             for (DBNConnection connection : connections) {

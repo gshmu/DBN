@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.data.model;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -15,7 +14,6 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBTable;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,8 +24,6 @@ import java.util.List;
 public class DatasetEditorModelRow
         extends ResultSetDataModelRow<DatasetEditorModel, DatasetEditorModelCell>
         implements PropertyHolder<RecordStatus>{
-
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     public DatasetEditorModelRow(DatasetEditorModel model, ResultSet resultSet, int resultSetRowIndex) throws SQLException {
         super(model, resultSet, resultSetRowIndex);

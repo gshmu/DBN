@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -22,7 +21,7 @@ public class ConnectionPropertiesSettingsForm extends ConfigurationEditorForm<Co
     private JCheckBox autoCommitCheckBox;
     private JPanel propertiesPanel;
 
-    private PropertiesEditorForm propertiesEditorForm;
+    private final PropertiesEditorForm propertiesEditorForm;
 
     public ConnectionPropertiesSettingsForm(final ConnectionPropertiesSettings configuration) {
         super(configuration);
@@ -39,7 +38,7 @@ public class ConnectionPropertiesSettingsForm extends ConfigurationEditorForm<Co
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -74,12 +73,5 @@ public class ConnectionPropertiesSettingsForm extends ConfigurationEditorForm<Co
         ConnectionPropertiesSettings configuration = getConfiguration();
         autoCommitCheckBox.setSelected(configuration.isEnableAutoCommit());
         propertiesEditorForm.setProperties(configuration.getProperties());
-    }
-
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(propertiesEditorForm);
-        super.disposeInner();
     }
 }

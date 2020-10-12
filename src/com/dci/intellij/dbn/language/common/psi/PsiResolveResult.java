@@ -17,7 +17,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.*;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.CONNECTION_ACTIVE;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.CONNECTION_VALID;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.NEW;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.RESOLVING;
+import static com.dci.intellij.dbn.language.common.psi.PsiResolveStatus.RESOLVING_OBJECT_TYPE;
 
 public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
     private ConnectionHandlerRef connectionHandlerRef;
@@ -54,7 +58,7 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
         this.referencedElement = null;
         this.parent = null;
         this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
-        this.databaseSchema = DBObjectRef.from(psiElement.getDatabaseSchema());
+        this.databaseSchema = DBObjectRef.of(psiElement.getDatabaseSchema());
         BasePsiElement enclosingScopePsiElement = psiElement.getEnclosingScopePsiElement();
         this.scopeTextLength = enclosingScopePsiElement == null ? 0 : enclosingScopePsiElement.getTextLength();
         if (StringUtil.isEmpty(text)) {

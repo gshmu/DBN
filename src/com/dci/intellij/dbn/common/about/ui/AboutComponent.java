@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.about.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
@@ -59,30 +60,19 @@ public class AboutComponent extends DBNFormImpl{
 
         downloadPageLinkLabel.setForeground(CodeInsightColors.HYPERLINK_ATTRIBUTES.getDefaultAttributes().getForegroundColor());
         downloadPageLinkLabel.setCursor(handCursor);
-        downloadPageLinkLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                BrowserUtil.browse("http://plugins.jetbrains.com/plugin/?id=1800");
-            }
-        });
+        downloadPageLinkLabel.addMouseListener(MouseClickedListener.create(e ->
+                BrowserUtil.browse("http://plugins.jetbrains.com/plugin/?id=1800")));
 
         supportPageLinkLabel.setForeground(CodeInsightColors.HYPERLINK_ATTRIBUTES.getDefaultAttributes().getForegroundColor());
         supportPageLinkLabel.setCursor(handCursor);
-        supportPageLinkLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                BrowserUtil.browse("http://confluence.jetbrains.com/display/CONTEST/Database+Navigator");
-            }
-        });
+        supportPageLinkLabel.addMouseListener(MouseClickedListener.create(e ->
+                BrowserUtil.browse("http://confluence.jetbrains.com/display/CONTEST/Database+Navigator")));
 
         requestTrackerPageLinkLabel.setForeground(CodeInsightColors.HYPERLINK_ATTRIBUTES.getDefaultAttributes().getForegroundColor());
         requestTrackerPageLinkLabel.setCursor(handCursor);
-        requestTrackerPageLinkLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                BrowserUtil.browse("https://database-navigator.atlassian.net/issues/?filter=10104");
-            }
-        });
+        requestTrackerPageLinkLabel.addMouseListener(MouseClickedListener.create(e ->
+                BrowserUtil.browse("https://database-navigator.atlassian.net/issues/?filter=10104")));
+
         IdeaPluginDescriptor ideaPluginDescriptor = PluginManager.getPlugin(PluginId.getId("DBN"));
         String version = ideaPluginDescriptor == null ? "3.1.9999.0" : ideaPluginDescriptor.getVersion();
         buildLabel.setText("Build: " + version.substring(4, 8));
@@ -90,7 +80,7 @@ public class AboutComponent extends DBNFormImpl{
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

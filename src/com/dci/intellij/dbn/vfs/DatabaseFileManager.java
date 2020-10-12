@@ -26,6 +26,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -75,7 +76,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
 */
 
 
-        StartupManager.getInstance(project).registerPostStartupActivity(() -> projectInitialized = true);
+        StartupManager.getInstance(project).registerPostStartupActivity((DumbAwareRunnable) () -> projectInitialized = true);
     }
 
     public static DatabaseFileManager getInstance(@NotNull Project project) {

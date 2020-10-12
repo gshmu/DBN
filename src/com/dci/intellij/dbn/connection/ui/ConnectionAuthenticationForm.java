@@ -20,7 +20,7 @@ import java.awt.*;
 import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
 import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
 
-public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenticationDialog>{
+public class ConnectionAuthenticationForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JPasswordField passwordField;
@@ -47,7 +47,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
         String hintText;
         if (connectionHandler != null) {
             initComboBox(authTypeComboBox, connectionHandler.getDatabaseType().getAuthTypes());
-            DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler, this);
+            DBNHeaderForm headerForm = new DBNHeaderForm(this, connectionHandler);
             headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
             int passwordExpiryTime = connectionHandler.getSettings().getDetailSettings().getCredentialExpiryTime();
@@ -64,7 +64,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
         }
         setSelection(authTypeComboBox, authenticationInfo.getType());
 
-        DBNHintForm hintForm = new DBNHintForm(hintText, null, true);
+        DBNHintForm hintForm = new DBNHintForm(this, hintText, null, true);
         hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 
         updateAuthenticationFields();
@@ -123,7 +123,7 @@ public class ConnectionAuthenticationForm extends DBNFormImpl<ConnectionAuthenti
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

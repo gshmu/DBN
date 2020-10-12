@@ -16,7 +16,7 @@ public class GenerateDDLStatementAction extends GenerateStatementAction {
 
     GenerateDDLStatementAction(DBObject object) {
         super("DDL Statement");
-        objectRef = DBObjectRef.from(object);
+        objectRef = DBObjectRef.of(object);
 
     }
 

@@ -70,12 +70,12 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
     private JPanel databaseFilesPanel;
     private JPanel databaseTypeHintPanel;
 
-    private DatabaseFileSettingsForm databaseFileSettingsForm;
-    private ConnectionDriverSettingsForm driverSettingsForm;
-    private ConnectionAuthenticationSettingsForm authenticationSettingsForm;
+    private final DatabaseFileSettingsForm databaseFileSettingsForm;
+    private final ConnectionDriverSettingsForm driverSettingsForm;
+    private final ConnectionAuthenticationSettingsForm authenticationSettingsForm;
 
     private DatabaseType selectedDatabaseType;
-    private Map<DatabaseType, String> urlHistory = new HashMap<>();
+    private final Map<DatabaseType, String> urlHistory = new HashMap<>();
 
     public ConnectionDatabaseSettingsForm(ConnectionDatabaseSettings configuration) {
         super(configuration);
@@ -277,7 +277,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -423,7 +423,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         DatabaseType driverDatabaseType = getDriverDatabaseType();
         if (selectedDatabaseType == DatabaseType.GENERIC && driverDatabaseType != null && driverDatabaseType != selectedDatabaseType) {
             String databaseTypeName = driverDatabaseType.getName();
-            DBNHintForm hintForm = new DBNHintForm(
+            DBNHintForm hintForm = new DBNHintForm(this,
                     "Your database type was identified as \"" + databaseTypeName +"\".\n" +
                     "Use specific connection type instead of \"Generic\", " +
                             "to enable dedicated support for this database", MessageType.WARNING, true);

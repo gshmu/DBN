@@ -7,10 +7,9 @@ import com.dci.intellij.dbn.common.content.dependency.BasicDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.MultipleContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapterImpl;
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.Compactable;
@@ -32,7 +31,7 @@ import java.util.Set;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.check;
 
-public class DBObjectListContainer extends DisposableBase implements Disposable, Compactable {
+public class DBObjectListContainer extends StatefulDisposable.Base implements StatefulDisposable, Compactable {
     private final WeakRef<GenericDatabaseElement> owner;
     private Map<DBObjectType, DBObjectList<DBObject>> objectLists;
 
@@ -107,7 +106,7 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
 
 
     public DBObject getObject(DBObjectType objectType, String name, short overload) {
-        DBObjectList objectList = getObjectList(objectType);
+        DBObjectList<?> objectList = getObjectList(objectType);
         if (objectList == null) {
             objectList = getInternalObjectList(objectType);
         }
@@ -340,7 +339,6 @@ public class DBObjectListContainer extends DisposableBase implements Disposable,
 
     @Override
     public void disposeInner() {
-        Disposer.dispose(objectLists);
-        super.disposeInner();
+        DisposeUtil.dispose(objectLists);
     }
 }

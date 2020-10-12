@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PropertiesTableModel extends DBNEditableTableModel {
-    private List<KeyValueProperty> properties = new ArrayList<KeyValueProperty>();
+    private final List<KeyValueProperty> properties = new ArrayList<KeyValueProperty>();
 
     public PropertiesTableModel(Map<String, String> propertiesMap) {
         loadProperties(propertiesMap);

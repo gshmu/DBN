@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.session;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
 import com.intellij.openapi.components.NamedComponent;
@@ -34,7 +34,7 @@ public class SessionBrowserEditorProvider implements FileEditorProvider, NamedCo
 
     @Override
     public void disposeEditor(@NotNull final FileEditor editor) {
-        Disposer.dispose(editor);
+        DisposeUtil.dispose(editor);
     }
 
     @Override

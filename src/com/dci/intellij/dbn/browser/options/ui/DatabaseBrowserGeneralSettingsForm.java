@@ -40,7 +40,7 @@ public class DatabaseBrowserGeneralSettingsForm extends ConfigurationEditorForm<
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

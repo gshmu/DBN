@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
 import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.transaction.PendingTransaction;
@@ -8,6 +9,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.SimpleTextAttributes;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,8 +17,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class ResourceMonitorTransactionsTable extends DBNTable<ResourceMonitorTransactionsTableModel> {
-    ResourceMonitorTransactionsTable(ResourceMonitorTransactionsTableModel model) {
-        super(model.getProject(), model, false);
+
+    ResourceMonitorTransactionsTable(@NotNull DBNComponent parent, ResourceMonitorTransactionsTableModel model) {
+        super(parent, model, false);
         setDefaultRenderer(PendingTransaction.class, new CellRenderer());
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setCellSelectionEnabled(true);
@@ -48,7 +51,7 @@ public class ResourceMonitorTransactionsTable extends DBNTable<ResourceMonitorTr
         return null;
     }
 
-    public class CellRenderer extends DBNColoredTableCellRenderer {
+    public static class CellRenderer extends DBNColoredTableCellRenderer {
         @Override
         protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
             PendingTransaction change = (PendingTransaction) value;

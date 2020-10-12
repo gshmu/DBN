@@ -41,7 +41,7 @@ public class PsiFileRef<T extends PsiFile>{
         });
     }
 
-    public static <T extends PsiFile> PsiFileRef<T> from(@NotNull T psiFile) {
+    public static <T extends PsiFile> PsiFileRef<T> of(@NotNull T psiFile) {
         return new PsiFileRef<>(psiFile);
     }
 

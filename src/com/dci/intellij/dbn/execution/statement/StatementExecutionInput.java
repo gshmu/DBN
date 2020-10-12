@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.execution.statement;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -31,7 +30,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-@Nullifiable
 public class StatementExecutionInput extends LocalExecutionInput {
     private StatementExecutionProcessor executionProcessor;
     private StatementExecutionVariablesBundle executionVariables;
@@ -143,7 +141,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
 
     public void setExecutionVariables(StatementExecutionVariablesBundle executionVariables) {
         if (this.executionVariables != null) {
-            Disposer.dispose(this.executionVariables);
+            DisposeUtil.dispose(this.executionVariables);
         }
         this.executionVariables = executionVariables;
     }

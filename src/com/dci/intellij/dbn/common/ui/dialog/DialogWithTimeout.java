@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -24,13 +24,13 @@ public abstract class DialogWithTimeout extends DBNDialog<DialogWithTimeoutForm>
 
     @NotNull
     @Override
-    protected DialogWithTimeoutForm createComponent() {
-        return new DialogWithTimeoutForm(secondsLeft);
+    protected DialogWithTimeoutForm createForm() {
+        return new DialogWithTimeoutForm(this, secondsLeft);
     }
 
     @Override
     protected void init() {
-        getComponent().setContentComponent(createContentComponent());
+        getForm().setContentComponent(createContentComponent());
         super.init();
     }
 
@@ -40,7 +40,7 @@ public abstract class DialogWithTimeout extends DBNDialog<DialogWithTimeoutForm>
             try {
                 if (secondsLeft > 0) {
                     secondsLeft = secondsLeft -1;
-                    getComponent().updateTimeLeft(secondsLeft);
+                    getForm().updateTimeLeft(secondsLeft);
                     if (secondsLeft == 0) {
                         Dispatch.run(() -> doDefaultAction());
                     }
@@ -55,8 +55,7 @@ public abstract class DialogWithTimeout extends DBNDialog<DialogWithTimeoutForm>
 
     @Override
     public void disposeInner() {
-        Disposer.dispose(timeoutTimer);
-        super.disposeInner();
+        DisposeUtil.dispose(timeoutTimer);
     }
 
 }

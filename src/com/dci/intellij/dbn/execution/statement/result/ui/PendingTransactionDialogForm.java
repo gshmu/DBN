@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.editor.Document;
@@ -30,18 +31,18 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
-public class PendingTransactionDialogForm extends DBNFormImpl<PendingTransactionDialog> {
+public class PendingTransactionDialogForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JPanel previewPanel;
     private JPanel headerPanel;
     private JTextPane hintTextPane;
 
-    private StatementExecutionProcessor executionProcessor;
+    private final WeakRef<StatementExecutionProcessor> executionProcessor;
     private EditorEx viewer;
 
-    public PendingTransactionDialogForm(final PendingTransactionDialog parentComponent, final StatementExecutionProcessor executionProcessor) {
-        super(parentComponent);
-        this.executionProcessor = executionProcessor;
+    public PendingTransactionDialogForm(PendingTransactionDialog parent, final StatementExecutionProcessor executionProcessor) {
+        super(parent);
+        this.executionProcessor = WeakRef.of(executionProcessor);
 
         String text =
                 "You executed this statement in a pool connection. \n" +
@@ -58,27 +59,22 @@ public class PendingTransactionDialogForm extends DBNFormImpl<PendingTransaction
         JBColor headerColor = psiFile == null ?
                 EnvironmentType.DEFAULT.getColor() :
                 psiFile.getEnvironmentType().getColor();
-        DBNHeaderForm headerForm = new DBNHeaderForm(headerName, headerIcon, headerColor, this);
+        DBNHeaderForm headerForm = new DBNHeaderForm(this, headerName, headerIcon, headerColor);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         updatePreview();
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
     }
 
+    @NotNull
     public StatementExecutionProcessor getExecutionProcessor() {
-        return executionProcessor;
+        return executionProcessor.ensure();
     }
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
-    }
-
-    @Override
-    public void disposeInner() {
-        EditorUtil.releaseEditor(viewer);
-        super.disposeInner();
     }
 
     @Override
@@ -87,6 +83,8 @@ public class PendingTransactionDialogForm extends DBNFormImpl<PendingTransaction
     }
 
     private void updatePreview() {
+        StatementExecutionProcessor executionProcessor = getExecutionProcessor();
+
         ConnectionHandler connectionHandler = Failsafe.nn(executionProcessor.getConnectionHandler());
         SchemaId currentSchema = executionProcessor.getTargetSchema();
         Project project = connectionHandler.getProject();
@@ -101,28 +99,39 @@ public class PendingTransactionDialogForm extends DBNFormImpl<PendingTransaction
                 connectionHandler,
                 currentSchema);
 
-        Document previewDocument = DocumentUtil.getDocument(selectStatementFile);
+        if (selectStatementFile != null) {
+            Document previewDocument = DocumentUtil.getDocument(selectStatementFile);
 
-        viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, project);
-        viewer.setEmbeddedIntoDialogWrapper(true);
-        JScrollPane viewerScrollPane = viewer.getScrollPane();
-        SyntaxHighlighter syntaxHighlighter = languageDialect.getSyntaxHighlighter();
-        EditorColorsScheme colorsScheme = viewer.getColorsScheme();
-        viewer.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
-        viewer.setBackgroundColor(Colors.adjust(viewer.getBackgroundColor(), -0.01));
-        viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        //viewerScrollPane.setBorder(null);
-        viewerScrollPane.setViewportBorder(new LineBorder(CompatibilityUtil.getEditorBackgroundColor(viewer), 4, false));
+            viewer = (EditorEx) EditorFactory.getInstance().createViewer(previewDocument, project);
+            viewer.setEmbeddedIntoDialogWrapper(true);
+            JScrollPane viewerScrollPane = viewer.getScrollPane();
+            SyntaxHighlighter syntaxHighlighter = languageDialect.getSyntaxHighlighter();
+            EditorColorsScheme colorsScheme = viewer.getColorsScheme();
+            viewer.setHighlighter(HighlighterFactory.createHighlighter(syntaxHighlighter, colorsScheme));
+            viewer.setBackgroundColor(Colors.adjust(viewer.getBackgroundColor(), -0.01));
+            viewerScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            viewerScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+            //viewerScrollPane.setBorder(null);
+            viewerScrollPane.setViewportBorder(new LineBorder(CompatibilityUtil.getEditorBackgroundColor(viewer), 4, false));
 
-        EditorSettings settings = viewer.getSettings();
-        settings.setFoldingOutlineShown(false);
-        settings.setLineMarkerAreaShown(false);
-        settings.setLineNumbersShown(false);
-        settings.setVirtualSpace(false);
-        settings.setDndEnabled(false);
-        settings.setAdditionalLinesCount(2);
-        settings.setRightMarginShown(false);
-        previewPanel.add(viewer.getComponent(), BorderLayout.CENTER);
+            EditorSettings settings = viewer.getSettings();
+            settings.setFoldingOutlineShown(false);
+            settings.setLineMarkerAreaShown(false);
+            settings.setLineNumbersShown(false);
+            settings.setVirtualSpace(false);
+            settings.setDndEnabled(false);
+            settings.setAdditionalLinesCount(2);
+            settings.setRightMarginShown(false);
+            previewPanel.add(viewer.getComponent(), BorderLayout.CENTER);
+        }
+    }
+
+
+    @Override
+    public void disposeInner() {
+        EditorUtil.releaseEditor(viewer);
+        viewer = null;
+
+        super.disposeInner();
     }
 }

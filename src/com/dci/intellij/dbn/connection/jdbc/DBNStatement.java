@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
 
 public class DBNStatement<T extends Statement> extends DBNResource<T> implements Statement, CloseableResource, CancellableResource {
-    private WeakRef<DBNConnection> connection;
+    private final WeakRef<DBNConnection> connection;
     private WeakRef<DBNResultSet> resultSet;
 
     /** last execution time. -1 unknown */

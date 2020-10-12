@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.method.browser.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -29,14 +28,14 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 
-public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrowserDialog> {
+public class MethodExecutionBrowserForm extends DBNFormImpl {
 
     private JPanel actionsPanel;
     private JPanel mainPanel;
     private DBNTree methodsTree;
 
-    MethodExecutionBrowserForm(MethodExecutionBrowserDialog parentComponent, ObjectTreeModel model, boolean debug) {
-        super(parentComponent);
+    MethodExecutionBrowserForm(MethodExecutionBrowserDialog parent, ObjectTreeModel model, boolean debug) {
+        super(parent);
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true,
                 new ConnectionSelectDropdownAction(this, debug),
                 new SchemaSelectDropdownAction(this),
@@ -50,7 +49,6 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
             methodsTree.setSelectionPath(selectionPath);
             methodsTree.scrollPathToVisible(selectionPath.getParentPath());
         }
-        Disposer.register(this, methodsTree);
     }
 
     public MethodBrowserSettings getSettings() {
@@ -94,7 +92,7 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
             Object userObject = node.getUserObject();
             if (userObject instanceof DBObjectRef) {
-                DBObjectRef<?> objectRef = (DBObjectRef) userObject;
+                DBObjectRef<?> objectRef = (DBObjectRef<?>) userObject;
                 DBObject object = DBObjectRef.get(objectRef);
                 if (object instanceof DBMethod) {
                     return (DBMethod) object;
@@ -118,11 +116,11 @@ public class MethodExecutionBrowserForm extends DBNFormImpl<MethodExecutionBrows
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
     private void createUIComponents() {
-        methodsTree = new ObjectTree(getProject());
+        methodsTree = new ObjectTree(this);
     }
 }

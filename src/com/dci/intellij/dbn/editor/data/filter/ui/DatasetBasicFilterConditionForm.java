@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.ComboBoxSelectionKeyListener;
 import com.dci.intellij.dbn.common.ui.DBNComboBox;
@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.SimpleTextAttributes;
@@ -42,13 +43,13 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
     private DBNComboBox<DBColumn> columnSelector;
     private DBNComboBox<ConditionOperator> operatorSelector;
 
-    private TextFieldWithPopup editorComponent;
+    private TextFieldWithPopup<?> editorComponent;
     private DatasetBasicFilterForm filterForm;
-    private DBObjectRef<DBDataset> datasetRef;
+    private final DBObjectRef<DBDataset> dataset;
 
     public DatasetBasicFilterConditionForm(DBDataset dataset, DatasetBasicFilterCondition condition) {
         super(condition);
-        datasetRef = DBObjectRef.from(dataset);
+        this.dataset = DBObjectRef.of(dataset);
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
                 "DBNavigator.DataEditor.SimpleFilter.Condition", true,
                 new EnableDisableBasicFilterConditionAction(this),
@@ -90,7 +91,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
             }
         });
 
-        editorComponent = new TextFieldWithPopup(dataset.getProject());
+        editorComponent = new TextFieldWithPopup<>(dataset.getProject());
         editorComponent.createCalendarPopup(false);
         editorComponent.setPopupEnabled(TextFieldPopupType.CALENDAR, dataType == GenericDataType.DATE_TIME);
         
@@ -111,6 +112,8 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
         valueTextField.setToolTipText("<html>While editing value, <br> " +
                 "press <b>Up/Down</b> keys to change column or <br> " +
                 "press <b>Ctrl-Up/Ctrl-Down</b> keys to change operator</html>");
+
+        Disposer.register(this, editorComponent);
     }
 
     @NotNull
@@ -125,7 +128,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
 
     @NotNull
     List<DBColumn> loadColumns() {
-        DBDataset dataset1 = datasetRef.get();
+        DBDataset dataset1 = dataset.get();
         if (dataset1 != null) {
             List<DBColumn> columns = new ArrayList<>(dataset1.getColumns());
             Collections.sort(columns);
@@ -151,7 +154,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
     }
 
     public void setBasicFilterPanel(DatasetBasicFilterForm basicFilterForm) {
-        Disposer.dispose(filterForm);
+        DisposeUtil.dispose(filterForm);
         filterForm = basicFilterForm;
     }
 
@@ -201,7 +204,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
         }
     }
 
-    private ListCellRenderer cellRenderer = new ColoredListCellRenderer() {
+    private ListCellRenderer<?> cellRenderer = new ColoredListCellRenderer() {
         @Override
         protected void customizeCellRenderer(JList list, Object value, int index, boolean selected, boolean hasFocus) {
             DBObjectRef<DBColumn> columnRef = (DBObjectRef<DBColumn>) value;
@@ -215,7 +218,7 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -243,12 +246,4 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
     public void resetFormChanges() {
 
     }
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(editorComponent);
-        super.disposeInner();
-    }
-
-
 }

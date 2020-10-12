@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.data.export.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
@@ -19,33 +18,32 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class ExportDataDialog extends DBNDialog<ExportDataForm> {
-    private ResultSetTable table;
-    private ConnectionHandlerRef connectionHandlerRef;
-    private DBObjectRef sourceObjectRef;
+    private final ResultSetTable<?> table;
+    private final ConnectionHandlerRef connectionHandler;
+    private final DBObjectRef<?> sourceObject;
 
-    public ExportDataDialog(ResultSetTable table, @NotNull DBObject sourceObject) {
+    public ExportDataDialog(ResultSetTable<?> table, @NotNull DBObject sourceObject) {
         this(table, sourceObject, sourceObject.getConnectionHandler());
     }
 
-    public ExportDataDialog(ResultSetTable table, @NotNull ExecutionResult executionResult) {
+    public ExportDataDialog(ResultSetTable<?> table, @NotNull ExecutionResult<?> executionResult) {
         this(table, null, executionResult.getConnectionHandler());
     }
 
 
-    private ExportDataDialog(ResultSetTable table, @Nullable DBObject sourceObject, @NotNull ConnectionHandler connectionHandler) {
+    private ExportDataDialog(ResultSetTable<?> table, @Nullable DBObject sourceObject, @NotNull ConnectionHandler connectionHandler) {
         super(connectionHandler.getProject(), "Export data", true);
         this.table = table;
-        this.connectionHandlerRef = connectionHandler.getRef();
-        this.sourceObjectRef = DBObjectRef.from(sourceObject);
-        Disposer.register(this, table);
+        this.connectionHandler = connectionHandler.getRef();
+        this.sourceObject = DBObjectRef.of(sourceObject);
         init();
     }
 
     @NotNull
     @Override
-    protected ExportDataForm createComponent() {
-        DBObject sourceObject = DBObjectRef.get(sourceObjectRef);
-        ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
+    protected ExportDataForm createForm() {
+        DBObject sourceObject = DBObjectRef.get(this.sourceObject);
+        ConnectionHandler connectionHandler = this.connectionHandler.ensure();
         DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());
         DataExportInstructions instructions = exportManager.getExportInstructions();
         boolean hasSelection = table.getSelectedRowCount() > 1 || table.getSelectedColumnCount() > 1;
@@ -54,7 +52,7 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     @NotNull
@@ -72,14 +70,14 @@ public class ExportDataDialog extends DBNDialog<ExportDataForm> {
 
     @Override
     protected void doOKAction() {
-        getComponent().validateEntries(
+        getForm().validateEntries(
                 () -> Progress.modal(
                         getProject(),
                         "Creating export file", true,
                         (progress) -> {
                             ConnectionHandler connectionHandler = getConnectionHandler();
                             DataExportManager exportManager = DataExportManager.getInstance(connectionHandler.getProject());
-                            DataExportInstructions exportInstructions = getComponent().getExportInstructions();
+                            DataExportInstructions exportInstructions = getForm().getExportInstructions();
                             exportManager.setExportInstructions(exportInstructions);
                             exportManager.exportSortableTableContent(
                                     table,

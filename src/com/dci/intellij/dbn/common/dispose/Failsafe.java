@@ -46,8 +46,8 @@ public class Failsafe {
     public static boolean check(Object object) {
         if (object == null) {
             return false;
-        } else if (object instanceof Disposable) {
-            Disposable disposable = (Disposable) object;
+        } else if (object instanceof StatefulDisposable) {
+            StatefulDisposable disposable = (StatefulDisposable) object;
             if (disposable.isDisposed()) {
                 return false;
             }

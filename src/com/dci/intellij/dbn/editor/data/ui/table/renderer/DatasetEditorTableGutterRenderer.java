@@ -16,12 +16,15 @@ import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import java.awt.*;
 
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DELETED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
 
 public class DatasetEditorTableGutterRenderer extends JPanel implements ListCellRenderer {
-    private JLabel textLabel;
-    private JLabel imageLabel;
-    private JPanel textPanel;
+    private final JLabel textLabel;
+    private final JLabel imageLabel;
+    private final JPanel textPanel;
     private static final Cursor HAND_CURSOR = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 
     public DatasetEditorTableGutterRenderer() {

@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.statement.variables.ui;
 
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -41,7 +41,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionInputsDialog> {
+public class StatementExecutionInputForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JPanel variablesPanel;
     private JPanel executionOptionsPanel;
@@ -56,17 +56,17 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
     private JScrollPane variablesScrollPane;
 
     private StatementExecutionProcessor executionProcessor;
-    private List<StatementExecutionVariableValueForm> variableValueForms = new ArrayList<>();
-    private ExecutionOptionsForm executionOptionsForm;
+    private final List<StatementExecutionVariableValueForm> variableValueForms = DisposableContainer.list(this);
+    private final ExecutionOptionsForm executionOptionsForm;
+    private final String statementText;
     private Document previewDocument;
     private EditorEx viewer;
-    private String statementText;
 
     StatementExecutionInputForm(
-            @NotNull StatementExecutionInputsDialog parentComponent,
+            @NotNull StatementExecutionInputsDialog parent,
             @NotNull StatementExecutionProcessor executionProcessor,
             @NotNull DBDebuggerType debuggerType, boolean isBulkExecution) {
-        super(parentComponent);
+        super(parent);
         this.executionProcessor = executionProcessor;
         this.statementText = executionProcessor.getExecutionInput().getExecutableStatementText();
 
@@ -91,7 +91,7 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
                 EnvironmentType.DEFAULT.getColor() :
                 psiFile.getEnvironmentType().getColor();
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(headerTitle, headerIcon, headerBackground, this);
+        DBNHeaderForm headerForm = new DBNHeaderForm(this, headerTitle, headerIcon, headerBackground);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         StatementExecutionVariablesBundle executionVariables = executionProcessor.getExecutionVariables();
@@ -139,10 +139,15 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
         JCheckBox reuseVariablesCheckBox = executionOptionsForm.getReuseVariablesCheckBox();
         if (isBulkExecution && executionVariables != null) {
             reuseVariablesCheckBox.setVisible(true);
-            reuseVariablesCheckBox.addActionListener(e -> ensureParentComponent().setReuseVariables(reuseVariablesCheckBox.isSelected()));
+            reuseVariablesCheckBox.addActionListener(e -> getParentDialog().setReuseVariables(reuseVariablesCheckBox.isSelected()));
         } else {
             reuseVariablesCheckBox.setVisible(false);
         }
+    }
+
+    @NotNull
+    public StatementExecutionInputsDialog getParentDialog() {
+        return (StatementExecutionInputsDialog) ensureParentComponent();
     }
 
     public StatementExecutionProcessor getExecutionProcessor() {
@@ -151,15 +156,8 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
-    }
-
-    @Override
-    public void disposeInner() {
-        EditorUtil.releaseEditor(viewer);
-        Disposer.dispose(variableValueForms);
-        super.disposeInner();
     }
 
     @Override
@@ -236,5 +234,13 @@ public class StatementExecutionInputForm extends DBNFormImpl<StatementExecutionI
         } else {
             DocumentUtil.setText(previewDocument, previewText);
         }
+    }
+
+
+    @Override
+    public void disposeInner() {
+        EditorUtil.releaseEditor(viewer);
+        executionProcessor = null;
+        super.disposeInner();
     }
 }

@@ -14,12 +14,12 @@ public class NavigateToObjectAction extends DumbAwareAction {
         Presentation presentation = getTemplatePresentation();
         presentation.setText(object.getName(), false);
         presentation.setIcon(object.getIcon());
-        this.objectRef = DBObjectRef.from(object);
+        this.objectRef = DBObjectRef.of(object);
     }
 
     public NavigateToObjectAction(DBObject sourceObject, DBObject object) {
         super();
-        this.objectRef = DBObjectRef.from(object);
+        this.objectRef = DBObjectRef.of(object);
 
         Presentation presentation = getTemplatePresentation();
         presentation.setText(

@@ -21,12 +21,11 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
     private JLabel dataTypeLabel;
     private JPanel mainPanel;
 
-    private JTextField valueTextField;
-    private ResultSetRecordViewerForm parentForm;
-    private ResultSetDataModelCell cell;
+    private final JTextField valueTextField;
+    private ResultSetDataModelCell<?, ?> cell;
 
-    public ResultSetRecordViewerColumnForm(ResultSetRecordViewerForm parentForm, ResultSetDataModelCell cell, boolean showDataType) {
-        this.parentForm = parentForm;
+    public ResultSetRecordViewerColumnForm(ResultSetRecordViewerForm parent, ResultSetDataModelCell<?, ?> cell, boolean showDataType) {
+        super(parent);
         ColumnInfo columnInfo = cell.getColumnInfo();
 
         DBDataType dataType = columnInfo.getDataType();
@@ -53,11 +52,11 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
-    public void setCell(ResultSetDataModelCell cell) {
+    public void setCell(ResultSetDataModelCell<?, ?> cell) {
         this.cell = cell;
 
         if (cell.getUserValue() instanceof String) {
@@ -73,7 +72,7 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
         }
     }
 
-    public ResultSetDataModelCell getCell() {
+    public ResultSetDataModelCell<?, ?> getCell() {
         return cell;
     }
 
@@ -111,6 +110,7 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
         @Override
         public void keyPressed(KeyEvent e) {
             if (!e.isConsumed()) {
+                ResultSetRecordViewerForm parentForm = (ResultSetRecordViewerForm) ResultSetRecordViewerColumnForm.this.ensureParentComponent();
                 if (e.getKeyCode() == 38) {//UP
                     parentForm.focusPreviousColumnPanel(ResultSetRecordViewerColumnForm.this);
                     e.consume();
@@ -121,4 +121,11 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
             }
         }
     };
+
+
+    @Override
+    protected void disposeInner() {
+        super.disposeInner();
+        cell = null;
+    }
 }

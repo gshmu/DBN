@@ -1,10 +1,8 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -13,11 +11,12 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-@Nullifiable
-public class ObjectDependencyTreeNode extends DisposableBase implements Disposable {
-    private DBObjectRef<DBObject> objectRef;
+public class ObjectDependencyTreeNode extends StatefulDisposable.Base implements StatefulDisposable {
+    private final DBObjectRef<DBObject> object;
+
     private List<ObjectDependencyTreeNode> dependencies;
     private ObjectDependencyTreeModel model;
     private ObjectDependencyTreeNode parent;
@@ -27,17 +26,17 @@ public class ObjectDependencyTreeNode extends DisposableBase implements Disposab
 
     private ObjectDependencyTreeNode(ObjectDependencyTreeNode parent, DBObject object) {
         this.parent = parent;
-        this.objectRef = DBObjectRef.from(object);
+        this.object = DBObjectRef.of(object);
     }
 
     ObjectDependencyTreeNode(ObjectDependencyTreeModel model, DBObject object) {
         this.model = model;
-        this.objectRef = DBObjectRef.from(object);
+        this.object = DBObjectRef.of(object);
     }
 
     @Nullable
     DBObject getObject() {
-        return DBObjectRef.get(objectRef);
+        return DBObjectRef.get(object);
     }
 
     public ObjectDependencyTreeModel getModel() {
@@ -53,14 +52,14 @@ public class ObjectDependencyTreeNode extends DisposableBase implements Disposab
 
     public synchronized List<ObjectDependencyTreeNode> getChildren(final boolean load) {
         final ObjectDependencyTreeModel model = getModel();
-        if (objectRef == null || model == null)  {
-            return java.util.Collections.emptyList();
+        if (object == null || model == null)  {
+            return Collections.emptyList();
         }
 
         if (dependencies == null && load) {
             DBObject object = getObject();
             if (isDisposed() || object == null || isRecursive(object)) {
-                dependencies = java.util.Collections.emptyList();
+                dependencies = Collections.emptyList();
                 shouldLoad = false;
             } else {
                 dependencies = new ArrayList<>();
@@ -98,7 +97,7 @@ public class ObjectDependencyTreeNode extends DisposableBase implements Disposab
 
                             List<ObjectDependencyTreeNode> oldDependencies = dependencies;
                             dependencies = newDependencies;
-                            Disposer.dispose(oldDependencies);
+                            DisposeUtil.dispose(oldDependencies);
 
                             getModel().notifyNodeLoaded(ObjectDependencyTreeNode.this);
                         }
@@ -150,7 +149,7 @@ public class ObjectDependencyTreeNode extends DisposableBase implements Disposab
 
     @Override
     public void disposeInner() {
-        Disposer.dispose(dependencies);
-        super.disposeInner();
+        DisposeUtil.dispose(dependencies);
+        nullify();
     }
 }

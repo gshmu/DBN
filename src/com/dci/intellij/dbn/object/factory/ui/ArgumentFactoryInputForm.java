@@ -1,30 +1,30 @@
 package com.dci.intellij.dbn.object.factory.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.ui.DataTypeEditor;
 import com.dci.intellij.dbn.object.factory.ArgumentFactoryInput;
 import com.dci.intellij.dbn.object.factory.ObjectFactoryInput;
 import com.dci.intellij.dbn.object.factory.ui.common.ObjectFactoryInputForm;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ArgumentFactoryInputForm extends ObjectFactoryInputForm {
+public class ArgumentFactoryInputForm extends ObjectFactoryInputForm<ArgumentFactoryInput> {
     private JPanel mainPanel;
     private JLabel iconLabel;
     private JTextField nameTextField;
     private JCheckBox inCheckBox;
     private JCheckBox outCheckBox;
     private JPanel dataTypeEditor;
-    private boolean enforceInArgument;
+    private final boolean enforceInArgument;
 
-    ArgumentFactoryInputForm(Project project, ConnectionHandler connectionHandler, boolean enforceInArgument, int index) {
-        super(project, connectionHandler, DBObjectType.ARGUMENT, index);
+    ArgumentFactoryInputForm(DBNForm parent, ConnectionHandler connectionHandler, boolean enforceInArgument, int index) {
+        super(parent, connectionHandler, DBObjectType.ARGUMENT, index);
         this.enforceInArgument = enforceInArgument;
         iconLabel.setText(null);
         iconLabel.setIcon(enforceInArgument ? Icons.DBO_ARGUMENT_IN : DBObjectType.ARGUMENT.getIcon());
@@ -37,7 +37,7 @@ public class ArgumentFactoryInputForm extends ObjectFactoryInputForm {
         }
     }
 
-    private ActionListener actionListener = new ActionListener() {
+    private final ActionListener actionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == inCheckBox || e.getSource() == outCheckBox) {
@@ -52,7 +52,7 @@ public class ArgumentFactoryInputForm extends ObjectFactoryInputForm {
     };
 
     @Override
-    public ObjectFactoryInput createFactoryInput(ObjectFactoryInput parent) {
+    public ArgumentFactoryInput createFactoryInput(ObjectFactoryInput parent) {
         return new ArgumentFactoryInput(
                 parent,
                 getIndex(),
@@ -69,7 +69,7 @@ public class ArgumentFactoryInputForm extends ObjectFactoryInputForm {
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

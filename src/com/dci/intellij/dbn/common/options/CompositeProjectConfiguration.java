@@ -17,7 +17,7 @@ public abstract class CompositeProjectConfiguration<P extends ProjectConfigurati
 
     public CompositeProjectConfiguration(@NotNull Project project) {
         super(null);
-        this.projectRef = ProjectRef.from(project);
+        this.projectRef = ProjectRef.of(project);
     }
 
     @NotNull

@@ -20,14 +20,14 @@ public class CompilerTypeSelectionDialog extends DBNDialog<CompilerTypeSelection
         super(project, "Compile type", true);
         setModal(true);
         setResizable(false);
-        objectRef = DBObjectRef.from(object);
+        objectRef = DBObjectRef.of(object);
         //setVerticalStretch(0);
         init();
     }
 
     @NotNull
     @Override
-    protected CompilerTypeSelectionForm createComponent() {
+    protected CompilerTypeSelectionForm createForm() {
         DBSchemaObject object = DBObjectRef.get(objectRef);
         return new CompilerTypeSelectionForm(this, object);
     }

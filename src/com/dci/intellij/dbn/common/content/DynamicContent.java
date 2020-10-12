@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.common.content;
 
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
-import com.dci.intellij.dbn.common.dispose.Disposable;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.util.Compactable;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface DynamicContent<T extends DynamicContentElement> extends Disposable, Compactable, PropertyHolder<DynamicContentStatus> {
+public interface DynamicContent<T extends DynamicContentElement> extends StatefulDisposable, Compactable, PropertyHolder<DynamicContentStatus> {
 
     /**
      * Loads the content. It is typically called every time the content is queried.

@@ -16,12 +16,13 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHeaderForm<ConnectionFilterSettingsDialog>> {
+public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHeaderForm> {
+    private final ConnectionHandlerRef connectionHandler;
     private ConnectionFilterSettingsForm configurationEditor;
-    private ConnectionHandlerRef connectionHandlerRef;
-    public ConnectionFilterSettingsDialog(@NotNull final ConnectionHandler connectionHandler) {
+
+    public ConnectionFilterSettingsDialog(@NotNull ConnectionHandler connectionHandler) {
         super(connectionHandler.getProject(), "Object filters", true);
-        connectionHandlerRef = connectionHandler.getRef();
+        this.connectionHandler = connectionHandler.getRef();
         setModal(true);
         setResizable(true);
         init();
@@ -29,12 +30,12 @@ public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHead
 
     @NotNull
     @Override
-    protected DBNContentWithHeaderForm<ConnectionFilterSettingsDialog> createComponent() {
-        ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
-        return new DBNContentWithHeaderForm<ConnectionFilterSettingsDialog>(this) {
+    protected DBNContentWithHeaderForm createForm() {
+        ConnectionHandler connectionHandler = this.connectionHandler.ensure();
+        return new DBNContentWithHeaderForm(this) {
             @Override
             public DBNHeaderForm createHeaderForm() {
-                return new DBNHeaderForm(connectionHandler, this);
+                return new DBNHeaderForm(this, connectionHandler);
             }
 
             @Override

@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
@@ -559,7 +558,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         return updater.getRefreshNodes();
     }
 
-    class ObjectStatusUpdater extends DisposableBase implements DBObjectListVisitor {
+    class ObjectStatusUpdater extends Base implements DBObjectListVisitor {
         private Set<BrowserTreeNode> refreshNodes = new HashSet<BrowserTreeNode>();
 
         @Override
@@ -593,6 +592,11 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
 
         public Set<BrowserTreeNode> getRefreshNodes() {
             return refreshNodes;
+        }
+
+        @Override
+        protected void disposeInner() {
+            nullify();
         }
     }
 

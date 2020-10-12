@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.common.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
+import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -29,10 +30,11 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
     private boolean hasErrors;
     private transient int timeout;
 
-    private ExecutionInput executionInput;
-    private DBDebuggerType debuggerType;
+    private final ExecutionInput executionInput;
+    private final DBDebuggerType debuggerType;
 
-    protected ExecutionTimeoutForm(final ExecutionInput executionInput, final DBDebuggerType debuggerType) {
+    protected ExecutionTimeoutForm(DBNForm parent, ExecutionInput executionInput, DBDebuggerType debuggerType) {
+        super(parent);
         this.executionInput = executionInput;
         this.debuggerType = debuggerType;
 
@@ -94,7 +96,7 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

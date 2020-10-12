@@ -8,7 +8,7 @@ public class SortableDataModelCell<
         R extends SortableDataModelRow<M, ? extends SortableDataModelCell<R, M>>,
         M extends SortableDataModel<R, ? extends SortableDataModelCell<R, M>>>
         extends BasicDataModelCell<R, M>
-        implements Comparable {
+        implements Comparable<DataModelCell> {
 
     public SortableDataModelCell(R row, Object userValue, int index) {
         super(userValue, row, index);
@@ -27,8 +27,7 @@ public class SortableDataModelCell<
     }
 
     @Override
-    public int compareTo(@NotNull Object o) {
-        DataModelCell cell = (DataModelCell) o;
+    public int compareTo(@NotNull DataModelCell cell) {
         Comparable local = (Comparable) getUserValue();
         Comparable remote = (Comparable) cell.getUserValue();
         boolean nullsFirst = getModel().isSortingNullsFirst();

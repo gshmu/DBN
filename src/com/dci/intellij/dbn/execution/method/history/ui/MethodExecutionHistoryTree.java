@@ -19,13 +19,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
-    private MethodExecutionHistoryDialog dialog;
     private boolean grouped;
-    private boolean debug;
+    private final boolean debug;
 
-    MethodExecutionHistoryTree(MethodExecutionHistoryDialog dialog, boolean grouped, boolean debug) {
-        super(dialog.getProject(), createTreeModel(grouped, debug));
-        this.dialog = dialog;
+    MethodExecutionHistoryTree(MethodExecutionHistoryForm form, boolean grouped, boolean debug) {
+        super(form, createTreeModel(grouped, debug));
         this.grouped = grouped;
         this.debug = debug;
         setCellRenderer(new TreeCellRenderer());
@@ -33,6 +31,11 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
         TreeUtil.expand(this, 4);
 
         getModel().addTreeModelListener(treeModelListener);
+    }
+
+    @NotNull
+    public MethodExecutionHistoryDialog getParentDialog() {
+        return ((MethodExecutionHistoryForm) getParentComponent()).getParentDialog();
     }
 
     @NotNull
@@ -80,7 +83,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
         return null;
     }
 
-    private class TreeCellRenderer extends ColoredTreeCellRenderer {
+    private static class TreeCellRenderer extends ColoredTreeCellRenderer {
         @Override
         public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
             try {
@@ -115,10 +118,10 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
      *                         Listeners                      *
      **********************************************************/
 
-    private TreeModelListener treeModelListener = new TreeModelHandler() {
+    private final TreeModelListener treeModelListener = new TreeModelHandler() {
         @Override
         public void treeNodesRemoved(TreeModelEvent e) {
-            dialog.setSaveButtonEnabled(true);
+            getParentDialog().setSaveButtonEnabled(true);
         }
     };
 }

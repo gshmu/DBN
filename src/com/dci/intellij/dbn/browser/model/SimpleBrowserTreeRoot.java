@@ -3,8 +3,6 @@ package com.dci.intellij.dbn.browser.model;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -22,13 +20,12 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Nullifiable
-public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements BrowserTreeNode {
-    private List<ConnectionBundle> rootChildren = new ArrayList<>();
-    private ProjectRef projectRef;
+public final class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements BrowserTreeNode {
+    private final List<ConnectionBundle> rootChildren = new ArrayList<>();
+    private final ProjectRef project;
 
     SimpleBrowserTreeRoot(@NotNull Project project, ConnectionBundle connectionBundle) {
-        this.projectRef = ProjectRef.from(project);
+        this.project = ProjectRef.of(project);
         if (connectionBundle != null) {
             this.rootChildren.add(connectionBundle);
         }
@@ -37,7 +34,7 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
     @Override
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return project.ensure();
     }
 
     @Nullable
@@ -75,7 +72,7 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
 
     @Override
     public List<ConnectionBundle> getChildren() {
-        return Failsafe.nn(rootChildren);
+        return rootChildren;
     }
 
     @Override
@@ -209,4 +206,9 @@ public class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements Browse
         return SQLTextAttributesKeys.IDENTIFIER;
     }
 
+
+    @Override
+    protected void disposeInner() {
+        rootChildren.clear();
+    }
 }

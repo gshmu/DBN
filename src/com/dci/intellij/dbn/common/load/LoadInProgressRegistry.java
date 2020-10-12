@@ -1,23 +1,25 @@
 package com.dci.intellij.dbn.common.load;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
-import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.util.Disposer;
 
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-@Nullifiable
-public abstract class LoadInProgressRegistry<T extends Disposable> extends DisposableBase implements Disposable{
+public abstract class LoadInProgressRegistry<T extends StatefulDisposable> extends StatefulDisposable.Base {
     private final List<T> nodes = CollectionUtil.createConcurrentList();
 
-    private LoadInProgressRegistry(RegisteredDisposable parentDisposable) {
+    private LoadInProgressRegistry(Disposable parentDisposable) {
         Disposer.register(parentDisposable, this);
+    }
+
+    @Override
+    protected void disposeInner() {
+        nodes.clear();
     }
 
     public void register(T node) {
@@ -52,7 +54,7 @@ public abstract class LoadInProgressRegistry<T extends Disposable> extends Dispo
 
     protected abstract void notify(T node);
 
-    public static <T extends Disposable> LoadInProgressRegistry<T> create(RegisteredDisposable parentDisposable, Notifier<T> notifier) {
+    public static <T extends StatefulDisposable> LoadInProgressRegistry<T> create(StatefulDisposable parentDisposable, Notifier<T> notifier) {
         return new LoadInProgressRegistry<T>(parentDisposable) {
             @Override
             protected void notify(T node) {
@@ -62,7 +64,7 @@ public abstract class LoadInProgressRegistry<T extends Disposable> extends Dispo
     }
 
     @FunctionalInterface
-    public interface Notifier<T extends Disposable> {
+    public interface Notifier<T extends StatefulDisposable> {
         void notify(T node);
     }
 }

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.data.model.basic;
 
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
+import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -16,11 +16,10 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-@Nullifiable
 public class BasicDataModelCell<
         R extends BasicDataModelRow<M, ? extends BasicDataModelCell<R, M>>,
         M extends BasicDataModel<R, ? extends BasicDataModelCell<R, M>>>
-        extends DisposablePropertyHolder<RecordStatus>
+        extends PropertyHolderImpl<RecordStatus>
         implements DataModelCell<R, M> {
 
     protected WeakRef<R> row;
@@ -143,5 +142,10 @@ public class BasicDataModelCell<
     @NotNull
     public Formatter getFormatter() {
         return getModel().getFormatter();
+    }
+
+    @Override
+    public void dispose() {
+        DisposeUtil.nullify(this);
     }
 }

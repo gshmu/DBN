@@ -174,17 +174,17 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
     }
 
     @Override
-    public LookupItemBuilder getLookupItemBuilder(DBObjectRef objectRef, DBLanguage language) {
+    public LookupItemBuilder getLookupItemBuilder(DBObjectRef<?> objectRef, DBLanguage<?> language) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public DBObjectPsiFacade getObjectPsiFacade(DBObjectRef objectRef) {
+    public DBObjectPsiFacade getObjectPsiFacade(DBObjectRef<?> objectRef) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public DBObjectVirtualFile getObjectVirtualFile(DBObjectRef objectRef) {
+    public DBObjectVirtualFile<?> getObjectVirtualFile(DBObjectRef<?> objectRef) {
         throw new UnsupportedOperationException();
     }
 
@@ -350,5 +350,10 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
     @Override
     public PsiFile getFakeObjectFile() {
         return null;
+    }
+
+    @Override
+    protected void disposeInner() {
+
     }
 }

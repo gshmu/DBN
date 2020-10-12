@@ -24,7 +24,7 @@ public class CompileObjectAction extends DumbAwareAction {
 
     public CompileObjectAction(DBSchemaObject object, DBContentType contentType, CompileType compileType) {
         super("Compile");
-        this.objectRef = DBObjectRef.from(object);
+        this.objectRef = DBObjectRef.of(object);
         this.contentType = contentType;
         this.compileType = compileType;
     }

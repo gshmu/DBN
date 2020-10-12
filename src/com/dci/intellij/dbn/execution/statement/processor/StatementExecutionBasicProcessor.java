@@ -2,9 +2,8 @@ package com.dci.intellij.dbn.execution.statement.processor;
 
 import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.latent.Latent;
@@ -79,12 +78,11 @@ import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
 
-@Nullifiable
-public class StatementExecutionBasicProcessor extends DisposableBase implements StatementExecutionProcessor {
-    private final ProjectRef projectRef;
-    private final WeakRef<FileEditor> fileEditorRef;
-    private PsiFileRef<DBLanguagePsiFile> psiFileRef;
-    private PsiElementRef<ExecutablePsiElement> cachedExecutableRef;
+public class StatementExecutionBasicProcessor extends StatefulDisposable.Base implements StatementExecutionProcessor {
+    private final ProjectRef project;
+    private final WeakRef<FileEditor> fileEditor;
+    private PsiFileRef<DBLanguagePsiFile> psiFile;
+    private PsiElementRef<ExecutablePsiElement> cachedExecutable;
     private EditorProviderId editorProviderId;
     private transient CancellableDatabaseCall<StatementExecutionResult> databaseCall;
 
@@ -110,11 +108,11 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     public StatementExecutionBasicProcessor(@NotNull Project project, @NotNull FileEditor fileEditor, @NotNull ExecutablePsiElement psiElement, int index) {
         DBLanguagePsiFile psiFile = psiElement.getFile();
 
-        this.projectRef = ProjectRef.from(project);
-        this.fileEditorRef = WeakRef.of(fileEditor);
-        this.psiFileRef = PsiFileRef.from(psiFile);
+        this.project = ProjectRef.of(project);
+        this.fileEditor = WeakRef.of(fileEditor);
+        this.psiFile = PsiFileRef.of(psiFile);
 
-        this.cachedExecutableRef = PsiElementRef.from(psiElement);
+        this.cachedExecutable = PsiElementRef.from(psiElement);
         this.name = psiFile.getName();
         this.icon = psiFile.getIcon();
         this.index = index;
@@ -123,9 +121,9 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     }
 
     StatementExecutionBasicProcessor(@NotNull Project project, @NotNull FileEditor fileEditor, @NotNull DBLanguagePsiFile psiFile, String sqlStatement, int index) {
-        this.projectRef = ProjectRef.from(project);
-        this.fileEditorRef = WeakRef.of(fileEditor);
-        this.psiFileRef = PsiFileRef.from(psiFile);
+        this.project = ProjectRef.of(project);
+        this.fileEditor = WeakRef.of(fileEditor);
+        this.psiFile = PsiFileRef.of(psiFile);
         this.name = psiFile.getName();
         this.icon = psiFile.getIcon();
         this.index = index;
@@ -149,7 +147,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     private void initEditorProviderId(FileEditor fileEditor) {
         if (fileEditor instanceof BasicTextEditor) {
-            BasicTextEditor basicTextEditor = (BasicTextEditor) fileEditor;
+            BasicTextEditor<?> basicTextEditor = (BasicTextEditor<?>) fileEditor;
             editorProviderId = basicTextEditor.getEditorProviderId();
         }
     }
@@ -176,13 +174,13 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
 
     @Override
     public void bind(ExecutablePsiElement executablePsiElement) {
-        cachedExecutableRef = PsiElementRef.from(executablePsiElement);
+        cachedExecutable = PsiElementRef.from(executablePsiElement);
         executablePsiElement.setExecutionProcessor(this);
     }
 
     @Override
     public void unbind() {
-        cachedExecutableRef = null;
+        cachedExecutable = null;
     }
 
     @Override
@@ -193,12 +191,12 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Nullable
     @Override
     public DBLanguagePsiFile getPsiFile() {
-        DBLanguagePsiFile psiFile = psiFileRef.get();
+        DBLanguagePsiFile psiFile = this.psiFile.get();
         if (psiFile == null) {
-            ExecutablePsiElement executablePsiElement = WeakRef.get(cachedExecutableRef);
+            ExecutablePsiElement executablePsiElement = WeakRef.get(cachedExecutable);
             if (executablePsiElement != null && executablePsiElement.isValid()) {
                 psiFile = executablePsiElement.getFile();
-                psiFileRef = PsiFileRef.from(psiFile);
+                this.psiFile = PsiFileRef.of(psiFile);
             }
         }
         return psiFile;
@@ -214,7 +212,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Nullable
     @Override
     public FileEditor getFileEditor() {
-        return fileEditorRef.get();
+        return fileEditor.get();
     }
 
     @Override
@@ -226,7 +224,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Override
     @Nullable
     public ExecutablePsiElement getCachedExecutable() {
-        return cachedExecutableRef == null ? null : cachedExecutableRef.get();
+        return cachedExecutable == null ? null : cachedExecutable.get();
     }
 
     public static boolean contains(PsiElement parent, BasePsiElement childElement, BasePsiElement.MatchType matchType) {
@@ -692,7 +690,7 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
     @Override
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return project.ensure();
     }
 
     @Override
@@ -828,5 +826,11 @@ public class StatementExecutionBasicProcessor extends DisposableBase implements 
         }
 
         return 0;
+    }
+
+
+    @Override
+    protected void disposeInner() {
+        nullify();
     }
 }

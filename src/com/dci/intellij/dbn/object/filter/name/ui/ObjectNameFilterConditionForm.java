@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class ObjectNameFilterConditionForm extends DBNFormImpl<ObjectNameFilterConditionDialog> {
+public class ObjectNameFilterConditionForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JLabel objectNameLabel;
     private JLabel wildcardsHintLabel;
@@ -21,7 +21,7 @@ public class ObjectNameFilterConditionForm extends DBNFormImpl<ObjectNameFilterC
     private DBNComboBox<ConditionOperator> operatorComboBox;
     private DBNComboBox<ConditionJoinType> joinTypeComboBox;
 
-    private SimpleNameFilterCondition condition;
+    private final SimpleNameFilterCondition condition;
     public enum Operation {CREATE, EDIT, JOIN}
 
     ObjectNameFilterConditionForm(
@@ -97,7 +97,7 @@ public class ObjectNameFilterConditionForm extends DBNFormImpl<ObjectNameFilterC
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 }

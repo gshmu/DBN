@@ -20,7 +20,7 @@ public class DatasetEditorSortingDialog extends DBNDialog<DatasetEditorSortingFo
 
     @NotNull
     @Override
-    protected DatasetEditorSortingForm createComponent() {
+    protected DatasetEditorSortingForm createForm() {
         return new DatasetEditorSortingForm(this, datasetEditor);
     }
 
@@ -36,7 +36,7 @@ public class DatasetEditorSortingDialog extends DBNDialog<DatasetEditorSortingFo
 
     @Override
     protected void doOKAction() {
-        getComponent().applyChanges();
+        getForm().applyChanges();
         datasetEditor.getEditorTable().sort();
         super.doOKAction();
     }

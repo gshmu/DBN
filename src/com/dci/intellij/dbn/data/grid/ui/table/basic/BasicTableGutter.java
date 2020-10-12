@@ -2,15 +2,15 @@ package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 
 public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
-    public BasicTableGutter(final T table) {
+    public BasicTableGutter(@NotNull T table) {
         super(table);
         addListSelectionListener(gutterSelectionListener);
         setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -63,28 +63,25 @@ public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
     /*********************************************************
      *                ListSelectionListener                  *
      *********************************************************/
-    private ListSelectionListener gutterSelectionListener = new ListSelectionListener() {
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            T table = getTable();
-            if (hasFocus()) {
-                if (justGainedFocus) {
-                    justGainedFocus = false;
-                    if (table.isEditing()) table.getCellEditor().cancelCellEditing();
-                    table.clearSelection();
-                    int columnCount = table.getColumnCount();
-                    if (columnCount > 0) {
-                        int lastColumnIndex = Math.max(columnCount - 1, 0);
-                        table.setColumnSelectionInterval(0, lastColumnIndex);
-                    }
+    private ListSelectionListener gutterSelectionListener = e -> {
+        T table = getTable();
+        if (hasFocus()) {
+            if (justGainedFocus) {
+                justGainedFocus = false;
+                if (table.isEditing()) table.getCellEditor().cancelCellEditing();
+                table.clearSelection();
+                int columnCount = table.getColumnCount();
+                if (columnCount > 0) {
+                    int lastColumnIndex = Math.max(columnCount - 1, 0);
+                    table.setColumnSelectionInterval(0, lastColumnIndex);
                 }
+            }
 
-                for (int i = e.getFirstIndex(); i <= e.getLastIndex(); i++) {
-                    ListSelectionModel selectionModel = table.getSelectionModel();
-                    if (isSelectedIndex(i))
-                        selectionModel.addSelectionInterval(i, i); else
-                        selectionModel.removeSelectionInterval(i, i);
-                }
+            for (int i = e.getFirstIndex(); i <= e.getLastIndex(); i++) {
+                ListSelectionModel selectionModel = table.getSelectionModel();
+                if (isSelectedIndex(i))
+                    selectionModel.addSelectionInterval(i, i); else
+                    selectionModel.removeSelectionInterval(i, i);
             }
         }
     };
@@ -101,7 +98,6 @@ public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
             tableSelectionListener = null;
             gutterSelectionListener = null;
             super.dispose();
-
         }
     }
 }

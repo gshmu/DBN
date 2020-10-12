@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
+import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -14,7 +15,6 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
 import com.dci.intellij.dbn.connection.transaction.TransactionAction;
 import com.dci.intellij.dbn.connection.transaction.TransactionListener;
-import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.SimpleTextAttributes;
@@ -23,18 +23,17 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
+public class ResourceMonitorForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel detailsPanel;
     private JList<ConnectionHandler> connectionsList;
-    private List<ConnectionHandler> connectionHandlers = new ArrayList<ConnectionHandler>();
+    private final List<ConnectionHandler> connectionHandlers = new ArrayList<>();
 
-    private Map<ConnectionId, ResourceMonitorDetailForm> resourceMonitorForms = new HashMap<ConnectionId, ResourceMonitorDetailForm>();
+    private final Map<ConnectionId, ResourceMonitorDetailForm> resourceMonitorForms = DisposableContainer.map(this);
 
     ResourceMonitorForm(ResourceMonitorDialog parentComponent) {
         super(parentComponent);
@@ -49,7 +48,6 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
         connectionsList.setSelectedIndex(0);
         updateListModel();
 
-        Project project = getProject();
         subscribe(TransactionListener.TOPIC, transactionListener);
         subscribe(ConnectionHandlerStatusListener.TOPIC, (connectionId) -> GUIUtil.repaint(connectionsList));
     }
@@ -72,7 +70,7 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -86,7 +84,7 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
             ConnectionId connectionId = connectionHandler.getConnectionId();
             ResourceMonitorDetailForm detailForm = resourceMonitorForms.get(connectionId);
             if (detailForm == null) {
-                detailForm = new ResourceMonitorDetailForm(connectionHandler);
+                detailForm = new ResourceMonitorDetailForm(this, connectionHandler);
                 resourceMonitorForms.put(connectionId, detailForm);
             }
             detailsPanel.add(detailForm.getComponent(), BorderLayout.CENTER);
@@ -117,7 +115,7 @@ public class ResourceMonitorForm extends DBNFormImpl<ResourceMonitorDialog> {
     /********************************************************
      *                Transaction Listener                  *
      ********************************************************/
-    private TransactionListener transactionListener = new TransactionListener() {
+    private final TransactionListener transactionListener = new TransactionListener() {
         @Override
         public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
             refreshForm();

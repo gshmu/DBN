@@ -14,10 +14,10 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class FileListCellRenderer extends ColoredListCellRenderer<VirtualFile> {
-    private ProjectRef projectRef;
+    private final ProjectRef projectRef;
 
     FileListCellRenderer(Project project) {
-        this.projectRef = ProjectRef.from(project);
+        this.projectRef = ProjectRef.of(project);
     }
 
     @Override

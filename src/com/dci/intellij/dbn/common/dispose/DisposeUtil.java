@@ -18,7 +18,6 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -30,15 +29,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 
-public class Disposer {
+public class DisposeUtil {
     private static final MapLatent<Class<?>, List<Field>, RuntimeException> CLASS_FIELDS = MapLatent.create(clazz -> ReflectionUtil.collectFields(clazz));
-    private static final MapLatent<Class<?>, Nullifiable, RuntimeException> NULLIFIABLE = MapLatent.create(clazz -> (Nullifiable) clazz.getAnnotation(Nullifiable.class));
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     public static void disposeInBackground(Object ... disposable) {
         // trigger background in dispatch thread
-        Dispatch.run(() ->Background.run(() -> dispose(disposable)));
+        Dispatch.run(() -> Background.run(() -> dispose(disposable)));
     }
 
     public static void dispose(@Nullable Object ... objects) {
@@ -64,43 +62,25 @@ public class Disposer {
 
     }
 
-    static boolean isNullifiable(@NotNull Object object) {
-        Class<?> objectType = object.getClass();
-        while (objectType != Object.class) {
-            Nullifiable nullifiable = NULLIFIABLE.get(objectType);
-            if (nullifiable != null) {
-                return true;
-            }
-            objectType = objectType.getSuperclass();
-        }
-
-        return false;
-    }
-
     private static void dispose(@Nullable Disposable disposable) {
         if (disposable != null) {
             try {
-                if (disposable instanceof RegisteredDisposable) {
-                    // dispose tree
-                    com.intellij.openapi.util.Disposer.dispose(disposable);
-                } else {
-                    disposable.dispose();
-                }
+                disposable.dispose();
             } catch (ProcessCanceledException ignore) {}
         }
     }
 
-    public static void disposeInBackground(Collection collection) {
+    public static void disposeInBackground(Collection<?> collection) {
         Background.run(() -> dispose(collection));
     }
     
-    public static void dispose(Collection collection) {
+    public static void dispose(Collection<?> collection) {
         if (collection instanceof FiltrableList) {
-            FiltrableList filtrableList = (FiltrableList) collection;
+            FiltrableList<?> filtrableList = (FiltrableList<?>) collection;
             collection = filtrableList.getFullList();
         }
         if (collection != null && collection.size()> 0) {
-            Collection disposableCollection = new ArrayList(collection);
+            Collection<?> disposableCollection = new ArrayList<>(collection);
             clearCollection(collection);
             for (Object object : disposableCollection) {
                 dispose(object);
@@ -108,27 +88,21 @@ public class Disposer {
         }
     }
 
-    private static void clearCollection(Collection collection) {
+    private static void clearCollection(Collection<?> collection) {
         Unsafe.silent(() -> collection.clear());
     }
 
-    private static void clearMap(Map map) {
+    private static void clearMap(Map<?, ?> map) {
         Unsafe.silent(() -> map.clear());
     }
 
-    public static void dispose(Map map) {
+    public static void dispose(Map<?, ?> map) {
         if (map != null) {
-            Collection disposableCollection = new ArrayList(map.values());
+            Collection<?> disposableCollection = new ArrayList<>(map.values());
             clearMap(map);
             for (Object disposable : disposableCollection) {
                 dispose(disposable);
             }
-        }
-    }
-
-    public static void register(RegisteredDisposable parent, Disposable disposable) {
-        if (Failsafe.check(parent)) {
-            com.intellij.openapi.util.Disposer.register(parent, disposable);
         }
     }
 
@@ -205,10 +179,5 @@ public class Disposer {
             timer.cancel();
             timer.purge();
         }
-    }
-
-    public static <T> T replace(T oldElement, T disposable) {
-        Disposer.disposeInBackground(oldElement);
-        return disposable;
     }
 }

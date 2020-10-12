@@ -42,7 +42,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private JScrollPane textEditorScrollPane;
     private boolean changed;
 
-    TextEditorPopupProviderForm(TextFieldWithPopup textField, boolean autoPopup) {
+    TextEditorPopupProviderForm(TextFieldWithPopup<?> textField, boolean autoPopup) {
         super(textField, autoPopup, true);
         editorTextArea.setBorder(JBUI.Borders.empty(4));
         editorTextArea.addKeyListener(this);
@@ -82,7 +82,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

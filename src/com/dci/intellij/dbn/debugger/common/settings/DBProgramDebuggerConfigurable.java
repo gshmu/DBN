@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.debugger.common.settings;
 
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.debugger.common.settings.ui.DBProgramDebuggerSettingsForm;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
@@ -8,6 +9,9 @@ import org.jetbrains.annotations.Nls;
 import javax.swing.*;
 
 public class DBProgramDebuggerConfigurable implements Configurable {
+
+    private transient DBProgramDebuggerSettingsForm component;
+
     @Override
     @Nls
     public String getDisplayName() {
@@ -25,7 +29,8 @@ public class DBProgramDebuggerConfigurable implements Configurable {
 
     @Override
     public JComponent createComponent() {
-        return new DBProgramDebuggerSettingsForm().getComponent();
+        component = new DBProgramDebuggerSettingsForm();
+        return component.getComponent();
     }
 
     @Override
@@ -43,5 +48,7 @@ public class DBProgramDebuggerConfigurable implements Configurable {
 
     @Override
     public void disposeUIResources() {
+        SafeDisposer.dispose(component);
+        component = null;
     }
 }

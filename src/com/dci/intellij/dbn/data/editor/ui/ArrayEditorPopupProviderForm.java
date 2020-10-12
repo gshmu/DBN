@@ -43,10 +43,10 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
     private JPanel leftActionPanel;
     private JScrollPane listScrollPane;
 
-    private ArrayEditorList list;
+    private final ArrayEditorList list;
     private boolean changed;
 
-    public ArrayEditorPopupProviderForm(TextFieldWithPopup textField, boolean autoPopup) {
+    public ArrayEditorPopupProviderForm(TextFieldWithPopup<?> textField, boolean autoPopup) {
         super(textField, autoPopup, true);
 
         ActionToolbar leftActionToolbar = ActionUtil.createActionToolbar(
@@ -87,7 +87,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -99,7 +99,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
     private class ArrayEditorList extends EditableStringList {
         public ArrayEditorList() {
-            super(false, true);
+            super(ArrayEditorPopupProviderForm.this, false, true);
         }
 
         @Override
@@ -114,8 +114,8 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
     public JBPopup createPopup() {
         JTextField textField = getTextField();
 
-        List<String> stringValues = new ArrayList<String>();
-        UserValueHolder userValueHolder = getEditorComponent().getUserValueHolder();
+        List<String> stringValues = new ArrayList<>();
+        UserValueHolder<?> userValueHolder = getEditorComponent().getUserValueHolder();
         Project project = getProject();
         try {
             Object userValue = userValueHolder.getUserValue();
@@ -192,14 +192,14 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
     private class DocumentListener extends DocumentAdapter {
         @Override
-        protected void textChanged(DocumentEvent documentEvent) {
+        protected void textChanged(@NotNull DocumentEvent e) {
             changed = true;
         }
     }
 
     private class AcceptAction extends DumbAwareAction {
         private AcceptAction() {
-            super("Accept changes", null, Icons.TEXT_CELL_EDIT_ACCEPT);
+            super("Accept Changes", null, Icons.TEXT_CELL_EDIT_ACCEPT);
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_ENTER, InputEvent.ALT_DOWN_MASK));
             registerAction(this);
         }
@@ -231,7 +231,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
 
     private class RevertAction extends DumbAwareAction{
         private RevertAction() {
-            super("Revert changes", null, Icons.TEXT_CELL_EDIT_REVERT);
+            super("Revert Changes", null, Icons.TEXT_CELL_EDIT_REVERT);
             setShortcutSet(KeyUtil.createShortcutSet(KeyEvent.VK_ESCAPE, 0));
             registerAction(this);
         }

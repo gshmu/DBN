@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.connection.console;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.thread.Synchronized;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.object.DBConsole;
@@ -18,15 +17,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Nullifiable
-public class DatabaseConsoleBundle extends DisposableBase {
-    private ConnectionHandlerRef connectionHandlerRef;
+public class DatabaseConsoleBundle extends StatefulDisposable.Base {
+    private final ConnectionHandlerRef connectionHandler;
 
-    private List<DBConsole> consoles = CollectionUtil.createConcurrentList();
+    private final List<DBConsole> consoles = DisposableContainer.concurrentList(this);
 
     public DatabaseConsoleBundle(ConnectionHandler connectionHandler) {
         super(connectionHandler);
-        this.connectionHandlerRef = connectionHandler.getRef();
+        this.connectionHandler = connectionHandler.getRef();
     }
 
     public List<DBConsole> getConsoles() {
@@ -46,7 +44,7 @@ public class DatabaseConsoleBundle extends DisposableBase {
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     @NotNull
@@ -88,13 +86,11 @@ public class DatabaseConsoleBundle extends DisposableBase {
     void removeConsole(String name) {
         DBConsole console = getConsole(name);
         consoles.remove(console);
-        Disposer.dispose(console);
+        DisposeUtil.dispose(console);
     }
 
     @Override
     public void disposeInner() {
-        Disposer.dispose(consoles);
-        super.disposeInner();
     }
 
     void renameConsole(String oldName, String newName) {

@@ -15,7 +15,8 @@ public class DialogWithTimeoutForm extends DBNFormImpl {
     private JPanel contentPanel;
     private JLabel timeLeftLabel;
 
-    public DialogWithTimeoutForm(int secondsLeft) {
+    public DialogWithTimeoutForm(DBNDialog<?> parent, int secondsLeft) {
+        super(parent);
         contentPanel.setBorder(Borders.BOTTOM_LINE_BORDER);
         updateTimeLeft(secondsLeft);
     }
@@ -26,7 +27,7 @@ public class DialogWithTimeoutForm extends DBNFormImpl {
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

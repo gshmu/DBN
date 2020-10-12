@@ -71,7 +71,7 @@ public class MethodBrowserSettings implements PersistentConfiguration {
     }
 
     public void setMethod(DBMethod method) {
-        this.method = DBObjectRef.from(method);
+        this.method = DBObjectRef.of(method);
     }
 
     @Override

@@ -1,31 +1,29 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.PendingTransaction;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.TableModelListener;
 
-@Nullifiable
-public class ResourceMonitorTransactionsTableModel extends DisposableBase implements DBNTableModel {
-    private ConnectionHandlerRef connectionHandlerRef;
+public class ResourceMonitorTransactionsTableModel implements DBNTableModel, Disposable {
+    private final ConnectionHandlerRef connectionHandler;
     private DBNConnection connection;
 
     public ResourceMonitorTransactionsTableModel(ConnectionHandler connectionHandler, @Nullable DBNConnection connection) {
-        this.connectionHandlerRef = connectionHandler.getRef();
+        this.connectionHandler = connectionHandler.getRef();
         this.connection = connection;
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     @NotNull
@@ -82,4 +80,9 @@ public class ResourceMonitorTransactionsTableModel extends DisposableBase implem
 
     @Override
     public void removeTableModelListener(TableModelListener l) {}
+
+    @Override
+    public void dispose() {
+        connection = null;
+    }
 }

@@ -59,13 +59,13 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     }
 
     @Override
-    public synchronized void refreshRow() throws SQLException {
+    public synchronized void refreshRow() {
         // not supported
     }
 
 
     @Override
-    public synchronized void startInsertRow() throws SQLException {
+    public synchronized void startInsertRow() {
         if (!isInsertMode())  {
             setInsertMode(true);
             currentRow = new Row();
@@ -73,7 +73,7 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     }
 
     @Override
-    public synchronized void cancelInsertRow() throws SQLException {
+    public synchronized void cancelInsertRow() {
         if (isInsertMode())  {
             setInsertMode(false);
             currentRow = null;
@@ -107,13 +107,13 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
     }
 
     @Override
-    public synchronized void setValue(final int columnIndex, @NotNull final ValueAdapter valueAdapter, @Nullable final Object value) throws SQLException {
+    public synchronized void setValue(final int columnIndex, @NotNull final ValueAdapter valueAdapter, @Nullable final Object value) {
         DatasetEditorColumnInfo columnInfo = getColumnInfo(columnIndex);
         currentRow.addChangedCell(columnInfo, value);
     }
 
     @Override
-    public synchronized void setValue(final int columnIndex, @NotNull final DBDataType dataType, @Nullable final Object value) throws SQLException {
+    public synchronized void setValue(final int columnIndex, @NotNull final DBDataType dataType, @Nullable final Object value) {
         DatasetEditorColumnInfo columnInfo = getColumnInfo(columnIndex);
         currentRow.addChangedCell(columnInfo, value);
     }
@@ -228,9 +228,9 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
         preparedStatement.executeUpdate();
     }
 
-    private class Cell {
-        private ColumnInfo columnInfo;
-        private Object value;
+    private static class Cell {
+        private final ColumnInfo columnInfo;
+        private final Object value;
 
         Cell(ColumnInfo columnInfo, Object value) {
             this.columnInfo = columnInfo;
@@ -276,9 +276,9 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
         }
     }
 
-    private class Row {
-        private Set<Cell> keyCells = new HashSet<>();
-        private Set<Cell> changedCells = new HashSet<>();
+    private static class Row {
+        private final Set<Cell> keyCells = new HashSet<>();
+        private final Set<Cell> changedCells = new HashSet<>();
 
         List<Cell> getKeyCells() {
             return new ArrayList<>(keyCells);
@@ -299,5 +299,12 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
             changedCells.remove(cell);
             changedCells.add(cell);
         }
+    }
+
+    @Override
+    protected void disposeInner() {
+        currentRow = null;
+        connection = null;
+        super.disposeInner();
     }
 }

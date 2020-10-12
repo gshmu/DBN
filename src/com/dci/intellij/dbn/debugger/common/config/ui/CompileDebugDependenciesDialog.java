@@ -26,7 +26,7 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
 
     @NotNull
     @Override
-    protected CompileDebugDependenciesForm createComponent() {
+    protected CompileDebugDependenciesForm createForm() {
         return new CompileDebugDependenciesForm(this, runConfiguration, compileList);
     }
 
@@ -64,7 +64,7 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            getComponent().selectAll();
+            getForm().selectAll();
             doOKAction();
         }
     }
@@ -76,14 +76,14 @@ public class CompileDebugDependenciesDialog extends DBNDialog<CompileDebugDepend
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            getComponent().selectNone();
+            getForm().selectNone();
             doOKAction();
         }
     }
 
     @Override
     protected void doOKAction() {
-        DBObjectRef<DBSchemaObject>[] schemaObjectRefs = getComponent().getSelection().toArray(new DBObjectRef[0]);
+        DBObjectRef<DBSchemaObject>[] schemaObjectRefs = getForm().getSelection().toArray(new DBObjectRef[0]);
         selection = WeakRef.of(schemaObjectRefs);
         runConfiguration.setCompileDependencies(!isRememberSelection());
         super.doOKAction();

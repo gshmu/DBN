@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.data.model.basic;
 
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelHeader;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -12,9 +11,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-@Nullifiable
-public class BasicDataModelHeader<T extends ColumnInfo> extends DisposableBase implements DataModelHeader<T> {
-    private List<T> columnInfos = new ArrayList<T>();
+public class BasicDataModelHeader<T extends ColumnInfo> extends StatefulDisposable.Base implements DataModelHeader<T> {
+    private final List<T> columnInfos = new ArrayList<T>();
 
 
     protected void addColumnInfo(T columnInfo) {
@@ -63,7 +61,7 @@ public class BasicDataModelHeader<T extends ColumnInfo> extends DisposableBase i
      *******************************************************  */
     @Override
     public void disposeInner() {
-        Disposer.dispose(columnInfos);
-        super.disposeInner();
+        DisposeUtil.dispose(columnInfos);
+        nullify();
     }
 }

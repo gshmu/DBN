@@ -29,11 +29,11 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
     private ConnectionId connectionId;
     private String datasetName;
     private DatasetFilter activeFilter;
-    private List<DatasetFilter> filters = new ArrayList<>();
-    private List<DatasetFilter> filtersTemp = new ArrayList<>();
+    private final List<DatasetFilter> filters = new ArrayList<>();
+    private final List<DatasetFilter> filtersTemp = new ArrayList<>();
 
-    private boolean isChanged;
-    private Set<ListDataListener> listeners = new HashSet<>();
+    private boolean changed;
+    private final Set<ListDataListener> listeners = new HashSet<>();
 
 
     public DatasetFilterGroup(Project project) {
@@ -210,9 +210,9 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
     }
 
     private void initChange() {
-        if (!isChanged) {
+        if (!changed) {
             filtersTemp.addAll(filters);
-            isChanged = true;
+            changed = true;
         }
     }
 
@@ -229,11 +229,11 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
      ****************************************************/
     @Override
     public void apply() throws ConfigurationException {
-        if (isChanged) {
+        if (changed) {
             filters.clear();
             filters.addAll(filtersTemp);
             filtersTemp.clear();
-            isChanged = false;
+            changed = false;
             if (!filters.contains(activeFilter)) {
                 activeFilter = null;
             }
@@ -245,9 +245,9 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
 
     @Override
     public void reset() {
-        if (isChanged) {
+        if (changed) {
             filtersTemp.clear();
-            isChanged = false;
+            changed = false;
         }
         for (DatasetFilter filter : filters) {
             filter.reset();
@@ -309,7 +309,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
     *                     ListModel                 *
     *************************************************/
    public List<DatasetFilter> getFilters() {
-        return isChanged ? filtersTemp : filters;
+        return changed ? filtersTemp : filters;
    }
 
    @Override

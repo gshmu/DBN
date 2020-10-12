@@ -197,7 +197,7 @@
     /********************************************************
      *                    MouseListener                     *
      ********************************************************/
-    private MouseMotionListener mouseMotionListener = new MouseMotionAdapter() {
+    private final MouseMotionListener mouseMotionListener = new MouseMotionAdapter() {
         @Override
         public void mouseMoved(MouseEvent e) {
             JTextField textField = getTextField();
@@ -224,7 +224,7 @@
         }
     };
 
-    private MouseListener mouseListener = new MouseAdapter() {
+    private final MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseReleased(MouseEvent event) {
             DatasetEditorModelCell cell = getCell();
@@ -249,14 +249,4 @@
             }
         }
     };
-
-     /********************************************************
-      *                    Disposable                        *
-      ********************************************************/
-     @Override
-     public void dispose() {
-         if (!isDisposed()) {
-             super.dispose();
-         }
-     }
  }

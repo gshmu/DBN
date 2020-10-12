@@ -8,9 +8,12 @@ import javax.swing.*;
 public class DBProgramDebuggerSettingsForm extends DBNFormImpl {
     private JPanel mainPanel;
 
+    public DBProgramDebuggerSettingsForm() {
+    }
+
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 }

@@ -1,17 +1,18 @@
 package com.dci.intellij.dbn.connection.config.file.ui;
 
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
 import com.dci.intellij.dbn.common.ui.table.FileBrowserTableCellEditor;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.table.TableColumn;
 
 public class DatabaseFilesTable extends DBNEditableTable<DatabaseFilesTableModel> {
 
-    public DatabaseFilesTable(Project project, DatabaseFiles databaseFiles) {
-        super(project, new DatabaseFilesTableModel(databaseFiles), false);
+    public DatabaseFilesTable(@NotNull DBNComponent parent, DatabaseFiles databaseFiles) {
+        super(parent, new DatabaseFilesTableModel(databaseFiles), false);
         setDefaultRenderer(Object.class, new DatabaseFilesTableCellRenderer());
         getColumnModel().getColumn(0).setCellEditor(new FileBrowserTableCellEditor(new FileChooserDescriptor(true, true, false, false, false, false)));
         setFixedWidth(columnModel.getColumn(1), 100);

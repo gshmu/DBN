@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.KeyAdapter;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.common.ui.listener.PopupCloseListener;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -17,6 +17,8 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.ui.popup.JBPopup;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,15 +29,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements KeyAdapter, TextFieldPopupProvider {
-    protected TextFieldWithPopup editorComponent;
-    private final boolean autoPopup;
-    private final boolean buttonVisible;
-    private boolean enabled = true;
-    private JBPopup popup;
-    private JLabel button;
-    private final Set<AnAction> actions = new HashSet<>();
+    protected TextFieldWithPopup<?> editorComponent;
+    @Getter private final boolean autoPopup;
+    @Getter private final boolean buttonVisible;
+    @Getter @Setter private boolean enabled = true;
+    @Getter @Setter private JLabel button;
+    @Getter private JBPopup popup;
+    @Getter private final Set<AnAction> actions = new HashSet<>();
 
-    TextFieldPopupProviderForm(TextFieldWithPopup editorComponent, boolean autoPopup, boolean buttonVisible) {
+    TextFieldPopupProviderForm(TextFieldWithPopup<?> editorComponent, boolean autoPopup, boolean buttonVisible) {
         super(editorComponent.getProject());
         this.editorComponent = editorComponent;
         this.autoPopup = autoPopup;
@@ -43,23 +45,19 @@ public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements 
         subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
-    private FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerListener() {
+    private final FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerListener() {
         @Override
         public void selectionChanged(@NotNull FileEditorManagerEvent event) {
             hidePopup();
         }
     };
 
-    public TextFieldWithPopup getEditorComponent() {
+    public TextFieldWithPopup<?> getEditorComponent() {
         return editorComponent;
     }
 
     public JTextField getTextField() {
         return editorComponent.getTextField();
-    }
-
-    public JBPopup getPopup() {
-        return popup;
     }
 
     /**
@@ -69,6 +67,7 @@ public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements 
      */
     @Nullable
     public abstract JBPopup createPopup();
+
     @Override
     public final String getKeyShortcutDescription() {
         return KeymapUtil.getShortcutsText(getShortcuts());
@@ -80,37 +79,6 @@ public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements 
     }
 
     protected abstract String getKeyShortcutName();
-
-    @Override
-    public boolean isAutoPopup() {
-        return autoPopup;
-    }
-
-    @Override
-    public boolean isButtonVisible() {
-        return buttonVisible;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    @Override
-    public void setButton(@Nullable JLabel button) {
-        this.button = button;
-    }
-
-    @Nullable
-    @Override
-    public JLabel getButton() {
-        return button;
-    }
 
     void registerAction(AnAction action) {
         actions.add(action);
@@ -130,10 +98,6 @@ public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements 
                 }
             }
         }
-    }
-
-    public Set<AnAction> getActions() {
-        return actions;
     }
 
     public void preparePopup() {}
@@ -156,7 +120,7 @@ public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements 
                     if (!isShowingPopup()) {
                         popup = createPopup();
                         if (popup != null) {
-                            Disposer.register(TextFieldPopupProviderForm.this, popup);
+                            popup.addListener(PopupCloseListener.create(this));
 
                             JPanel panel = (JPanel) popup.getContent();
                             panel.setBorder(Borders.COMPONENT_LINE_BORDER);

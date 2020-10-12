@@ -10,18 +10,18 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-public class CompilerTypeSelectionForm extends DBNFormImpl<CompilerTypeSelectionDialog> {
+public class CompilerTypeSelectionForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JCheckBox rememberSelectionCheckBox;
     private JPanel hintPanel;
 
-    CompilerTypeSelectionForm(final CompilerTypeSelectionDialog parentComponent, @Nullable DBSchemaObject object) {
-        super(parentComponent);
+    CompilerTypeSelectionForm(final CompilerTypeSelectionDialog parent, @Nullable DBSchemaObject object) {
+        super(parent);
         if (object == null) {
             headerPanel.setVisible(false);
         } else {
-            DBNHeaderForm headerForm = new DBNHeaderForm(object, this);
+            DBNHeaderForm headerForm = new DBNHeaderForm(this, object);
             headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         }
         String hintText =
@@ -29,15 +29,15 @@ public class CompilerTypeSelectionForm extends DBNFormImpl<CompilerTypeSelection
                         "For runtime performance reasons, it is recommended to use normal compile option, unless you plan to debug the selected element(s)." +
                         "\n\"Keep current\" will carry over the existing compile type.\n\n" +
                         "Please select your compile option.";
-        DBNHintForm hintForm = new DBNHintForm(hintText, null, true);
+        DBNHintForm hintForm = new DBNHintForm(this, hintText, null, true);
         hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 
-        parentComponent.registerRememberSelectionCheckBox(rememberSelectionCheckBox);
+        parent.registerRememberSelectionCheckBox(rememberSelectionCheckBox);
     }
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

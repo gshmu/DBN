@@ -82,7 +82,6 @@ public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
              formattedUserValue = CommonUtil.nvl(cell.getFormattedUserValue(), "");
          }
 
-         if (cell.isDisposed()) return;
          DataModel model = cell.getModel();
          if (model.hasSearchResult()) {
              DataSearchResult searchResult = model.getSearchResult();
