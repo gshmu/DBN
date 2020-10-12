@@ -15,7 +15,7 @@ public class CursorResultExportAction extends MethodExecutionCursorResultAction 
 
     @Override
     protected void actionPerformed(@NotNull AnActionEvent e, @NotNull Project project) {
-        ResultSetTable resultSetTable = getResultSetTable(e);
+        ResultSetTable<?> resultSetTable = getResultSetTable(e);
         DBArgument methodArgument = getMethodArgument(e);
         if (resultSetTable != null && methodArgument != null) {
             ExportDataDialog dialog = new ExportDataDialog(resultSetTable, methodArgument);

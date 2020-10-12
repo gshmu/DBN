@@ -27,7 +27,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDialog>{
+public class ScriptExecutionInputForm extends DBNFormImpl{
     private JPanel headerPanel;
     private JPanel mainPanel;
     private DBNComboBox<ConnectionHandler> connectionComboBox;
@@ -37,11 +37,11 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
     private JPanel hintPanel;
     private JPanel executionTimeoutPanel;
 
-    private DBNHeaderForm headerForm;
-    private ExecutionTimeoutForm executionTimeoutForm;
+    private final DBNHeaderForm headerForm;
+    private final ExecutionTimeoutForm executionTimeoutForm;
 
-    ScriptExecutionInputForm(@NotNull ScriptExecutionInputDialog parentComponent, @NotNull ScriptExecutionInput executionInput) {
-        super(parentComponent);
+    ScriptExecutionInputForm(@NotNull ScriptExecutionInputDialog parent, @NotNull ScriptExecutionInput executionInput) {
+        super(parent);
 
         VirtualFile sourceFile = executionInput.getSourceFile();
         String headerTitle = sourceFile.isInLocalFileSystem() ? sourceFile.getPath() : sourceFile.getName();
@@ -51,14 +51,14 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
             headerIcon = databaseVirtualFile.getIcon();
         }
 
-        headerForm = new DBNHeaderForm(headerTitle, headerIcon, this);
+        headerForm = new DBNHeaderForm(this, headerTitle, headerIcon);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         String hintText =
                 "Script execution uses the Command-Line Interface executable supplied with your database client. " +
                 "Make sure it is available in the \"PATH\" environment variable or provide the path to the executable.";
 
-        DBNHintForm hintForm = new DBNHintForm(hintText, null, true);
+        DBNHintForm hintForm = new DBNHintForm(this, hintText, null, true);
         hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 
         final Project project = getProject();
@@ -82,7 +82,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
         });
 
         clearOutputCheckBox.setSelected(executionInput.isClearOutput());
-        executionTimeoutForm = new ExecutionTimeoutForm(executionInput, DBDebuggerType.NONE) {
+        executionTimeoutForm = new ExecutionTimeoutForm(this, executionInput, DBDebuggerType.NONE) {
             @Override
             protected void handleChange(boolean hasError) {
                 updateButtons();
@@ -164,7 +164,7 @@ public class ScriptExecutionInputForm extends DBNFormImpl<ScriptExecutionInputDi
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 }

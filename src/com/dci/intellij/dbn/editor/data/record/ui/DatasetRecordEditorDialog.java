@@ -20,7 +20,7 @@ public class DatasetRecordEditorDialog extends DBNDialog<DatasetRecordEditorForm
 
     @NotNull
     @Override
-    protected DatasetRecordEditorForm createComponent() {
+    protected DatasetRecordEditorForm createForm() {
         return new DatasetRecordEditorForm(this, row);
     }
 

@@ -23,7 +23,7 @@ public class CodeCompletionSettingsForm extends CompositeConfigurationEditorForm
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 }

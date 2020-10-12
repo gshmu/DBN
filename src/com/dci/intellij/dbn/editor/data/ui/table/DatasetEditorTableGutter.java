@@ -15,7 +15,7 @@ public class DatasetEditorTableGutter extends BasicTableGutter<DatasetEditorTabl
     }
 
     @Override
-    protected ListCellRenderer createCellRenderer() {
+    protected ListCellRenderer<?> createCellRenderer() {
         return new DatasetEditorTableGutterRenderer();
     }
 

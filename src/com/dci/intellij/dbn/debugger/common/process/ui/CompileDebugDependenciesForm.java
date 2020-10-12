@@ -22,24 +22,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CompileDebugDependenciesForm extends DBNFormImpl<CompileDebugDependenciesDialog> {
-    private JList objectList;
+public class CompileDebugDependenciesForm extends DBNFormImpl {
+    private JList<DBSchemaObject> objectList;
     private JPanel mainPanel;
     private JCheckBox rememberSelectionCheckBox;
     private JPanel headerPanel;
     private JPanel hintPanel;
 
-    public CompileDebugDependenciesForm(CompileDebugDependenciesDialog parentComponent, DBRunConfig runConfiguration, List<DBSchemaObject> compileList) {
-        super(parentComponent);
+    public CompileDebugDependenciesForm(CompileDebugDependenciesDialog parent, DBRunConfig<?> runConfiguration, List<DBSchemaObject> compileList) {
+        super(parent);
         String hintText = "The program you are trying to debug or some of its dependencies are not compiled with debug information." +
                 "This may result in breakpoints being ignored during the debug execution, as well as missing information about execution stacks and variables.\n" +
                 "In order to achieve full debugging support you are advised to compile the respective programs in debug mode.";
 
-        DBNHintForm hintForm = new DBNHintForm(hintText, null, true);
+        DBNHintForm hintForm = new DBNHintForm(this, hintText, null, true);
         hintPanel.add(hintForm.getComponent());
 
         objectList.setCellRenderer(new ObjectListCellRenderer());
-        DefaultListModel model = new DefaultListModel();
+        DefaultListModel<DBSchemaObject> model = new DefaultListModel<>();
 
         Collections.sort(compileList);
         for (DBSchemaObject schemaObject : compileList) {
@@ -49,9 +49,9 @@ public class CompileDebugDependenciesForm extends DBNFormImpl<CompileDebugDepend
 
         List<DBMethod> methods = runConfiguration.getMethods();
 
-        List<DBSchemaObject> selectedObjects = new ArrayList<DBSchemaObject>();
+        List<DBSchemaObject> selectedObjects = new ArrayList<>();
         for (DBMethod method : methods) {
-            DBProgram program = method.getProgram();
+            DBProgram<?, ?> program = method.getProgram();
             DBSchemaObject selectedObject = program == null ? method : program;
             if (!selectedObjects.contains(selectedObject)) {
                 selectedObjects.add(selectedObject);
@@ -67,14 +67,14 @@ public class CompileDebugDependenciesForm extends DBNFormImpl<CompileDebugDepend
 
         Presentable source = runConfiguration.getSource();
         DBNHeaderForm headerForm = source instanceof DBObject ?
-                new DBNHeaderForm((DBObject) source, this) :
-                new DBNHeaderForm(CommonUtil.nvl(source, Presentable.UNKNOWN), this);
+                new DBNHeaderForm(this, (DBObject) source) :
+                new DBNHeaderForm(this, CommonUtil.nvl(source, Presentable.UNKNOWN));
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
-        parentComponent.registerRememberSelectionCheckBox(rememberSelectionCheckBox);
+        parent.registerRememberSelectionCheckBox(rememberSelectionCheckBox);
     }
 
     private int[] computeSelection(List<DBSchemaObject> compileList, List<DBSchemaObject> selectedObjects) {
-        List<Integer> selectedIndices = new ArrayList<Integer>();
+        List<Integer> selectedIndices = new ArrayList<>();
         for (DBSchemaObject selectedObject : selectedObjects) {
             int index = compileList.indexOf(selectedObject);
             if (index > -1) {
@@ -93,11 +93,11 @@ public class CompileDebugDependenciesForm extends DBNFormImpl<CompileDebugDepend
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
-    public List<DBObjectRef> getSelection() {
+    public List<DBObjectRef<?>> getSelection() {
         List<DBSchemaObject> selectedValuesList = objectList.getSelectedValuesList();
         return CollectionUtil.map(selectedValuesList, o -> o.getRef());
     }

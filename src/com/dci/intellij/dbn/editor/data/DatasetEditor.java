@@ -6,8 +6,7 @@ import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.dispose.DisposableUserDataHolderBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
-import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
 import com.dci.intellij.dbn.common.thread.Background;
@@ -61,7 +60,6 @@ import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,13 +79,12 @@ import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.USE_CURREN
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
 
-@Nullifiable
 public class DatasetEditor extends DisposableUserDataHolderBase implements
         FileEditor,
         FileConnectionMappingProvider,
         ConnectionProvider,
         DataProvider,
-        RegisteredDisposable,
+        StatefulDisposable,
         ProjectEventAdapter {
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -95,12 +92,12 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
     private static final DatasetLoadInstructions COL_VISIBILITY_STATUS_CHANGE_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(USE_CURRENT_FILTER, PRESERVE_CHANGES, DELIBERATE_ACTION, REBUILD);
     private static final DatasetLoadInstructions CON_STATUS_CHANGE_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(USE_CURRENT_FILTER);
 
-    private final ProjectRef projectRef;
-    private final DBObjectRef<DBDataset> datasetRef;
+    private final ProjectRef project;
+    private final DBObjectRef<DBDataset> dataset;
     private final DBEditableObjectVirtualFile databaseFile;
     private final DatasetEditorForm editorForm;
     private final DatasetEditorStatusHolder status;
-    private final ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connectionHandler;
     private final DataEditorSettings settings;
     private StructureViewModel structureViewModel;
     private String dataLoadError;
@@ -109,12 +106,12 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
 
     public DatasetEditor(DBEditableObjectVirtualFile databaseFile, DBDataset dataset) {
         Project project = dataset.getProject();
-        this.projectRef = ProjectRef.from(project);
+        this.project = ProjectRef.of(project);
         this.databaseFile = databaseFile;
-        this.datasetRef = DBObjectRef.from(dataset);
+        this.dataset = DBObjectRef.of(dataset);
         this.settings = DataEditorSettings.getInstance(project);
 
-        connectionHandlerRef = ConnectionHandlerRef.from(dataset.getConnectionHandler());
+        connectionHandler = ConnectionHandlerRef.from(dataset.getConnectionHandler());
         status = new DatasetEditorStatusHolder();
         status.set(CONNECTED, true);
         editorForm = new DatasetEditorForm(this);
@@ -124,8 +121,6 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
             load(true, true, false);
         }
 */
-        Disposer.register(this, editorForm);
-
         subscribe(project, this, TransactionListener.TOPIC, transactionListener);
         subscribe(project, this, ConnectionStatusListener.TOPIC, connectionStatusListener);
         subscribe(project, this, DataGridSettingsChangeListener.TOPIC, dataGridSettingsChangeListener);
@@ -133,7 +128,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
 
     @NotNull
     public DBDataset getDataset() {
-        return Failsafe.nn(datasetRef.get(getProject()));
+        return Failsafe.nn(dataset.get(getProject()));
     }
 
     public DataEditorSettings getSettings() {
@@ -173,7 +168,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
 
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return project.ensure();
     }
 
     @Override
@@ -541,7 +536,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     @Nullable

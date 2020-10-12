@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.navigation;
 
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -32,19 +32,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByNameModel {
-    private ProjectRef project;
-    private ConnectionHandlerRef selectedConnectionRef;
-    private DBObjectRef<DBSchema> selectedSchema;
-    private ObjectsLookupSettings objectsLookupSettings;
+public class GoToDatabaseObjectModel extends StatefulDisposable.Base implements ChooseByNameModel {
+    private final ProjectRef project;
+    private final ConnectionHandlerRef selectedConnection;
+    private final DBObjectRef<DBSchema> selectedSchema;
+    private final ObjectsLookupSettings objectsLookupSettings;
     private static final Object[] EMPTY_ARRAY = new Object[0];
     private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 
     public GoToDatabaseObjectModel(@NotNull Project project, @Nullable ConnectionHandler selectedConnection, DBSchema selectedSchema) {
-        this.project = ProjectRef.from(project);
-        this.selectedConnectionRef = ConnectionHandlerRef.from(selectedConnection);
-        this.selectedSchema = DBObjectRef.from(selectedSchema);
+        this.project = ProjectRef.of(project);
+        this.selectedConnection = ConnectionHandlerRef.from(selectedConnection);
+        this.selectedSchema = DBObjectRef.of(selectedSchema);
         objectsLookupSettings = ProjectSettingsManager.getSettings(project).getNavigationSettings().getObjectsLookupSettings();
     }
 
@@ -58,7 +58,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
     }
 
     private ConnectionHandler getSelectedConnection() {
-        return selectedConnectionRef.get();
+        return selectedConnection.get();
     }
 
     @NotNull
@@ -183,8 +183,8 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
         }
     }
 
-    private class ObjectNamesCollector extends DisposableBase implements DBObjectListVisitor {
-        private boolean forceLoad;
+    private class ObjectNamesCollector extends Base implements DBObjectListVisitor {
+        private final boolean forceLoad;
         private DBObject parentObject;
         private Set<String> bucket;
 
@@ -235,7 +235,10 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
             return bucket;
         }
 
-
+        @Override
+        protected void disposeInner() {
+            nullify();
+        }
     }
 
     private boolean isLookupEnabled(DBObjectType objectType) {
@@ -251,7 +254,7 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
     }
 
 
-    private class ObjectCollector extends DisposableBase implements DBObjectListVisitor {
+    private class ObjectCollector extends Base implements DBObjectListVisitor {
         private String objectName;
         private boolean forceLoad;
         private DBObject parentObject;
@@ -303,6 +306,11 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
         public List<DBObject> getBucket() {
             return bucket;
         }
+
+        @Override
+        protected void disposeInner() {
+            nullify();
+        }
     }
 
 
@@ -346,5 +354,10 @@ public class GoToDatabaseObjectModel extends DisposableBase implements ChooseByN
                 }
             } else append(value.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
+    }
+
+    @Override
+    protected void disposeInner() {
+        nullify();
     }
 }

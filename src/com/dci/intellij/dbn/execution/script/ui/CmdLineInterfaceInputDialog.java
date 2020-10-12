@@ -24,7 +24,7 @@ public class CmdLineInterfaceInputDialog extends DBNDialog<CmdLineInterfaceInput
 
     @NotNull
     @Override
-    protected CmdLineInterfaceInputForm createComponent() {
+    protected CmdLineInterfaceInputForm createForm() {
         return new CmdLineInterfaceInputForm(this, cmdLineInterface, usedNames);
     }
 

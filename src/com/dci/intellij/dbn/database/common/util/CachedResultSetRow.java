@@ -14,7 +14,7 @@ import java.util.Map;
 import static com.dci.intellij.dbn.database.common.util.CachedResultSet.Columns;
 
 public class CachedResultSetRow {
-    private Map<String, Object> values = new HashMap<>();
+    private final Map<String, Object> values = new HashMap<>();
 
     private CachedResultSetRow(@Nullable ResultSet source, List<String> columnNames) throws SQLException {
         if (source != null) {

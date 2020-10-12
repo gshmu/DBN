@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.content.loader.VoidDynamicContentLoader;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.property.Property;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -13,11 +13,11 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class VoidDynamicContent extends DisposableBase implements DynamicContent{
-    private List elements = new ArrayList();
+public class VoidDynamicContent extends StatefulDisposable.Base implements DynamicContent{
+    private final List<?> elements = Collections.emptyList();
 
     public static final VoidDynamicContent INSTANCE = new VoidDynamicContent();
 
@@ -197,6 +197,11 @@ public class VoidDynamicContent extends DisposableBase implements DynamicContent
 
     @Override
     public void compact() {
+
+    }
+
+    @Override
+    protected void disposeInner() {
 
     }
 }

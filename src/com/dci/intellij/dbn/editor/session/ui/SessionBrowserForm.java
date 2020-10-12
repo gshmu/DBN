@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.session.ui;
 
 import com.dci.intellij.dbn.common.Colors;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -18,6 +17,7 @@ import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.ui.GuiUtils;
@@ -45,24 +45,25 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     private JPanel editorPanel;
     private SessionBrowserTable editorTable;
 
-    private final Latent<DataSearchComponent> dataSearchComponent = Latent.disposable(this, () -> {
+    private final Latent<DataSearchComponent> dataSearchComponent = Latent.basic(() -> {
         DataSearchComponent dataSearchComponent = new DataSearchComponent(SessionBrowserForm.this);
         searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
         DataManager.registerDataProvider(dataSearchComponent.getSearchField(), this);
         return dataSearchComponent;
     });
 
-    private final SessionBrowser sessionBrowser;
+    private final WeakRef<SessionBrowser> sessionBrowser;
     private SessionBrowserDetailsForm detailsForm;
 
     public SessionBrowserForm(SessionBrowser sessionBrowser) {
-        this.sessionBrowser = sessionBrowser;
+        super(sessionBrowser.getProject());
+        this.sessionBrowser = WeakRef.of(sessionBrowser);
         try {
-            editorTable = new SessionBrowserTable(sessionBrowser);
+            editorTable = new SessionBrowserTable(this, sessionBrowser);
             editorTableScrollPane.setViewportView(editorTable);
             editorTableScrollPane.getViewport().setBackground(editorTable.getBackground());
             editorTable.initTableGutter();
-            detailsForm = new SessionBrowserDetailsForm(sessionBrowser);
+            detailsForm = new SessionBrowserDetailsForm(this, sessionBrowser);
             detailsPanel.add(detailsForm.getComponent(), BorderLayout.CENTER);
 
             loadTimestampLabel.setForeground(Colors.HINT_COLOR);
@@ -84,9 +85,6 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
             hideLoadingHint();
 
             DataManager.registerDataProvider(actionsPanel, this);
-
-            Disposer.register(this, editorTable);
-            Disposer.register(this, detailsForm);
         } catch (SQLException e) {
             MessageUtil.showErrorDialog(
                     sessionBrowser.getProject(),
@@ -97,7 +95,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -148,7 +146,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
 
     @NotNull
     public SessionBrowser getSessionBrowser() {
-        return Failsafe.nn(sessionBrowser);
+        return sessionBrowser.ensure();
     }
 
     @NotNull
@@ -226,8 +224,9 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     }
 
     @Override
-    public void disposeInner() {
+    protected void disposeInner() {
         DataManager.removeDataProvider(actionsPanel);
         super.disposeInner();
+        editorTable = null;
     }
 }

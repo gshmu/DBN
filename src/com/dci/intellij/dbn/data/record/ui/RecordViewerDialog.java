@@ -24,7 +24,7 @@ public class RecordViewerDialog extends DBNDialog<RecordViewerForm> {
 
     @NotNull
     @Override
-    protected RecordViewerForm createComponent() {
+    protected RecordViewerForm createForm() {
         return new RecordViewerForm(this, record);
     }
 

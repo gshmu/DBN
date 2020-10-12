@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.ddl.ui;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNHintForm;
+import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,12 +19,12 @@ public class SelectDDLFileForm extends DBNFormImpl {
     private JCheckBox doNotPromptCheckBox;
     private JPanel hintPanel;
 
-    SelectDDLFileForm(DBSchemaObject object, List<VirtualFile> virtualFiles, String hint, boolean isFileOpenEvent) {
-        Project project = object.getProject();
-        DBNHeaderForm headerForm = new DBNHeaderForm(object, this);
+    SelectDDLFileForm(DBNDialog<?> parent, DBSchemaObject object, List<VirtualFile> virtualFiles, String hint, boolean isFileOpenEvent) {
+        super(parent);
+        DBNHeaderForm headerForm = new DBNHeaderForm(this, object);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        DBNHintForm hintForm = new DBNHintForm(hint, null, true);
+        DBNHintForm hintForm = new DBNHintForm(this, hint, null, true);
         hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 
         DefaultListModel<VirtualFile> listModel = new DefaultListModel<VirtualFile>();
@@ -32,7 +32,7 @@ public class SelectDDLFileForm extends DBNFormImpl {
             listModel.addElement(virtualFile);
         }
         filesList.setModel(listModel);
-        filesList.setCellRenderer(new FileListCellRenderer(project));
+        filesList.setCellRenderer(new FileListCellRenderer(getProject()));
         filesList.setSelectedIndex(0);
 
         if (!isFileOpenEvent) mainPanel.remove(doNotPromptCheckBox);
@@ -56,7 +56,7 @@ public class SelectDDLFileForm extends DBNFormImpl {
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 }

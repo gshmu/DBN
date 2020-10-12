@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.code;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
@@ -108,11 +108,10 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
         DataManager.registerDataProvider(actionsPanel.getComponent(), sourceCodeEditor);
         //FileEditorManager.getInstance(editor.getProject()).addTopComponent(fileEditor, actionToolbar.getComponent());
         editorComponent.getParent().add(actionsPanel.getComponent(), BorderLayout.NORTH);
-        Disposer.register(sourceCodeEditor, actionsPanel);
     }
 
     @Override
     public void disposeEditor(@NotNull FileEditor editor) {
-        Disposer.dispose(editor);
+        DisposeUtil.dispose(editor);
     }
 }

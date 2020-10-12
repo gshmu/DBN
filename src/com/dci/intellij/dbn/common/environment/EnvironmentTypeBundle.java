@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class EnvironmentTypeBundle implements Iterable<EnvironmentType>, Cloneable {
-    private List<EnvironmentType> environmentTypes = new ArrayList<>();
+    private final List<EnvironmentType> environmentTypes = new ArrayList<>();
     public static EnvironmentTypeBundle DEFAULT = new EnvironmentTypeBundle();
 
     private EnvironmentTypeBundle() {

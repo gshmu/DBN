@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeEventAdapter;
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.DBNForm;
@@ -17,21 +17,22 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
+public class ObjectPropertiesForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JLabel objectLabel;
     private JLabel objectTypeLabel;
     private JTable objectPropertiesTable;
     private JScrollPane objectPropertiesScrollPane;
     private JPanel closeActionPanel;
-    private DBObjectRef objectRef;
+    private DBObjectRef<?> object;
 
-    public ObjectPropertiesForm(DBNForm parentForm) {
-        super(parentForm);
+    public ObjectPropertiesForm(DBNForm parent) {
+        super(parent);
         //ActionToolbar objectPropertiesActionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.Browser.ObjectProperties");
         //closeActionPanel.add(objectPropertiesActionToolbar.getComponent(), BorderLayout.CENTER);
         objectPropertiesTable.setRowSelectionAllowed(false);
@@ -45,7 +46,7 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -67,13 +68,13 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
     };
 
     public DBObject getObject() {
-        return DBObjectRef.get(objectRef);
+        return DBObjectRef.get(object);
     }
 
     public void setObject(@NotNull DBObject object) {
         DBObject localObject = getObject();
         if (!object.equals(localObject)) {
-            objectRef = DBObjectRef.from(object);
+            this.object = DBObjectRef.of(object);
 
             Project project = object.getProject();
             Progress.background(project, "Rendering object properties", false,
@@ -89,17 +90,17 @@ public class ObjectPropertiesForm extends DBNFormImpl<DBNForm> {
 
                             ObjectPropertiesTableModel oldTableModel = (ObjectPropertiesTableModel) objectPropertiesTable.getModel();
                             objectPropertiesTable.setModel(tableModel);
-                            ((DBNTable) objectPropertiesTable).accommodateColumnsSize();
+                            ((DBNTable<?>) objectPropertiesTable).accommodateColumnsSize();
 
                             GUIUtil.repaint(mainPanel);
-                            Disposer.dispose(oldTableModel);
+                            DisposeUtil.dispose(oldTableModel);
                         });
                     });
         }
     }
 
     private void createUIComponents() {
-        objectPropertiesTable = new ObjectPropertiesTable(null, new ObjectPropertiesTableModel());
+        objectPropertiesTable = new ObjectPropertiesTable(this, new ObjectPropertiesTableModel());
         objectPropertiesTable.getTableHeader().setReorderingAllowed(false);
         Disposer.register(this, (Disposable) objectPropertiesTable);
     }

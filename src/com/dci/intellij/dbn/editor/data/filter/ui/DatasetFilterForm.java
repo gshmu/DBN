@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.data.filter.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -24,12 +25,11 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGroup> implements ListSelectionListener {
-    private Map<String, ConfigurationEditorForm> filterDetailPanels = new HashMap<String, ConfigurationEditorForm>();
+    private final Map<String, ConfigurationEditorForm> filterDetailPanels = DisposableContainer.map(this);
     private static final String BLANK_PANEL_ID = "BLANK_PANEL";
 
     private JPanel mainPanel;
@@ -44,7 +44,7 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
         filtersList.setFont(UIUtil.getLabelFont());
         Project project = dataset.getProject();
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(dataset, this);
+        DBNHeaderForm headerForm = new DBNHeaderForm(this, dataset);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         DatasetFilterList filters = getFilterList();
@@ -77,7 +77,7 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -93,12 +93,6 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
 
     private void createUIComponents() {
         filtersList = new DatasetFilterList();
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(filterDetailPanels);
-        super.disposeInner();
     }
 
     @Override
@@ -127,6 +121,7 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
 
                     configurationEditorForm = filter.ensureSettingsEditor();
                     filterDetailPanels.put(id, configurationEditorForm);
+
                     Disposer.register(this, configurationEditorForm);
                 }
                 cardLayout.show(filterDetailsPanel, id);

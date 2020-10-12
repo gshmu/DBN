@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.compiler;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
@@ -156,7 +156,7 @@ public class CompilerMessage extends ConsoleMessage implements Comparable<Compil
 
     @Override
     public void disposeInner() {
-        Disposer.dispose(compilerResult);
+        DisposeUtil.dispose(compilerResult);
         super.disposeInner();
     }
 }

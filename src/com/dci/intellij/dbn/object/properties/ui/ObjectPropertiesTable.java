@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.object.properties.ui;
 
 import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.MouseUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
-import com.intellij.openapi.project.Project;
 import com.intellij.pom.Navigatable;
 
 import javax.swing.*;
@@ -20,8 +20,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class ObjectPropertiesTable extends DBNTable {
-    ObjectPropertiesTable(Project project, DBNTableModel tableModel) {
-        super(project, tableModel, false);
+    ObjectPropertiesTable(DBNForm parent, DBNTableModel tableModel) {
+        super(parent, tableModel, false);
         setDefaultRenderer(String.class, cellRenderer);
         setDefaultRenderer(PresentableProperty.class, cellRenderer);
         adjustRowHeight(3);

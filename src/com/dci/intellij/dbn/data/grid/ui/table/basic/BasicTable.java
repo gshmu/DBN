@@ -4,6 +4,9 @@ import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
+import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
+import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTableWithGutter;
 import com.dci.intellij.dbn.common.ui.table.TableSelectionRestorer;
@@ -25,8 +28,6 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupAdapter;
-import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.ui.components.JBViewport;
 import com.intellij.util.Alarm;
 import com.intellij.util.ui.UIUtil;
@@ -39,13 +40,12 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> implements EditorColorsListener, Disposable {
+public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutter<T> implements EditorColorsListener, Disposable {
     private final BasicTableCellRenderer cellRenderer;
     private final RegionalSettings regionalSettings;
     private final DataGridSettings dataGridSettings;
@@ -54,8 +54,10 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     private MathResult selectionMath;
     private boolean loading;
 
-    public BasicTable(Project project, T dataModel) {
-        super(project, dataModel, true);
+    public BasicTable(@NotNull DBNComponent parent, T dataModel) {
+        super(parent, dataModel, true);
+
+        Project project = getProject();
         regionalSettings = RegionalSettings.getInstance(project);
         dataGridSettings = DataGridSettings.getInstance(project);
         cellRenderer = createCellRenderer();
@@ -64,19 +66,10 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         EditorColorsManager.getInstance().addEditorColorsListener(this, this);
         Color bgColor = displayAttributes.getPlainData(false, false).getBgColor();
         setBackground(bgColor == null ? UIUtil.getTableBackground() : bgColor);
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1 && valuePopup == null) {
-                    showCellValuePopup();
-                }
-            }
-
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                super.mouseMoved(e);
-            }
-        });
+        addMouseListener(MouseClickedListener.create(e -> {
+            if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1 && valuePopup == null) {
+                showCellValuePopup();
+            }}));
 
         addPropertyChangeListener(e -> {
             Object newProperty = e.getNewValue();
@@ -109,7 +102,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
                     for (int selectedRow : selectedRows) {
                         Object value = getValueAt(selectedRow, selectedColumn);
                         if (value instanceof BasicDataModelCell) {
-                            BasicDataModelCell cell = (BasicDataModelCell) value;
+                            BasicDataModelCell<?, ?> cell = (BasicDataModelCell<?, ?>) value;
                             Object userValue = cell.getUserValue();
                             if (userValue == null || userValue instanceof Number) {
                                 if (userValue != null) {
@@ -153,7 +146,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     }
 
     boolean isCellSelected(Point point) {
-        DataModelCell cell = getCellAtLocation(point);
+        DataModelCell<?, ?> cell = getCellAtLocation(point);
         if (cell != null) {
             int rowIndex = cell.getRow().getIndex();
             int columnIndex = cell.getColumnInfo().getColumnIndex();
@@ -199,8 +192,8 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     }
 
     @Override
-    protected BasicTableGutter createTableGutter() {
-        return new BasicTableGutter(this);
+    protected BasicTableGutter<?> createTableGutter() {
+        return new BasicTableGutter<>(this);
     }
 
     public RegionalSettings getRegionalSettings() {
@@ -267,6 +260,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
             accommodateColumnsSize();
         }
 
+        DBNTableGutter<?> tableGutter = getTableGutter();
         if (tableGutter != null) {
             tableGutter.setFixedCellHeight(rowHeight);
             tableGutter.setFixedCellWidth(getModel().getRowCount() == 0 ? 10 : -1);
@@ -274,14 +268,14 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     }
 
     @Nullable
-    public DataModelCell getCellAtLocation(Point point) {
+    public DataModelCell<?, ?> getCellAtLocation(Point point) {
         int columnIndex = columnAtPoint(point);
         int rowIndex = rowAtPoint(point);
         return columnIndex > -1 && rowIndex > -1 ? getCellAtPosition(rowIndex, columnIndex) : null;
     }
 
     @Nullable
-    protected DataModelCell getCellAtMouseLocation() {
+    protected DataModelCell<?, ?> getCellAtMouseLocation() {
         Point location = MouseInfo.getPointerInfo().getLocation();
         location.setLocation(location.getX() - getLocationOnScreen().getX(), location.getY() - getLocationOnScreen().getY());
         return getCellAtLocation(location);
@@ -292,8 +286,8 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     }
 
     @Nullable
-    protected DataModelCell getCellAtPosition(int rowIndex, int columnIndex) {
-        DataModelRow row = getModel().getRowAtIndex(rowIndex);
+    protected DataModelCell<?, ?> getCellAtPosition(int rowIndex, int columnIndex) {
+        DataModelRow<?, ?> row = getModel().getRowAtIndex(rowIndex);
         if (row != null) {
             int modelColumnIndex = getModelColumnIndex(columnIndex);
             return row.getCellAtIndex(modelColumnIndex);
@@ -351,25 +345,15 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
                 int columnIndex = getSelectedColumn();
                 if (!canDisplayCompleteValue(rowIndex, columnIndex)) {
                     Rectangle cellRect = getCellRect(rowIndex, columnIndex, true);
-                    DataModelCell cell = (DataModelCell) getValueAt(rowIndex, columnIndex);
+                    DataModelCell<?, ?> cell = (DataModelCell<?, ?>) getValueAt(rowIndex, columnIndex);
                     TableColumn column = getColumnModel().getColumn(columnIndex);
 
                     int preferredWidth = column.getWidth();
-                    LargeValuePreviewPopup viewer = new LargeValuePreviewPopup(this, cell, preferredWidth);
+                    LargeValuePreviewPopup viewer = new LargeValuePreviewPopup(getProject(), this, cell, preferredWidth);
                     initLargeValuePopup(viewer);
                     Point location = cellRect.getLocation();
                     location.setLocation(location.getX() + 4, location.getY() + 20);
-
                     valuePopup = viewer.show(this, location);
-                    valuePopup.addListener(
-                        new JBPopupAdapter() {
-                            @Override
-                            public void onClosed(@NotNull LightweightWindowEvent event) {
-                                valuePopup.cancel();
-                                valuePopup = null;
-                            }
-                        }
-                    );
                 }
             }
         }
@@ -388,7 +372,7 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
     }
 
     private boolean canDisplayCompleteValue(int rowIndex, int columnIndex) {
-        DataModelCell cell = (DataModelCell) getValueAt(rowIndex, columnIndex);
+        DataModelCell<?, ?> cell = (DataModelCell<?, ?>) getValueAt(rowIndex, columnIndex);
         if (cell != null) {
             Object value = cell.getUserValue();
             if (value instanceof LargeObjectValue) {
@@ -404,13 +388,13 @@ public class BasicTable<T extends BasicDataModel> extends DBNTableWithGutter<T> 
         return true;
     }
 
-    public Rectangle getCellRect(DataModelCell cell) {
+    public Rectangle getCellRect(DataModelCell<?, ?> cell) {
         int rowIndex = convertRowIndexToView(cell.getRow().getIndex());
         int columnIndex = convertColumnIndexToView(cell.getIndex());
         return getCellRect(rowIndex, columnIndex, true);
     }
 
-    public void scrollCellToVisible(DataModelCell cell) {
+    public void scrollCellToVisible(DataModelCell<?, ?> cell) {
         Rectangle cellRectangle = getCellRect(cell);
         scrollRectToVisible(cellRectangle);
     }

@@ -2,8 +2,7 @@ package com.dci.intellij.dbn.database.common.util;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.data.Data;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.ResultSetUtil;
@@ -20,8 +19,7 @@ import java.util.stream.Collectors;
 
 import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 
-@Nullifiable
-public class CachedResultSet extends DisposableBase implements ResultSetStub {
+public class CachedResultSet extends StatefulDisposable.Base implements ResultSetStub {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private List<CachedResultSetRow> rows = new ArrayList<>();
@@ -41,7 +39,7 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
         }
     };
 
-    private MapLatent<Condition, CachedResultSet, RuntimeException> filtered = MapLatent.create(condition -> {
+    private final MapLatent<Condition, CachedResultSet, RuntimeException> filtered = MapLatent.create(condition -> {
         if (rows.isEmpty()) {
             return this;
         } else {
@@ -60,7 +58,7 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
         }
     });
 
-    private MapLatent<Columns, CachedResultSet, RuntimeException> grouped = MapLatent.create(columns -> {
+    private final MapLatent<Columns, CachedResultSet, RuntimeException> grouped = MapLatent.create(columns -> {
         if (rows.isEmpty()) {
             return this;
         } else {
@@ -398,4 +396,10 @@ public class CachedResultSet extends DisposableBase implements ResultSetStub {
     }
 
     // TODO add more accessors overrides if needed
+
+
+    @Override
+    protected void disposeInner() {
+        nullify();
+    }
 }

@@ -35,18 +35,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 
-public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecutionResultForm> {
+public class MethodExecutionLargeValueResultForm extends DBNFormImpl {
     private JPanel actionsPanel;
     private JPanel mainPanel;
     private JPanel largeValuePanel;
-    private DBObjectRef<DBArgument> argumentRef;
 
+    private final DBObjectRef<DBArgument> argumentRef;
     private EditorEx editor;
     private TextContentType contentType;
 
     MethodExecutionLargeValueResultForm(MethodExecutionResultForm parent, MethodExecutionResult executionResult, DBArgument argument) {
         super(parent);
-        argumentRef = DBObjectRef.from(argument);
+        argumentRef = DBObjectRef.of(argument);
 
         ArgumentValue argumentValue = executionResult.getArgumentValue(argumentRef);
         LargeObjectValue value = (LargeObjectValue) argumentValue.getValue();
@@ -99,7 +99,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecu
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -136,7 +136,7 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecu
     }
 
     public class ContentTypeSelectAction extends DumbAwareProjectAction {
-        private TextContentType contentType;
+        private final TextContentType contentType;
 
         ContentTypeSelectAction(TextContentType contentType) {
             super(contentType.getName(), null, contentType.getIcon());
@@ -157,8 +157,8 @@ public class MethodExecutionLargeValueResultForm extends DBNFormImpl<MethodExecu
     }
 
     @Override
-    public void disposeInner() {
+    protected void disposeInner() {
         EditorUtil.releaseEditor(editor);
-        super.disposeInner();
+        editor = null;
     }
 }

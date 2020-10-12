@@ -3,9 +3,10 @@ package com.dci.intellij.dbn.data.preview;
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.Lookup;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.listener.PopupCloseListener;
 import com.dci.intellij.dbn.common.ui.table.TableUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -14,6 +15,7 @@ import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -22,10 +24,8 @@ import com.intellij.openapi.actionSystem.ToggleAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.JBPopupListener;
-import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,31 +46,32 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
     private JPanel infoPanel;
     private JPanel leftActionsPanel;
 
-    private JTable table;
-    private JBPopup popup;
-    private UserValueHolder userValueHolder;
+    private transient JBPopup popup;
+    private final WeakRef<JTable> table;
+    private final UserValueHolder<?> userValueHolder;
 
     private boolean loadContentVisible;
     private String loadContentCaption;
     private String contentInfoText;
 
-    private boolean isLargeTextLayout;
-    private boolean isPinned;
+    private final boolean largeTextLayout;
+    private boolean pinned;
 
-    public LargeValuePreviewPopup(JTable table, UserValueHolder userValueHolder, int preferredWidth) {
-        this.table = table;
+    public LargeValuePreviewPopup(Project project, JTable table, UserValueHolder<?> userValueHolder, int preferredWidth) {
+        super(project);
+        this.table = WeakRef.of(table);
         this.userValueHolder = userValueHolder;
 
         loadContent(true);
         String value = valueTextArea.getText();
         int maxRowLength = StringUtil.textMaxRowLength(value);
         preferredWidth = Math.max(preferredWidth, Math.min(maxRowLength * 8, 600));
-        isLargeTextLayout = preferredWidth > 500;
+        largeTextLayout = preferredWidth > 500;
 
         valueScrollPane.setBorder(null);
         valueScrollPane.setPreferredSize(new Dimension(preferredWidth + 32, Math.max(60, preferredWidth / 4)));
 
-        if (isLargeTextLayout) {
+        if (largeTextLayout) {
             boolean isBasicPreview = !(table instanceof BasicTable);
             if (isBasicPreview) {
                 ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", false, new WrapUnwrapContentAction());
@@ -97,7 +98,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
             }
 
             DatasetEditorManager dataEditorManager = DatasetEditorManager.getInstance(userValueHolder.getProject());
-            isPinned = dataEditorManager.isValuePreviewPinned();
+            pinned = dataEditorManager.isValuePreviewPinned();
             boolean isWrapped = dataEditorManager.isValuePreviewTextWrapping();
             valueTextArea.setLineWrap(isWrapped);
         } else {
@@ -107,11 +108,12 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
         }
 
         valueTextArea.setBackground(Colors.LIGHT_BLUE);
-
-
         valueTextArea.addKeyListener(keyListener);
+    }
 
-
+    @Nullable
+    public JTable getTable() {
+        return WeakRef.get(table);
     }
 
     public void addPopupListener(JBPopupListener listener) {
@@ -149,7 +151,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
         int caretPosition = valueTextArea.getText().length();
         valueTextArea.setText(text);
         valueTextArea.setCaretPosition(caretPosition);
-        if (popup != null && isLargeTextLayout) {
+        if (popup != null && largeTextLayout) {
             infoLabel.setText(contentInfoText);
             //popup.setAdText(contentInfoText, SwingUtilities.LEFT);
         }
@@ -161,7 +163,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -173,6 +175,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
 
         @Override
         public void keyPressed(KeyEvent e) {
+            JTable table = getTable();
             // only if fired for table cells. Enable table navigation.
             if (table != null) {
                 int selectedRow = table.getSelectedRow();
@@ -231,21 +234,16 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
         });
 */
 
-        popupBuilder.setCancelCallback(() -> !isPinned);
+        popupBuilder.setCancelCallback(() -> !pinned);
 
-        if (isLargeTextLayout) {
+        if (largeTextLayout) {
             infoLabel.setText(contentInfoText);
             //popupBuilder.setAdText(contentInfoText);
             //popupBuilder.setTitle("Large value preview");
         }
 
         popup = popupBuilder.createPopup();
-        popup.addListener(new JBPopupAdapter() {
-            @Override
-            public void onClosed(@NotNull LightweightWindowEvent event) {
-                dispose();
-            }
-        });
+        popup.addListener(PopupCloseListener.create(this));
         return popup;
     }
 
@@ -256,7 +254,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
             LargeObjectValue largeObjectValue = (LargeObjectValue) userValue;
             largeObjectValue.release();
         }
-        Disposer.dispose(popup);
+        SafeDisposer.dispose(popup);
         super.disposeInner();
     }
 
@@ -307,7 +305,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
 
         @Override
         public boolean isSelected(@NotNull AnActionEvent e) {
-            return isPinned;
+            return pinned;
         }
 
         @Override
@@ -315,21 +313,21 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
             DatasetEditorManager editorManager = getDataEditorManager(e);
             if (editorManager != null) {
                 editorManager.setValuePreviewPinned(state);
-                isPinned = state;
+                pinned = state;
             }
         }
 
         @Override
         public void update(@NotNull AnActionEvent e) {
             super.update(e);
-            e.getPresentation().setText(isPinned ? "Unpin" : "Pin");
+            e.getPresentation().setText(pinned ? "Unpin" : "Pin");
 
         }
     }
 
     private class LoadReloadAction extends AnAction {
         private LoadReloadAction() {
-            super("Load / Reload content", null, Icons.ACTION_RERUN);
+            super("Load / Reload Content", null, Icons.ACTION_RERUN);
         }
 
         @Override
@@ -352,7 +350,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            isPinned = false;
+            pinned = false;
             popup.cancel();
         }
 

@@ -16,11 +16,10 @@ public class ObjectListItemForm extends DBNFormImpl {
     private JPanel removeActionPanel;
     private JPanel objectDetailsComponent;
 
-    private ObjectListForm parent;
-    private ObjectFactoryInputForm inputForm;
+    private final ObjectFactoryInputForm<?> inputForm;
 
-    ObjectListItemForm(ObjectListForm parent, ObjectFactoryInputForm inputForm) {
-        this.parent = parent;
+    ObjectListItemForm(@NotNull ObjectListForm<?> parent, ObjectFactoryInputForm<?> inputForm) {
+        super(parent);
         this.inputForm = inputForm;
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
                 "DBNavigator.ObjectFactory.AddElement", true,
@@ -30,8 +29,13 @@ public class ObjectListItemForm extends DBNFormImpl {
     }
 
     @NotNull
+    public ObjectListForm<?> getParentForm() {
+        return ensureParentComponent();
+    }
+
+    @NotNull
     @Override
-    public JPanel ensureComponent(){
+    public JPanel getMainComponent(){
         return mainPanel;
     }
 
@@ -41,16 +45,16 @@ public class ObjectListItemForm extends DBNFormImpl {
 
     public class RemoveObjectAction extends AnAction {
         RemoveObjectAction() {
-            super("Remove " + parent.getObjectType().getName(), null, Icons.ACTION_CLOSE);
+            super("Remove " + getParentForm().getObjectType().getName(), null, Icons.ACTION_CLOSE);
         }
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            parent.removeObjectPanel(ObjectListItemForm.this);
+            getParentForm().removeObjectPanel(ObjectListItemForm.this);
         }
     }
 
-    ObjectFactoryInputForm getObjectDetailsPanel() {
+    ObjectFactoryInputForm<?> getObjectDetailsPanel() {
         return inputForm;
     }
 }

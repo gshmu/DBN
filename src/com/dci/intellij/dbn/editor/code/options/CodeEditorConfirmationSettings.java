@@ -10,19 +10,19 @@ import org.jetbrains.annotations.NotNull;
 public class CodeEditorConfirmationSettings extends BasicConfiguration<CodeEditorSettings, CodeEditorConfirmationSettingsForm> {
     public static final String REMEMBER_OPTION_HINT = ""; //"\n\n(you can remember your option and change it at any time in Settings > Operations > Session Manager)";
 
-    private ConfirmationOptionHandler saveChanges =
+    private final ConfirmationOptionHandler saveChanges =
             new ConfirmationOptionHandler(
                     "save-changes",
                     "Save changes",
                     "Save the changes for {0}?" + REMEMBER_OPTION_HINT, false);
 
-    private ConfirmationOptionHandler revertChanges =
+    private final ConfirmationOptionHandler revertChanges =
             new ConfirmationOptionHandler(
                     "revert-changes",
                     "Revert Changes",
                     "Revert the changes for {0}?" + REMEMBER_OPTION_HINT, true);
 
-    private InteractiveOptionBroker<CodeEditorChangesOption> exitOnChanges =
+    private final InteractiveOptionBroker<CodeEditorChangesOption> exitOnChanges =
             new InteractiveOptionBroker<>(
                     "exit-on-changes",
                     "Unsaved Changes",

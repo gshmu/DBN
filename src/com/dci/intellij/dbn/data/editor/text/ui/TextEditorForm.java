@@ -34,27 +34,27 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
 
-public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
+public class TextEditorForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JPanel editorPanel;
     private JPanel actionsPanel;
 
     private EditorEx editor;
-    private UserValueHolder userValueHolder;
     private String error;
     private String text;
 
-    private TextEditorAdapter textEditorAdapter;
-    private DocumentListener documentListener;
+    private final UserValueHolder<?> userValueHolder;
+    private final TextEditorAdapter textEditorAdapter;
+    private final DocumentListener documentListener;
 
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
-    public TextEditorForm(TextEditorDialog parent, DocumentListener documentListener, UserValueHolder userValueHolder, TextEditorAdapter textEditorAdapter) {
+    public TextEditorForm(TextEditorDialog parent, DocumentListener documentListener, UserValueHolder<?> userValueHolder, TextEditorAdapter textEditorAdapter) {
         super(parent);
         this.documentListener = documentListener;
         this.userValueHolder = userValueHolder;
@@ -157,7 +157,6 @@ public class TextEditorForm extends DBNFormImpl<TextEditorDialog> {
     @Override
     public void disposeInner() {
         EditorUtil.releaseEditor(editor);
-        super.dispose();
     }
 
     @Nullable

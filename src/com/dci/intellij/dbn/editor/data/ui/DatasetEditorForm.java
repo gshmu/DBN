@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -24,12 +24,14 @@ import com.dci.intellij.dbn.editor.data.state.column.DatasetColumnState;
 import com.dci.intellij.dbn.editor.data.statusbar.DatasetEditorStatusBarWidget;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -54,9 +56,9 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     private JPanel loadingDataPanel;
 
     private DatasetEditorTable datasetEditorTable;
-    private final DatasetEditor datasetEditor;
+    private final WeakRef<DatasetEditor> datasetEditor;
 
-    private final Latent<DataSearchComponent> dataSearchComponent = Latent.disposable(this, () -> {
+    private final Latent<DataSearchComponent> dataSearchComponent = Latent.basic(() -> {
         DataSearchComponent dataSearchComponent = new DataSearchComponent(DatasetEditorForm.this);
         searchPanel.add(dataSearchComponent.getComponent(), BorderLayout.CENTER);
         DataManager.registerDataProvider(dataSearchComponent.getSearchField(), this);
@@ -66,10 +68,11 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
     public DatasetEditorForm(DatasetEditor datasetEditor) {
         super(datasetEditor.getProject());
-        this.datasetEditor = datasetEditor;
+        this.datasetEditor = WeakRef.of(datasetEditor);
+
         DBDataset dataset = getDataset();
         try {
-            datasetEditorTable = new DatasetEditorTable(datasetEditor);
+            datasetEditorTable = new DatasetEditorTable(this, datasetEditor);
             datasetTableScrollPane.setViewportView(datasetEditorTable);
             datasetEditorTable.initTableGutter();
 
@@ -90,7 +93,6 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
             loadingActionPanel.add(loadingActionToolbar.getComponent(), BorderLayout.CENTER);
 
             Disposer.register(this, autoCommitLabel);
-            Disposer.register(this, datasetEditorTable);
         } catch (SQLException e) {
             MessageUtil.showErrorDialog(
                     getProject(),
@@ -102,6 +104,8 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
             ConnectionHandler connectionHandler = getConnectionHandler();
             autoCommitLabel.init(getProject(), datasetEditor.getFile(), connectionHandler, SessionId.MAIN);
         }
+
+        Disposer.register(datasetEditor, this);
     }
 
     public DatasetEditorTable beforeRebuild() throws SQLException {
@@ -109,8 +113,8 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
         DatasetEditorTable oldEditorTable = getEditorTable();
         DatasetEditor datasetEditor = getDatasetEditor();
-        datasetEditorTable = new DatasetEditorTable(datasetEditor);
-        Disposer.register(this, datasetEditorTable);
+
+        datasetEditorTable = new DatasetEditorTable(this, datasetEditor);
         DatasetEditorStatusBarWidget statusBarWidget = DatasetEditorStatusBarWidget.getInstance(project);
         datasetEditorTable.getSelectionModel().addListSelectionListener(e -> statusBarWidget.update());
 
@@ -143,14 +147,14 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
                 datasetEditorTable.initTableGutter();
                 datasetEditorTable.updateBackground(false);
 
-                Disposer.disposeInBackground(oldEditorTable);
+                DisposeUtil.disposeInBackground(oldEditorTable);
             });
         }
     }
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -161,7 +165,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
     @NotNull
     public DatasetEditor getDatasetEditor() {
-        return Failsafe.nn(datasetEditor);
+        return datasetEditor.ensure();
     }
 
     public void showLoadingHint() {
@@ -236,7 +240,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
     @NotNull
     @Override
-    public BasicTable getTable() {
+    public BasicTable<?> getTable() {
         return getEditorTable();
     }
 

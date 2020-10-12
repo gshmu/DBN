@@ -29,23 +29,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl<MethodExecutionInputArgumentForm> {
+public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl {
     private JLabel attributeTypeLabel;
     private JLabel attributeLabel;
     private JPanel mainPanel;
     private JPanel attributePanel;
     private JPanel inputFieldPanel;
 
-    private JTextField inputTextField;
+    private final JTextField inputTextField;
     private UserValueHolderImpl<String> userValueHolder;
 
-    private DBObjectRef<DBArgument> argumentRef;
-    private DBObjectRef<DBTypeAttribute> typeAttributeRef;
+    private final DBObjectRef<DBArgument> argument;
+    private final DBObjectRef<DBTypeAttribute> typeAttribute;
 
-    MethodExecutionInputTypeAttributeForm(MethodExecutionInputArgumentForm parentForm, DBArgument argument, DBTypeAttribute typeAttribute) {
-        super(parentForm);
-        this.argumentRef = DBObjectRef.from(argument);
-        this.typeAttributeRef = DBObjectRef.from(typeAttribute);
+    MethodExecutionInputTypeAttributeForm(MethodExecutionInputArgumentForm parent, DBArgument argument, DBTypeAttribute typeAttribute) {
+        super(parent);
+        this.argument = DBObjectRef.of(argument);
+        this.typeAttribute = DBObjectRef.of(typeAttribute);
         attributeLabel.setText(typeAttribute.getName());
         attributeLabel.setIcon(typeAttribute.getIcon());
         attributeTypeLabel.setForeground(UIUtil.getInactiveTextColor());
@@ -91,6 +91,10 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl<MethodExe
         }
 
         inputTextField.setDisabledTextColor(inputTextField.getForeground());
+    }
+
+    public MethodExecutionInputArgumentForm getParentForm() {
+        return ensureParentComponent();
     }
 
     @NotNull
@@ -142,20 +146,20 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl<MethodExe
 
     @NotNull
     private String getAttributeQualifiedName() {
-        return argumentRef.objectName + '.' + typeAttributeRef.objectName;
+        return argument.objectName + '.' + typeAttribute.objectName;
     }
 
     public DBArgument getArgument() {
-        return DBObjectRef.get(argumentRef);
+        return DBObjectRef.get(argument);
     }
 
     public DBTypeAttribute getTypeAttribute() {
-        return DBObjectRef.get(typeAttributeRef);
+        return DBObjectRef.get(typeAttribute);
     }
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -175,7 +179,7 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl<MethodExe
     }
 
     private MethodExecutionInput getExecutionInput() {
-        return  ensureParentComponent().ensureParentComponent().getExecutionInput();
+        return getParentForm().getParentForm().getExecutionInput();
     }
 
     protected int[] getMetrics(int[] metrics) {

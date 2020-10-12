@@ -1,24 +1,23 @@
 package com.dci.intellij.dbn.editor.data.model;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ResultSetUtil;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.dci.intellij.dbn.database.DatabaseFeature;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 
-@Nullifiable
-public abstract class ResultSetAdapter extends ResultSetUtil implements Disposable {
-    private boolean useSavePoints;
+public abstract class ResultSetAdapter extends ResultSetUtil implements StatefulDisposable {
+    private final boolean useSavePoints;
     private boolean insertMode;
-    private DatasetEditorModel model;
+    private final WeakRef<DatasetEditorModel> model;
     public ResultSetAdapter(DatasetEditorModel model) {
-        this.model = model;
+        this.model = WeakRef.of(model);
         ConnectionHandler connectionHandler = model.getConnectionHandler();
         useSavePoints = !DatabaseFeature.CONNECTION_ERROR_RECOVERY.isSupported(connectionHandler);
     }
@@ -36,7 +35,7 @@ public abstract class ResultSetAdapter extends ResultSetUtil implements Disposab
     }
 
     public DatasetEditorModel getModel() {
-        return model;
+        return model.ensure();
     }
 
     public abstract void scroll(int rowIndex) throws SQLException;

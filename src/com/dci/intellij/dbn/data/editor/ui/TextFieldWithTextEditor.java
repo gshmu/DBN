@@ -2,9 +2,10 @@ package com.dci.intellij.dbn.data.editor.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
+import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
+import com.dci.intellij.dbn.common.ui.panel.DBNPanelImpl;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
 import com.dci.intellij.dbn.data.editor.text.ui.TextEditorDialog;
@@ -15,6 +16,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -24,26 +27,25 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-@Nullifiable
-public class TextFieldWithTextEditor extends JPanel implements DataEditorComponent, TextEditorAdapter {
-    private JTextField textField;
-    private JLabel button;
+public class TextFieldWithTextEditor extends DBNPanelImpl implements DataEditorComponent, TextEditorAdapter {
+    private final JTextField textField;
+    private final JLabel button;
 
-    private UserValueHolder userValueHolder;
-    private ProjectRef projectRef;
-    private String displayValue;
+    @Getter
+    @Setter
+    private UserValueHolder<?> userValueHolder;
+    private final ProjectRef project;
+    private final String displayValue;
 
     public TextFieldWithTextEditor(@NotNull Project project) {
         this(project, null);
     }
 
     public TextFieldWithTextEditor(@NotNull Project project, String displayValue) {
-        super(new BorderLayout(2, 0));
-        this.projectRef = ProjectRef.from(project);
+        setLayout(new BorderLayout(2, 0));
+        this.project = ProjectRef.of(project);
         this.displayValue = displayValue;
         setBounds(0, 0, 0, 0);
 
@@ -97,12 +99,6 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
         return textField.isEditable();
     }
 
-    @Override
-    public void setUserValueHolder(UserValueHolder userValueHolder) {
-        this.userValueHolder = userValueHolder;
-    }
-
-
     public void customizeTextField(JTextField textField) {}
     public void customizeButton(JLabel button) {}
 
@@ -146,13 +142,13 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
 
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return project.ensure();
     }
 
     /********************************************************
      *                      KeyListener                     *
      ********************************************************/
-    private KeyListener keyListener = new KeyAdapter() {
+    private final KeyListener keyListener = new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent keyEvent) {
             Shortcut[] shortcuts = KeyUtil.getShortcuts(IdeActions.ACTION_SHOW_INTENTION_ACTIONS);
@@ -165,19 +161,9 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
     /********************************************************
      *                    ActionListener                    *
      ********************************************************/
-    private ActionListener actionListener = e -> openEditor();
+    private final ActionListener actionListener = e -> openEditor();
 
-    private MouseListener mouseListener = new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            openEditor();
-        }
-    };
-
-    @Override
-    public UserValueHolder getUserValueHolder() {
-        return userValueHolder;
-    }
+    private final MouseListener mouseListener = MouseClickedListener.create(e -> openEditor());
 
     /********************************************************
      *                 TextEditorListener                   *
@@ -197,15 +183,8 @@ public class TextFieldWithTextEditor extends JPanel implements DataEditorCompone
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
-    private boolean disposed;
 
     @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
-    @Override
-    public void markDisposed() {
-        disposed = true;
+    protected void disposeInner() {
     }
 }

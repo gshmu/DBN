@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.data.find;
 
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.find.action.CloseOnESCAction;
 import com.dci.intellij.dbn.data.find.action.NextOccurrenceAction;
@@ -15,12 +15,10 @@ import com.dci.intellij.dbn.data.find.action.ToggleWholeWordsOnlyAction;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.model.DataModel;
 import com.dci.intellij.dbn.data.model.DataModelListener;
-import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindModel;
 import com.intellij.find.FindSettings;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -45,11 +43,9 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.regex.Pattern;
 
-public class DataSearchComponent extends DBNFormImpl implements Disposable, SelectionListener, DataSearchResultListener, DataModelListener {
+public class DataSearchComponent extends DBNFormImpl implements SelectionListener, DataSearchResultListener, DataModelListener {
     private static final int MATCHES_LIMIT = 10000;
 
     private JPanel mainPanel;
@@ -59,30 +55,28 @@ public class DataSearchComponent extends DBNFormImpl implements Disposable, Sele
     private JLabel closeLabel;
 
     private DataFindModel findModel;
-    private DataSearchResultController searchResultController;
     private boolean myListeningSelection = false;
     private ActionToolbar actionsToolbar;
-    private SearchableDataComponent searchableComponent;
+    private final DataSearchResultController searchResultController;
 
     public JTextField getSearchField() {
         return searchField;
     }
 
-    public DataSearchComponent(final SearchableDataComponent searchableComponent) {
-        this.searchableComponent = searchableComponent;
-        BasicTable<? extends BasicDataModel> table = searchableComponent.getTable();
-        DataModel dataModel = table.getModel();
+    public DataSearchComponent(@NotNull SearchableDataComponent searchableComponent) {
+        super(searchableComponent);
+        BasicTable<?> table = searchableComponent.getTable();
+        DataModel<?, ?> dataModel = table.getModel();
         dataModel.addDataModelListener(this);
         initializeFindModel();
 
         findModel = new DataFindModel();
         DataSearchResult searchResult = dataModel.getSearchResult();
         searchResult.setMatchesLimit(MATCHES_LIMIT);
-        searchResultController = new DataSearchResultController(searchableComponent);
         searchResult.addListener(this);
+        searchResultController = new DataSearchResultController(searchableComponent);
         searchResultController.updateResult(findModel);
 
-        Disposer.register(this, searchResultController);
         configureLeadPanel();
 
         findModel.addObserver(findModel -> {
@@ -98,12 +92,7 @@ public class DataSearchComponent extends DBNFormImpl implements Disposable, Sele
 
         closeLabel.setText(" ");
         closeLabel.setIcon(IconLoader.getIcon("/actions/cross.png"));
-        closeLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(final MouseEvent e) {
-                close();
-            }
-        });
+        closeLabel.addMouseListener(MouseClickedListener.create(e -> close()));
 
         updateUIWithFindModel();
         //new CloseOnESCAction(this, table);
@@ -123,8 +112,13 @@ public class DataSearchComponent extends DBNFormImpl implements Disposable, Sele
     }
 
     @NotNull
+    public SearchableDataComponent getSearchableComponent() {
+        return (SearchableDataComponent) this.ensureParentComponent();
+    }
+
+    @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -188,7 +182,7 @@ public class DataSearchComponent extends DBNFormImpl implements Disposable, Sele
         initTextField();
         setupSearchFieldListener();
 
-        DefaultActionGroup myActionsGroup = new DefaultActionGroup("search bar", false);
+        DefaultActionGroup myActionsGroup = new DefaultActionGroup("Search Bar", false);
         myActionsGroup.add(new ShowHistoryAction(searchField, this));
         myActionsGroup.add(new PrevOccurrenceAction(this, searchField, true));
         myActionsGroup.add(new NextOccurrenceAction(this, searchField, true));
@@ -207,12 +201,7 @@ public class DataSearchComponent extends DBNFormImpl implements Disposable, Sele
 
 
         JLabel closeLabel = new JLabel(" ", IconLoader.getIcon("/actions/cross.png"), SwingConstants.RIGHT);
-        closeLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(final MouseEvent e) {
-                close();
-            }
-        });
+        closeLabel.addMouseListener(MouseClickedListener.create(e -> close()));
 
         closeLabel.setToolTipText("Close search bar (Escape)");
         CompatibilityUtil.setSmallerFont(searchField);
@@ -230,12 +219,7 @@ public class DataSearchComponent extends DBNFormImpl implements Disposable, Sele
 
         final String initialText = findModel.getStringToFind();
 
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                setInitialText(initialText);
-            }
-        });
+        ApplicationManager.getApplication().invokeLater(() -> setInitialText(initialText));
     }
 
     private void setupSearchFieldListener() {
@@ -358,7 +342,7 @@ public class DataSearchComponent extends DBNFormImpl implements Disposable, Sele
     }
 
     private void requestFocus(Component component) {
-        Project project = searchableComponent.getTable().getProject();
+        Project project = getSearchableComponent().getTable().getProject();
         IdeFocusManager.getInstance(project).requestFocus(component, true);
     }
 
@@ -405,7 +389,7 @@ public class DataSearchComponent extends DBNFormImpl implements Disposable, Sele
 
     public void close() {
         getSearchResult().clear();
-        searchableComponent.hideSearchHeader();
+        getSearchableComponent().hideSearchHeader();
     }
 
     public void removeNotify() {
@@ -423,8 +407,9 @@ public class DataSearchComponent extends DBNFormImpl implements Disposable, Sele
         String text = searchField.getText();
         if (text.length() == 0) {
             nothingToSearchFor();
+            SearchableDataComponent searchableComponent = getSearchableComponent();
             searchableComponent.cancelEditActions();
-            BasicTable table = searchableComponent.getTable();
+            BasicTable table = getSearchableComponent().getTable();
             table.clearSelection();
             GUIUtil.repaint(table);
         } else {
@@ -455,7 +440,7 @@ public class DataSearchComponent extends DBNFormImpl implements Disposable, Sele
     }
 
     private FindManager getFindManager() {
-        Project project = searchableComponent.getTable().getProject();
+        Project project = getSearchableComponent().getTable().getProject();
         return FindManager.getInstance(project);
     }
 
@@ -496,7 +481,7 @@ public class DataSearchComponent extends DBNFormImpl implements Disposable, Sele
     }
 
     private DataSearchResult getSearchResult() {
-        return searchableComponent.getTable().getModel().getSearchResult();
+        return getSearchableComponent().getTable().getModel().getSearchResult();
     }
 
 }

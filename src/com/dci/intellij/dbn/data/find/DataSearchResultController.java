@@ -8,23 +8,29 @@ import com.dci.intellij.dbn.data.model.DataModel;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
 import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindResult;
-import com.intellij.openapi.Disposable;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataSearchResultController implements Disposable {
-    private SearchableDataComponent searchableComponent;
+public class DataSearchResultController {
+    private final WeakRef<SearchableDataComponent> searchableComponent;
 
     DataSearchResultController(SearchableDataComponent searchableComponent) {
-        this.searchableComponent = searchableComponent;
+        this.searchableComponent = WeakRef.of(searchableComponent);
+    }
+
+    @NotNull
+    public SearchableDataComponent getSearchableComponent() {
+        return searchableComponent.ensure();
     }
 
     void moveCursor(DataSearchDirection direction) {
-        BasicTable<? extends BasicDataModel> table = searchableComponent.getTable();
+        BasicTable<? extends BasicDataModel> table = getSearchableComponent().getTable();
         DataModel dataModel = table.getModel();
         DataSearchResult searchResult = dataModel.getSearchResult();
         DataSearchResultScrollPolicy scrollPolicy = DataSearchResultScrollPolicy.HORIZONTAL;
@@ -37,7 +43,7 @@ public class DataSearchResultController implements Disposable {
     }
 
     private void selectFirst(int selectedRowIndex, int selectedColumnIndex) {
-        BasicTable<? extends BasicDataModel> table = searchableComponent.getTable();
+        BasicTable<? extends BasicDataModel> table = getSearchableComponent().getTable();
         DataModel dataModel = table.getModel();
         DataSearchResult searchResult = dataModel.getSearchResult();
         DataSearchResultScrollPolicy scrollPolicy = DataSearchResultScrollPolicy.HORIZONTAL;
@@ -66,7 +72,7 @@ public class DataSearchResultController implements Disposable {
 
     void updateResult(DataFindModel findModel) {
         Background.run(() -> {
-            BasicTable table = searchableComponent.getTable();
+            BasicTable table = getSearchableComponent().getTable();
             DataModel dataModel = table.getModel();
             DataSearchResult searchResult = dataModel.getSearchResult();
 
@@ -109,7 +115,7 @@ public class DataSearchResultController implements Disposable {
                 int selectedColumnIndex = table.getSelectedRow();
                 if (selectedRowIndex < 0) selectedRowIndex = 0;
                 if (selectedColumnIndex < 0) selectedColumnIndex = 0;
-                searchableComponent.cancelEditActions();
+                getSearchableComponent().cancelEditActions();
 
                 table.clearSelection();
                 GUIUtil.repaint(table);
@@ -118,10 +124,5 @@ public class DataSearchResultController implements Disposable {
                 searchResult.notifyListeners();
             });
         });
-    }
-
-    @Override
-    public void dispose() {
-        searchableComponent = null;
     }
 }

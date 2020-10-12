@@ -1,7 +1,5 @@
 package com.dci.intellij.dbn.common.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
@@ -23,17 +21,17 @@ public class DBNHeaderForm extends DBNFormImpl{
     private JLabel objectLabel;
     private JPanel mainPanel;
 
-    public DBNHeaderForm(RegisteredDisposable parentDisposable) {
+    public DBNHeaderForm(DBNForm parent) {
+        super(parent);
         mainPanel.setBorder(BORDER);
-        Disposer.register(parentDisposable, this);
     }
 
-    public DBNHeaderForm(String title, Icon icon, RegisteredDisposable parentDisposable) {
-        this(title, icon, null, parentDisposable);
+    public DBNHeaderForm(DBNForm parent, String title, Icon icon) {
+        this(parent, title, icon, null);
     }
 
-    public DBNHeaderForm(String title, Icon icon, Color background, RegisteredDisposable parentDisposable) {
-        this(parentDisposable);
+    public DBNHeaderForm(DBNForm parent, String title, Icon icon, Color background) {
+        this(parent);
         objectLabel.setText(title);
         objectLabel.setIcon(icon);
         if (background != null) {
@@ -41,25 +39,25 @@ public class DBNHeaderForm extends DBNFormImpl{
         }
     }
 
-    public DBNHeaderForm(@NotNull DBObject object, RegisteredDisposable parentDisposable) {
-        this(parentDisposable);
+    public DBNHeaderForm(DBNForm parent, @NotNull DBObject object) {
+        this(parent);
         update(object);
     }
 
-    public DBNHeaderForm(@NotNull DBObjectRef objectRef, RegisteredDisposable parentDisposable) {
-        this(parentDisposable);
+    public DBNHeaderForm(DBNForm parent, @NotNull DBObjectRef<?> objectRef) {
+        this(parent);
         update(objectRef);
     }
 
-    public DBNHeaderForm(@NotNull Presentable presentable, RegisteredDisposable parentDisposable) {
-        this(parentDisposable);
+    public DBNHeaderForm(DBNForm parent, @NotNull Presentable presentable) {
+        this(parent);
         objectLabel.setText(presentable.getName());
         objectLabel.setIcon(presentable.getIcon());
         updateBorderAndBackground(presentable);
     }
 
-    public DBNHeaderForm(@NotNull ConnectionHandler connectionHandler, RegisteredDisposable parentDisposable) {
-        this(parentDisposable);
+    public DBNHeaderForm(DBNForm parent, @NotNull ConnectionHandler connectionHandler) {
+        this(parent);
         objectLabel.setText(connectionHandler.getName());
         objectLabel.setIcon(connectionHandler.getIcon());
         updateBorderAndBackground((Presentable) connectionHandler);
@@ -86,7 +84,7 @@ public class DBNHeaderForm extends DBNFormImpl{
         updateBorderAndBackground((Presentable) object);
     }
 
-    public void update(@NotNull DBObjectRef objectRef) {
+    public void update(@NotNull DBObjectRef<?> objectRef) {
         ConnectionHandler connectionHandler = objectRef.resolveConnectionHandler();
 
         String connectionName = connectionHandler == null ? "UNKNOWN" : connectionHandler.getName();
@@ -133,7 +131,7 @@ public class DBNHeaderForm extends DBNFormImpl{
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 }

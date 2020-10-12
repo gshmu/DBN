@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection.config.ui;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -46,7 +46,6 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,12 +57,12 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     private JPanel actionsPanel;
     private JPanel connectionSetupPanel;
     private JBScrollPane connectionListScrollPane;
-    private JList<ConnectionSettings> connectionsList;
+    private final JList<ConnectionSettings> connectionsList;
 
     private String currentPanelId;
 
     
-    private Map<String, ConnectionSettingsForm> cachedForms = new HashMap<>();
+    private final Map<String, ConnectionSettingsForm> cachedForms = DisposableContainer.map(this);
 
     public JList getList() {
         return connectionsList;
@@ -98,7 +97,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -156,12 +155,6 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         } catch (IndexOutOfBoundsException e) {
             // fixme find out why
         }
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(cachedForms);
-        super.disposeInner();
     }
 
     private void switchSettingsPanel(ConnectionSettings connectionSettings) {
@@ -359,7 +352,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         if (DataKeys.CONNECTION_BUNDLE_SETTINGS.is(dataId)) {
             return ConnectionBundleSettingsForm.this;
         }
-        return null;
+        return super.getData(dataId);
     }
 
     public int getSelectionSize() {

@@ -18,24 +18,24 @@ import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.util.Set;
 
-public class CreateRenameSessionForm extends DBNFormImpl<CreateRenameSessionDialog>{
+public class CreateRenameSessionForm extends DBNFormImpl{
     private JPanel headerPanel;
     private JPanel mainPanel;
     private JTextField sessionNameTextField;
     private JLabel errorLabel;
 
-    private ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connectionHandler;
     private DatabaseSession session;
 
-    CreateRenameSessionForm(final CreateRenameSessionDialog parentComponent, @NotNull ConnectionHandler connectionHandler, @Nullable final DatabaseSession session) {
-        super(parentComponent);
-        this.connectionHandlerRef = connectionHandler.getRef();
+    CreateRenameSessionForm(final CreateRenameSessionDialog parent, @NotNull ConnectionHandler connectionHandler, @Nullable final DatabaseSession session) {
+        super(parent);
+        this.connectionHandler = connectionHandler.getRef();
         this.session = session;
         errorLabel.setForeground(JBColor.RED);
         errorLabel.setIcon(Icons.EXEC_MESSAGES_ERROR);
         errorLabel.setVisible(false);
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler, this);
+        DBNHeaderForm headerForm = new DBNHeaderForm(this, connectionHandler);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         final Set<String> sessionNames = connectionHandler.getSessionBundle().getSessionNames();
@@ -49,7 +49,7 @@ public class CreateRenameSessionForm extends DBNFormImpl<CreateRenameSessionDial
         } else {
             name = session.getName();
             sessionNames.remove(name);
-            parentComponent.getOKAction().setEnabled(false);
+            parent.getOKAction().setEnabled(false);
         }
         sessionNameTextField.setText(name);
 
@@ -68,7 +68,7 @@ public class CreateRenameSessionForm extends DBNFormImpl<CreateRenameSessionDial
 
 
                 errorLabel.setVisible(errorText != null);
-                parentComponent.getOKAction().setEnabled(errorText == null && (session == null || !session.getName().equals(text)));
+                parent.getOKAction().setEnabled(errorText == null && (session == null || !session.getName().equals(text)));
                 if (errorText != null) {
                     errorLabel.setText(errorText);
                 }
@@ -87,7 +87,7 @@ public class CreateRenameSessionForm extends DBNFormImpl<CreateRenameSessionDial
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     public DatabaseSession getSession() {
@@ -100,7 +100,7 @@ public class CreateRenameSessionForm extends DBNFormImpl<CreateRenameSessionDial
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

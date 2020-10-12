@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
@@ -31,14 +31,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-public class ConnectionPool extends DisposableBase implements NotificationSupport, Disposable {
+public class ConnectionPool extends StatefulDisposable.Base implements NotificationSupport, Disposable {
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
     private static final ConnectionPoolCleanTask POOL_CLEANER_TASK = new ConnectionPoolCleanTask();
     private int peakPoolSize = 0;
 
     protected final Logger log = Logger.getInstance(getClass().getName());
-    private final ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connectionHandler;
 
     private final List<DBNConnection> poolConnections = ContainerUtil.createLockFreeCopyOnWriteList();
     private final Map<SessionId, DBNConnection> dedicatedConnections = ContainerUtil.newConcurrentMap();
@@ -63,7 +63,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
 
     ConnectionPool(@NotNull ConnectionHandler connectionHandler) {
         super(connectionHandler);
-        this.connectionHandlerRef = connectionHandler.getRef();
+        this.connectionHandler = connectionHandler.getRef();
         POOL_CLEANER_TASK.register(this);
     }
 
@@ -117,7 +117,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
 
     @NotNull
     public List<DBNConnection> getConnections(ConnectionType... connectionTypes) {
-        ArrayList<DBNConnection> connections = new ArrayList<>();
+        List<DBNConnection> connections = new ArrayList<>();
         if (ConnectionType.POOL.matches(connectionTypes)) {
             connections.addAll(poolConnections);
         }
@@ -174,7 +174,7 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     @Override
@@ -340,7 +340,6 @@ public class ConnectionPool extends DisposableBase implements NotificationSuppor
     @Override
     public void disposeInner() {
         closeConnections();
-        super.disposeInner();
     }
 
     public boolean isConnected(SessionId sessionId) {

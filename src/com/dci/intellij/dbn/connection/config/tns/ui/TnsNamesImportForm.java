@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.config.tns.TnsName;
 import com.dci.intellij.dbn.connection.config.tns.TnsNamesParser;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBScrollPane;
@@ -19,18 +18,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TnsNamesImportForm extends DBNFormImpl<TnsNamesImportDialog>{
+public class TnsNamesImportForm extends DBNFormImpl{
     private TextFieldWithBrowseButton tnsNamesFileTextField;
     private JBScrollPane tnsNamesScrollPanel;
     private JPanel mainPanel;
     private JLabel errorLabel;
 
-    private TnsNamesTable tnsNamesTable;
+    private final TnsNamesTable tnsNamesTable;
 
-    TnsNamesImportForm(@NotNull TnsNamesImportDialog parentComponent, @Nullable File file) {
-        super(parentComponent);
-        final Project project = parentComponent.getProject();
-        tnsNamesTable = new TnsNamesTable(project, Collections.emptyList());
+    TnsNamesImportForm(@NotNull TnsNamesImportDialog parent, @Nullable File file) {
+        super(parent);
+        tnsNamesTable = new TnsNamesTable(this, Collections.emptyList());
         tnsNamesScrollPanel.setViewportView(tnsNamesTable);
         tnsNamesScrollPanel.getViewport().setBackground(tnsNamesTable.getBackground());
         errorLabel.setIcon(Icons.COMMON_ERROR);
@@ -47,7 +45,7 @@ public class TnsNamesImportForm extends DBNFormImpl<TnsNamesImportDialog>{
         tnsNamesFileTextField.addBrowseFolderListener(
                 null,
                 null,
-                project,
+                getProject(),
                 TnsNamesParser.FILE_CHOOSER_DESCRIPTOR);
 
         tnsNamesFileTextField.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
@@ -56,6 +54,10 @@ public class TnsNamesImportForm extends DBNFormImpl<TnsNamesImportDialog>{
                 updateTnsNamesTable();
             }
         });
+    }
+
+    public TnsNamesImportDialog getParentDialog() {
+        return ensureParentComponent();
     }
 
     private void updateButtons() {
@@ -86,7 +88,7 @@ public class TnsNamesImportForm extends DBNFormImpl<TnsNamesImportDialog>{
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

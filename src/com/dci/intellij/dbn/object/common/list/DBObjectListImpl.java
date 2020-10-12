@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSortingSettings;
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContentImpl;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
@@ -29,7 +28,6 @@ import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -47,8 +45,6 @@ import java.util.List;
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
 
 public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> implements DBObjectList<T> {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
-
     private final DBObjectType objectType;
     private InternalFilter filter;
     private PsiDirectory psiDirectory;

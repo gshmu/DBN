@@ -11,7 +11,7 @@ public class ProjectSettingsProvider extends ConfigurableProvider{
     private ProjectRef projectRef;
 
     public ProjectSettingsProvider(Project project) {
-        this.projectRef = ProjectRef.from(project);
+        this.projectRef = ProjectRef.of(project);
     }
 
     @Nullable

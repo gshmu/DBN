@@ -1,21 +1,20 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.language.common.WeakRef;
 
-@Nullifiable
 public abstract class MessagesTreeNodeBase<P extends MessagesTreeNode, C extends MessagesTreeNode>
-        extends DisposableBase
+        extends StatefulDisposable.Base
         implements MessagesTreeNode<P, C>{
 
-    private P parent;
+    private final WeakRef<P> parent;
 
     MessagesTreeNodeBase(P parent) {
-        this.parent = parent;
+        this.parent = WeakRef.of(parent);
     }
 
     @Override
     public P getParent() {
-        return parent;
+        return WeakRef.get(parent);
     }
 }

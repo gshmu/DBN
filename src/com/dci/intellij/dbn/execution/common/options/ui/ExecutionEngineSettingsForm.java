@@ -22,7 +22,7 @@ public class ExecutionEngineSettingsForm extends CompositeConfigurationEditorFor
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 }

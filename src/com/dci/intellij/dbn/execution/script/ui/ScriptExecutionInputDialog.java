@@ -21,7 +21,7 @@ public class ScriptExecutionInputDialog extends DBNDialog<ScriptExecutionInputFo
 
     @NotNull
     @Override
-    protected ScriptExecutionInputForm createComponent() {
+    protected ScriptExecutionInputForm createForm() {
         return new ScriptExecutionInputForm(this, executionInput);
     }
 

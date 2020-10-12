@@ -12,7 +12,7 @@ public class ObjectDependencyTreeDialog extends DBNDialog<ObjectDependencyTreeFo
     private DBObjectRef<DBSchemaObject> objectRef;
     public ObjectDependencyTreeDialog(Project project, DBSchemaObject object) {
         super(project, "Object dependency tree", true);
-        this.objectRef = DBObjectRef.from(object);
+        this.objectRef = DBObjectRef.of(object);
         setModal(false);
         setResizable(true);
         getCancelAction().putValue(Action.NAME, "Close");
@@ -21,7 +21,7 @@ public class ObjectDependencyTreeDialog extends DBNDialog<ObjectDependencyTreeFo
 
     @NotNull
     @Override
-    protected ObjectDependencyTreeForm createComponent() {
+    protected ObjectDependencyTreeForm createForm() {
         DBSchemaObject object = DBObjectRef.get(objectRef);
         return new ObjectDependencyTreeForm(this, object);
     }

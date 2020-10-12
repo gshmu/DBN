@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.editor.code.ui;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerListener;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.AsyncProcessIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,12 +25,12 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
     private JLabel loadingLabel;
     private JPanel loadingIconPanel;
 
-    private SourceCodeEditor sourceCodeEditor;
+    private final WeakRef<SourceCodeEditor> sourceCodeEditor;
 
     public SourceCodeEditorActionsPanel(@NotNull SourceCodeEditor sourceCodeEditor) {
-        this.sourceCodeEditor = sourceCodeEditor;
+        super(sourceCodeEditor.getProject());
+        this.sourceCodeEditor = WeakRef.of(sourceCodeEditor);
         Editor editor = sourceCodeEditor.getEditor();
-        Project project = sourceCodeEditor.getProject();
         JComponent editorComponent = editor.getComponent();
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.SourceEditor");
         actionToolbar.setTargetComponent(editorComponent);
@@ -38,10 +38,11 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
         loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);
         loadingDataPanel.setVisible(false);
 
-        subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+        subscribe(SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+        Disposer.register(sourceCodeEditor, this);
     }
 
-    private SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
+    private final SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
         @Override
         public void sourceCodeLoading(@NotNull DBSourceCodeVirtualFile sourceCodeFile) {
             DBSourceCodeVirtualFile virtualFile = getSourceCodeEditor().getVirtualFile();
@@ -59,13 +60,14 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
         }
     };
 
+    @NotNull
     public SourceCodeEditor getSourceCodeEditor() {
-        return Failsafe.nn(sourceCodeEditor);
+        return sourceCodeEditor.ensure();
     }
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

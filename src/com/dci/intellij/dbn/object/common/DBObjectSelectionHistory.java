@@ -12,7 +12,7 @@ public class DBObjectSelectionHistory implements Disposable{
     private int offset;
 
     public void add(DBObject object) {
-        DBObjectRef objectRef = DBObjectRef.from(object);
+        DBObjectRef objectRef = DBObjectRef.of(object);
         if (objectRef != null) {
             if (history.size() > 0 && history.get(offset).equals(objectRef)) {
                 return;

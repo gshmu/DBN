@@ -117,7 +117,7 @@ public class DBNConnection extends DBNConnectionBase {
 
     private DBNConnection(Project project, Connection connection, String name, ConnectionType type, ConnectionId id, SessionId sessionId) throws SQLException {
         super(connection);
-        this.projectRef = ProjectRef.from(project);
+        this.projectRef = ProjectRef.of(project);
         this.name = name;
         this.type = type;
         this.id = id;

@@ -23,9 +23,9 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
 
     public DatasetFilterDialog(DBDataset dataset, boolean automaticPrompt, boolean createNewFilter, DatasetFilterType defaultFilterType) {
         super(dataset.getProject(), "Data filters", true);
-        this.datasetRef = DBObjectRef.from(dataset);
+        this.datasetRef = DBObjectRef.of(dataset);
         this.automaticPrompt = automaticPrompt;
-        DatasetFilterForm component = getComponent();
+        DatasetFilterForm component = getForm();
         if ((createNewFilter || filterGroup.getFilters().isEmpty()) && defaultFilterType != DatasetFilterType.NONE) {
             DatasetFilter filter =
                     defaultFilterType == DatasetFilterType.BASIC ? filterGroup.createBasicFilter(true) :
@@ -38,15 +38,15 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
 
     public DatasetFilterDialog(DBDataset dataset, DatasetBasicFilter basicFilter) {
         super(dataset.getProject(), "Data filters", true);
-        this.datasetRef = DBObjectRef.from(dataset);
+        this.datasetRef = DBObjectRef.of(dataset);
         this.automaticPrompt = false;
-        getComponent().getFilterList().setSelectedValue(basicFilter, true);
+        getForm().getFilterList().setSelectedValue(basicFilter, true);
         init();
     }
 
     @NotNull
     @Override
-    protected DatasetFilterForm createComponent() {
+    protected DatasetFilterForm createForm() {
         setModal(true);
         setResizable(true);
         DBDataset dataset = getDataset();
@@ -96,7 +96,7 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
 
     @Override
     public void doOKAction() {
-        DatasetFilterForm component = getComponent();
+        DatasetFilterForm component = getForm();
         Project project = getProject();
         DBDataset dataset = getDataset();
         try {
@@ -116,13 +116,13 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
 
     @Override
     public void doCancelAction() {
-        DatasetFilterForm component = getComponent();
+        DatasetFilterForm component = getForm();
         component.resetFormChanges();
         super.doCancelAction();
     }
 
     public void doNoFilterAction() {
-        DatasetFilterForm component = getComponent();
+        DatasetFilterForm component = getForm();
         component.resetFormChanges();
         DBDataset dataset = getDataset();
         Project project = getProject();

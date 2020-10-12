@@ -1,27 +1,30 @@
 package com.dci.intellij.dbn.common.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 
-public abstract class DBNContentWithHeaderForm<T extends DBNDialog> extends DBNFormImpl<T>{
+public abstract class DBNContentWithHeaderForm extends DBNFormImpl{
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JPanel contentPanel;
 
-    private DBNHeaderForm headerForm;
-    private DBNForm contentForm;
+    private final DBNHeaderForm headerForm;
+    private final DBNForm contentForm;
 
-    protected DBNContentWithHeaderForm(@NotNull T parentComponent) {
-        super(parentComponent);
+    protected DBNContentWithHeaderForm(@NotNull DBNDialog<?> parent) {
+        super(parent);
         headerForm = createHeaderForm();
         contentForm = createContentForm();
 
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
         contentPanel.add(contentForm.getComponent(), BorderLayout.CENTER);
+
+        Disposer.register(this, headerForm);
+        Disposer.register(this, contentForm);
     }
 
     public abstract DBNHeaderForm createHeaderForm();
@@ -38,14 +41,7 @@ public abstract class DBNContentWithHeaderForm<T extends DBNDialog> extends DBNF
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(headerForm);
-        Disposer.dispose(contentForm);
-        super.disposeInner();
     }
 }

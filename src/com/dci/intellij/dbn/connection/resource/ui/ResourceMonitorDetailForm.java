@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -36,8 +36,8 @@ import static com.dci.intellij.dbn.connection.transaction.TransactionAction.acti
 
 
 public class ResourceMonitorDetailForm extends DBNFormImpl {
-    private final DBNTable sessionsTable;
-    private final DBNTable transactionsTable;
+    private final DBNTable<ResourceMonitorSessionsTableModel> sessionsTable;
+    private final DBNTable<ResourceMonitorTransactionsTableModel> transactionsTable;
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JPanel sessionsPanel;
@@ -46,19 +46,17 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     private JButton rollbackButton;
     private JLabel openTransactionsLabel;
 
-    private final ConnectionHandlerRef connectionHandlerRef;
-    private ResourceMonitorTransactionsTableModel transactionsTableModel;
-    private ResourceMonitorSessionsTableModel sessionsTableModel;
+    private final ConnectionHandlerRef connectionHandler;
 
-    ResourceMonitorDetailForm(ConnectionHandler connectionHandler) {
-        super(connectionHandler.getProject());
-        this.connectionHandlerRef = connectionHandler.getRef();
+    ResourceMonitorDetailForm(@NotNull DBNComponent parent, ConnectionHandler connectionHandler) {
+        super(parent);
+        this.connectionHandler = connectionHandler.getRef();
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(connectionHandler, this);
+        DBNHeaderForm headerForm = new DBNHeaderForm(this, connectionHandler);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        sessionsTableModel = new ResourceMonitorSessionsTableModel(connectionHandler);
-        sessionsTable = new ResourceMonitorSessionsTable(sessionsTableModel);
+        ResourceMonitorSessionsTableModel sessionsTableModel = new ResourceMonitorSessionsTableModel(connectionHandler);
+        sessionsTable = new ResourceMonitorSessionsTable(this, sessionsTableModel);
         sessionsTable.getSelectionModel().addListSelectionListener(e -> {
             DBNConnection connection = getSelectedConnection();
             refreshTransactionsData(connection);
@@ -74,8 +72,8 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         sessionsTable.getParent().setBackground(sessionsTable.getBackground());
 
         // transactions table
-        transactionsTableModel = new ResourceMonitorTransactionsTableModel(connectionHandler, null);
-        transactionsTable = new ResourceMonitorTransactionsTable(transactionsTableModel);
+        ResourceMonitorTransactionsTableModel transactionsTableModel = new ResourceMonitorTransactionsTableModel(connectionHandler, null);
+        transactionsTable = new ResourceMonitorTransactionsTable(this, transactionsTableModel);
         transactionsTableScrollPane.setViewportView(transactionsTable);
         transactionsTableScrollPane.getViewport().setBackground(transactionsTable.getBackground());
 
@@ -219,12 +217,12 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     };
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -234,7 +232,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     private final TransactionListener transactionListener = new TransactionListener() {
         @Override
         public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
-            if (connectionHandler == getConnectionHandler() && transactionsTableModel.getConnection() == connection && succeeded) {
+            if (connectionHandler == getConnectionHandler() && transactionsTable.getModel().getConnection() == connection && succeeded) {
                 refreshTransactionsData(connection);
             }
         }
@@ -297,10 +295,8 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
             checkDisposed();
             ConnectionHandler connectionHandler = getConnectionHandler();
 
-            ResourceMonitorSessionsTableModel oldTableModel = sessionsTableModel;
-            sessionsTableModel = new ResourceMonitorSessionsTableModel(connectionHandler);
+            ResourceMonitorSessionsTableModel sessionsTableModel = new ResourceMonitorSessionsTableModel(connectionHandler);
             sessionsTable.setModel(sessionsTableModel);
-            Disposer.dispose(oldTableModel);
         });
     }
 
@@ -309,21 +305,19 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
             checkDisposed();
             ConnectionHandler connectionHandler = getConnectionHandler();
 
-            ResourceMonitorTransactionsTableModel oldTableModel = transactionsTableModel;
-            transactionsTableModel = new ResourceMonitorTransactionsTableModel(connectionHandler, connection);
+            ResourceMonitorTransactionsTableModel transactionsTableModel = new ResourceMonitorTransactionsTableModel(connectionHandler, connection);
             transactionsTable.setModel(transactionsTableModel);
             boolean transactional = connection != null && connection.hasDataChanges();
             commitButton.setEnabled(transactional);
             rollbackButton.setEnabled(transactional);
             DatabaseSession session = getSelectedSession();
             openTransactionsLabel.setText(session == null ? "Open Transactions" : "Open Transactions (" + session.getName() + ")");
-            Disposer.dispose(oldTableModel);
         });
     }
 
     @Nullable
     private DatabaseSession getSelectedSession() {
-        return sessionsTableModel.getSession(sessionsTable.getSelectedRow());
+        return sessionsTable.getModel().getSession(sessionsTable.getSelectedRow());
     }
 
     @Nullable
@@ -340,15 +334,4 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         return DatabaseTransactionManager.getInstance(getProject());
     }
 
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(
-                sessionsTable,
-                sessionsTableModel,
-                transactionsTable,
-                transactionsTableModel);
-
-        super.disposeInner();
-    }
 }

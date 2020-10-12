@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.common;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.language.common.PsiElementRef;
@@ -13,7 +12,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class DBObjectPsiFacade extends DisposableBase {
+public final class DBObjectPsiFacade {
     private DBObjectRef objectRef;
     private PsiElementRef<PsiElement> psiElementRef;
 

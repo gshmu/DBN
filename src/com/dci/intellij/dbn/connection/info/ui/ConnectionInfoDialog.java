@@ -36,7 +36,7 @@ public class ConnectionInfoDialog extends DBNDialog<ConnectionInfoForm> {
 
     @NotNull
     @Override
-    protected ConnectionInfoForm createComponent() {
+    protected ConnectionInfoForm createForm() {
         if (connectionHandlerRef != null) {
             ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
             return new ConnectionInfoForm(this, connectionHandler);

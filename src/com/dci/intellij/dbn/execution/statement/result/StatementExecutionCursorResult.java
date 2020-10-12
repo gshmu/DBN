@@ -28,7 +28,7 @@ import java.sql.SQLException;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
 public class StatementExecutionCursorResult extends StatementExecutionBasicResult {
-    private ResultSetDataModel dataModel;
+    private ResultSetDataModel<?, ?> dataModel;
 
     public StatementExecutionCursorResult(
             @NotNull StatementExecutionProcessor executionProcessor,
@@ -37,7 +37,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
             int updateCount) throws SQLException {
         super(executionProcessor, resultName, updateCount);
         int fetchBlockSize = getQueryExecutionSettings().getResultSetFetchBlockSize();
-        dataModel = new ResultSetDataModel(resultSet, executionProcessor.getConnectionHandler(), fetchBlockSize);
+        dataModel = new ResultSetDataModel<>(resultSet, executionProcessor.getConnectionHandler(), fetchBlockSize);
     }
 
     private StatementExecutionSettings getQueryExecutionSettings() {
@@ -76,7 +76,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
                                     ConnectionHandler connectionHandler = getConnectionHandler();
                                     SchemaId currentSchema = getDatabaseSchema();
                                     DBNConnection connection = connectionHandler.getMainConnection(currentSchema);
-                                    DBNStatement statement = connection.createStatement();
+                                    DBNStatement<?> statement = connection.createStatement();
                                     statement.setQueryTimeout(executionInput.getExecutionTimeout());
                                     statement.execute(executionInput.getExecutableStatementText());
                                     DBNResultSet resultSet = statement.getResultSet();
@@ -100,7 +100,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
         StatementExecutionResultForm resultForm = getForm();
         if (Failsafe.check(resultForm)) {
             int rowCount = Math.max(dataModel == null ? 0 : dataModel.getRowCount() + 1, 100);
-            dataModel = new ResultSetDataModel(resultSet, getConnectionHandler(), rowCount);
+            dataModel = new ResultSetDataModel<>(resultSet, getConnectionHandler(), rowCount);
             resultForm.rebuildForm();
             resultForm.updateVisibleComponents();
         }
@@ -142,12 +142,12 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
                 });
     }
 
-    public ResultSetDataModel getTableModel() {
+    public ResultSetDataModel<?, ?> getTableModel() {
         return dataModel;
     }
 
     @Nullable
-    public ResultSetTable getResultTable() {
+    public ResultSetTable<?> getResultTable() {
         StatementExecutionResultForm resultForm = getForm();
         return Failsafe.check(resultForm) ? resultForm.getResultTable() : null;
     }
@@ -165,6 +165,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
 
     @Override
     public void disposeInner() {
+        dataModel = null;
         super.disposeInner();
     }
 

@@ -43,7 +43,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
 
     @NotNull
     @Override
-    protected MethodExecutionHistoryForm createComponent() {
+    protected MethodExecutionHistoryForm createForm() {
         return new MethodExecutionHistoryForm(this, WeakRef.get(selectedExecutionInput), debug);
     }
 
@@ -73,7 +73,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     }
 
     private void saveChanges() {
-        MethodExecutionHistoryForm component = getComponent();
+        MethodExecutionHistoryForm component = getForm();
         component.updateMethodExecutionInputs();
         MethodExecutionManager methodExecutionManager = MethodExecutionManager.getInstance(getProject());
         methodExecutionManager.setExecutionInputs(component.getExecutionInputs());
@@ -111,7 +111,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
         @Override
         public void actionPerformed(ActionEvent e) {
             saveChanges();
-            MethodExecutionInput executionInput = getComponent().getTree().getSelectedExecutionInput();
+            MethodExecutionInput executionInput = getForm().getTree().getSelectedExecutionInput();
             if (executionInput != null) {
                 MethodExecutionManager executionManager = MethodExecutionManager.getInstance(getProject());
                 close(OK_EXIT_CODE);
@@ -128,7 +128,7 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
         @Override
         public void actionPerformed(ActionEvent e) {
             saveChanges();
-            MethodExecutionInput executionInput = getComponent().getTree().getSelectedExecutionInput();
+            MethodExecutionInput executionInput = getForm().getTree().getSelectedExecutionInput();
             if (executionInput != null) {
                 DatabaseDebuggerManager debuggerManager = DatabaseDebuggerManager.getInstance(getProject());
                 close(OK_EXIT_CODE);

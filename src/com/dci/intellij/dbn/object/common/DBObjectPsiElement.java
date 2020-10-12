@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.object.common;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
@@ -32,10 +31,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class DBObjectPsiElement extends DisposableBase implements PsiNamedElement, NavigationItem {
-    private final DBObjectRef objectRef;
+public class DBObjectPsiElement implements PsiNamedElement, NavigationItem {
+    private final DBObjectRef<?> objectRef;
 
-    public DBObjectPsiElement(DBObjectRef objectRef) {
+    public DBObjectPsiElement(DBObjectRef<?> objectRef) {
         this.objectRef = objectRef;
     }
 

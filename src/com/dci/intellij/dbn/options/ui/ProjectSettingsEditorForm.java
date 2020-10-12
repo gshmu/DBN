@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
@@ -54,7 +53,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
     private JLabel newVersionLabel;
     private JPanel pluginUpdatePanel;
     private JPanel pluginUpdateLinkPanel;
-    private TabbedPane configurationTabs;
+    private final TabbedPane configurationTabs;
 
     private WeakRef<ProjectSettingsDialog> dialogRef;
 
@@ -166,7 +165,7 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -210,11 +209,5 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
             return (Configuration) tabInfo.getObject();
         }
         return getConfiguration();
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(configurationTabs);
-        super.disposeInner();
     }
 }

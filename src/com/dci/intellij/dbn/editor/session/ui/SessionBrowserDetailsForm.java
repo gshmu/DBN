@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.editor.session.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -11,6 +10,7 @@ import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.details.SessionDetailsTable;
 import com.dci.intellij.dbn.editor.session.details.SessionDetailsTableModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBSplitter;
 import com.intellij.ui.components.JBScrollPane;
@@ -26,16 +26,17 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
     private JPanel mainPanel;
     private JPanel sessionDetailsTabsPanel;
     private JBScrollPane sessionDetailsTablePane;
-    private SessionDetailsTable sessionDetailsTable;
-    private TabbedPane detailsTabbedPane;
+    private final SessionDetailsTable sessionDetailsTable;
+    private final TabbedPane detailsTabbedPane;
     private JPanel explainPlanPanel;
 
-    private SessionBrowser sessionBrowser;
-    private SessionBrowserCurrentSqlPanel currentSqlPanel;
+    private final WeakRef<SessionBrowser> sessionBrowser;
+    private final SessionBrowserCurrentSqlPanel currentSqlPanel;
 
-    public SessionBrowserDetailsForm(SessionBrowser sessionBrowser) {
-        this.sessionBrowser = sessionBrowser;
-        sessionDetailsTable = new SessionDetailsTable(sessionBrowser.getProject());
+    public SessionBrowserDetailsForm(@NotNull DBNComponent parent, SessionBrowser sessionBrowser) {
+        super(parent);
+        this.sessionBrowser = WeakRef.of(sessionBrowser);
+        sessionDetailsTable = new SessionDetailsTable(this);
         sessionDetailsTablePane.setViewportView(sessionDetailsTable);
         sessionDetailsTablePane.getViewport().setBackground(sessionDetailsTable.getBackground());
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
@@ -45,7 +46,7 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
         detailsTabbedPane = new TabbedPane(this);
         sessionDetailsTabsPanel.add(detailsTabbedPane, BorderLayout.CENTER);
 
-        currentSqlPanel = new SessionBrowserCurrentSqlPanel(sessionBrowser);
+        currentSqlPanel = new SessionBrowserCurrentSqlPanel(this, sessionBrowser);
         TabInfo currentSqlTabInfo = new TabInfo(currentSqlPanel.getComponent());
         currentSqlTabInfo.setText("Current Statement");
         currentSqlTabInfo.setIcon(Icons.FILE_SQL_CONSOLE);
@@ -70,15 +71,16 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
                 }
             }
         });
-
-        Disposer.register(this, sessionDetailsTable);
-        Disposer.register(this, currentSqlPanel);
-        Disposer.register(this, detailsTabbedPane);
     }
 
     @NotNull
     private ConnectionHandler getConnectionHandler() {
-        return Failsafe.nn(sessionBrowser.getConnectionHandler());
+        return getSessionBrowser().getConnectionHandler();
+    }
+
+    @NotNull
+    public SessionBrowser getSessionBrowser() {
+        return sessionBrowser.ensure();
     }
 
     public void update(@Nullable final SessionBrowserModelRow selectedRow) {
@@ -94,7 +96,7 @@ public class SessionBrowserDetailsForm extends DBNFormImpl{
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 }

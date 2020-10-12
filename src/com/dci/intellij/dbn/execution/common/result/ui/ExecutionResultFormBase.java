@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.execution.common.result.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.execution.ExecutionResult;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class ExecutionResultFormBase<T extends ExecutionResult> extends DBNFormImpl implements ExecutionResultForm<T>{
+public abstract class ExecutionResultFormBase<T extends ExecutionResult<?>> extends DBNFormImpl implements ExecutionResultForm<T>{
     private T executionResult;
 
     public ExecutionResultFormBase(@NotNull T executionResult) {
@@ -24,11 +25,9 @@ public abstract class ExecutionResultFormBase<T extends ExecutionResult> extends
     @Override
     public void setExecutionResult(@NotNull T executionResult) {
         if (this.executionResult != executionResult) {
-            T oldExecutionResult = this.executionResult;
-            this.executionResult = executionResult;
+            this.executionResult = SafeDisposer.replace(this.executionResult, executionResult);
             this.executionResult.setPrevious(null);
             rebuildForm();
-            Disposer.disposeInBackground(oldExecutionResult);
         }
     }
 
@@ -47,6 +46,7 @@ public abstract class ExecutionResultFormBase<T extends ExecutionResult> extends
     @Override
     public void disposeInner() {
         Disposer.dispose(executionResult);
+        executionResult = null;
         super.disposeInner();
     }
 }

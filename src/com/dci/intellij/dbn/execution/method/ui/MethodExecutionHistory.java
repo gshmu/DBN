@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
@@ -23,18 +23,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MethodExecutionHistory implements PersistentStateElement, Disposable{
-    private List<MethodExecutionInput> executionInputs = CollectionUtil.createConcurrentList();
+    private final ProjectRef project;
     private boolean groupEntries = true;
     private DBObjectRef<DBMethod> selection;
-    private ProjectRef projectRef;
+
+    private List<MethodExecutionInput> executionInputs = CollectionUtil.createConcurrentList();
 
     public MethodExecutionHistory(Project project) {
-        this.projectRef = ProjectRef.from(project);
+        this.project = ProjectRef.of(project);
     }
 
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return project.ensure();
     }
 
     public List<MethodExecutionInput> getExecutionInputs() {
@@ -102,7 +103,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
             MethodExecutionInput executionInput = new MethodExecutionInput(getProject(), method);
             executionInputs.add(executionInput);
             java.util.Collections.sort(executionInputs);
-            selection = DBObjectRef.from(method);
+            selection = DBObjectRef.of(method);
             return executionInput;
         }
         return null;
@@ -193,7 +194,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
 
     @Override
     public void dispose() {
-        Disposer.dispose(executionInputs);
+        DisposeUtil.dispose(executionInputs);
         CollectionUtil.clear(executionInputs);
     }
 

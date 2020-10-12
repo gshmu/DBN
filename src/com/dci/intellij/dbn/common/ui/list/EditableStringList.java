@@ -1,12 +1,13 @@
 package com.dci.intellij.dbn.common.ui.list;
 
 import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
 import com.dci.intellij.dbn.common.ui.table.DBNTableGutter;
 import com.dci.intellij.dbn.common.ui.table.IndexTableGutter;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
@@ -21,14 +22,15 @@ import java.util.Collections;
 import java.util.List;
 
 public class EditableStringList extends DBNEditableTable<EditableStringList.EditableListModel> {
-    private boolean sorted;
-    private boolean indexed;
+    private final boolean sorted;
+    private final boolean indexed;
 
-    public EditableStringList(boolean sorted, boolean indexed) {
-        this(null, new ArrayList<String>(), sorted, indexed);
+    public EditableStringList(@NotNull DBNComponent parent, boolean sorted, boolean indexed) {
+        this(parent, new ArrayList<>(), sorted, indexed);
     }
-    public EditableStringList(Project project, List<String> elements, boolean sorted, boolean indexed) {
-        super(project, new EditableListModel(elements, sorted), false);
+
+    public EditableStringList(@NotNull DBNComponent parent, List<String> elements, boolean sorted, boolean indexed) {
+        super(parent, new EditableListModel(elements, sorted), false);
         setTableHeader(null);
         this.sorted = sorted;
         this.indexed = indexed;
@@ -47,8 +49,8 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
     }
 
     @Override
-    public DBNTableGutter createTableGutter() {
-        return indexed ? new IndexTableGutter(this) : null;
+    public DBNTableGutter<?> createTableGutter() {
+        return indexed ? new IndexTableGutter<>(this) : null;
     }
 
     @Override
@@ -68,7 +70,7 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
         return component;
     }
 
-    private KeyAdapter keyListener = new KeyAdapter() {
+    private final KeyAdapter keyListener = new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent e) {
             if (!e.isConsumed()) {
@@ -113,10 +115,10 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
 
 
     public static class EditableListModel extends DBNEditableTableModel {
-        private List<String> data;
+        private final List<String> data;
 
         public EditableListModel(Collection<String> data, boolean sorted) {
-            this.data = new ArrayList<String>(data);
+            this.data = new ArrayList<>(data);
             if (sorted) Collections.sort(this.data);
         }
 

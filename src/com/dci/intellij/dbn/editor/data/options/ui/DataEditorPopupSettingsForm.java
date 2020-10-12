@@ -46,7 +46,7 @@ public class DataEditorPopupSettingsForm extends ConfigurationEditorForm<DataEdi
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

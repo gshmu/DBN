@@ -17,7 +17,7 @@ public abstract class BasicProjectConfiguration<P extends ProjectConfiguration, 
 
     public BasicProjectConfiguration(Project project) {
         super(null);
-        this.projectRef = ProjectRef.from(project);
+        this.projectRef = ProjectRef.of(project);
     }
 
     @NotNull

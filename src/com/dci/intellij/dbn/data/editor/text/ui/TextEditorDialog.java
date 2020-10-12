@@ -26,7 +26,7 @@ public class TextEditorDialog extends DBNDialog<TextEditorForm> {
 
     @NotNull
     @Override
-    protected TextEditorForm createComponent() {
+    protected TextEditorForm createForm() {
         UserValueHolder userValueHolder = textEditorAdapter.getUserValueHolder();
         return new TextEditorForm(this, documentListener, userValueHolder, textEditorAdapter);
     }
@@ -57,7 +57,7 @@ public class TextEditorDialog extends DBNDialog<TextEditorForm> {
 
     @Override
     protected void doOKAction() {
-        String text = getComponent().getText();
+        String text = getForm().getText();
         Progress.modal(getProject(), "Updating value", false, (progress) -> {
             UserValueHolder userValueHolder = textEditorAdapter.getUserValueHolder();
             userValueHolder.updateUserValue(text, false);

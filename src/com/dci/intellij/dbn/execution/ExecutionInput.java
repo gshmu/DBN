@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.execution;
 
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
@@ -18,7 +17,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class ExecutionInput extends DisposableBase implements Disposable, ConnectionProvider, PersistentConfiguration {
+public abstract class ExecutionInput extends StatefulDisposable.Base implements StatefulDisposable, ConnectionProvider, PersistentConfiguration {
     private final ExecutionTimeout executionTimeout;
     private final ExecutionTimeout debugExecutionTimeout;
     private final ExecutionTarget executionTarget;
@@ -41,7 +40,7 @@ public abstract class ExecutionInput extends DisposableBase implements Disposabl
     protected abstract ExecutionContext createExecutionContext();
 
     public ExecutionInput(Project project, ExecutionTarget executionTarget) {
-        projectRef = ProjectRef.from(project);
+        projectRef = ProjectRef.of(project);
         this.executionTarget = executionTarget;
         executionTimeout = new ExecutionTimeout(project, executionTarget, false);
         debugExecutionTimeout = new ExecutionTimeout(project, executionTarget, true);
@@ -117,5 +116,10 @@ public abstract class ExecutionInput extends DisposableBase implements Disposabl
     @NotNull
     public final ExecutionTarget getExecutionTarget() {
         return executionTarget;
+    }
+
+    @Override
+    protected void disposeInner() {
+        nullify();
     }
 }

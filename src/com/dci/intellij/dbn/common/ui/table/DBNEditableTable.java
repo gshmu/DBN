@@ -2,10 +2,11 @@ package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.Borders;
-import com.intellij.openapi.project.Project;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.TableUtil;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -19,8 +20,8 @@ import java.awt.*;
 public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableWithGutter<T> {
     public static final LineBorder SELECTION_BORDER = new LineBorder(UIUtil.getTableBackground());
 
-    public DBNEditableTable(Project project, T model, boolean showHeader) {
-        super(project, model, showHeader);
+    public DBNEditableTable(@NotNull DBNComponent parent, @NotNull T model, boolean showHeader) {
+        super(parent, model, showHeader);
         setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         getSelectionModel().addListSelectionListener(selectionListener);
         setSelectionBackground(UIUtil.getTableBackground());
@@ -49,7 +50,7 @@ public class DBNEditableTable<T extends DBNEditableTableModel> extends DBNTableW
         });
     }
 
-    private ListSelectionListener selectionListener = e -> {
+    private final ListSelectionListener selectionListener = e -> {
         if (!e.getValueIsAdjusting() && getSelectedRowCount() == 1) {
             startCellEditing();
         }

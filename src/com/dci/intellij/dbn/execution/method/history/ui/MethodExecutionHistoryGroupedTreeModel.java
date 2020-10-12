@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHistoryTreeModel {
+
     MethodExecutionHistoryGroupedTreeModel(List<MethodExecutionInput> executionInputs, boolean debug) {
         super(executionInputs);
         for (MethodExecutionInput executionInput : executionInputs) {

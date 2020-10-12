@@ -6,9 +6,8 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
@@ -55,13 +54,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-@Nullifiable
-public class ConnectionHandlerImpl extends DisposableBase implements ConnectionHandler, NotificationSupport {
+public class ConnectionHandlerImpl extends StatefulDisposable.Base implements ConnectionHandler, NotificationSupport {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private ConnectionSettings connectionSettings;
     private DatabaseInterfaceProvider interfaceProvider;
-    private final WeakRef<ConnectionBundle> connectionBundleRef;
+    private final WeakRef<ConnectionBundle> connectionBundle;
     private final ConnectionHandlerStatusHolder connectionStatus;
     private final ConnectionPool connectionPool;
     private final DatabaseConsoleBundle consoleBundle;
@@ -92,11 +90,11 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
             Latent.basic(() -> new DBConnectionPsiDirectory(this));
 
     private final Latent<DBObjectBundle> objectBundle =
-            Latent.disposable(this, () -> new DBObjectBundleImpl(this, getConnectionBundle()));
+            Latent.basic(() -> new DBObjectBundleImpl(this, getConnectionBundle()));
 
 
     ConnectionHandlerImpl(ConnectionBundle connectionBundle, ConnectionSettings connectionSettings) {
-        this.connectionBundleRef = WeakRef.of(connectionBundle);
+        this.connectionBundle = WeakRef.of(connectionBundle);
         this.connectionSettings = connectionSettings;
         this.enabled = connectionSettings.isActive();
         ref = new ConnectionHandlerRef(this);
@@ -197,7 +195,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
     @Override
     @NotNull
     public ConnectionBundle getConnectionBundle() {
-        return connectionBundleRef.ensure();
+        return connectionBundle.ensure();
     }
 
     @NotNull
@@ -551,7 +549,7 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
         if (language instanceof DBLanguageDialect) {
             return (DBLanguageDialect) language;
         } else if (language instanceof DBLanguage) {
-            return getLanguageDialect((DBLanguage) language);
+            return getLanguageDialect((DBLanguage<?>) language);
         }
         return null;
     }
@@ -632,5 +630,10 @@ public class ConnectionHandlerImpl extends DisposableBase implements ConnectionH
             }
         }
         return false;
+    }
+
+    @Override
+    protected void disposeInner() {
+        nullify();
     }
 }

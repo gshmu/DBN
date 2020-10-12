@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.record.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposableContainer;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -9,8 +9,10 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.data.record.ColumnSortingType;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorColumnInfo;
+import com.dci.intellij.dbn.editor.data.model.DatasetEditorModel;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -21,27 +23,26 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDialog> {
+public class DatasetRecordEditorForm extends DBNFormImpl {
     private JPanel actionsPanel;
     private JPanel columnsPanel;
     private JPanel mainPanel;
     private JScrollPane columnsPanelScrollPane;
     private JPanel headerPanel;
 
-    private List<DatasetRecordEditorColumnForm> columnForms = new ArrayList<DatasetRecordEditorColumnForm>();
+    private final List<DatasetRecordEditorColumnForm> columnForms = DisposableContainer.list(this);
 
-    private DatasetEditorModelRow row;
+    private WeakRef<DatasetEditorModelRow> row;
 
     public DatasetRecordEditorForm(DatasetRecordEditorDialog parentComponent, DatasetEditorModelRow row) {
         super(parentComponent);
-        this.row = row;
+        this.row = WeakRef.of(row);
         DBDataset dataset = row.getModel().getDataset();
 
-        DBNHeaderForm headerForm = new DBNHeaderForm(dataset, this);
+        DBNHeaderForm headerForm = new DBNHeaderForm(this, dataset);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
@@ -93,7 +94,7 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -101,8 +102,22 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
         return columnsPanel;
     }
 
+    @NotNull
+    public DatasetEditorModelRow getRow() {
+        return row.ensure();
+    }
+
+    public int geRowIndex() {
+        return getRow().getIndex();
+    }
+
+    @NotNull
+    public DatasetEditorModel getModel() {
+        return getRow().getModel();
+    }
+
     public void setRow(DatasetEditorModelRow row) {
-        this.row = row;
+        this.row = WeakRef.of(row);
         for (DatasetEditorModelCell cell : row.getCells()) {
             DatasetRecordEditorColumnForm columnForm = getColumnPanel(cell.getColumnInfo());
             if (columnForm != null) {
@@ -125,11 +140,11 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
      *********************************************************/
     private void sortColumns(ColumnSortingType columnSortingType) {
         Comparator<DatasetRecordEditorColumnForm> comparator =
-                columnSortingType == ColumnSortingType.ALPHABETICAL ? alphabeticComparator :
-                columnSortingType == ColumnSortingType.BY_INDEX ? indexedComparator : null;
+                columnSortingType == ColumnSortingType.ALPHABETICAL ? ALPHANUMERIC_COMPARATOR :
+                columnSortingType == ColumnSortingType.BY_INDEX ? INDEXED_COMPARATOR : null;
 
         if (comparator != null) {
-            java.util.Collections.sort(columnForms, comparator);
+            columnForms.sort(comparator);
             columnsPanel.removeAll();
             for (DatasetRecordEditorColumnForm columnForm : columnForms) {
                 columnsPanel.add(columnForm.getComponent());
@@ -138,22 +153,16 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
         }
     }
 
-    private static Comparator<DatasetRecordEditorColumnForm> alphabeticComparator = new Comparator<DatasetRecordEditorColumnForm>() {
-        @Override
-        public int compare(DatasetRecordEditorColumnForm columnPanel1, DatasetRecordEditorColumnForm columnPanel2) {
-            String name1 = columnPanel1.getCell().getColumnInfo().getName();
-            String name2 = columnPanel2.getCell().getColumnInfo().getName();
-            return name1.compareTo(name2);
-        }
+    private static final Comparator<DatasetRecordEditorColumnForm> ALPHANUMERIC_COMPARATOR = (columnPanel1, columnPanel2) -> {
+        String name1 = columnPanel1.getCell().getColumnInfo().getName();
+        String name2 = columnPanel2.getCell().getColumnInfo().getName();
+        return name1.compareTo(name2);
     };
 
-    private static Comparator<DatasetRecordEditorColumnForm> indexedComparator = new Comparator<DatasetRecordEditorColumnForm>() {
-        @Override
-        public int compare(DatasetRecordEditorColumnForm columnPanel1, DatasetRecordEditorColumnForm columnPanel2) {
-            int index1 = columnPanel1.getCell().getColumnInfo().getColumnIndex();
-            int index2 = columnPanel2.getCell().getColumnInfo().getColumnIndex();
-            return index1-index2;
-        }
+    private static final Comparator<DatasetRecordEditorColumnForm> INDEXED_COMPARATOR = (columnPanel1, columnPanel2) -> {
+        int index1 = columnPanel1.getCell().getColumnInfo().getColumnIndex();
+        int index2 = columnPanel2.getCell().getColumnInfo().getColumnIndex();
+        return index1-index2;
     };
 
     public void focusNextColumnPanel(DatasetRecordEditorColumnForm source) {
@@ -177,20 +186,20 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
      *********************************************************/
     private class SortAlphabeticallyAction extends ToggleAction {
         private SortAlphabeticallyAction() {
-            super("Sort columns alphabetically", null, Icons.ACTION_SORT_ALPHA);
+            super("Sort Columns Alphabetically", null, Icons.ACTION_SORT_ALPHA);
         }
 
         @Override
-        public boolean isSelected(AnActionEvent anActionEvent) {
-            Project project = row.getModel().getDataset().getProject();
+        public boolean isSelected(@NotNull AnActionEvent e) {
+            Project project = getModel().getDataset().getProject();
             ColumnSortingType columnSortingType = DatasetEditorManager.getInstance(project).getRecordViewColumnSortingType();
             return columnSortingType == ColumnSortingType.ALPHABETICAL;
         }
 
         @Override
-        public void setSelected(AnActionEvent anActionEvent, boolean selected) {
+        public void setSelected(@NotNull AnActionEvent e, boolean selected) {
             ColumnSortingType columnSortingType = selected ? ColumnSortingType.ALPHABETICAL : ColumnSortingType.BY_INDEX;
-            Project project = row.getModel().getDataset().getProject();
+            Project project = getModel().getDataset().getProject();
             DatasetEditorManager.getInstance(project).setRecordViewColumnSortingType(columnSortingType);
             sortColumns(columnSortingType);
         }
@@ -203,16 +212,16 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            DatasetEditorModelRow firstRow = row.getModel().getRowAtIndex(0);
+            DatasetEditorModelRow firstRow = getModel().getRowAtIndex(0);
             if (firstRow != null) {
                 setRow(firstRow);
-                row.getModel().getEditorTable().selectRow(0);
+                getModel().getEditorTable().selectRow(0);
             }
         }
 
         @Override
         public void update(AnActionEvent anactionevent) {
-            anactionevent.getPresentation().setEnabled(row.getIndex() > 0);
+            anactionevent.getPresentation().setEnabled(geRowIndex() > 0);
         }
     }
 
@@ -223,19 +232,19 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            if (row.getIndex() > 0) {
-                int index = row.getIndex() - 1;
-                DatasetEditorModelRow previousRow = row.getModel().getRowAtIndex(index);
+            if (geRowIndex() > 0) {
+                int index = geRowIndex() - 1;
+                DatasetEditorModelRow previousRow = getModel().getRowAtIndex(index);
                 if (previousRow != null) {
                     setRow(previousRow);
-                    row.getModel().getEditorTable().selectRow(index);
+                    getModel().getEditorTable().selectRow(index);
                 }
             }
         }
 
         @Override
         public void update(AnActionEvent anactionevent) {
-            anactionevent.getPresentation().setEnabled(row.getIndex() > 0);
+            anactionevent.getPresentation().setEnabled(geRowIndex() > 0);
         }
     }
 
@@ -246,46 +255,41 @@ public class DatasetRecordEditorForm extends DBNFormImpl<DatasetRecordEditorDial
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            if (row.getIndex() < row.getModel().getRowCount() -1) {
-                int index = row.getIndex() + 1;
-                DatasetEditorModelRow nextRow = row.getModel().getRowAtIndex(index);
+            if (geRowIndex() < getModel().getRowCount() -1) {
+                int index = geRowIndex() + 1;
+                DatasetEditorModelRow nextRow = getModel().getRowAtIndex(index);
                 if (nextRow != null) {
                     setRow(nextRow);
-                    row.getModel().getEditorTable().selectRow(index);
+                    getModel().getEditorTable().selectRow(index);
                 }
             }
         }
 
         @Override
         public void update(AnActionEvent anactionevent) {
-            anactionevent.getPresentation().setEnabled(row.getIndex() < row.getModel().getRowCount() -1);
+            anactionevent.getPresentation().setEnabled(geRowIndex() < getModel().getRowCount() -1);
         }
     }
 
     private class LastRecordAction extends AnAction {
         private LastRecordAction() {
-            super("Last record", null, Icons.DATA_EDITOR_LAST_RECORD);
+            super("Last Record", null, Icons.DATA_EDITOR_LAST_RECORD);
         }
 
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
-            int index = row.getModel().getRowCount() - 1 ;
-            DatasetEditorModelRow lastRow = row.getModel().getRowAtIndex(index);
+            int index = getModel().getRowCount() - 1 ;
+            DatasetEditorModelRow lastRow = getModel().getRowAtIndex(index);
             if (lastRow != null) {
                 setRow(lastRow);
-                row.getModel().getEditorTable().selectRow(index);
+                getModel().getEditorTable().selectRow(index);
             }
         }
 
         @Override
         public void update(AnActionEvent anactionevent) {
-            anactionevent.getPresentation().setEnabled(row.getIndex() < row.getModel().getRowCount() -1);
+            anactionevent.getPresentation().setEnabled(geRowIndex() < getModel().getRowCount() -1);
         }
     }
 
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(columnForms);
-        super.disposeInner();
-    }
 }

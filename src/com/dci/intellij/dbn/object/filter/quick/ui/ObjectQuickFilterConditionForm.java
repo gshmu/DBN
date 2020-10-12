@@ -21,7 +21,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.awt.*;
 
-public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilterForm> {
+public class ObjectQuickFilterConditionForm extends DBNFormImpl {
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JLabel objectNameLabel;
@@ -29,10 +29,10 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
     private DBNComboBox<ConditionOperator> operatorComboBox;
     private DBNComboBox<ConditionJoinType> joinTypeComboBox;
 
-    private ObjectQuickFilterCondition condition;
+    private final ObjectQuickFilterCondition condition;
 
-    ObjectQuickFilterConditionForm(final ObjectQuickFilterForm parentComponent, @NotNull final ObjectQuickFilterCondition condition) {
-        super(parentComponent);
+    ObjectQuickFilterConditionForm(@NotNull ObjectQuickFilterForm parent, @NotNull final ObjectQuickFilterCondition condition) {
+        super(parent);
         this.condition = condition;
 
         final ObjectQuickFilter filter = condition.getFilter();
@@ -40,7 +40,7 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
         joinTypeComboBox.addListener((oldValue, newValue) -> {
             if (condition.index() == 0) {
                 filter.setJoinType(newValue);
-                parentComponent.updateJoinTypeComponents();
+                parent.updateJoinTypeComponents();
             }
         });
 
@@ -74,6 +74,11 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
     }
 
+    @NotNull
+    public ObjectQuickFilterForm getParentForm() {
+        return (ObjectQuickFilterForm) ensureParentComponent();
+    }
+
     void updateJoinTypeComponent() {
         joinTypeComboBox.setSelectedValue(condition.getFilter().getJoinType());
         int conditionsCount = condition.getFilter().getConditions().size();
@@ -88,7 +93,7 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -98,7 +103,7 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl<ObjectQuickFilte
     }
 
     public void remove() {
-        ensureParentComponent().removeConditionPanel(condition);
+        getParentForm().removeConditionPanel(condition);
     }
 
     public boolean isActive() {

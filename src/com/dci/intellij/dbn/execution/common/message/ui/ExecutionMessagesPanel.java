@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.common.message.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -21,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.tree.TreePath;
 
-public class ExecutionMessagesPanel extends DBNFormImpl<ExecutionConsoleForm>{
+public class ExecutionMessagesPanel extends DBNFormImpl{
     private JPanel mainPanel;
     private JPanel actionsPanel;
     private JPanel statusPanel;
@@ -30,9 +29,9 @@ public class ExecutionMessagesPanel extends DBNFormImpl<ExecutionConsoleForm>{
 
     private final MessagesTree messagesTree;
 
-    public ExecutionMessagesPanel(ExecutionConsoleForm parentForm) {
-        super(parentForm);
-        messagesTree = new MessagesTree(getProject());
+    public ExecutionMessagesPanel(ExecutionConsoleForm parent) {
+        super(parent);
+        messagesTree = new MessagesTree(this);
         messagesScrollPane.setViewportView(messagesTree);
         messagesPanel.setBorder(IdeBorderFactory.createBorder());
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
@@ -44,8 +43,6 @@ public class ExecutionMessagesPanel extends DBNFormImpl<ExecutionConsoleForm>{
                 ActionUtil.SEPARATOR,
                 new ExecutionEngineSettingsAction(messagesTree));
         actionsPanel.add(actionToolbar.getComponent());
-
-        Disposer.register(this, messagesTree);
     }
 
     public void resetMessagesStatus() {
@@ -70,7 +67,7 @@ public class ExecutionMessagesPanel extends DBNFormImpl<ExecutionConsoleForm>{
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

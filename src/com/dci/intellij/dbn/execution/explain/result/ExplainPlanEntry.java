@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.execution.explain.result;
 
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Disposer;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -14,24 +14,23 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Nullifiable
-public class ExplainPlanEntry extends DisposableBase {
-    private DBObjectRef objectRef;
-    private final String operation;
-    private final String operationOptions;
-    private final String optimizer;
-    private final Integer id;
-    private Integer parentId;
-    private final BigDecimal depth;
-    private final BigDecimal position;
-    private final BigDecimal cost;
-    private final BigDecimal cardinality;
-    private final BigDecimal bytes;
-    private final BigDecimal cpuCost;
-    private final BigDecimal ioCost;
-    private final String accessPredicates;
-    private final String filterPredicates;
-    private final String projection;
+public class ExplainPlanEntry extends StatefulDisposable.Base {
+    private DBObjectRef<?> objectRef;
+    private @Getter Integer parentId;
+    private final @Getter String operation;
+    private final @Getter String operationOptions;
+    private final @Getter String optimizer;
+    private final @Getter Integer id;
+    private final @Getter BigDecimal depth;
+    private final @Getter BigDecimal position;
+    private final @Getter BigDecimal cost;
+    private final @Getter BigDecimal cardinality;
+    private final @Getter BigDecimal bytes;
+    private final @Getter BigDecimal cpuCost;
+    private final @Getter BigDecimal ioCost;
+    private final @Getter String accessPredicates;
+    private final @Getter String filterPredicates;
+    private final @Getter String projection;
 
     private ExplainPlanEntry parent;
     private List<ExplainPlanEntry> children;
@@ -74,8 +73,8 @@ public class ExplainPlanEntry extends DisposableBase {
             }
 
 
-            DBObjectRef schemaRef = new DBObjectRef(connectionHandler.getConnectionId(), DBObjectType.SCHEMA, objectOwner);
-            objectRef = new DBObjectRef(schemaRef, objectType, objectName);
+            DBObjectRef<?> schemaRef = new DBObjectRef<>(connectionHandler.getConnectionId(), DBObjectType.SCHEMA, objectOwner);
+            objectRef = new DBObjectRef<>(schemaRef, objectType, objectName);
         }
     }
 
@@ -98,73 +97,13 @@ public class ExplainPlanEntry extends DisposableBase {
         return children;
     }
 
-    public DBObjectRef getObjectRef() {
+    public DBObjectRef<?> getObjectRef() {
         return objectRef;
-    }
-
-    public String getOperation() {
-        return operation;
-    }
-
-    public String getOperationOptions() {
-        return operationOptions;
-    }
-
-    public String getOptimizer() {
-        return optimizer;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public Integer getParentId() {
-        return parentId;
-    }
-
-    public BigDecimal getDepth() {
-        return depth;
-    }
-
-    public BigDecimal getPosition() {
-        return position;
-    }
-
-    public BigDecimal getCost() {
-        return cost;
-    }
-
-    public BigDecimal getCardinality() {
-        return cardinality;
-    }
-
-    public BigDecimal getBytes() {
-        return bytes;
-    }
-
-    public BigDecimal getCpuCost() {
-        return cpuCost;
-    }
-
-    public BigDecimal getIoCost() {
-        return ioCost;
-    }
-
-    public String getAccessPredicates() {
-        return accessPredicates;
-    }
-
-    public String getFilterPredicates() {
-        return filterPredicates;
-    }
-
-    public String getProjection() {
-        return projection;
     }
 
     @Override
     public void disposeInner() {
-        Disposer.dispose(children);
-        super.disposeInner();
+        DisposeUtil.dispose(children);
+        nullify();
     }
 }

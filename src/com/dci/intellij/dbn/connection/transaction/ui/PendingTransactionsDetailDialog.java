@@ -14,12 +14,14 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.COMMIT;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.ROLLBACK;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
 
 public class PendingTransactionsDetailDialog extends DBNDialog<PendingTransactionsDetailForm> {
-    private ConnectionHandlerRef connectionHandlerRef;
-    private TransactionAction additionalOperation;
-    private boolean showActions;
+    private final ConnectionHandlerRef connectionHandlerRef;
+    private final TransactionAction additionalOperation;
+    private final boolean showActions;
 
     public PendingTransactionsDetailDialog(ConnectionHandler connectionHandler, TransactionAction additionalOperation, boolean showActions) {
         super(connectionHandler.getProject(), "Uncommitted changes", true);
@@ -33,8 +35,8 @@ public class PendingTransactionsDetailDialog extends DBNDialog<PendingTransactio
 
     @NotNull
     @Override
-    protected PendingTransactionsDetailForm createComponent() {
-        return new PendingTransactionsDetailForm(getConnectionHandler(), additionalOperation, showActions);
+    protected PendingTransactionsDetailForm createForm() {
+        return new PendingTransactionsDetailForm(this, getConnectionHandler(), additionalOperation, showActions);
     }
 
     @NotNull
@@ -92,7 +94,7 @@ public class PendingTransactionsDetailDialog extends DBNDialog<PendingTransactio
 
     protected void executeActions(List<TransactionAction>  actions) {
         ConnectionHandler connectionHandler = getConnectionHandler();
-        List<DBNConnection> connections = getComponent().getConnections();
+        List<DBNConnection> connections = getForm().getConnections();
         DatabaseTransactionManager transactionManager = getTransactionManager();
         for (DBNConnection connection : connections) {
             transactionManager.execute(connectionHandler, connection, actions, true, null);

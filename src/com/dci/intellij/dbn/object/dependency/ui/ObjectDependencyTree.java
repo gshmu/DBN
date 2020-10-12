@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -41,9 +42,12 @@ public class ObjectDependencyTree extends DBNTree{
             LoadInProgressRegistry.create(this,
                     node -> getModel().refreshLoadInProgressNode(node));
 
-    ObjectDependencyTree(@NotNull Project project, @NotNull DBSchemaObject schemaObject) {
-        super(project);
-        setModel(createModel(project, schemaObject));
+    ObjectDependencyTree(@NotNull DBNComponent parent, @NotNull DBSchemaObject schemaObject) {
+        super(parent);
+        Project project = getProject();
+        ObjectDependencyTreeModel model = createModel(project, schemaObject);
+
+        setModel(model);
         selectionHistory.add(schemaObject);
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
@@ -90,7 +94,7 @@ public class ObjectDependencyTree extends DBNTree{
         if (model instanceof ObjectDependencyTreeModel) {
             ObjectDependencyTreeModel treeModel = (ObjectDependencyTreeModel) model;
             treeModel.setTree(this);
-            Disposer.dispose(getModel());
+            DisposeUtil.dispose(getModel());
             super.setModel(model);
         }
     }
@@ -158,7 +162,7 @@ public class ObjectDependencyTree extends DBNTree{
         private final DBObjectRef<DBSchemaObject> objectRef;
         SelectObjectAction(DBSchemaObject object) {
             super("Select");
-            objectRef = DBObjectRef.from(object);
+            objectRef = DBObjectRef.of(object);
         }
 
         @Override
@@ -209,7 +213,7 @@ public class ObjectDependencyTree extends DBNTree{
         DBSchemaObject object = oldModel.getObject();
         if (object != null) {
             setModel(new ObjectDependencyTreeModel(object, dependencyType));
-            Disposer.dispose(oldModel);
+            DisposeUtil.dispose(oldModel);
         }
     }
 
@@ -221,12 +225,12 @@ public class ObjectDependencyTree extends DBNTree{
 
         ObjectDependencyType dependencyType = oldModel.getDependencyType();
         setModel(new ObjectDependencyTreeModel(object, dependencyType));
-        Disposer.dispose(oldModel);
+        DisposeUtil.dispose(oldModel);
     }
 
     @Override
     public void disposeInner() {
-        Disposer.dispose(selectionHistory, speedSearch, getModel());
+        DisposeUtil.dispose(selectionHistory, speedSearch, getModel());
         super.disposeInner();
     }
 }

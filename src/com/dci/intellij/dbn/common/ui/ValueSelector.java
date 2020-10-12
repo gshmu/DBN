@@ -34,16 +34,16 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class ValueSelector<T extends Presentable> extends JPanel{
-    private Set<ValueSelectorListener<T>> listeners = new HashSet<>();
-    private PropertyHolder<ValueSelectorOption> options = PropertyHolder.create(ValueSelectorOption.class);
+    private final Set<ValueSelectorListener<T>> listeners = new HashSet<>();
+    private final PropertyHolder<ValueSelectorOption> options = PropertyHolder.create(ValueSelectorOption.class);
 
-    private JLabel label;
-    private JPanel innerPanel;
+    private final JLabel label;
+    private final JPanel innerPanel;
     private boolean isEnabled = true;
     private ListPopup popup;
 
-    private static Border focusBorder = new CompoundBorder(new RoundedLineBorder(new JBColor(Gray._190, Gray._55), 3, 1), JBUI.Borders.empty(2, 4));
-    private static Border defaultBorder = JBUI.Borders.empty(3, 5);
+    private static final Border focusBorder = new CompoundBorder(new RoundedLineBorder(new JBColor(Gray._190, Gray._55), 3, 1), JBUI.Borders.empty(2, 4));
+    private static final Border defaultBorder = JBUI.Borders.empty(3, 5);
 
     private List<T> values;
     private PresentableFactory<T> valueFactory;

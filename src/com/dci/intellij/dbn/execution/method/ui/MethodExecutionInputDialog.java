@@ -24,7 +24,7 @@ public class MethodExecutionInputDialog extends DBNDialog<MethodExecutionInputFo
 
     @NotNull
     @Override
-    protected MethodExecutionInputForm createComponent() {
+    protected MethodExecutionInputForm createForm() {
         return new MethodExecutionInputForm(this, executionInput, true, debuggerType);
     }
 
@@ -53,7 +53,7 @@ public class MethodExecutionInputDialog extends DBNDialog<MethodExecutionInputFo
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                getComponent().updateExecutionInput();
+                getForm().updateExecutionInput();
             } finally {
                 doOKAction();
             }

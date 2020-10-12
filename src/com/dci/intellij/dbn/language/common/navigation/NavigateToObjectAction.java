@@ -10,7 +10,7 @@ public class NavigateToObjectAction extends AnAction {
     private DBObjectRef objectRef;
     public NavigateToObjectAction(DBObject object, DBObjectType objectType) {
         super("Navigate to " + objectType.getName(), null, objectType.getIcon());
-        objectRef = DBObjectRef.from(object);
+        objectRef = DBObjectRef.of(object);
     }
 
     @Override

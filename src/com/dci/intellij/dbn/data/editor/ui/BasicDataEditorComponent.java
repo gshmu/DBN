@@ -1,22 +1,18 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.swing.*;
 
 public class BasicDataEditorComponent extends JTextField implements DataEditorComponent{
-    private UserValueHolder userValueHolder;
+    @Getter
+    @Setter
+    private UserValueHolder<?> userValueHolder;
+
     @Override
     public JTextField getTextField() {
         return this;
-    }
-
-    @Override
-    public void setUserValueHolder(UserValueHolder userValueHolder) {
-        this.userValueHolder = userValueHolder;
-    }
-
-    @Override
-    public UserValueHolder getUserValueHolder() {
-        return userValueHolder;
     }
 
     @Override
@@ -32,20 +28,11 @@ public class BasicDataEditorComponent extends JTextField implements DataEditorCo
     /********************************************************
      *                    Disposable                        *
      ********************************************************/
+    @Getter
     private boolean disposed;
 
     @Override
-    public boolean isDisposed() {
-        return disposed;
-    }
-
-    @Override
-    public void markDisposed() {
-        disposed = true;
-    }
-
-    @Override
-    public void disposeInner() {
+    public void dispose() {
         userValueHolder = null;
     }
 }

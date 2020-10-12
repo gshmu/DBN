@@ -1,10 +1,8 @@
 package com.dci.intellij.dbn.browser.model;
 
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
-import com.dci.intellij.dbn.common.dispose.RegisteredDisposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
 import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
@@ -20,8 +18,7 @@ import javax.swing.tree.TreePath;
 import java.util.HashSet;
 import java.util.Set;
 
-@Nullifiable
-public abstract class BrowserTreeModel extends DisposableBase implements TreeModel, RegisteredDisposable, ProjectEventAdapter.Provided {
+public abstract class BrowserTreeModel extends StatefulDisposable.Base implements TreeModel, StatefulDisposable, ProjectEventAdapter.Provided {
 
     private final Set<TreeModelListener> treeModelListeners = new HashSet<>();
     private final WeakRef<BrowserTreeNode> root;
@@ -99,7 +96,7 @@ public abstract class BrowserTreeModel extends DisposableBase implements TreeMod
 
     @Override
     public void disposeInner() {
-        super.disposeInner();
+        nullify();
     }
 
     /********************************************************

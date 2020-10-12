@@ -22,7 +22,7 @@ public class ObjectQuickFilterDialog extends DBNDialog<ObjectQuickFilterForm> {
 
     @NotNull
     @Override
-    protected ObjectQuickFilterForm createComponent() {
+    protected ObjectQuickFilterForm createForm() {
         return new ObjectQuickFilterForm(this, objectList);
     }
 
@@ -39,7 +39,7 @@ public class ObjectQuickFilterDialog extends DBNDialog<ObjectQuickFilterForm> {
                 new AbstractAction("Clear Filters") {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        getComponent().getFilter().clear();
+                        getForm().getFilter().clear();
                         doOKAction();
                     }
                 },
@@ -51,7 +51,7 @@ public class ObjectQuickFilterDialog extends DBNDialog<ObjectQuickFilterForm> {
     public void doOKAction() {
         try {
             ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
-            quickFilterManager.applyFilter(getComponent().getObjectList(), getComponent().getFilter());
+            quickFilterManager.applyFilter(getForm().getObjectList(), getForm().getFilter());
         } finally {
             super.doOKAction();
         }

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.dialog.DialogWithTimeout;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -17,19 +16,22 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.COMMIT;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.DISCONNECT_IDLE;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.KEEP_ALIVE;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.ROLLBACK_IDLE;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
 
 public class IdleConnectionDialog extends DialogWithTimeout {
-    private IdleConnectionDialogForm idleConnectionDialogForm;
-    private ConnectionHandlerRef connectionHandlerRef;
-    private DBNConnection connection;
+    private final IdleConnectionDialogForm idleConnectionDialogForm;
+    private final ConnectionHandlerRef connectionHandlerRef;
+    private final DBNConnection connection;
 
     public IdleConnectionDialog(ConnectionHandler connectionHandler, DBNConnection connection) {
         super(connectionHandler.getProject(), "Idle connection", true, TimeUtil.getSeconds(5));
         this.connectionHandlerRef = connectionHandler.getRef();
         this.connection = connection;
-        idleConnectionDialogForm = new IdleConnectionDialogForm(connectionHandler, connection, 5);
-        Disposer.register(this, idleConnectionDialogForm);
+        idleConnectionDialogForm = new IdleConnectionDialogForm(this, connectionHandler, connection, 5);
         setModal(false);
         init();
     }

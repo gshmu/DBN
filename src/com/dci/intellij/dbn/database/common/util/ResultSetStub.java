@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database.common.util;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -29,7 +29,7 @@ import java.util.Map;
  * All methods throw {@link AbstractMethodError}
  * Concrete implementations must override the methods expected to be invoked!
  */
-public interface ResultSetStub extends ResultSet, Disposable{
+public interface ResultSetStub extends ResultSet, StatefulDisposable {
 
 
     @Override

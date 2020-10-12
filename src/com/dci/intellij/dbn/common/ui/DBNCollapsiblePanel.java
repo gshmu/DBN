@@ -2,28 +2,28 @@ package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposableProjectComponent;
+import com.dci.intellij.dbn.common.ui.component.DBNComponent;
+import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class DBNCollapsiblePanel<P extends DisposableProjectComponent> extends DBNFormImpl<P>{
+public class DBNCollapsiblePanel<P extends DBNComponent> extends DBNFormImpl{
     private JLabel collapseExpandLabel;
     private JPanel contentPanel;
     private JPanel mainPanel;
-    private boolean expanded = false;
+    private boolean expanded;
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
-    public DBNCollapsiblePanel(@NotNull P parentComponent, JComponent contentComponent, String title, boolean expanded) {
-        super(parentComponent);
+    public DBNCollapsiblePanel(@NotNull P parent, JComponent contentComponent, String title, boolean expanded) {
+        super(parent);
         this.expanded = expanded;
         contentPanel.add(contentComponent, BorderLayout.CENTER);
         contentPanel.setVisible(this.expanded);
@@ -32,15 +32,12 @@ public class DBNCollapsiblePanel<P extends DisposableProjectComponent> extends D
         collapseExpandLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         collapseExpandLabel.setForeground(Colors.HINT_COLOR);
 
-        collapseExpandLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1) {
-                    DBNCollapsiblePanel.this.expanded = !DBNCollapsiblePanel.this.expanded;
-                    contentPanel.setVisible(DBNCollapsiblePanel.this.expanded);
-                    collapseExpandLabel.setIcon(DBNCollapsiblePanel.this.expanded ? Icons.COMMON_DOWN : Icons.COMMON_RIGHT);
-                }
+        collapseExpandLabel.addMouseListener(MouseClickedListener.create(e -> {
+            if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON1) {
+                DBNCollapsiblePanel.this.expanded = !DBNCollapsiblePanel.this.expanded;
+                contentPanel.setVisible(DBNCollapsiblePanel.this.expanded);
+                collapseExpandLabel.setIcon(DBNCollapsiblePanel.this.expanded ? Icons.COMMON_DOWN : Icons.COMMON_RIGHT);
             }
-        });
+        }));
     }
 }

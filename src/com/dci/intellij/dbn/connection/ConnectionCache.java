@@ -2,9 +2,10 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.component.ApplicationComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.project.impl.ProjectLifecycleListener;
+import com.intellij.openapi.project.ProjectManagerListener;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +18,8 @@ public class ConnectionCache implements ApplicationComponent {
     private static final Map<ConnectionId, ConnectionHandler> CACHE = new THashMap<>();
 
     public ConnectionCache() {
-        subscribe(ProjectLifecycleListener.TOPIC, projectLifecycleListener);
+        ApplicationManager.getApplication().getMessageBus().connect().subscribe(
+                ProjectManager.TOPIC, projectManagerListener);
     }
 
     @Nullable
@@ -59,14 +61,9 @@ public class ConnectionCache implements ApplicationComponent {
     /*********************************************************
      *              ProjectLifecycleListener                 *
      *********************************************************/
-    private final ProjectLifecycleListener projectLifecycleListener = new ProjectLifecycleListener() {
-
+    private final ProjectManagerListener projectManagerListener = new ProjectManagerListener() {
         @Override
-        public void beforeProjectLoaded(@NotNull Project project) {
-        }
-
-        @Override
-        public void projectComponentsInitialized(@NotNull Project project) {
+        public void projectOpened(@NotNull Project project) {
             if (!project.isDefault()) {
                 ConnectionManager connectionManager = ConnectionManager.getInstance(project);
                 List<ConnectionHandler> connectionHandlers = connectionManager.getConnectionHandlers();
@@ -77,7 +74,7 @@ public class ConnectionCache implements ApplicationComponent {
         }
 
         @Override
-        public void afterProjectClosed(@NotNull Project project) {
+        public void projectClosed(@NotNull Project project) {
             if (!project.isDefault()) {
                 Iterator<ConnectionId> connectionIds = CACHE.keySet().iterator();
                 while (connectionIds.hasNext()) {

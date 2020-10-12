@@ -19,7 +19,7 @@ public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFil
 
     public SourceCodeEditor(Project project, final DBSourceCodeVirtualFile sourceCodeFile, String name, EditorProviderId editorProviderId) {
         super(project, sourceCodeFile, name, editorProviderId);
-        objectRef = DBObjectRef.from(sourceCodeFile.getObject());
+        objectRef = DBObjectRef.of(sourceCodeFile.getObject());
     }
 
     public DBSchemaObject getObject() {

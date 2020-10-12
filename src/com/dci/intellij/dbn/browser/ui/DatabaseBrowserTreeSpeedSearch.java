@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.browser.ui;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.SpeedSearchBase;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -17,14 +18,15 @@ import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
 
-@Nullifiable
-public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> implements Disposable {
+public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> implements StatefulDisposable {
     private static final Object[] EMPTY_ARRAY = new Object[0];
     private Object[] elements = null;
 
     DatabaseBrowserTreeSpeedSearch(DatabaseBrowserTree tree) {
         super(tree);
         getComponent().getModel().addTreeModelListener(treeModelListener);
+
+        Disposer.register(tree, this);
     }
 
     @Override
@@ -104,7 +106,7 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
 */
     }
 
-    private TreeModelListener treeModelListener = new TreeModelListener() {
+    private final TreeModelListener treeModelListener = new TreeModelListener() {
 
         @Override
         public void treeNodesChanged(TreeModelEvent e) {
@@ -127,22 +129,17 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
         }
     };
 
+    @Getter
     private boolean disposed;
 
-    @Override
-    public final boolean isDisposed() {
-        return disposed;
-    }
 
     @Override
-    public final void markDisposed() {
-        disposed = true;
-    }
-
-    @Override
-    public void disposeInner() {
-        getComponent().getModel().removeTreeModelListener(treeModelListener);
-        elements = EMPTY_ARRAY;
-        Disposable.super.disposeInner();
+    public void dispose() {
+        if (!disposed) {
+            disposed = true;
+            getComponent().getModel().removeTreeModelListener(treeModelListener);
+            elements = EMPTY_ARRAY;
+            nullify();
+        }
     }
 }

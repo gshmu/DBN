@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.connection.config.file.ui;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
@@ -12,15 +11,14 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-public class DatabaseFileSettingsForm extends DBNFormImpl<ConnectionDatabaseSettingsForm> {
+public class DatabaseFileSettingsForm extends DBNFormImpl {
     private JPanel mainPanel;
-    private DatabaseFilesTable table;
     private DatabaseFiles databaseFiles;
+    private final DatabaseFilesTable table;
 
     public DatabaseFileSettingsForm(ConnectionDatabaseSettingsForm parent, DatabaseFiles databaseFiles) {
         super(parent);
-        table = new DatabaseFilesTable(null, databaseFiles);
-        Disposer.register(this, table);
+        table = new DatabaseFilesTable(this, databaseFiles);
 
         ToolbarDecorator decorator = ToolbarDecorator.createDecorator(table);
         decorator.setAddAction(anActionButton -> table.insertRow());
@@ -41,7 +39,7 @@ public class DatabaseFileSettingsForm extends DBNFormImpl<ConnectionDatabaseSett
     
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

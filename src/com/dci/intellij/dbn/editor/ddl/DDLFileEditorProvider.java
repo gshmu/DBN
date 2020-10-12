@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.ddl;
 
-import com.dci.intellij.dbn.common.dispose.Disposer;
+import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
@@ -58,7 +58,7 @@ public abstract class DDLFileEditorProvider extends BasicTextEditorProvider impl
         DDLFileEditor sourceEditor = (DDLFileEditor) editor;
         Document document = sourceEditor.getEditor().getDocument();
         //DocumentUtil.removeGuardedBlock(document);
-        Disposer.dispose(sourceEditor);
+        DisposeUtil.dispose(sourceEditor);
     }
 
     @Override

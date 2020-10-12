@@ -25,7 +25,7 @@ public class PSQLCodeStyleSettingsEditorForm extends CompositeConfigurationEdito
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 }

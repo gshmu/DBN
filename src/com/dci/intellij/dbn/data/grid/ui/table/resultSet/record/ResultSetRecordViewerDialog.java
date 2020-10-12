@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class ResultSetRecordViewerDialog extends DBNDialog<ResultSetRecordViewerForm> {
-    private ResultSetTable table;
-    private boolean showDataTypes;
-    public ResultSetRecordViewerDialog(ResultSetTable table, boolean showDataTypes) {
+    private final ResultSetTable<?> table;
+    private final boolean showDataTypes;
+    public ResultSetRecordViewerDialog(ResultSetTable<?> table, boolean showDataTypes) {
         super(table.getProject(), "View record", true);
         this.table = table;
         this.showDataTypes = showDataTypes;
@@ -21,7 +21,7 @@ public class ResultSetRecordViewerDialog extends DBNDialog<ResultSetRecordViewer
 
     @NotNull
     @Override
-    protected ResultSetRecordViewerForm createComponent() {
+    protected ResultSetRecordViewerForm createForm() {
         return new ResultSetRecordViewerForm(this, table, showDataTypes);
     }
 

@@ -36,7 +36,7 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBP
 
     public DBDatasetFilterVirtualFile(DBDataset dataset, String content) {
         super(dataset.getProject());
-        this.datasetRef = DBObjectRef.from(dataset);
+        this.datasetRef = DBObjectRef.of(dataset);
         this.content = content;
         name = dataset.getName();
         ConnectionHandler connectionHandler = Failsafe.nn(getConnectionHandler());

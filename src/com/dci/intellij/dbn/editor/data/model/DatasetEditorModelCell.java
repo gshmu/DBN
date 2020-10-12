@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -18,7 +17,6 @@ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
-import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.ChangeEvent;
@@ -34,8 +32,6 @@ import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
 public class DatasetEditorModelCell
         extends ResultSetDataModelCell<DatasetEditorModelRow, DatasetEditorModel>
         implements ChangeListener {
-
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private Object originalUserValue;
     private DatasetEditorError error;
@@ -82,10 +78,10 @@ public class DatasetEditorModelCell
                 }
 
                 if (isValueAdapter) {
-                    ValueAdapter valueAdapter = (ValueAdapter) userValue;
+                    ValueAdapter<?> valueAdapter = (ValueAdapter<?>) userValue;
                     if (valueAdapter != null) {
                         if (newUserValue instanceof ValueAdapter) {
-                            ValueAdapter newValueAdapter = (ValueAdapter) newUserValue;
+                            ValueAdapter<?> newValueAdapter = (ValueAdapter<?>) newUserValue;
                             newUserValue = newValueAdapter.read();
                         }
                         resultSetAdapter.setValue(columnIndex, valueAdapter, newUserValue);
@@ -142,7 +138,7 @@ public class DatasetEditorModelCell
 
     private boolean userValueChanged(Object newUserValue) {
         if (userValue instanceof ValueAdapter) {
-            ValueAdapter valueAdapter = (ValueAdapter) userValue;
+            ValueAdapter<?> valueAdapter = (ValueAdapter<?>) userValue;
             try {
                 return !Safe.equal(valueAdapter.read(), newUserValue);
             } catch (SQLException e) {
@@ -331,7 +327,6 @@ public class DatasetEditorModelCell
             }
             error.addChangeListener(this);
             if (showPopup) {
-                checkDisposed();
                 table.showErrorPopup(this);
             }
             return true;

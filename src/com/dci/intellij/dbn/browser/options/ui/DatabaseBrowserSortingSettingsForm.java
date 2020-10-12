@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.browser.options.ui;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSortingSettings;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTable;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
@@ -36,7 +37,7 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
         super(settings);
         updateBorderTitleForeground(mainPanel);
         Project project = settings.getProject();
-        sortingTypeTable = new SortingTypeTable(project, settings.getComparators());
+        sortingTypeTable = new SortingTypeTable(this, settings.getComparators());
         sortingTypesScrollPanel.setViewportView(sortingTypeTable);
         sortingTypesScrollPanel.getViewport().setBackground(sortingTypeTable.getBackground());
         registerComponent(sortingTypeTable);
@@ -57,14 +58,14 @@ public class DatabaseBrowserSortingSettingsForm extends ConfigurationEditorForm<
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
     public class SortingTypeTable extends DBNEditableTable<SortingTypeTableModel> {
 
-        public SortingTypeTable(Project project, List<DBObjectComparator> comparators) {
-            super(project, new SortingTypeTableModel(comparators), true);
+        public SortingTypeTable(DBNForm parent, List<DBObjectComparator> comparators) {
+            super(parent, new SortingTypeTableModel(comparators), true);
             setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             adjustRowHeight(3);
 

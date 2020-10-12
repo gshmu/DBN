@@ -14,7 +14,7 @@ public class ExecutionTimeout {
     private int settingsValue;
 
     ExecutionTimeout(@NotNull Project project, ExecutionTarget executionTarget, boolean debug) {
-        this.projectRef = ProjectRef.from(project);
+        this.projectRef = ProjectRef.of(project);
         this.executionTarget = executionTarget;
         this.debug = debug;
         this.settingsValue = getSettingsExecutionTimeout();

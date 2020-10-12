@@ -21,7 +21,7 @@ public class DDFileSettingsForm extends CompositeConfigurationEditorForm<DDLFile
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 }

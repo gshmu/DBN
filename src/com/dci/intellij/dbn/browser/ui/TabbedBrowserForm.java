@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.browser.ui;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.common.dispose.Disposer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
@@ -29,8 +28,8 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
     private final TabbedPane connectionTabs;
     private JPanel mainPanel;
 
-    TabbedBrowserForm(BrowserToolWindowForm parentComponent, @Nullable TabbedBrowserForm previous) {
-        super(parentComponent);
+    TabbedBrowserForm(BrowserToolWindowForm parent, @Nullable TabbedBrowserForm previous) {
+        super(parent);
         connectionTabs = new TabbedPane(this);
         //connectionTabs.setBackground(GUIUtil.getListBackground());
         //mainPanel.add(connectionTabs, BorderLayout.CENTER);
@@ -132,7 +131,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 
@@ -176,12 +175,6 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
             SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
             browserForm.rebuildTree();
         }
-    }
-
-    @Override
-    public void disposeInner() {
-        Disposer.dispose(connectionTabs);
-        super.disposeInner();
     }
 
     @NotNull

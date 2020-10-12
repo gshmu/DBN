@@ -16,7 +16,7 @@ import javax.swing.event.DocumentEvent;
 import java.awt.*;
 import java.util.Set;
 
-public class CmdLineInterfaceInputForm extends DBNFormImpl<CmdLineInterfaceInputDialog>{
+public class CmdLineInterfaceInputForm extends DBNFormImpl{
     private JPanel mainPanel;
     private JTextField nameTextField;
     private JLabel databaseTypeLabel;
@@ -26,8 +26,8 @@ public class CmdLineInterfaceInputForm extends DBNFormImpl<CmdLineInterfaceInput
     private JPanel databaseTypePanel;
     private JPanel hintPanel;
 
-    public CmdLineInterfaceInputForm(@NotNull final CmdLineInterfaceInputDialog parentComponent, @NotNull final CmdLineInterface cmdLineInterface, @NotNull final Set<String> usedNames) {
-        super(parentComponent);
+    public CmdLineInterfaceInputForm(@NotNull CmdLineInterfaceInputDialog parent, @NotNull CmdLineInterface cmdLineInterface, @NotNull Set<String> usedNames) {
+        super(parent);
         DatabaseType databaseType = cmdLineInterface.getDatabaseType();
         databaseTypeLabel.setText(databaseType.name());
         databaseTypeLabel.setIcon(databaseType.getIcon());
@@ -44,7 +44,7 @@ public class CmdLineInterfaceInputForm extends DBNFormImpl<CmdLineInterfaceInput
         cmdLineInterface.setExecutablePath(executablePath);
         nameTextField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
-            protected void textChanged(DocumentEvent e) {
+            protected void textChanged(@NotNull DocumentEvent e) {
                 updateComponents(cmdLineInterface, usedNames);
             }
         });
@@ -52,10 +52,14 @@ public class CmdLineInterfaceInputForm extends DBNFormImpl<CmdLineInterfaceInput
         String hintText =
                 "Please provide a name for storing Command-Line interface executable.\n" +
                 "Command-Line interfaces can be configured in DBN Settings > Execution Engine > Script Execution.";
-        DBNHintForm hintForm = new DBNHintForm(hintText, null, true);
+        DBNHintForm hintForm = new DBNHintForm(this, hintText, null, true);
         hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 
         updateComponents(cmdLineInterface, usedNames);
+    }
+
+    public CmdLineInterfaceInputDialog getParentDialog() {
+        return (CmdLineInterfaceInputDialog) ensureParentComponent();
     }
 
     @Nullable
@@ -70,13 +74,13 @@ public class CmdLineInterfaceInputForm extends DBNFormImpl<CmdLineInterfaceInput
         boolean isNameUsed = usedNames.contains(name);
         nameInUseLabel.setVisible(isNameUsed);
 
-        CmdLineInterfaceInputDialog parentComponent = ensureParentComponent();
+        CmdLineInterfaceInputDialog parentComponent = getParentDialog();
         parentComponent.setActionEnabled(!isNameUsed && StringUtil.isNotEmpty(nameTextField.getText()));
     }
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 }

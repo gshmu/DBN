@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.common.ui.table;
 
-import com.dci.intellij.dbn.common.dispose.Disposable;
-import com.dci.intellij.dbn.common.dispose.DisposableBase;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.dispose.Nullifiable;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.language.common.WeakRef;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -12,18 +11,19 @@ import javax.swing.event.ListDataListener;
 import java.util.HashSet;
 import java.util.Set;
 
-@Nullifiable
-public class DBNTableGutterModel<T extends DBNTableWithGutterModel> extends DisposableBase implements ListModel, Disposable{
-    private final T tableModel;
+public class DBNTableGutterModel<T extends DBNTableWithGutterModel> extends StatefulDisposable.Base implements ListModel {
+    private final WeakRef<T> tableModel;
     private final Set<ListDataListener> listeners = new HashSet<ListDataListener>();
 
-    public DBNTableGutterModel(T tableModel) {
-        this.tableModel = tableModel;
+    public DBNTableGutterModel(@NotNull T tableModel) {
+        this.tableModel = WeakRef.of(tableModel);
+
+        Disposer.register(tableModel, this);
     }
 
     @NotNull
     public T getTableModel() {
-        return Failsafe.nn(tableModel);
+        return tableModel.ensure();
     }
 
     @Override
@@ -50,5 +50,10 @@ public class DBNTableGutterModel<T extends DBNTableWithGutterModel> extends Disp
         for (ListDataListener listDataListener : listeners) {
             listDataListener.contentsChanged(listDataEvent);
         }
+    }
+
+    @Override
+    protected void disposeInner() {
+        nullify();
     }
 }

@@ -15,11 +15,11 @@ public class DBStatementJdbcRunConfigurationEditorForm extends DBProgramRunConfi
     private JCheckBox compileDependenciesCheckBox;
     private JPanel hintPanel;
 
-    public DBStatementJdbcRunConfigurationEditorForm(final DBStatementJdbcRunConfig configuration) {
+    public DBStatementJdbcRunConfigurationEditorForm(DBStatementJdbcRunConfig configuration) {
         super(configuration.getProject());
         if (configuration.getCategory() != DBRunConfigCategory.CUSTOM) {
             headerPanel.setVisible(false);
-            DBNHintForm hintForm = new DBNHintForm(DatabaseDebuggerManager.GENERIC_STATEMENT_RUNNER_HINT, null, true);
+            DBNHintForm hintForm = new DBNHintForm(this, DatabaseDebuggerManager.GENERIC_STATEMENT_RUNNER_HINT, null, true);
             hintPanel.setVisible(true);
             hintPanel.add(hintForm.getComponent());
         } else {
@@ -30,7 +30,7 @@ public class DBStatementJdbcRunConfigurationEditorForm extends DBProgramRunConfi
 
     @NotNull
     @Override
-    public JPanel ensureComponent() {
+    public JPanel getMainComponent() {
         return mainPanel;
     }
 

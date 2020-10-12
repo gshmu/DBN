@@ -320,7 +320,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     }
 
     public void setParentObject(DBVirtualObject virtualObject) {
-        parentObjectRef = DBObjectRef.from(virtualObject);
+        parentObjectRef = DBObjectRef.of(virtualObject);
     }
 
     @Override

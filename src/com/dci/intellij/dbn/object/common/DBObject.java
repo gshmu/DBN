@@ -138,7 +138,7 @@ public interface DBObject extends
     void refresh(DBObjectType objectType);
 
     @Override
-    default DynamicContentType getDynamicContentType() {
+    default DynamicContentType<?> getDynamicContentType() {
         return getObjectType();
     }
 }
