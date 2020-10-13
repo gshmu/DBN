@@ -97,7 +97,7 @@ public class ObjectDependencyTree extends DBNTree{
             ObjectDependencyTreeModel oldModel = getModel();
             newModel.setTree(this);
             super.setModel(newModel);
-            SafeDisposer.dispose(oldModel);
+            SafeDisposer.dispose(oldModel, false);
         }
     }
 
@@ -215,7 +215,7 @@ public class ObjectDependencyTree extends DBNTree{
         DBSchemaObject object = oldModel.getObject();
         if (object != null) {
             setModel(new ObjectDependencyTreeModel(object, dependencyType));
-            SafeDisposer.dispose(oldModel);
+            SafeDisposer.dispose(oldModel, false);
         }
     }
 
@@ -227,14 +227,14 @@ public class ObjectDependencyTree extends DBNTree{
 
         ObjectDependencyType dependencyType = oldModel.getDependencyType();
         setModel(new ObjectDependencyTreeModel(object, dependencyType));
-        SafeDisposer.dispose(oldModel);
+        SafeDisposer.dispose(oldModel, false);
     }
 
     @Override
     public void disposeInner() {
-        Disposer.dispose(selectionHistory);
-        Disposer.dispose(speedSearch);
-        SafeDisposer.dispose(getModel());
+        Disposer.dispose(selectionHistory, false);
+        Disposer.dispose(speedSearch, false);
+        SafeDisposer.dispose(getModel(), false);
         super.disposeInner();
     }
 }
