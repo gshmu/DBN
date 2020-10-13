@@ -44,8 +44,16 @@ public interface SafeDisposer {
     }
 
     static void dispose(@Nullable Disposable disposable) {
+        dispose(disposable, true);
+    }
+
+    static void dispose(@Nullable Disposable disposable, boolean registered) {
         if (Failsafe.check(disposable)) {
-            Disposer.dispose(disposable);
+            if (registered) {
+                Disposer.dispose(disposable);
+            } else {
+                disposable.dispose();
+            }
         }
     }
 
@@ -73,12 +81,14 @@ public interface SafeDisposer {
             if (background && !ThreadMonitor.isBackgroundProcess()) {
                 Background.run(() -> dispose(collection, registered, false));
             } else {
-                Collection<?> disposeCollection = null;
+                Collection<?> disposeCollection;
                 if (collection instanceof FiltrableList) {
                     FiltrableList<?> filtrableList = (FiltrableList<?>) collection;
                     disposeCollection = new ArrayList<>(filtrableList.getFullList());
+                } else {
+                    disposeCollection = new ArrayList<>(collection);
                 }
-                if (disposeCollection != null && disposeCollection.size()> 0) {
+                if (disposeCollection.size()> 0) {
                     clearCollection(collection);
 
                     for (Object object : disposeCollection) {

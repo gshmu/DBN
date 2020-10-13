@@ -86,7 +86,7 @@ public class DatabaseConsoleBundle extends StatefulDisposable.Base {
     void removeConsole(String name) {
         DBConsole console = getConsole(name);
         consoles.remove(console);
-        SafeDisposer.dispose(console);
+        SafeDisposer.dispose(console, false);
     }
 
     @Override

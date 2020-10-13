@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import com.intellij.openapi.Disposable;
@@ -19,11 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DBObjectRelationListContainer implements Disposable, Compactable {
-    private GenericDatabaseElement owner;
+    private final WeakRef<GenericDatabaseElement> owner;
     private List<DBObjectRelationList> objectRelationLists;
 
     public DBObjectRelationListContainer(GenericDatabaseElement owner) {
-        this.owner = owner;
+        this.owner = WeakRef.of(owner);
     }
 
     @Override
@@ -36,12 +37,16 @@ public class DBObjectRelationListContainer implements Disposable, Compactable {
     }
 
     private boolean isSupported(DBObjectRelationType objectRelationType) {
-        ConnectionHandler connectionHandler = owner.getConnectionHandler();
+        ConnectionHandler connectionHandler = getOwner().getConnectionHandler();
         DatabaseCompatibilityInterface compatibilityInterface = DatabaseCompatibilityInterface.getInstance(connectionHandler);
         DatabaseObjectTypeId sourceTypeId = objectRelationType.getSourceType().getTypeId();
         DatabaseObjectTypeId targetTypeId = objectRelationType.getTargetType().getTypeId();
         return compatibilityInterface.supportsObjectType(sourceTypeId) &&
                 compatibilityInterface.supportsObjectType(targetTypeId);
+    }
+
+    GenericDatabaseElement getOwner() {
+        return owner.ensure();
     }
 
     @Nullable
@@ -96,7 +101,6 @@ public class DBObjectRelationListContainer implements Disposable, Compactable {
     @Override
     public void dispose() {
         SafeDisposer.dispose(objectRelationLists, false, false);
-        owner = null;
     }
 
     public void reload() {
