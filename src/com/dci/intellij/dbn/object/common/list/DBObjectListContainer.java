@@ -340,5 +340,6 @@ public class DBObjectListContainer extends StatefulDisposable.Base implements St
     @Override
     public void disposeInner() {
         SafeDisposer.dispose(objectLists, false, false);
+        nullify();
     }
 }

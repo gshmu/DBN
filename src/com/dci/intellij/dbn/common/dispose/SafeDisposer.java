@@ -48,13 +48,15 @@ public interface SafeDisposer {
     }
 
     static void dispose(@Nullable Disposable disposable, boolean registered) {
-        if (Failsafe.check(disposable)) {
-            if (registered) {
-                Disposer.dispose(disposable);
-            } else {
-                disposable.dispose();
+        Unsafe.silent(() -> {
+            if (Failsafe.check(disposable)) {
+                if (registered) {
+                    Disposer.dispose(disposable);
+                } else {
+                    disposable.dispose();
+                }
             }
-        }
+        });
     }
 
     static <T extends Disposable> T replace(T oldElement, T newElement, boolean registered) {
@@ -67,17 +69,13 @@ public interface SafeDisposer {
             if (background && !ThreadMonitor.isBackgroundProcess()) {
                 Background.run(() -> dispose(disposable, registered, false));
             } else {
-                if (registered) {
-                    Disposer.dispose(disposable);
-                } else {
-                    disposable.dispose();
-                }
+                dispose(disposable, registered);
             }
         }
     }
 
     static void dispose(@Nullable Collection<?> collection, boolean registered, boolean background) {
-        if (collection != null && !collection.isEmpty()) {
+        if (collection != null) {
             if (background && !ThreadMonitor.isBackgroundProcess()) {
                 Background.run(() -> dispose(collection, registered, false));
             } else {
@@ -94,11 +92,7 @@ public interface SafeDisposer {
                     for (Object object : disposeCollection) {
                         if (object instanceof Disposable) {
                             Disposable disposable = (Disposable) object;
-                            if (registered) {
-                                Disposer.dispose(disposable);
-                            } else {
-                                disposable.dispose();
-                            }
+                            dispose(disposable, registered);
                         }
                     }
                 }
