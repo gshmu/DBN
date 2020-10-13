@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.editor.data.model;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -51,12 +51,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static com.dci.intellij.dbn.connection.ConnectionProperty.RS_TYPE_FORWARD_ONLY;
 import static com.dci.intellij.dbn.connection.ConnectionProperty.RS_TYPE_SCROLL_INSENSITIVE;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DELETED;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DIRTY;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTED;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.UPDATING;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
 public class DatasetEditorModel
         extends ResultSetDataModel<DatasetEditorModelRow, DatasetEditorModelCell>
@@ -135,12 +130,11 @@ public class DatasetEditorModel
     public void setResultSet(DBNResultSet resultSet) throws SQLException {
         super.setResultSet(resultSet);
 
-        // instructions the adapter
-        DisposeUtil.dispose(resultSetAdapter);
         ConnectionHandler connectionHandler = getConnectionHandler();
-        resultSetAdapter = DatabaseFeature.UPDATABLE_RESULT_SETS.isSupported(connectionHandler) ?
+        resultSetAdapter = SafeDisposer.replace(resultSetAdapter,
+                DatabaseFeature.UPDATABLE_RESULT_SETS.isSupported(connectionHandler) ?
                     new EditableResultSetAdapter(this, resultSet) :
-                    new ReadonlyResultSetAdapter(this, resultSet);
+                    new ReadonlyResultSetAdapter(this, resultSet), false);
 
         Disposer.register(this, resultSetAdapter);
     }

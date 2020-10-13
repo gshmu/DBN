@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.editor.session;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
@@ -288,7 +288,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                 openFiles.remove(sessionBrowserFile);
 
                 if (openFiles.size() == 0 && timestampUpdater != null) {
-                    DisposeUtil.dispose(timestampUpdater);
+                    SafeDisposer.dispose(timestampUpdater);
                 }
             }
         }
@@ -296,7 +296,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
 
     @Override
     public void disposeInner() {
-        DisposeUtil.dispose(timestampUpdater);
+        SafeDisposer.dispose(timestampUpdater);
         super.disposeInner();
     }
 

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.Colors;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -88,7 +88,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     if (scrollTimer != null) {
-                        DisposeUtil.dispose(scrollTimer);
+                        SafeDisposer.dispose(scrollTimer);
                         scrollTimer = null;
                     }
                 }
@@ -106,7 +106,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     public void setModel(@NotNull TableModel dataModel) {
         T oldDataModel = (T) super.getModel();
         super.setModel(dataModel);
-        DisposeUtil.disposeInBackground(oldDataModel);
+        SafeDisposer.dispose(oldDataModel, false, true);
     }
 
     private void updateComponentColors() {
@@ -397,7 +397,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     public void dispose(){
         if (!disposed) {
             disposed = true;
-            DisposeUtil.disposeInBackground(getModel());
+            SafeDisposer.dispose(getModel(), false, true);
             listenerList = new EventListenerList();
             columnModel = new DefaultTableColumnModel();
             selectionModel = new DefaultListSelectionModel();

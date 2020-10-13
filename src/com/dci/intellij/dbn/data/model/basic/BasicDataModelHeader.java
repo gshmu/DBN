@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.data.model.basic;
 
 
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelHeader;
@@ -61,7 +61,7 @@ public class BasicDataModelHeader<T extends ColumnInfo> extends StatefulDisposab
      *******************************************************  */
     @Override
     public void disposeInner() {
-        DisposeUtil.dispose(columnInfos);
+        SafeDisposer.dispose(columnInfos, false, false);
         nullify();
     }
 }

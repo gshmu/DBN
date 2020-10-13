@@ -2,10 +2,10 @@ package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.dispose.FailsafeWeakRef;
 import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.ExceptionUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public abstract class ResourceStatusAdapterImpl<T extends Resource> implements ResourceStatusAdapter<T> {
     protected static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private final FailsafeWeakRef<T> resource;
+    private final WeakRef<T> resource;
     private final ResourceStatus subject;
     private final ResourceStatus changing;
     private final ResourceStatus checking;
@@ -27,7 +27,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
     private long checkTimestamp;
 
     ResourceStatusAdapterImpl(T resource, ResourceStatus subject, ResourceStatus changing, ResourceStatus checking, long checkInterval, @NotNull Boolean initialStatus, @Nullable Boolean terminalStatus) {
-        this.resource = new FailsafeWeakRef<>(resource);
+        this.resource = WeakRef.of(resource);
         this.subject = subject;
         this.changing = changing;
         this.checking = checking;
@@ -75,7 +75,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
 
     @NotNull
     private T getResource() {
-        return this.resource.get();
+        return this.resource.ensure();
     }
 
     private boolean value() {

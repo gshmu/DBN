@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.explain.result;
 
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -103,7 +103,7 @@ public class ExplainPlanEntry extends StatefulDisposable.Base {
 
     @Override
     public void disposeInner() {
-        DisposeUtil.dispose(children);
+        SafeDisposer.dispose(children, false, false);
         nullify();
     }
 }

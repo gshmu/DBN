@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.session;
 
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -123,7 +123,6 @@ public class DatabaseSessionBundle extends StatefulDisposable.Base implements Di
     void deleteSession(SessionId id) {
         DatabaseSession session = getSession(id);
         sessions.remove(session);
-        DisposeUtil.dispose(session);
     }
 
     void renameSession(String oldName, String newName) {
@@ -135,7 +134,7 @@ public class DatabaseSessionBundle extends StatefulDisposable.Base implements Di
 
     @Override
     public void disposeInner() {
-        DisposeUtil.dispose(sessions);
+        SafeDisposer.dispose(sessions, false, false);
         mainSession = null;
         debugSession = null;
         debuggerSession = null;

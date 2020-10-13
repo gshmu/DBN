@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.model.basic;
 
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.dci.intellij.dbn.data.model.DataModelRow;
@@ -96,7 +96,7 @@ public class BasicDataModelRow<
 
     @Override
     public void disposeInner() {
-        DisposeUtil.dispose(cells);
+        SafeDisposer.dispose(cells, false, false);
         nullify();
     }
 }

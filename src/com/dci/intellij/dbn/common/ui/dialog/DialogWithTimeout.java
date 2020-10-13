@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -55,7 +55,7 @@ public abstract class DialogWithTimeout extends DBNDialog<DialogWithTimeoutForm>
 
     @Override
     public void disposeInner() {
-        DisposeUtil.dispose(timeoutTimer);
+        SafeDisposer.dispose(timeoutTimer);
     }
 
 }

@@ -84,7 +84,8 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
             StatementExecutionCursorResult executionResult = getExecutionResult();
             JScrollBar horizontalScrollBar = resultScrollPane.getHorizontalScrollBar();
             int horizontalScrolling = horizontalScrollBar.getValue();
-            resultTable = SafeDisposer.replace(resultTable, new ResultSetTable<>(this, executionResult.getTableModel(), true, recordViewInfo));
+            ResultSetTable<?> newResultSetTable = new ResultSetTable<>(this, executionResult.getTableModel(), true, recordViewInfo);
+            resultTable = SafeDisposer.replace(resultTable, newResultSetTable, false);
             resultScrollPane.setViewportView(resultTable);
             resultTable.initTableGutter();
             resultTable.setName(getExecutionResult().getName());

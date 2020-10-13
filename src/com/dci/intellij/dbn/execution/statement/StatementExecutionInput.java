@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.execution.statement;
 
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -140,10 +140,7 @@ public class StatementExecutionInput extends LocalExecutionInput {
     }
 
     public void setExecutionVariables(StatementExecutionVariablesBundle executionVariables) {
-        if (this.executionVariables != null) {
-            DisposeUtil.dispose(this.executionVariables);
-        }
-        this.executionVariables = executionVariables;
+        this.executionVariables = SafeDisposer.replace(this.executionVariables, executionVariables, false);
     }
 
     public PsiFile createPreviewFile() {

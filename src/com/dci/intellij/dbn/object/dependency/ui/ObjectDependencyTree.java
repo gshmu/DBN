@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -22,6 +22,7 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,10 +93,11 @@ public class ObjectDependencyTree extends DBNTree{
     @Override
     public void setModel(TreeModel model) {
         if (model instanceof ObjectDependencyTreeModel) {
-            ObjectDependencyTreeModel treeModel = (ObjectDependencyTreeModel) model;
-            treeModel.setTree(this);
-            DisposeUtil.dispose(getModel());
-            super.setModel(model);
+            ObjectDependencyTreeModel newModel = (ObjectDependencyTreeModel) model;
+            ObjectDependencyTreeModel oldModel = getModel();
+            newModel.setTree(this);
+            super.setModel(newModel);
+            SafeDisposer.dispose(oldModel);
         }
     }
 
@@ -213,7 +215,7 @@ public class ObjectDependencyTree extends DBNTree{
         DBSchemaObject object = oldModel.getObject();
         if (object != null) {
             setModel(new ObjectDependencyTreeModel(object, dependencyType));
-            DisposeUtil.dispose(oldModel);
+            SafeDisposer.dispose(oldModel);
         }
     }
 
@@ -225,12 +227,14 @@ public class ObjectDependencyTree extends DBNTree{
 
         ObjectDependencyType dependencyType = oldModel.getDependencyType();
         setModel(new ObjectDependencyTreeModel(object, dependencyType));
-        DisposeUtil.dispose(oldModel);
+        SafeDisposer.dispose(oldModel);
     }
 
     @Override
     public void disposeInner() {
-        DisposeUtil.dispose(selectionHistory, speedSearch, getModel());
+        Disposer.dispose(selectionHistory);
+        Disposer.dispose(speedSearch);
+        SafeDisposer.dispose(getModel());
         super.disposeInner();
     }
 }

@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.node.CompilerMessagesNode;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.node.ExplainPlanMessagesNode;
@@ -8,17 +7,18 @@ import com.dci.intellij.dbn.execution.common.message.ui.tree.node.StatementExecu
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanMessage;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 public class MessagesTreeRootNode extends MessagesTreeBundleNode<MessagesTreeNode, MessagesTreeBundleNode> {
-    private MessagesTreeModel treeModel;
+    private final WeakRef<MessagesTreeModel> treeModel;
 
     MessagesTreeRootNode(MessagesTreeModel treeModel) {
         super(null);
-        this.treeModel = treeModel;
+        this.treeModel = WeakRef.of(treeModel);
     }
 
     TreePath addExecutionMessage(StatementExecutionMessage executionMessage) {
@@ -32,7 +32,7 @@ public class MessagesTreeRootNode extends MessagesTreeBundleNode<MessagesTreeNod
         if (execMessagesNode == null) {
             execMessagesNode = new StatementExecutionMessagesNode(this);
             addChild(execMessagesNode);
-            treeModel.notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
+            getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
         }
 
         return execMessagesNode.addExecutionMessage(executionMessage);
@@ -49,7 +49,7 @@ public class MessagesTreeRootNode extends MessagesTreeBundleNode<MessagesTreeNod
         if (explainPlanMessagesNode == null) {
             explainPlanMessagesNode = new ExplainPlanMessagesNode(this);
             addChild(explainPlanMessagesNode);
-            treeModel.notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
+            getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
         }
 
         return explainPlanMessagesNode.addExplainPlanMessage(explainPlanMessage);
@@ -60,7 +60,7 @@ public class MessagesTreeRootNode extends MessagesTreeBundleNode<MessagesTreeNod
         if (compilerMessagesNode == null) {
             compilerMessagesNode = new CompilerMessagesNode(this);
             addChild(compilerMessagesNode);
-            treeModel.notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
+            getTreeModel().notifyTreeModelListeners(this, TreeEventType.STRUCTURE_CHANGED);
         }
         return compilerMessagesNode.addCompilerMessage(compilerMessage);
     }
@@ -106,6 +106,6 @@ public class MessagesTreeRootNode extends MessagesTreeBundleNode<MessagesTreeNod
 
     @Override
     public MessagesTreeModel getTreeModel() {
-        return Failsafe.nn(treeModel);
+        return treeModel.ensure();
     }
 }

@@ -13,8 +13,8 @@ import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -73,9 +73,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.util.CollectionUtil.compact;
-import static com.dci.intellij.dbn.common.util.CollectionUtil.filter;
-import static com.dci.intellij.dbn.common.util.CollectionUtil.forEach;
+import static com.dci.intellij.dbn.common.util.CollectionUtil.*;
 
 public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTreeNodeBase implements DBObject, ToolTipProvider {
 
@@ -92,25 +90,25 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     private DBObjectListContainer childObjects;
     private DBObjectRelationListContainer childObjectRelations;
 
-    private final ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connectionHandler;
 
     private static final DBOperationExecutor NULL_OPERATION_EXECUTOR = operationType -> {
         throw new DBOperationNotSupportedException(operationType);
     };
 
     protected DBObjectImpl(@NotNull DBObject parentObject, M metadata) throws SQLException {
-        this.connectionHandlerRef = ConnectionHandlerRef.from(parentObject.getConnectionHandler());
+        this.connectionHandler = ConnectionHandlerRef.from(parentObject.getConnectionHandler());
         this.parentObjectRef = DBObjectRef.of(parentObject);
         init(metadata);
     }
 
     protected DBObjectImpl(@NotNull ConnectionHandler connectionHandler, M metadata) throws SQLException {
-        this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+        this.connectionHandler = ConnectionHandlerRef.from(connectionHandler);
         init(metadata);
     }
 
     protected DBObjectImpl(@Nullable ConnectionHandler connectionHandler, DBObjectType objectType, String name) {
-        this.connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+        this.connectionHandler = ConnectionHandlerRef.from(connectionHandler);
         objectRef = new DBObjectRef<>(this, objectType, name);
     }
 
@@ -333,13 +331,13 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @NotNull
     @Override
     public ConnectionId getConnectionId() {
-        return connectionHandlerRef.getConnectionId();
+        return connectionHandler.getConnectionId();
     }
 
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return ConnectionHandlerRef.ensure(connectionHandlerRef);
+        return ConnectionHandlerRef.ensure(connectionHandler);
     }
 
     @NotNull
@@ -918,8 +916,8 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Override
     public void disposeInner() {
-        DisposeUtil.dispose(childObjects);
-        DisposeUtil.dispose(childObjectRelations);
+        SafeDisposer.dispose(childObjects);
+        SafeDisposer.dispose(childObjectRelations);
         nullify();
     }
 }

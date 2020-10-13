@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.data.model.basic;
 
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -40,7 +39,7 @@ public class BasicDataModel<
         extends DisposablePropertyHolder<RecordStatus>
         implements DataModel<R,C> {
 
-    private final ProjectRef projectRef;
+    private final ProjectRef project;
     private DataModelHeader<? extends ColumnInfo> header;
     private DataModelState state;
     private List<R> rows = new ArrayList<>();
@@ -67,7 +66,7 @@ public class BasicDataModel<
 
 
     public BasicDataModel(Project project) {
-        this.projectRef = ProjectRef.of(project);
+        this.project = ProjectRef.of(project);
         formatter = Latent.thread(() -> Formatter.getInstance(project).clone());
         subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
     }
@@ -103,11 +102,11 @@ public class BasicDataModel<
     @Override
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return project.ensure();
     }
 
     public void setHeader(@NotNull DataModelHeader<? extends ColumnInfo> header) {
-        this.header = SafeDisposer.replace(this.header, header);
+        this.header = SafeDisposer.replace(this.header, header, false);
         SafeDisposer.register(this, this.header);
     }
 
@@ -195,7 +194,7 @@ public class BasicDataModel<
         updateRowIndexes(index);
         getState().setRowCount(getRowCount());
 
-        DisposeUtil.dispose(row);
+        SafeDisposer.dispose(row);
     }
 
     @Nullable
@@ -363,7 +362,7 @@ public class BasicDataModel<
      *******************************************************  */
     @Override
     public void disposeInner() {
-        DisposeUtil.dispose(rows);
+        SafeDisposer.dispose(rows, false, false);
         nullify();
     }
 }

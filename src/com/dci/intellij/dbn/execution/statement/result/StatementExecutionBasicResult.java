@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.execution.statement.result;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -129,10 +129,8 @@ public class StatementExecutionBasicResult extends ExecutionResultBase<Statement
 
     @Override
     public void clearExecutionMessage() {
-        if (executionMessage != null) {
-            DisposeUtil.dispose(executionMessage);
-            executionMessage = null;
-        }
+        SafeDisposer.dispose(executionMessage);
+        executionMessage = null;
     }
 
     @Override
