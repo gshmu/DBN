@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
 import com.dci.intellij.dbn.common.list.FiltrableList;
@@ -31,17 +31,7 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.CHANGING;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.DIRTY;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.ERROR;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADED;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.LOADING_IN_BACKGROUND;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.MASTER;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.MUTABLE;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.PASSIVE;
-import static com.dci.intellij.dbn.common.content.DynamicContentStatus.REFRESHING;
+import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
 
 public abstract class DynamicContentImpl<T extends DynamicContentElement>
         extends DisposablePropertyHolder<DynamicContentStatus>
@@ -362,7 +352,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
             notifyChangeListeners();
         }
         if (is(MASTER)) {
-            DisposeUtil.disposeInBackground(oldElements);
+            SafeDisposer.dispose(oldElements, false, true);
         }
     }
 
@@ -444,7 +434,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     public void disposeInner() {
         if (elements != EMPTY_CONTENT && elements != EMPTY_UNTOUCHED_CONTENT) {
             if (!dependencyAdapter.isSubContent()) {
-                DisposeUtil.dispose(elements);
+                SafeDisposer.dispose(elements, false, false);
             }
             elements = EMPTY_DISPOSED_CONTENT;
         }

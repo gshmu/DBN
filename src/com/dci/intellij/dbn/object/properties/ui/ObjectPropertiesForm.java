@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeEventAdapter;
 import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.DatabaseBrowserTree;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.DBNForm;
@@ -93,7 +93,7 @@ public class ObjectPropertiesForm extends DBNFormImpl {
                             ((DBNTable<?>) objectPropertiesTable).accommodateColumnsSize();
 
                             GUIUtil.repaint(mainPanel);
-                            DisposeUtil.dispose(oldTableModel);
+                            SafeDisposer.dispose(oldTableModel);
                         });
                     });
         }

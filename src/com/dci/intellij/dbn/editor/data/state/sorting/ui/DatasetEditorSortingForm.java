@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.data.state.sorting.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableContainer;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -15,6 +14,7 @@ import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
@@ -138,7 +138,7 @@ public class DatasetEditorSortingForm extends DBNFormImpl{
         sortingInstructionsPanel.remove(sortingInstructionForm.getComponent());
         sortingInstructionForms.remove(sortingInstructionForm);
         updateIndexes();
-        DisposeUtil.dispose(sortingInstructionForm);
+        Disposer.dispose(sortingInstructionForm);
 
         GUIUtil.repaint(sortingInstructionsPanel);
     }

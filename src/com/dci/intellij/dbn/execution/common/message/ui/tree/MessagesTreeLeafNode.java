@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.tree.TreeNode;
@@ -57,7 +57,7 @@ public abstract class MessagesTreeLeafNode<P extends MessagesTreeNode, M extends
 
     @Override
     public void disposeInner() {
-        DisposeUtil.dispose(message);
+        Disposer.dispose(message);
         nullify();
     }
 }

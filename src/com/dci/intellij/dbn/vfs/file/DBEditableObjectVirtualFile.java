@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.vfs.file;
 
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -262,7 +261,9 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
     @Override
     public void invalidate() {
-        DisposeUtil.dispose(contentFiles.value());
+        List<DBContentVirtualFile> contentVirtualFiles = contentFiles.value();
+        contentVirtualFiles.forEach(virtualFile -> virtualFile.invalidate());
+
         contentFiles.set(EMPTY_CONTENT_FILES);
         super.invalidate();
     }

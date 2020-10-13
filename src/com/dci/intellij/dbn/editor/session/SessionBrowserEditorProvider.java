@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.session;
 
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.vfs.file.DBSessionBrowserVirtualFile;
 import com.intellij.openapi.components.NamedComponent;
@@ -10,6 +9,7 @@ import com.intellij.openapi.fileEditor.FileEditorProvider;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
@@ -33,8 +33,8 @@ public class SessionBrowserEditorProvider implements FileEditorProvider, NamedCo
     }
 
     @Override
-    public void disposeEditor(@NotNull final FileEditor editor) {
-        DisposeUtil.dispose(editor);
+    public void disposeEditor(@NotNull FileEditor editor) {
+        Disposer.dispose(editor);
     }
 
     @Override

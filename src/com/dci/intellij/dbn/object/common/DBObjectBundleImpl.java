@@ -14,8 +14,8 @@ import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoaderImpl;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -110,18 +110,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static com.dci.intellij.dbn.object.type.DBObjectRelationType.ROLE_PRIVILEGE;
-import static com.dci.intellij.dbn.object.type.DBObjectRelationType.ROLE_ROLE;
-import static com.dci.intellij.dbn.object.type.DBObjectRelationType.USER_PRIVILEGE;
-import static com.dci.intellij.dbn.object.type.DBObjectRelationType.USER_ROLE;
-import static com.dci.intellij.dbn.object.type.DBObjectType.CHARSET;
-import static com.dci.intellij.dbn.object.type.DBObjectType.CONSOLE;
-import static com.dci.intellij.dbn.object.type.DBObjectType.OBJECT_PRIVILEGE;
-import static com.dci.intellij.dbn.object.type.DBObjectType.ROLE;
-import static com.dci.intellij.dbn.object.type.DBObjectType.SCHEMA;
-import static com.dci.intellij.dbn.object.type.DBObjectType.SYNONYM;
-import static com.dci.intellij.dbn.object.type.DBObjectType.SYSTEM_PRIVILEGE;
-import static com.dci.intellij.dbn.object.type.DBObjectType.USER;
+import static com.dci.intellij.dbn.object.type.DBObjectRelationType.*;
+import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport, ProjectEventAdapter {
     private final ConnectionHandlerRef connectionHandler;
@@ -804,18 +794,6 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         return getConnectionHandler().getName();
     }
 
-    @Override
-    public void disposeInner() {
-        DisposeUtil.disposeInBackground(
-                objectLists,
-                objectRelationLists,
-                sqlLookupItemBuilders,
-                psqlLookupItemBuilders,
-                objectPsiFacades,
-                virtualFiles);
-        nullify();
-    }
-
     /*********************************************************
      *                         Loaders                       *
      *********************************************************/
@@ -991,5 +969,17 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                 return null;
             }
         };
+    }
+
+
+    @Override
+    public void disposeInner() {
+        SafeDisposer.dispose(objectLists, false, true);
+        SafeDisposer.dispose(objectRelationLists, false, true);
+        sqlLookupItemBuilders.reset();
+        psqlLookupItemBuilders.reset();
+        objectPsiFacades.reset();
+        virtualFiles.reset();
+        nullify();
     }
 }

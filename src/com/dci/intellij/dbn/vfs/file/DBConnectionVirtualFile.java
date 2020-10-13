@@ -20,24 +20,24 @@ import java.io.OutputStream;
 
 public class DBConnectionVirtualFile extends DBVirtualFileImpl {
     private static final byte[] EMPTY_CONTENT = new byte[0];
-    private final ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connectionHandler;
 
     public DBConnectionVirtualFile(ConnectionHandler connectionHandler) {
         super(connectionHandler.getProject());
-        this.connectionHandlerRef = connectionHandler.getRef();
+        this.connectionHandler = connectionHandler.getRef();
         this.name = connectionHandler.getName();
     }
 
     @NotNull
     @Override
     public ConnectionId getConnectionId() {
-        return connectionHandlerRef.getConnectionId();
+        return connectionHandler.getConnectionId();
     }
 
     @Override
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     @Nullable
@@ -58,7 +58,7 @@ public class DBConnectionVirtualFile extends DBVirtualFileImpl {
 
     @Override
     public boolean isValid() {
-        return super.isValid() && connectionHandlerRef.isValid();
+        return super.isValid() && connectionHandler.isValid();
     }
 
     @Override

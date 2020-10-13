@@ -6,8 +6,8 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
@@ -60,10 +60,7 @@ import java.util.stream.Collectors;
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
-import static com.dci.intellij.dbn.common.util.MessageUtil.options;
-import static com.dci.intellij.dbn.common.util.MessageUtil.showErrorDialog;
-import static com.dci.intellij.dbn.common.util.MessageUtil.showInfoDialog;
-import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
+import static com.dci.intellij.dbn.common.util.MessageUtil.*;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
 
 @State(
@@ -105,7 +102,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     @Override
     public void disposeInner() {
-        DisposeUtil.dispose(idleConnectionCleaner);
+        SafeDisposer.dispose(idleConnectionCleaner);
         super.disposeInner();
     }
 
@@ -512,7 +509,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 Background.run(() -> {
                     connectionHandlers.forEach(connectionHandler -> {
                         connectionHandler.getConnectionPool().closeConnections();
-                        DisposeUtil.dispose(connectionHandler);
+                        Disposer.dispose(connectionHandler);
                     });
                 });
             });

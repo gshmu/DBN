@@ -1,18 +1,18 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeWeakRef;
 import com.dci.intellij.dbn.common.property.Property;
+import com.dci.intellij.dbn.language.common.WeakRef;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class IncrementalStatusAdapter<T, P extends Property> {
     private final P status;
-    private final FailsafeWeakRef<T> resource;
-    private AtomicInteger count = new AtomicInteger();
+    private final WeakRef<T> resource;
+    private final AtomicInteger count = new AtomicInteger();
 
     public IncrementalStatusAdapter(T resource, P status) {
         this.status = status;
-        this.resource = new FailsafeWeakRef<T>(resource);
+        this.resource = WeakRef.of(resource);
     }
 
     public final boolean set(boolean value) {
@@ -26,7 +26,7 @@ public abstract class IncrementalStatusAdapter<T, P extends Property> {
     }
 
     public T getResource() {
-        return resource.get();
+        return resource.ensure();
     }
 
     public P getStatus() {

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.debugger.jdwp.config.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DumbAwareProjectAction;
 import com.dci.intellij.dbn.common.action.GroupPopupAction;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -154,7 +154,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
 
                     Dispatch.run(() -> {
                         methodArgumentsPanel.removeAll();
-                        DisposeUtil.dispose(methodExecutionInputForm);
+                        SafeDisposer.dispose(methodExecutionInputForm);
                         methodExecutionInputForm = null;
 
                         String headerTitle = "No method selected";

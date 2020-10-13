@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.navigation.action;
 
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.util.ClipboardUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -35,6 +34,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -250,7 +250,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
     }
 
     private class Callback extends ChooseByNamePopupComponent.Callback {
-        private GoToDatabaseObjectModel model;
+        private final GoToDatabaseObjectModel model;
 
         private Callback(GoToDatabaseObjectModel model) {
             this.model = model;
@@ -272,7 +272,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
         @Override
         public void onClose() {
             removeActionLock();
-            DisposeUtil.dispose(model);
+            Disposer.dispose(model);
             latestUsedText = popup.getEnteredText();
             popup = null;
         }

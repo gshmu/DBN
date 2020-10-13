@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.execution.method.ui;
 
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -194,8 +194,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
 
     @Override
     public void dispose() {
-        DisposeUtil.dispose(executionInputs);
-        CollectionUtil.clear(executionInputs);
+        SafeDisposer.dispose(executionInputs, false, false);
     }
 
 
