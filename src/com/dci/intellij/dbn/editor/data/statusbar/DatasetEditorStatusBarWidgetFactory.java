@@ -20,7 +20,7 @@ public class DatasetEditorStatusBarWidgetFactory implements StatusBarWidgetFacto
     @NotNull
     @Override
     public String getDisplayName() {
-        return "Math";
+        return "DB Table Math";
     }
 
     @Override

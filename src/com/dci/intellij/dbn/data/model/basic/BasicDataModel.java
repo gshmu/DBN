@@ -194,7 +194,7 @@ public class BasicDataModel<
         updateRowIndexes(index);
         getState().setRowCount(getRowCount());
 
-        SafeDisposer.dispose(row);
+        SafeDisposer.dispose(row, false);
     }
 
     @Nullable

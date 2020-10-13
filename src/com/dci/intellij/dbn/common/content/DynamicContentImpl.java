@@ -441,5 +441,6 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         dependencyAdapter.dispose();
         dependencyAdapter = VoidContentDependencyAdapter.INSTANCE;
         parent = null;
+        nullify();
     }
 }

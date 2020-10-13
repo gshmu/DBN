@@ -916,8 +916,8 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
     @Override
     public void disposeInner() {
-        SafeDisposer.dispose(childObjects);
-        SafeDisposer.dispose(childObjectRelations);
+        SafeDisposer.dispose(childObjects, false);
+        SafeDisposer.dispose(childObjectRelations, false);
         nullify();
     }
 }
