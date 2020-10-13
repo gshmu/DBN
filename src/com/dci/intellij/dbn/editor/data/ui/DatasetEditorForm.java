@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.editor.data.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
@@ -147,7 +147,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
                 datasetEditorTable.initTableGutter();
                 datasetEditorTable.updateBackground(false);
 
-                DisposeUtil.disposeInBackground(oldEditorTable);
+                SafeDisposer.dispose(oldEditorTable, true, true);
             });
         }
     }

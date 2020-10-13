@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.common.cache;
 
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.language.common.WeakRef;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,7 +50,12 @@ public class Cache {
                 CacheValue cacheValue = elements.get(key);
                 if (!isValid(cacheValue)) {
                     cacheValue = elements.remove(key);
-                    DisposeUtil.dispose(cacheValue.getValue());
+                    Object value = cacheValue.getValue();
+                    if (value instanceof Disposable) {
+                        Disposable disposable = (Disposable) value;
+                        Disposer.dispose(disposable);
+                    }
+
                 }
             }
         }

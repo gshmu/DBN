@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.object.common.list;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.MultipleContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapterImpl;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.Compactable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -95,8 +95,7 @@ public class DBObjectRelationListContainer implements Disposable, Compactable {
 
     @Override
     public void dispose() {
-        DisposeUtil.dispose(objectRelationLists);
-        CollectionUtil.clear(objectRelationLists);
+        SafeDisposer.dispose(objectRelationLists, false, false);
         owner = null;
     }
 

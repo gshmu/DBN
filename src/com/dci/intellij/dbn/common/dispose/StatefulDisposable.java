@@ -14,7 +14,7 @@ public interface StatefulDisposable extends com.intellij.openapi.Disposable {
     }
 
     default void nullify() {
-        DisposeUtil.nullify(this);
+        SafeDisposer.nullify(this);
     }
 
     abstract class Base implements StatefulDisposable {

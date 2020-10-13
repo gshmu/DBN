@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.ui.panel;
 
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.intellij.ui.components.JBPanel;
 import lombok.Getter;
 
@@ -13,7 +13,7 @@ public abstract class DBNPanelImpl extends JBPanel implements DBNPanel{
         if (!disposed) {
             disposed = true;
             disposeInner();
-            DisposeUtil.nullify(this);
+            SafeDisposer.nullify(this);
         }
     }
 

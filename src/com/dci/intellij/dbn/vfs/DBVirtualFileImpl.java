@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.ui.Presentable;
@@ -10,6 +9,7 @@ import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFilePathWrapper;
 import com.intellij.openapi.vfs.ex.dummy.DummyFileIdGenerator;
@@ -201,7 +201,8 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
                 List<PsiFile> cachedPsiFiles = cachedViewProvider.getCachedPsiFiles();
                 for (PsiFile cachedPsiFile: cachedPsiFiles) {
                     if (cachedPsiFile instanceof DBLanguagePsiFile) {
-                        DisposeUtil.dispose(cachedPsiFile);
+                        DBLanguagePsiFile languagePsiFile = (DBLanguagePsiFile) cachedPsiFile;
+                        Disposer.dispose(languagePsiFile);
                     }
                 }
 

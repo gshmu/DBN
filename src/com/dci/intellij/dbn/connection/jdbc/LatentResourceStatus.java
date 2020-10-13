@@ -1,26 +1,26 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import com.dci.intellij.dbn.common.dispose.FailsafeWeakRef;
 import com.dci.intellij.dbn.common.property.Property;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class LatentResourceStatus<T extends Property> {
-    private long interval;
+    private final long interval;
     private long lastCheck;
     private boolean checking;
     private boolean dirty;
-    private T status;
-    private FailsafeWeakRef<PropertyHolder<T>> resource;
+    private final T status;
+    private WeakRef<PropertyHolder<T>> resource;
 
     protected LatentResourceStatus(PropertyHolder<T> resource, T status, boolean initialValue, long interval){
         resource.set(status, initialValue);
         this.status = status;
         this.interval = interval;
-        this.resource = new FailsafeWeakRef<>(resource);
+        this.resource = WeakRef.of(resource);
     }
 
     public boolean check() {
@@ -65,7 +65,7 @@ public abstract class LatentResourceStatus<T extends Property> {
 
     @NotNull
     PropertyHolder<T> getResource() {
-        return this.resource.get();
+        return this.resource.ensure();
     }
 
     public void markDirty() {

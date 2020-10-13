@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.execution.method;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -33,6 +32,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.Disposer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -340,7 +340,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
     @Override
     public void disposeInner() {
-        DisposeUtil.dispose(executionHistory);
+        Disposer.dispose(executionHistory);
         super.disposeInner();
     }
 }

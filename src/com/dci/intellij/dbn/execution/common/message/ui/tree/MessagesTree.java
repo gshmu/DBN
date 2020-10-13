@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.common.message.ui.tree;
 
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
@@ -38,6 +37,7 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -110,7 +110,7 @@ public class MessagesTree extends DBNTree implements Disposable {
     public void reset() {
         MessagesTreeModel oldModel = getModel();
         setModel(new MessagesTreeModel());
-        DisposeUtil.dispose(oldModel);
+        Disposer.dispose(oldModel);
     }
 
     public TreePath addExecutionMessage(StatementExecutionMessage message, boolean select, boolean focus) {

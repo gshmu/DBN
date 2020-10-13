@@ -5,8 +5,8 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.BrowserDisplayMode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.browser.options.listener.DisplayModeSettingsListener;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -80,7 +80,7 @@ public class BrowserToolWindowForm extends DBNFormImpl {
         GUIUtil.repaint(browserPanel);
 
         Disposer.register(this, this.browserForm);
-        DisposeUtil.disposeInBackground(oldBrowserForm);
+        SafeDisposer.dispose(oldBrowserForm, true, true);
     }
 
     public DatabaseBrowserTree getBrowserTree(ConnectionId connectionId) {

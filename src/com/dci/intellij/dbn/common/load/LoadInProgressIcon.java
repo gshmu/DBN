@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.common.load;
 
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.intellij.openapi.util.IconLoader;
@@ -51,7 +51,7 @@ public class LoadInProgressIcon implements Icon{
                 synchronized (IconRollerTimerTask.class) {
                     Timer cachedIconRoller = ICON_ROLLER;
                     ICON_ROLLER = null;
-                    DisposeUtil.dispose(cachedIconRoller);
+                    SafeDisposer.dispose(cachedIconRoller);
                 }
             }
         }

@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.editor.session;
 
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposableUserDataHolderBase;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.EventNotifier;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -129,7 +129,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
                 newModel.setState(state);
                 editorTable.setModel(newModel);
                 refreshTable();
-                DisposeUtil.dispose(oldModel);
+                Disposer.dispose(oldModel);
             });
         }
     }
@@ -340,7 +340,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
     }
 
     private void stopRefreshTimer() {
-        DisposeUtil.dispose(refreshTimer);
+        SafeDisposer.dispose(refreshTimer);
         refreshTimer = null;
     }
 

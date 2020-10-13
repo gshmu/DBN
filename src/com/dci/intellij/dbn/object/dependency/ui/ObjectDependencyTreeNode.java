@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -97,7 +97,7 @@ public class ObjectDependencyTreeNode extends StatefulDisposable.Base implements
 
                             List<ObjectDependencyTreeNode> oldDependencies = dependencies;
                             dependencies = newDependencies;
-                            DisposeUtil.dispose(oldDependencies);
+                            SafeDisposer.dispose(oldDependencies, false, true);
 
                             getModel().notifyNodeLoaded(ObjectDependencyTreeNode.this);
                         }
@@ -149,7 +149,7 @@ public class ObjectDependencyTreeNode extends StatefulDisposable.Base implements
 
     @Override
     public void disposeInner() {
-        DisposeUtil.dispose(dependencies);
+        SafeDisposer.dispose(dependencies, false, false);
         nullify();
     }
 }

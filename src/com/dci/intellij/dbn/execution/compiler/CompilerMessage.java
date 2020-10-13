@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.compiler;
 
-import com.dci.intellij.dbn.common.dispose.DisposeUtil;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.common.message.ConsoleMessage;
@@ -8,6 +7,7 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
@@ -156,7 +156,7 @@ public class CompilerMessage extends ConsoleMessage implements Comparable<Compil
 
     @Override
     public void disposeInner() {
-        DisposeUtil.dispose(compilerResult);
+        Disposer.dispose(compilerResult);
         super.disposeInner();
     }
 }
