@@ -1,13 +1,18 @@
 package com.dci.intellij.dbn.browser.ui;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.ui.component.DBNComponent;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class DatabaseBrowserForm extends DBNFormImpl {
-    DatabaseBrowserForm(DBNComponent parent) {
+    public DatabaseBrowserForm(DBNForm parent) {
         super(parent);
+    }
+
+    DatabaseBrowserForm(Project project) {
+        super(project);
     }
 
     @Nullable

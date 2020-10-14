@@ -7,13 +7,15 @@ import com.dci.intellij.dbn.connection.ConnectionCache;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SimpleBrowserTreeModel extends BrowserTreeModel {
     public SimpleBrowserTreeModel() {
         this(Failsafe.DUMMY_PROJECT, null);
     }
 
-    public SimpleBrowserTreeModel(Project project, ConnectionBundle connectionBundle) {
+    public SimpleBrowserTreeModel(@NotNull Project project, @Nullable ConnectionBundle connectionBundle) {
         super(new SimpleBrowserTreeRoot(project, connectionBundle));
         subscribe(ConnectionHandlerStatusListener.TOPIC, connectionHandlerStatusListener);
     }

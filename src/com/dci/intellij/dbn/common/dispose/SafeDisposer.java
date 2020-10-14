@@ -37,9 +37,23 @@ public interface SafeDisposer {
     MapLatent<Class<?>, List<Field>, RuntimeException> CLASS_FIELDS = MapLatent.create(clazz -> ReflectionUtil.collectFields(clazz));
     Logger LOGGER = LoggerFactory.createLogger();
 
+    static void register(@Nullable Disposable parent, @NotNull Object object) {
+        if (object instanceof Disposable) {
+            Disposable disposable = (Disposable) object;
+            register(parent, disposable);
+        }
+    }
+
     static void register(@Nullable Disposable parent, @NotNull Disposable disposable) {
         if (Failsafe.check(parent)) {
             Disposer.register(parent, disposable);
+        }
+    }
+
+    static void dispose(@Nullable Object object) {
+        if (object instanceof Disposable) {
+            Disposable disposable = (Disposable) object;
+            dispose(disposable);
         }
     }
 

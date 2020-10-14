@@ -24,7 +24,7 @@ public final class SimpleBrowserTreeRoot extends BrowserTreeNodeBase implements 
     private final List<ConnectionBundle> rootChildren = new ArrayList<>();
     private final ProjectRef project;
 
-    SimpleBrowserTreeRoot(@NotNull Project project, ConnectionBundle connectionBundle) {
+    SimpleBrowserTreeRoot(@NotNull Project project, @Nullable ConnectionBundle connectionBundle) {
         this.project = ProjectRef.of(project);
         if (connectionBundle != null) {
             this.rootChildren.add(connectionBundle);

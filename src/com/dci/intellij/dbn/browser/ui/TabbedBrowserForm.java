@@ -16,7 +16,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.tabs.TabInfo;
-import com.intellij.ui.tabs.TabsListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,37 +27,12 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
     private final TabbedPane connectionTabs;
     private JPanel mainPanel;
 
-    TabbedBrowserForm(BrowserToolWindowForm parent, @Nullable TabbedBrowserForm previous) {
-        super(parent);
+    TabbedBrowserForm(Project project, @Nullable TabbedBrowserForm previous) {
+        super(project);
         connectionTabs = new TabbedPane(this);
         //connectionTabs.setBackground(GUIUtil.getListBackground());
         //mainPanel.add(connectionTabs, BorderLayout.CENTER);
         initTabs(previous);
-        connectionTabs.addListener(new TabsListener() {
-            @Override
-            public void selectionChanged(TabInfo oldSelection, TabInfo newSelection) {
-/*
-                ToolWindow toolWindow = browserManager.getBrowserToolWindow();
-                if (toolWindow.isVisible()) {
-                    toolWindow.activate(null);
-                }
-*/
-            }
-
-            @Override
-            public void beforeSelectionChanged(TabInfo oldSelection, TabInfo newSelection) {
-            }
-
-            @Override
-            public void tabRemoved(@NotNull TabInfo tabInfo) {
-            }
-
-            @Override
-            public void tabsMoved() {
-            }
-        });
-
-        Project project = getProject();
         subscribe(EnvironmentManagerListener.TOPIC, environmentManagerListener);
     }
 
