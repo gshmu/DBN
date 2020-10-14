@@ -39,6 +39,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -53,13 +54,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class DatabaseBrowserTree extends DBNTree {
+public final class DatabaseBrowserTree extends DBNTree {
     private BrowserTreeNode targetSelection;
     private JPopupMenu popupMenu;
     private final TreeNavigationHistory navigationHistory = new TreeNavigationHistory();
 
-    public DatabaseBrowserTree(@NotNull DBNComponent parent, BrowserTreeModel treeModel) {
-        super(parent, treeModel);
+    public DatabaseBrowserTree(@NotNull DBNComponent parent, @Nullable ConnectionHandler connectionHandler) {
+        super(parent, createModel(parent.getProject(), connectionHandler));
+        BrowserTreeModel treeModel = getModel();
 
         addKeyListener(keyListener);
         addMouseListener(mouseListener);
@@ -69,7 +71,7 @@ public class DatabaseBrowserTree extends DBNTree {
         setRootVisible(treeModel instanceof TabbedBrowserTreeModel);
         setShowsRootHandles(true);
         setAutoscrolls(true);
-        DatabaseBrowserTreeCellRenderer browserTreeCellRenderer = new DatabaseBrowserTreeCellRenderer(treeModel.getProject());
+        DatabaseBrowserTreeCellRenderer browserTreeCellRenderer = new DatabaseBrowserTreeCellRenderer(parent.getProject());
         setCellRenderer(browserTreeCellRenderer);
         //setExpandedState(DatabaseBrowserUtils.createTreePath(treeModel.getRoot()), false);
 
@@ -77,6 +79,14 @@ public class DatabaseBrowserTree extends DBNTree {
 
         Disposer.register(parent, this);
         Disposer.register(this, navigationHistory);
+    }
+
+    private static BrowserTreeModel createModel(@NotNull Project project, @Nullable ConnectionHandler connectionHandler) {
+        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+        return connectionHandler == null ?
+                new SimpleBrowserTreeModel(project, connectionManager.getConnectionBundle()) :
+                new TabbedBrowserTreeModel(connectionHandler);
+
     }
 
     @Override
