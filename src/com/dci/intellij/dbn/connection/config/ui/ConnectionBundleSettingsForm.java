@@ -231,7 +231,11 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
     public void removeSelectedConnections() {
         getConfiguration().setModified(true);
-        ListUtil.removeSelectedItems(connectionsList);
+        List<ConnectionSettings> connectionSettings = ListUtil.removeSelectedItems(connectionsList);
+        for (ConnectionSettings connectionSetting : connectionSettings) {
+            connectionSetting.disposeUIResources();
+        }
+
     }
 
     public void moveSelectedConnectionsUp() {
