@@ -17,13 +17,13 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
-    private boolean automaticPrompt;
-    private DBObjectRef<DBDataset> datasetRef;
+    private final boolean automaticPrompt;
+    private final DBObjectRef<DBDataset> dataset;
     private DatasetFilterGroup filterGroup;
 
     public DatasetFilterDialog(DBDataset dataset, boolean automaticPrompt, boolean createNewFilter, DatasetFilterType defaultFilterType) {
         super(dataset.getProject(), "Data filters", true);
-        this.datasetRef = DBObjectRef.of(dataset);
+        this.dataset = DBObjectRef.of(dataset);
         this.automaticPrompt = automaticPrompt;
         DatasetFilterForm component = getForm();
         if ((createNewFilter || filterGroup.getFilters().isEmpty()) && defaultFilterType != DatasetFilterType.NONE) {
@@ -38,7 +38,7 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
 
     public DatasetFilterDialog(DBDataset dataset, DatasetBasicFilter basicFilter) {
         super(dataset.getProject(), "Data filters", true);
-        this.datasetRef = DBObjectRef.of(dataset);
+        this.dataset = DBObjectRef.of(dataset);
         this.automaticPrompt = false;
         getForm().getFilterList().setSelectedValue(basicFilter, true);
         init();
@@ -52,11 +52,12 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
         DBDataset dataset = getDataset();
         DatasetFilterManager filterManager = DatasetFilterManager.getInstance(dataset.getProject());
         filterGroup = filterManager.getFilterGroup(dataset);
-        return filterGroup.createConfigurationEditor();
+        DatasetFilterForm filterForm = filterGroup.createConfigurationEditor();
+        return filterForm;
     }
 
     private DBDataset getDataset() {
-        return DBObjectRef.get(datasetRef);
+        return DBObjectRef.get(dataset);
     }
 
     public DatasetFilterGroup getFilterGroup() {
@@ -133,5 +134,10 @@ public class DatasetFilterDialog extends DBNDialog<DatasetFilterForm> {
             filterManager.setActiveFilter(dataset, activeFilter);
         }
         close(OK_EXIT_CODE);
+    }
+
+    @Override
+    protected void disposeInner() {
+        filterGroup.disposeUIResources();
     }
 }

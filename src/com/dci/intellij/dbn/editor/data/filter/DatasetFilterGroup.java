@@ -131,6 +131,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
         initChange();
         int index = getFilters().indexOf(filter);
         getFilters().remove(index);
+        filter.disposeUIResources();
         ListUtil.notifyListDataListeners(this, listeners, index, index, ListDataEvent.INTERVAL_REMOVED);
 
     }
