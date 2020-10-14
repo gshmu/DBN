@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.ui.tree;
 
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.language.common.WeakRef;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.treeStructure.Tree;
@@ -27,13 +27,14 @@ public class DBNTree extends Tree implements DBNComponent {
         Disposer.register(parent, this);
     }
 
-    public DBNTree(@NotNull DBNComponent parent, TreeModel treemodel) {
-        super(treemodel);
+    public DBNTree(@NotNull DBNComponent parent, TreeModel treeModel) {
+        super(treeModel);
         parentComponent = WeakRef.of(parent);
         setTransferHandler(new DBNTreeTransferHandler());
         setFont(UIUtil.getLabelFont());
 
         Disposer.register(parent, this);
+        SafeDisposer.register(this, treeModel);
     }
 
     public DBNTree(@NotNull DBNComponent parent, TreeNode root) {
@@ -42,6 +43,16 @@ public class DBNTree extends Tree implements DBNComponent {
         setTransferHandler(new DBNTreeTransferHandler());
 
         Disposer.register(parent, this);
+        SafeDisposer.register(this, root);
+    }
+
+    @Override
+    public void setModel(TreeModel treeModel) {
+        TreeModel oldTreeModel = getModel();
+        super.setModel(treeModel);
+
+        SafeDisposer.register(this, treeModel);
+        SafeDisposer.dispose(oldTreeModel);
     }
 
     @NotNull
@@ -72,13 +83,8 @@ public class DBNTree extends Tree implements DBNComponent {
         if (!disposed) {
             disposed = true;
             getUI().uninstallUI(this);
-            TreeModel model = getModel();
-            if (model instanceof Disposable) {
-                Disposer.dispose((Disposable) model);
-            }
             setSelectionModel(null);
             disposeInner();
-
             nullify();
         }
     }

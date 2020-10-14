@@ -17,7 +17,7 @@ import javax.swing.*;
 public abstract class BasicConfiguration<P extends Configuration, E extends ConfigurationEditorForm>
         implements Configuration<P, E>, SettingsSupport {
 
-    private transient E configurationEditorForm;
+    private E configurationEditorForm;
 
     private boolean modified = false;
     private final boolean transitory = IS_TRANSITORY.get();

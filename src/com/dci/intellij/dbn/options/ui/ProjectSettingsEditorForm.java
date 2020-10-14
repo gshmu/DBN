@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
+import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -153,12 +154,12 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
         this.dialogRef = WeakRef.of(dialog);
     }
 
-    private void addSettingsPanel(Configuration configuration) {
+    private void addSettingsPanel(BasicConfiguration configuration) {
         JComponent component = configuration.createComponent();
         JBScrollPane scrollPane = new JBScrollPane(component);
         TabInfo tabInfo = new TabInfo(scrollPane);
         tabInfo.setText(configuration.getDisplayName());
-        tabInfo.setObject(configuration);
+        tabInfo.setObject(configuration.getSettingsEditor());
         //tabInfo.setTabColor(GUIUtil.getWindowColor());
         configurationTabs.addTab(tabInfo);
     }
@@ -206,7 +207,8 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
     public Configuration getActiveSettings() {
         TabInfo tabInfo = configurationTabs.getSelectedInfo();
         if (tabInfo != null) {
-            return (Configuration) tabInfo.getObject();
+            ConfigurationEditorForm configurationEditorForm = (ConfigurationEditorForm) tabInfo.getObject();
+            return configurationEditorForm.getConfiguration();
         }
         return getConfiguration();
     }
