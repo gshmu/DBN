@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicContentImpl<T> implements DBObjectRelationList<T>{
-    private DBObjectRelationType objectRelationType;
+    private final DBObjectRelationType objectRelationType;
 
     public DBObjectRelationListImpl(
             @NotNull DBObjectRelationType type,

@@ -3,14 +3,15 @@ package com.dci.intellij.dbn.object.common.list;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.MultipleContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapterImpl;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
+import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.common.util.Compactable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import com.intellij.openapi.Disposable;
@@ -19,12 +20,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DBObjectRelationListContainer implements Disposable, Compactable {
-    private final WeakRef<GenericDatabaseElement> owner;
+public class DBObjectRelationListContainer extends StatefulDisposable.Base implements Disposable, Compactable {
+    private GenericDatabaseElement owner;
     private List<DBObjectRelationList> objectRelationLists;
 
     public DBObjectRelationListContainer(GenericDatabaseElement owner) {
-        this.owner = WeakRef.of(owner);
+        this.owner = owner;
     }
 
     @Override
@@ -46,7 +47,7 @@ public class DBObjectRelationListContainer implements Disposable, Compactable {
     }
 
     GenericDatabaseElement getOwner() {
-        return owner.ensure();
+        return Failsafe.nn(owner);
     }
 
     @Nullable
@@ -99,8 +100,10 @@ public class DBObjectRelationListContainer implements Disposable, Compactable {
     }
 
     @Override
-    public void dispose() {
+    public void disposeInner() {
         SafeDisposer.dispose(objectRelationLists, false, false);
+        owner = null;
+        nullify();
     }
 
     public void reload() {

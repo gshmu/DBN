@@ -16,7 +16,6 @@ import com.dci.intellij.dbn.common.util.Compactable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -32,11 +31,11 @@ import java.util.Set;
 import static com.dci.intellij.dbn.common.dispose.Failsafe.check;
 
 public class DBObjectListContainer extends StatefulDisposable.Base implements StatefulDisposable, Compactable {
-    private final WeakRef<GenericDatabaseElement> owner;
+    private GenericDatabaseElement owner;
     private Map<DBObjectType, DBObjectList<DBObject>> objectLists;
 
     public DBObjectListContainer(@NotNull GenericDatabaseElement owner) {
-        this.owner = WeakRef.of(owner);
+        this.owner = owner;
     }
 
     @Override
@@ -209,7 +208,7 @@ public class DBObjectListContainer extends StatefulDisposable.Base implements St
 
     @NotNull
     private GenericDatabaseElement getOwner() {
-        return owner.ensure();
+        return Failsafe.nn(owner);
     }
 
 
@@ -340,6 +339,7 @@ public class DBObjectListContainer extends StatefulDisposable.Base implements St
     @Override
     public void disposeInner() {
         SafeDisposer.dispose(objectLists, false, false);
+        owner = null;
         nullify();
     }
 }
