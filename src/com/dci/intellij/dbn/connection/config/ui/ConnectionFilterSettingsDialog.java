@@ -19,6 +19,7 @@ import javax.swing.*;
 public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHeaderForm> {
     private final ConnectionHandlerRef connectionHandler;
     private ConnectionFilterSettingsForm configurationEditor;
+    private ConnectionFilterSettings filterSettings;
 
     public ConnectionFilterSettingsDialog(@NotNull ConnectionHandler connectionHandler) {
         super(connectionHandler.getProject(), "Object filters", true);
@@ -42,7 +43,8 @@ public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHead
             public DBNForm createContentForm() {
                 ProjectSettingsManager settingsManager = ProjectSettingsManager.getInstance(getProject());
                 ConnectionSettings connectionSettings = settingsManager.getConnectionSettings().getConnectionSettings(connectionHandler.getConnectionId());
-                configurationEditor = connectionSettings.getFilterSettings().createConfigurationEditor();
+                filterSettings = connectionSettings.getFilterSettings();
+                configurationEditor = filterSettings.createConfigurationEditor();
                 return configurationEditor;
             }
         };
@@ -60,10 +62,9 @@ public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHead
     @Override
     public void doOKAction() {
         try {
-            ConnectionFilterSettings configuration = configurationEditor.getConfiguration();
             // !!workaround!! apply settings is normally cascaded from top level settings
             configurationEditor.applyFormChanges();
-            configuration.apply();
+            filterSettings.apply();
             Configuration.notifyChanges();
             super.doOKAction();
         } catch (ConfigurationException e) {
@@ -77,4 +78,8 @@ public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHead
         super.doCancelAction();
     }
 
+    @Override
+    protected void disposeInner() {
+        filterSettings.disposeUIResources();
+    }
 }

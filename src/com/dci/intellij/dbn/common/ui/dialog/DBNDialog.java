@@ -113,7 +113,7 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
     }
 
     @Override
-    public void dispose() {
+    public final void dispose() {
         if (!disposed) {
             disposed = true;
             super.dispose();
