@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.options;
 
 import com.dci.intellij.dbn.common.ProjectRef;
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +27,6 @@ public abstract class CompositeProjectConfiguration<P extends ProjectConfigurati
             return project.ensure();
         }
 
-        return Failsafe.nn(resolveProject());
+        return getParent().getProject();
     }
 }
