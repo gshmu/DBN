@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.options;
 
 import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +24,10 @@ public abstract class BasicProjectConfiguration<P extends ProjectConfiguration, 
     @NotNull
     @Override
     public Project getProject() {
-        P parent = getParent();
-        return parent == null ? project.ensure() : parent.getProject();
+        if (project != null) {
+            return project.ensure();
+        }
+
+        return Failsafe.nn(resolveProject());
     }
 }

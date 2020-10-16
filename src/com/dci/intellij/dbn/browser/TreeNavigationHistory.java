@@ -12,7 +12,8 @@ public class TreeNavigationHistory implements Disposable{
     private final List<BrowserTreeNode> history = new ArrayList<BrowserTreeNode>();
     private int offset;
 
-    public void add(BrowserTreeNode treeNode) {
+    public synchronized void add(BrowserTreeNode treeNode) {
+        offset = Math.min(offset, history.size() -1);
         if (history.size() > 0 && treeNode == history.get(offset)) {
             return;
         }
@@ -30,7 +31,7 @@ public class TreeNavigationHistory implements Disposable{
         offset = history.size() -1;
     }
 
-    public void clear() {
+    public synchronized void clear() {
         history.clear();
     }
 
@@ -42,7 +43,8 @@ public class TreeNavigationHistory implements Disposable{
         return offset > 0;
     }
 
-    public @Nullable BrowserTreeNode next() {
+    @Nullable
+    public synchronized BrowserTreeNode next() {
         if (offset < history.size() -1) {
             offset = offset + 1;
             BrowserTreeNode browserTreeNode = history.get(offset);
@@ -55,7 +57,8 @@ public class TreeNavigationHistory implements Disposable{
         return null;
     }
 
-    public @Nullable BrowserTreeNode previous() {
+    @Nullable
+    public synchronized BrowserTreeNode previous() {
         if (offset > 0) {
             offset = offset-1;
             BrowserTreeNode browserTreeNode = history.get(offset);

@@ -185,10 +185,12 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
     public ConnectionId createNewConnection(@NotNull DatabaseType databaseType, @NotNull ConnectionConfigType configType) {
         ConnectionBundleSettings connectionBundleSettings = getConfiguration();
-        connectionBundleSettings.setModified(true);
         ConnectionSettings connectionSettings = new ConnectionSettings(connectionBundleSettings, databaseType, configType);
         connectionSettings.setNew(true);
         connectionSettings.generateNewId();
+
+        connectionBundleSettings.setModified(true);
+        connectionBundleSettings.getConnections().add(connectionSettings);
 
         String name = "Connection";
         ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
@@ -308,15 +310,18 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
     }
 
     public void importTnsNames(List<TnsName> tnsNames) {
-        ConnectionBundleSettings configuration = getConfiguration();
+        ConnectionBundleSettings connectionBundleSettings = getConfiguration();
         ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
         int index = connectionsList.getModel().getSize();
         List<Integer> selectedIndexes = new ArrayList<Integer>();
 
         for (TnsName tnsName : tnsNames) {
-            ConnectionSettings connectionSettings = new ConnectionSettings(configuration, DatabaseType.ORACLE, ConnectionConfigType.BASIC);
+            ConnectionSettings connectionSettings = new ConnectionSettings(connectionBundleSettings, DatabaseType.ORACLE, ConnectionConfigType.BASIC);
             connectionSettings.setNew(true);
             connectionSettings.generateNewId();
+            connectionBundleSettings.setModified(true);
+            connectionBundleSettings.getConnections().add(connectionSettings);
+
             ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
             String name = tnsName.getName();
             while (model.getConnectionConfig(name) != null) {
@@ -343,7 +348,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
 
             model.add(index, connectionSettings);
             selectedIndexes.add(index);
-            configuration.setModified(true);
+            connectionBundleSettings.setModified(true);
             index++;
         }
         connectionsList.setSelectedIndices(ArrayUtils.toPrimitive(selectedIndexes.toArray(new Integer[0])));
