@@ -187,7 +187,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     }
 
-    public static void testConfigConnection(ConnectionSettings connectionSettings, boolean showMessageDialog) {
+    public void testConfigConnection(ConnectionSettings connectionSettings, boolean showMessageDialog) {
         Project project = connectionSettings.getProject();
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         try {
@@ -240,7 +240,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 });
     }
 
-    public static void showConnectionInfo(ConnectionSettings connectionSettings, EnvironmentType environmentType) {
+    public void showConnectionInfo(ConnectionSettings connectionSettings, EnvironmentType environmentType) {
         ConnectionDatabaseSettings databaseSettings = connectionSettings.getDatabaseSettings();
         String connectionName = databaseSettings.getName();
         Project project = connectionSettings.getProject();
@@ -264,7 +264,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         }
     }
 
-    private static void ensureAuthenticationProvided(
+    private void ensureAuthenticationProvided(
             @NotNull ConnectionDatabaseSettings databaseSettings,
             @NotNull ParametricRunnable.Basic<AuthenticationInfo> callback) {
 
@@ -346,12 +346,12 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         });
     }
 
-    static void promptAuthenticationDialog(
+    void promptAuthenticationDialog(
             @Nullable ConnectionHandler connectionHandler,
             @NotNull AuthenticationInfo authenticationInfo,
             @NotNull ParametricRunnable.Basic<AuthenticationInfo> callback) {
 
-        ConnectionAuthenticationDialog passwordDialog = new ConnectionAuthenticationDialog(null, connectionHandler, authenticationInfo);
+        ConnectionAuthenticationDialog passwordDialog = new ConnectionAuthenticationDialog(getProject(), connectionHandler, authenticationInfo);
         passwordDialog.show();
         if (passwordDialog.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
             AuthenticationInfo newAuthenticationInfo = passwordDialog.getAuthenticationInfo();

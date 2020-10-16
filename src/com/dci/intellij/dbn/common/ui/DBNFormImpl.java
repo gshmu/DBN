@@ -28,7 +28,6 @@ public abstract class DBNFormImpl
     private WeakRef<DBNComponent> parentComponent;
     private boolean registeredDataProvider;
 
-    @Deprecated // no Disposer hierarchy
     protected DBNFormImpl() {
     }
 
@@ -37,7 +36,7 @@ public abstract class DBNFormImpl
         Disposer.register(parent, this);
     }
 
-    protected DBNFormImpl(@NotNull Project project) {
+    protected DBNFormImpl(Project project) {
         this.project = ProjectRef.of(project);
     }
 

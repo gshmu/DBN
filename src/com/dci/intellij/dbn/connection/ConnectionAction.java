@@ -92,7 +92,8 @@ public abstract class ConnectionAction implements Runnable{
         ConnectionHandler connectionHandler = getConnectionHandler();
         AuthenticationInfo temporaryAuthenticationInfo = connectionHandler.getAuthenticationInfo().clone();
         temporaryAuthenticationInfo.setTemporary(true);
-        ConnectionManager.promptAuthenticationDialog(
+        ConnectionManager connectionManager = ConnectionManager.getInstance(connectionHandler.getProject());
+        connectionManager.promptAuthenticationDialog(
                 connectionHandler,
                 temporaryAuthenticationInfo,
                 (authenticationInfo) -> {

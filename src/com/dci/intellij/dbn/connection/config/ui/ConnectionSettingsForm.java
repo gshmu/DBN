@@ -165,13 +165,14 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
                     if (connectionSettingsForm != null) {
                         try {
                             ConnectionSettings temporaryConfig = connectionSettingsForm.getTemporaryConfig();
+                            ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
 
-                            if (source == testButton) ConnectionManager.testConfigConnection(temporaryConfig, true);
+                            if (source == testButton) connectionManager.testConfigConnection(temporaryConfig, true);
                             if (source == infoButton) {
                                 ConnectionDetailSettingsForm detailSettingsForm = configuration.getDetailSettings().getSettingsEditor();
                                 if (detailSettingsForm != null) {
                                     EnvironmentType environmentType = detailSettingsForm.getSelectedEnvironmentType();
-                                    ConnectionManager.showConnectionInfo(temporaryConfig, environmentType);
+                                    connectionManager.showConnectionInfo(temporaryConfig, environmentType);
                                 }
                             }
                             configuration.getDatabaseSettings().setConnectivityStatus(temporaryConfig.getDatabaseSettings().getConnectivityStatus());
@@ -222,7 +223,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
         return mainPanel;
     }
 
-    private ConnectionPresentationChangeListener connectionPresentationChangeListener = new ConnectionPresentationChangeListener() {
+    private final ConnectionPresentationChangeListener connectionPresentationChangeListener = new ConnectionPresentationChangeListener() {
         @Override
         public void presentationChanged(String name, Icon icon, Color color, ConnectionId connectionId, DatabaseType databaseType) {
             Dispatch.run(() -> {

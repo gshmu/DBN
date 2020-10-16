@@ -2,10 +2,12 @@ package com.dci.intellij.dbn.common.options;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
+import com.dci.intellij.dbn.common.util.ProjectSupplier;
 import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -80,5 +82,21 @@ public interface Configuration<P extends Configuration, E extends ConfigurationE
                 configuration.readConfiguration(childElement);
             }
         }
+    }
+
+    default Project resolveProject() {
+        if (this instanceof ProjectSupplier) {
+            ProjectSupplier projectSupplier = (ProjectSupplier) this;
+            return projectSupplier.getProject();
+        }
+        Configuration parent = this.getParent();
+        while (parent != null) {
+            Project project = parent.resolveProject();
+            if (project != null) {
+                return project;
+            }
+            parent = parent.getParent();
+        }
+        return null;
     }
 }
