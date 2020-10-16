@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -51,7 +52,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
 
     public void registerExtensions(DDLFileExtensionSettings settings) {
         extensionRegisterer.addRequest(() -> {
-            Dispatch.run(() -> {
+            Dispatch.run(() -> WriteCommandAction.writeCommandAction(getProject()).run(() -> {
                 FileTypeManager fileTypeManager = FileTypeManager.getInstance();
                 List<DDLFileType> ddlFileTypeList = settings.getDDLFileTypes();
                 for (DDLFileType ddlFileType : ddlFileTypeList) {
@@ -59,7 +60,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
                         fileTypeManager.associateExtension(ddlFileType.getLanguageFileType(), extension);
                     }
                 }
-            });
+            }));
         }, 0);
     }
 
@@ -124,7 +125,6 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
     private final FileTypeListener fileTypeListener = new FileTypeListener() {
         @Override
         public void fileTypesChanged(@NotNull FileTypeEvent event) {
-            StringBuilder restoredAssociations = new StringBuilder();
             FileTypeManager fileTypeManager = FileTypeManager.getInstance();
             List<DDLFileType> ddlFileTypeList = getExtensionSettings().getDDLFileTypes();
             for (DDLFileType ddlFileType : ddlFileTypeList) {
@@ -138,7 +138,8 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
                     }
                 }
 
-                Dispatch.run(() -> {
+                Dispatch.run(() -> WriteCommandAction.writeCommandAction(getProject()).run(() -> {
+                    StringBuilder restoredAssociations = new StringBuilder();
                     for (String extension : ddlFileType.getExtensions()) {
                         if (!registeredExtension.contains(extension)) {
                             fileTypeManager.associateExtension(fileType, extension);
@@ -149,15 +150,17 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
 
                         }
                     }
-                });
+
+                    if (restoredAssociations.length() > 0) {
+                        sendInfoNotification(
+                                NotificationGroup.DDL,
+                                "Following file associations have been restored: \"" + restoredAssociations + "\". " +
+                                        "They are registered as DDL file types in project \"" + getProject().getName() + "\".\n" +
+                                        "Please remove them from project DDL configuration first (Project Settings > DB Navigator > DDL File Settings).");
+                    }
+                }));
             }
-            if (restoredAssociations.length() > 0) {
-                sendInfoNotification(
-                        NotificationGroup.DDL,
-                        "Following file associations have been restored: \"" + restoredAssociations + "\". " +
-                                "They are registered as DDL file types in project \"" + getProject().getName() + "\".\n" +
-                                "Please remove them from project DDL configuration first (Project Settings > DB Navigator > DDL File Settings).");
-            }
+
         }
     };
 
