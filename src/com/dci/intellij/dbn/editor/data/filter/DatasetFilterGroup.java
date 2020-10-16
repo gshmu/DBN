@@ -36,11 +36,11 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
     private final Set<ListDataListener> listeners = new HashSet<>();
 
 
-    public DatasetFilterGroup(Project project) {
+    public DatasetFilterGroup(@NotNull Project project) {
         super(project);
     }
 
-    public DatasetFilterGroup(Project project, ConnectionId connectionId, String datasetName) {
+    public DatasetFilterGroup(@NotNull Project project, ConnectionId connectionId, String datasetName) {
         super(project);
         this.connectionId = connectionId;
         this.datasetName = datasetName;

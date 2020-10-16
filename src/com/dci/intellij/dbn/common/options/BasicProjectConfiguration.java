@@ -9,21 +9,21 @@ public abstract class BasicProjectConfiguration<P extends ProjectConfiguration, 
         extends BasicConfiguration<P, E>
         implements ProjectConfiguration<P, E> {
 
-    private ProjectRef projectRef;
+    private ProjectRef project;
 
-    public BasicProjectConfiguration(P parent) {
+    public BasicProjectConfiguration(@NotNull P parent) {
         super(parent);
     }
 
-    public BasicProjectConfiguration(Project project) {
+    public BasicProjectConfiguration(@NotNull Project project) {
         super(null);
-        this.projectRef = ProjectRef.of(project);
+        this.project = ProjectRef.of(project);
     }
 
     @NotNull
     @Override
     public Project getProject() {
         P parent = getParent();
-        return parent == null ? projectRef.ensure() : parent.getProject();
+        return parent == null ? project.ensure() : parent.getProject();
     }
 }

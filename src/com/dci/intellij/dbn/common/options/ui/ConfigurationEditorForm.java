@@ -2,12 +2,9 @@ package com.dci.intellij.dbn.common.options.ui;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
-import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
-import com.dci.intellij.dbn.common.util.ProjectSupplier;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,24 +25,8 @@ public abstract class ConfigurationEditorForm<E extends BasicConfiguration> exte
     private final E configuration;
 
     protected ConfigurationEditorForm(E configuration) {
-        super(getProject(configuration));
+        super(configuration.resolveProject());
         this.configuration = configuration;
-    }
-
-    protected static Project getProject(Configuration configuration) {
-        if (configuration instanceof ProjectSupplier) {
-            ProjectSupplier projectSupplier = (ProjectSupplier) configuration;
-            return projectSupplier.getProject();
-        }
-        Configuration parent = configuration.getParent();
-        while (parent != null) {
-            Project project = getProject(parent);
-            if (project != null) {
-                return project;
-            }
-            parent = parent.getParent();
-        }
-        return null;
     }
 
     public final E getConfiguration() {
