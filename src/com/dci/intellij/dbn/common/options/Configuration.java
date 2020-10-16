@@ -1,9 +1,13 @@
 package com.dci.intellij.dbn.common.options;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.ProjectSupplier;
 import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -11,6 +15,7 @@ import com.intellij.openapi.project.Project;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,6 +101,16 @@ public interface Configuration<P extends Configuration, E extends ConfigurationE
                 return project;
             }
             parent = parent.getParent();
+        }
+
+        E settingsEditor = getSettingsEditor();
+        if (Failsafe.check(settingsEditor)) {
+            JComponent component = settingsEditor.getComponent();
+            DataContext dataContext = DataManager.getInstance().getDataContext(component);
+            Project project = PlatformDataKeys.PROJECT.getData(dataContext);
+            if (project != null) {
+                return project;
+            }
         }
         return null;
     }
