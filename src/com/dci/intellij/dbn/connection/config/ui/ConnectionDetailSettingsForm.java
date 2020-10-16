@@ -27,9 +27,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<ConnectionDetailSettings> {
@@ -194,7 +192,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         alternativeStatementDelimiterTextField.setText(configuration.getAlternativeStatementDelimiter());
     }
 
-    private EnvironmentConfigLocalListener presentationChangeListener = new EnvironmentConfigLocalListener() {
+    private final EnvironmentConfigLocalListener presentationChangeListener = new EnvironmentConfigLocalListener() {
         @Override
         public void settingsChanged(EnvironmentTypeBundle environmentTypes) {
             EnvironmentType selectedItem = getSelection(environmentTypesComboBox);
