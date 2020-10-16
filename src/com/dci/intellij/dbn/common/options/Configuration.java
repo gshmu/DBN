@@ -94,23 +94,20 @@ public interface Configuration<P extends Configuration, E extends ConfigurationE
             ProjectSupplier projectSupplier = (ProjectSupplier) this;
             return projectSupplier.getProject();
         }
+
         Configuration parent = this.getParent();
-        while (parent != null) {
+        if (parent != null) {
             Project project = parent.resolveProject();
             if (project != null) {
                 return project;
             }
-            parent = parent.getParent();
         }
 
-        E settingsEditor = getSettingsEditor();
+        ConfigurationEditorForm settingsEditor = this.getSettingsEditor();
         if (Failsafe.check(settingsEditor)) {
             JComponent component = settingsEditor.getComponent();
             DataContext dataContext = DataManager.getInstance().getDataContext(component);
-            Project project = PlatformDataKeys.PROJECT.getData(dataContext);
-            if (project != null) {
-                return project;
-            }
+            return PlatformDataKeys.PROJECT.getData(dataContext);
         }
         return null;
     }
