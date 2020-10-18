@@ -21,7 +21,7 @@ public class SQLConsoleEditorToolbarForm extends DBNFormImpl {
     private AutoCommitLabel autoCommitLabel;
 
     public SQLConsoleEditorToolbarForm(Project project, SQLConsoleEditor fileEditor) {
-        super(project);
+        super(fileEditor, project);
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.FileEditor");
         actionToolbar.setTargetComponent(actionsPanel);
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);

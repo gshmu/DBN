@@ -41,7 +41,8 @@ public class ObjectPropertiesForm extends DBNFormImpl {
         objectTypeLabel.setText("Object properties:");
         objectLabel.setText("(no object selected)");
 
-        subscribe(getProject(), this, BrowserTreeEventListener.TOPIC, browserTreeEventListener);
+        Project project = ensureProject();
+        subscribe(project, this, BrowserTreeEventListener.TOPIC, browserTreeEventListener);
     }
 
     @NotNull
@@ -53,7 +54,8 @@ public class ObjectPropertiesForm extends DBNFormImpl {
     private final BrowserTreeEventListener browserTreeEventListener = new BrowserTreeEventAdapter() {
         @Override
         public void selectionChanged() {
-            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(getProject());
+            Project project = ensureProject();
+            DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
             if (browserManager.getShowObjectProperties().value()) {
                 DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
                 if (activeBrowserTree != null) {

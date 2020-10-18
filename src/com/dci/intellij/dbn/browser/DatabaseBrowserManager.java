@@ -74,7 +74,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private final Latent<BrowserToolWindowForm> toolWindowForm = Latent.basic(() -> {
-        BrowserToolWindowForm form = new BrowserToolWindowForm(getProject());
+        BrowserToolWindowForm form = new BrowserToolWindowForm(this, getProject());
         Disposer.register(this, form);
         return form;
     });

@@ -9,6 +9,7 @@ public class DBProgramDebuggerSettingsForm extends DBNFormImpl {
     private JPanel mainPanel;
 
     public DBProgramDebuggerSettingsForm() {
+        super(null);
     }
 
     @NotNull

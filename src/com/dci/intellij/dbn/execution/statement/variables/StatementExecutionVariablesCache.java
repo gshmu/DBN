@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution.statement.variables;
 
-import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.intellij.openapi.project.Project;

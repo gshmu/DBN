@@ -99,7 +99,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         DBDataset dataset = table.getDataset();
         DBColumn column = Failsafe.nn(dataset.getColumn(columnInfo.getName()));
         if (columnValue != null) {
-            if (cell != null && column.isForeignKey()) {
+            if (column.isForeignKey()) {
                 DatasetFilterInput filterInput = table.getModel().resolveForeignKeyRecord(cell);
                 if (filterInput != null) {
                     add(new ReferencedRecordOpenAction(filterInput));

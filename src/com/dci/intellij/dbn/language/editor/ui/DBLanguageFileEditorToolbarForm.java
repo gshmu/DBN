@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -22,8 +23,8 @@ public class DBLanguageFileEditorToolbarForm extends DBNFormImpl {
     private JPanel actionsPanel;
     private AutoCommitLabel autoCommitLabel;
 
-    public DBLanguageFileEditorToolbarForm(Project project, VirtualFile file) {
-        super(project);
+    public DBLanguageFileEditorToolbarForm(Disposable parent, Project project, VirtualFile file) {
+        super(parent, project);
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.FileEditor");
         actionToolbar.setTargetComponent(actionsPanel);
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);

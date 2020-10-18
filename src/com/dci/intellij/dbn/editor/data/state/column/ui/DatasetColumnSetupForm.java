@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.editor.data.state.column.action.OrderAlphabeticallyA
 import com.dci.intellij.dbn.editor.data.state.column.action.RevertColumnOrderAction;
 import com.dci.intellij.dbn.editor.data.state.column.action.SelectAllColumnsAction;
 import com.dci.intellij.dbn.object.DBDataset;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,8 +31,8 @@ public class DatasetColumnSetupForm extends DBNFormImpl {
     private final CheckBoxList<ColumnStateSelectable> columnList;
     private final DatasetColumnSetup columnSetup;
 
-    public DatasetColumnSetupForm(@NotNull DatasetEditor datasetEditor) {
-        super(datasetEditor.getProject());
+    public DatasetColumnSetupForm(@NotNull Disposable parent, @NotNull DatasetEditor datasetEditor) {
+        super(parent);
         DBDataset dataset = datasetEditor.getDataset();
         columnSetup = datasetEditor.getColumnSetup();
         List<DatasetColumnState> columnStates = columnSetup.getColumnStates();

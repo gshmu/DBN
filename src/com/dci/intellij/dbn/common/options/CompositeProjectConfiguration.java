@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.options;
 
-import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
+import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +27,6 @@ public abstract class CompositeProjectConfiguration<P extends ProjectConfigurati
             return project.ensure();
         }
 
-        return getParent().getProject();
+        return getParent().ensureProject();
     }
 }

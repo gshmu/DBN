@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
+import com.dci.intellij.dbn.common.ui.listener.PopupCloseListener;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
@@ -31,7 +32,7 @@ public class AboutComponent extends DBNFormImpl{
     private JPanel linksPanel;
 
     public AboutComponent(Project project) {
-        super(project);
+        super(null, project);
         Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 
         splashLabel.setIcon(Icons.DATABASE_NAVIGATOR);
@@ -87,6 +88,8 @@ public class AboutComponent extends DBNFormImpl{
     public void showPopup(Project project) {
         ComponentPopupBuilder popupBuilder = JBPopupFactory.getInstance().createComponentPopupBuilder(mainPanel, null);
         JBPopup popup = popupBuilder.createPopup();
+        popup.addListener(PopupCloseListener.create(this));
         popup.showCenteredInCurrentWindow(project);
+
     }
 }

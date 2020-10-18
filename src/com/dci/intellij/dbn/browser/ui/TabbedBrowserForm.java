@@ -38,7 +38,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
 
 
     private void initTabs(@Nullable TabbedBrowserForm previous) {
-        Project project = getProject();
+        Project project = ensureProject();
 
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
@@ -48,7 +48,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
             if (browserForm == null) {
                 browserForm = new SimpleBrowserForm(this, connectionHandler);
             } else {
-                browserForm.setParentComponent(this);
+                browserForm.setParent(this);
             }
 
             JComponent component = browserForm.getComponent();

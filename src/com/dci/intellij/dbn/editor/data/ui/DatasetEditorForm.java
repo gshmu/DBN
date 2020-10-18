@@ -67,7 +67,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
 
     public DatasetEditorForm(DatasetEditor datasetEditor) {
-        super(datasetEditor.getProject());
+        super(datasetEditor, datasetEditor.getProject());
         this.datasetEditor = WeakRef.of(datasetEditor);
 
         DBDataset dataset = getDataset();
@@ -109,7 +109,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
     }
 
     public DatasetEditorTable beforeRebuild() throws SQLException {
-        Project project = getProject();
+        Project project = ensureProject();
 
         DatasetEditorTable oldEditorTable = getEditorTable();
         DatasetEditor datasetEditor = getDatasetEditor();

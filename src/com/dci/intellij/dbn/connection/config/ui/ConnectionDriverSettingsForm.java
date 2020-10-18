@@ -97,7 +97,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl{
     }
 
     public ConnectionDatabaseSettingsForm getParentForm() {
-        return ensureParentComponent();
+        return ensureParent();
     }
 
     void updateDriverFields() {

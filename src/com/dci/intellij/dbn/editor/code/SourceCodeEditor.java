@@ -15,15 +15,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 
 public class SourceCodeEditor extends BasicTextEditorImpl<DBSourceCodeVirtualFile>{
-    private DBObjectRef<DBSchemaObject> objectRef;
+    private final DBObjectRef<DBSchemaObject> object;
 
     public SourceCodeEditor(Project project, final DBSourceCodeVirtualFile sourceCodeFile, String name, EditorProviderId editorProviderId) {
         super(project, sourceCodeFile, name, editorProviderId);
-        objectRef = DBObjectRef.of(sourceCodeFile.getObject());
+        object = DBObjectRef.of(sourceCodeFile.getObject());
     }
 
     public DBSchemaObject getObject() {
-        return DBObjectRef.get(objectRef);
+        return DBObjectRef.get(object);
     }
 
     public int getHeaderEndOffset() {

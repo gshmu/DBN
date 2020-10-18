@@ -29,7 +29,7 @@ public class DatabaseBrowserTreeCellRenderer implements TreeCellRenderer {
     private DefaultTreeCellRenderer cellRenderer = new DefaultTreeCellRenderer();
     private DatabaseBrowserSettings browserSettings;
 
-    public DatabaseBrowserTreeCellRenderer(Project project) {
+    public DatabaseBrowserTreeCellRenderer(@NotNull Project project) {
         browserSettings = DatabaseBrowserSettings.getInstance(project);
     }
 

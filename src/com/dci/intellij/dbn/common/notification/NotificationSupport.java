@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.common.notification;
 
 import com.dci.intellij.dbn.common.Constants;
+import com.dci.intellij.dbn.common.project.ProjectSupplier;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
@@ -10,8 +11,7 @@ import com.intellij.openapi.project.Project;
 import java.text.MessageFormat;
 import java.util.Arrays;
 
-public interface NotificationSupport {
-    Project getProject();
+public interface NotificationSupport extends ProjectSupplier {
 
     default void sendNotification(NotificationType type, NotificationGroup group, String message, Object ... args) {
         sendNotification(getProject(), type, group, message, args);

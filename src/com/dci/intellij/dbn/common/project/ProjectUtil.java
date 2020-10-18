@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.common;
+package com.dci.intellij.dbn.common.project;
 
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.intellij.openapi.project.Project;
