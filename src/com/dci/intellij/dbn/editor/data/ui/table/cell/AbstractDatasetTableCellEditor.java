@@ -64,6 +64,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
             }
         });
 
+        Disposer.register(table, this);
         Disposer.register(this, editorComponent);
     }
 

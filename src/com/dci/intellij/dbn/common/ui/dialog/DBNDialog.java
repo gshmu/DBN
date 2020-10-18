@@ -16,14 +16,14 @@ import javax.swing.*;
 
 public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper implements DBNComponent, ProjectEventAdapter.Provided {
     private F form;
-    private final ProjectRef projectRef;
+    private final ProjectRef project;
     private boolean rememberSelection;
     private boolean disposed;
 
     protected DBNDialog(Project project, String title, boolean canBeParent) {
         super(project, canBeParent);
+        this.project = ProjectRef.of(project);
         setTitle(Constants.DBN_TITLE_PREFIX + title);
-        projectRef = ProjectRef.of(project);
         getHelpAction().setEnabled(false);
     }
 
@@ -96,7 +96,7 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
     @Override
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return project.ensure();
     }
 
     public boolean isRememberSelection() {

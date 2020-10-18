@@ -6,7 +6,6 @@ import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.KeyAdapter;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.dci.intellij.dbn.common.ui.listener.PopupCloseListener;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -17,6 +16,7 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.util.Disposer;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
@@ -120,7 +120,7 @@ public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements 
                     if (!isShowingPopup()) {
                         popup = createPopup();
                         if (popup != null) {
-                            popup.addListener(PopupCloseListener.create(this));
+                            Disposer.register(TextFieldPopupProviderForm.this, popup);
 
                             JPanel panel = (JPanel) popup.getContent();
                             panel.setBorder(Borders.COMPONENT_LINE_BORDER);
