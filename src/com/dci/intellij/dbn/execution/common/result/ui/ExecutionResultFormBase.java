@@ -12,7 +12,7 @@ public abstract class ExecutionResultFormBase<T extends ExecutionResult<?>> exte
     private T executionResult;
 
     public ExecutionResultFormBase(@NotNull T executionResult) {
-        super(executionResult.getProject());
+        super(null, executionResult.getProject());
         this.executionResult = executionResult;
     }
 

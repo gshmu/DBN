@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.options;
 
-import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurableProvider;
 import com.intellij.openapi.project.Project;
@@ -8,10 +8,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ProjectSettingsProvider extends ConfigurableProvider{
-    private ProjectRef projectRef;
+    private final ProjectRef project;
 
     public ProjectSettingsProvider(Project project) {
-        this.projectRef = ProjectRef.of(project);
+        this.project = ProjectRef.of(project);
     }
 
     @Nullable
@@ -27,6 +27,6 @@ public class ProjectSettingsProvider extends ConfigurableProvider{
 
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
+        return project.ensure();
     }
 }

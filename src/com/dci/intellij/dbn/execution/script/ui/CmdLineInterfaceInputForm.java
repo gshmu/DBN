@@ -59,7 +59,7 @@ public class CmdLineInterfaceInputForm extends DBNFormImpl{
     }
 
     public CmdLineInterfaceInputDialog getParentDialog() {
-        return (CmdLineInterfaceInputDialog) ensureParentComponent();
+        return (CmdLineInterfaceInputDialog) ensureParent();
     }
 
     @Nullable

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.ddl.ui;
 
-import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;

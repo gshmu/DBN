@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.event;
 
+import com.dci.intellij.dbn.common.project.ProjectSupplier;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.messages.MessageBus;
@@ -14,11 +15,15 @@ public interface ProjectEventAdapter {
         connection.subscribe(topic, handler);
     }
 
-    interface Provided extends ProjectEventAdapter, Disposable {
-        @NotNull Project getProject();
-
+    interface Provided extends ProjectEventAdapter, ProjectSupplier, Disposable {
         default <T> void subscribe(@NotNull Topic<T> topic, @NotNull T handler) {
-            subscribe(getProject(), this, topic, handler);
+            Project project = getProject();
+            if (project != null) {
+                subscribe(project, this, topic, handler);
+            } else {
+                throw new IllegalStateException("Project not provided");
+            }
+
         }
     }
 }

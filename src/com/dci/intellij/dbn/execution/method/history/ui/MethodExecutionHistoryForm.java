@@ -80,7 +80,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl {
 
     @NotNull
     MethodExecutionHistoryDialog getParentDialog() {
-        return (MethodExecutionHistoryDialog) ensureParentComponent();
+        return (MethodExecutionHistoryDialog) ensureParent();
     }
 
     @NotNull

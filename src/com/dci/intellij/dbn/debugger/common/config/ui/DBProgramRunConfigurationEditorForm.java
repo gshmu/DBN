@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project;
 public abstract class DBProgramRunConfigurationEditorForm<T extends DBRunConfig> extends DBNFormImpl {
 
     public DBProgramRunConfigurationEditorForm(Project project) {
-        super(project);
+        super(null, project);
     }
 
     public abstract void readConfiguration(T configuration);

@@ -18,7 +18,7 @@ public class DBLanguageFileEditorListener implements FileEditorManagerListener{
         if ((file.isInLocalFileSystem() || file instanceof LightVirtualFile) && file.getFileType() instanceof DBLanguageFileType) {
             FileEditor fileEditor = source.getSelectedEditor(file);
             if (fileEditor != null) {
-                DBLanguageFileEditorToolbarForm toolbarForm = new DBLanguageFileEditorToolbarForm(source.getProject(), file);
+                DBLanguageFileEditorToolbarForm toolbarForm = new DBLanguageFileEditorToolbarForm(fileEditor, source.getProject(), file);
                 fileEditor.getComponent().add(toolbarForm.getComponent(), BorderLayout.NORTH);
                 fileEditor.putUserData(DBLanguageFileEditorToolbarForm.USER_DATA_KEY, toolbarForm);
             }

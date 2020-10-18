@@ -15,7 +15,7 @@ public class MathPanel extends DBNFormImpl {
     private JPanel mainPanel;
 
     public MathPanel(Project project, MathResult result) {
-        super(project);
+        super(null, project);
         sumLabel.setText(result.getSum().toPlainString());
         countLabel.setText(result.getCount().toPlainString());
         averageLabel.setText(result.getAverage().toPlainString());

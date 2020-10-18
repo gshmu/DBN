@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.compatibility;
 
-import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.event.ProjectManagerEventAdapter;
+import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;

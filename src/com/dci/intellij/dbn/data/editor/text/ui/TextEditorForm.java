@@ -84,7 +84,7 @@ public class TextEditorForm extends DBNFormImpl {
             document = null;
         }
 
-        Project project = getProject();
+        Project project = ensureProject();
         FileType fileType = userValueHolder.getContentType().getFileType();
         if (fileType instanceof LanguageFileType) {
             LanguageFileType languageFileType = (LanguageFileType) fileType;

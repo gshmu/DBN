@@ -63,8 +63,9 @@ public class DatasetRecordEditorForm extends DBNFormImpl {
             columnForms.add(columnForm);
         }
 
-        Project project = getProject();
-        ColumnSortingType columnSortingType = DatasetEditorManager.getInstance(project).getRecordViewColumnSortingType();
+        Project project = ensureProject();
+        DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(project);
+        ColumnSortingType columnSortingType = datasetEditorManager.getRecordViewColumnSortingType();
         sortColumns(columnSortingType);
 
         int[] metrics = new int[]{0, 0};

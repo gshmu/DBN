@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.execution;
 
-import com.dci.intellij.dbn.common.ProjectRef;
+import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.intellij.openapi.project.Project;

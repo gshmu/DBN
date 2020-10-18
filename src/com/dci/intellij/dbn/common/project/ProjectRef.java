@@ -1,4 +1,4 @@
-package com.dci.intellij.dbn.common;
+package com.dci.intellij.dbn.common.project;
 
 import com.dci.intellij.dbn.common.action.UserDataKeys;
 import com.dci.intellij.dbn.language.common.WeakRef;

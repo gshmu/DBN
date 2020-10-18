@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.execution.statement;
 
-import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.execution.ExecutionContext;
@@ -14,7 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
 
 public final class StatementExecutionQueue extends StatefulDisposable.Base {
 

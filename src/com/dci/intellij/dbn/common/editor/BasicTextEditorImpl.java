@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.editor;
 
-import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;

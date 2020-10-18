@@ -36,6 +36,7 @@ import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProc
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionCursorResult;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
@@ -66,8 +67,8 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
     private boolean canScrollToSource;
 
-    public ExecutionConsoleForm(Project project) {
-        super(project);
+    public ExecutionConsoleForm(Disposable parent, Project project) {
+        super(parent, project);
         subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
         subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
     }

@@ -58,7 +58,7 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
     private boolean pinned;
 
     public LargeValuePreviewPopup(Project project, JTable table, UserValueHolder<?> userValueHolder, int preferredWidth) {
-        super(project);
+        super(null, project);
         this.table = WeakRef.of(table);
         this.userValueHolder = userValueHolder;
 

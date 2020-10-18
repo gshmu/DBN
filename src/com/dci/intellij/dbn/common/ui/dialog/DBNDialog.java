@@ -1,11 +1,12 @@
 package com.dci.intellij.dbn.common.ui.dialog;
 
 import com.dci.intellij.dbn.common.Constants;
-import com.dci.intellij.dbn.common.ProjectRef;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
+import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
@@ -50,7 +51,7 @@ public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper impleme
     protected abstract F createForm();
 
     @Nullable
-    public final <T extends DBNComponent> T getParentComponent() {
+    public final <T extends Disposable> T parent() {
         return null;
     }
 

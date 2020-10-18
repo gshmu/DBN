@@ -25,7 +25,7 @@ public abstract class ConfigurationEditorForm<E extends BasicConfiguration> exte
     private final E configuration;
 
     protected ConfigurationEditorForm(E configuration) {
-        super(configuration.resolveProject());
+        super(null, configuration.resolveProject());
         this.configuration = configuration;
     }
 

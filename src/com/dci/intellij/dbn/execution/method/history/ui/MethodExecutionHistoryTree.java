@@ -35,7 +35,7 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
 
     @NotNull
     public MethodExecutionHistoryDialog getParentDialog() {
-        return ((MethodExecutionHistoryForm) getParentComponent()).getParentDialog();
+        return ((MethodExecutionHistoryForm) parent()).getParentDialog();
     }
 
     @NotNull

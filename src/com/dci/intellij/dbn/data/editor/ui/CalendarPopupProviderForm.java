@@ -133,7 +133,7 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
     }
 
     public Formatter getFormatter() {
-        return Formatter.getInstance(getProject());
+        return Formatter.getInstance(ensureProject());
     }
 
     private Date getDateForPopup() {
