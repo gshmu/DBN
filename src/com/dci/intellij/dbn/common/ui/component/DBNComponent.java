@@ -1,15 +1,13 @@
 package com.dci.intellij.dbn.common.ui.component;
 
+import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.project.ProjectSupplier;
 import com.dci.intellij.dbn.language.common.WeakRef;
-import com.intellij.ide.DataManager;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -76,8 +74,7 @@ public interface DBNComponent extends StatefulDisposable, ProjectSupplier {
                 }
             }
 
-            DataContext dataContext = DataManager.getInstance().getDataContext(getComponent());
-            return PlatformDataKeys.PROJECT.getData(dataContext);
+            return Lookup.getProject(getComponent());
         }
     }
 }
