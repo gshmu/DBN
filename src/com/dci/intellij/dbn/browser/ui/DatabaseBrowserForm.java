@@ -12,7 +12,7 @@ public abstract class DatabaseBrowserForm extends DBNFormImpl {
     }
 
     DatabaseBrowserForm(Project project) {
-        super(project);
+        super(null, project);
     }
 
     @Nullable

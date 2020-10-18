@@ -164,7 +164,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
 
     @NotNull
     public final Project getProject() {
-        return parentComponentRef.ensure().getProject();
+        return parentComponentRef.ensure().ensureProject();
     }
 
     @NotNull

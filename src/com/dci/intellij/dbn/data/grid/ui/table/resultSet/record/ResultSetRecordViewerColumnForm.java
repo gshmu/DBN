@@ -110,7 +110,7 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
         @Override
         public void keyPressed(KeyEvent e) {
             if (!e.isConsumed()) {
-                ResultSetRecordViewerForm parentForm = (ResultSetRecordViewerForm) ResultSetRecordViewerColumnForm.this.ensureParentComponent();
+                ResultSetRecordViewerForm parentForm = (ResultSetRecordViewerForm) ResultSetRecordViewerColumnForm.this.ensureParent();
                 if (e.getKeyCode() == 38) {//UP
                     parentForm.focusPreviousColumnPanel(ResultSetRecordViewerColumnForm.this);
                     e.consume();

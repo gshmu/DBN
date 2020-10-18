@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterCondition;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilterManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
@@ -122,7 +123,8 @@ public class ObjectQuickFilterForm extends DBNFormImpl {
         NewFilterSelector(final ObjectQuickFilter filter) {
             super(PlatformIcons.ADD_ICON, "Add Name Condition", null, ValueSelectorOption.HIDE_DESCRIPTION);
             addListener((oldValue, newValue) -> {
-                ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
+                Project project = ensureProject();
+                ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(project);
                 quickFilterManager.setLastUsedOperator(newValue);
                 ObjectQuickFilterCondition condition = filter.addNewCondition(newValue);
                 addConditionPanel(condition);

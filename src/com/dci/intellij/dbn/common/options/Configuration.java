@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.options;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
-import com.dci.intellij.dbn.common.util.ProjectSupplier;
+import com.dci.intellij.dbn.common.project.ProjectSupplier;
 import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -92,7 +92,10 @@ public interface Configuration<P extends Configuration, E extends ConfigurationE
     default Project resolveProject() {
         if (this instanceof ProjectSupplier) {
             ProjectSupplier projectSupplier = (ProjectSupplier) this;
-            return projectSupplier.getProject();
+            Project project = projectSupplier.getProject();
+            if (project != null) {
+                return project;
+            }
         }
 
         Configuration parent = this.getParent();

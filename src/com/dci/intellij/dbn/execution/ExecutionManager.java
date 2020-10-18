@@ -45,7 +45,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     public static final String TOOL_WINDOW_ID = "DB Execution Console";
     private final Latent<ExecutionConsoleForm> executionConsoleForm =
             Latent.basic(() -> {
-                ExecutionConsoleForm form = new ExecutionConsoleForm(getProject());
+                ExecutionConsoleForm form = new ExecutionConsoleForm(this, getProject());
                 Disposer.register(this, form);
                 return form;
             });

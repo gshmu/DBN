@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.object.filter.quick.action.DeleteQuickFilterConditio
 import com.dci.intellij.dbn.object.filter.quick.action.EnableDisableQuickFilterConditionAction;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.project.Project;
 import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,7 +54,8 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl {
         patternTextField.setText(condition.getPattern());
         operatorComboBox.setSelectedValue(condition.getOperator());
         operatorComboBox.addListener((oldValue, newValue) -> {
-            ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(getProject());
+            Project project = ensureProject();
+            ObjectQuickFilterManager quickFilterManager = ObjectQuickFilterManager.getInstance(project);
             quickFilterManager.setLastUsedOperator(newValue);
             condition.setOperator(newValue);
         });
@@ -76,7 +78,7 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl {
 
     @NotNull
     public ObjectQuickFilterForm getParentForm() {
-        return (ObjectQuickFilterForm) ensureParentComponent();
+        return ensureParent();
     }
 
     void updateJoinTypeComponent() {

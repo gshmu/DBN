@@ -28,7 +28,7 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
     private final WeakRef<SourceCodeEditor> sourceCodeEditor;
 
     public SourceCodeEditorActionsPanel(@NotNull SourceCodeEditor sourceCodeEditor) {
-        super(sourceCodeEditor.getProject());
+        super(sourceCodeEditor, sourceCodeEditor.getProject());
         this.sourceCodeEditor = WeakRef.of(sourceCodeEditor);
         Editor editor = sourceCodeEditor.getEditor();
         JComponent editorComponent = editor.getComponent();

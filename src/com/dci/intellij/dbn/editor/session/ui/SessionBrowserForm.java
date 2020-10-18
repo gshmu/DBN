@@ -56,7 +56,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
     private SessionBrowserDetailsForm detailsForm;
 
     public SessionBrowserForm(SessionBrowser sessionBrowser) {
-        super(sessionBrowser.getProject());
+        super(sessionBrowser, sessionBrowser.getProject());
         this.sessionBrowser = WeakRef.of(sessionBrowser);
         try {
             editorTable = new SessionBrowserTable(this, sessionBrowser);

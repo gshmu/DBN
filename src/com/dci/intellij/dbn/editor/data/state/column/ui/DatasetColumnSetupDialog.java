@@ -28,7 +28,7 @@ public class DatasetColumnSetupDialog extends DBNDialog<DatasetColumnSetupForm> 
     @NotNull
     @Override
     protected DatasetColumnSetupForm createForm() {
-        return new DatasetColumnSetupForm(datasetEditor);
+        return new DatasetColumnSetupForm(this, datasetEditor);
     }
 
     @Override
@@ -48,5 +48,11 @@ public class DatasetColumnSetupDialog extends DBNDialog<DatasetColumnSetupForm> 
             datasetEditor.loadData(LOAD_INSTRUCTIONS);
         }
         super.doOKAction();
+    }
+
+    @Override
+    protected void disposeInner() {
+        datasetEditor = null;
+        super.disposeInner();
     }
 }

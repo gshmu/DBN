@@ -34,7 +34,7 @@ public class DatasetEditorErrorForm extends DBNFormImpl implements ChangeListene
     private final JBPopup popup;
 
     public DatasetEditorErrorForm(@NotNull DatasetEditorModelCell cell) {
-        super(cell.getProject());
+        super(null, cell.getProject());
         this.cell = WeakRef.of(cell);
         DatasetEditorError error = cell.getError();
         error.addChangeListener(this);

@@ -38,7 +38,7 @@ public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements 
     @Getter private final Set<AnAction> actions = new HashSet<>();
 
     TextFieldPopupProviderForm(TextFieldWithPopup<?> editorComponent, boolean autoPopup, boolean buttonVisible) {
-        super(editorComponent.getProject());
+        super(editorComponent, editorComponent.getProject());
         this.editorComponent = editorComponent;
         this.autoPopup = autoPopup;
         this.buttonVisible = buttonVisible;

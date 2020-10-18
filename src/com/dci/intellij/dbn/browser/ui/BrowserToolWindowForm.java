@@ -14,6 +14,7 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionSettingsListener;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.properties.ui.ObjectPropertiesForm;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -37,8 +38,8 @@ public class BrowserToolWindowForm extends DBNFormImpl {
     private @Getter @Setter BrowserDisplayMode displayMode;
     private final ObjectPropertiesForm objectPropertiesForm;
 
-    public BrowserToolWindowForm(Project project) {
-        super(project);
+    public BrowserToolWindowForm(Disposable parent, @NotNull Project project) {
+        super(parent, project);
         //toolWindow.setIcon(dbBrowser.getIcon(0));
         DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
 
@@ -63,8 +64,9 @@ public class BrowserToolWindowForm extends DBNFormImpl {
     }
 
     public void rebuild() {
-        Project project = getProject();
-        displayMode = DatabaseBrowserSettings.getInstance(project).getGeneralSettings().getDisplayMode();
+        Project project = ensureProject();
+        DatabaseBrowserSettings browserSettings = DatabaseBrowserSettings.getInstance(project);
+        displayMode = browserSettings.getGeneralSettings().getDisplayMode();
         DatabaseBrowserForm oldBrowserForm = this.browserForm;
         TabbedBrowserForm previousTabbedForm =
                 oldBrowserForm instanceof TabbedBrowserForm ?
@@ -80,7 +82,6 @@ public class BrowserToolWindowForm extends DBNFormImpl {
         browserPanel.add(this.browserForm.getComponent(), BorderLayout.CENTER);
         GUIUtil.repaint(browserPanel);
 
-        Disposer.register(this, this.browserForm);
         SafeDisposer.dispose(oldBrowserForm, true, true);
     }
 
@@ -100,7 +101,8 @@ public class BrowserToolWindowForm extends DBNFormImpl {
 
 
     public void showObjectProperties() {
-        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(getProject());
+        Project project = ensureProject();
+        DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(project);
         DatabaseBrowserTree activeBrowserTree = browserManager.getActiveBrowserTree();
         BrowserTreeNode treeNode = activeBrowserTree == null ? null : activeBrowserTree.getSelectedNode();
         if (treeNode instanceof DBObject) {

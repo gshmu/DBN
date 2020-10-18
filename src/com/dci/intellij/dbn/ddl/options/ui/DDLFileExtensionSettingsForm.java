@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.ddl.DDLFileType;
 import com.dci.intellij.dbn.ddl.DDLFileTypeId;
 import com.dci.intellij.dbn.ddl.options.DDLFileExtensionSettings;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -110,7 +111,8 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
         applySetting(typeBodyTextField, DDLFileTypeId.TYPE_BODY, changed);
 
         if (changed.get()) {
-            DDLFileManager ddlFileManager = DDLFileManager.getInstance(getProject());
+            Project project = getConfiguration().getProject();
+            DDLFileManager ddlFileManager = DDLFileManager.getInstance(project);
             ddlFileManager.registerExtensions(getConfiguration());
         }
     }

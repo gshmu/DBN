@@ -41,7 +41,7 @@ public class ObjectDependencyTreeForm extends DBNFormImpl{
 
     public ObjectDependencyTreeForm(ObjectDependencyTreeDialog parentComponent, final DBSchemaObject schemaObject) {
         super(parentComponent);
-        Project project = getProject();
+        Project project = ensureProject();
         dependencyTree = new ObjectDependencyTree(this, schemaObject) {
             @Override
             public void setModel(TreeModel model) {

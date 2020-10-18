@@ -123,7 +123,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl {
 
     @NotNull
     public MethodExecutionInputForm getParentForm() {
-        return ensureParentComponent();
+        return ensureParent();
     }
 
     @NotNull

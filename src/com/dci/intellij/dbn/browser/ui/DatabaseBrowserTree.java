@@ -60,7 +60,7 @@ public final class DatabaseBrowserTree extends DBNTree {
     private final TreeNavigationHistory navigationHistory = new TreeNavigationHistory();
 
     public DatabaseBrowserTree(@NotNull DBNComponent parent, @Nullable ConnectionHandler connectionHandler) {
-        super(parent, createModel(parent.getProject(), connectionHandler));
+        super(parent, createModel(parent.ensureProject(), connectionHandler));
         BrowserTreeModel treeModel = getModel();
 
         addKeyListener(keyListener);
@@ -71,7 +71,7 @@ public final class DatabaseBrowserTree extends DBNTree {
         setRootVisible(treeModel instanceof TabbedBrowserTreeModel);
         setShowsRootHandles(true);
         setAutoscrolls(true);
-        DatabaseBrowserTreeCellRenderer browserTreeCellRenderer = new DatabaseBrowserTreeCellRenderer(parent.getProject());
+        DatabaseBrowserTreeCellRenderer browserTreeCellRenderer = new DatabaseBrowserTreeCellRenderer(parent.ensureProject());
         setCellRenderer(browserTreeCellRenderer);
         //setExpandedState(DatabaseBrowserUtils.createTreePath(treeModel.getRoot()), false);
 
@@ -100,7 +100,7 @@ public final class DatabaseBrowserTree extends DBNTree {
 
     public void expandConnectionManagers() {
         Dispatch.run(() -> {
-            ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+            ConnectionManager connectionManager = ConnectionManager.getInstance(ensureProject());
             ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
             TreePath treePath = DatabaseBrowserUtils.createTreePath(connectionBundle);
             setExpandedState(treePath, true);
@@ -121,7 +121,7 @@ public final class DatabaseBrowserTree extends DBNTree {
     }
 
     public void scrollToSelectedElement() {
-        if (getProject().isOpen() && targetSelection != null) {
+        if (ensureProject().isOpen() && targetSelection != null) {
             Background.run(() -> {
                 BrowserTreeNode targetSelection = this.targetSelection;
                 if (targetSelection != null) {
@@ -253,7 +253,7 @@ public final class DatabaseBrowserTree extends DBNTree {
             if (lastPathEntity instanceof DBObject) {
                 DBObject object = (DBObject) lastPathEntity;
                 DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
-                Project project = getProject();
+                Project project = ensureProject();
                 if (object instanceof DBConsole) {
                     DBConsole console = (DBConsole) object;
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
@@ -325,7 +325,7 @@ public final class DatabaseBrowserTree extends DBNTree {
                     }
                 }
 
-                EventNotifier.notify(getProject(),
+                EventNotifier.notify(ensureProject(),
                         BrowserTreeEventListener.TOPIC,
                         (listener) -> listener.selectionChanged());
             }
@@ -339,7 +339,7 @@ public final class DatabaseBrowserTree extends DBNTree {
         @Override
         public void mouseClicked(MouseEvent event) {
             if (event.getButton() == MouseEvent.BUTTON1) {
-                DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(getProject());
+                DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(ensureProject());
                 if (browserManager.getAutoscrollToEditor().value() || event.getClickCount() > 1) {
                     TreePath path = getPathForLocation(event.getX(), event.getY());
                     processSelectEvent(event, path, event.getClickCount() > 1);

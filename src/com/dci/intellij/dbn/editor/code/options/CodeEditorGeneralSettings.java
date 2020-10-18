@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.code.options;
 
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
-import com.dci.intellij.dbn.common.util.ProjectSupplier;
+import com.dci.intellij.dbn.common.project.ProjectSupplier;
 import com.dci.intellij.dbn.editor.code.options.ui.CodeEditorGeneralSettingsForm;
 import com.intellij.openapi.project.Project;
 import org.jdom.Element;

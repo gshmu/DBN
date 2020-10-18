@@ -30,7 +30,7 @@ public class ObjectListItemForm extends DBNFormImpl {
 
     @NotNull
     public ObjectListForm<?> getParentForm() {
-        return ensureParentComponent();
+        return ensureParent();
     }
 
     @NotNull
