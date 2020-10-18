@@ -295,7 +295,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     @Override
     public void loadState(@NotNull Element element) {
         Element openFilesElement = element.getChild("open-files");
-        if (openFilesElement != null) {
+        if (openFilesElement != null && pendingOpenFiles != null) {
             List<Element> fileElements = openFilesElement.getChildren();
             fileElements.forEach((fileElement) -> {
                 DBObjectRef<DBSchemaObject> objectRef = DBObjectRef.from(fileElement);
