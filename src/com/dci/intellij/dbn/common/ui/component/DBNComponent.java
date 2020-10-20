@@ -65,8 +65,8 @@ public interface DBNComponent extends StatefulDisposable, ProjectSupplier {
             if (this.parent != null) {
                 Disposable parent = this.parent.ensure();
 
-                if (parent instanceof DBNComponent) {
-                    DBNComponent component = (DBNComponent) parent;
+                if (parent instanceof ProjectSupplier) {
+                    ProjectSupplier component = (ProjectSupplier) parent;
                     Project project = component.getProject();
                     if (project != null) {
                         return project;

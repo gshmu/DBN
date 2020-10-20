@@ -11,17 +11,17 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class SourceCodeBodyEditorProvider extends BasicSourceCodeEditorProvider{
+public class SourceCodeBodyEditorProvider extends SourceCodeEditorProviderBase {
 
     @Override
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
-        DBEditableObjectVirtualFile databaseFile = null;
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
-            databaseFile = (DBEditableObjectVirtualFile) virtualFile;
+            DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
+            DBContentType contentType = databaseFile.getContentType();
+            return contentType == DBContentType.CODE_SPEC_AND_BODY;
         }
 
-        DBContentType contentType = databaseFile == null ? null : databaseFile.getContentType();
-        return contentType == DBContentType.CODE_SPEC_AND_BODY;
+        return super.accept(project, virtualFile);
     }
 
     @Override

@@ -278,9 +278,9 @@ public abstract class DBJdwpDebugProcess<T extends ExecutionInput>
                 if (shouldSuspend(suspendContext)) {
                     DBJdwpDebugSuspendContext dbSuspendContext = new DBJdwpDebugSuspendContext(DBJdwpDebugProcess.this, suspendContext);
                     session.positionReached(dbSuspendContext);
-                    throw AlreadyDisposedException.INSTANCE;
                 }
             });
+            throw AlreadyDisposedException.INSTANCE;
         }
     }
 

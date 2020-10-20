@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingProviderPsiEl
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -16,7 +17,6 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.ui.SessionBrowserForm;
-import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
@@ -398,13 +398,13 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
         }
     }
 
-    public void navigateInEditor(@NotNull FileEditor fileEditor, NavigationInstruction instruction) {
+    public void navigateInEditor(@NotNull FileEditor fileEditor, NavigationInstructions instructions) {
         OpenFileDescriptor descriptor = (OpenFileDescriptor) EditSourceUtil.getDescriptor(this);
         if (descriptor != null) {
             Editor editor = EditorUtil.getEditor(fileEditor);
             if (editor != null) {
-                if (instruction.isScroll()) descriptor.navigateIn(editor);
-                if (instruction.isFocus()) EditorUtil.focusEditor(editor);
+                if (instructions.isScroll()) descriptor.navigateIn(editor);
+                if (instructions.isFocus()) EditorUtil.focusEditor(editor);
                 //TODO instruction.isOpen();
             }
         }

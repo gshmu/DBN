@@ -1,12 +1,16 @@
 package com.dci.intellij.dbn.editor.code;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.BasicTextEditorProvider;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
+import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.code.ui.SourceCodeEditorActionsPanel;
+import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.ide.DataManager;
@@ -24,15 +28,33 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvider implements DumbAware {
+abstract class SourceCodeEditorProviderBase extends BasicTextEditorProvider implements DumbAware {
+    public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
+        if (virtualFile instanceof DBSourceCodeVirtualFile) {
+            // accept provider if invoked for a child file (ide invocations)
+            //  => custom handling when createEditor(...) is invoked
+            DBSourceCodeVirtualFile sourceCodeVirtualFile = (DBSourceCodeVirtualFile) virtualFile;
+            DBContentType contentType = sourceCodeVirtualFile.getContentType();
+            return contentType == getContentType();
+        }
+        return false;
+    }
+
+
     @Override
     @NotNull
     public FileEditor createEditor(@NotNull Project project, @NotNull VirtualFile file) {
         DBEditableObjectVirtualFile databaseFile;
 
+        EditorProviderId editorProviderId = getEditorProviderId();
         if (file instanceof DBSourceCodeVirtualFile) {
             DBSourceCodeVirtualFile sourceCodeFile = (DBSourceCodeVirtualFile) file;
             databaseFile = sourceCodeFile.getMainDatabaseFile();
+            DBSchemaObject object = databaseFile.getObject();
+
+            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+            databaseFileSystem.connectAndOpenEditor(object, editorProviderId, false, true);
+            throw AlreadyDisposedException.INSTANCE;
         } else {
             databaseFile = (DBEditableObjectVirtualFile) file;
         }
@@ -42,8 +64,8 @@ public abstract class BasicSourceCodeEditorProvider extends BasicTextEditorProvi
 
         String editorName = getName();
         SourceCodeEditor sourceCodeEditor = isMainEditor ?
-                new SourceCodeMainEditor(project, sourceCodeFile, editorName, getEditorProviderId()) :
-                new SourceCodeEditor(project, sourceCodeFile, editorName, getEditorProviderId());
+                new SourceCodeMainEditor(project, sourceCodeFile, editorName, editorProviderId) :
+                new SourceCodeEditor(project, sourceCodeFile, editorName, editorProviderId);
 
         updateEditorActions(sourceCodeEditor);
         Document document = sourceCodeEditor.getEditor().getDocument();
