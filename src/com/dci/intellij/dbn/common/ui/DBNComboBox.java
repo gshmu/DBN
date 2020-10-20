@@ -212,7 +212,7 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
         if (value != null) {
             String description = value.getDescription();
             String name = value.getName();
-            return options != null && options.is(ValueSelectorOption.HIDE_DESCRIPTION) || StringUtil.isEmpty(description) ? name : name + " (" + description + ")";
+            return options.is(ValueSelectorOption.HIDE_DESCRIPTION) || StringUtil.isEmpty(description) ? name : name + " (" + description + ")";
         } else {
             return "";
         }

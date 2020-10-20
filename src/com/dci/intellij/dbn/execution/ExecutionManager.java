@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -157,7 +158,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
             executionConsoleForm.addResult(executionResult);
             if (!executionResult.isBulkExecution() && !executionResult.hasCompilerResult() && !focusOnExecution()) {
-                executionResult.navigateToEditor(NavigationInstruction.FOCUS);
+                executionResult.navigateToEditor(NavigationInstructions.FOCUS);
             }
         });
     }

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.util;
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
+import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
@@ -10,7 +11,6 @@ import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.ddl.DDLFileEditor;
-import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
@@ -51,7 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EditorUtil {
-    public static FileEditor selectEditor(@NotNull Project project, @Nullable FileEditor fileEditor, @NotNull VirtualFile virtualFile, EditorProviderId editorProviderId, NavigationInstruction instruction) {
+    public static FileEditor selectEditor(@NotNull Project project, @Nullable FileEditor fileEditor, @NotNull VirtualFile virtualFile, EditorProviderId editorProviderId, NavigationInstructions instructions) {
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
         if (fileEditor != null) {
             if (fileEditor instanceof DDLFileEditor) {
@@ -61,7 +61,7 @@ public class EditorUtil {
                     virtualFile = editableObject.getVirtualFile();
                 }
             }
-            fileEditorManager.openFile(virtualFile, instruction.isFocus());
+            fileEditorManager.openFile(virtualFile, instructions.isFocus());
 
             if (fileEditor instanceof BasicTextEditor) {
                 BasicTextEditor basicTextEditor = (BasicTextEditor) fileEditor;
@@ -83,8 +83,8 @@ public class EditorUtil {
             }
 
             if (editableObjectFile != null && editableObjectFile.isValid()) {
-                FileEditor[] fileEditors = instruction.isOpen() ?
-                        fileEditorManager.openFile(editableObjectFile, instruction.isFocus()) :
+                FileEditor[] fileEditors = instructions.isOpen() ?
+                        fileEditorManager.openFile(editableObjectFile, instructions.isFocus()) :
                         fileEditorManager.getEditors(editableObjectFile);
 
                 if (fileEditors.length > 0) {
@@ -103,15 +103,15 @@ public class EditorUtil {
 
             }
         } else if (virtualFile.isInLocalFileSystem()) {
-            FileEditor[] fileEditors = instruction.isOpen() ?
-                    fileEditorManager.openFile(virtualFile, instruction.isFocus()) :
+            FileEditor[] fileEditors = instructions.isOpen() ?
+                    fileEditorManager.openFile(virtualFile, instructions.isFocus()) :
                     fileEditorManager.getEditors(virtualFile);
             if (fileEditors.length > 0) {
                 fileEditor = fileEditors[0];
             }
         }
 
-        if (instruction.isFocus() && fileEditor != null) {
+        if (instructions.isFocus() && fileEditor != null) {
             focusEditor(fileEditor);
         }
 

@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
+import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.routine.ProgressRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -23,7 +24,6 @@ import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.editor.EditorStateManager;
 import com.dci.intellij.dbn.editor.code.SourceCodeMainEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManager;
-import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -485,8 +485,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                     DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(scrollBrowser);
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                     fileEditorManager.openFile(databaseFile, focusEditor);
-                    NavigationInstruction navigationInstruction = focusEditor ? NavigationInstruction.FOCUS_SCROLL : NavigationInstruction.SCROLL;
-                    EditorUtil.selectEditor(project, null, databaseFile, editorProviderId, navigationInstruction);
+                    NavigationInstructions navigationInstructions = focusEditor ? NavigationInstructions.FOCUS_SCROLL : NavigationInstructions.SCROLL;
+                    EditorUtil.selectEditor(project, null, databaseFile, editorProviderId, navigationInstructions);
                     DatabaseBrowserManager.AUTOSCROLL_FROM_EDITOR.set(true);
                 }
             });
@@ -508,8 +508,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                     for (FileEditor fileEditor : fileEditors) {
                         if (fileEditor instanceof SourceCodeMainEditor) {
                             SourceCodeMainEditor sourceCodeEditor = (SourceCodeMainEditor) fileEditor;
-                            NavigationInstruction navigationInstruction = focusEditor ? NavigationInstruction.FOCUS_SCROLL : NavigationInstruction.SCROLL;
-                            EditorUtil.selectEditor(project, fileEditor, databaseFile, editorProviderId, navigationInstruction);
+                            NavigationInstructions navigationInstructions = focusEditor ? NavigationInstructions.FOCUS_SCROLL : NavigationInstructions.SCROLL;
+                            EditorUtil.selectEditor(project, fileEditor, databaseFile, editorProviderId, navigationInstructions);
                             sourceCodeEditor.navigateTo(object);
                             break;
                         }

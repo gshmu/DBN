@@ -194,16 +194,20 @@ public class ResultSetRecordViewerForm extends DBNFormImpl {
 
         @Override
         public boolean isSelected(@NotNull AnActionEvent e) {
-            Project project = getProject();
-            ColumnSortingType sortingType = DatasetEditorManager.getInstance(project).getRecordViewColumnSortingType();
+            Project project = ensureProject();
+            DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(project);
+
+            ColumnSortingType sortingType = datasetEditorManager.getRecordViewColumnSortingType();
             return sortingType == ColumnSortingType.ALPHABETICAL;
         }
 
         @Override
         public void setSelected(@NotNull AnActionEvent e, boolean selected) {
+            Project project = ensureProject();
+            DatasetEditorManager datasetEditorManager = DatasetEditorManager.getInstance(project);
+
             ColumnSortingType sortingType = selected ? ColumnSortingType.ALPHABETICAL : ColumnSortingType.BY_INDEX;
-            Project project = getProject();
-            DatasetEditorManager.getInstance(project).setRecordViewColumnSortingType(sortingType);
+            datasetEditorManager.setRecordViewColumnSortingType(sortingType);
             sortColumns(sortingType);
         }
     }

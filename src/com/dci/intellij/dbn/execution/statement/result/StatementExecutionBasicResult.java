@@ -4,13 +4,13 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.message.MessageType;
+import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionResultBase;
-import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.execution.compiler.CompilerResult;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionMessage;
@@ -88,8 +88,8 @@ public class StatementExecutionBasicResult extends ExecutionResultBase<Statement
     }
 
     @Override
-    public void navigateToEditor(NavigationInstruction instruction) {
-          getExecutionProcessor().navigateToEditor(instruction);
+    public void navigateToEditor(NavigationInstructions instructions) {
+          getExecutionProcessor().navigateToEditor(instructions);
     }
 
     @Override
