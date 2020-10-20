@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class SourceCodeEditorProvider extends BasicSourceCodeEditorProvider {
+public class SourceCodeEditorProvider extends SourceCodeEditorProviderBase {
 
     @Override
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
@@ -20,11 +20,13 @@ public class SourceCodeEditorProvider extends BasicSourceCodeEditorProvider {
             DBEditableObjectVirtualFile databaseFile = (DBEditableObjectVirtualFile) virtualFile;
 
             DBContentType contentType = databaseFile.getContentType();
-            return contentType.isOneOf(DBContentType.CODE, DBContentType.CODE_AND_DATA) &&
-                    DatabaseFeature.OBJECT_SOURCE_EDITING.isSupported(databaseFile.getObject());
+            return contentType.isOneOf(
+                    DBContentType.CODE,
+                    DBContentType.CODE_AND_DATA) &&
+                        DatabaseFeature.OBJECT_SOURCE_EDITING.isSupported(databaseFile.getObject());
 
         }
-        return false;
+        return super.accept(project, virtualFile);
     }
 
 

@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.language.common.WeakRef;
+import com.dci.intellij.dbn.vfs.DatabaseOpenFileDescriptor;
 import com.intellij.codeHighlighting.BackgroundEditorHighlighter;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.structureView.StructureViewBuilder;
@@ -113,7 +114,7 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Statefu
 
     @Override
     public boolean canNavigateTo(@NotNull final Navigatable navigatable) {
-        return getTextEditor().canNavigateTo(navigatable);
+        return navigatable instanceof DatabaseOpenFileDescriptor && getTextEditor().canNavigateTo(navigatable);
     }
 
     @Override

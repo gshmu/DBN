@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySett
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.message.MessageType;
+import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
@@ -17,7 +18,6 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionResult;
-import com.dci.intellij.dbn.execution.NavigationInstruction;
 import com.dci.intellij.dbn.execution.common.message.ui.ExecutionMessagesPanel;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.result.ui.ExecutionResultForm;
@@ -164,7 +164,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
                     ExecutionResult<?> executionResult = getExecutionResult(newSelection);
                     if (executionResult instanceof StatementExecutionResult) {
                         StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
-                        statementExecutionResult.navigateToEditor(NavigationInstruction.SCROLL);
+                        statementExecutionResult.navigateToEditor(NavigationInstructions.SCROLL);
                     }
                 }
             }
