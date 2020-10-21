@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.execution.compiler;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -37,9 +37,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class DatabaseCompilerManager extends AbstractProjectComponent {
-    private DatabaseCompilerManager(Project project) {
+    private DatabaseCompilerManager(@NotNull Project project) {
         super(project);
-        subscribe(SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+
+        ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
     }
 
     public static DatabaseCompilerManager getInstance(@NotNull Project project) {
@@ -64,7 +65,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                         compileObject(object, compileType, compilerAction);
                     }
                     ConnectionHandler connectionHandler = object.getConnectionHandler();
-                    EventNotifier.notify(project,
+                    ProjectEvents.notify(project,
                             CompileManagerListener.TOPIC,
                             (listener) -> listener.compileFinished(connectionHandler, object));
 
@@ -140,7 +141,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                                 (progress) -> {
                                     doCompileObject(object, selectedCompileType, compilerAction);
                                     ConnectionHandler connectionHandler = object.getConnectionHandler();
-                                    EventNotifier.notify(project,
+                                    ProjectEvents.notify(project,
                                             CompileManagerListener.TOPIC,
                                             (listener) -> listener.compileFinished(connectionHandler, object));
 
@@ -228,7 +229,7 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
                                         doCompileInvalidObjects(schema.getProcedures(), "procedures", progress, selectedCompileType);
                                         doCompileInvalidObjects(schema.getDatasetTriggers(), "dataset triggers", progress, selectedCompileType);
                                         doCompileInvalidObjects(schema.getDatabaseTriggers(), "database triggers", progress, selectedCompileType);
-                                        EventNotifier.notify(project,
+                                        ProjectEvents.notify(project,
                                                 CompileManagerListener.TOPIC,
                                                 (listener) -> listener.compileFinished(connectionHandler, null));
 

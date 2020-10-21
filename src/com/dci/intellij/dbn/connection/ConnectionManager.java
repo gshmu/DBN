@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
@@ -84,11 +85,11 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
         return Failsafe.getComponent(project, ConnectionManager.class);
     }
 
-    private ConnectionManager(Project project) {
+    private ConnectionManager(@NotNull Project project) {
         super(project);
         connectionBundle = new ConnectionBundle(project);
-        subscribe(ConnectionSettingsListener.TOPIC, connectionSettingsListener);
 
+        ProjectEvents.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
         Disposer.register(this, connectionBundle);
     }
 

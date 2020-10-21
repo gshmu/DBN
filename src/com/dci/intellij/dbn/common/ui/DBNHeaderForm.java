@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.ui;
 
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
@@ -64,7 +65,7 @@ public class DBNHeaderForm extends DBNFormImpl{
         ConnectionId id = connectionHandler.getConnectionId();
         Project project = connectionHandler.getProject();
 
-        subscribe(ConnectionHandlerStatusListener.TOPIC, (connectionId) -> {
+        ProjectEvents.subscribe(project, this, ConnectionHandlerStatusListener.TOPIC, (connectionId) -> {
             if (connectionId == id) {
                 ConnectionManager connectionManager = ConnectionManager.getInstance(project);
                 ConnectionHandler connHandler = connectionManager.getConnectionHandler(connectionId);

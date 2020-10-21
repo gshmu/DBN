@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.editor.ui;
 
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.Borders;
@@ -42,7 +43,7 @@ public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements 
         this.editorComponent = editorComponent;
         this.autoPopup = autoPopup;
         this.buttonVisible = buttonVisible;
-        subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        ProjectEvents.subscribe(ensureProject(), this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
     private final FileEditorManagerListener fileEditorManagerListener = new FileEditorManagerListener() {

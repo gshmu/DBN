@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.environment.options.ui;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentConfigLocalListener;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ui.table.DBNEditableTableModel;
 import com.dci.intellij.dbn.common.util.Safe;
@@ -44,7 +44,7 @@ public class EnvironmentTypesTableModel extends DBNEditableTableModel {
         @Override
         public void tableChanged(TableModelEvent e) {
             Project project = getProject();
-            EventNotifier.notify(project,
+            ProjectEvents.notify(project,
                     EnvironmentConfigLocalListener.TOPIC,
                     (listener) -> listener.settingsChanged(environmentTypes));
         }

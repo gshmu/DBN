@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.browser.model;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
@@ -18,7 +18,7 @@ import javax.swing.tree.TreePath;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class BrowserTreeModel extends StatefulDisposable.Base implements TreeModel, StatefulDisposable, ProjectEventAdapter.Provided {
+public abstract class BrowserTreeModel extends StatefulDisposable.Base implements TreeModel, StatefulDisposable {
 
     private final Set<TreeModelListener> treeModelListeners = new HashSet<>();
     private final WeakRef<BrowserTreeNode> root;
@@ -29,7 +29,7 @@ public abstract class BrowserTreeModel extends StatefulDisposable.Base implement
 
     BrowserTreeModel(BrowserTreeNode root) {
         this.root = WeakRef.of(root);
-        subscribe(BrowserTreeEventListener.TOPIC, browserTreeEventListener);
+        ProjectEvents.subscribe(getProject(), this, BrowserTreeEventListener.TOPIC, browserTreeEventListener);
     }
 
     @Override

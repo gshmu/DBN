@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -32,10 +32,9 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
 
     public static final String COMPONENT_NAME = "DBNavigator.Project.EnvironmentManager";
 
-    private EnvironmentManager(Project project) {
+    private EnvironmentManager(@NotNull Project project) {
         super(project);
-        subscribe(EnvironmentManagerListener.TOPIC, environmentManagerListener);
-
+        ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
     }
 
     public static EnvironmentManager getInstance(@NotNull Project project) {
@@ -63,7 +62,7 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
             EditorUtil.setEditorsReadonly(contentFile, false);
 
             Project project = getProject();
-            EventNotifier.notify(project,
+            ProjectEvents.notify(project,
                     EnvironmentManagerListener.TOPIC,
                     (listener) -> listener.editModeChanged(project, contentFile));
         }
@@ -77,7 +76,7 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
             EditorUtil.setEditorsReadonly(contentFile, readonly);
 
             Project project = getProject();
-            EventNotifier.notify(project,
+            ProjectEvents.notify(project,
                     EnvironmentManagerListener.TOPIC,
                     (listener) -> listener.editModeChanged(project, contentFile));
         }

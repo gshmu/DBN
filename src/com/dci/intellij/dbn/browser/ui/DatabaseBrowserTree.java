@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -325,7 +325,7 @@ public final class DatabaseBrowserTree extends DBNTree {
                     }
                 }
 
-                EventNotifier.notify(ensureProject(),
+                ProjectEvents.notify(ensureProject(),
                         BrowserTreeEventListener.TOPIC,
                         (listener) -> listener.selectionChanged());
             }

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -64,7 +65,7 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
             rollbackButton.addActionListener(actionListener);
 
         }
-        subscribe(TransactionListener.TOPIC, transactionListener);
+        ProjectEvents.subscribe(ensureProject(), this, TransactionListener.TOPIC, transactionListener);
     }
 
     public ConnectionHandler getConnectionHandler() {

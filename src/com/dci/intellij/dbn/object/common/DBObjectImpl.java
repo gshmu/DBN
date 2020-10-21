@@ -16,7 +16,7 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
@@ -756,7 +756,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
 
         Project project = Failsafe.nn(getProject());
-        EventNotifier.notify(project,
+        ProjectEvents.notify(project,
                 BrowserTreeEventListener.TOPIC,
                 (listener) -> listener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED));
         DatabaseBrowserManager.scrollToSelectedElement(getConnectionHandler());

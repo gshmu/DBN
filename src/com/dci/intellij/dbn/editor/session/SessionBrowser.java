@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.DisposableUserDataHolderBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -101,7 +101,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
                                         SessionBrowserModel model = sessionBrowserManager.loadSessions(databaseFile);
                                         replaceModel(model);
                                     } finally {
-                                        EventNotifier.notify(getProject(),
+                                        ProjectEvents.notify(getProject(),
                                                 SessionBrowserLoadListener.TOPIC,
                                                 (listener) -> listener.sessionsLoaded(databaseFile));
                                         setLoading(false);

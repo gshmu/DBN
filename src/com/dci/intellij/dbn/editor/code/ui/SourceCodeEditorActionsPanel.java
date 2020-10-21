@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.code.ui;
 
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -38,7 +39,7 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
         loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);
         loadingDataPanel.setVisible(false);
 
-        subscribe(SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+        ProjectEvents.subscribe(ensureProject(), this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
         Disposer.register(sourceCodeEditor, this);
     }
 

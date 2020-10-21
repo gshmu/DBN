@@ -63,7 +63,7 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
         rightActionPanel.add(rightActionToolbar.getComponent(), BorderLayout.EAST);
 
         updateComponentColors();
-        Colors.subscribe(() -> updateComponentColors());
+        Colors.subscribe(this, () -> updateComponentColors());
     }
 
     private void updateComponentColors() {

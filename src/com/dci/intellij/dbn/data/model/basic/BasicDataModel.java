@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.data.model.basic;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.list.FiltrableList;
@@ -68,7 +69,7 @@ public class BasicDataModel<
     public BasicDataModel(Project project) {
         this.project = ProjectRef.of(project);
         formatter = Latent.thread(() -> Formatter.getInstance(project).clone());
-        subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
+        ProjectEvents.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
     }
 
     @Override

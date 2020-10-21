@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableHeaderRenderer;
@@ -40,7 +39,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public abstract class DBNTable<T extends DBNTableModel> extends JTable implements StatefulDisposable, UserDataHolder, ProjectEventAdapter.Provided {
+public abstract class DBNTable<T extends DBNTableModel> extends JTable implements StatefulDisposable, UserDataHolder {
     private static final int MAX_COLUMN_WIDTH = 300;
     private static final int MIN_COLUMN_WIDTH = 10;
 
@@ -96,7 +95,7 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
         }
 
         updateComponentColors();
-        Colors.subscribe(() -> updateComponentColors());
+        Colors.subscribe(this, () -> updateComponentColors());
 
         Disposer.register(parent, this);
         Disposer.register(this, tableModel);

@@ -196,7 +196,7 @@ public class TextFieldWithPopup<T extends JComponent> extends DBNPanelImpl imple
             buttonsPanel.add(button, buttonsPanel.getComponentCount());
             customizeButton(button);
             popupProvider.setButton(button);
-            Colors.subscribe(() -> customizeButton(button));
+            Colors.subscribe(this, () -> customizeButton(button));
         }
     }
 

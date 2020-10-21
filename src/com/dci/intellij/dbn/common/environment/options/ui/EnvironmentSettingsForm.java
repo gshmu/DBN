@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.environment.EnvironmentTypeBundle;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -95,7 +95,7 @@ public class EnvironmentSettingsForm extends ConfigurationEditorForm<Environment
         Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (settingsChanged || visibilityChanged) {
-                EventNotifier.notify(project,
+                ProjectEvents.notify(project,
                         EnvironmentManagerListener.TOPIC,
                         (listener) -> listener.configurationChanged(project));
             }

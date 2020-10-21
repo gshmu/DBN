@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
@@ -49,9 +50,9 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
     private EditorStateManager(Project project) {
         super(project);
 
-        subscribe(SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
-        subscribe(EnvironmentManagerListener.TOPIC, environmentManagerListener);
-        subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorListener);
+        ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorListener);
+        ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
     }
 
     public static EditorStateManager getInstance(@NotNull Project project) {

@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.browser.model;
 
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
@@ -7,7 +8,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 public class TabbedBrowserTreeModel extends BrowserTreeModel {
     public TabbedBrowserTreeModel(ConnectionHandler connectionHandler) {
         super(connectionHandler.getObjectBundle());
-        subscribe(ConnectionHandlerStatusListener.TOPIC, connectionHandlerStatusListener);
+        ProjectEvents.subscribe(connectionHandler.getProject(), this, ConnectionHandlerStatusListener.TOPIC, connectionHandlerStatusListener);
     }
 
     @Override

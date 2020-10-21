@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.util.TimeUtil;
@@ -310,7 +310,7 @@ public class DBNConnection extends DBNConnectionBase {
 
     private void notifyStatusChange() {
         try {
-            EventNotifier.notify(getProject(),
+            ProjectEvents.notify(getProject(),
                     ConnectionStatusListener.TOPIC,
                     (listener) -> listener.statusChanged(id, sessionId));
         } catch (ProcessCanceledException ignore) {}

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.common.list.action;
 
 import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.action.AbstractConnectionToggleAction;
@@ -26,7 +26,7 @@ public class HideEmptySchemasToggleAction extends AbstractConnectionToggleAction
         ConnectionHandler connectionHandler = getConnectionHandler();
         connectionHandler.getSettings().getFilterSettings().setHideEmptySchemas(state);
         ConnectionId connectionId = connectionHandler.getConnectionId();
-        EventNotifier.notify(
+        ProjectEvents.notify(
                 connectionHandler.getProject(),
                 ObjectFilterChangeListener.TOPIC,
                 (listener) -> listener.nameFiltersChanged(connectionId, DBObjectType.SCHEMA));

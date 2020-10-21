@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.debugger.common.process;
 
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -193,7 +193,7 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
                                     CompilerAction compilerAction = new CompilerAction(CompilerActionSource.BULK_COMPILE, contentType);
                                     compilerManager.compileObject(schemaObject, CompileType.DEBUG, compilerAction);
                                 }
-                                EventNotifier.notify(project,
+                                ProjectEvents.notify(project,
                                         CompileManagerListener.TOPIC,
                                         (listener) -> listener.compileFinished(connectionHandler, null));
                                 Progress.check(progress);

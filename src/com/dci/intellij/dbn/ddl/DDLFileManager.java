@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.ddl;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -45,9 +46,10 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
 
     public static final String COMPONENT_NAME = "DBNavigator.Project.DDLFileManager";
 
-    private DDLFileManager(Project project) {
+    private DDLFileManager(@NotNull Project project) {
         super(project);
-        subscribe(FileTypeManager.TOPIC, fileTypeListener);
+
+        ProjectEvents.subscribe(project, this, FileTypeManager.TOPIC, fileTypeListener);
 
         StartupManager startupManager = StartupManager.getInstance(project);
         startupManager.registerPostStartupActivity((DumbAwareRunnable) () -> registerExtensions(getExtensionSettings()));

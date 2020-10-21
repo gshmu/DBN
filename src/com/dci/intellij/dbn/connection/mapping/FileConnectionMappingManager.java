@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.list.FiltrableList;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -84,10 +84,10 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
     private final Set<FileConnectionMapping> mappings = new THashSet<>();
 
-    private FileConnectionMappingManager(Project project) {
+    private FileConnectionMappingManager(@NotNull Project project) {
         super(project);
         VirtualFileManager.getInstance().addVirtualFileListener(virtualFileListener);
-        subscribe(SessionManagerListener.TOPIC, sessionManagerListener);
+        ProjectEvents.subscribe(project, this, SessionManagerListener.TOPIC, sessionManagerListener);
     }
 
     @NotNull
@@ -410,7 +410,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             if (changed) {
                 DocumentUtil.touchDocument(editor, true);
 
-                EventNotifier.notify(getProject(),
+                ProjectEvents.notify(getProject(),
                         FileConnectionMappingListener.TOPIC,
                         (listener) -> listener.connectionChanged(virtualFile, connectionHandler));
             }
@@ -425,7 +425,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             if (changed) {
                 DocumentUtil.touchDocument(editor, false);
 
-                EventNotifier.notify(getProject(),
+                ProjectEvents.notify(getProject(),
                         FileConnectionMappingListener.TOPIC,
                         (listener) -> listener.schemaChanged(virtualFile, schema));
             }
@@ -438,7 +438,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         if (isSessionSelectable(virtualFile)) {
             setDatabaseSession(virtualFile, session);
 
-            EventNotifier.notify(getProject(),
+            ProjectEvents.notify(getProject(),
                     FileConnectionMappingListener.TOPIC,
                     (listener) -> listener.sessionChanged(virtualFile, session));
         }

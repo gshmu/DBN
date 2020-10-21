@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.editor.data;
 
 import com.dci.intellij.dbn.common.editor.EditorNotificationProvider;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.data.ui.DatasetEditorLoadErrorNotificationPanel;
 import com.dci.intellij.dbn.editor.data.ui.DatasetEditorNotificationPanel;
@@ -24,15 +25,15 @@ public class DatasetEditorNotificationProvider extends EditorNotificationProvide
     private static final Key<DatasetEditorNotificationPanel> KEY = Key.create("DBNavigator.DatasetEditorNotificationPanel");
 
     public DatasetEditorNotificationProvider() {
-        this(null);
+        ProjectEvents.subscribe(DatasetLoadListener.TOPIC, datasetLoadListener);
+        ProjectEvents.subscribe(EnvironmentManagerListener.TOPIC, environmentManagerListener);
     }
 
-    public DatasetEditorNotificationProvider(@Nullable Project project) {
+    @Deprecated
+    public DatasetEditorNotificationProvider(@NotNull Project project) {
         super(project);
-
-        subscribe(DatasetLoadListener.TOPIC, datasetLoadListener);
-        subscribe(EnvironmentManagerListener.TOPIC, environmentManagerListener);
-
+        ProjectEvents.subscribe(project, this, DatasetLoadListener.TOPIC, datasetLoadListener);
+        ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
     }
 
     private final DatasetLoadListener datasetLoadListener = new DatasetLoadListener() {

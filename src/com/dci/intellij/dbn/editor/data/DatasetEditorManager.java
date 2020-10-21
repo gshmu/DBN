@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.data.record.ColumnSortingType;
@@ -61,7 +62,8 @@ public class DatasetEditorManager extends AbstractProjectComponent implements Pe
 
     private DatasetEditorManager(Project project) {
         super(project);
-        subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorListener);
+
+        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorListener);
     }
 
     public static DatasetEditorManager getInstance(@NotNull Project project) {

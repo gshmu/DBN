@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.editor.session;
 
 import com.dci.intellij.dbn.common.compatibility.LegacyEditorNotificationsProvider;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.editor.session.ui.SessionBrowserErrorNotificationPanel;
@@ -17,23 +18,22 @@ public class SessionBrowserNotificationProvider extends LegacyEditorNotification
     private static final Key<SessionBrowserErrorNotificationPanel> KEY = Key.create("DBNavigator.SessionBrowserErrorNotificationPanel");
 
     public SessionBrowserNotificationProvider() {
-        this(null);
+        ProjectEvents.subscribe(SessionBrowserLoadListener.TOPIC, sessionsLoadListener);
     }
 
-    public SessionBrowserNotificationProvider(@Nullable Project project) {
+    @Deprecated
+    public SessionBrowserNotificationProvider(@NotNull Project project) {
         super(project);
-        subscribe(SessionBrowserLoadListener.TOPIC, sessionsLoadListener);
+        ProjectEvents.subscribe(project, this, SessionBrowserLoadListener.TOPIC, sessionsLoadListener);
 
     }
 
-    SessionBrowserLoadListener sessionsLoadListener = new SessionBrowserLoadListener() {
-        @Override
-        public void sessionsLoaded(VirtualFile virtualFile) {
-            Project project = getProject();
-            if (virtualFile != null && !project.isDisposed()) {
-                EditorNotifications notifications = EditorNotifications.getInstance(project);
-                notifications.updateNotifications(virtualFile);
-            }
+    SessionBrowserLoadListener sessionsLoadListener = virtualFile -> {
+        if (virtualFile instanceof DBSessionBrowserVirtualFile) {
+            DBSessionBrowserVirtualFile databaseFile = (DBSessionBrowserVirtualFile) virtualFile;
+            Project project = databaseFile.getProject();
+            EditorNotifications notifications = EditorNotifications.getInstance(project);
+            notifications.updateNotifications(virtualFile);
         }
     };
 

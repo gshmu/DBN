@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.object.common.loader;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
@@ -22,7 +23,7 @@ public class DatabaseLoaderManager extends AbstractProjectComponent {
 
     private DatabaseLoaderManager(Project project) {
         super(project);
-        subscribe(ConnectionLoadListener.TOPIC,
+        ProjectEvents.subscribe(project, this, ConnectionLoadListener.TOPIC,
                 connectionHandler -> Dispatch.run(() -> {
                     checkDisposed();
                     Failsafe.nn(project);

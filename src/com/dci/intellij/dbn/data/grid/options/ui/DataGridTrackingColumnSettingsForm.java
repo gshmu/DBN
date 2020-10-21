@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.grid.options.ui;
 
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.list.EditableStringListForm;
@@ -67,7 +67,7 @@ public class DataGridTrackingColumnSettingsForm extends ConfigurationEditorForm<
         Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (visibilityChanged) {
-                EventNotifier.notify(project,
+                ProjectEvents.notify(project,
                         DataGridSettingsChangeListener.TOPIC,
                         (listener) -> listener.trackingColumnsVisibilityChanged(trackingColumnsVisible));
             }

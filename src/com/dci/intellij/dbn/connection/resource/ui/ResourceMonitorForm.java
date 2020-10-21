@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -48,8 +49,8 @@ public class ResourceMonitorForm extends DBNFormImpl {
         connectionsList.setSelectedIndex(0);
         updateListModel();
 
-        subscribe(TransactionListener.TOPIC, transactionListener);
-        subscribe(ConnectionHandlerStatusListener.TOPIC, (connectionId) -> GUIUtil.repaint(connectionsList));
+        ProjectEvents.subscribe(ensureProject(), this, TransactionListener.TOPIC, transactionListener);
+        ProjectEvents.subscribe(ensureProject(), this, ConnectionHandlerStatusListener.TOPIC, (connectionId) -> GUIUtil.repaint(connectionsList));
     }
 
     private void updateListModel() {
