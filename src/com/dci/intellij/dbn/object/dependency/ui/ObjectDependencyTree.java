@@ -94,8 +94,8 @@ public class ObjectDependencyTree extends DBNTree{
     public void setModel(TreeModel model) {
         if (model instanceof ObjectDependencyTreeModel) {
             ObjectDependencyTreeModel treeModel = (ObjectDependencyTreeModel) model;
-            super.setModel(treeModel);
             treeModel.setTree(this);
+            super.setModel(treeModel);
         }
     }
 
