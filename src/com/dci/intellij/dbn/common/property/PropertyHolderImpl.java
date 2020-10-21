@@ -9,9 +9,14 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
 
     private int computed = 0;
 
-    public PropertyHolderImpl() {
+    public PropertyHolderImpl(T ... properties) {
         for (T property : properties()) {
             if (property.implicit()) {
+                set(property);
+            }
+        }
+        if (properties != null) {
+            for (T property : properties) {
                 set(property);
             }
         }
