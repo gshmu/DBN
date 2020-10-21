@@ -160,15 +160,31 @@ public class DBJdwpNodeRenderer extends NodeRendererImpl {
     @Nullable
     @Override
     public String getIdLabel(Value value, DebugProcess process) {
-        String idLabel = super.getIdLabel(value, process);
-        if (idLabel != null) {
-            int index = idLabel.indexOf("@");
-            if (index > -1) {
-                idLabel = idLabel.substring(0, index);
-            }
-            idLabel = idLabel.toLowerCase();
+        String label = super.getIdLabel(value, process);
+        if (label != null && !label.toLowerCase().startsWith("deprecated")) {
+            label = adjustIdLabel(label);
         }
 
-        return idLabel;
+        return label;
+    }
+
+    @Nullable
+    @Override
+    public String calcIdLabel(ValueDescriptor descriptor, DebugProcess process, DescriptorLabelListener labelListener) {
+        String label = super.calcIdLabel(descriptor, process, labelListener);
+        if (label != null) {
+            label = adjustIdLabel(label);
+        }
+        return label;
+    }
+
+    @NotNull
+    private static String adjustIdLabel(@NotNull String label) {
+        int index = label.indexOf("@");
+        if (index > -1) {
+            label = label.substring(0, index);
+        }
+        label = label.toLowerCase();
+        return label;
     }
 }
