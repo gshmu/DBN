@@ -37,7 +37,7 @@ public interface Latent<T> {
 
     static <T> Latent<T> laf(Loader<T> loader) {
         Latent<T> latent = basic(loader);
-        Colors.subscribe(() -> latent.reset());
+        Colors.subscribe(null, () -> latent.reset());
         return latent;
     }
 

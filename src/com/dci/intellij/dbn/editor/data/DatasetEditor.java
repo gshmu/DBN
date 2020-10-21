@@ -6,8 +6,7 @@ import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.dispose.DisposableUserDataHolderBase;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.event.EventNotifier;
-import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -69,13 +68,8 @@ import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.CONNECTED;
-import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.LOADED;
-import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.LOADING;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.DELIBERATE_ACTION;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.PRESERVE_CHANGES;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.REBUILD;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.USE_CURRENT_FILTER;
+import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.*;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
 
@@ -84,8 +78,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
         FileConnectionMappingProvider,
         ConnectionProvider,
         DataProvider,
-        StatefulDisposable,
-        ProjectEventAdapter {
+        StatefulDisposable {
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
@@ -121,9 +114,9 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
             load(true, true, false);
         }
 */
-        subscribe(project, this, TransactionListener.TOPIC, transactionListener);
-        subscribe(project, this, ConnectionStatusListener.TOPIC, connectionStatusListener);
-        subscribe(project, this, DataGridSettingsChangeListener.TOPIC, dataGridSettingsChangeListener);
+        ProjectEvents.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
+        ProjectEvents.subscribe(project, this, ConnectionStatusListener.TOPIC, connectionStatusListener);
+        ProjectEvents.subscribe(project, this, DataGridSettingsChangeListener.TOPIC, dataGridSettingsChangeListener);
     }
 
     @NotNull
@@ -296,7 +289,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
 */
         } finally {
             Project project = getProject();
-            EventNotifier.notify(project,
+            ProjectEvents.notify(project,
                     DatasetLoadListener.TOPIC,
                     (listener) -> listener.datasetLoaded(databaseFile));
         }
@@ -308,7 +301,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
                     (action) -> {
                         setLoading(true);
                         Project project = getProject();
-                        EventNotifier.notify(project,
+                        ProjectEvents.notify(project,
                                 DatasetLoadListener.TOPIC,
                                 (listener) -> listener.datasetLoading(databaseFile));
 
@@ -340,7 +333,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
                                 status.set(LOADED, true);
                                 editorForm.hideLoadingHint();
                                 setLoading(false);
-                                EventNotifier.notify(project,
+                                ProjectEvents.notify(project,
                                         DatasetLoadListener.TOPIC,
                                         (listener) -> listener.datasetLoaded(databaseFile));
                             }

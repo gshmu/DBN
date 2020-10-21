@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.browser.options.listener.DisplayModeSettingsListener;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -59,8 +60,8 @@ public class BrowserToolWindowForm extends DBNFormImpl {
         GUIUtil.updateSplitterProportion(mainPanel, (float) 0.7);
 
 
-        subscribe(DisplayModeSettingsListener.TOPIC, displayModeSettingsListener);
-        subscribe(ConnectionSettingsListener.TOPIC, connectionSettingsListener);
+        ProjectEvents.subscribe(project, this, DisplayModeSettingsListener.TOPIC, displayModeSettingsListener);
+        ProjectEvents.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
     }
 
     public void rebuild() {

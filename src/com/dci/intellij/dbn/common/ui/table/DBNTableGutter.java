@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.event.ApplicationEvents;
 import com.dci.intellij.dbn.language.common.WeakRef;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.EditorColorsListener;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
@@ -27,7 +27,8 @@ public abstract class DBNTableGutter<T extends DBNTableWithGutter> extends JList
         setBackground(UIUtil.getPanelBackground());
 
         setCellRenderer(createCellRenderer());
-        ApplicationManager.getApplication().getMessageBus().connect().subscribe(EditorColorsManager.TOPIC, this);
+
+        ApplicationEvents.subscribe(this, EditorColorsManager.TOPIC, this);
         Disposer.register(table, this);
     }
 

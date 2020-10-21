@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.ui.tab.TabbedPane;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
@@ -27,13 +28,13 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
     private final TabbedPane connectionTabs;
     private JPanel mainPanel;
 
-    TabbedBrowserForm(Project project, @Nullable TabbedBrowserForm previous) {
+    TabbedBrowserForm(@NotNull Project project, @Nullable TabbedBrowserForm previous) {
         super(project);
         connectionTabs = new TabbedPane(this);
         //connectionTabs.setBackground(GUIUtil.getListBackground());
         //mainPanel.add(connectionTabs, BorderLayout.CENTER);
         initTabs(previous);
-        subscribe(EnvironmentManagerListener.TOPIC, environmentManagerListener);
+        ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
     }
 
 

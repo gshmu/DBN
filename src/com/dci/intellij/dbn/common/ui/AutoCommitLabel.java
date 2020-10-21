@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
-import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.panel.DBNPanelImpl;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -26,7 +26,7 @@ import java.awt.*;
 
 import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 
-public class AutoCommitLabel extends DBNPanelImpl implements Disposable, ProjectEventAdapter {
+public class AutoCommitLabel extends DBNPanelImpl implements Disposable {
     private interface Colors {
         Color DISCONNECTED = new JBColor(new Color(0x454545), new Color(0x808080));
         Color CONNECTED = new JBColor(new Color(0x454545), new Color(0x808080));
@@ -65,9 +65,9 @@ public class AutoCommitLabel extends DBNPanelImpl implements Disposable, Project
         this.sessionId = nvl(sessionId, SessionId.MAIN);
         if (!subscribed) {
             subscribed = true;
-            subscribe(project, this, ConnectionStatusListener.TOPIC, connectionStatusListener);
-            subscribe(project, this, FileConnectionMappingListener.TOPIC, connectionMappingListener);
-            subscribe(project, this, TransactionListener.TOPIC, transactionListener);
+            ProjectEvents.subscribe(project, this, ConnectionStatusListener.TOPIC, connectionStatusListener);
+            ProjectEvents.subscribe(project, this, FileConnectionMappingListener.TOPIC, connectionMappingListener);
+            ProjectEvents.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
         }
         update();
     }

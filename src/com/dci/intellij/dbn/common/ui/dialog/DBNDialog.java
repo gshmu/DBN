@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.ui.dialog;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
@@ -15,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper implements DBNComponent, ProjectEventAdapter.Provided {
+public abstract class DBNDialog<F extends DBNForm> extends DialogWrapper implements DBNComponent {
     private F form;
     private final ProjectRef project;
     private boolean rememberSelection;

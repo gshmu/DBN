@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentVisibilitySettings;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
@@ -69,8 +70,8 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
     public ExecutionConsoleForm(Disposable parent, Project project) {
         super(parent, project);
-        subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
-        subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
+        ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
+        ProjectEvents.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
     }
 
     private TabbedPane getResultTabs() {

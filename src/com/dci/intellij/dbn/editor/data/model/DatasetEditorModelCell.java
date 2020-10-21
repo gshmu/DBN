@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.model;
 
 
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -25,9 +25,7 @@ import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTED;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
 public class DatasetEditorModelCell
         extends ResultSetDataModelCell<DatasetEditorModelRow, DatasetEditorModel>
@@ -109,7 +107,7 @@ public class DatasetEditorModelCell
                 if (valueChanged) {
                     DBNConnection connection = getModel().getConnection();
                     connection.notifyDataChanges(getDataset().getVirtualFile());
-                    EventNotifier.notify(getProject(),
+                    ProjectEvents.notify(getProject(),
                             DatasetEditorModelCellValueListener.TOPIC,
                             (listener) -> listener.valueChanged(this));
                 }

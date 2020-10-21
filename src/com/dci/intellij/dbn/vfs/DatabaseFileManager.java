@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.vfs;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -59,13 +60,13 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     private boolean projectInitialized = false;
     private final String sessionId;
 
-    private DatabaseFileManager(final Project project) {
+    private DatabaseFileManager(@NotNull Project project) {
         super(project);
         sessionId = UUID.randomUUID().toString();
 
-        subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
-        subscribe(FileEditorManagerListener.Before.FILE_EDITOR_MANAGER, fileEditorManagerListenerBefore);
-        subscribe(ConnectionSettingsListener.TOPIC, connectionSettingsListener);
+        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        ProjectEvents.subscribe(project, this, FileEditorManagerListener.Before.FILE_EDITOR_MANAGER, fileEditorManagerListenerBefore);
+        ProjectEvents.subscribe(project, this, ConnectionSettingsListener.TOPIC, connectionSettingsListener);
 
 /*
         StartupManager.getInstance(project).registerPreStartupActivity(new Runnable() {

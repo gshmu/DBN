@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.connection.config.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -99,7 +100,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
         headerForm = new DBNHeaderForm(this, name, icon, color);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
-        subscribe(ConnectionPresentationChangeListener.TOPIC, connectionPresentationChangeListener);
+        ProjectEvents.subscribe(ensureProject(), this, ConnectionPresentationChangeListener.TOPIC, connectionPresentationChangeListener);
 
         //databaseSettingsForm.notifyPresentationChanges();
         //detailSettingsForm.notifyPresentationChanges();

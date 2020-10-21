@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -62,7 +62,7 @@ public class DocumentUtil {
                 ((EditorEx) editor).setHighlighter(editorHighlighter);
             }
             if (reparse) {
-                EventNotifier.notify(project,
+                ProjectEvents.notify(project,
                         DocumentBulkUpdateListener.TOPIC,
                         (listener) -> listener.updateStarted(document));
 

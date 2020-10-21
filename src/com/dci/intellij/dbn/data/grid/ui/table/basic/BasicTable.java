@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -138,7 +139,7 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
             }
         });
 
-        subscribe(RegionalSettingsListener.TOPIC, regionalSettingsListener);
+        ProjectEvents.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
         //EventUtil.subscribe(this, EditorColorsManager.TOPIC, this);
         EditorColorsManager.getInstance().addEditorColorsListener(this, this);
 

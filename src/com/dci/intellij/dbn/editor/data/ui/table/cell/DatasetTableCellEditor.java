@@ -55,7 +55,7 @@
         textField.setFont(table.getFont());
 
         updateTextField();
-        Colors.subscribe(() -> updateTextField());
+        Colors.subscribe(this, () -> updateTextField());
     }
 
      private void updateTextField() {

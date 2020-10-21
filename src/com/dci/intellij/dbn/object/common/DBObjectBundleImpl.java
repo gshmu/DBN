@@ -16,8 +16,7 @@ import com.dci.intellij.dbn.common.content.loader.DynamicContentLoaderImpl;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
-import com.dci.intellij.dbn.common.event.EventNotifier;
-import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MapLatent;
@@ -113,7 +112,7 @@ import java.util.Set;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.*;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
-public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport, ProjectEventAdapter {
+public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectBundle, NotificationSupport {
     private final ConnectionHandlerRef connectionHandler;
     private final BrowserTreeNode treeParent;
     private final List<BrowserTreeNode> allPossibleTreeChildren;
@@ -193,9 +192,9 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(project);
         fakeObjectFile = Read.call(() -> psiFileFactory.createFileFromText("object", SQLLanguage.INSTANCE, ""));
 
-        subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
-        subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
-        subscribe(project, this, CompileManagerListener.TOPIC, compileManagerListener);
+        ProjectEvents.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
+        ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+        ProjectEvents.subscribe(project, this, CompileManagerListener.TOPIC, compileManagerListener);
 
         Disposer.register(connectionHandler, this);
     }
@@ -469,7 +468,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
         visibleTreeChildren = treeChildren;
         treeChildrenLoaded = true;
 
-        EventNotifier.notify(getProject(),
+        ProjectEvents.notify(getProject(),
                 BrowserTreeEventListener.TOPIC,
                 (listener) -> listener.nodeChanged(this, TreeEventType.STRUCTURE_CHANGED));
 

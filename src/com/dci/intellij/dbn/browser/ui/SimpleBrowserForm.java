@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.browser.options.listener.ObjectDetailSettingsListener;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -36,7 +37,7 @@ public class SimpleBrowserForm extends DatabaseBrowserForm{
         browserScrollPane.setBorder(JBUI.Borders.emptyTop(1));
         ToolTipManager.sharedInstance().registerComponent(browserTree);
 
-        subscribe(ObjectDetailSettingsListener.TOPIC, objectDetailSettingsListener);
+        ProjectEvents.subscribe(ensureProject(), this, ObjectDetailSettingsListener.TOPIC, objectDetailSettingsListener);
         return browserTree;
     }
 

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.ddl;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.ui.ListUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -69,10 +69,11 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     public static final String COMPONENT_NAME = "DBNavigator.Project.DDLFileAttachmentManager";
 
     private final Map<String, DBObjectRef<DBSchemaObject>> mappings = new HashMap<>();
-    private DDLFileAttachmentManager(Project project) {
+    private DDLFileAttachmentManager(@NotNull Project project) {
         super(project);
+
         VirtualFileManager.getInstance().addVirtualFileListener(virtualFileListener);
-        subscribe(SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+        ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
     }
 
     private final SourceCodeManagerListener sourceCodeManagerListener = new SourceCodeManagerAdapter() {
@@ -179,7 +180,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         if (objectRef != null) {
             mappings.put(virtualFile.getUrl(), objectRef);
             Project project = getProject();
-            EventNotifier.notify(project,
+            ProjectEvents.notify(project,
                     DDLFileAttachmentManagerListener.TOPIC,
                     (listener) -> listener.ddlFileAttached(project, virtualFile));
         }
@@ -203,7 +204,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
         }
 
         Project project = getProject();
-        EventNotifier.notify(project,
+        ProjectEvents.notify(project,
                 DDLFileAttachmentManagerListener.TOPIC,
                 (listener) -> listener.ddlFileDetached(project, virtualFile));
     }

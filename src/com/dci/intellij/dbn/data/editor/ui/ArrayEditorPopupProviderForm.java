@@ -76,7 +76,7 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         mainPanel.addKeyListener(this);
 
         updateComponentColors();
-        Colors.subscribe(() -> updateComponentColors());
+        Colors.subscribe(this, () -> updateComponentColors());
     }
 
     private void updateComponentColors() {

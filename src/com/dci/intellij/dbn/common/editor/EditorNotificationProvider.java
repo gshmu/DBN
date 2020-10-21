@@ -10,6 +10,9 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class EditorNotificationProvider<T extends EditorNotificationPanel> extends LegacyEditorNotificationsProvider<T> {
 
+    public EditorNotificationProvider() {}
+
+    @Deprecated
     public EditorNotificationProvider(Project project) {
         super(project);
     }
