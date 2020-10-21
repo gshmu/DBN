@@ -2,23 +2,15 @@ package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionBundle;
 import com.dci.intellij.dbn.ddl.DDLFileAttachmentManager;
 import com.dci.intellij.dbn.ddl.DDLFileManager;
 import com.dci.intellij.dbn.ddl.DDLFileType;
-import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
-import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.EditorProviderId;
-import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
-import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
-import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.language.sql.SQLFileType;
-import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
@@ -27,7 +19,6 @@ import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.SAVING;
 
@@ -70,53 +60,6 @@ public class DBEditableObjectVirtualFile extends DBObjectVirtualFile<DBSchemaObj
 
     public void setDatabaseSessionId(SessionId databaseSessionId) {
         this.databaseSessionId = databaseSessionId;
-    }
-
-    public boolean preOpen() {
-        DBSchemaObject object = getObject();
-        Project project = object.getProject();
-        DBContentType contentType = object.getContentType();
-        if (contentType == DBContentType.DATA) {
-            DBDataset dataset = (DBDataset) object;
-            DatasetFilterManager filterManager = DatasetFilterManager.getInstance(project);
-            DatasetFilter filter = filterManager.getActiveFilter(dataset);
-
-            if (filter == null) {
-                DataEditorSettings settings = DataEditorSettings.getInstance(project);
-                if (settings.getFilterSettings().isPromptFilterDialog()) {
-                    int exitCode = filterManager.openFiltersDialog(dataset, true, false, settings.getFilterSettings().getDefaultFilterType());
-                    return exitCode != DialogWrapper.CANCEL_EXIT_CODE;
-                }
-            }
-        }
-        else if (contentType.isOneOf(DBContentType.CODE, DBContentType.CODE_SPEC_AND_BODY)) {
-
-            DDLFileGeneralSettings ddlFileSettings = DDLFileSettings.getInstance(project).getGeneralSettings();
-            ConnectionHandler connectionHandler = object.getConnectionHandler();
-            boolean ddlFileBinding = connectionHandler.getSettings().getDetailSettings().isEnableDdlFileBinding();
-            if (ddlFileBinding && ddlFileSettings.isLookupDDLFilesEnabled()) {
-                List<VirtualFile> attachedDDLFiles = getAttachedDDLFiles();
-                if (attachedDDLFiles == null || attachedDDLFiles.isEmpty()) {
-                    DDLFileAttachmentManager fileAttachmentManager = DDLFileAttachmentManager.getInstance(project);
-                    DBObjectRef<DBSchemaObject> objectRef = object.getRef();
-                    List<VirtualFile> virtualFiles = fileAttachmentManager.lookupDetachedDDLFiles(objectRef);
-                    if (virtualFiles.size() > 0) {
-                        int exitCode = fileAttachmentManager.showFileAttachDialog(object, virtualFiles, true);
-                        return exitCode != DialogWrapper.CANCEL_EXIT_CODE;
-                    } else if (ddlFileSettings.isCreateDDLFilesEnabled()) {
-                        MessageUtil.showQuestionDialog(
-                                project, "No DDL file found",
-                                "Could not find any DDL file for " + object.getQualifiedNameWithType() + ". Do you want to create one? \n" +
-                                "(You can disable this check in \"DDL File\" options)", MessageUtil.OPTIONS_YES_NO, 0,
-                                (option) -> conditional(option == 0,
-                                        () -> fileAttachmentManager.createDDLFile(objectRef)));
-
-                    }
-                }
-            }
-        }
-
-        return true;
     }
 
     public List<DBContentVirtualFile> getContentFiles() {

@@ -285,7 +285,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 */
 
-    public boolean is(@NotNull T object) {
+    public boolean is(@NotNull DBObject object) {
         return object.getRef().equals(this);
     }
 
