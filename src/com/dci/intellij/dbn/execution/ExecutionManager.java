@@ -220,6 +220,10 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
 
     @Override
     public void projectClosing() {
+        releaseExecutionConsole();
+    }
+
+    public void releaseExecutionConsole() {
         if (executionConsoleForm.loaded()) {
             getExecutionConsoleForm().removeAllTabs();
         }

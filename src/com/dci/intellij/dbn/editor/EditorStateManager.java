@@ -117,10 +117,6 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
         return COMPONENT_NAME;
     }
 
-    @Override
-    public void initComponent() {
-    }
-
     private final FileEditorManagerListener fileEditorListener = new FileEditorManagerListener() {
         @Override
         public void selectionChanged(@NotNull FileEditorManagerEvent event) {

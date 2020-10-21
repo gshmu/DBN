@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
+import com.dci.intellij.dbn.common.project.ProjectUtil;
 import com.dci.intellij.dbn.common.routine.ProgressRunnable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -112,7 +113,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     private final Map<DBObjectRef, DBEditableObjectVirtualFile> filesCache = new ConcurrentHashMap<>();
 
     public DatabaseFileSystem() {
-
+        ProjectUtil.projectClosed(project -> clearCachedFiles(project));
     }
 
     public static DatabaseFileSystem getInstance() {
