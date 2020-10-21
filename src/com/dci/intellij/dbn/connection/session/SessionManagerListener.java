@@ -7,9 +7,9 @@ import java.util.EventListener;
 public interface SessionManagerListener extends EventListener{
     Topic<SessionManagerListener> TOPIC = Topic.create("Session manager event", SessionManagerListener.class);
 
-    void sessionCreated(DatabaseSession session);
+    default void sessionCreated(DatabaseSession session) {};
 
-    void sessionDeleted(DatabaseSession session);
+    default void sessionDeleted(DatabaseSession session) {};
 
-    void sessionChanged(DatabaseSession session);
+    default void sessionChanged(DatabaseSession session){};
 }

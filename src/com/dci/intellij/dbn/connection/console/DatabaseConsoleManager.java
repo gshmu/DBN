@@ -129,10 +129,7 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
     /***************************************
      *         SessionManagerListener      *
      ***************************************/
-    private SessionManagerListener sessionManagerListener = new SessionManagerListener() {
-        @Override
-        public void sessionCreated(DatabaseSession session) {}
-
+    private final SessionManagerListener sessionManagerListener = new SessionManagerListener() {
         @Override
         public void sessionDeleted(DatabaseSession session) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
@@ -148,9 +145,6 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                 }
             }
         }
-
-        @Override
-        public void sessionChanged(DatabaseSession session) {}
     };
 
     /*********************************************
@@ -227,6 +221,11 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
 
     @Override
     public void projectOpened() {
+        restoreConsoleContents();
+    }
+
+
+    private void restoreConsoleContents() {
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         for (ConnectionHandler connectionHandler : connectionManager.getConnectionHandlers()) {
             for (DBConsole console : connectionHandler.getConsoleBundle().getConsoles()) {
@@ -236,8 +235,6 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
                 virtualFile.setText(text);
             }
         }
-
-        super.projectOpened();
     }
 
 }

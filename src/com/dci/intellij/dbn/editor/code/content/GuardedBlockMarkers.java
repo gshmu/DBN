@@ -6,9 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GuardedBlockMarkers {
-    private List<GuardedBlockMarker> ranges = new ArrayList<GuardedBlockMarker>();
+    private final List<GuardedBlockMarker> ranges = new ArrayList<GuardedBlockMarker>();
 
     public void addMarker(int startOffset, int endOffset) {
+        ranges.removeIf(range -> range.getStartOffset() >= startOffset && range.getEndOffset() <= endOffset);
         ranges.add(new GuardedBlockMarker(startOffset, endOffset));
     }
 
@@ -17,12 +18,16 @@ public class GuardedBlockMarkers {
     }
 
     public void apply(List<RangeMarker> rangeMarkers) {
-        ranges.clear();
+        reset();
         for (RangeMarker rangeMarker : rangeMarkers) {
             addMarker(
                 rangeMarker.getStartOffset(),
                 rangeMarker.getEndOffset());
         }
+    }
+
+    public void reset() {
+        ranges.clear();
     }
 
     public boolean isEmpty() {

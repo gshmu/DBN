@@ -222,7 +222,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
         set(MODIFIED, false);
     }
 
-    private void updateFileContent(final SourceCodeContent newContent, final CharSequence newText) {
+    private void updateFileContent(@Nullable SourceCodeContent newContent, @Nullable CharSequence newText) {
         Write.run(() -> {
             if (newContent != null) {
                 localContent = newContent;

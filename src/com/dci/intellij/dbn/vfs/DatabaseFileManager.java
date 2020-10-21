@@ -246,11 +246,6 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         }
     }
 
-    @Override
-    public void projectOpened() {
-        //reopenDatabaseEditors();
-    }
-
 
     @Override
     public void projectClosed() {
