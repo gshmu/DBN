@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.language.common.PsiFileRef;
+import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.codeInsight.intention.LowPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -67,7 +68,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         VirtualFile virtualFile = psiFile.getVirtualFile();
-        if (DatabaseDebuggerManager.isDebugConsole(virtualFile)) {
+        if (DatabaseDebuggerManager.isDebugConsole(virtualFile) || virtualFile instanceof DBSourceCodeVirtualFile) {
             return false;
         }
 
