@@ -71,10 +71,6 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
         SLOW = slowDatabaseModeEnabled;
     }
 
-    @Override
-    public void disposeComponent() {
-    }
-
     public String getName() {
         return null;
     }
