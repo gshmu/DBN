@@ -1,22 +1,17 @@
 package com.dci.intellij.dbn;
 
 import com.dci.intellij.dbn.common.component.ApplicationComponent;
-import com.dci.intellij.dbn.init.DatabaseNavigatorInitializer;
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManager;
-import com.intellij.ide.plugins.PluginManagerCore;
-import com.intellij.ide.plugins.PluginNode;
+import com.dci.intellij.dbn.execution.ExecutionManager;
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.extensions.PluginId;
-import com.intellij.openapi.updateSettings.impl.PluginDownloader;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoolean;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoolean;
@@ -48,16 +43,9 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
     public static boolean DEVELOPER = false;
 
     private boolean showPluginConflictDialog;
-    private String repositoryPluginVersion;
 
-    @Override
-    public void initComponent() {
-        //ModuleTypeManager.getInstance().registerModuleType(DBModuleType.MODULE_TYPE);
-
-        //FileTypeManager.getInstance().registerFileType(SQLFileType.INSTANCE, "sql");
-        //FileTypeManager.getInstance().registerFileType(PSQLFileType.INSTANCE, "psql");
-        //resolvePluginConflict();
-        DatabaseNavigatorInitializer.componentsInitialized();
+    public DatabaseNavigator() {
+        new NotificationGroup("Database Navigator", NotificationDisplayType.TOOL_WINDOW, true, ExecutionManager.TOOL_WINDOW_ID);
     }
 
 /*
@@ -89,19 +77,6 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
 
     public String getName() {
         return null;
-    }
-
-    public String getPluginVersion() {
-        IdeaPluginDescriptor pluginDescriptor = PluginManager.getPlugin(DatabaseNavigator.DBN_PLUGIN_ID);
-        return pluginDescriptor != null ? pluginDescriptor.getVersion() : null;
-    }
-
-    public String getRepositoryPluginVersion() {
-        return repositoryPluginVersion;
-    }
-
-    public void setRepositoryPluginVersion(String repositoryPluginVersion) {
-        this.repositoryPluginVersion = repositoryPluginVersion;
     }
 
     /*********************************************
@@ -156,23 +131,5 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
             });
         }
     }*/
-
-
-    @Nullable
-    public static PluginNode loadPluginNode() throws IOException {
-        //TODO use RepositoryHelper (??)
-        IdeaPluginDescriptor pluginDescriptor = getPluginDescriptor();
-        if (pluginDescriptor != null) {
-            PluginDownloader downloader = PluginDownloader.createDownloader(getPluginDescriptor());
-            return PluginDownloader.createPluginNode(null, downloader);
-        }
-        return null;
-    }
-
-    @Nullable
-    public static IdeaPluginDescriptor getPluginDescriptor() {
-        //TODO use RepositoryHelper (??)
-        return PluginManagerCore.getPlugin(DBN_PLUGIN_ID);
-    }
 }
 
