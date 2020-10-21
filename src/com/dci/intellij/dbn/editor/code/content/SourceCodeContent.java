@@ -74,6 +74,7 @@ public class SourceCodeContent{
     }
 
     public void importContent(String content) {
+        offsets.getGuardedBlocks().reset();
         StringBuilder builder = new StringBuilder(CommonUtil.nvl(content, ""));
         int startIndex = builder.indexOf(START_OFFSET_IDENTIFIER);
 

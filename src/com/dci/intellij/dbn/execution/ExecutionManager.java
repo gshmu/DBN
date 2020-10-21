@@ -217,14 +217,6 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     /*********************************************************
      *                    ProjectComponent                   *
      *********************************************************/
-    @Override
-    public void projectOpened() {
-    }
-
-    @Override
-    public void projectClosed() {
-    }
-
 
     @Override
     public void projectClosing() {
