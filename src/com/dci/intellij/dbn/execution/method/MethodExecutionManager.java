@@ -303,10 +303,6 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         return COMPONENT_NAME;
     }
 
-    @Override
-    public void projectOpened() {
-    }
-
     /****************************************
      *       PersistentStateComponent       *
      *****************************************/

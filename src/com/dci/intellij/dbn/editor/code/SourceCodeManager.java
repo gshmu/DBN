@@ -665,10 +665,6 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
     }
 
     @Override
-    public void projectOpened() {
-    }
-
-    @Override
     @NonNls
     @NotNull
     public String getComponentName() {

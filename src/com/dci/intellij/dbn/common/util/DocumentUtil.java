@@ -145,31 +145,27 @@ public class DocumentUtil {
 
     public static void createGuardedBlock(Document document, GuardedBlockType type, int startOffset, int endOffset, String reason) {
         if (startOffset != endOffset) {
-            Write.run(() -> {
-                int textLength = document.getTextLength();
-                if (endOffset <= textLength) {
-                    RangeMarker rangeMarker = document.createGuardedBlock(startOffset, endOffset);
-                    rangeMarker.setGreedyToLeft(startOffset == 0);
-                    rangeMarker.setGreedyToRight(endOffset == textLength);
-                    rangeMarker.putUserData(GuardedBlockType.KEY, type);
-                    document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, reason);
-                }
-            });
+            int textLength = document.getTextLength();
+            if (endOffset <= textLength) {
+                RangeMarker rangeMarker = document.createGuardedBlock(startOffset, endOffset);
+                rangeMarker.setGreedyToLeft(startOffset == 0);
+                rangeMarker.setGreedyToRight(endOffset == textLength);
+                rangeMarker.putUserData(GuardedBlockType.KEY, type);
+                document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, reason);
+            }
         }
     }
 
     public static void removeGuardedBlocks(Document document, GuardedBlockType type) {
         if (document instanceof DocumentEx) {
             DocumentEx documentEx = (DocumentEx) document;
-            Write.run(() -> {
-                List<RangeMarker> guardedBlocks = new ArrayList<>(documentEx.getGuardedBlocks());
-                for (RangeMarker block : guardedBlocks) {
-                    if (block.getUserData(GuardedBlockType.KEY) == type) {
-                        document.removeGuardedBlock(block);
-                    }
+            List<RangeMarker> guardedBlocks = new ArrayList<>(documentEx.getGuardedBlocks());
+            for (RangeMarker block : guardedBlocks) {
+                if (block.getUserData(GuardedBlockType.KEY) == type) {
+                    document.removeGuardedBlock(block);
                 }
-                document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, null);
-            });
+            }
+            document.putUserData(OverrideReadonlyFragmentModificationHandler.GUARDED_BLOCK_REASON, null);
         }
     }
 
@@ -203,11 +199,13 @@ public class DocumentUtil {
     }
 
     public static void setReadonly(Document document, Project project, boolean readonly) {
-        //document.setReadOnly(readonly);
-        DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT);
-        if (readonly) {
-            DocumentUtil.createGuardedBlock(document, GuardedBlockType.READONLY_DOCUMENT, null, false);
-        }
+        Write.run(() -> {
+            //document.setReadOnly(readonly);
+            DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT);
+            if (readonly) {
+                DocumentUtil.createGuardedBlock(document, GuardedBlockType.READONLY_DOCUMENT, null, false);
+            }
+        });
     }
 
     public static void setText(@NotNull Document document, CharSequence text) {
