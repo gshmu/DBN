@@ -246,32 +246,6 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         }
     }
 
-
-    @Override
-    public void projectClosed() {
-/*
-            // TODO seems to be obsolete since file unique id
-            PsiManagerImpl psiManager = (PsiManagerImpl) PsiManager.getInstance(project);
-            FileManagerImpl fileManager = (FileManagerImpl) psiManager.getFileManager();
-            ConcurrentMap<VirtualFile, FileViewProvider> fileViewProviderCache = fileManager.getVFileToViewProviderMap();
-            for (VirtualFile virtualFile : fileViewProviderCache.keySet()) {
-                if (virtualFile instanceof DBContentVirtualFile) {
-                    DBContentVirtualFile contentVirtualFile = (DBContentVirtualFile) virtualFile;
-                    if (contentVirtualFile.isDisposed() || !contentVirtualFile.isValid() ||contentVirtualFile.getProject() == project) {
-                        fileViewProviderCache.remove(virtualFile);
-                    }
-                } else if (virtualFile instanceof DBObjectVirtualFile) {
-                    DBObjectVirtualFile objectVirtualFile = (DBObjectVirtualFile) virtualFile;
-                    if (objectVirtualFile.isDisposed() || !objectVirtualFile.isValid() || objectVirtualFile.getProject() == project) {
-                        fileViewProviderCache.remove(virtualFile);
-                    }
-                }
-            }
-*/
-
-        DatabaseFileSystem.getInstance().clearCachedFiles(getProject());
-    }
-
     /*********************************************
      *            PersistentStateComponent       *
      *********************************************/

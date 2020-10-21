@@ -67,9 +67,6 @@ public class DatasetEditorStatusBarWidget extends AbstractProjectComponent imple
     }
 
     @Override
-    public void projectOpened() {}
-
-    @Override
     public void selectionChanged(@NotNull FileEditorManagerEvent event) {
         update();
     }

@@ -178,23 +178,6 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         }
     }
 
-    @Override
-    public void initComponent() {
-        //createDefaultConfigs();
-
-        // TODO remove this cleanup logic after statement debugger roll-out
-        /*try {
-            RunManagerEx runManager = (RunManagerEx) RunManagerEx.getInstance(getProject());
-            List<RunnerAndConfigurationSettings> configurationSettingsList = runManager.getConfigurationSettingsList(UnknownConfigurationType.INSTANCE);
-            for (RunnerAndConfigurationSettings configurationSettings : configurationSettingsList) {
-                runManager.removeConfiguration(configurationSettings);
-            }
-        } catch (Throwable t) {
-            LOGGER.error("Failed to cleanup run configuration", t);
-        }*/
-        super.initComponent();
-    }
-
     @NotNull
     private RunnerAndConfigurationSettings getDefaultConfig(DBRunConfigType configurationType, DBDebuggerType debuggerType){
         return Failsafe.nn(getDefaultConfig(configurationType, debuggerType, true));

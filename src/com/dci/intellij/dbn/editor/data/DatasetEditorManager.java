@@ -43,10 +43,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.DELIBERATE_ACTION;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.PRESERVE_CHANGES;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.REBUILD;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.USE_CURRENT_FILTER;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
 
 @State(
     name = DatasetEditorManager.COMPONENT_NAME,
@@ -198,9 +195,6 @@ public class DatasetEditorManager extends AbstractProjectComponent implements Pe
             }
         }
     };
-
-    @Override
-    public void initComponent() {}
 
     /****************************************
      *       PersistentStateComponent       *
