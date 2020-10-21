@@ -858,12 +858,6 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
      *          ProjectComponent         *
      ***************************************/
     @Override
-    public void projectOpened() {}
-    @Override
-    public void projectClosed() {}
-    @Override
-    public void initComponent() {}
-    @Override
     public void disposeComponent() {
         super.disposeComponent();
         mappings.clear();

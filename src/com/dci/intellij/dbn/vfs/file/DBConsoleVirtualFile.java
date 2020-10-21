@@ -3,16 +3,12 @@ package com.dci.intellij.dbn.vfs.file;
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.thread.Write;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseDebuggerInterface;
-import com.dci.intellij.dbn.editor.code.content.GuardedBlockMarkers;
-import com.dci.intellij.dbn.editor.code.content.GuardedBlockType;
 import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
@@ -72,18 +68,6 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
             text = debuggerInterface.getDebugConsoleTemplate(styleCaseSettings);
         }
         content.importContent(text);
-
-        Write.run(() -> {
-            Document document = DocumentUtil.getDocument(this);
-            if (document != null) {
-                //DocumentUtil.setText(document, content.getText());
-                GuardedBlockMarkers guardedBlocks = content.getOffsets().getGuardedBlocks();
-                if (!guardedBlocks.isEmpty()) {
-                    DocumentUtil.removeGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION);
-                    DocumentUtil.createGuardedBlocks(document, GuardedBlockType.READONLY_DOCUMENT_SECTION, guardedBlocks, null);
-                }
-            }
-        });
     }
 
     @Override

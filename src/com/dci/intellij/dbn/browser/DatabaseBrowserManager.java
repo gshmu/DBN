@@ -188,10 +188,6 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
         return COMPONENT_NAME;
     }
 
-    @Override
-    public void initComponent() {
-    }
-
     public static void scrollToSelectedElement(ConnectionHandler connectionHandler) {
         Dispatch.run(() -> {
             Project project = connectionHandler.getProject();

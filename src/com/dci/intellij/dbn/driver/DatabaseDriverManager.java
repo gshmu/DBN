@@ -69,12 +69,6 @@ public class DatabaseDriverManager implements ApplicationComponent {
         return "DBNavigator.DatabaseDriverManager";
     }
 
-    @Override
-    public void initComponent() {}
-    @Override
-    public void disposeComponent() {}
-
-
     public List<Driver> loadDrivers(File libraryFile, boolean force) throws Exception{
         try{
             if (force) {

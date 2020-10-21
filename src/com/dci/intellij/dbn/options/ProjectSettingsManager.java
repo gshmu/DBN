@@ -179,26 +179,6 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
         getProject().putUserData(UserDataKeys.PROJECT_SETTINGS_LOADED, true);
     }
 
-    @Override
-    public void projectOpened() {
-/*
-        TODO figure out DBNE-871 workarounds
-        FileTemplateManager templateManager = FileTemplateManager.getInstance(getProject());
-        FileTemplate sqlTemplate = templateManager.getTemplate("SQL Script");
-        if (sqlTemplate == null) {
-            templateManager.addTemplate("SQL Script", "sql");
-        }
-*/
-    }
-
-    @Override
-    public void projectClosed() {}
-
-    @Override
-    public void initComponent() {
-        //importDefaultSettings(true);
-    }
-
     public void exportToDefaultSettings() {
         final Project project = getProject();
         MessageUtil.showQuestionDialog(
