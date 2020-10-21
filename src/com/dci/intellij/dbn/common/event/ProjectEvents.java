@@ -8,11 +8,14 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
 
 
 public interface ProjectEvents {
@@ -26,14 +29,18 @@ public interface ProjectEvents {
     }
 
     static <T> void subscribe(Topic<T> topic, T handler) {
+        Project[] openProjects = ProjectManager.getInstance().getOpenProjects();
+        Arrays.stream(openProjects).forEach(project -> subscribe(project, null, topic, handler));
+
         Application application = ApplicationManager.getApplication();
         application.invokeLater(() ->
                 ProjectUtil.projectOpened(project ->
                         subscribe(project, null, topic, handler)));
+
     }
 
     static <T> void notify(@Nullable Project project, Topic<T> topic, ParametricRunnable.Basic<T> callback) {
-        if (project != Failsafe.DUMMY_PROJECT) {
+        if (Failsafe.check(project) && project != Failsafe.DUMMY_PROJECT) {
             try {
                 MessageBus messageBus = Failsafe.nd(project).getMessageBus();
                 T publisher = messageBus.syncPublisher(topic);

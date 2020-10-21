@@ -214,21 +214,6 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         executionConsoleForm.closeExecutionResults(connectionIds);
     }
 
-    /*********************************************************
-     *                    ProjectComponent                   *
-     *********************************************************/
-
-    @Override
-    public void projectClosing() {
-        releaseExecutionConsole();
-    }
-
-    public void releaseExecutionConsole() {
-        if (executionConsoleForm.loaded()) {
-            getExecutionConsoleForm().removeAllTabs();
-        }
-    }
-
     @Override
     @NonNls
     @NotNull

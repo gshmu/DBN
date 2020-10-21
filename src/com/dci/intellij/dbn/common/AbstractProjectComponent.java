@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common;
 
+import com.dci.intellij.dbn.common.component.LegacyComponent;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
@@ -16,7 +17,8 @@ public abstract class AbstractProjectComponent extends StatefulDisposable.Base i
         ProjectComponent,
         ProjectManagerListener,
         StatefulDisposable,
-        NotificationSupport {
+        NotificationSupport,
+        LegacyComponent {
 
     private final ProjectRef project;
 
@@ -34,10 +36,6 @@ public abstract class AbstractProjectComponent extends StatefulDisposable.Base i
 
     public boolean canCloseProject() {
         return true;
-    }
-
-    public void projectClosing() {
-
     }
 
     /***********************************************
@@ -59,15 +57,6 @@ public abstract class AbstractProjectComponent extends StatefulDisposable.Base i
 
     @Override
     public final void projectClosing(@NotNull Project project) {
-        if (project.equals(getProject())) {
-            projectClosing();
-        }
-    }
-
-
-    @Override
-    public void disposeComponent() {
-        dispose();
     }
 
     @Override

@@ -855,15 +855,6 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         }
     };
 
-    /***************************************
-     *          ProjectComponent         *
-     ***************************************/
-    @Override
-    public void disposeComponent() {
-        super.disposeComponent();
-        mappings.clear();
-    }
-
     /*********************************************
      *            PersistentStateComponent       *
      *********************************************/
@@ -893,5 +884,13 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             }
         }
     }
+
+
+    @Override
+    protected void disposeInner() {
+        super.disposeInner();
+        mappings.clear();
+    }
+
 }
 
