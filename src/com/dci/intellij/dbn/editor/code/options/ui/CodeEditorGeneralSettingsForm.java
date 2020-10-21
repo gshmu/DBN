@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.editor.code.options.ui;
 
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorGeneralSettings;
@@ -51,7 +51,7 @@ public class CodeEditorGeneralSettingsForm extends ConfigurationEditorForm<CodeE
         Project project = configuration.getProject();
         if (spellcheckingSettingsChanged) {
             SettingsChangeNotifier.register(
-                    () -> EventNotifier.notify(project,
+                    () -> ProjectEvents.notify(project,
                             SpellcheckingSettingsListener.TOPIC,
                             (listener) -> listener.settingsChanged()));
         }

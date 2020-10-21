@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.object.filter.name.ui;
 
 import com.dci.intellij.dbn.browser.options.ObjectFilterChangeListener;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.util.ActionUtil;
@@ -151,7 +151,7 @@ public class ObjectNameFilterSettingsForm extends ConfigurationEditorForm<Object
         SettingsChangeNotifier.register(() -> {
             if (notifyFilterListeners) {
                 DBObjectType[] refreshObjectTypes = filterObjectTypes.toArray(new DBObjectType[0]);
-                EventNotifier.notify(project, ObjectFilterChangeListener.TOPIC,
+                ProjectEvents.notify(project, ObjectFilterChangeListener.TOPIC,
                         (listener) -> listener.nameFiltersChanged(configuration.getConnectionId(), refreshObjectTypes));
             }
         });

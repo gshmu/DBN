@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.editor.document.OverrideReadonlyFragmentModificationHandler;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
@@ -87,13 +87,14 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         return Failsafe.getComponent(project, SourceCodeManager.class);
     }
 
-    private SourceCodeManager(Project project) {
+    private SourceCodeManager(@NotNull Project project) {
         super(project);
         EditorActionManager.getInstance().setReadonlyFragmentModificationHandler(OverrideReadonlyFragmentModificationHandler.INSTANCE);
-        subscribe(DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
-        subscribe(EnvironmentManagerListener.TOPIC, environmentManagerListener);
-        subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
-        subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new DBLanguageFileEditorListener());
+
+        ProjectEvents.subscribe(project, this, DataDefinitionChangeListener.TOPIC, dataDefinitionChangeListener);
+        ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
+        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, new DBLanguageFileEditorListener());
     }
 
 
@@ -189,7 +190,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                         Project project = getProject();
                         DBSchemaObject object = sourceCodeFile.getObject();
 
-                        EventNotifier.notify(project,
+                        ProjectEvents.notify(project,
                                 SourceCodeManagerListener.TOPIC,
                                 (listener) -> listener.sourceCodeLoading(sourceCodeFile));
                         try {
@@ -205,7 +206,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                             }
                         } finally {
                             sourceCodeFile.set(LOADING, false);
-                            EventNotifier.notify(project,
+                            ProjectEvents.notify(project,
                                     SourceCodeManagerListener.TOPIC,
                                     (listener) -> listener.sourceCodeLoaded(sourceCodeFile, initialLoad));
                         }
@@ -516,7 +517,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         Progress.prompt(project, "Saving sources to database", false, (progress) -> {
             try {
                 sourceCodeFile.saveSourceToDatabase();
-                EventNotifier.notify(project,
+                ProjectEvents.notify(project,
                         SourceCodeManagerListener.TOPIC,
                         (listener) -> listener.sourceCodeSaved(sourceCodeFile, fileEditor));
 

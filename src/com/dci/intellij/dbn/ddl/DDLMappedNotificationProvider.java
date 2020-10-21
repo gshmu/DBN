@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.ddl;
 
 import com.dci.intellij.dbn.common.compatibility.LegacyEditorNotificationsProvider;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.event.ProjectManagerEventAdapter;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.ddl.options.DDLFileGeneralSettings;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.ddl.options.listener.DDLFileSettingsChangeListener;
@@ -24,20 +24,22 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class DDLMappedNotificationProvider extends LegacyEditorNotificationsProvider<DDLMappedNotificationPanel> implements ProjectManagerEventAdapter {
+public class DDLMappedNotificationProvider extends LegacyEditorNotificationsProvider<DDLMappedNotificationPanel> {
     private static final Key<DDLMappedNotificationPanel> KEY = Key.create("DBNavigator.DDLMappedNotificationPanel");
 
     public DDLMappedNotificationProvider() {
-        this(null);
+        ProjectEvents.subscribe(DDLFileSettingsChangeListener.TOPIC, ddlFileSettingsChangeListener);
+        ProjectEvents.subscribe(DDLFileAttachmentManagerListener.TOPIC, ddlFileAttachmentManagerListener);
+        ProjectEvents.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
-
-    public DDLMappedNotificationProvider(Project project) {
+    @Deprecated
+    public DDLMappedNotificationProvider(@NotNull Project project) {
         super(project);
 
-        subscribe(DDLFileSettingsChangeListener.TOPIC, ddlFileSettingsChangeListener);
-        subscribe(DDLFileAttachmentManagerListener.TOPIC, ddlFileAttachmentManagerListener);
-        subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        ProjectEvents.subscribe(project, this, DDLFileSettingsChangeListener.TOPIC, ddlFileSettingsChangeListener);
+        ProjectEvents.subscribe(project, this, DDLFileAttachmentManagerListener.TOPIC, ddlFileAttachmentManagerListener);
+        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
     }
 
 

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.editor.data.ui.table.cell;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -31,7 +31,7 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.EventObject;
 
-public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor implements TableCellEditor, StatefulDisposable, ProjectEventAdapter {
+public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor implements TableCellEditor, StatefulDisposable {
     private final WeakRef<DataEditorComponent> editorComponent;
     private final WeakRef<DatasetEditorTable> table;
     private WeakRef<DatasetEditorModelCell> cell;
@@ -54,7 +54,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
 
         this.clickCountToStart = 2;
         editorComponent.getTextField().addActionListener(new EditorDelegate());
-        subscribe(project, this, DatasetEditorModelCellValueListener.TOPIC, cellValueListener);
+        ProjectEvents.subscribe(project, this, DatasetEditorModelCellValueListener.TOPIC, cellValueListener);
 
         table.addPropertyChangeListener(evt -> {
             Object newValue = evt.getNewValue();

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -82,9 +83,9 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         commitButton.addActionListener(transactionActionListener);
         rollbackButton.addActionListener(transactionActionListener);
 
-        Project project = getProject();
-        subscribe(TransactionListener.TOPIC, transactionListener);
-        subscribe(SessionManagerListener.TOPIC, sessionManagerListener);
+        Project project = ensureProject();
+        ProjectEvents.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
+        ProjectEvents.subscribe(project, this, SessionManagerListener.TOPIC, sessionManagerListener);
     }
 
     private final AnActionButton commitAction = new DumbAwareActionButton("Commit", null, Icons.CONNECTION_COMMIT) {

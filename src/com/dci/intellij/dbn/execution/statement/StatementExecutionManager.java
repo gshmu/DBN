@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.action.UserDataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -71,9 +72,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
 @State(
     name = StatementExecutionManager.COMPONENT_NAME,
@@ -88,10 +87,11 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
 
     private static final AtomicInteger RESULT_SEQUENCE = new AtomicInteger(0);
 
-    private StatementExecutionManager(Project project) {
+    private StatementExecutionManager(@NotNull Project project) {
         super(project);
         variablesCache = new StatementExecutionVariablesCache(project);
-        subscribe(PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
+
+        ProjectEvents.subscribe(project, this, PsiDocumentTransactionListener.TOPIC, psiDocumentTransactionListener);
     }
 
     public StatementExecutionQueue getExecutionQueue(ConnectionId connectionId, SessionId sessionId) {

@@ -1,17 +1,18 @@
 package com.dci.intellij.dbn.common;
 
+import com.dci.intellij.dbn.common.event.ApplicationEvents;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.ui.JBColor;
-import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -73,8 +74,7 @@ public interface Colors {
         private final Color tableLineNumberColor = getGlobalScheme().getColor(EditorColors.LINE_NUMBERS_COLOR);
 
         ColorsImpl() {
-            MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect();
-            connection.subscribe(EditorColorsManager.TOPIC, scheme -> COLORS.reset());
+            ApplicationEvents.subscribe(null, EditorColorsManager.TOPIC, scheme -> COLORS.reset());
 
             UIManager.addPropertyChangeListener(evt -> {
                 if ("lookAndFeel".equals(evt.getPropertyName())) {
@@ -93,9 +93,8 @@ public interface Colors {
         return EditorColorsManager.getInstance().getGlobalScheme();
     }
 
-    static void subscribe(Runnable runnable) {
-        MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect();
-        connection.subscribe(EditorColorsManager.TOPIC, scheme -> runnable.run());
+    static void subscribe(@Nullable Disposable parentDisposable,  Runnable runnable) {
+        ApplicationEvents.subscribe(parentDisposable, EditorColorsManager.TOPIC, scheme -> runnable.run());
 
         UIManager.addPropertyChangeListener(evt -> {
             if ("lookAndFeel".equals(evt.getPropertyName())) {

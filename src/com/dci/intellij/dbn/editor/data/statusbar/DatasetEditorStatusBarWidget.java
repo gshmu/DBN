@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.MathResult;
 import com.dci.intellij.dbn.common.util.Safe;
@@ -36,7 +37,8 @@ public class DatasetEditorStatusBarWidget extends AbstractProjectComponent imple
         super(project);
         textLabel = new JLabel();
         component.add(textLabel, BorderLayout.WEST);
-        subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, this);
+
+        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, this);
     }
 
     public static DatasetEditorStatusBarWidget getInstance(@NotNull Project project) {

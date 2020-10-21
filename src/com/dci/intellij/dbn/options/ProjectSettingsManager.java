@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.action.UserDataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -224,7 +224,7 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
                                     ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.set(true);
                                     getProjectSettings().readConfiguration(element);
 
-                                    EventNotifier.notify(project,
+                                    ProjectEvents.notify(project,
                                             ConnectionSettingsListener.TOPIC,
                                             (listener) -> listener.connectionsChanged());
 

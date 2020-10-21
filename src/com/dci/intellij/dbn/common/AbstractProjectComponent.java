@@ -9,9 +9,6 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerListener;
-import com.intellij.util.messages.MessageBus;
-import com.intellij.util.messages.MessageBusConnection;
-import com.intellij.util.messages.Topic;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractProjectComponent extends StatefulDisposable.Base implements
@@ -23,18 +20,10 @@ public abstract class AbstractProjectComponent extends StatefulDisposable.Base i
 
     private final ProjectRef project;
 
-    protected AbstractProjectComponent(Project project) {
+    protected AbstractProjectComponent(@NotNull Project project) {
         this.project = ProjectRef.of(project);
         ProjectManager projectManager = ProjectManager.getInstance();
         projectManager.addProjectManagerListener(project, this);
-    }
-
-
-    protected <T> void subscribe(Topic<T> topic, T handler) {
-        Project project = getProject();
-        MessageBus messageBus = project.getMessageBus();
-        MessageBusConnection connection = messageBus.connect();
-        connection.subscribe(topic, handler);
     }
 
     @Override

@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.environment.EnvironmentTypeId;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentConfigLocalListener;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -48,7 +48,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     private JCheckBox restoreWorkspaceDeepCheckBox;
     private JTextField idleTimePoolTextField;
 
-    public ConnectionDetailSettingsForm(final ConnectionDetailSettings configuration) {
+    public ConnectionDetailSettingsForm(ConnectionDetailSettings configuration) {
         super(configuration);
 
         updateBorderTitleForeground(generalGroupPanel);
@@ -71,7 +71,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         boolean visibleHint = !autoConnectCheckBox.isSelected() && restoreWorkspaceCheckBox.isSelected();
         autoConnectHintPanel.setVisible(visibleHint);
 
-        subscribe(EnvironmentConfigLocalListener.TOPIC, presentationChangeListener);
+        ProjectEvents.subscribe(ensureProject(), this, EnvironmentConfigLocalListener.TOPIC, presentationChangeListener);
     }
 
     private void notifyPresentationChanges() {
@@ -79,7 +79,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         EnvironmentType environmentType = getSelection(environmentTypesComboBox);
         Color color = environmentType == null ? null : environmentType.getColor();
 
-        EventNotifier.notify(project,
+        ProjectEvents.notify(project,
                 ConnectionPresentationChangeListener.TOPIC,
                 (listener) -> listener.presentationChanged(null, null, color, getConfiguration().getConnectionId(), null));
     }
@@ -138,13 +138,13 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (environmentChanged) {
-                EventNotifier.notify(project,
+                ProjectEvents.notify(project,
                         EnvironmentManagerListener.TOPIC,
                         (listener) -> listener.configurationChanged(project));
             }
 
             if (settingsChanged) {
-                EventNotifier.notify(project, ConnectionHandlerStatusListener.TOPIC,
+                ProjectEvents.notify(project, ConnectionHandlerStatusListener.TOPIC,
                         (listener) -> listener.statusChanged(configuration.getConnectionId()));
             }
         });

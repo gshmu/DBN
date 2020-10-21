@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
@@ -149,7 +149,7 @@ public class ConnectionPool extends StatefulDisposable.Base implements Notificat
                                 "Connected to database \"{0}\"",
                                 connectionHandler.getConnectionName(connection));
                     } finally {
-                        EventNotifier.notify(getProject(),
+                        ProjectEvents.notify(getProject(),
                                 ConnectionStatusListener.TOPIC,
                                 (listener) -> listener.statusChanged(connectionHandler.getConnectionId(), sessionId));
                     }

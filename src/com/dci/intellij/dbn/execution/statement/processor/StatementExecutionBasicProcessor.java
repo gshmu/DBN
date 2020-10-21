@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.editor.BasicTextEditor;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.message.MessageType;
@@ -544,7 +544,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
         if (isDataDefinitionStatement()) {
             DBSchemaObject affectedObject = getAffectedObject();
             if (affectedObject != null) {
-                EventNotifier.notify(project,
+                ProjectEvents.notify(project,
                         DataDefinitionChangeListener.TOPIC,
                         (listener) -> listener.dataDefinitionChanged(affectedObject));
             } else {
@@ -552,7 +552,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
                 IdentifierPsiElement subjectPsiElement = getSubjectPsiElement();
                 if (affectedSchema != null && subjectPsiElement != null) {
                     DBObjectType objectType = subjectPsiElement.getObjectType();
-                    EventNotifier.notify(project,
+                    ProjectEvents.notify(project,
                             DataDefinitionChangeListener.TOPIC,
                             (listener) -> listener.dataDefinitionChanged(affectedSchema, objectType));
                 }
@@ -619,7 +619,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
                                 if (compileType == CompileType.DEBUG) {
                                     compilerManager.compileObject(object, compileType, compilerAction);
                                 }
-                                EventNotifier.notify(project,
+                                ProjectEvents.notify(project,
                                         CompileManagerListener.TOPIC,
                                         (listener) -> listener.compileFinished(connectionHandler, object));
                             }

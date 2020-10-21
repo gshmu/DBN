@@ -32,8 +32,7 @@ public class SessionBrowserTextAttributes extends CommonUtil implements DataGrid
 
     private final Color caretRowBgColor;
 
-    private static final Latent<SessionBrowserTextAttributes> INSTANCE = Latent.laf(
-            () -> new SessionBrowserTextAttributes());
+    private static final Latent<SessionBrowserTextAttributes> INSTANCE = Latent.laf(() -> new SessionBrowserTextAttributes());
 
     private SessionBrowserTextAttributes() {
         EditorColorsScheme globalScheme = EditorColorsManager.getInstance().getGlobalScheme();

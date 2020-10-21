@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.factory;
 
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
@@ -47,12 +47,12 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
         int eventType = event.getEventType();
         Project project = getProject();
         if (eventType == ObjectFactoryEvent.EVENT_TYPE_CREATE) {
-            EventNotifier.notify(project,
+            ProjectEvents.notify(project,
                     ObjectFactoryListener.TOPIC,
                     (listener) -> listener.objectCreated(object));
 
         } else if (eventType == ObjectFactoryEvent.EVENT_TYPE_DROP) {
-            EventNotifier.notify(project,
+            ProjectEvents.notify(project,
                     ObjectFactoryListener.TOPIC,
                     (listener) -> listener.objectDropped(object));
         }

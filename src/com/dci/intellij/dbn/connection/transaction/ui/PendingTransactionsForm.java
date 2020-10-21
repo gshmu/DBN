@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
 import com.dci.intellij.dbn.common.dispose.DisposableContainer;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -47,13 +48,13 @@ public class PendingTransactionsForm extends DBNFormImpl {
         connectionsList.setSelectedIndex(0);
         updateListModel();
 
-        subscribe(TransactionListener.TOPIC, transactionListener);
+        ProjectEvents.subscribe(ensureProject(), this, TransactionListener.TOPIC, transactionListener);
     }
 
     private void updateListModel() {
         checkDisposed();
         DefaultListModel<ConnectionHandler> model = new DefaultListModel<>();
-        ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+        ConnectionManager connectionManager = ConnectionManager.getInstance(ensureProject());
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
         for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
             if (connectionHandler.hasUncommittedChanges()) {

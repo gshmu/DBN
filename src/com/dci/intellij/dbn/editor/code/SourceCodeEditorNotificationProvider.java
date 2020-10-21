@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.code;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.editor.EditorNotificationProvider;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.code.diff.MergeAction;
 import com.dci.intellij.dbn.editor.code.diff.SourceCodeDifManagerListener;
@@ -28,16 +29,22 @@ public class SourceCodeEditorNotificationProvider extends EditorNotificationProv
     private static final Key<SourceCodeEditorNotificationPanel> KEY = Key.create("DBNavigator.SourceCodeEditorNotificationPanel");
 
     public SourceCodeEditorNotificationProvider() {
-        this(null);
+        ProjectEvents.subscribe(SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+        ProjectEvents.subscribe(SourceCodeDifManagerListener.TOPIC, sourceCodeDifManagerListener);
+        ProjectEvents.subscribe(EnvironmentManagerListener.TOPIC, environmentManagerListener);
+        ProjectEvents.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        ProjectEvents.subscribe(ScriptExecutionListener.TOPIC, scriptExecutionListener);
+
     }
 
-    public SourceCodeEditorNotificationProvider(@Nullable Project project) {
+    @Deprecated
+    public SourceCodeEditorNotificationProvider(@NotNull Project project) {
         super(project);
-        subscribe(SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
-        subscribe(SourceCodeDifManagerListener.TOPIC, sourceCodeDifManagerListener);
-        subscribe(EnvironmentManagerListener.TOPIC, environmentManagerListener);
-        subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
-        subscribe(ScriptExecutionListener.TOPIC, scriptExecutionListener);
+        ProjectEvents.subscribe(project, this, SourceCodeManagerListener.TOPIC, sourceCodeManagerListener);
+        ProjectEvents.subscribe(project, this, SourceCodeDifManagerListener.TOPIC, sourceCodeDifManagerListener);
+        ProjectEvents.subscribe(project, this, EnvironmentManagerListener.TOPIC, environmentManagerListener);
+        ProjectEvents.subscribe(project, this, FileEditorManagerListener.FILE_EDITOR_MANAGER, fileEditorManagerListener);
+        ProjectEvents.subscribe(project, this, ScriptExecutionListener.TOPIC, scriptExecutionListener);
     }
 
     private final ScriptExecutionListener scriptExecutionListener = new ScriptExecutionListener() {

@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -39,36 +39,7 @@ import com.dci.intellij.dbn.database.common.metadata.def.DBTypeAttributeMetadata
 import com.dci.intellij.dbn.database.common.metadata.def.DBTypeMetadata;
 import com.dci.intellij.dbn.database.common.metadata.def.DBViewMetadata;
 import com.dci.intellij.dbn.editor.DBContentType;
-import com.dci.intellij.dbn.object.DBArgument;
-import com.dci.intellij.dbn.object.DBCluster;
-import com.dci.intellij.dbn.object.DBColumn;
-import com.dci.intellij.dbn.object.DBConstraint;
-import com.dci.intellij.dbn.object.DBDatabaseLink;
-import com.dci.intellij.dbn.object.DBDatabaseTrigger;
-import com.dci.intellij.dbn.object.DBDataset;
-import com.dci.intellij.dbn.object.DBDatasetTrigger;
-import com.dci.intellij.dbn.object.DBDimension;
-import com.dci.intellij.dbn.object.DBFunction;
-import com.dci.intellij.dbn.object.DBIndex;
-import com.dci.intellij.dbn.object.DBMaterializedView;
-import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.DBNestedTable;
-import com.dci.intellij.dbn.object.DBPackage;
-import com.dci.intellij.dbn.object.DBPackageFunction;
-import com.dci.intellij.dbn.object.DBPackageProcedure;
-import com.dci.intellij.dbn.object.DBPackageType;
-import com.dci.intellij.dbn.object.DBProcedure;
-import com.dci.intellij.dbn.object.DBProgram;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.DBSequence;
-import com.dci.intellij.dbn.object.DBSynonym;
-import com.dci.intellij.dbn.object.DBTable;
-import com.dci.intellij.dbn.object.DBType;
-import com.dci.intellij.dbn.object.DBTypeAttribute;
-import com.dci.intellij.dbn.object.DBTypeFunction;
-import com.dci.intellij.dbn.object.DBTypeProcedure;
-import com.dci.intellij.dbn.object.DBUser;
-import com.dci.intellij.dbn.object.DBView;
+import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectImpl;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -94,13 +65,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.INTERNAL;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DEBUGABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.EMPTY_SCHEMA;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.INVALIDABLE;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.PUBLIC_SCHEMA;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SYSTEM_SCHEMA;
-import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.USER_SCHEMA;
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.CONSTRAINT_COLUMN;
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.INDEX_COLUMN;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
@@ -540,7 +505,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
                 });
 
         for (BrowserTreeNode treeNode : refreshNodes) {
-            EventNotifier.notify(getProject(),
+            ProjectEvents.notify(getProject(),
                     BrowserTreeEventListener.TOPIC,
                     (listener) -> listener.nodeChanged(treeNode, TreeEventType.NODES_CHANGED));
         }

@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.ui;
 
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.environment.options.EnvironmentSettings;
-import com.dci.intellij.dbn.common.event.ProjectEventAdapter;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
@@ -16,7 +15,7 @@ import javax.swing.*;
 
 public abstract class DBNFormImpl
         extends DBNComponent.Base
-        implements DBNForm, NotificationSupport, ProjectEventAdapter {
+        implements DBNForm, NotificationSupport {
 
     private boolean registeredDataProvider;
 

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.locale.options.ui;
 
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.locale.DBDateFormat;
 import com.dci.intellij.dbn.common.locale.DBNumberFormat;
 import com.dci.intellij.dbn.common.locale.Formatter;
@@ -205,7 +205,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
         Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (modified) {
-                EventNotifier.notify(project,
+                ProjectEvents.notify(project,
                         RegionalSettingsListener.TOPIC,
                         (listener) -> listener.settingsChanged());
             }});

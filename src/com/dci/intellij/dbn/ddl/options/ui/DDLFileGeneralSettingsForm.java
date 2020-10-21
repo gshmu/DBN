@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.ddl.options.ui;
 
-import com.dci.intellij.dbn.common.event.EventNotifier;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
@@ -76,7 +76,7 @@ public class DDLFileGeneralSettingsForm extends ConfigurationEditorForm<DDLFileG
         Project project = configuration.getProject();
         SettingsChangeNotifier.register(() -> {
             if (settingChanged) {
-                EventNotifier.notify(project,
+                ProjectEvents.notify(project,
                         DDLFileSettingsChangeListener.TOPIC,
                         (listener) -> listener.settingsChanged(project));
 

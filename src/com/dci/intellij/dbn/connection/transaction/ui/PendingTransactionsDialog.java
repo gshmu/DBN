@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -18,9 +19,7 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.COMMIT;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.ROLLBACK;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
 
 public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm> {
     private final TransactionAction additionalOperation;
@@ -31,7 +30,7 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
         setModal(false);
         setResizable(true);
         init();
-        subscribe(TransactionListener.TOPIC, transactionListener);
+        ProjectEvents.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
     }
 
     @NotNull
@@ -56,7 +55,7 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
         super.doOKAction();
     }
 
-    private AbstractAction commitAllAction = new AbstractAction("Commit all", Icons.CONNECTION_COMMIT) {
+    private final AbstractAction commitAllAction = new AbstractAction("Commit all", Icons.CONNECTION_COMMIT) {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
@@ -73,7 +72,7 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
         }
     };
 
-    private AbstractAction rollbackAllAction = new AbstractAction("Rollback all", Icons.CONNECTION_ROLLBACK) {
+    private final AbstractAction rollbackAllAction = new AbstractAction("Rollback all", Icons.CONNECTION_ROLLBACK) {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
@@ -106,7 +105,7 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
         return DatabaseTransactionManager.getInstance(getProject());
     }
 
-    private TransactionListener transactionListener = new TransactionListener() {
+    private final TransactionListener transactionListener = new TransactionListener() {
         @Override
         public void afterAction(@NotNull ConnectionHandler connectionHandler, DBNConnection connection, TransactionAction action, boolean succeeded) {
             ConnectionManager connectionManager = ConnectionManager.getInstance(connectionHandler.getProject());

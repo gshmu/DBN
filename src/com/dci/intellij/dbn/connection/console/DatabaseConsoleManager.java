@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection.console;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -44,9 +45,9 @@ import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 public class DatabaseConsoleManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DatabaseConsoleManager";
 
-    private DatabaseConsoleManager(Project project) {
+    private DatabaseConsoleManager(@NotNull Project project) {
         super(project);
-        subscribe(SessionManagerListener.TOPIC, sessionManagerListener);
+        ProjectEvents.subscribe(project, this, SessionManagerListener.TOPIC, sessionManagerListener);
     }
 
     public static DatabaseConsoleManager getInstance(@NotNull Project project) {
