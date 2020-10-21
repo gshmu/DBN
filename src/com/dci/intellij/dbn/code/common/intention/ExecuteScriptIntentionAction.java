@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.language.common.DBLanguage;
+import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.codeInsight.intention.PriorityAction;
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.openapi.editor.Editor;
@@ -38,9 +39,11 @@ public class ExecuteScriptIntentionAction extends GenericIntentionAction {
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile psiFile) {
         if (psiFile != null && psiFile.getLanguage() instanceof DBLanguage) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
-            if (!(virtualFile instanceof VirtualFileWindow)) {
-                return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
+            if (virtualFile instanceof VirtualFileWindow || virtualFile instanceof DBSourceCodeVirtualFile) {
+                return false;
             }
+
+            return !DatabaseDebuggerManager.isDebugConsole(virtualFile);
         }
         return false;
     }
