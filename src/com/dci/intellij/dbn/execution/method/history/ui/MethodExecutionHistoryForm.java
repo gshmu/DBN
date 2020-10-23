@@ -196,11 +196,11 @@ public class MethodExecutionHistoryForm extends DBNFormImpl {
     }
 
 
-    private TreeSelectionListener treeSelectionListener = e -> {
+    private final TreeSelectionListener treeSelectionListener = e -> {
         MethodExecutionInput executionInput = getTree().getSelectedExecutionInput();
         if (executionInput != null) {
             ConnectionAction.invoke("loading the execution history", true, executionInput,
-                    (action) -> Progress.prompt(executionInput.getProject(), "Loading method details", false,
+                    (action) -> Progress.prompt(getProject(), "Loading method details", false,
                             (progress) -> {
                                 DBMethod method = executionInput.getMethod();
                                 if (method != null) {
@@ -218,6 +218,9 @@ public class MethodExecutionHistoryForm extends DBNFormImpl {
                                     }
                                 });
                             }));
+        } else {
+            MethodExecutionHistoryDialog dialog = getParentDialog();
+            dialog.updateMainButtons(null);
         }
     };
 }

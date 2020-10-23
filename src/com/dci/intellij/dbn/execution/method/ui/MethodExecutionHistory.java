@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MethodExecutionHistory implements PersistentStateElement, Disposable{
@@ -27,7 +28,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
     private boolean groupEntries = true;
     private DBObjectRef<DBMethod> selection;
 
-    private List<MethodExecutionInput> executionInputs = CollectionUtil.createConcurrentList();
+    private final List<MethodExecutionInput> executionInputs = CollectionUtil.createConcurrentList();
 
     public MethodExecutionHistory(Project project) {
         this.project = ProjectRef.of(project);
@@ -43,7 +44,8 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
     }
 
     public void setExecutionInputs(List<MethodExecutionInput> executionInputs) {
-        this.executionInputs = executionInputs;
+        this.executionInputs.clear();
+        this.executionInputs.addAll(executionInputs);
     }
 
     public boolean isGroupEntries() {
@@ -102,7 +104,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
         if (create) {
             MethodExecutionInput executionInput = new MethodExecutionInput(getProject(), method);
             executionInputs.add(executionInput);
-            java.util.Collections.sort(executionInputs);
+            Collections.sort(executionInputs);
             selection = DBObjectRef.of(method);
             return executionInput;
         }
@@ -120,7 +122,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
         if (method != null) {
             MethodExecutionInput executionInput = new MethodExecutionInput(getProject(), method);
             executionInputs.add(executionInput);
-            java.util.Collections.sort(executionInputs);
+            Collections.sort(executionInputs);
             selection = methodRef;
             return executionInput;
         }
@@ -147,6 +149,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
      * @param element*/
     @Override
     public void readState(Element element) {
+        executionInputs.clear();
         Element historyElement = element.getChild("execution-history");
         if (historyElement != null) {
             groupEntries = SettingsSupport.getBoolean(historyElement, "group-entries", groupEntries);
@@ -158,7 +161,7 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
                 executionInput.readConfiguration(configElement);
                 executionInputs.add(executionInput);
             }
-            java.util.Collections.sort(executionInputs);
+            Collections.sort(executionInputs);
 
             Element selectionElement = historyElement.getChild("selection");
             if (selectionElement != null) {
