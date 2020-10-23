@@ -20,12 +20,6 @@ public class SetupCodeCompletionIntentionAction extends GenericIntentionAction i
     }
 
     @Override
-    @NotNull
-    public String getFamilyName() {
-        return IntentionActionGroups.SETUP;
-    }
-
-    @Override
     public Icon getIcon(int flags) {
         return null;
     }

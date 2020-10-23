@@ -37,7 +37,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
             }
         }
 
-        return "Database logging";
+        return "Toggle database logging";
     }
 
     @Override
@@ -49,11 +49,6 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
         return Icons.EXEC_LOG_OUTPUT_CONSOLE;
     }
 
-    @Override
-    @NotNull
-    public String getFamilyName() {
-        return IntentionActionGroups.STATEMENT_EXECUTION;
-    }
 
     ConnectionHandler getLastCheckedConnection() {
         if (lastChecked != null && lastChecked.get() != null) {
