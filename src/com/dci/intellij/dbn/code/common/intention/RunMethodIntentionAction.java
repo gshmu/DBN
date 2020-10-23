@@ -18,7 +18,7 @@ public class RunMethodIntentionAction extends AbstractMethodExecutionIntentionAc
 
     @Override
     protected String getActionName() {
-        return "Run";
+        return "Run method";
     }
 
     @Override

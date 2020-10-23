@@ -15,7 +15,7 @@ public class DebugMethodIntentionAction extends AbstractMethodExecutionIntention
 
     @Override
     protected String getActionName() {
-        return "Debug";
+        return "Debug method";
     }
 
     @Override

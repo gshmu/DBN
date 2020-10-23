@@ -307,7 +307,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
     private static void reopenDatabaseEditors(@NotNull List<DBObjectRef<DBSchemaObject>> objectRefs, @NotNull ConnectionHandler connectionHandler) {
         Project project = connectionHandler.getProject();
         ConnectionAction.invoke("opening database editors", false, connectionHandler, action ->
-                Progress.prompt(project, "Opening database editors (" + connectionHandler.getQualifiedName() + ")", true,
+                Progress.background(project, "Opening database editors (" + connectionHandler.getQualifiedName() + ")", true,
                         (progress) -> {
                             progress.setIndeterminate(true);
                             progress.setText2(connectionHandler.getQualifiedName());

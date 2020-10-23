@@ -29,7 +29,7 @@ public abstract class AbstractMethodExecutionIntentionAction extends GenericInte
             if (objectType.matches(DBObjectType.FUNCTION)) objectType = DBObjectType.FUNCTION;
             return getActionName() + ' ' + objectType.getName() + ' ' + method.getName();
         }
-        return getActionName() + " method";
+        return getActionName();
     }
 
     protected abstract String getActionName();
@@ -74,9 +74,4 @@ public abstract class AbstractMethodExecutionIntentionAction extends GenericInte
         return lastChecked == null ? null : lastChecked.get();
     }
 
-    @Override
-    @NotNull
-    public String getFamilyName() {
-        return IntentionActionGroups.METHOD_EXECUTION;
-    }
 }
