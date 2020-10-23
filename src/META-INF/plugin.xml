@@ -541,33 +541,68 @@
         <editorNotificationProvider implementation="com.dci.intellij.dbn.editor.data.DatasetEditorNotificationProvider"/>
         <editorNotificationProvider implementation="com.dci.intellij.dbn.editor.session.SessionBrowserNotificationProvider"/>
 
-        <additionalTextAttributes scheme="Default" file="resources/DBNDefaultColors.xml" id="DBN-Default"/>
-        <additionalTextAttributes scheme="AllHallowsEve" file="resources/DBNAllHallowsEveColors.xml" id="DBN-AllHallowsEve"/>
-        <additionalTextAttributes scheme="Blackboard" file="resources/DBNBlackboardColors.xml" id="DBN-Blackboard"/>
-        <additionalTextAttributes scheme="Cobalt" file="resources/DBNCobaltColors.xml" id="DBN-Cobalt"/>
-        <additionalTextAttributes scheme="Darcula" file="resources/DBNDarculaColors.xml" id="DBN-Darcula"/>
-        <additionalTextAttributes scheme="Monokai" file="resources/DBNMonokaiColors.xml" id="DBN-Monokai"/>
-        <additionalTextAttributes scheme="Railscasts" file="resources/DBNRailscastsColors.xml" id="DBN-Railscasts"/>
-        <additionalTextAttributes scheme="Twilight" file="resources/DBNTwilightColors.xml" id="DBN-Twilight"/>
-        <additionalTextAttributes scheme="VibrantInk" file="resources/DBNVibrantInkColors.xml" id="DBN-VibrantInk"/>
-        <additionalTextAttributes scheme="WarmNeon" file="resources/DBNWarmNeonColors.xml" id="DBN-WarmNeon"/>
+        <additionalTextAttributes scheme="Default" file="resources/textAttributes/DBNDefaultColors.xml" id="DBN-Default"/>
+        <additionalTextAttributes scheme="AllHallowsEve" file="resources/textAttributes/DBNAllHallowsEveColors.xml" id="DBN-AllHallowsEve"/>
+        <additionalTextAttributes scheme="Blackboard" file="resources/textAttributes/DBNBlackboardColors.xml" id="DBN-Blackboard"/>
+        <additionalTextAttributes scheme="Cobalt" file="resources/textAttributes/DBNCobaltColors.xml" id="DBN-Cobalt"/>
+        <additionalTextAttributes scheme="Darcula" file="resources/textAttributes/DBNDarculaColors.xml" id="DBN-Darcula"/>
+        <additionalTextAttributes scheme="Monokai" file="resources/textAttributes/DBNMonokaiColors.xml" id="DBN-Monokai"/>
+        <additionalTextAttributes scheme="Railscasts" file="resources/textAttributes/DBNRailscastsColors.xml" id="DBN-Railscasts"/>
+        <additionalTextAttributes scheme="Twilight" file="resources/textAttributes/DBNTwilightColors.xml" id="DBN-Twilight"/>
+        <additionalTextAttributes scheme="VibrantInk" file="resources/textAttributes/DBNVibrantInkColors.xml" id="DBN-VibrantInk"/>
+        <additionalTextAttributes scheme="WarmNeon" file="resources/textAttributes/DBNWarmNeonColors.xml" id="DBN-WarmNeon"/>
 
         <fileTemplateGroup implementation="com.dci.intellij.dbn.common.file.DBNFileTemplateGroupDescriptorFactory"/>
         <statusBarWidgetFactory implementation="com.dci.intellij.dbn.editor.data.statusbar.DatasetEditorStatusBarWidgetFactory"/>
 
 
-        <intentionAction><className>com.dci.intellij.dbn.code.common.intention.ExecuteScriptIntentionAction</className><category>Database</category></intentionAction>
-        <intentionAction><className>com.dci.intellij.dbn.code.common.intention.ExecuteStatementIntentionAction</className><category>Database</category></intentionAction>
-        <intentionAction><className>com.dci.intellij.dbn.code.common.intention.DebugStatementIntentionAction</className><category>Database</category></intentionAction>
-        <intentionAction><className>com.dci.intellij.dbn.code.common.intention.RunMethodIntentionAction</className><category>Database</category></intentionAction>
-        <intentionAction><className>com.dci.intellij.dbn.code.common.intention.DebugMethodIntentionAction</className><category>Database</category></intentionAction>
-        <intentionAction><className>com.dci.intellij.dbn.code.common.intention.ExplainPlanIntentionAction</className><category>Database</category></intentionAction>
-        <intentionAction><className>com.dci.intellij.dbn.code.common.intention.DatabaseConnectIntentionAction</className><category>Database</category></intentionAction>
-        <intentionAction><className>com.dci.intellij.dbn.code.common.intention.JumpToExecutionResultIntentionAction</className><category>Database</category></intentionAction>
-        <intentionAction><className>com.dci.intellij.dbn.code.common.intention.SelectConnectionIntentionAction</className><category>Database</category></intentionAction>
-        <intentionAction><className>com.dci.intellij.dbn.code.common.intention.SelectSchemaIntentionAction</className><category>Database</category></intentionAction>
-        <intentionAction><className>com.dci.intellij.dbn.code.common.intention.SelectSessionIntentionAction</className><category>Database</category></intentionAction>
-        <intentionAction><className>com.dci.intellij.dbn.code.common.intention.ToggleDatabaseLoggingIntentionAction</className><category>Database</category></intentionAction>
+        <intentionAction>
+            <className>com.dci.intellij.dbn.code.common.intention.ExecuteScriptIntentionAction</className>
+            <category>Database/Script execution</category>
+        </intentionAction>
+        <intentionAction>
+            <className>com.dci.intellij.dbn.code.common.intention.ExecuteStatementIntentionAction</className>
+            <category>Database/Statement execution</category>
+        </intentionAction>
+        <intentionAction>
+            <className>com.dci.intellij.dbn.code.common.intention.DebugStatementIntentionAction</className>
+            <category>Database/Statement execution</category>
+        </intentionAction>
+        <intentionAction>
+            <className>com.dci.intellij.dbn.code.common.intention.ExplainPlanIntentionAction</className>
+            <category>Database/Statement execution</category>
+        </intentionAction>
+        <intentionAction>
+            <className>com.dci.intellij.dbn.code.common.intention.JumpToExecutionResultIntentionAction</className>
+            <category>Database/Statement execution</category>
+        </intentionAction>
+        <intentionAction>
+            <className>com.dci.intellij.dbn.code.common.intention.RunMethodIntentionAction</className>
+            <category>Database/Method execution</category>
+        </intentionAction>
+        <intentionAction>
+            <className>com.dci.intellij.dbn.code.common.intention.DebugMethodIntentionAction</className>
+            <category>Database/Method execution</category>
+        </intentionAction>
+        <intentionAction>
+            <className>com.dci.intellij.dbn.code.common.intention.DatabaseConnectIntentionAction</className>
+            <category>Database/Connectivity</category>
+        </intentionAction>
+        <intentionAction>
+            <className>com.dci.intellij.dbn.code.common.intention.SelectConnectionIntentionAction</className>
+            <category>Database/Connectivity</category>
+        </intentionAction>
+        <intentionAction>
+            <className>com.dci.intellij.dbn.code.common.intention.SelectSchemaIntentionAction</className>
+            <category>Database/Connectivity</category>
+        </intentionAction>
+        <intentionAction>
+            <className>com.dci.intellij.dbn.code.common.intention.SelectSessionIntentionAction</className>
+            <category>Database/Connectivity</category></intentionAction>
+        <intentionAction>
+            <className>com.dci.intellij.dbn.code.common.intention.ToggleDatabaseLoggingIntentionAction</className>
+            <category>Database/Statement execution</category>
+        </intentionAction>
         <!--<intentionAction><className>com.dci.intellij.dbn.code.common.intention.SetupCodeCompletionIntentionAction</className><category>Database</category></intentionAction>-->
 
         <fileDocumentManagerListener implementation="com.dci.intellij.dbn.connection.console.DatabaseConsoleFileInitializer"/>

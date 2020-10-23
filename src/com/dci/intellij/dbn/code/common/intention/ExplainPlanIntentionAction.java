@@ -28,11 +28,6 @@ public class ExplainPlanIntentionAction extends GenericIntentionAction implement
         return "Explain plan for statement";
     }
 
-    @Override
-    @NotNull
-    public String getFamilyName() {
-        return IntentionActionGroups.STATEMENT_EXECUTION;
-    }
 
     @Override
     public Icon getIcon(int flags) {

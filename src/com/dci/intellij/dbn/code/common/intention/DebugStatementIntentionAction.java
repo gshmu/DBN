@@ -30,11 +30,6 @@ public class DebugStatementIntentionAction extends GenericIntentionAction implem
         return "Debug statement";
     }
 
-    @Override
-    @NotNull
-    public String getFamilyName() {
-        return IntentionActionGroups.STATEMENT_EXECUTION;
-    }
 
     @Override
     public Icon getIcon(int flags) {

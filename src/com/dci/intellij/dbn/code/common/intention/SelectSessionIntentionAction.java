@@ -18,13 +18,7 @@ public class SelectSessionIntentionAction extends GenericIntentionAction impleme
     @Override
     @NotNull
     public String getText() {
-        return "Select session...";
-    }
-
-    @Override
-    @NotNull
-    public String getFamilyName() {
-        return IntentionActionGroups.CONNECTION;
+        return "Set current session";
     }
 
     @Override
