@@ -21,14 +21,9 @@ public class ExecuteScriptIntentionAction extends GenericIntentionAction {
     @Override
     @NotNull
     public String getText() {
-        return "Execute SQL script...";
+        return "Execute SQL script";
     }
 
-    @Override
-    @NotNull
-    public String getFamilyName() {
-        return IntentionActionGroups.STATEMENT_EXECUTION;
-    }
 
     @Override
     public Icon getIcon(int flags) {
