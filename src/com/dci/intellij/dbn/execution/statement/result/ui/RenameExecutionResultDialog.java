@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.statement.result.ui;
 
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
+import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,9 +35,15 @@ public class RenameExecutionResultDialog extends DBNDialog<RenameExecutionResult
     @Override
     protected void doOKAction() {
         RenameExecutionResultForm component = getForm();
-        executionResult.setName(
-                component.getResultName(),
-                component.isStickyResultName());
+
+        boolean stickyResultName = component.isStickyResultName();
+        String resultName = component.getResultName();
+
+        executionResult.setName(resultName, stickyResultName);
+
+        ExecutionManager executionManager = ExecutionManager.getInstance(ensureProject());
+        executionManager.setRetainStickyNames(stickyResultName);
+
         super.doOKAction();
     }
 

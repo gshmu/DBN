@@ -8,12 +8,14 @@ import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
 import com.dci.intellij.dbn.execution.script.options.ui.ScriptExecutionSettingsForm;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 public class ScriptExecutionSettings extends BasicProjectConfiguration<ExecutionEngineSettings, ScriptExecutionSettingsForm> implements ExecutionTimeoutSettings, ProjectSupplier {
-    private CmdLineInterfaceBundle commandLineInterfaces = new CmdLineInterfaceBundle();
-    private int executionTimeout = 300;
+    private @Getter @Setter CmdLineInterfaceBundle commandLineInterfaces = new CmdLineInterfaceBundle();
+    private @Getter @Setter int executionTimeout = 300;
 
     public ScriptExecutionSettings(ExecutionEngineSettings parent) {
         super(parent);
@@ -25,17 +27,9 @@ public class ScriptExecutionSettings extends BasicProjectConfiguration<Execution
         return new ScriptExecutionSettingsForm(this);
     }
 
-    public CmdLineInterfaceBundle getCommandLineInterfaces() {
-        return commandLineInterfaces;
-    }
-
     @NotNull
     public CmdLineInterface getCommandLineInterface(String id) {
         return commandLineInterfaces.getInterface(id);
-    }
-
-    public void setCommandLineInterfaces(CmdLineInterfaceBundle commandLineInterfaces) {
-        this.commandLineInterfaces = commandLineInterfaces;
     }
 
     @Override
@@ -44,21 +38,8 @@ public class ScriptExecutionSettings extends BasicProjectConfiguration<Execution
     }
 
     @Override
-    public int getExecutionTimeout() {
-        return executionTimeout;
-    }
+    public void setDebugExecutionTimeout(int timeout) {}
 
-    @Override
-    public boolean setExecutionTimeout(int executionTimeout) {
-        if (this.executionTimeout != executionTimeout) {
-            this.executionTimeout = executionTimeout;
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean setDebugExecutionTimeout(int timeout) {return false;}
 
     @Override
     public String getConfigElementName() {
