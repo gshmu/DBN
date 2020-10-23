@@ -223,7 +223,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
         return defaultRunnerConfig;
     }
 
-    public void startMethodDebugger(DBMethod method) {
+    public void startMethodDebugger(@NotNull DBMethod method) {
         startDebugger((debuggerType) -> {
             Project project = getProject();
             DBMethodRunConfigType configurationType = getMethodConfigurationType();

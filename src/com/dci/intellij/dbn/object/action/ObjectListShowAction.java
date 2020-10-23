@@ -26,12 +26,12 @@ import java.awt.*;
 import java.util.List;
 
 public abstract class ObjectListShowAction extends DumbAwareAction {
-    private DBObjectRef sourceObjectRef;
+    private final DBObjectRef<?> sourceObject;
     private RelativePoint popupLocation;
 
     public ObjectListShowAction(String text, DBObject sourceObject) {
         super(text);
-        sourceObjectRef = DBObjectRef.of(sourceObject);
+        this.sourceObject = DBObjectRef.of(sourceObject);
     }
 
     public void setPopupLocation(RelativePoint popupLocation) {
@@ -46,7 +46,7 @@ public abstract class ObjectListShowAction extends DumbAwareAction {
 
     @NotNull
     public DBObject getSourceObject() {
-        return DBObjectRef.ensure(sourceObjectRef);
+        return DBObjectRef.ensure(sourceObject);
     }
 
     @Override
