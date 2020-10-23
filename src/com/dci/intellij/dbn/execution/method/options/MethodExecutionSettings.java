@@ -7,13 +7,15 @@ import com.dci.intellij.dbn.common.project.ProjectSupplier;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.method.options.ui.MethodExecutionSettingsForm;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 public class MethodExecutionSettings extends BasicProjectConfiguration<ExecutionEngineSettings, ConfigurationEditorForm> implements ExecutionTimeoutSettings, ProjectSupplier {
-    private int executionTimeout = 30;
-    private int debugExecutionTimeout = 600;
-    private int parameterHistorySize = 10;
+    private @Getter @Setter int executionTimeout = 30;
+    private @Getter @Setter int debugExecutionTimeout = 600;
+    private @Getter @Setter int parameterHistorySize = 10;
 
     public MethodExecutionSettings(ExecutionEngineSettings parent) {
         super(parent);
@@ -27,46 +29,6 @@ public class MethodExecutionSettings extends BasicProjectConfiguration<Execution
     @Override
     public String getHelpTopic() {
         return "executionEngine";
-    }
-
-    /*********************************************************
-    *                       Settings                        *
-    *********************************************************/
-
-    @Override
-    public int getExecutionTimeout() {
-        return executionTimeout;
-    }
-
-    @Override
-    public int getDebugExecutionTimeout() {
-        return debugExecutionTimeout;
-    }
-
-    @Override
-    public boolean setExecutionTimeout(int executionTimeout) {
-        if (this.executionTimeout != executionTimeout) {
-            this.executionTimeout = executionTimeout;
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean setDebugExecutionTimeout(int debugExecutionTimeout) {
-        if (this.debugExecutionTimeout != debugExecutionTimeout) {
-            this.debugExecutionTimeout = debugExecutionTimeout;
-            return true;
-        }
-        return false;
-    }
-
-    public int getParameterHistorySize() {
-        return parameterHistorySize;
-    }
-
-    public void setParameterHistorySize(int parameterHistorySize) {
-        this.parameterHistorySize = parameterHistorySize;
     }
 
     /****************************************************

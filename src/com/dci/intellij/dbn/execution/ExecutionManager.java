@@ -29,6 +29,8 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentFactoryImpl;
 import com.intellij.ui.content.ContentManager;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -36,11 +38,16 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoolean;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoolean;
+
 @State(
     name = ExecutionManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class ExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
+    private @Getter @Setter boolean retainStickyNames = false;
+
     public static final String COMPONENT_NAME = "DBNavigator.Project.ExecutionManager";
 
     public static final String TOOL_WINDOW_ID = "DB Execution Console";
@@ -229,13 +236,15 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
     /*********************************************
      *            PersistentStateComponent       *
      *********************************************/
-    @Nullable
-    @Override
     public Element getState() {
-        return null;
+        Element element = new Element("state");
+        setBoolean(element, "retain-sticky-names", retainStickyNames);
+        return element;
     }
 
     @Override
     public void loadState(@NotNull Element element) {
+        retainStickyNames = getBoolean(element, "retain-sticky-names", retainStickyNames);
     }
+
 }

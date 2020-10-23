@@ -7,17 +7,19 @@ import com.dci.intellij.dbn.common.project.ProjectSupplier;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.statement.options.ui.StatementExecutionSettingsForm;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 public class StatementExecutionSettings extends BasicProjectConfiguration<ExecutionEngineSettings, ConfigurationEditorForm> implements ExecutionTimeoutSettings, ProjectSupplier {
     private static final String REMEMBER_OPTION_HINT = ""/*"\n\n(you can remember your option and change it at any time in Settings > Execution Engine > Statement Execution)"*/;
 
-    private int resultSetFetchBlockSize = 100;
-    private int executionTimeout = 20;
-    private int debugExecutionTimeout = 600;
-    private boolean focusResult = false;
-    private boolean promptExecution = false;
+    private @Getter @Setter int resultSetFetchBlockSize = 100;
+    private @Getter @Setter int executionTimeout = 20;
+    private @Getter @Setter int debugExecutionTimeout = 600;
+    private @Getter @Setter boolean focusResult = false;
+    private @Getter @Setter boolean promptExecution = false;
 
     public StatementExecutionSettings(ExecutionEngineSettings parent) {
         super(parent);
@@ -31,62 +33,6 @@ public class StatementExecutionSettings extends BasicProjectConfiguration<Execut
     @Override
     public String getHelpTopic() {
         return "executionEngine";
-    }
-
-    /*********************************************************
-    *                       Settings                        *
-    *********************************************************/
-
-    public int getResultSetFetchBlockSize() {
-        return resultSetFetchBlockSize;
-    }
-
-    public void setResultSetFetchBlockSize(int resultSetFetchBlockSize) {
-        this.resultSetFetchBlockSize = resultSetFetchBlockSize;
-    }
-
-    @Override
-    public int getExecutionTimeout() {
-        return executionTimeout;
-    }
-
-    @Override
-    public int getDebugExecutionTimeout() {
-        return debugExecutionTimeout;
-    }
-
-    @Override
-    public boolean setExecutionTimeout(int executionTimeout) {
-        if (this.executionTimeout != executionTimeout) {
-            this.executionTimeout = executionTimeout;
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean setDebugExecutionTimeout(int debugExecutionTimeout) {
-        if (this.debugExecutionTimeout != debugExecutionTimeout) {
-            this.debugExecutionTimeout = debugExecutionTimeout;
-            return true;
-        }
-        return false;
-    }
-
-    public void setFocusResult(boolean focusResult) {
-        this.focusResult = focusResult;
-    }
-
-    public boolean isFocusResult() {
-        return focusResult;
-    }
-
-    public boolean isPromptExecution() {
-        return promptExecution;
-    }
-
-    public void setPromptExecution(boolean promptExecution) {
-        this.promptExecution = promptExecution;
     }
 
     /****************************************************

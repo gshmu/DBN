@@ -3,7 +3,9 @@ package com.dci.intellij.dbn.execution.statement.result.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
+import com.dci.intellij.dbn.common.ui.DBNHintForm;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.statement.result.StatementExecutionResult;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
@@ -17,8 +19,9 @@ import java.awt.*;
 public class RenameExecutionResultForm extends DBNFormImpl{
     private JPanel headerPanel;
     private JPanel mainPanel;
-    private JTextField resultNameTextField;
+    private JPanel hintPanel;
     private JLabel errorLabel;
+    private JTextField resultNameTextField;
     private JCheckBox stickyCheckBox;
 
     RenameExecutionResultForm(RenameExecutionResultDialog parent, @NotNull StatementExecutionResult executionResult) {
@@ -33,9 +36,15 @@ public class RenameExecutionResultForm extends DBNFormImpl{
                 executionResult.getConnectionHandler().getEnvironmentType().getColor());
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
+        String hint = "Use \"Sticky\" option to retain the name after the result is closed.";
+        DBNHintForm hintForm = new DBNHintForm(this, hint, null, false);
+        hintPanel.add(hintForm.getComponent(), BorderLayout.CENTER);
 
         String resultName = executionResult.getName();
         resultNameTextField.setText(resultName);
+
+        ExecutionManager executionManager = ExecutionManager.getInstance(ensureProject());
+        stickyCheckBox.setSelected(executionManager.isRetainStickyNames());
 
         resultNameTextField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
@@ -82,5 +91,4 @@ public class RenameExecutionResultForm extends DBNFormImpl{
     public JPanel getMainComponent() {
         return mainPanel;
     }
-
 }
