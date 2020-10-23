@@ -30,6 +30,8 @@ public interface ExecutionResult<F extends ExecutionResultForm> extends Stateful
     @NotNull
     String getName();
 
+    default void setName(@NotNull String name) {}
+
     Icon getIcon();
 
     @NotNull
