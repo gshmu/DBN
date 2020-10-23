@@ -93,7 +93,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         promptExecutionDialog(method, debuggerType, () -> MethodExecutionManager.this.execute(method));
     }
 
-    private void promptExecutionDialog(DBMethod method, @NotNull DBDebuggerType debuggerType, Runnable callback) {
+    private void promptExecutionDialog(@NotNull DBMethod method, @NotNull DBDebuggerType debuggerType, Runnable callback) {
         MethodExecutionInput executionInput = getExecutionInput(method);
         promptExecutionDialog(executionInput, debuggerType, callback);
     }
