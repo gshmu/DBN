@@ -52,6 +52,8 @@ public interface StatementExecutionProcessor extends ConnectionProvider, Statefu
     @NotNull
     String getResultName();
 
+    void setResultName(String resultName, boolean sticky);
+
     String getStatementName();
 
     void navigateToResult();

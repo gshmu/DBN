@@ -73,7 +73,9 @@ import javax.swing.*;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
-import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.COMPILABLE;
 
 public class StatementExecutionBasicProcessor extends StatefulDisposable.Base implements StatementExecutionProcessor {
@@ -91,7 +93,12 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
     private final String name;
     private final Icon icon;
 
+    private String stickyResultName;
+
     private final Latent<String> resultName = Latent.basic(() -> {
+        if (stickyResultName != null) {
+            return stickyResultName;
+        }
         String resultName = null;
         ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
         if (executablePsiElement!= null) {
@@ -695,6 +702,11 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
     @NotNull
     public String getResultName() {
         return resultName.get();
+    }
+
+    public void setResultName(String resultName, boolean sticky) {
+        this.resultName.set(resultName);
+        stickyResultName = sticky ? resultName : null;
     }
 
     @Override

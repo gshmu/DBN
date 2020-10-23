@@ -60,8 +60,9 @@ public class StatementExecutionBasicResult extends ExecutionResultBase<Statement
     }
 
     @Override
-    public void setName(@NotNull String name) {
+    public void setName(@NotNull String name, boolean sticky) {
         this.name = name;
+        getExecutionProcessor().setResultName(name, sticky);
     }
 
     @Override

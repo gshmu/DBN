@@ -19,6 +19,7 @@ public class RenameExecutionResultForm extends DBNFormImpl{
     private JPanel mainPanel;
     private JTextField resultNameTextField;
     private JLabel errorLabel;
+    private JCheckBox stickyCheckBox;
 
     RenameExecutionResultForm(RenameExecutionResultDialog parent, @NotNull StatementExecutionResult executionResult) {
         super(parent);
@@ -70,6 +71,10 @@ public class RenameExecutionResultForm extends DBNFormImpl{
 
     public String getResultName() {
         return resultNameTextField.getText();
+    }
+
+    public boolean isStickyResultName() {
+        return stickyCheckBox.isSelected();
     }
 
     @NotNull
