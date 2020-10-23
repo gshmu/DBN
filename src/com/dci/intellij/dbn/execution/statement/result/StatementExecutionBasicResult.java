@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class StatementExecutionBasicResult extends ExecutionResultBase<StatementExecutionResultForm> implements StatementExecutionResult{
-    private final String resultName;
+    private String name;
     private StatementExecutionMessage executionMessage;
     private StatementExecutionStatus executionStatus;
     private int executionDuration;
@@ -39,9 +39,9 @@ public class StatementExecutionBasicResult extends ExecutionResultBase<Statement
 
     public StatementExecutionBasicResult(
             @NotNull StatementExecutionProcessor executionProcessor,
-            @NotNull String resultName,
+            @NotNull String name,
             int updateCount) {
-        this.resultName = resultName;
+        this.name = name;
         this.executionProcessor = executionProcessor;
         this.updateCount = updateCount;
         this.connectionHandler = Failsafe.nn(executionProcessor.getConnectionHandler()).getRef();
@@ -56,7 +56,12 @@ public class StatementExecutionBasicResult extends ExecutionResultBase<Statement
     @Override
     @NotNull
     public String getName() {
-        return resultName;
+        return name;
+    }
+
+    @Override
+    public void setName(@NotNull String name) {
+        this.name = name;
     }
 
     @Override
