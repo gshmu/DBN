@@ -25,11 +25,6 @@ public class DatabaseConnectIntentionAction extends GenericIntentionAction imple
         return "Connect to database";
     }
 
-    @Override
-    @NotNull
-    public String getFamilyName() {
-        return IntentionActionGroups.CONNECTION;
-    }
 
     @Override
     public Icon getIcon(int flags) {

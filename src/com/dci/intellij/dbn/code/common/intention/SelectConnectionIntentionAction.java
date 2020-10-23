@@ -17,13 +17,7 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction impl
     @Override
     @NotNull
     public String getText() {
-        return "Select connection...";
-    }
-
-    @Override
-    @NotNull
-    public String getFamilyName() {
-        return IntentionActionGroups.CONNECTION;
+        return "Select connection";
     }
 
     @Override
