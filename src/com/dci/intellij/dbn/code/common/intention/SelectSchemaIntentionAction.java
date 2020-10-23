@@ -18,13 +18,7 @@ public class SelectSchemaIntentionAction extends GenericIntentionAction implemen
     @Override
     @NotNull
     public String getText() {
-        return "Set current schema...";
-    }
-
-    @Override
-    @NotNull
-    public String getFamilyName() {
-        return IntentionActionGroups.CONNECTION;
+        return "Set current schema";
     }
 
     @Override

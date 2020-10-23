@@ -27,11 +27,6 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
         return "Navigate to result";
     }
 
-    @Override
-    @NotNull
-    public String getFamilyName() {
-        return IntentionActionGroups.STATEMENT_EXECUTION;
-    }
 
     @Override
     public Icon getIcon(int flags) {
