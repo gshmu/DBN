@@ -11,6 +11,7 @@ import com.intellij.debugger.ui.impl.watch.DebuggerTreeNodeImpl;
 import com.intellij.debugger.ui.impl.watch.FieldDescriptorImpl;
 import com.intellij.debugger.ui.impl.watch.LocalVariableDescriptorImpl;
 import com.intellij.debugger.ui.impl.watch.NodeManagerImpl;
+import com.intellij.debugger.ui.impl.watch.ValueDescriptorImpl;
 import com.intellij.debugger.ui.tree.DebuggerTreeNode;
 import com.intellij.debugger.ui.tree.NodeDescriptor;
 import com.intellij.debugger.ui.tree.ValueDescriptor;
@@ -169,9 +170,15 @@ public class DBJdwpNodeRenderer extends NodeRendererImpl {
     }
 
     @Nullable
-    @Override
+    //@Override
     public String calcIdLabel(ValueDescriptor descriptor, DebugProcess process, DescriptorLabelListener labelListener) {
-        String label = super.calcIdLabel(descriptor, process, labelListener);
+        String label = null; // super.calcIdLabel(descriptor, process, labelListener);
+        Value value = descriptor.getValue();
+        if (value instanceof ObjectReference && isShowType()) {
+            ObjectReference objectReference = (ObjectReference) value;
+            label = ValueDescriptorImpl.getIdLabel(objectReference);
+        }
+
         if (label != null) {
             label = adjustIdLabel(label);
         }
