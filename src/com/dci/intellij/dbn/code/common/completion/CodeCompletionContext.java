@@ -5,9 +5,11 @@ import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletion
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
+import com.dci.intellij.dbn.language.common.PsiFileRef;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
@@ -21,109 +23,91 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
+import lombok.Getter;
+import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CodeCompletionContext {
-    private boolean extended;
-    private DBLanguagePsiFile file;
-    private ProjectCodeStyleSettings codeStyleSettings;
-    private CodeCompletionSettings codeCompletionSettings;
-    private CompletionParameters parameters;
-    private CompletionResultSet result;
-    private PsiElement elementAtCaret;
-    private ConnectionHandler connectionHandler;
-    private String userInput;
-    private double databaseVersion;
-    private boolean newLine = true;
+    private @Getter @Setter boolean extended;
+    private final PsiFileRef<DBLanguagePsiFile> file;
+    private final ConnectionHandlerRef connectionHandler;
+    private final @Getter ProjectCodeStyleSettings codeStyleSettings;
+    private final @Getter CodeCompletionSettings codeCompletionSettings;
+    private final @Getter CompletionParameters parameters;
+    private final @Getter CompletionResultSet result;
+    private final @Getter double databaseVersion;
+    private final @Getter String userInput;
+    private final @Getter PsiElement elementAtCaret;
+    private final @Getter boolean newLine;
 
 
     public CodeCompletionContext(DBLanguagePsiFile file, CompletionParameters parameters, CompletionResultSet result) {
-        this.file = file;
+        this.file = PsiFileRef.of(file);
         this.parameters = parameters;
         this.result = result;
         this.extended = parameters.getCompletionType() == CompletionType.SMART;
-        this.connectionHandler = file.getConnectionHandler();
+        this.connectionHandler = ConnectionHandlerRef.from(file.getConnectionHandler());
 
         PsiElement position = parameters.getPosition();
         if (position instanceof PsiComment) {
             throw new ProcessCanceledException();
         }
         int offset = parameters.getOffset();
-        if (offset > position.getTextOffset()) {
-            userInput = position.getText().substring(0, offset - position.getTextOffset());
-        }
+        userInput = calcUserInput(position, offset);
 
         ProjectSettings projectSettings = ProjectSettingsManager.getSettings(file.getProject());
         codeStyleSettings = projectSettings.getCodeStyleSettings();
         codeCompletionSettings = projectSettings.getCodeCompletionSettings();
 
-        elementAtCaret = position instanceof BasePsiElement ? (BasePsiElement) position : PsiUtil.lookupLeafAtOffset(file, position.getTextOffset());
-        elementAtCaret = elementAtCaret == null ? file : elementAtCaret;
+        elementAtCaret = calcElementAtCaret(file, position);
 
         databaseVersion = file.getDatabaseVersion();
+        newLine = calcNewLine(parameters, offset);
+    }
+
+    private static PsiElement calcElementAtCaret(DBLanguagePsiFile file, PsiElement position) {
+        PsiElement elementAtCaret = position instanceof BasePsiElement ? (BasePsiElement) position : PsiUtil.lookupLeafAtOffset(file, position.getTextOffset());
+        elementAtCaret = elementAtCaret == null ? file : elementAtCaret;
+        return elementAtCaret;
+    }
+
+    private static String calcUserInput(PsiElement position, int offset) {
+        if (offset > position.getTextOffset()) {
+            return position.getText().substring(0, offset - position.getTextOffset());
+        }
+        return null;
+    }
+
+    private static boolean calcNewLine(CompletionParameters parameters, int offset) {
         Document document = parameters.getEditor().getDocument();
         int lineNumber = document.getLineNumber(offset);
         int lineStartOffset = document.getLineStartOffset(lineNumber);
         int lineEndOffset = Math.min(offset, document.getTextLength());
         if (lineStartOffset < lineEndOffset) {
             String text = document.getText(new TextRange(lineStartOffset, lineEndOffset));
-            newLine = !StringUtil.containsWhitespaces(text.trim());
+            return !StringUtil.containsWhitespaces(text.trim());
         }
+        return true;
     }
 
-    public String getUserInput() {
-        return userInput;
-    }
-
-    public CompletionParameters getParameters() {
-        return parameters;
-    }
-
-    public CompletionResultSet getResult() {
-        return result;
-    }
-
-    public PsiElement getElementAtCaret() {
-        return elementAtCaret;
-    }
-
+    @Nullable
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandler;
-    }
-
-    public void setExtended(boolean extended) {
-        this.extended = extended;
-    }
-
-    public boolean isExtended() {
-        return extended;
-    }
-
-    public ProjectCodeStyleSettings getCodeStyleSettings() {
-        return codeStyleSettings;
-    }
-
-    public CodeCompletionSettings getCodeCompletionSettings() {
-        return codeCompletionSettings;
+        return ConnectionHandlerRef.get(connectionHandler);
     }
 
     public CodeCompletionFilterSettings getCodeCompletionFilterSettings() {
         return codeCompletionSettings.getFilterSettings().getFilterSettings(extended);
     }
 
+    @NotNull
     public DBLanguagePsiFile getFile() {
-        return file;
+        return file.ensure();
     }
 
+    @NotNull
     public DBLanguage getLanguage() {
-        DBLanguageDialect languageDialect = file.getLanguageDialect();
+        DBLanguageDialect languageDialect = getFile().getLanguageDialect();
         return languageDialect == null ? SQLLanguage.INSTANCE : languageDialect.getBaseLanguage();
-    }
-
-    public double getDatabaseVersion() {
-        return databaseVersion;
-    }
-
-    public boolean isNewLine() {
-        return newLine;
     }
 }
