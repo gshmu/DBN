@@ -53,7 +53,7 @@ public abstract class AbstractMethodExecutionIntentionAction extends GenericInte
                         BasePsiElement methodPsiElement = METHOD_LOOKUP_ADAPTER.findInParentScopeOf(psiElement);
                         if (methodPsiElement instanceof IdentifierPsiElement) {
                             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) methodPsiElement;
-                            DBObject object = identifierPsiElement.resolveUnderlyingObject();
+                            DBObject object = identifierPsiElement.getUnderlyingObject();
                             if (object instanceof DBMethod) {
                                 DBMethod method = (DBMethod) object;
                                 lastChecked = method.getRef();

@@ -133,7 +133,7 @@ public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiE
             if (parentObjectPsiElements != null) {
                 for (BasePsiElement parentObjectPsiElement : parentObjectPsiElements) {
                     if (!parentObjectPsiElement.containsPsiElement(sourceScope)) {
-                        DBObject parentObject = parentObjectPsiElement.resolveUnderlyingObject();
+                        DBObject parentObject = parentObjectPsiElement.getUnderlyingObject();
                         parentObjects = addObjectToSet(parentObjects, parentObject);
                     }
                 }
