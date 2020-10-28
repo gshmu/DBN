@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -723,20 +722,18 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
 
     public abstract boolean matches(@Nullable BasePsiElement basePsiElement, MatchType matchType);
 
-    public DBObject resolveUnderlyingObject() {
+    public DBObject getUnderlyingObject() {
         if (isVirtualObject()) {
-            Synchronized.run(this,
-                    () -> getCachedUnderlyingObject() == null,
-                    () -> {
+            if (underlyingObject == null || !underlyingObject.isValid()) {
+                synchronized (this) {
+                    if (underlyingObject == null || !underlyingObject.isValid()) {
                         DBObjectType virtualObjectType = elementType.getVirtualObjectType();
                         underlyingObject = new DBVirtualObject(virtualObjectType, this);
-                    });
+                    }
+                }
+            }
         }
         return underlyingObject;
-    }
-
-    public DBVirtualObject getCachedUnderlyingObject() {
-        return underlyingObject != null && underlyingObject.isValid() ? underlyingObject : null;
     }
 
     public QuoteDefinition getIdentifierQuotes() {

@@ -60,7 +60,7 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                 BasePsiElement methodPsiElement = METHOD_LOOKUP_ADAPTER.findInElement(enclosingNamedPsiElement);
                 if (methodPsiElement instanceof IdentifierPsiElement) {
                     IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) methodPsiElement;
-                    DBObject object = identifierPsiElement.resolveUnderlyingObject();
+                    DBObject object = identifierPsiElement.getUnderlyingObject();
                     if (object instanceof DBMethod) {
                         DBMethod method = (DBMethod) object;
                         DBProgram program = method.getProgram();
@@ -152,7 +152,7 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
             if (iterationPsiElement != null) {
                 BasePsiElement argumentPsiElement = ARGUMENT_LOOKUP_ADAPTER.findInElement(parameter);
                 if (argumentPsiElement != null) {
-                    DBObject object = argumentPsiElement.resolveUnderlyingObject();
+                    DBObject object = argumentPsiElement.getUnderlyingObject();
                     if (object instanceof DBArgument) {
                         DBArgument argument = (DBArgument) object;
                         context.setCurrentParameter(argument.getPosition() -1);

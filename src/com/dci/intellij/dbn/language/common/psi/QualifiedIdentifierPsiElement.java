@@ -129,7 +129,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement<QualifiedI
 
     public DBObject lookupParentObjectFor(LeafPsiElement leafPsiElement) {
         LeafPsiElement parent = lookupParentElementFor(leafPsiElement);
-        return parent == null ? null : parent.resolveUnderlyingObject();
+        return parent == null ? null : parent.getUnderlyingObject();
     }
 
     public DBObject lookupParentObjectFor(LeafElementType leafElementType) {
@@ -139,7 +139,7 @@ public class QualifiedIdentifierPsiElement extends SequencePsiElement<QualifiedI
                 if (index > 0) {
                     IdentifierPsiElement previousPsiElement = getLeafAtIndex(index-1);
                     if (previousPsiElement != null) {
-                        DBObject parentObject = previousPsiElement.resolveUnderlyingObject();
+                        DBObject parentObject = previousPsiElement.getUnderlyingObject();
                         if (parentObject != null) {
                             return parentObject;
                         }

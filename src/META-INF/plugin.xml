@@ -589,7 +589,7 @@
             <category>Database/Connectivity</category>
         </intentionAction>
         <intentionAction>
-            <className>com.dci.intellij.dbn.code.common.intention.SelectConnectionIntentionAction</className>
+            <className>com.dci.intellij.dbn.code.common.intention.SelectSessionIntentionAction</className>
             <category>Database/Connectivity</category>
         </intentionAction>
         <intentionAction>
@@ -597,8 +597,9 @@
             <category>Database/Connectivity</category>
         </intentionAction>
         <intentionAction>
-            <className>com.dci.intellij.dbn.code.common.intention.SelectSessionIntentionAction</className>
-            <category>Database/Connectivity</category></intentionAction>
+            <className>com.dci.intellij.dbn.code.common.intention.SelectConnectionIntentionAction</className>
+            <category>Database/Connectivity</category>
+        </intentionAction>
         <intentionAction>
             <className>com.dci.intellij.dbn.code.common.intention.ToggleDatabaseLoggingIntentionAction</className>
             <category>Database/Statement execution</category>

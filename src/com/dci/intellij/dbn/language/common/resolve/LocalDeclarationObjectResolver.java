@@ -43,7 +43,7 @@ public class LocalDeclarationObjectResolver extends UnderlyingObjectResolver{
             }
         }
 
-        return underlyingObjectCandidate == null ? null : underlyingObjectCandidate.resolveUnderlyingObject() ;
+        return underlyingObjectCandidate == null ? null : underlyingObjectCandidate.getUnderlyingObject() ;
     }
 
     private static BasePsiElement findObject(IdentifierPsiElement identifierPsiElement, @NotNull NamedPsiElement enclosingNamedPsiElement, DBObjectType objectType) {
