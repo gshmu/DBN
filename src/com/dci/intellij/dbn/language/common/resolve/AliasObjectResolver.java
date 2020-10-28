@@ -37,7 +37,7 @@ public class AliasObjectResolver extends UnderlyingObjectResolver{
         BasePsiElement aliasedObject = PsiUtil.resolveAliasedEntityElement(identifierPsiElement);
         if (aliasedObject != null) {
             if (aliasedObject.isVirtualObject()) {
-                return aliasedObject.resolveUnderlyingObject();
+                return aliasedObject.getUnderlyingObject();
             } else if (aliasedObject instanceof IdentifierPsiElement) {
                 IdentifierPsiElement aliasedPsiElement = (IdentifierPsiElement) aliasedObject;
                 PsiElement underlyingPsiElement = aliasedPsiElement.resolve();

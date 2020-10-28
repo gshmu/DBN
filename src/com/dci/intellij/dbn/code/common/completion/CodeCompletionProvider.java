@@ -150,7 +150,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                 BasePsiElement parentPsiElement = element.getPrevElement();
                 if (parentPsiElement instanceof IdentifierPsiElement) {
                     parentIdentifierPsiElement = (IdentifierPsiElement) parentPsiElement;
-                    parentObject = parentIdentifierPsiElement.resolveUnderlyingObject();
+                    parentObject = parentIdentifierPsiElement.getUnderlyingObject();
 
                     if (parentObject != null) {
                         for (QualifiedIdentifierVariant parseVariant : qualifiedIdentifier.getParseVariants()){
@@ -170,7 +170,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             LeafPsiElement parentPsiElement = element.getPrevLeaf();
             if (parentPsiElement instanceof IdentifierPsiElement) {
                 parentIdentifierPsiElement = (IdentifierPsiElement) parentPsiElement;
-                parentObject = parentIdentifierPsiElement.resolveUnderlyingObject();
+                parentObject = parentIdentifierPsiElement.getUnderlyingObject();
             }
         } else if (parent instanceof BasePsiElement) {
             BasePsiElement basePsiElement = (BasePsiElement) parent;

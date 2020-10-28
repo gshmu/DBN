@@ -210,7 +210,7 @@ public class PSQLLanguageAnnotator implements Annotator {
                     }
 
                     if (codeEditorGeneralSettings.isShowObjectsNavigationGutter()) {
-                        NavigateToObjectAction navigateToObjectAction = new NavigateToObjectAction(identifierPsiElement.resolveUnderlyingObject(), objectType);
+                        NavigateToObjectAction navigateToObjectAction = new NavigateToObjectAction(identifierPsiElement.getUnderlyingObject(), objectType);
                         Annotation annotation = holder.createInfoAnnotation(basePsiElement, null);
                         annotation.setGutterIconRenderer(new NavigationGutterRenderer(navigateToObjectAction, GutterIconRenderer.Alignment.LEFT));
                     }
