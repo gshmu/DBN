@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.execution.common.message.ui;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.execution.common.message.action.ExecutedStatementViewAction;
@@ -49,16 +50,16 @@ public class ExecutionMessagesPanel extends DBNFormImpl{
         getMessagesTree().resetMessagesStatus();
     }
 
-    public TreePath addExecutionMessage(StatementExecutionMessage executionMessage, boolean select, boolean focus) {
-        return getMessagesTree().addExecutionMessage(executionMessage, select, focus);
+    public TreePath addExecutionMessage(StatementExecutionMessage executionMessage, NavigationInstructions instructions) {
+        return getMessagesTree().addExecutionMessage(executionMessage, instructions);
     }
 
-    public TreePath addCompilerMessage(CompilerMessage compilerMessage, boolean select) {
-        return getMessagesTree().addCompilerMessage(compilerMessage, select);
+    public TreePath addCompilerMessage(CompilerMessage compilerMessage, NavigationInstructions instructions) {
+        return getMessagesTree().addCompilerMessage(compilerMessage, instructions);
     }
 
-    public TreePath addExplainPlanMessage(ExplainPlanMessage explainPlanMessage, boolean select) {
-        return getMessagesTree().addExplainPlanMessage(explainPlanMessage, select);
+    public TreePath addExplainPlanMessage(ExplainPlanMessage explainPlanMessage, NavigationInstructions instructions) {
+        return getMessagesTree().addExplainPlanMessage(explainPlanMessage, instructions);
     }
 
     public void reset() {
@@ -71,12 +72,12 @@ public class ExecutionMessagesPanel extends DBNFormImpl{
         return mainPanel;
     }
 
-    public void selectMessage(@NotNull CompilerMessage compilerMessage) {
-        getMessagesTree().selectCompilerMessage(compilerMessage);
+    public void selectMessage(@NotNull CompilerMessage compilerMessage, NavigationInstructions instructions) {
+        getMessagesTree().selectCompilerMessage(compilerMessage, instructions);
     }
 
-    public void selectMessage(@NotNull StatementExecutionMessage statementExecutionMessage, boolean focus) {
-        getMessagesTree().selectExecutionMessage(statementExecutionMessage, focus);
+    public void selectMessage(@NotNull StatementExecutionMessage statementExecutionMessage, NavigationInstructions instructions) {
+        getMessagesTree().selectExecutionMessage(statementExecutionMessage, instructions);
     }
 
     public void expand(TreePath treePath) {

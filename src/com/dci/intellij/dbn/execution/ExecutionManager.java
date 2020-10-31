@@ -38,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoolean;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoolean;
 
@@ -106,19 +107,11 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         return getExecutionConsoleForm().getExecutionResultForm(executionResult);
     }
 
-    public void addExecutionResult(@NotNull CompilerResult compilerResult) {
+    public void addCompilerResult(@NotNull CompilerResult compilerResult) {
         Dispatch.run(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-            executionConsoleForm.addResult(compilerResult);
-        });
-    }
-
-    public void addExecutionResults(List<CompilerResult> compilerResults) {
-        Dispatch.run(() -> {
-            showExecutionConsole();
-            ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-            executionConsoleForm.addResults(compilerResults);
+            executionConsoleForm.addCompilerResult(compilerResult);
         });
     }
 
@@ -126,7 +119,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         Dispatch.run(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-            executionConsoleForm.addResult(explainPlanResult);
+            executionConsoleForm.addResult(explainPlanResult, NavigationInstructions.create(SELECT, FOCUS));
         });
     }
 
@@ -140,7 +133,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         });
     }
 
-    public void addExecutionResult(@NotNull StatementExecutionResult executionResult) {
+    public void addExecutionResult(@NotNull StatementExecutionResult executionResult, NavigationInstructions instructions) {
         Dispatch.run(() -> {
             showExecutionConsole();
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
@@ -163,7 +156,7 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
                         LogOutput.createSysOutput(context, " - Statement execution finished\n", false));
             }
 
-            executionConsoleForm.addResult(executionResult);
+            executionConsoleForm.addResult(executionResult, instructions);
             if (!executionResult.isBulkExecution() && !executionResult.hasCompilerResult() && !focusOnExecution()) {
                 executionResult.navigateToEditor(NavigationInstructions.FOCUS);
             }
@@ -186,10 +179,10 @@ public class ExecutionManager extends AbstractProjectComponent implements Persis
         });
     }
 
-    public void selectExecutionResult(final StatementExecutionResult executionResult) {
+    public void selectExecutionResult(StatementExecutionResult executionResult) {
         Dispatch.run(() -> {
             ExecutionConsoleForm executionConsoleForm = getExecutionConsoleForm();
-            executionConsoleForm.selectResult(executionResult);
+            executionConsoleForm.selectResult(executionResult, NavigationInstructions.create(FOCUS, SCROLL, SELECT));
             showExecutionConsole();
         });
 
