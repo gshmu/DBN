@@ -102,6 +102,11 @@ public class CompilerResult implements Disposable, NotificationSupport {
         return error;
     }
 
+    public boolean isSingleMessage() {
+        return compilerMessages.size() == 1;
+    }
+
+
     public List<CompilerMessage> getCompilerMessages() {
         return compilerMessages;
     }

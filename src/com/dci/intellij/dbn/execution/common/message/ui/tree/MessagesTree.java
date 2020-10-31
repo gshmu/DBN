@@ -52,6 +52,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
+
 public class MessagesTree extends DBNTree implements Disposable {
     private boolean ignoreSelectionEvent = false;
 
@@ -113,40 +115,43 @@ public class MessagesTree extends DBNTree implements Disposable {
         Disposer.dispose(oldModel);
     }
 
-    public TreePath addExecutionMessage(StatementExecutionMessage message, boolean select, boolean focus) {
+    public TreePath addExecutionMessage(StatementExecutionMessage message, NavigationInstructions instructions) {
         TreePath treePath = getModel().addExecutionMessage(message);
-        scrollToPath(treePath, select, focus);
+        scrollToPath(treePath, instructions);
         return treePath;
     }
 
-    public TreePath addCompilerMessage(CompilerMessage message, boolean select) {
+    public TreePath addCompilerMessage(CompilerMessage message, NavigationInstructions instructions) {
         TreePath treePath = getModel().addCompilerMessage(message);
-        scrollToPath(treePath, select, false);
+        scrollToPath(treePath, instructions);
         return treePath;
     }
 
-    public TreePath addExplainPlanMessage(ExplainPlanMessage message, boolean select) {
+    public TreePath addExplainPlanMessage(ExplainPlanMessage message, NavigationInstructions instructions) {
         TreePath treePath = getModel().addExplainPlanMessage(message);
-        scrollToPath(treePath, select, false);
+        scrollToPath(treePath, instructions);
         return treePath;
     }
 
-    public void selectCompilerMessage(CompilerMessage message) {
+    public void selectCompilerMessage(CompilerMessage message, NavigationInstructions instructions) {
         TreePath treePath = getModel().getTreePath(message);
-        scrollToPath(treePath, true, false);
+        scrollToPath(treePath, instructions);
     }
 
-    public void selectExecutionMessage(StatementExecutionMessage message, boolean focus) {
+    public void selectExecutionMessage(StatementExecutionMessage message, NavigationInstructions instructions) {
         TreePath treePath = getModel().getTreePath(message);
-        scrollToPath(treePath, true, focus);
+        scrollToPath(treePath, instructions);
     }
 
-    private void scrollToPath(TreePath treePath, boolean select, boolean focus) {
+    private void scrollToPath(TreePath treePath, NavigationInstructions instructions) {
         if (treePath != null) {
             Dispatch.run(() -> {
-                scrollPathToVisible(treePath);
+                if (instructions.isScroll()) {
+                    scrollPathToVisible(treePath);
+                }
+
                 TreeSelectionModel selectionModel = getSelectionModel();
-                if (select) {
+                if (instructions.isSelect()) {
                     try {
                         ignoreSelectionEvent = true;
                         selectionModel.setSelectionPath(treePath);
@@ -156,10 +161,11 @@ public class MessagesTree extends DBNTree implements Disposable {
                 } else {
                     selectionModel.clearSelection();
                 }
-                if (focus) {
+                if (instructions.isFocus()) {
                     requestFocus();
-                } else {
-                    navigateToCode(treePath.getLastPathComponent(), NavigationInstructions.FOCUS);
+
+                } else if (instructions.isOpen()){
+                    navigateToCode(treePath.getLastPathComponent(), NavigationInstructions.create(OPEN, SCROLL, FOCUS, SELECT));
                 }
             });
         }
