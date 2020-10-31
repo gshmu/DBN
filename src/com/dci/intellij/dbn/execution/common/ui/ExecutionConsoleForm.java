@@ -267,12 +267,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         boolean error = compilerResult.isError();
         boolean single = compilerResult.isSingleMessage();
 
-        NavigationInstructions instructions = NavigationInstructions.create().
-                with(RESET).
-                with(FOCUS, !bulk && error && single).
-                with(SCROLL, single);
-
-        prepareMessagesTab(instructions);
+        prepareMessagesTab(NavigationInstructions.create(RESET));
 
         CompilerMessage firstMessage = null;
         ExecutionMessagesPanel messagesPanel = getMessagesPanel();
@@ -281,7 +276,10 @@ public class ExecutionConsoleForm extends DBNFormImpl{
             if (firstMessage == null) {
                 firstMessage = compilerMessage;
             }
-            messagesPanel.addCompilerMessage(compilerMessage, instructions);
+            messagesPanel.addCompilerMessage(compilerMessage,
+                    NavigationInstructions.create().
+                    with(FOCUS, !bulk && error && single).
+                    with(SCROLL, single));
         }
 
         if (firstMessage != null && firstMessage.isError() && !bulk) {
