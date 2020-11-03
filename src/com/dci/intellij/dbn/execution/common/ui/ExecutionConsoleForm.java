@@ -167,7 +167,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
                     ExecutionResult<?> executionResult = getExecutionResult(newSelection);
                     if (executionResult instanceof StatementExecutionResult) {
                         StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
-                        statementExecutionResult.navigateToEditor(NavigationInstructions.SCROLL);
+                        statementExecutionResult.navigateToEditor(NavigationInstructions.create(FOCUS, SCROLL));
                     }
                 }
             }
