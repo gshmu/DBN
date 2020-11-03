@@ -352,7 +352,7 @@ public class MessagesTree extends DBNTree implements Disposable {
     private final TreeSelectionListener treeSelectionListener = event -> {
         if (event.isAddedPath() && !ignoreSelectionEvent) {
             Object object = event.getPath().getLastPathComponent();
-            navigateToCode(object, NavigationInstructions.OPEN_SCROLL);
+            navigateToCode(object, NavigationInstructions.create(OPEN, SCROLL));
             //grabFocus();
         }
     };
@@ -366,7 +366,7 @@ public class MessagesTree extends DBNTree implements Disposable {
             TreePath selectionPath = getSelectionPath();
             if (selectionPath != null) {
                 Object value = selectionPath.getLastPathComponent();
-                navigateToCode(value, NavigationInstructions.OPEN_FOCUS_SCROLL);
+                navigateToCode(value, NavigationInstructions.create(OPEN, FOCUS, SCROLL));
             }
         }
     });
@@ -381,7 +381,7 @@ public class MessagesTree extends DBNTree implements Disposable {
                 TreePath selectionPath = getSelectionPath();
                 if (selectionPath != null) {
                     Object value = selectionPath.getLastPathComponent();
-                    navigateToCode(value, NavigationInstructions.OPEN_FOCUS_SCROLL);
+                    navigateToCode(value, NavigationInstructions.create(OPEN, FOCUS, SCROLL));
                 }
             }
         }
