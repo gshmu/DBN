@@ -70,9 +70,8 @@ public class ExplainPlanIntentionAction extends GenericIntentionAction implement
         return false;
     }
 
-    @NotNull
     @Override
-    public Priority getPriority() {
-        return Priority.HIGH;
+    protected Integer getGroupPriority() {
+        return 2;
     }
 }

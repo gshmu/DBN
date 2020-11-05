@@ -89,9 +89,8 @@ public class JumpToExecutionResultIntentionAction extends GenericIntentionAction
         return false;
     }
 
-    @NotNull
     @Override
-    public Priority getPriority() {
-        return Priority.NORMAL;
+    protected Integer getGroupPriority() {
+        return super.getGroupPriority();
     }
 }
