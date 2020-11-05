@@ -45,4 +45,9 @@ public class DebugMethodIntentionAction extends AbstractMethodExecutionIntention
     public boolean startInWriteAction() {
         return false;
     }
+
+    @Override
+    protected Integer getGroupPriority() {
+        return 1;
+    }
 }

@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class GenericIntentionAction implements IntentionAction, Iconable, DumbAware {
+public abstract class GenericIntentionAction implements IntentionAction, PriorityAction, Iconable, DumbAware, Comparable {
 
     @Override
     @NotNull
@@ -27,8 +27,18 @@ public abstract class GenericIntentionAction implements IntentionAction, Iconabl
         return null;
     }
 
-    @NotNull
-    public PriorityAction.Priority getPriority() {
-        return PriorityAction.Priority.LOW;
+    protected Integer getGroupPriority() {
+        return 0;
+    }
+
+    @Override
+    public int compareTo(@NotNull Object o) {
+        if (o instanceof GenericIntentionAction) {
+            GenericIntentionAction a = (GenericIntentionAction) o;
+            int groupLevel = getPriority().compareTo(a.getPriority());
+
+            return groupLevel == 0 ? getGroupPriority().compareTo(a.getGroupPriority()) : groupLevel;
+        }
+        return 0;
     }
 }

@@ -49,4 +49,9 @@ public class SelectConnectionIntentionAction extends GenericIntentionAction impl
     public boolean startInWriteAction() {
         return false;
     }
+
+    @Override
+    protected Integer getGroupPriority() {
+        return 2;
+    }
 }
