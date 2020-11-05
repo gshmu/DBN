@@ -10,12 +10,13 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractMethodExecutionIntentionAction extends GenericIntentionAction {
+public abstract class AbstractMethodExecutionIntentionAction extends GenericIntentionAction implements HighPriorityAction {
     private DBObjectRef<DBMethod> lastChecked;
     public static final ObjectLookupAdapter METHOD_LOOKUP_ADAPTER = new ObjectLookupAdapter(null, IdentifierCategory.DEFINITION, DBObjectType.METHOD);
 
