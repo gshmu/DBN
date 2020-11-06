@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class ConnectionPool extends StatefulDisposable.Base implements NotificationSupport, Disposable {
@@ -41,7 +42,7 @@ public class ConnectionPool extends StatefulDisposable.Base implements Notificat
     private final ConnectionHandlerRef connectionHandler;
 
     private final List<DBNConnection> poolConnections = ContainerUtil.createLockFreeCopyOnWriteList();
-    private final Map<SessionId, DBNConnection> dedicatedConnections = ContainerUtil.newConcurrentMap();
+    private final Map<SessionId, DBNConnection> dedicatedConnections = new ConcurrentHashMap<>();
 
     private final IntervalLoader<Long> lastAccessTimestamp = new IntervalLoader<Long>(TimeUtil.Millis.TEN_SECONDS) {
         @Override
