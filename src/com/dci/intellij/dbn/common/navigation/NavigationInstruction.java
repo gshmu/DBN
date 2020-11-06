@@ -5,7 +5,9 @@ import com.dci.intellij.dbn.common.property.Property;
 public enum NavigationInstruction implements Property{
     OPEN,
     FOCUS,
-    SCROLL;
+    SCROLL,
+    SELECT,
+    RESET;
 
     private final int index = Property.idx(this);
 

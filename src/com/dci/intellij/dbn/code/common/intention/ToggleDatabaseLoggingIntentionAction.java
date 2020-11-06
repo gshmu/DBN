@@ -92,9 +92,8 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
         return false;
     }
 
-    @NotNull
     @Override
-    public Priority getPriority() {
-        return Priority.LOW;
+    protected Integer getGroupPriority() {
+        return 0;
     }
 }

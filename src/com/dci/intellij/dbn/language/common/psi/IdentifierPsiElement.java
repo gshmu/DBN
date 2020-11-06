@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.QuotePair;
@@ -42,12 +43,13 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElementType> {
+    private PsiResolveResult ref;
+    private final Latent<DBObject> underlyingObject = Latent.mutable(
+            () -> ref == null ? 0 : ref.getLastResolveInvocation(),
+            () -> loadUnderlyingObject());
+
     public IdentifierPsiElement(ASTNode astNode, IdentifierElementType elementType) {
         super(astNode, elementType);
-/*        ref = astNode.getUserData(PsiResolveResult.DATA_KEY);
-        if (ref != null) {
-            ref.accept(this);
-        }*/
     }
 
     @Override
@@ -222,15 +224,6 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     }
 
     /**
-     * TODO: !!method arguments resolve into the object type from their definition
-     */
-    public synchronized DBObject resolveUnderlyingObjectType() {
-        return null;
-    }
-
-    private boolean isResolvingUnderlyingObject = false;
-
-    /**
      * Looks-up whatever underlying database object may be referenced from this identifier.
      * - if this references to a synonym, the DBObject behind the synonym is returned.
      * - if this is an alias reference or definition, it returns the underlying DBObject of the aliased identifier.
@@ -239,49 +232,42 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
      */
     @Override
     @Nullable
-    public DBObject resolveUnderlyingObject() {
-        if (isResolvingUnderlyingObject) {
-            return null;
+    public DBObject getUnderlyingObject() {
+        return underlyingObject.get();
+    }
+
+    private DBObject loadUnderlyingObject() {
+        UnderlyingObjectResolver underlyingObjectResolver = elementType.getUnderlyingObjectResolver();
+        if (underlyingObjectResolver != null) {
+            DBObject underlyingObject = underlyingObjectResolver.resolve(this);
+            return resolveActualObject(underlyingObject);
         }
-        try {
-            isResolvingUnderlyingObject = true;
-            UnderlyingObjectResolver underlyingObjectResolver = elementType.getUnderlyingObjectResolver();
-            if (underlyingObjectResolver != null) {
-                DBObject underlyingObject = underlyingObjectResolver.resolve(this);
-                return resolveActualObject(underlyingObject);
+
+        IdentifierPsiElement originalElement = (IdentifierPsiElement) getOriginalElement();
+        PsiElement psiReferenceElement = originalElement.resolve();
+        if (psiReferenceElement != null && psiReferenceElement != this) {
+            if (psiReferenceElement instanceof DBObjectPsiElement) {
+                DBObjectPsiElement underlyingObject = (DBObjectPsiElement) psiReferenceElement;
+                DBObject object = underlyingObject.getObject();
+                return object == null ? null : resolveActualObject(object.getUndisposedElement());
             }
 
-
-            PsiElement psiReferenceElement = resolve();
-            if (psiReferenceElement != this) {
-                if (psiReferenceElement instanceof DBObjectPsiElement) {
-                    DBObjectPsiElement underlyingObject = (DBObjectPsiElement) psiReferenceElement;
-                    DBObject object = underlyingObject.getObject();
-                    return object == null ? null : resolveActualObject(object.getUndisposedElement());
-                }
-
-                if (psiReferenceElement instanceof IdentifierPsiElement) {
-                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiReferenceElement;
-                    return identifierPsiElement.resolveUnderlyingObject();
-                }
+            if (psiReferenceElement instanceof IdentifierPsiElement) {
+                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiReferenceElement;
+                return identifierPsiElement.getUnderlyingObject();
             }
-
-            if (isAlias() && isDefinition()) {
-                DBObject underlyingObject = AliasObjectResolver.getInstance().resolve(this);
-                return resolveActualObject(underlyingObject);
-            }
-
-            DBObject underlyingObject = SurroundingVirtualObjectResolver.getInstance().resolve(this);
-            if (underlyingObject != null) {
-                return underlyingObject;
-            }
-
-            return null;
-        } catch (ProcessCanceledException ignore){
-            return null;
-        } finally {
-            isResolvingUnderlyingObject = false;
         }
+
+        if (isAlias() && isDefinition()) {
+            DBObject underlyingObject = AliasObjectResolver.getInstance().resolve(this);
+            return resolveActualObject(underlyingObject);
+        }
+
+        DBObject underlyingObject = SurroundingVirtualObjectResolver.getInstance().resolve(this);
+        if (underlyingObject != null) {
+            return underlyingObject;
+        }
+        return null;
     }
 
     private static DBObject resolveActualObject(@Nullable DBObject object) {
@@ -334,7 +320,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
             IdentifierPsiElement parentElement = qualifiedIdentifier.getLeafAtIndex(index - 1);
             if (parentElement.resolve() != null) {
                 parentObjectElement = parentElement.isObject() || parentElement.isVariable() ? parentElement : PsiUtil.resolveAliasedEntityElement(parentElement);
-                parentObject = parentObjectElement != null ? parentElement.resolveUnderlyingObject() : null;
+                parentObject = parentObjectElement != null ? parentElement.getUnderlyingObject() : null;
             } else {
                 return;
             }
@@ -381,7 +367,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
             if (prevLeaf != null) {
                 LeafPsiElement parentPsiElement = prevLeaf.getPrevLeaf();
                 if (parentPsiElement != null) {
-                    DBObject object = parentPsiElement.resolveUnderlyingObject();
+                    DBObject object = parentPsiElement.getUnderlyingObject();
                     if (object != null && object != getFile().getUnderlyingObject()) {
                         DBObject referencedObject = object.getChildObject(refText.toString(), (short) 0, false);
                         if (updateReference(null, elementType, referencedObject)) return;
@@ -498,7 +484,6 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     /*********************************************************
      *                       PsiReference                    *
      ********************************************************/
-    private PsiResolveResult ref;
 
     @Override
     @Nullable
@@ -527,6 +512,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
         }
         if (ref.isDirty()) {
             //System.out.println("resolving " + getTextOffset() + " " + getText() + " - attempt " + ref.getResolveAttempts());
+            boolean cancelled = false;
             try {
                 ref.preResolve(this);
                 if (getParent() instanceof QualifiedIdentifierPsiElement) {
@@ -535,8 +521,11 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
                 } else {
                     resolveWithScopeParentLookup(getObjectType(), elementType);
                 }
-           } finally {
-                ref.postResolve();
+            } catch (ProcessCanceledException e){
+                cancelled = true;
+                throw e;
+            } finally {
+                ref.postResolve(cancelled);
             }
         }
         return ref.getReferencedElement();

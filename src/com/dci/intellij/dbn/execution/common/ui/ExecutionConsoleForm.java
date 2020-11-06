@@ -60,6 +60,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
+
 public class ExecutionConsoleForm extends DBNFormImpl{
     private JPanel mainPanel;
     //private Map<Component, ExecutionResult> executionResultsMap = new HashMap<Component, ExecutionResult>();
@@ -165,7 +167,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
                     ExecutionResult<?> executionResult = getExecutionResult(newSelection);
                     if (executionResult instanceof StatementExecutionResult) {
                         StatementExecutionResult statementExecutionResult = (StatementExecutionResult) executionResult;
-                        statementExecutionResult.navigateToEditor(NavigationInstructions.SCROLL);
+                        statementExecutionResult.navigateToEditor(NavigationInstructions.create(FOCUS, SCROLL));
                     }
                 }
             }
@@ -205,48 +207,48 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         return getResultTabs();
     }
 
-    public void selectResult(StatementExecutionResult executionResult) {
+    public void selectResult(StatementExecutionResult executionResult, NavigationInstructions instructions) {
         StatementExecutionMessage executionMessage = executionResult.getExecutionMessage();
         if (executionMessage != null) {
-            prepareMessagesTab(false);
+            prepareMessagesTab(instructions);
             ExecutionMessagesPanel messagesPane = getMessagesPanel();
-            messagesPane.selectMessage(executionMessage, true);
+            messagesPane.selectMessage(executionMessage, instructions);
         }
     }
 
-    public void addResult(ExplainPlanResult explainPlanResult) {
+    public void addResult(ExplainPlanResult explainPlanResult, NavigationInstructions instructions) {
         if (explainPlanResult.isError()) {
-            prepareMessagesTab(true);
+            prepareMessagesTab(instructions.with(RESET));
             ExecutionMessagesPanel messagesPane = getMessagesPanel();
             ExplainPlanMessage explainPlanMessage = new ExplainPlanMessage(explainPlanResult, MessageType.ERROR);
-            messagesPane.addExplainPlanMessage(explainPlanMessage, true);
+            messagesPane.addExplainPlanMessage(explainPlanMessage, instructions);
         } else {
             showResultTab(explainPlanResult);
         }
     }
 
-    public void addResult(StatementExecutionResult executionResult) {
+    public void addResult(StatementExecutionResult executionResult, NavigationInstructions instructions) {
         ExecutionMessagesPanel messagesPane = getMessagesPanel();
         TreePath messageTreePath = null;
         CompilerResult compilerResult = executionResult.getCompilerResult();
-        boolean hasCompilerResult = compilerResult != null;
-        boolean selectMessage = !executionResult.getExecutionProcessor().getExecutionInput().isBulkExecution() && !hasCompilerResult;
-        boolean focusMessage = selectMessage && focusOnExecution();
+        //boolean hasCompilerResult = compilerResult != null;
+        //boolean selectMessage = !executionResult.getExecutionProcessor().getExecutionInput().isBulkExecution() && !hasCompilerResult;
+        //boolean focusMessage = selectMessage && focusOnExecution();
         if (executionResult instanceof StatementExecutionCursorResult) {
             StatementExecutionMessage executionMessage = executionResult.getExecutionMessage();
             if (executionMessage == null) {
                 showResultTab(executionResult);
             } else {
-                prepareMessagesTab(true);
-                messageTreePath = messagesPane.addExecutionMessage(executionMessage, selectMessage, focusMessage);
+                prepareMessagesTab(instructions.with(RESET));
+                messageTreePath = messagesPane.addExecutionMessage(executionMessage, instructions);
             }
         } else {
-            prepareMessagesTab(true);
-            messageTreePath = messagesPane.addExecutionMessage(executionResult.getExecutionMessage(), selectMessage, focusMessage);
+            prepareMessagesTab(instructions.with(RESET));
+            messageTreePath = messagesPane.addExecutionMessage(executionResult.getExecutionMessage(), instructions);
         }
 
         if (compilerResult != null) {
-            addResult(compilerResult);
+            addCompilerResult(compilerResult);
         }
         if (messageTreePath != null) {
             messagesPane.expand(messageTreePath);
@@ -254,26 +256,34 @@ public class ExecutionConsoleForm extends DBNFormImpl{
     }
 
     private boolean focusOnExecution() {
-        ExecutionEngineSettings executionEngineSettings = ExecutionEngineSettings.getInstance(getProject());
+        Project project = ensureProject();
+        ExecutionEngineSettings executionEngineSettings = ExecutionEngineSettings.getInstance(project);
         StatementExecutionSettings statementExecutionSettings = executionEngineSettings.getStatementExecutionSettings();
         return statementExecutionSettings.isFocusResult();
     }
 
-    public void addResult(CompilerResult compilerResult) {
-        prepareMessagesTab(true);
+    public void addCompilerResult(@NotNull CompilerResult compilerResult) {
+        boolean bulk = compilerResult.getCompilerAction().isBulkCompile();
+        boolean error = compilerResult.isError();
+        boolean single = compilerResult.isSingleMessage();
+
+        prepareMessagesTab(NavigationInstructions.create(RESET));
+
         CompilerMessage firstMessage = null;
         ExecutionMessagesPanel messagesPanel = getMessagesPanel();
-        if (compilerResult.getCompilerMessages().size() > 0) {
-            for (CompilerMessage compilerMessage : compilerResult.getCompilerMessages()) {
-                if (firstMessage == null) {
-                    firstMessage = compilerMessage;
-                }
-                messagesPanel.addCompilerMessage(compilerMessage, false);
+
+        for (CompilerMessage compilerMessage : compilerResult.getCompilerMessages()) {
+            if (firstMessage == null) {
+                firstMessage = compilerMessage;
             }
+            messagesPanel.addCompilerMessage(compilerMessage,
+                    NavigationInstructions.create().
+                    with(FOCUS, !bulk && error && single).
+                    with(SCROLL, single));
         }
 
-        if (firstMessage != null && firstMessage.isError()) {
-            messagesPanel.selectMessage(firstMessage);
+        if (firstMessage != null && firstMessage.isError() && !bulk) {
+            messagesPanel.selectMessage(firstMessage, NavigationInstructions.create(SCROLL, SELECT, OPEN));
         }
     }
 
@@ -281,25 +291,6 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         showResultTab(executionResult);
     }
 
-    public void addResults(List<CompilerResult> compilerResults) {
-        prepareMessagesTab(true);
-        CompilerMessage firstMessage = null;
-        ExecutionMessagesPanel messagesPanel = getMessagesPanel();
-        for (CompilerResult compilerResult : compilerResults) {
-            if (compilerResult.getCompilerMessages().size() > 0) {
-                for (CompilerMessage compilerMessage : compilerResult.getCompilerMessages()) {
-                    if (firstMessage == null) {
-                        firstMessage = compilerMessage;
-                    }
-                    messagesPanel.addCompilerMessage(compilerMessage, false);
-                }
-            }
-        }
-        if (firstMessage != null && firstMessage.isError()) {
-            messagesPanel.selectMessage(firstMessage);
-        }
-    }
-    
     public ExecutionResult<?> getSelectedExecutionResult() {
         TabInfo selectedInfo = getResultTabs().getSelectedInfo();
         return selectedInfo == null ? null : getExecutionResult(selectedInfo);
@@ -318,10 +309,10 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         return executionMessagesPanel.get();
     }
 
-    private void prepareMessagesTab(boolean resetMessages) {
+    private void prepareMessagesTab(NavigationInstructions instructions) {
         TabbedPane resultTabs = getResultTabs();
         ExecutionMessagesPanel messagesPanel = getMessagesPanel();
-        if (resetMessages) {
+        if (instructions.isReset()) {
             messagesPanel.resetMessagesStatus();
         }
         JComponent component = messagesPanel.getComponent();
@@ -334,7 +325,7 @@ public class ExecutionConsoleForm extends DBNFormImpl{
         }
 
         TabInfo tabInfo = resultTabs.getTabAt(0);
-        resultTabs.select(tabInfo, true);
+        resultTabs.select(tabInfo, instructions.isFocus());
     }
 
 
@@ -355,7 +346,8 @@ public class ExecutionConsoleForm extends DBNFormImpl{
 
     @NotNull
     public ExecutionManager getExecutionManager() {
-        return ExecutionManager.getInstance(getProject());
+        Project project = ensureProject();
+        return ExecutionManager.getInstance(project);
     }
 
     private boolean isMessagesTabVisible() {

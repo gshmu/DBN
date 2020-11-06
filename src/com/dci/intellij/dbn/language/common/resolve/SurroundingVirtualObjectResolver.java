@@ -22,7 +22,7 @@ public class SurroundingVirtualObjectResolver extends UnderlyingObjectResolver{
         if (objectType != DBObjectType.DATASET) {
             BasePsiElement virtualObjectPsiElement = identifierPsiElement.findEnclosingVirtualObjectPsiElement(objectType);
             if (virtualObjectPsiElement != null) {
-                return virtualObjectPsiElement.resolveUnderlyingObject();
+                return virtualObjectPsiElement.getUnderlyingObject();
             }
         }
 

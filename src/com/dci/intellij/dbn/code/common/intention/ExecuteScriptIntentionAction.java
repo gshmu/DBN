@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.script.ScriptExecutionManager;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
-import com.intellij.codeInsight.intention.PriorityAction;
+import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class ExecuteScriptIntentionAction extends GenericIntentionAction {
+public class ExecuteScriptIntentionAction extends GenericIntentionAction implements HighPriorityAction {
     @Override
     @NotNull
     public String getText() {
@@ -57,9 +57,9 @@ public class ExecuteScriptIntentionAction extends GenericIntentionAction {
         return false;
     }
 
-    @NotNull
+
     @Override
-    public PriorityAction.Priority getPriority() {
-        return PriorityAction.Priority.NORMAL;
+    protected Integer getGroupPriority() {
+        return 3;
     }
 }

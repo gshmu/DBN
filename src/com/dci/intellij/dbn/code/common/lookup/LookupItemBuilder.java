@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.code.common.lookup;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
 import com.dci.intellij.dbn.code.common.completion.CodeCompletionLookupConsumer;
 import com.dci.intellij.dbn.code.common.completion.options.sorting.CodeCompletionSortingSettings;
-import com.dci.intellij.dbn.common.thread.Read;
 
 import javax.swing.*;
 
@@ -27,7 +26,7 @@ public abstract class LookupItemBuilder {
                 lookupItem = new CodeCompletionLookupItem(source, icon, text.toString(), textHint, bold);
             }
             adjustLookupItem(lookupItem);
-            Read.run(() -> context.getResult().addElement(lookupItem));
+            context.getResult().addElement(lookupItem);
         }
     }
 
