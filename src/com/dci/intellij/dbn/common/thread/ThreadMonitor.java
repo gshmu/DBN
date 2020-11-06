@@ -3,16 +3,16 @@ package com.dci.intellij.dbn.common.thread;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThreadMonitor {
-    private static ThreadLocal<ThreadInfo> THREAD_PROPERTIES = new ThreadLocal<>();
-    private static Map<ThreadProperty, AtomicInteger> PROCESS_COUNTERS = ContainerUtil.newConcurrentMap();
+    private static final ThreadLocal<ThreadInfo> THREAD_PROPERTIES = new ThreadLocal<>();
+    private static final Map<ThreadProperty, AtomicInteger> PROCESS_COUNTERS = new ConcurrentHashMap<>();
 
     public static ThreadInfo current() {
         ThreadInfo threadInfo = THREAD_PROPERTIES.get();
