@@ -77,9 +77,8 @@ public class ExecuteStatementIntentionAction extends GenericIntentionAction impl
         return false;
     }
 
-    @NotNull
     @Override
-    public Priority getPriority() {
-        return Priority.TOP;
+    protected Integer getGroupPriority() {
+        return 0;
     }
 }

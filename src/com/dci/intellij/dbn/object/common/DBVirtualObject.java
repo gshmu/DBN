@@ -77,11 +77,11 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     private boolean loadingChildren;
     private WeakRef<BasePsiElement> relevantPsiElement;
-    private DBObjectPsiFacade psiFacade;
-    private MapLatent<DBLanguage, ObjectLookupItemBuilder, RuntimeException> lookupItemBuilder =
+    private final DBObjectPsiFacade psiFacade;
+    private final MapLatent<DBLanguage, ObjectLookupItemBuilder, RuntimeException> lookupItemBuilder =
             MapLatent.create(key -> new ObjectLookupItemBuilder(getRef(), key));
 
-    private BasicProperty<Boolean> valid = new BasicProperty<Boolean>(true) {
+    private final BasicProperty<Boolean> valid = new BasicProperty<Boolean>(true) {
         @Override
         protected Boolean load() {
             return Read.call(() -> {
@@ -253,7 +253,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                                     int index = qualifiedIdentifierPsiElement.getIndexOf(starPsiElement);
                                     if (index > 0) {
                                         IdentifierPsiElement parentPsiElement = qualifiedIdentifierPsiElement.getLeafAtIndex(index - 1);
-                                        DBObject object = parentPsiElement.resolveUnderlyingObject();
+                                        DBObject object = parentPsiElement.getUnderlyingObject();
                                         if (object != null && object.getObjectType().matches(DBObjectType.DATASET)) {
                                             List<DBObject> columns = object.getChildObjects(DBObjectType.COLUMN);
                                             for (DBObject column : columns) {
@@ -265,7 +265,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                                     Set<BasePsiElement> basePsiElements = DATASET_LOOKUP_ADAPTER.collectInElement(underlyingPsiElement, null);
                                     if (basePsiElements != null) {
                                         for (BasePsiElement basePsiElement : basePsiElements) {
-                                            DBObject object = basePsiElement.resolveUnderlyingObject();
+                                            DBObject object = basePsiElement.getUnderlyingObject();
                                             if (object != null && object != this && object.getObjectType().matches(DBObjectType.DATASET)) {
                                                 List<DBObject> columns = object.getChildObjects(DBObjectType.COLUMN);
                                                 for (DBObject column : columns) {
@@ -279,7 +279,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                             }
                         }
 
-                        DBObject object = child.resolveUnderlyingObject();
+                        DBObject object = child.getUnderlyingObject();
                         if (object != null && object.getObjectType().isChildOf(getObjectType()) && !objectList.getAllElements().contains(object)) {
                             if (object instanceof DBVirtualObject) {
                                 DBVirtualObject virtualObject = (DBVirtualObject) object;

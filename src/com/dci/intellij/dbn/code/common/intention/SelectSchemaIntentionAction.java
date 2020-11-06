@@ -53,4 +53,9 @@ public class SelectSchemaIntentionAction extends GenericIntentionAction implemen
     public boolean startInWriteAction() {
         return false;
     }
+
+    @Override
+    protected Integer getGroupPriority() {
+        return 3;
+    }
 }

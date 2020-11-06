@@ -10,12 +10,13 @@ import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class AbstractMethodExecutionIntentionAction extends GenericIntentionAction {
+public abstract class AbstractMethodExecutionIntentionAction extends GenericIntentionAction implements HighPriorityAction {
     private DBObjectRef<DBMethod> lastChecked;
     public static final ObjectLookupAdapter METHOD_LOOKUP_ADAPTER = new ObjectLookupAdapter(null, IdentifierCategory.DEFINITION, DBObjectType.METHOD);
 
@@ -53,7 +54,7 @@ public abstract class AbstractMethodExecutionIntentionAction extends GenericInte
                         BasePsiElement methodPsiElement = METHOD_LOOKUP_ADAPTER.findInParentScopeOf(psiElement);
                         if (methodPsiElement instanceof IdentifierPsiElement) {
                             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) methodPsiElement;
-                            DBObject object = identifierPsiElement.resolveUnderlyingObject();
+                            DBObject object = identifierPsiElement.getUnderlyingObject();
                             if (object instanceof DBMethod) {
                                 DBMethod method = (DBMethod) object;
                                 lastChecked = method.getRef();

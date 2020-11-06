@@ -28,7 +28,7 @@ public class PSQLDocumentationProvider implements DocumentationProvider {
                     if (aliasedObjectElement == null) {
                         return "unknown alias";
                     } else {
-                        DBObject aliasedObject = aliasedObjectElement.resolveUnderlyingObject();
+                        DBObject aliasedObject = aliasedObjectElement.getUnderlyingObject();
                         if (aliasedObject == null) {
                             return "alias of " + aliasedObjectElement.getReferenceQualifiedName();
                         } else {

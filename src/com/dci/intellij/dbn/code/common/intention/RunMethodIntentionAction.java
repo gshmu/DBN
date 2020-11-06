@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBMethod;
-import com.intellij.codeInsight.intention.HighPriorityAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class RunMethodIntentionAction extends AbstractMethodExecutionIntentionAction implements HighPriorityAction {
+public class RunMethodIntentionAction extends AbstractMethodExecutionIntentionAction{
 
     @Override
     protected String getActionName() {
@@ -47,5 +46,10 @@ public class RunMethodIntentionAction extends AbstractMethodExecutionIntentionAc
     @Override
     public boolean startInWriteAction() {
         return false;
+    }
+
+    @Override
+    protected Integer getGroupPriority() {
+        return 0;
     }
 }
