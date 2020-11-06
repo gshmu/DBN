@@ -45,6 +45,11 @@ public class PsiFileRef<T extends PsiFile>{
         return new PsiFileRef<>(psiFile);
     }
 
+    @Nullable
+    public static <T extends PsiFile> T from(@Nullable PsiFileRef<T> psiFileRef) {
+        return psiFileRef == null ? null : psiFileRef.get();
+    }
+
     @NotNull
     public T ensure() {
         return Failsafe.nn(get());

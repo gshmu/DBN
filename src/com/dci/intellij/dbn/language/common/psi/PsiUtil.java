@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -316,7 +317,7 @@ public class PsiUtil {
     @Nullable
     public static PsiFile getPsiFile(@NotNull Project project, @NotNull VirtualFile virtualFile) {
         return Read.call(() -> {
-            if (virtualFile.isValid()) {
+            if (virtualFile.isValid() && Failsafe.check(project)) {
                 PsiManager psiManager = PsiManager.getInstance(project);
                 return psiManager.findFile(virtualFile);
             } else {
