@@ -5,13 +5,11 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.components.JBList;
-import com.intellij.ui.popup.PopupState;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -25,7 +23,7 @@ public class CompatibilityUtil {
     }
 
     public static void showSearchCompletionPopup(boolean byClickingToolbarButton, JComponent toolbarComponent, JBList list, String title, JTextField textField) {
-        Utils.showCompletionPopup(byClickingToolbarButton ? toolbarComponent : null, list, title, textField, "", (PopupState<JBPopup>) null);
+        Utils.showCompletionPopup(byClickingToolbarButton ? toolbarComponent : null, list, title, textField, "", null);
     }
 
 
