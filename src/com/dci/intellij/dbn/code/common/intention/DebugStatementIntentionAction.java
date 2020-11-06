@@ -78,9 +78,8 @@ public class DebugStatementIntentionAction extends GenericIntentionAction implem
         return false;
     }
 
-    @NotNull
     @Override
-    public Priority getPriority() {
-        return Priority.NORMAL;
+    protected Integer getGroupPriority() {
+        return 1;
     }
 }

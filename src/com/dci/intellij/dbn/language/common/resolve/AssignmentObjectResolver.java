@@ -26,7 +26,7 @@ public class AssignmentObjectResolver extends UnderlyingObjectResolver{
             PsiLookupAdapter lookupAdapter = new ObjectReferenceLookupAdapter(identifierPsiElement, DBObjectType.TYPE, null);
             BasePsiElement underlyingObjectCandidate = lookupAdapter.findInElement(enclosingNamedPsiElement);
 
-            return underlyingObjectCandidate == null ? null : underlyingObjectCandidate.resolveUnderlyingObject() ;
+            return underlyingObjectCandidate == null ? null : underlyingObjectCandidate.getUnderlyingObject() ;
         }
         return null;
     }

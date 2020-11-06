@@ -71,6 +71,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.FilePathType.*;
 
 public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysicalFileSystem, */NamedComponent {
@@ -229,7 +230,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         }
 
         if (index > -1) {
-            for (FilePathType value : values()) {
+            for (FilePathType value : FilePathType.values()) {
                 path = path.replace(value.urlToken, value.presentableUrlToken);
             }
 
@@ -443,8 +444,8 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         if (isEditable(object) && !DBFileOpenHandle.isFileOpening(object)) {
             DBFileOpenHandle handle = DBFileOpenHandle.create(object).
                     withEditorProviderId(editorProviderId).
-                    withEditorInstructions(NavigationInstructions.create(true, focusEditor, true)).
-                    withBrowserInstructions(NavigationInstructions.create(false, false, scrollBrowser));
+                    withEditorInstructions(NavigationInstructions.create().with(OPEN).with(SCROLL).with(FOCUS, focusEditor)).
+                    withBrowserInstructions(NavigationInstructions.create().with(SCROLL, scrollBrowser));
 
             try {
                 handle.init();
@@ -503,7 +504,9 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
 
                     FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
                     fileEditorManager.openFile(databaseFile, focusEditor);
-                    NavigationInstructions instructions = focusEditor ? NavigationInstructions.FOCUS_SCROLL : NavigationInstructions.SCROLL;
+                    NavigationInstructions instructions = NavigationInstructions.create().
+                            with(SCROLL).
+                            with(FOCUS, focusEditor);
                     EditorUtil.selectEditor(project, null, databaseFile, editorProviderId, instructions);
                 }
             }
@@ -531,7 +534,10 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
                     for (FileEditor fileEditor : fileEditors) {
                         if (fileEditor instanceof SourceCodeMainEditor) {
                             SourceCodeMainEditor sourceCodeEditor = (SourceCodeMainEditor) fileEditor;
-                            NavigationInstructions instructions = focusEditor ? NavigationInstructions.FOCUS_SCROLL : NavigationInstructions.SCROLL;
+                            NavigationInstructions instructions = NavigationInstructions.create().
+                                    with(SCROLL).
+                                    with(FOCUS, focusEditor);
+
                             EditorUtil.selectEditor(project, fileEditor, databaseFile, editorProviderId, instructions);
                             sourceCodeEditor.navigateTo(object);
                             break;

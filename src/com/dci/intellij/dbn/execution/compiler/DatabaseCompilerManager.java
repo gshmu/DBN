@@ -78,13 +78,15 @@ public class DatabaseCompilerManager extends AbstractProjectComponent {
     private void createCompilerResult(DBSchemaObject object, CompilerAction compilerAction) {
         Project project = object.getProject();
         CompilerResult compilerResult = new CompilerResult(compilerAction, object);
-        ExecutionManager.getInstance(project).addExecutionResult(compilerResult);
+        ExecutionManager executionManager = ExecutionManager.getInstance(project);
+        executionManager.addCompilerResult(compilerResult);
     }
 
     private void createErrorCompilerResult(CompilerAction compilerAction, DBSchemaObject object, DBContentType contentType, Exception e) {
         Project project = object.getProject();
-        CompilerResult compilerResult = new CompilerResult(compilerAction, object, contentType,"Could not perform compile operation. \nCause: " + e.getMessage());
-        ExecutionManager.getInstance(project).addExecutionResult(compilerResult);
+        CompilerResult compilerResult = new CompilerResult(compilerAction, object, contentType, "Could not perform compile operation. \nCause: " + e.getMessage());
+        ExecutionManager executionManager = ExecutionManager.getInstance(project);
+        executionManager.addCompilerResult(compilerResult);
     }
 
     public CompileType getCompileType(@Nullable DBSchemaObject object, DBContentType contentType) {

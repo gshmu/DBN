@@ -96,7 +96,7 @@ public class StatementExecutionVariablesBundle extends StatefulDisposable.Base i
             BasePsiElement basePsiElement = lookupAdapter.findInScope(conditionPsiElement);
             if (basePsiElement instanceof IdentifierPsiElement) {
                 IdentifierPsiElement columnPsiElement = (IdentifierPsiElement) basePsiElement;
-                DBObject object = columnPsiElement.resolveUnderlyingObject();
+                DBObject object = columnPsiElement.getUnderlyingObject();
                 if (object instanceof DBColumn) {
                     DBColumn column = (DBColumn) object;
                     return column.getDataType();

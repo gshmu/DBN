@@ -56,4 +56,9 @@ public class SelectSessionIntentionAction extends GenericIntentionAction impleme
     public boolean startInWriteAction() {
         return false;
     }
+
+    @Override
+    protected Integer getGroupPriority() {
+        return 1;
+    }
 }

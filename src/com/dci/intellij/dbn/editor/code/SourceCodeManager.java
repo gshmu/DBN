@@ -70,6 +70,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 import static com.dci.intellij.dbn.common.util.MessageUtil.*;
 import static com.dci.intellij.dbn.common.util.NamingUtil.unquote;
@@ -555,8 +556,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
             if (textEditor != null) {
                 Project project = getProject();
                 EditorProviderId editorProviderId = textEditor.getEditorProviderId();
-                FileEditor fileEditor = EditorUtil.selectEditor(project, textEditor, editableObjectFile, editorProviderId, NavigationInstructions.OPEN);
-                basePsiElement.navigateInEditor(fileEditor, NavigationInstructions.FOCUS_SCROLL);
+                FileEditor fileEditor = EditorUtil.selectEditor(project, textEditor, editableObjectFile, editorProviderId, NavigationInstructions.create(OPEN));
+                basePsiElement.navigateInEditor(fileEditor, NavigationInstructions.create(FOCUS, SCROLL));
             }
         }
     }
