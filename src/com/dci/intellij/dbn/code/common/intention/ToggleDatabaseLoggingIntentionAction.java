@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction implements LowPriorityAction {
-    private PsiFileRef lastChecked;
+    private PsiFileRef<?> lastChecked;
 
     @Override
     @NotNull
@@ -51,8 +51,9 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
 
 
     ConnectionHandler getLastCheckedConnection() {
-        if (lastChecked != null && lastChecked.get() != null) {
-            ConnectionHandler connectionHandler = getConnectionHandler(lastChecked.get());
+        PsiFile psiFile = PsiFileRef.from(lastChecked);
+        if (psiFile != null) {
+            ConnectionHandler connectionHandler = getConnectionHandler(psiFile);
             if (supportsLogging(connectionHandler)) {
                 return connectionHandler;
             }
