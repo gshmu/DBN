@@ -61,7 +61,10 @@ import java.util.stream.Collectors;
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
-import static com.dci.intellij.dbn.common.util.MessageUtil.*;
+import static com.dci.intellij.dbn.common.util.MessageUtil.options;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showErrorDialog;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showInfoDialog;
+import static com.dci.intellij.dbn.common.util.MessageUtil.showWarningDialog;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
 
 @State(
@@ -109,7 +112,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
 
     @Nullable
     private static ConnectionHandler getLastUsedConnection() {
-        return lastUsedConnection.get();
+        return lastUsedConnection == null ? null : lastUsedConnection.get();
     }
 
     @Nullable
