@@ -30,6 +30,7 @@ import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -363,6 +364,11 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
             return rowAtIndex == null ? null : rowAtIndex.getSessionId();
         }
         return null;
+    }
+
+    @Override
+    public @Nullable VirtualFile getFile() {
+        return getDatabaseFile();
     }
 
     private class RefreshTask extends TimerTask {
