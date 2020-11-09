@@ -44,6 +44,7 @@ import java.util.Set;
 
 public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElementType> {
     private PsiResolveResult ref;
+    private boolean resolvingUnderlyingObject;
     private final Latent<DBObject> underlyingObject = Latent.mutable(
             () -> ref == null ? 0 : ref.getLastResolveInvocation(),
             () -> loadUnderlyingObject());
@@ -233,7 +234,19 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     @Override
     @Nullable
     public DBObject getUnderlyingObject() {
-        return underlyingObject.get();
+        if (!resolvingUnderlyingObject) {
+            synchronized (this) {
+                if (!resolvingUnderlyingObject) {
+                    try {
+                        resolvingUnderlyingObject = true;
+                        return underlyingObject.get();
+                    } finally {
+                        resolvingUnderlyingObject = false;
+                    }
+                }
+            }
+        }
+        return underlyingObject.value();
     }
 
     private DBObject loadUnderlyingObject() {
