@@ -1,11 +1,13 @@
 package com.dci.intellij.dbn.common.dispose;
 
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.intellij.mock.MockProject;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,4 +67,5 @@ public class Failsafe {
             invoker.run(target);
         }
     }
+
 }

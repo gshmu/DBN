@@ -102,7 +102,7 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> 
     }
 
     private class ApplyAction extends AbstractAction {
-        private final Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
+        private final Alarm alarm = new Alarm(ProjectSettingsDialog.this);
         private final Runnable reloader = new Runnable() {
             @Override
             public void run() {

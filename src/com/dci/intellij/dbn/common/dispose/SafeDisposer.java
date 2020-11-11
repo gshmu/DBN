@@ -47,6 +47,8 @@ public interface SafeDisposer {
     static void register(@Nullable Disposable parent, @NotNull Disposable disposable) {
         if (Failsafe.check(parent)) {
             Disposer.register(parent, disposable);
+        } else {
+            Disposer.dispose(disposable);
         }
     }
 
