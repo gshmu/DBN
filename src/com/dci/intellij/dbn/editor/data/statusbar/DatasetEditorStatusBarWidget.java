@@ -90,27 +90,22 @@ public class DatasetEditorStatusBarWidget extends AbstractProjectComponent imple
     }
 
     public void update() {
-        if (!updateAlarm.isDisposed()) {
-            updateAlarm.cancelAllRequests();
-            if (!updateAlarm.isDisposed()) {
-                updateAlarm.addRequest(() -> {
-                    DatasetEditorTable editorTable = getEditorTable();
-                    MathResult mathResult = Safe.call(editorTable, table -> table.getSelectionMath());
+        Safe.queueRequest(updateAlarm, 100, true, () -> {
+            DatasetEditorTable editorTable = getEditorTable();
+            MathResult mathResult = Safe.call(editorTable, table -> table.getSelectionMath());
 
-                    if (mathResult == null) {
-                        textLabel.setText("");
-                        textLabel.setIcon(null);
-                    } else {
-                        textLabel.setText(" " +
-                                "Sum " +  mathResult.getSum() + "   " +
-                                "Count " + mathResult.getCount() + "   " +
-                                "Average " + mathResult.getAverage());
-                        textLabel.setIcon(Icons.COMMON_DATA_GRID);
-                    }
-                    GUIUtil.repaint(getComponent());
-                }, 100);
+            if (mathResult == null) {
+                textLabel.setText("");
+                textLabel.setIcon(null);
+            } else {
+                textLabel.setText(" " +
+                        "Sum " +  mathResult.getSum() + "   " +
+                        "Count " + mathResult.getCount() + "   " +
+                        "Average " + mathResult.getAverage());
+                textLabel.setIcon(Icons.COMMON_DATA_GRID);
             }
-        }
+            GUIUtil.repaint(getComponent());
+        });
     }
 
     @Override
