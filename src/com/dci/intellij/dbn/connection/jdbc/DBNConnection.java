@@ -376,12 +376,12 @@ public class DBNConnection extends DBNConnectionBase {
     /********************************************************************
      *                             Data changes                         *
      ********************************************************************/
-    public void notifyDataChanges(VirtualFile virtualFile) {
+    public void notifyDataChanges(@NotNull VirtualFile virtualFile) {
         if (!getAutoCommit()) {
             if (dataChanges == null) {
                 dataChanges = new PendingTransactionBundle();
             }
-            dataChanges.notifyChange(virtualFile);
+            dataChanges.notifyChange(virtualFile, this);
         }
     }
 
