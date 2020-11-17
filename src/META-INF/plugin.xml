@@ -210,8 +210,8 @@
         <component><implementation-class>com.dci.intellij.dbn.object.dependency.ObjectDependencyManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.options.ProjectSettingsManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.vfs.DatabaseFileManager</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.connection.console.DatabaseConsoleManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.session.DatabaseSessionManager</implementation-class></component>
+        <component><implementation-class>com.dci.intellij.dbn.connection.console.DatabaseConsoleManager</implementation-class></component>
     </project-components>
     <module-components>
         <!--<component><implementation-class>com.dci.intellij.dbn.browser.cache.ModuleBrowserCacheComponent</implementation-class></component>-->
@@ -267,7 +267,7 @@
                 <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift M"/>
             </action>
             <action class="com.dci.intellij.dbn.menu.action.ResourceMonitorOpenAction" text="Resource Monitor" id="DBNavigator.Actions.MainMenu.ResourceMonitor"/>
-            <action class="com.dci.intellij.dbn.menu.action.PendingTransactionsOpenAction" text="Uncommitted Changes" id="DBNavigator.Actions.MainMenu.PendingTransactions"/>
+            <action class="com.dci.intellij.dbn.menu.action.PendingTransactionsOpenAction" text="Open Transactions" id="DBNavigator.Actions.MainMenu.PendingTransactions"/>
             <separator/>
             <group id="DBNavigator.ActionGroup.Development" text="Development" popup="true">
                 <action id="DBNavigator.Actions.MainMenu.DevelopmentReset" class="com.dci.intellij.dbn.menu.action.MetaDataDefinitionReloadAction" text="Reload Metadata Definitions"/>

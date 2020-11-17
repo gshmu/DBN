@@ -55,8 +55,9 @@ public class ResourceMonitorForm extends DBNFormImpl {
 
     private void updateListModel() {
         checkDisposed();
+        int selectedIndex = Integer.max(connectionsList.getSelectedIndex(), 0);
         DefaultListModel<ConnectionHandler> model = new DefaultListModel<>();
-        ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+        ConnectionManager connectionManager = ConnectionManager.getInstance(ensureProject());
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
         for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
             checkDisposed();
@@ -64,8 +65,8 @@ public class ResourceMonitorForm extends DBNFormImpl {
             model.addElement(connectionHandler);
         }
         connectionsList.setModel(model);
-        if (model.size() > 0) {
-            connectionsList.setSelectedIndex(0);
+        if (model.size() > selectedIndex) {
+            connectionsList.setSelectedIndex(selectedIndex);
         }
     }
 
@@ -107,9 +108,9 @@ public class ResourceMonitorForm extends DBNFormImpl {
                 changes += dataChanges == null ? 0 : dataChanges.size();
             }
 
-            if (changes > 0) {
+/*            if (changes > 0) {
                 append(" (" + changes + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
-            }
+            }*/
         }
     }
 
