@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
-import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.dialog.DBNDialog;
@@ -25,7 +24,7 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
     private final TransactionAction additionalOperation;
 
     public PendingTransactionsDialog(Project project, TransactionAction additionalOperation) {
-        super(project, "Uncommitted changes overview", true);
+        super(project, "Open transactions overview", true);
         this.additionalOperation = additionalOperation;
         setModal(false);
         setResizable(true);
@@ -55,7 +54,7 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
         super.doOKAction();
     }
 
-    private final AbstractAction commitAllAction = new AbstractAction("Commit all", Icons.CONNECTION_COMMIT) {
+    private final AbstractAction commitAllAction = new AbstractAction("Commit all") {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
@@ -72,7 +71,7 @@ public class PendingTransactionsDialog extends DBNDialog<PendingTransactionsForm
         }
     };
 
-    private final AbstractAction rollbackAllAction = new AbstractAction("Rollback all", Icons.CONNECTION_ROLLBACK) {
+    private final AbstractAction rollbackAllAction = new AbstractAction("Rollback all") {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {

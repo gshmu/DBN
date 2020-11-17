@@ -48,11 +48,13 @@ public class ConsoleSaveToFileAction extends DumbAwareProjectAction {
                         VirtualFile newVirtualFile = virtualFileWrapper.getVirtualFile(true);
                         if (newVirtualFile != null) {
                             newVirtualFile.setBinaryContent(document.getCharsSequence().toString().getBytes());
-                            FileConnectionMappingManager fileConnectionMappingManager = FileConnectionMappingManager.getInstance(project);
-                            fileConnectionMappingManager.setConnectionHandler(newVirtualFile, consoleVirtualFile.getConnectionHandler());
-                            fileConnectionMappingManager.setDatabaseSchema(newVirtualFile, consoleVirtualFile.getSchemaId());
+                            FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);
+                            mappingManager.setConnectionHandler(newVirtualFile, consoleVirtualFile.getConnectionHandler());
+                            mappingManager.setDatabaseSchema(newVirtualFile, consoleVirtualFile.getSchemaId());
+                            mappingManager.setDatabaseSession(newVirtualFile, consoleVirtualFile.getDatabaseSession());
 
-                            FileEditorManager.getInstance(project).openFile(newVirtualFile, true);
+                            FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
+                            fileEditorManager.openFile(newVirtualFile, true);
                         }
                     } catch (IOException e1) {
                         MessageUtil.showErrorDialog(project, "Error saving to file", "Could not save console content to file \"" + virtualFileWrapper.getFile().getName() + "\"", e1);

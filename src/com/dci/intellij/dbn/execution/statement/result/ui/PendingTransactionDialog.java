@@ -16,11 +16,11 @@ import static com.dci.intellij.dbn.execution.ExecutionStatus.PROMPTED;
 public class PendingTransactionDialog extends DialogWithTimeout {
     private final CommitAction commitAction;
     private final RollbackAction rollbackAction;
-    private StatementExecutionProcessor executionProcessor;
-    private PendingTransactionDialogForm transactionForm;
+    private final StatementExecutionProcessor executionProcessor;
+    private final PendingTransactionDialogForm transactionForm;
 
     public PendingTransactionDialog(StatementExecutionProcessor executionProcessor) {
-        super(executionProcessor.getProject(), "Uncommitted changes", true, TimeUtil.getSeconds(5));
+        super(executionProcessor.getProject(), "Open transactions", true, TimeUtil.getSeconds(5));
         setModal(true);
         setResizable(true);
         this.executionProcessor = executionProcessor;

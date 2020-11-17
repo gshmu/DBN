@@ -14,9 +14,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.COMMIT;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.ROLLBACK;
-import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
+import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
 
 public class PendingTransactionsDetailDialog extends DBNDialog<PendingTransactionsDetailForm> {
     private final ConnectionHandlerRef connectionHandlerRef;
@@ -24,7 +22,7 @@ public class PendingTransactionsDetailDialog extends DBNDialog<PendingTransactio
     private final boolean showActions;
 
     public PendingTransactionsDetailDialog(ConnectionHandler connectionHandler, TransactionAction additionalOperation, boolean showActions) {
-        super(connectionHandler.getProject(), "Uncommitted changes", true);
+        super(connectionHandler.getProject(), "Open transactions", true);
         this.connectionHandlerRef = connectionHandler.getRef();
         this.additionalOperation = additionalOperation;
         this.showActions = showActions;

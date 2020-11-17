@@ -29,8 +29,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.actions;
@@ -43,8 +41,6 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     private JPanel headerPanel;
     private JPanel sessionsPanel;
     private JBScrollPane transactionsTableScrollPane;
-    private JButton commitButton;
-    private JButton rollbackButton;
     private JLabel openTransactionsLabel;
 
     private final ConnectionHandlerRef connectionHandler;
@@ -79,9 +75,6 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         transactionsTableScrollPane.getViewport().setBackground(transactionsTable.getBackground());
 
         GuiUtils.replaceJSplitPaneWithIDEASplitter(mainPanel);
-
-        commitButton.addActionListener(transactionActionListener);
-        rollbackButton.addActionListener(transactionActionListener);
 
         Project project = ensureProject();
         ProjectEvents.subscribe(project, this, TransactionListener.TOPIC, transactionListener);
@@ -200,7 +193,8 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
                         MessageUtil.OPTIONS_YES_NO, 0,
                         (option) -> conditional(option == 0,
                                 () -> {
-                                    DatabaseSessionManager sessionManager = DatabaseSessionManager.getInstance(getProject());
+                                    Project project = ensureProject();
+                                    DatabaseSessionManager sessionManager = DatabaseSessionManager.getInstance(project);
                                     sessionManager.deleteSession(session);
                                 }));
             }
@@ -262,35 +256,6 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         }
     };
 
-    private final ActionListener transactionActionListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            Object source = e.getSource();
-            if (source == commitButton || source == rollbackButton) {
-                ConnectionHandler connectionHandler = getConnectionHandler();
-                DatabaseTransactionManager transactionManager = getTransactionManager();
-                DBNConnection connection = getSelectedConnection();
-                if (connection != null) {
-                    if (source == commitButton) {
-                        transactionManager.execute(
-                                connectionHandler,
-                                connection,
-                                actions(TransactionAction.COMMIT),
-                                false,
-                                null);
-
-                    } else if (source == rollbackButton) {
-                        transactionManager.execute(
-                                connectionHandler,
-                                connection,
-                                actions(TransactionAction.ROLLBACK), false,
-                                null);
-                    }
-                }
-            }
-        }
-    };
-
     private void refreshSessionData(DatabaseSession session) {
         Dispatch.run(() -> {
             checkDisposed();
@@ -308,9 +273,6 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
 
             ResourceMonitorTransactionsTableModel transactionsTableModel = new ResourceMonitorTransactionsTableModel(connectionHandler, connection);
             transactionsTable.setModel(transactionsTableModel);
-            boolean transactional = connection != null && connection.hasDataChanges();
-            commitButton.setEnabled(transactional);
-            rollbackButton.setEnabled(transactional);
             DatabaseSession session = getSelectedSession();
             openTransactionsLabel.setText(session == null ? "Open Transactions" : "Open Transactions (" + session.getName() + ")");
         });
@@ -332,7 +294,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
 
     @NotNull
     private DatabaseTransactionManager getTransactionManager() {
-        return DatabaseTransactionManager.getInstance(getProject());
+        return DatabaseTransactionManager.getInstance(ensureProject());
     }
 
 }
