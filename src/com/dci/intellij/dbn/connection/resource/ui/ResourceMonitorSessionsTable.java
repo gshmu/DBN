@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.ConnectionPool;
+import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.intellij.ui.SimpleTextAttributes;
@@ -12,6 +13,7 @@ import com.intellij.util.text.DateFormatUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.List;
 
 class ResourceMonitorSessionsTable extends DBNTable<ResourceMonitorSessionsTableModel> {
     ResourceMonitorSessionsTable(@NotNull DBNComponent parent, ResourceMonitorSessionsTableModel tableModel) {
@@ -25,7 +27,7 @@ class ResourceMonitorSessionsTable extends DBNTable<ResourceMonitorSessionsTable
     }
 
 
-    public class CellRenderer extends DBNColoredTableCellRenderer {
+    public static class CellRenderer extends DBNColoredTableCellRenderer {
         @Override
         protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
             DatabaseSession session = (DatabaseSession) value;
@@ -47,6 +49,10 @@ class ResourceMonitorSessionsTable extends DBNTable<ResourceMonitorSessionsTable
                     append(lastAccessTimestamp == 0 ? "Never" : DateFormatUtil.formatPrettyDateTime(lastAccessTimestamp), textAttributes);
                 } else if (column == 3) {
                     append(connectionPoolSize + " / " + connectionPool.getPeakPoolSize(), textAttributes);
+                } else if (column == 4) {
+                    List<DBNConnection> connections = connectionPool.getConnections(ConnectionType.POOL);
+                    int totalCursorsCount = connections.stream().mapToInt(connection -> connection.getActiveStatementsCount()).sum();
+                    append(Integer.toString(totalCursorsCount), textAttributes);
                 }
             } else {
                 DBNConnection connection = connectionPool.getSessionConnection(session.getId());
@@ -59,7 +65,9 @@ class ResourceMonitorSessionsTable extends DBNTable<ResourceMonitorSessionsTable
                 } else if (column == 1) {
                     append(connection == null ? "Not connected" : "Connected" + (connection.hasDataChanges() ? " - open transactions" : ""), textAttributes);
                 } else if (column == 2) {
-                    append(connection == null ? "" : DateFormatUtil.formatPrettyDateTime(connection.getLastAccess()));
+                    append(connection == null ? "" : DateFormatUtil.formatPrettyDateTime(connection.getLastAccess()), textAttributes);
+                } else if (column == 4) {
+                    append(connection == null ? "" : Integer.toString(connection.getActiveStatementsCount()), textAttributes);
                 }
             }
             setBorder(Borders.TEXT_FIELD_BORDER);
