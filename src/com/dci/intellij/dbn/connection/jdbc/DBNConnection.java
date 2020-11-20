@@ -167,6 +167,14 @@ public class DBNConnection extends DBNConnectionBase {
         updateLastAccess();
     }
 
+    public Set<DBNStatement> getActiveStatements() {
+        return activeStatements;
+    }
+
+    public int getActiveStatementsCount() {
+        return activeStatements.size();
+    }
+
     @Override
     public boolean isClosedInner() throws SQLException {
         return inner.isClosed();
