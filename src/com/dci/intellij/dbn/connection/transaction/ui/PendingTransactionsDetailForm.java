@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
@@ -64,7 +65,10 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
             };
 
             commitButton.addActionListener(actionListener);
+            commitButton.setIcon(Icons.CONNECTION_COMMIT);
+
             rollbackButton.addActionListener(actionListener);
+            rollbackButton.setIcon(Icons.CONNECTION_ROLLBACK);
 
             pendingTransactionsTable.getSelectionModel().addListSelectionListener(e -> updateTransactionActions());
             updateTransactionActions();
