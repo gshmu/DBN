@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.connection.ConnectionPool;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.session.DatabaseSessionManager;
@@ -43,6 +44,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
     private JPanel sessionsPanel;
     private JBScrollPane transactionsTableScrollPane;
     private JLabel openTransactionsLabel;
+    private JLabel sessionLabel;
     private JButton commitButton;
     private JButton rollbackButton;
 
@@ -71,6 +73,7 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
         decorator.setPreferredSize(new Dimension(-1, 400));
         sessionsPanel.add(decorator.createPanel(), BorderLayout.CENTER);
         sessionsTable.getParent().setBackground(sessionsTable.getBackground());
+        sessionLabel.setText("");
 
         // transactions table
         ResourceMonitorTransactionsTableModel transactionsTableModel = new ResourceMonitorTransactionsTableModel(connectionHandler, null);
@@ -239,21 +242,25 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
             ResourceMonitorTransactionsTableModel transactionsTableModel = new ResourceMonitorTransactionsTableModel(connectionHandler, connection);
             transactionsTable.setModel(transactionsTableModel);
             DatabaseSession session = getSelectedSession();
-            openTransactionsLabel.setText(session == null ? "Open Transactions" : "Open Transactions (" + session.getName() + ")");
+            sessionLabel.setText(session == null ? "" : session.getName() + " (" + connectionHandler.getName() + ")");
+            sessionLabel.setIcon(session == null ? null : session.getIcon());
             updateTransactionActions();
         });
     }
 
     @Nullable
     private DatabaseSession getSelectedSession() {
-        return sessionsTable.getModel().getSession(sessionsTable.getSelectedRow());
+        ResourceMonitorSessionsTableModel sessionsTableModel = sessionsTable.getModel();
+        return sessionsTableModel.getSession(sessionsTable.getSelectedRow());
     }
 
     @Nullable
     private DBNConnection getSelectedConnection() {
         DatabaseSession session = getSelectedSession();
         if (session != null) {
-            return getConnectionHandler().getConnectionPool().getSessionConnection(session.getId());
+            ConnectionHandler connectionHandler = getConnectionHandler();
+            ConnectionPool connectionPool = connectionHandler.getConnectionPool();
+            return connectionPool.getSessionConnection(session.getId());
         }
         return null;
     }
