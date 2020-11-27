@@ -11,10 +11,10 @@ import org.jetbrains.annotations.NotNull;
 public class TransactionManagerSettings extends BasicConfiguration<OperationSettings, TransactionManagerSettingsForm> {
     public static final String REMEMBER_OPTION_HINT = ""/*"\n\n(you can remember your option and change it at any time in Settings > Operations > Transaction Manager)"*/;
 
-    private InteractiveOptionBroker<TransactionOption> closeProject =
-            new InteractiveOptionBroker<TransactionOption>(
+    private final InteractiveOptionBroker<TransactionOption> closeProject =
+            new InteractiveOptionBroker<>(
                     "on-project-close",
-                    "Uncommitted changes",
+                    "Open transactions",
                     "You have uncommitted changes on one or more connections for project \"{0}\". \n" +
                             "Please specify whether to commit or rollback these changes before closing the project" +
                             REMEMBER_OPTION_HINT,
@@ -24,10 +24,10 @@ public class TransactionManagerSettings extends BasicConfiguration<OperationSett
                     TransactionOption.REVIEW_CHANGES,
                     TransactionOption.CANCEL);
 
-    private InteractiveOptionBroker<TransactionOption> toggleAutoCommit =
-            new InteractiveOptionBroker<TransactionOption>(
+    private final InteractiveOptionBroker<TransactionOption> toggleAutoCommit =
+            new InteractiveOptionBroker<>(
                     "on-autocommit-toggle",
-                    "Uncommitted changes",
+                    "Open transactions",
                     "You have uncommitted changes on the connection \"{0}\". \n" +
                             "Please specify whether to commit or rollback these changes before switching Auto-Commit ON." +
                             REMEMBER_OPTION_HINT,
@@ -37,10 +37,10 @@ public class TransactionManagerSettings extends BasicConfiguration<OperationSett
                     TransactionOption.REVIEW_CHANGES,
                     TransactionOption.CANCEL);
 
-    private InteractiveOptionBroker<TransactionOption> disconnect =
-            new InteractiveOptionBroker<TransactionOption>(
+    private final InteractiveOptionBroker<TransactionOption> disconnect =
+            new InteractiveOptionBroker<>(
                     "on-disconnect",
-                    "Uncommitted changes",
+                    "Open transactions",
                     "You have uncommitted changes on the connection \"{0}\". \n" +
                             "Please specify whether to commit or rollback these changes before disconnecting" +
                             REMEMBER_OPTION_HINT,
@@ -50,8 +50,8 @@ public class TransactionManagerSettings extends BasicConfiguration<OperationSett
                     TransactionOption.REVIEW_CHANGES,
                     TransactionOption.CANCEL);
 
-    private InteractiveOptionBroker<TransactionOption> commitMultipleChanges =
-            new InteractiveOptionBroker<TransactionOption>(
+    private final InteractiveOptionBroker<TransactionOption> commitMultipleChanges =
+            new InteractiveOptionBroker<>(
                     "on-commit",
                     "Commit multiple changes",
                     "This commit action will affect several other changes on the connection \"{0}\", " +
@@ -62,8 +62,8 @@ public class TransactionManagerSettings extends BasicConfiguration<OperationSett
                     TransactionOption.REVIEW_CHANGES,
                     TransactionOption.CANCEL);
 
-    private InteractiveOptionBroker<TransactionOption> rollbackMultipleChanges =
-            new InteractiveOptionBroker<TransactionOption>(
+    private final InteractiveOptionBroker<TransactionOption> rollbackMultipleChanges =
+            new InteractiveOptionBroker<>(
                     "on-rollback",
                     "Rollback multiple changes",
                     "This rollback action will affect several other changes on the connection \"{0}\", " +

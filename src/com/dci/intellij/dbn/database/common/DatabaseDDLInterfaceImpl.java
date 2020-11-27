@@ -42,9 +42,12 @@ public abstract class DatabaseDDLInterfaceImpl extends DatabaseInterfaceImpl imp
 
     protected final void execute(String statementText, DBNConnection connection) throws SQLException {
         Statement statement = connection.createStatement();
-        statement.setQueryTimeout(20);
-        statement.execute(statementText);
-
+        try {
+            statement.setQueryTimeout(20);
+            statement.execute(statementText);
+        } finally {
+            ResourceUtil.close(statement);
+        }
     }
 
     protected final String getSingleValue(DBNConnection connection, String loaderId, Object... arguments) throws SQLException {

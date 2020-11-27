@@ -1,11 +1,11 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
-import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -24,7 +24,7 @@ import static com.dci.intellij.dbn.connection.transaction.TransactionAction.acti
 
 
 public class PendingTransactionsDetailForm extends DBNFormImpl {
-    private final DBNTable<PendingTransactionsTableModel> changesTable;
+    private final PendingTransactionsTable pendingTransactionsTable;
     private JPanel mainPanel;
     private JPanel headerPanel;
     private JScrollPane changesTableScrollPane;
@@ -33,7 +33,6 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
     private JPanel transactionActionsPanel;
 
     private final ConnectionHandlerRef connectionHandler;
-    private PendingTransactionsTableModel tableModel;
 
     PendingTransactionsDetailForm(@NotNull DBNComponent parent, @NotNull ConnectionHandler connectionHandler, TransactionAction additionalOperation, boolean showActions) {
         super(parent);
@@ -42,30 +41,52 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
         DBNHeaderForm headerForm = new DBNHeaderForm(this, connectionHandler);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        changesTable = new PendingTransactionsTable(this, new PendingTransactionsTableModel(connectionHandler));
-        changesTableScrollPane.setViewportView(changesTable);
-        changesTableScrollPane.getViewport().setBackground(changesTable.getBackground());
+        PendingTransactionsTableModel transactionsTableModel = new PendingTransactionsTableModel(connectionHandler);
+        pendingTransactionsTable = new PendingTransactionsTable(this, transactionsTableModel);
+        changesTableScrollPane.setViewportView(pendingTransactionsTable);
+        changesTableScrollPane.getViewport().setBackground(pendingTransactionsTable.getBackground());
 
         transactionActionsPanel.setVisible(showActions);
         if (showActions) {
             ActionListener actionListener = e -> {
                 Project project = connectionHandler.getProject();
                 DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
+                List<DBNConnection> connections = pendingTransactionsTable.getSelectedConnections();
                 Object source = e.getSource();
-                if (source == commitButton) {
-                    List<TransactionAction> actions = actions(TransactionAction.COMMIT, additionalOperation);
-                    transactionManager.execute(connectionHandler, null, actions, false, null);
-                } else if (source == rollbackButton) {
-                    List<TransactionAction> actions = actions(TransactionAction.ROLLBACK, additionalOperation);
-                    transactionManager.execute(connectionHandler, null, actions, false, null);
+
+                for (DBNConnection connection : connections) {
+                    if (source == commitButton) {
+                        transactionManager.commit(connectionHandler, connection);
+                    } else if (source == rollbackButton) {
+                        List<TransactionAction> actions = actions(TransactionAction.ROLLBACK, additionalOperation);
+                        transactionManager.rollback(connectionHandler, connection);
+                    }
                 }
             };
 
             commitButton.addActionListener(actionListener);
+            commitButton.setIcon(Icons.CONNECTION_COMMIT);
+
             rollbackButton.addActionListener(actionListener);
+            rollbackButton.setIcon(Icons.CONNECTION_ROLLBACK);
+
+            ListSelectionModel selectionModel = pendingTransactionsTable.getSelectionModel();
+            selectionModel.addListSelectionListener(e -> updateTransactionActions());
+
+            if (transactionsTableModel.getRowCount()> 0) {
+                pendingTransactionsTable.selectCell(0, 0);
+            }
+            updateTransactionActions();
 
         }
         ProjectEvents.subscribe(ensureProject(), this, TransactionListener.TOPIC, transactionListener);
+    }
+
+    private void updateTransactionActions() {
+        List<DBNConnection> connections = pendingTransactionsTable.getSelectedConnections();
+        boolean selectionAvailable = connections.size() > 0;
+        commitButton.setEnabled(selectionAvailable);
+        rollbackButton.setEnabled(selectionAvailable);
     }
 
     public ConnectionHandler getConnectionHandler() {
@@ -74,7 +95,7 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
 
     @NotNull
     public List<DBNConnection> getConnections() {
-        return tableModel.getConnections();
+        return pendingTransactionsTable.getModel().getTransactionalConnections();
     }
 
     @NotNull
@@ -98,10 +119,12 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
     private void refreshForm(ConnectionHandler connectionHandler) {
         Dispatch.run(() -> {
             checkDisposed();
-            tableModel = new PendingTransactionsTableModel(connectionHandler);
-            changesTable.setModel(tableModel);
-            commitButton.setEnabled(false);
-            rollbackButton.setEnabled(false);
+            PendingTransactionsTableModel transactionsTableModel = new PendingTransactionsTableModel(connectionHandler);
+            pendingTransactionsTable.setModel(transactionsTableModel);
+            if (transactionsTableModel.getRowCount() > 0) {
+                pendingTransactionsTable.selectCell(0, 0);
+            }
+            updateTransactionActions();
         });
     }
 }

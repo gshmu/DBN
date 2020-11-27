@@ -500,7 +500,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
     }
 
     private void notifyDataManipulationChanges(ExecutionContext context) {
-        final DBNConnection connection = context.getConnection();
+        DBNConnection connection = context.getConnection();
         ConnectionHandler connectionHandler = getTargetConnection();
         ExecutablePsiElement psiElement = executionInput.getExecutablePsiElement();
         boolean notifyChanges = false;
@@ -532,7 +532,9 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
                 executionManager.promptPendingTransactionDialog(this);
             } else {
                 VirtualFile virtualFile = getVirtualFile();
-                connection.notifyDataChanges(virtualFile);
+                if (virtualFile != null) {
+                    connection.notifyDataChanges(virtualFile);
+                }
             }
         } else if (resetChanges) {
             if (!connection.isPoolConnection()) {

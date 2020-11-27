@@ -1,24 +1,23 @@
 package com.dci.intellij.dbn.connection;
 
 import com.dci.intellij.dbn.common.util.EnumerationUtil;
+import lombok.Getter;
 
-public enum ConnectionType {
-    TEST("Test"),
-    MAIN("Main"),
-    POOL("Pool"),
-    SESSION("Session"),
-    DEBUG("Debug"),
-    DEBUGGER("Debugger")
+public enum ConnectionType{
+    MAIN("Main", 0),
+    POOL("Pool", 1),
+    SESSION("Session", 2),
+    DEBUG("Debug", 3),
+    DEBUGGER("Debugger", 4),
+    TEST("Test", 5)
     ;
 
-    private String name;
+    private final @Getter String name;
+    private final @Getter int priority;
 
-    ConnectionType(String name) {
+    ConnectionType(String name, int priority) {
         this.name = name;
-    }
-
-    public String getName() {
-        return name;
+        this.priority = priority;
     }
 
     public boolean isOneOf(ConnectionType... connectionTypes){

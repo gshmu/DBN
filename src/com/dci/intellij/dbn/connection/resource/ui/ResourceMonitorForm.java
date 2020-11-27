@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +31,6 @@ public class ResourceMonitorForm extends DBNFormImpl {
     private JPanel actionsPanel;
     private JPanel detailsPanel;
     private JList<ConnectionHandler> connectionsList;
-    private final List<ConnectionHandler> connectionHandlers = new ArrayList<>();
 
     private final Map<ConnectionId, ResourceMonitorDetailForm> resourceMonitorForms = DisposableContainer.map(this);
 
@@ -55,17 +53,26 @@ public class ResourceMonitorForm extends DBNFormImpl {
 
     private void updateListModel() {
         checkDisposed();
+        int selectionIndex = connectionsList.getSelectedIndex();
         DefaultListModel<ConnectionHandler> model = new DefaultListModel<>();
-        ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
+        ConnectionManager connectionManager = ConnectionManager.getInstance(ensureProject());
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-        for (ConnectionHandler connectionHandler : connectionBundle.getConnectionHandlers()) {
+        List<ConnectionHandler> connectionHandlers = connectionBundle.getConnectionHandlers();
+        for (ConnectionHandler connectionHandler : connectionHandlers) {
             checkDisposed();
-            connectionHandlers.add(connectionHandler);
             model.addElement(connectionHandler);
         }
         connectionsList.setModel(model);
-        if (model.size() > 0) {
-            connectionsList.setSelectedIndex(0);
+
+        if (selectionIndex < 0) {
+            ConnectionHandler connectionHandler = ConnectionManager.getLastUsedConnection();
+            if (connectionHandler != null) {
+                selectionIndex = connectionHandlers.indexOf(connectionHandler);
+            }
+        }
+        selectionIndex = Integer.max(selectionIndex, 0);
+        if (model.size() > selectionIndex) {
+            connectionsList.setSelectedIndex(selectionIndex);
         }
     }
 
@@ -73,10 +80,6 @@ public class ResourceMonitorForm extends DBNFormImpl {
     @Override
     public JPanel getMainComponent() {
         return mainPanel;
-    }
-
-    public List<ConnectionHandler> getConnectionHandlers (){
-        return connectionHandlers;
     }
 
     private void showChangesForm(ConnectionHandler connectionHandler) {
@@ -107,9 +110,9 @@ public class ResourceMonitorForm extends DBNFormImpl {
                 changes += dataChanges == null ? 0 : dataChanges.size();
             }
 
-            if (changes > 0) {
+/*            if (changes > 0) {
                 append(" (" + changes + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
-            }
+            }*/
         }
     }
 

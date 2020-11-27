@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.connection;
 
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.constant.PseudoConstant;
 import com.dci.intellij.dbn.common.constant.PseudoConstantConverter;
 
+import javax.swing.*;
 import java.util.UUID;
 
 public final class SessionId extends PseudoConstant<SessionId> {
@@ -38,5 +40,13 @@ public final class SessionId extends PseudoConstant<SessionId> {
         if (this == DEBUG) return ConnectionType.DEBUG;
         if (this == DEBUGGER) return ConnectionType.DEBUGGER;
         return ConnectionType.SESSION;
+    }
+
+    public Icon getIcon() {
+        if (this == MAIN) return Icons.SESSION_MAIN;
+        if (this == POOL) return Icons.SESSION_POOL;
+        if (this == DEBUG) return Icons.SESSION_DEBUG;
+        if (this == DEBUGGER) return Icons.SESSION_DEBUG;
+        return Icons.SESSION_CUSTOM;
     }
 }

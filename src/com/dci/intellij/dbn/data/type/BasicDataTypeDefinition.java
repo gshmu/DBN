@@ -1,16 +1,18 @@
 package com.dci.intellij.dbn.data.type;
 
 import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
 public class BasicDataTypeDefinition implements DataTypeDefinition {
-    private GenericDataType genericDataType;
-    private String name;
-    private Class typeClass;
-    private int sqlType;
-    private boolean pseudoNative = false;
-    private String contentTypeName;
-    private DataTypeParseAdapter parseAdapter;
+    private final @Getter GenericDataType genericDataType;
+    private final @Getter String name;
+    private final @Getter Class typeClass;
+    private final @Getter int sqlType;
+    private final @Getter boolean pseudoNative;
+    private final @Getter String contentTypeName;
+    private @Getter @Setter DataTypeParseAdapter parseAdapter;
 
 
     public BasicDataTypeDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType) {
@@ -19,7 +21,6 @@ public class BasicDataTypeDefinition implements DataTypeDefinition {
 
     public BasicDataTypeDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType, boolean pseudoNative) {
         this(name, typeClass, sqlType, genericDataType, pseudoNative, null);
-
     }
 
     public BasicDataTypeDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType, boolean pseudoNative, String contentTypeName) {
@@ -32,41 +33,6 @@ public class BasicDataTypeDefinition implements DataTypeDefinition {
     }
 
     @Override
-    @Nullable
-    public <T> DataTypeParseAdapter<T> getParseAdapter() {
-        return parseAdapter;
-    }
-
-    public void setParseAdapter(DataTypeParseAdapter parseAdapter) {
-        this.parseAdapter = parseAdapter;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public Class getTypeClass() {
-        return typeClass;
-    }
-
-    @Override
-    public int getSqlType() {
-        return sqlType;
-    }
-
-    @Override
-    public boolean isPseudoNative() {
-        return pseudoNative;
-    }
-
-    @Override
-    public GenericDataType getGenericDataType() {
-        return genericDataType;
-    }
-
-    @Override
     public String toString() {
         return "[NAME = " + name + ", GENERIC_TYPE = " + genericDataType + ", TYPE_CLASS = " + typeClass.getName() + " SQL_TYPE = " + sqlType + ']';
     }
@@ -74,11 +40,5 @@ public class BasicDataTypeDefinition implements DataTypeDefinition {
     @Override
     public Object convert(@Nullable Object object) {
         return object;
-    }
-
-    @Nullable
-    @Override
-    public String getContentTypeName() {
-        return contentTypeName;
     }
 }
