@@ -65,13 +65,12 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
             updateTransactionActions();
         });
 
-        ToolbarDecorator decorator = ToolbarDecorator.createDecorator(sessionsTable);
-        //decorator.addExtraAction(commitAction);
-        //decorator.addExtraAction(rollbackAction);
-        decorator.addExtraAction(disconnectAction);
-        decorator.addExtraAction(deleteSessionAction);
-        decorator.setPreferredSize(new Dimension(-1, 400));
-        sessionsPanel.add(decorator.createPanel(), BorderLayout.CENTER);
+        ToolbarDecorator toolbar = ToolbarDecorator.createDecorator(sessionsTable);
+        toolbar.addExtraAction(disconnectAction);
+        toolbar.addExtraAction(renameSessionAction);
+        toolbar.addExtraAction(deleteSessionAction);
+        toolbar.setPreferredSize(new Dimension(-1, 400));
+        sessionsPanel.add(toolbar.createPanel(), BorderLayout.CENTER);
         sessionsTable.getParent().setBackground(sessionsTable.getBackground());
         sessionLabel.setText("");
 
@@ -176,6 +175,27 @@ public class ResourceMonitorDetailForm extends DBNFormImpl {
                     session != null &&
                     session.isCustom() &&
                     (connection == null || !connection.hasDataChanges()));
+        }
+    };
+
+    private final AnActionButton renameSessionAction = new DumbAwareActionButton("Rename Session", null, Icons.ACTION_EDIT) {
+        @Override
+        public void actionPerformed(@NotNull AnActionEvent e) {
+            DatabaseSession session = getSelectedSession();
+            if (session != null) {
+                DatabaseSessionManager sessionManager = DatabaseSessionManager.getInstance(ensureProject());
+                sessionManager.showRenameSessionDialog(session, null);
+            }
+        }
+
+        @Override
+        public void updateButton(AnActionEvent e) {
+            DatabaseSession session = getSelectedSession();
+            DBNConnection connection = getSelectedConnection();
+            e.getPresentation().setEnabled(
+                    session != null &&
+                            session.isCustom() &&
+                            (connection == null || !connection.hasDataChanges()));
         }
     };
 

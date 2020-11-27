@@ -11,20 +11,20 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm> {
-    private ConnectionHandlerRef connectionHandlerRef;
-    private WeakRef<DatabaseSession> sessionRef;  // TODO dialog result - Disposable.nullify(...)
+    private final ConnectionHandlerRef connectionHandler;
+    private WeakRef<DatabaseSession> session;
 
     public CreateRenameSessionDialog(@NotNull ConnectionHandler connectionHandler) {
         super(connectionHandler.getProject(), "Create session", true);
-        connectionHandlerRef = connectionHandler.getRef();
+        this.connectionHandler = connectionHandler.getRef();
         getOKAction().putValue(Action.NAME, "Create");
         init();
     }
 
     public CreateRenameSessionDialog(ConnectionHandler connectionHandler, @NotNull DatabaseSession session) {
         super(connectionHandler.getProject(), "Rename session", true);
-        connectionHandlerRef = connectionHandler.getRef();
-        this.sessionRef = WeakRef.of(session);
+        this.connectionHandler = connectionHandler.getRef();
+        this.session = WeakRef.of(session);
         getOKAction().putValue(Action.NAME, "Rename");
         init();
     }
@@ -32,7 +32,7 @@ public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm
     @NotNull
     @Override
     protected CreateRenameSessionForm createForm() {
-        ConnectionHandler connectionHandler = connectionHandlerRef.ensure();
+        ConnectionHandler connectionHandler = this.connectionHandler.ensure();
         return new CreateRenameSessionForm(this, connectionHandler, getSession());
     }
 
@@ -49,11 +49,11 @@ public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm
     protected void doOKAction() {
         CreateRenameSessionForm component = getForm();
         DatabaseSessionManager databaseSessionManager = DatabaseSessionManager.getInstance(getProject());
-        if (sessionRef == null) {
+        if (session == null) {
             DatabaseSession session = databaseSessionManager.createSession(
                     component.getConnectionHandler(),
                     component.getSessionName());
-            sessionRef = WeakRef.of(session);
+            this.session = WeakRef.of(session);
             component.setSession(session);
 
         } else {
@@ -63,7 +63,7 @@ public class CreateRenameSessionDialog extends DBNDialog<CreateRenameSessionForm
     }
 
     public DatabaseSession getSession() {
-        return WeakRef.get(sessionRef);
+        return WeakRef.get(session);
     }
 
     @Override
