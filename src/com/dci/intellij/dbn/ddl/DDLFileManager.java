@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
 import com.dci.intellij.dbn.ddl.options.DDLFileExtensionSettings;
@@ -58,8 +59,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
     private final Alarm extensionRegisterer = new Alarm(DDLFileManager.this);
 
     public void registerExtensions(DDLFileExtensionSettings settings) {
-        Dispatch.run(() -> {
-            extensionRegisterer.addRequest(() -> {
+        Safe.queueRequest(extensionRegisterer, 0, false, () ->
                 Dispatch.run(() -> WriteCommandAction.writeCommandAction(getProject()).run(() -> {
                     FileTypeManager fileTypeManager = FileTypeManager.getInstance();
                     List<DDLFileType> ddlFileTypeList = settings.getDDLFileTypes();
@@ -68,9 +68,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
                             fileTypeManager.associateExtension(ddlFileType.getLanguageFileType(), extension);
                         }
                     }
-                }));
-            }, 0);
-        });
+                })));
     }
 
     public static DDLFileManager getInstance(@NotNull Project project) {

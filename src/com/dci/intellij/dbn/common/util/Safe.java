@@ -3,7 +3,9 @@ package com.dci.intellij.dbn.common.util;
 import com.dci.intellij.dbn.common.routine.BasicCallable;
 import com.dci.intellij.dbn.common.routine.ParametricCallable;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,4 +71,17 @@ public interface Safe {
         return value1.compareTo(value2);
     }
 
+    static void queueRequest(@NotNull Alarm alarm, int delayMillis, boolean cancelRequests, @NotNull Runnable runnable) {
+        Dispatch.runConditional(() -> {
+            if (alarm.isDisposed()) {
+                if (cancelRequests) {
+                    alarm.cancelAllRequests();
+                }
+
+                if (!alarm.isDisposed()) {
+                    alarm.addRequest(runnable, delayMillis);
+                }
+            }
+        });
+    }
 }

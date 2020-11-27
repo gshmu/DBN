@@ -7,7 +7,6 @@ import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.transaction.PendingTransaction;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
@@ -54,13 +53,13 @@ public class ResourceMonitorTransactionsTable extends DBNTable<ResourceMonitorTr
     public static class CellRenderer extends DBNColoredTableCellRenderer {
         @Override
         protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
-            PendingTransaction change = (PendingTransaction) value;
+            PendingTransaction transaction = (PendingTransaction) value;
             if (column == 0) {
-                setIcon(change.getIcon());
-                append(change.getDisplayFilePath(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                setIcon(transaction.getFileIcon());
+                append(transaction.getFilePath(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
             } else if (column == 1) {
-                append(change.getChangesCount() + " uncommitted changes", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                append(transaction.getChangesCount() + " uncommitted changes", SimpleTextAttributes.REGULAR_ATTRIBUTES);
             }
             setBorder(Borders.TEXT_FIELD_BORDER);
 
@@ -73,9 +72,9 @@ public class ResourceMonitorTransactionsTable extends DBNTable<ResourceMonitorTr
             if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
                 int selectedRow = getSelectedRow();
                 PendingTransaction change = (PendingTransaction) getModel().getValueAt(selectedRow, 0);
-                FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
-                VirtualFile virtualFile = VirtualFileManager.getInstance().findFileByUrl(change.getFilePath());
+                VirtualFile virtualFile = change.getFile();
                 if (virtualFile != null) {
+                    FileEditorManager fileEditorManager = FileEditorManager.getInstance(getProject());
                     fileEditorManager.openFile(virtualFile, true);
                 }
             }

@@ -13,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.TableModelListener;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PendingTransactionsTableModel extends StatefulDisposable.Base implements DBNTableModel {
     private final ConnectionHandlerRef connectionHandler;
@@ -20,7 +22,11 @@ public class PendingTransactionsTableModel extends StatefulDisposable.Base imple
 
     PendingTransactionsTableModel(ConnectionHandler connectionHandler) {
         this.connectionHandler = connectionHandler.getRef();
-        this.connections = connectionHandler.getConnections(ConnectionType.MAIN, ConnectionType.SESSION);
+        this.connections = connectionHandler.getConnections(
+                ConnectionType.MAIN,
+                ConnectionType.SESSION,
+                ConnectionType.DEBUG,
+                ConnectionType.DEBUGGER);
     }
 
     public ConnectionHandler getConnectionHandler() {
@@ -37,15 +43,14 @@ public class PendingTransactionsTableModel extends StatefulDisposable.Base imple
         return connections;
     }
 
+    @NotNull
+    public List<DBNConnection> getTransactionalConnections() {
+        return connections.stream().filter(connection -> connection.getDataChanges() != null).collect(Collectors.toList());
+    }
+
     @Override
     public int getRowCount() {
-        int count = 0;
-        for (DBNConnection connection : getConnections()) {
-            PendingTransactionBundle dataChanges = connection.getDataChanges();
-            count += dataChanges == null ? 0 : dataChanges.size();
-        }
-
-        return count;
+        return (int) getRows().count();
     }
 
     @Override
@@ -56,7 +61,7 @@ public class PendingTransactionsTableModel extends StatefulDisposable.Base imple
     @Override
     public String getColumnName(int columnIndex) {
         return
-            columnIndex == 0 ? "Connection" :
+            columnIndex == 0 ? "Session" :
             columnIndex == 1 ? "Source" :
             columnIndex == 2 ? "Details" : null ;
     }
@@ -72,18 +77,15 @@ public class PendingTransactionsTableModel extends StatefulDisposable.Base imple
     }
 
     @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        int count = 0;
-        for (DBNConnection connection : getConnections()) {
-            PendingTransactionBundle dataChanges = connection.getDataChanges();
-            int size = dataChanges == null ? 0 : dataChanges.size();
-            count += size;
-            if (dataChanges != null && count > rowIndex) {
-                return dataChanges.getEntries().get(count - size + rowIndex);
-            }
-        }
+    public PendingTransaction getValueAt(int rowIndex, int columnIndex) {
+        return getRows().collect(Collectors.toList()).get(rowIndex);
+    }
 
-        return null;
+    private Stream<PendingTransaction> getRows() {
+        return connections.stream().flatMap(connection -> {
+            PendingTransactionBundle dataChanges = connection.getDataChanges();
+            return dataChanges == null ? Stream.empty() : dataChanges.getEntries().stream();
+        });
     }
 
     @Override
