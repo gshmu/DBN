@@ -21,8 +21,9 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -38,19 +39,20 @@ import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.RESERVED;
 
 public class DBNConnection extends DBNConnectionBase {
     private static final Logger LOGGER = LoggerFactory.createLogger();
-    private final String name;
-    private final ConnectionType type;
-    private final ConnectionId id;
-    private final SessionId sessionId;
-    private final ProjectRef projectRef;
-    private final ConnectionProperties properties;
 
-    private long lastAccess = System.currentTimeMillis();
-    private PendingTransactionBundle dataChanges;
-    private SchemaId currentSchema;
+    private final ProjectRef project;
+    private final @Getter String name;
+    private final @Getter ConnectionType type;
+    private final @Getter ConnectionId id;
+    private final @Getter SessionId sessionId;
+    private final @Getter ConnectionProperties properties;
 
+    private @Getter long lastAccess = System.currentTimeMillis();
+    private @Getter PendingTransactionBundle dataChanges;
+    private @Getter @Setter SchemaId currentSchema;
 
-    private final Set<DBNStatement> activeStatements = new HashSet<>();
+    private @Getter final Set<DBNStatement> activeStatements = new HashSet<>();
+
     private final MapLatent<String, DBNPreparedStatement, SQLException> cachedStatements =
             MapLatent.create(sql -> {
                 DBNPreparedStatement preparedStatement = prepareStatement(sql);
@@ -117,7 +119,7 @@ public class DBNConnection extends DBNConnectionBase {
 
     private DBNConnection(Project project, Connection connection, String name, ConnectionType type, ConnectionId id, SessionId sessionId) throws SQLException {
         super(connection);
-        this.projectRef = ProjectRef.of(project);
+        this.project = ProjectRef.of(project);
         this.name = name;
         this.type = type;
         this.id = id;
@@ -167,6 +169,10 @@ public class DBNConnection extends DBNConnectionBase {
         updateLastAccess();
     }
 
+    public int getActiveStatementsCount() {
+        return activeStatements.size();
+    }
+
     @Override
     public boolean isClosedInner() throws SQLException {
         return inner.isClosed();
@@ -181,18 +187,6 @@ public class DBNConnection extends DBNConnectionBase {
     @Override
     public void closeInner() throws SQLException {
         inner.close();
-    }
-
-    public ConnectionId getId() {
-        return id;
-    }
-
-    public ConnectionType getType() {
-        return type;
-    }
-
-    public SessionId getSessionId() {
-        return sessionId;
     }
 
     public boolean isPoolConnection() {
@@ -232,10 +226,6 @@ public class DBNConnection extends DBNConnectionBase {
         lastAccess = System.currentTimeMillis();
     }
 
-    public long getLastAccess() {
-        return lastAccess;
-    }
-
     public int getIdleMinutes() {
         long idleTimeMillis = System.currentTimeMillis() - lastAccess;
         return (int) (idleTimeMillis / TimeUtil.Millis.ONE_MINUTE);
@@ -251,16 +241,7 @@ public class DBNConnection extends DBNConnectionBase {
 
     @NotNull
     public Project getProject() {
-        return projectRef.ensure();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    @NotNull
-    public ConnectionProperties getProperties() {
-        return properties;
+        return project.ensure();
     }
 
     /********************************************************************
@@ -316,14 +297,6 @@ public class DBNConnection extends DBNConnectionBase {
         } catch (ProcessCanceledException ignore) {}
     }
 
-    public SchemaId getCurrentSchema() {
-        return currentSchema;
-    }
-
-    public void setCurrentSchema(SchemaId currentSchema) {
-        this.currentSchema = currentSchema;
-    }
-
     /********************************************************************
      *                             Status                               *
      ********************************************************************/
@@ -376,22 +349,17 @@ public class DBNConnection extends DBNConnectionBase {
     /********************************************************************
      *                             Data changes                         *
      ********************************************************************/
-    public void notifyDataChanges(VirtualFile virtualFile) {
+    public void notifyDataChanges(@NotNull VirtualFile virtualFile) {
         if (!getAutoCommit()) {
             if (dataChanges == null) {
                 dataChanges = new PendingTransactionBundle();
             }
-            dataChanges.notifyChange(virtualFile);
+            dataChanges.notifyChange(virtualFile, this);
         }
     }
 
     public void resetDataChanges() {
         dataChanges = null;
-    }
-
-    @Nullable
-    public PendingTransactionBundle getDataChanges() {
-        return dataChanges;
     }
 
     public boolean hasDataChanges() {

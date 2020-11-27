@@ -7,12 +7,14 @@ import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.routine.ProgressRunnable;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerStatusListener;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.resource.ui.ResourceMonitorDialog;
+import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.connection.transaction.options.TransactionManagerSettings;
 import com.dci.intellij.dbn.connection.transaction.ui.PendingTransactionsDetailDialog;
 import com.dci.intellij.dbn.connection.transaction.ui.PendingTransactionsDialog;
@@ -32,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 import static com.dci.intellij.dbn.common.util.CommonUtil.list;
 import static com.dci.intellij.dbn.connection.transaction.TransactionAction.*;
@@ -44,6 +47,36 @@ public class DatabaseTransactionManager extends AbstractProjectComponent impleme
 
     public static DatabaseTransactionManager getInstance(@NotNull Project project) {
         return Failsafe.getComponent(project, DatabaseTransactionManager.class);
+    }
+
+    public void rollback(ConnectionHandler connectionHandler, @NotNull DBNConnection connection) {
+        DatabaseSession session = connectionHandler.getSessionBundle().getSession(connection.getSessionId());
+        MessageUtil.showQuestionDialog(getProject(),
+                "Commit Session",
+                "Are you sure you want to rollback the session \"" + session.getName() + "\" for connection\"" + connectionHandler.getName() + "\"" ,
+                MessageUtil.OPTIONS_YES_NO, 0,
+                (option) -> conditional(option == 0,
+                        () -> execute(
+                                connectionHandler,
+                                connection,
+                                actions(ROLLBACK),
+                                false,
+                                null)));
+    }
+
+    public void commit(ConnectionHandler connectionHandler, @NotNull DBNConnection connection) {
+        DatabaseSession session = connectionHandler.getSessionBundle().getSession(connection.getSessionId());
+        MessageUtil.showQuestionDialog(ensureProject(),
+                "Rollback Session",
+                "Are you sure you want to rollback the session \"" + session.getName() + "\" for connection\"" + connectionHandler.getName() + "\"" ,
+                MessageUtil.OPTIONS_YES_NO, 0,
+                (option) -> conditional(option == 0,
+                        () -> execute(
+                                connectionHandler,
+                                connection,
+                                actions(COMMIT),
+                                false,
+                                null)));
     }
 
     public void execute(

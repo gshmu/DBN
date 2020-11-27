@@ -43,7 +43,7 @@ public class ResourceMonitorSessionsTableModel extends StatefulDisposable.Base i
 
     @Override
     public int getColumnCount() {
-        return 4;
+        return 5;
     }
 
     @Override
@@ -52,7 +52,8 @@ public class ResourceMonitorSessionsTableModel extends StatefulDisposable.Base i
             case 0: return "Session";
             case 1: return "Status";
             case 2: return "Last Access";
-            case 3: return "Size / Peak";
+            case 3: return "Open Connections / Peak";
+            case 4: return "Open Cursors";
         }
         return null;
     }

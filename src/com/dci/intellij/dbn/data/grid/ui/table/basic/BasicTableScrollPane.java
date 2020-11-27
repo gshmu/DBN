@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.intellij.ide.IdeTooltip;
 import com.intellij.ide.IdeTooltipManager;
@@ -13,7 +14,7 @@ import java.awt.*;
 import java.awt.event.MouseWheelEvent;
 
 public class BasicTableScrollPane extends JBScrollPane{
-    private Alarm resizeAlarm = new Alarm();
+    private final Alarm resizeAlarm = new Alarm();
     @Override
     protected void processMouseWheelEvent(MouseWheelEvent e) {
         if (e.isControlDown()) {
@@ -33,12 +34,11 @@ public class BasicTableScrollPane extends JBScrollPane{
                     float defaultSize = UIUtil.getLabelFont().getSize();
                     int percentage = (int) (size / defaultSize * 100);
 
-                    resizeAlarm.cancelAllRequests();
-                    resizeAlarm.addRequest(() -> {
+                    Safe.queueRequest(resizeAlarm, 10, true, () -> {
                         IdeTooltip tooltip = new IdeTooltip(this, e.getPoint(), new JLabel(percentage + "%"));
                         tooltip.setFont(UIUtil.getLabelFont().deriveFont((float) 16));
                         IdeTooltipManager.getInstance().show(tooltip, true);
-                    }, 10);
+                    });
                 }
             } else {
                 super.processMouseWheelEvent(e);

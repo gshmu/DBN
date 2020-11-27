@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTableWithGutter;
 import com.dci.intellij.dbn.common.ui.table.TableSelectionRestorer;
 import com.dci.intellij.dbn.common.util.MathResult;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.model.DataModelCell;
@@ -133,8 +134,7 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
             @Override
             public void mouseMoved(MouseEvent e) {
                 if (selectionMath != null && isCellSelected(e.getPoint())) {
-                    runner.cancelAllRequests();
-                    runner.addRequest(() -> showSelectionTooltip(), 100);
+                    Safe.queueRequest(runner, 100, true, () -> showSelectionTooltip());
                 }
             }
         });
