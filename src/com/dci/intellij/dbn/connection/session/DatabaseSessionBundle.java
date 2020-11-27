@@ -13,11 +13,12 @@ import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DatabaseSessionBundle extends StatefulDisposable.Base implements Disposable{
     private final ConnectionHandlerRef connectionHandler;
@@ -47,14 +48,10 @@ public class DatabaseSessionBundle extends StatefulDisposable.Base implements Di
     }
 
     public List<DatabaseSession> getSessions(ConnectionType ... connectionTypes) {
-        List<DatabaseSession> sessions = new ArrayList<>();
-        for (DatabaseSession session : this.sessions) {
-            if (session.getConnectionType().matches(connectionTypes)) {
-                sessions.add(session);
-            }
-        }
-
-        return sessions;
+        return this.sessions.stream().
+                filter(session -> session.getConnectionType().matches(connectionTypes)).
+                sorted(Comparator.comparingInt(session -> session.getConnectionType().getPriority())).
+                collect(Collectors.toList());
     }
 
     public Set<String> getSessionNames() {

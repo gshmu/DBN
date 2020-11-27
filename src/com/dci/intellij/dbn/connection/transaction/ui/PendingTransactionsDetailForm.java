@@ -41,7 +41,8 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
         DBNHeaderForm headerForm = new DBNHeaderForm(this, connectionHandler);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        pendingTransactionsTable = new PendingTransactionsTable(this, new PendingTransactionsTableModel(connectionHandler));
+        PendingTransactionsTableModel transactionsTableModel = new PendingTransactionsTableModel(connectionHandler);
+        pendingTransactionsTable = new PendingTransactionsTable(this, transactionsTableModel);
         changesTableScrollPane.setViewportView(pendingTransactionsTable);
         changesTableScrollPane.getViewport().setBackground(pendingTransactionsTable.getBackground());
 
@@ -55,11 +56,10 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
 
                 for (DBNConnection connection : connections) {
                     if (source == commitButton) {
-                        List<TransactionAction> actions = actions(TransactionAction.COMMIT, additionalOperation);
-                        transactionManager.execute(connectionHandler, connection, actions, false, null);
+                        transactionManager.commit(connectionHandler, connection);
                     } else if (source == rollbackButton) {
                         List<TransactionAction> actions = actions(TransactionAction.ROLLBACK, additionalOperation);
-                        transactionManager.execute(connectionHandler, connection, actions, false, null);
+                        transactionManager.rollback(connectionHandler, connection);
                     }
                 }
             };
@@ -70,7 +70,12 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
             rollbackButton.addActionListener(actionListener);
             rollbackButton.setIcon(Icons.CONNECTION_ROLLBACK);
 
-            pendingTransactionsTable.getSelectionModel().addListSelectionListener(e -> updateTransactionActions());
+            ListSelectionModel selectionModel = pendingTransactionsTable.getSelectionModel();
+            selectionModel.addListSelectionListener(e -> updateTransactionActions());
+
+            if (transactionsTableModel.getRowCount()> 0) {
+                pendingTransactionsTable.selectCell(0, 0);
+            }
             updateTransactionActions();
 
         }
@@ -114,10 +119,12 @@ public class PendingTransactionsDetailForm extends DBNFormImpl {
     private void refreshForm(ConnectionHandler connectionHandler) {
         Dispatch.run(() -> {
             checkDisposed();
-            PendingTransactionsTableModel tableModel = new PendingTransactionsTableModel(connectionHandler);
-            pendingTransactionsTable.setModel(tableModel);
-            commitButton.setEnabled(false);
-            rollbackButton.setEnabled(false);
+            PendingTransactionsTableModel transactionsTableModel = new PendingTransactionsTableModel(connectionHandler);
+            pendingTransactionsTable.setModel(transactionsTableModel);
+            if (transactionsTableModel.getRowCount() > 0) {
+                pendingTransactionsTable.selectCell(0, 0);
+            }
+            updateTransactionActions();
         });
     }
 }
