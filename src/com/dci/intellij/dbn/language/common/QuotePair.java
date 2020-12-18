@@ -45,4 +45,9 @@ public class QuotePair {
     public String quote(String identifier) {
         return beginChar + identifier + endChar;
     }
+
+    @Override
+    public String toString() {
+        return "quote pair (begin=" + beginChar + ", end=" + endChar +')';
+    }
 }

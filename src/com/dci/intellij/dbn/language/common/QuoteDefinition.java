@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.language.common;
 
+import java.util.Arrays;
+
 public class QuoteDefinition {
     public static final QuoteDefinition DEFAULT_IDENTIFIER_QUOTE_DEFINITION = new QuoteDefinition(QuotePair.DEFAULT_IDENTIFIER_QUOTE_PAIR);
-    private QuotePair[] quotePairs;
+    private final QuotePair[] quotePairs;
 
     public QuoteDefinition(QuotePair... quotePairs) {
         this.quotePairs = quotePairs;
@@ -46,5 +48,10 @@ public class QuoteDefinition {
             }
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "quote definition (pairs=" + Arrays.toString(quotePairs) +')';
     }
 }
