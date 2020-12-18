@@ -77,8 +77,9 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         return executionHistory.getExecutionInput(method);
     }
 
+    @NotNull
     public MethodExecutionInput getExecutionInput(DBObjectRef<DBMethod> methodRef) {
-        return executionHistory.getExecutionInput(methodRef);
+        return executionHistory.getExecutionInput(methodRef, true);
     }
 
     public MethodExecutionArgumentValuesCache getArgumentValuesCache() {
