@@ -8,7 +8,8 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 public class SQLCustomCodeStyleSettings extends CustomCodeStyleSettings {
-    private SQLCodeStyleSettings codeStyleSettings;
+    private final SQLCodeStyleSettings codeStyleSettings;
+
     SQLCustomCodeStyleSettings(CodeStyleSettings container) {
         super("SQLCodeStyleSettings", container);
         codeStyleSettings = new SQLCodeStyleSettings(null);

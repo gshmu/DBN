@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.data.grid.ui.table.resultSet.ResultSetTable;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
@@ -228,9 +229,8 @@ public class ResultSetRecordViewerForm extends DBNFormImpl {
         }
 
         @Override
-        public void update(AnActionEvent anactionevent) {
-            ResultSetDataModelRow<?, ?> row = getRow();
-            anactionevent.getPresentation().setEnabled(row.getIndex() > 0);
+        public void update(@NotNull AnActionEvent e) {
+            e.getPresentation().setEnabled(getRowIndex() > 0);
         }
     }
 
@@ -254,9 +254,8 @@ public class ResultSetRecordViewerForm extends DBNFormImpl {
         }
 
         @Override
-        public void update(AnActionEvent anactionevent) {
-            ResultSetDataModelRow<?, ?> row = getRow();
-            anactionevent.getPresentation().setEnabled(row.getIndex() > 0);
+        public void update(AnActionEvent e) {
+            e.getPresentation().setEnabled(getRowIndex() > 0);
         }
     }
 
@@ -280,9 +279,8 @@ public class ResultSetRecordViewerForm extends DBNFormImpl {
         }
 
         @Override
-        public void update(AnActionEvent anactionevent) {
-            ResultSetDataModelRow<?, ?> row = getRow();
-            anactionevent.getPresentation().setEnabled(row.getIndex() < row.getModel().getRowCount() -1);
+        public void update(AnActionEvent e) {
+            e.getPresentation().setEnabled(getRowIndex() < getRowCount() -1);
         }
     }
 
@@ -303,15 +301,29 @@ public class ResultSetRecordViewerForm extends DBNFormImpl {
         }
 
         @Override
-        public void update(AnActionEvent anactionevent) {
-            ResultSetDataModelRow<?, ?> row = getRow();
-            anactionevent.getPresentation().setEnabled(row.getIndex() < row.getModel().getRowCount() -1);
+        public void update(AnActionEvent e) {
+            e.getPresentation().setEnabled(getRowIndex() < getRowCount() -1);
         }
     }
 
     @NotNull
     public ResultSetDataModelRow<?, ?> getRow() {
         return Failsafe.nn(row);
+    }
+
+
+    private int getRowIndex() {
+        return Safe.call(-1, () -> {
+            ResultSetDataModelRow<?, ?> row = getRow();
+            return row.getIndex();
+        });
+    }
+
+    private int getRowCount() {
+        return Safe.call(0, () -> {
+            ResultSetDataModelRow<?, ?> row = getRow();
+            return row.getModel().getRowCount();
+        });
     }
 
 

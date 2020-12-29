@@ -51,24 +51,24 @@ public abstract class DynamicContentLoaderImpl<
 
     @NotNull
     public static <T extends DynamicContentElement, M extends DBObjectMetadata> DynamicContentLoader<T, M> resolve(
-            @Nullable DynamicContentType parentContentType,
-            @NotNull DynamicContentType contentType) {
+            @Nullable DynamicContentType<?> parentContentType,
+            @NotNull DynamicContentType<?> contentType) {
 
-        DynamicContentType lookupParentContentType = CommonUtil.nvl(parentContentType, NULL);
+        DynamicContentType<?> lookupParentContentType = CommonUtil.nvl(parentContentType, NULL);
         while (lookupParentContentType != null) {
             Map<DynamicContentType, DynamicContentLoader> loaderMap = LOADERS.get(lookupParentContentType);
             if (loaderMap != null) {
-                DynamicContentType lookupContentType = contentType;
+                DynamicContentType<?> lookupContentType = contentType;
                 while (lookupContentType != null) {
                     DynamicContentLoader loader = loaderMap.get(lookupContentType);
                     if (loader != null) {
                         return loader;
                     }
-                    DynamicContentType genericContentType = lookupContentType.getGenericType();
+                    DynamicContentType<?> genericContentType = lookupContentType.getGenericType();
                     lookupContentType = genericContentType == lookupContentType ? null : genericContentType;
                 }
             }
-            DynamicContentType genericParentContentType = lookupParentContentType.getGenericType();
+            DynamicContentType<?> genericParentContentType = lookupParentContentType.getGenericType();
             lookupParentContentType =
                     genericParentContentType == NULL ? null :
                     genericParentContentType == lookupParentContentType ? NULL :
