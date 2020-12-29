@@ -35,10 +35,12 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     private JComboBox<CharsetOption> encodingComboBox;
     private JComboBox<EnvironmentType> environmentTypesComboBox;
     private JPanel generalGroupPanel;
+    private JPanel autoConnectHintPanel;
+    private JTextField connectivityTimeoutTextField;
     private JTextField maxPoolSizeTextField;
     private JTextField idleTimeTextField;
+    private JTextField idleTimePoolTextField;
     private JTextField alternativeStatementDelimiterTextField;
-    private JPanel autoConnectHintPanel;
     private JTextField passwordExpiryTextField;
     private JCheckBox databaseLoggingCheckBox;
     private JCheckBox sessionManagementCheckBox;
@@ -46,7 +48,6 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
     private JCheckBox autoConnectCheckBox;
     private JCheckBox restoreWorkspaceCheckBox;
     private JCheckBox restoreWorkspaceDeepCheckBox;
-    private JTextField idleTimePoolTextField;
 
     public ConnectionDetailSettingsForm(ConnectionDetailSettings configuration) {
         super(configuration);
@@ -164,10 +165,12 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         configuration.setEnableDdlFileBinding(ddlFileBindingCheckBox.isSelected());
         configuration.setEnableDatabaseLogging(databaseLoggingCheckBox.isSelected());
         configuration.setAlternativeStatementDelimiter(alternativeStatementDelimiterTextField.getText());
+        int connectivityTimeout = ConfigurationEditorUtil.validateIntegerInputValue(connectivityTimeoutTextField, "Connectivity timeout (seconds)", true, 0, 30, "");
         int idleTimeToDisconnect = ConfigurationEditorUtil.validateIntegerInputValue(idleTimeTextField, "Idle time to disconnect (minutes)", true, 0, 60, "");
         int idleTimeToDisconnectPool = ConfigurationEditorUtil.validateIntegerInputValue(idleTimePoolTextField, "Idle time to disconnect pool (minutes)", true, 1, 60, "");
         int passwordExpiryTime = ConfigurationEditorUtil.validateIntegerInputValue(passwordExpiryTextField, "Idle time to request password (minutes)", true, 0, 60, "");
         int maxPoolSize = ConfigurationEditorUtil.validateIntegerInputValue(maxPoolSizeTextField, "Max connection pool size", true, 3, 20, "");
+        configuration.setConnectivityTimeout(connectivityTimeout);
         configuration.setIdleTimeToDisconnect(idleTimeToDisconnect);
         configuration.setIdleTimeToDisconnectPool(idleTimeToDisconnectPool);
         configuration.setCredentialExpiryTime(passwordExpiryTime);
@@ -185,6 +188,7 @@ public class ConnectionDetailSettingsForm extends ConfigurationEditorForm<Connec
         restoreWorkspaceCheckBox.setSelected(configuration.isRestoreWorkspace());
         restoreWorkspaceDeepCheckBox.setSelected(configuration.isRestoreWorkspaceDeep());
         setSelection(environmentTypesComboBox, configuration.getEnvironmentType());
+        connectivityTimeoutTextField.setText(Integer.toString(configuration.getConnectivityTimeout()));
         idleTimeTextField.setText(Integer.toString(configuration.getIdleTimeToDisconnect()));
         idleTimePoolTextField.setText(Integer.toString(configuration.getIdleTimeToDisconnectPool()));
         passwordExpiryTextField.setText(Integer.toString(configuration.getCredentialExpiryTime()));
