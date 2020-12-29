@@ -18,7 +18,7 @@ import java.util.Set;
 
 public abstract class DBLanguageTokenTypeBundle {
     protected final Logger log = Logger.getInstance(getClass().getName());
-    private Language language;
+    private final Language language;
     private SimpleTokenType[] keywords;
     private SimpleTokenType[] functions;
     private SimpleTokenType[] parameters;
@@ -36,8 +36,8 @@ public abstract class DBLanguageTokenTypeBundle {
     private Map<String, SimpleTokenType> charactersMap;
     private Map<String, SimpleTokenType> operatorsMap;
 
-    private Map<String, SimpleTokenType> tokenTypes = new THashMap<>();
-    private Map<String, TokenSet> tokenSets = new THashMap<String, TokenSet>();
+    private final Map<String, SimpleTokenType> tokenTypes = new THashMap<>();
+    private final Map<String, TokenSet> tokenSets = new THashMap<String, TokenSet>();
 
     public Map<String, SimpleTokenType> getTokenTypes() {
         return tokenTypes;
@@ -68,14 +68,14 @@ public abstract class DBLanguageTokenTypeBundle {
     }
 
     private void createTokens(Element tokenDefs, Language language, Map<String, Set<String>> tokenSetIds) {
-        List<SimpleTokenType> keywordList = new ArrayList<SimpleTokenType>();
-        List<SimpleTokenType> functionList = new ArrayList<SimpleTokenType>();
-        List<SimpleTokenType> parameterList = new ArrayList<SimpleTokenType>();
-        List<SimpleTokenType> dataTypeList = new ArrayList<SimpleTokenType>();
-        List<SimpleTokenType> exceptionList = new ArrayList<SimpleTokenType>();
-        List<SimpleTokenType> objectsList = new ArrayList<SimpleTokenType>();
-        List<SimpleTokenType> characterList = new ArrayList<SimpleTokenType>();
-        List<SimpleTokenType> operatorList = new ArrayList<SimpleTokenType>();
+        List<SimpleTokenType> keywordList = new ArrayList<>();
+        List<SimpleTokenType> functionList = new ArrayList<>();
+        List<SimpleTokenType> parameterList = new ArrayList<>();
+        List<SimpleTokenType> dataTypeList = new ArrayList<>();
+        List<SimpleTokenType> exceptionList = new ArrayList<>();
+        List<SimpleTokenType> objectsList = new ArrayList<>();
+        List<SimpleTokenType> characterList = new ArrayList<>();
+        List<SimpleTokenType> operatorList = new ArrayList<>();
         for (Object o : tokenDefs.getChildren()) {
             Element element = (Element) o;
             String tokenTypeId = element.getAttributeValue("id").intern();

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.explain.result;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -16,7 +17,6 @@ import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import lombok.Getter;
@@ -144,7 +144,7 @@ public class ExplainPlanResult extends ExecutionResultBase<ExplainPlanResultForm
      *******************************************************  */
     @Override
     public void disposeInner() {
-        Disposer.dispose(root);
+        SafeDisposer.dispose(root);
         super.disposeInner();
     }
 }

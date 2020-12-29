@@ -27,8 +27,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class ChameleonElementType extends ILazyParseableElementType implements ElementType, TokenType {
-    private int uniqueIndex;
-    private DBLanguageDialect parentLanguage;
+    private final int uniqueIndex;
+    private final DBLanguageDialect parentLanguage;
     public ChameleonElementType(DBLanguageDialect language,DBLanguageDialect parentLanguage) {
         super("chameleon (" + language.getDisplayName() + ")", language, false);
         this.parentLanguage = parentLanguage;
@@ -70,8 +70,9 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
     }
 
     @Override
+    @NotNull
     public String getDebugName() {
-        return toString();
+        return "chameleon (" + getLanguage().getDisplayName() + ")";
     }
 
     @Override
