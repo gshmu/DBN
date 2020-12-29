@@ -60,12 +60,12 @@ public enum DatabaseType implements Constant<DatabaseType>, Presentable{
             AuthenticationType.values(),
             array(DatabaseUrlPattern.GENERIC));
 
-    private String name;
-    private Icon icon;
-    private Icon largeIcon;
-    AuthenticationType[] authTypes;
-    private DatabaseUrlPattern[] urlPatterns;
-    private String driverClassName;
+    private final String name;
+    private final Icon icon;
+    private final Icon largeIcon;
+    private final AuthenticationType[] authTypes;
+    private final DatabaseUrlPattern[] urlPatterns;
+    private final String driverClassName;
     private String internalLibraryPath;
 
 

@@ -6,18 +6,15 @@ import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.AuthenticationType;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectivityStatus;
-import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.connection.DatabaseUrlPattern;
-import com.dci.intellij.dbn.connection.DatabaseUrlType;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,22 +28,22 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSettings, ConnectionDatabaseSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private transient ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
-    private String name;
-    private String description;
-    private DatabaseType databaseType;
-    private DatabaseType resolvedDatabaseType = DatabaseType.GENERIC;
-    private DatabaseUrlPattern urlPattern;
-    private double databaseVersion = 9999;
+    private @Getter @Setter ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
+    private @Setter String name;
+    private @Getter @Setter String description;
+    private @Getter DatabaseType databaseType;
+    private @Getter @Setter DatabaseType resolvedDatabaseType = DatabaseType.GENERIC;
+    private @Getter @Setter DatabaseUrlPattern urlPattern;
+    private @Getter @Setter double databaseVersion = 9999;
     private int hashCode;
 
-    private DatabaseInfo databaseInfo;
-    private DriverSource driverSource;
-    private String driverLibrary;
-    private String driver;
+    private final @Getter DatabaseInfo databaseInfo;
+    private @Getter @Setter DriverSource driverSource;
+    private @Getter @Setter String driverLibrary;
+    private @Setter String driver;
 
     private ConnectionConfigType configType;
-    private AuthenticationInfo authenticationInfo = new AuthenticationInfo(this, false);
+    private final @Getter AuthenticationInfo authenticationInfo = new AuthenticationInfo(this, false);
 
     public ConnectionDatabaseSettings(ConnectionSettings parent, @NotNull DatabaseType databaseType, ConnectionConfigType configType) {
         super(parent);
@@ -76,70 +73,17 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         return new ConnectionDatabaseSettingsForm(this);
     }
 
-    public ConnectivityStatus getConnectivityStatus() {
-        return connectivityStatus;
-    }
-
-    public void setConnectivityStatus(ConnectivityStatus connectivityStatus) {
-        this.connectivityStatus = connectivityStatus;
-    }
-
     public String getName() {
         return nvl(name);
-    }
-
-    public DriverSource getDriverSource() {
-        return driverSource;
-    }
-
-    public void setDriverSource(DriverSource driverSource) {
-        this.driverSource = driverSource;
-    }
-
-    public String getDriverLibrary() {
-        return driverLibrary;
     }
 
     public String getDriver() {
         return driverSource == DriverSource.BUILTIN ? databaseType.getDriverClassName() : driver;
     }
 
-    public void setDriverLibrary(String driverLibrary) {
-        this.driverLibrary = driverLibrary;
-    }
-
-    public void setDriver(String driver) {
-        this.driver = driver;
-    }
-
     @Override
     public String getDisplayName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @NotNull
-    public DatabaseType getDatabaseType() {
-        return databaseType;
-    }
-
-    public DatabaseType getResolvedDatabaseType() {
-        return resolvedDatabaseType;
-    }
-
-    public void setResolvedDatabaseType(DatabaseType resolvedDatabaseType) {
-        this.resolvedDatabaseType = resolvedDatabaseType;
     }
 
     public ConnectionConfigType getConfigType() {
@@ -155,35 +99,9 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         initAuthType(databaseType);
     }
 
-    public DatabaseUrlPattern getUrlPattern() {
-        return urlPattern;
-    }
-
-    public void setUrlPattern(DatabaseUrlPattern urlPattern) {
-        this.urlPattern = urlPattern;
-    }
-
-    public double getDatabaseVersion() {
-        return databaseVersion;
-    }
-
-    public void setDatabaseVersion(double databaseVersion) {
-        this.databaseVersion = databaseVersion;
-    }
-
-    @NotNull
-    public AuthenticationInfo getAuthenticationInfo() {
-        return authenticationInfo;
-    }
-
     @Override
     public String getConfigElementName() {
         return "database";
-    }
-
-
-    public DatabaseInfo getDatabaseInfo() {
-        return databaseInfo;
     }
 
     public boolean isDatabaseInitialized() {

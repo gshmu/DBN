@@ -136,14 +136,10 @@ class Connector {
                     connectionUrl = databaseSettings.getConnectionUrl(localHost, localPort);
                 }
             }
-            /** THIS IS IMPORTANT. As we have created an isolated classloader for external driver config,
-             * we must set context loader used by driver to ensure all required classes are available to connect */
-            // TODO review / cleanup? not needed if URL class loaders are constructed properly with parent class loader (see com.dci.intellij.dbn.driver.DatabaseDriverManager recent changes)
-            //Thread.currentThread().setContextClassLoader(driver.getClass().getClassLoader());
 
             Connection connection = driver.connect(connectionUrl, properties);
             if (connection == null) {
-                throw new SQLException("Driver failed to create connection for this configuration. No failure information provided.");
+                throw new SQLException("Driver failed to create connection for this configuration. No failure information provided by jdbc vendor.");
             }
 
             if (connectionStatus != null) {

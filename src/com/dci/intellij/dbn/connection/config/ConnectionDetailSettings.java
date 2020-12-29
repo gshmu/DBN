@@ -8,34 +8,33 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDetailSettingsForm;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoolean;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getInteger;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getString;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoolean;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setInteger;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setString;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 public class ConnectionDetailSettings extends BasicProjectConfiguration<ConnectionSettings, ConnectionDetailSettingsForm> {
-    private Charset charset = Charset.forName("UTF-8");
-    private EnvironmentTypeId environmentTypeId = EnvironmentTypeId.DEFAULT;
-    private boolean enableSessionManagement = true;
-    private boolean enableDdlFileBinding = true;
-    private boolean enableDatabaseLogging = false;
-    private boolean connectAutomatically = true;
-    private boolean restoreWorkspace = true;
-    private boolean restoreWorkspaceDeep = true;
-    private int idleTimeToDisconnect = 30;
-    private int idleTimeToDisconnectPool = 5;
-    private int credentialExpiryTime = 10;
-    private int maxConnectionPoolSize = 7;
+    private @Getter @Setter Charset charset = StandardCharsets.UTF_8;
+    private @Getter @Setter EnvironmentTypeId environmentTypeId = EnvironmentTypeId.DEFAULT;
+    private @Getter @Setter boolean enableSessionManagement = true;
+    private @Getter @Setter boolean enableDdlFileBinding = true;
+    private @Getter @Setter boolean enableDatabaseLogging = false;
+    private @Getter @Setter boolean connectAutomatically = true;
+    private @Getter @Setter boolean restoreWorkspace = true;
+    private @Setter boolean restoreWorkspaceDeep = true;
+    private @Getter @Setter int connectivityTimeout = 5;
+    private @Getter @Setter int idleTimeToDisconnect = 30;
+    private @Getter @Setter int idleTimeToDisconnectPool = 5;
+    private @Getter @Setter int credentialExpiryTime = 10;
+    private @Getter @Setter int maxConnectionPoolSize = 7;
 
 
-    private String alternativeStatementDelimiter;
+    private @Getter @Setter String alternativeStatementDelimiter;
 
     public ConnectionDetailSettings(ConnectionSettings parent) {
         super(parent);
@@ -55,116 +54,15 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
      *                        Custom                         *
      *********************************************************/
 
-    public Charset getCharset() {
-        return charset;
-    }
-
-    public void setCharset(Charset charset) {
-        this.charset = charset;
-    }
-
     @NotNull
     public EnvironmentType getEnvironmentType() {
         EnvironmentSettings environmentSettings = GeneralProjectSettings.getInstance(getProject()).getEnvironmentSettings();
         return environmentSettings.getEnvironmentType(environmentTypeId);
     }
 
-    public void setEnvironmentTypeId(EnvironmentTypeId environmentTypeId) {
-        this.environmentTypeId = environmentTypeId;
-    }
-
-    public EnvironmentTypeId getEnvironmentTypeId() {
-        return environmentTypeId;
-    }
-
-    public boolean isEnableSessionManagement() {
-        return enableSessionManagement;
-    }
-
-    public void setEnableSessionManagement(boolean enableSessionManagement) {
-        this.enableSessionManagement = enableSessionManagement;
-    }
-
-    public boolean isEnableDdlFileBinding() {
-        return enableDdlFileBinding;
-    }
-
-    public void setEnableDdlFileBinding(boolean enableDdlFileBinding) {
-        this.enableDdlFileBinding = enableDdlFileBinding;
-    }
-
-    public boolean isEnableDatabaseLogging() {
-        return enableDatabaseLogging;
-    }
-
-    public void setEnableDatabaseLogging(boolean enableDatabaseLogging) {
-        this.enableDatabaseLogging = enableDatabaseLogging;
-    }
-
-    public boolean isRestoreWorkspace() {
-        return restoreWorkspace;
-    }
-
-    public void setRestoreWorkspace(boolean restoreWorkspace) {
-        this.restoreWorkspace = restoreWorkspace;
-    }
-
     public boolean isRestoreWorkspaceDeep() {
         return restoreWorkspace && restoreWorkspaceDeep;
     }
-
-    public void setRestoreWorkspaceDeep(boolean restoreWorkspaceDeep) {
-        this.restoreWorkspaceDeep = restoreWorkspaceDeep;
-    }
-
-    public boolean isConnectAutomatically() {
-        return connectAutomatically;
-    }
-
-    public void setConnectAutomatically(boolean connectAutomatically) {
-        this.connectAutomatically = connectAutomatically;
-    }
-
-    public int getMaxConnectionPoolSize() {
-        return maxConnectionPoolSize;
-    }
-
-    public void setMaxConnectionPoolSize(int maxConnectionPoolSize) {
-        this.maxConnectionPoolSize = maxConnectionPoolSize;
-    }
-
-    public int getIdleTimeToDisconnect() {
-        return idleTimeToDisconnect;
-    }
-
-    public void setIdleTimeToDisconnect(int idleTimeToDisconnect) {
-        this.idleTimeToDisconnect = idleTimeToDisconnect;
-    }
-
-    public int getIdleTimeToDisconnectPool() {
-        return idleTimeToDisconnectPool;
-    }
-
-    public void setIdleTimeToDisconnectPool(int idleTimeToDisconnectPool) {
-        this.idleTimeToDisconnectPool = idleTimeToDisconnectPool;
-    }
-
-    public int getCredentialExpiryTime() {
-        return credentialExpiryTime;
-    }
-
-    public void setCredentialExpiryTime(int credentialExpiryTime) {
-        this.credentialExpiryTime = credentialExpiryTime;
-    }
-
-    public String getAlternativeStatementDelimiter() {
-        return alternativeStatementDelimiter;
-    }
-
-    public void setAlternativeStatementDelimiter(String alternativeStatementDelimiter) {
-        this.alternativeStatementDelimiter = alternativeStatementDelimiter;
-    }
-
 
     /*********************************************************
      *                     Configuration                     *
@@ -192,6 +90,7 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
         restoreWorkspace = getBoolean(element, "restore-workspace", restoreWorkspace);
         restoreWorkspaceDeep = getBoolean(element, "restore-workspace-deep", restoreWorkspaceDeep);
         environmentTypeId = EnvironmentTypeId.get(getString(element, "environment-type", EnvironmentTypeId.DEFAULT.id()));
+        connectivityTimeout = getInteger(element, "connectivity-timeout", connectivityTimeout);
         idleTimeToDisconnect = getInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
         idleTimeToDisconnectPool = getInteger(element, "idle-time-to-disconnect-pool", idleTimeToDisconnectPool);
         credentialExpiryTime = getInteger(element, "credential-expiry-time", credentialExpiryTime);
@@ -210,6 +109,7 @@ public class ConnectionDetailSettings extends BasicProjectConfiguration<Connecti
         setBoolean(element, "restore-workspace", restoreWorkspace);
         setBoolean(element, "restore-workspace-deep", restoreWorkspaceDeep);
         setString(element, "environment-type", environmentTypeId.id());
+        setInteger(element, "connectivity-timeout", connectivityTimeout);
         setInteger(element, "idle-time-to-disconnect", idleTimeToDisconnect);
         setInteger(element, "idle-time-to-disconnect-pool", idleTimeToDisconnectPool);
         setInteger(element, "credential-expiry-time", credentialExpiryTime);
