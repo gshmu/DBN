@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TabbedBrowserForm extends DatabaseBrowserForm{
     private final TabbedPane connectionTabs;
@@ -80,7 +81,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
 
     @Nullable
     private SimpleBrowserForm getBrowserForm(ConnectionId connectionId) {
-        for (TabInfo tabInfo : getConnectionTabs().getTabs()) {
+        for (TabInfo tabInfo : listTabs()) {
             SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
             ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
             if (connectionHandler != null && connectionHandler.getConnectionId() == connectionId) {
@@ -146,7 +147,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
 
     @Override
     public void rebuildTree() {
-        for (TabInfo tabInfo : getConnectionTabs().getTabs()) {
+        for (TabInfo tabInfo : listTabs()) {
             SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
             browserForm.rebuildTree();
         }
@@ -164,7 +165,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
         @Override
         public void configurationChanged(Project project) {
             EnvironmentVisibilitySettings visibilitySettings = getEnvironmentSettings(project).getVisibilitySettings();
-            for (TabInfo tabInfo : getConnectionTabs().getTabs()) {
+            for (TabInfo tabInfo : listTabs()) {
                 try {
                     SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
                     ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
@@ -182,7 +183,7 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
     };
 
     void refreshTabInfo(ConnectionId connectionId) {
-        for (TabInfo tabInfo : connectionTabs.getTabs()) {
+        for (TabInfo tabInfo : listTabs()) {
             SimpleBrowserForm browserForm = (SimpleBrowserForm) tabInfo.getObject();
             ConnectionHandler connectionHandler = browserForm.getConnectionHandler();
             if (connectionHandler != null) {
@@ -193,6 +194,11 @@ public class TabbedBrowserForm extends DatabaseBrowserForm{
             }
         }
 
+    }
+
+    @NotNull
+    private List<TabInfo> listTabs() {
+        return new ArrayList<>(getConnectionTabs().getTabs());
     }
 }
 
