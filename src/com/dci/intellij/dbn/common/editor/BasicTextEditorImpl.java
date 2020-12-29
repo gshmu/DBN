@@ -56,6 +56,11 @@ public abstract class BasicTextEditorImpl<T extends VirtualFile> extends Statefu
     }
 
     @Override
+    public @Nullable VirtualFile getFile() {
+        return virtualFile.get();
+    }
+
+    @Override
     public <D> D getUserData(@NotNull Key<D> key) {
         return getTextEditor().getUserData(key);
     }
