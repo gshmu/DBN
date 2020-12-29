@@ -21,7 +21,6 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -57,7 +56,7 @@ public class DatasetCustomFilterForm extends ConfigurationEditorForm<DatasetCust
         selectStatement.append(isValidCondition ? condition : COMMENT);
 
         DBDatasetFilterVirtualFile filterFile = new DBDatasetFilterVirtualFile(dataset, selectStatement.toString());
-        DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(PsiManager.getInstance(project), filterFile, true);
+        DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(project, filterFile, true);
         PsiFile selectStatementFile = filterFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
 
         document = DocumentUtil.getDocument(selectStatementFile);
