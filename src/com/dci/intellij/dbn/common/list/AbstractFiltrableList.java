@@ -4,13 +4,7 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
     private List<T> list;
@@ -74,9 +68,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
     public int size() {
         Filter<T> filter = getFilter();
         if (filter != null) {
-            int count = 0;
-            for (T object : list) if (filter.accepts(object)) count++;
-            return count;
+            return (int) list.stream().filter(e -> filter.accepts(e)).count();
         } else {
             return list.size();
 
