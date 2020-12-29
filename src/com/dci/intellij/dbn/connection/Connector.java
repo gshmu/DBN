@@ -89,7 +89,16 @@ class Connector {
             ConnectionType connectionType = sessionId.getConnectionType();
             String appName = "Database Navigator - " + connectionType.getName();
             properties.put("ApplicationName", appName);
-            properties.put("v$session.program", appName);
+
+            DatabaseType databaseType = databaseSettings.getDatabaseType();
+            if (databaseType == DatabaseType.GENERIC) {
+                databaseType = DatabaseType.resolve(databaseSettings.getDriver());
+            }
+
+            if (databaseType == DatabaseType.ORACLE) {
+                properties.put("v$session.program", appName);
+            }
+
             Map<String, String> configProperties = databaseSettings.getParent().getPropertiesSettings().getProperties();
             if (configProperties != null) {
                 properties.putAll(configProperties);
@@ -106,7 +115,6 @@ class Connector {
             if (sslSettings.isActive()) {
                 SslConnectionManager connectionManager = SslConnectionManager.getInstance();
                 connectionManager.ensureSslConnection(connectionSettings);
-                DatabaseType databaseType = databaseSettings.getDatabaseType();
                 if (databaseType == DatabaseType.MYSQL) {
                     properties.setProperty("useSSL", "true");
                     properties.setProperty("requireSSL", "true");
@@ -161,7 +169,7 @@ class Connector {
             }
 
             DatabaseMetaData metaData = connection.getMetaData();
-            DatabaseType databaseType = ResourceUtil.getDatabaseType(metaData);
+            databaseType = ResourceUtil.getDatabaseType(metaData);
             databaseSettings.setResolvedDatabaseType(databaseType);
             databaseSettings.setDatabaseVersion(ResourceUtil.getDatabaseVersion(metaData));
             databaseSettings.setConnectivityStatus(ConnectivityStatus.VALID);
