@@ -38,6 +38,12 @@ public abstract class AbstractProjectComponent extends StatefulDisposable.Base i
         return true;
     }
 
+    @Deprecated
+    public final void projectOpened() {}
+
+    @Deprecated
+    public final void projectClosed() {}
+
     /***********************************************
      *            ProjectManagerListener           *
      ***********************************************/
