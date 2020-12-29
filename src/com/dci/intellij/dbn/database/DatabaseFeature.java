@@ -48,6 +48,8 @@ public enum DatabaseFeature {
     public boolean isSupported(@Nullable DBObject object) {
         return Failsafe.check(object) && isSupported(object.getConnectionHandler());
     }
+
+
     public boolean isSupported(@Nullable ConnectionHandler connectionHandler) {
         if (Failsafe.check(connectionHandler)) {
             DatabaseCompatibilityInterface compatibilityInterface = connectionHandler.getInterfaceProvider().getCompatibilityInterface();

@@ -162,7 +162,7 @@ public class ResultSetDataModel<
     }
 
     public void closeResultSet() {
-        ResourceUtil.close(resultSet);
+        Background.run(() -> ResourceUtil.close(resultSet));
     }
 
     @NotNull
