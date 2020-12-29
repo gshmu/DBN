@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.project.Project;
 import gnu.trove.THashSet;
 import org.jdom.Element;
@@ -31,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 public class MethodExecutionInput extends LocalExecutionInput implements Comparable<MethodExecutionInput>, Cloneable<MethodExecutionInput> {
-    private DBObjectRef<DBMethod> methodRef;
+    private DBObjectRef<DBMethod> method;
     private Set<MethodExecutionArgumentValue> argumentValues = new THashSet<>();
 
     private MethodExecutionResult executionResult;
@@ -39,17 +40,22 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
     public MethodExecutionInput(Project project) {
         super(project, ExecutionTarget.METHOD);
-        methodRef = new DBObjectRef<>();
+        method = new DBObjectRef<>();
 
         ExecutionOptions options = getOptions();
         options.set(ExecutionOption.COMMIT_AFTER_EXECUTION, true);
         //setSessionId(SessionId.POOL);
     }
 
-    public MethodExecutionInput(Project project, DBMethod method) {
+    public MethodExecutionInput(Project project, DBObjectRef<DBMethod> method) {
         super(project, ExecutionTarget.METHOD);
-        this.methodRef = DBObjectRef.of(method);
-        this.targetSchemaId = method.getSchemaIdentifier();
+        this.method = method;
+        DBObjectRef<?> schema = method.getParentRef(DBObjectType.SCHEMA);
+
+        if (schema != null) {
+            this.targetSchemaId = SchemaId.get(schema.getObjectName());
+        }
+
 
         if (DatabaseFeature.DATABASE_LOGGING.isSupported(method)) {
             ConnectionHandler connectionHandler = Failsafe.nn(method.getConnectionHandler());
@@ -70,7 +76,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
             @NotNull
             @Override
             public String getTargetName() {
-                return methodRef.objectType.getName() + " " + methodRef.objectName;
+                return method.objectType.getName() + " " + method.objectName;
             }
 
             @Nullable
@@ -91,12 +97,12 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     @Override
     public ConnectionHandler getConnectionHandler() {
         DBMethod method = getMethod();
-        return method == null ? methodRef == null ? null : methodRef.getConnectionHandler() : method.getConnectionHandler();
+        return method == null ? this.method == null ? null : this.method.getConnectionHandler() : method.getConnectionHandler();
     }
 
     @Override
     public ConnectionId getConnectionHandlerId() {
-        return methodRef.getConnectionId();
+        return method.getConnectionId();
     }
 
     @Override
@@ -121,19 +127,19 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
     @Nullable
     public DBMethod getMethod() {
-        return DBObjectRef.get(methodRef);
+        return DBObjectRef.get(method);
     }
 
     public DBObjectRef<DBMethod> getMethodRef() {
-        return methodRef;
+        return method;
     }
 
     public ConnectionId getConnectionId() {
-        return methodRef.getConnectionId();
+        return method.getConnectionId();
     }
 
     public boolean isObsolete() {
-        ConnectionHandler connectionHandler = methodRef.resolveConnectionHandler();
+        ConnectionHandler connectionHandler = method.resolveConnectionHandler();
         return connectionHandler == null/* || getMethod() == null*/;
     }
 
@@ -236,7 +242,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     @Override
     public void readConfiguration(Element element) {
         super.readConfiguration(element);
-        methodRef.readState(element);
+        method.readState(element);
         targetSchemaId = SchemaId.get(element.getAttributeValue("execution-schema"));;
         Element argumentsElement = element.getChild("argument-actions");
         if (argumentsElement != null) {
@@ -251,7 +257,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     @Override
     public void writeConfiguration(Element element) {
         super.writeConfiguration(element);
-        methodRef.writeState(element);
+        method.writeState(element);
         element.setAttribute("execution-schema", targetSchemaId == null ? "" : targetSchemaId.id());
 
         Element argumentsElement = new Element("argument-actions");
@@ -266,8 +272,8 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
     @Override
     public int compareTo(@NotNull MethodExecutionInput executionInput) {
-        DBObjectRef<DBMethod> localMethod = methodRef;
-        DBObjectRef<DBMethod> remoteMethod = executionInput.methodRef;
+        DBObjectRef<DBMethod> localMethod = method;
+        DBObjectRef<DBMethod> remoteMethod = executionInput.method;
         return localMethod.compareTo(remoteMethod);
     }
 
@@ -275,20 +281,20 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     public boolean equals(Object obj) {
         if (obj instanceof MethodExecutionInput) {
             MethodExecutionInput executionInput = (MethodExecutionInput) obj;
-            return methodRef.equals(executionInput.methodRef);
+            return method.equals(executionInput.method);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return methodRef.hashCode();
+        return method.hashCode();
     }
 
     @Override
     public MethodExecutionInput clone() {
         MethodExecutionInput clone = new MethodExecutionInput(getProject());
-        clone.methodRef = methodRef;
+        clone.method = method;
         clone.targetSchemaId = targetSchemaId;
         clone.setOptions(getOptions().clone());
         clone.argumentValues = new THashSet<>();
