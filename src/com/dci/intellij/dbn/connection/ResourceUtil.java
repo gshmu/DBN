@@ -21,12 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.sql.DatabaseMetaData;
-import java.sql.Driver;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLRecoverableException;
-import java.sql.Savepoint;
+import java.sql.*;
 import java.util.Collection;
 
 import static com.dci.intellij.dbn.DatabaseNavigator.DEBUG;
@@ -147,7 +142,8 @@ public class ResourceUtil {
                 attachmentHandler,
                 autoCommit);
 
-        DBNConnection connection = Timeout.call(30, null, true, () -> connector.connect());
+        int connectTimeout = connectionSettings.getDetailSettings().getConnectivityTimeout();
+        DBNConnection connection = Timeout.call(connectTimeout, null, true, () -> connector.connect());
 
         SQLException exception = connector.getException();
         if (exception != null) {
