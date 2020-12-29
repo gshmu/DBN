@@ -33,7 +33,7 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
 
     @Override
     public DynamicContentLoader<T, DBObjectMetadata> getLoader() {
-        DynamicContentType parentContentType = getParentElement().getDynamicContentType();
+        DynamicContentType<?> parentContentType = getParentElement().getDynamicContentType();
         return DynamicContentLoaderImpl.resolve(parentContentType, objectRelationType);
     }
 
