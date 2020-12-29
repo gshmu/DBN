@@ -26,12 +26,8 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Timer;
+import java.util.*;
 
 public interface SafeDisposer {
     MapLatent<Class<?>, List<Field>, RuntimeException> CLASS_FIELDS = MapLatent.create(clazz -> ReflectionUtil.collectFields(clazz));
@@ -143,8 +139,10 @@ public interface SafeDisposer {
                 if (component instanceof Container) {
                     Container container = (Container) component;
                     Component[] components = container.getComponents();
-                    Arrays.stream(components).forEach(child -> dispose(child));
-                    container.removeAll();
+                    if (components.length > 0) {
+                        Arrays.stream(components).forEach(child -> dispose(child));
+                        container.removeAll();
+                    }
                 }
             });
         }
