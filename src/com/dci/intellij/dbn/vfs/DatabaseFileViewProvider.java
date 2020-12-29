@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -13,6 +14,7 @@ import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -24,15 +26,18 @@ import org.jetbrains.annotations.Nullable;
 
 public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
     public static final Key<DatabaseFileViewProvider> CACHED_VIEW_PROVIDER = new Key<DatabaseFileViewProvider>("CACHED_VIEW_PROVIDER");
+    private final ProjectRef project;
 
-    public DatabaseFileViewProvider(@NotNull PsiManager manager, @NotNull VirtualFile virtualFile, boolean eventSystemEnabled) {
-        super(manager, virtualFile, eventSystemEnabled);
+    public DatabaseFileViewProvider(@NotNull Project project, @NotNull VirtualFile virtualFile, boolean eventSystemEnabled) {
+        super(PsiManager.getInstance(project), virtualFile, eventSystemEnabled);
+        this.project = ProjectRef.of(project);
         virtualFile.putUserData(CACHED_VIEW_PROVIDER, this);
         //virtualFile.putUserData(FREE_THREADED, true);
     }
 
-    public DatabaseFileViewProvider(@NotNull PsiManager psiManager, @NotNull VirtualFile virtualFile, boolean eventSystemEnabled, @NotNull Language language) {
-        super(psiManager, virtualFile, eventSystemEnabled, language);
+    public DatabaseFileViewProvider(@NotNull Project project, @NotNull VirtualFile virtualFile, boolean eventSystemEnabled, @NotNull Language language) {
+        super(PsiManager.getInstance(project), virtualFile, eventSystemEnabled, language);
+        this.project = ProjectRef.of(project);
         virtualFile.putUserData(CACHED_VIEW_PROVIDER, this);
 
         //virtualFile.putUserData(FREE_THREADED, true);
@@ -112,7 +117,12 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
     @NotNull
     @Override
     public SingleRootFileViewProvider createCopy(@NotNull VirtualFile copy) {
-        return new DatabaseFileViewProvider(getManager(), copy, false, getBaseLanguage());
+        return new DatabaseFileViewProvider(getProject(), copy, false, getBaseLanguage());
+    }
+
+    @NotNull
+    public Project getProject() {
+        return project.ensure();
     }
 
     @NotNull
