@@ -36,7 +36,6 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -147,7 +146,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
         Project project = sessionBrowser.getProject();
         ConnectionHandler connectionHandler = getConnectionHandler();
         virtualFile = new DBSessionStatementVirtualFile(sessionBrowser, "");
-        DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(PsiManager.getInstance(project), virtualFile, true);
+        DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(project, virtualFile, true);
         DBLanguagePsiFile psiFile = (DBLanguagePsiFile) virtualFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
         this.psiFile = PsiFileRef.of(psiFile);
         document = DocumentUtil.getDocument(psiFile);

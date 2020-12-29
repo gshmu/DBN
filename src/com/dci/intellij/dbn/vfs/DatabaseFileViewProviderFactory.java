@@ -46,6 +46,6 @@ public class DatabaseFileViewProviderFactory implements FileViewProviderFactory{
 
     @NotNull
     private DatabaseFileViewProvider createViewProvider(@NotNull VirtualFile file, Language language, @NotNull PsiManager manager, boolean eventSystemEnabled) {
-        return new DatabaseFileViewProvider(manager, file, eventSystemEnabled, language);
+        return new DatabaseFileViewProvider(manager.getProject(), file, eventSystemEnabled, language);
     }
 }

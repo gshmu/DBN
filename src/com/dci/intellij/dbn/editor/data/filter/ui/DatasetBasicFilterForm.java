@@ -32,7 +32,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -62,7 +61,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
     private JComboBox<ConditionJoinType> joinTypeComboBox;
 
     private final DBObjectRef<DBDataset> datasetRef;
-    private List<DatasetBasicFilterConditionForm> conditionForms = DisposableContainer.list(this);
+    private final List<DatasetBasicFilterConditionForm> conditionForms = DisposableContainer.list(this);
     private Document previewDocument;
     private boolean isCustomNamed;
     private EditorEx viewer;
@@ -185,7 +184,7 @@ public class DatasetBasicFilterForm extends ConfigurationEditorForm<DatasetBasic
             if (previewDocument == null) {
                 Project project = dataset.getProject();
                 DBDatasetFilterVirtualFile filterFile = new DBDatasetFilterVirtualFile(dataset, selectStatement.toString());
-                DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(PsiManager.getInstance(project), filterFile, true);
+                DatabaseFileViewProvider viewProvider = new DatabaseFileViewProvider(project, filterFile, true);
                 PsiFile selectStatementFile = filterFile.initializePsiFile(viewProvider, SQLLanguage.INSTANCE);
 
                 previewDocument = DocumentUtil.getDocument(selectStatementFile);
