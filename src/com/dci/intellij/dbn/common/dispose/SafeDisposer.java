@@ -141,7 +141,7 @@ public interface SafeDisposer {
                     Component[] components = container.getComponents();
                     if (components.length > 0) {
                         Arrays.stream(components).forEach(child -> dispose(child));
-                        container.removeAll();
+                        Unsafe.silent(() -> container.removeAll());
                     }
                 }
             });
