@@ -12,6 +12,7 @@ import com.dci.intellij.dbn.data.export.processor.DataExportProcessor;
 import com.dci.intellij.dbn.data.export.processor.ExcelDataExportProcessor;
 import com.dci.intellij.dbn.data.export.processor.ExcelXDataExportProcessor;
 import com.dci.intellij.dbn.data.export.processor.HTMLDataExportProcessor;
+import com.dci.intellij.dbn.data.export.processor.JIRAMarkupDataExportProcessor;
 import com.dci.intellij.dbn.data.export.processor.SQLDataExportProcessor;
 import com.dci.intellij.dbn.data.export.processor.XMLDataExportProcessor;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
@@ -52,6 +53,7 @@ public class DataExportManager extends AbstractProjectComponent implements Persi
             new CSVDataExportProcessor(),
             new HTMLDataExportProcessor(),
             new XMLDataExportProcessor(),
+            new JIRAMarkupDataExportProcessor(),
             new CustomDataExportProcessor()};
 
     public static DataExportProcessor getExportProcessor(DataExportFormat format) {
