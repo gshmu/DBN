@@ -42,6 +42,11 @@ public class SQLDataExportProcessor extends DataExportProcessor{
     }
 
     @Override
+    public boolean canExportToFile() {
+        return true;
+    }
+
+    @Override
     public boolean canExportToClipboard() {
         return true;
     }

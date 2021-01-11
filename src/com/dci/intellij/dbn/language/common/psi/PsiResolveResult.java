@@ -93,7 +93,7 @@ public class PsiResolveResult extends PropertyHolderImpl<PsiResolveStatus>{
         PsiElement referencedElement = getReferencedElement();
         if (referencedElement == null) {
             if (resolveAttempts > 0) {
-                return lastResolveInvocation < System.currentTimeMillis() - (resolveAttempts * 5000);
+                return lastResolveInvocation < System.currentTimeMillis() - (resolveAttempts * 5000L);
             } else {
                 return true;
             }
