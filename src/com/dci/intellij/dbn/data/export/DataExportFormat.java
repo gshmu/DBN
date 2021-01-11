@@ -6,6 +6,7 @@ public enum DataExportFormat {
     EXCELX,
     HTML,
     XML,
+    JIRA,
     CSV,
     CUSTOM
 }

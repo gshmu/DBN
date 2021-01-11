@@ -31,9 +31,11 @@ import java.util.GregorianCalendar;
 
 public abstract class DataExportProcessor {
     public abstract boolean canCreateHeader();
+    public abstract boolean canExportToFile();
     public abstract boolean canExportToClipboard();
     public abstract boolean canQuoteValues();
     public abstract boolean supportsFileEncoding();
+
     public abstract void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException;
 
     Formatter getFormatter(Project project) {

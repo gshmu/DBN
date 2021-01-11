@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.data.export.DataExportFormat;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportModel;
 import com.dci.intellij.dbn.data.type.GenericDataType;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -15,21 +16,21 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
 
-public class HTMLDataExportProcessor extends DataExportProcessor{
+public class JIRAMarkupDataExportProcessor extends DataExportProcessor{
     @Override
     public DataExportFormat getFormat() {
-        return DataExportFormat.HTML;
+        return DataExportFormat.JIRA;
     }
 
     @Override
     public String getFileExtension() {
-        return "html";
+        return "txt";
     }
 
     @Override
     public String adjustFileName(String fileName) {
-        if (!fileName.contains(".html")) {
-            fileName = fileName + ".html";
+        if (!fileName.endsWith(".txt")) {
+            fileName = fileName + ".txt";
         }
         return fileName;
     }
@@ -61,19 +62,17 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
 
     @Override
     public Transferable createClipboardContent(String content) {
-        return new HtmlContent(content);
+        return new JiraContent(content);
     }
 
-    public static class HtmlContent implements Transferable {
+    public static class JiraContent implements Transferable {
         private DataFlavor[] dataFlavors;
         private final String content;
 
-        public HtmlContent(String htmlText) {
-            content = htmlText;
+        public JiraContent(String markupText) {
+            content = markupText;
             try {
                 dataFlavors = new DataFlavor[3];
-                dataFlavors[0] = new DataFlavor("text/html;class=java.lang.String");
-                dataFlavors[1] = new DataFlavor("text/rtf;class=java.lang.String");
                 dataFlavors[2] = new DataFlavor("text/plain;class=java.lang.String");
 
             } catch (ClassNotFoundException e) {
@@ -88,12 +87,10 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
 
         @Override
         public boolean isDataFlavorSupported(DataFlavor flavor) {
-            return
-                    "text/html".equals(flavor.getMimeType()) ||
-                    "text/rtf".equals(flavor.getMimeType()) ||
-                    "text/plain".equals(flavor.getMimeType());
+            return "text/plain".equals(flavor.getMimeType());
         }
 
+        @NotNull
         @Override
         public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException{
             return content;
@@ -104,64 +101,46 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
     @Override
     public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
         StringBuilder buffer = new StringBuilder();
-        buffer.append("<html>\n");
-        buffer.append("    <head>\n");
-        buffer.append("        <style type='text/css'>\n");
-        buffer.append("            tr{vertical-align:top;}\n");
-        buffer.append("            th {border:solid #a9a9a9; border-width:1px 0 0 1px; font-family:Verdana,serif; font-size:70%;font-weight:bold}\n");
-        buffer.append("            td {border:solid #a9a9a9; border-width:1px 0 0 1px; font-family:Verdana,serif; font-size:70%;}\n");
-        buffer.append("            table{border:solid #a9a9a9; border-width:0 1px 1px 0;}\n");
-        buffer.append("        </style>\n");
-        buffer.append("    </head>\n");
-        buffer.append("    <body>\n");
-        buffer.append("        <table border='1' cellspacing='0' cellpadding='2'>\n");
-        buffer.append("            <tr bgcolor='#d3d3d3'>\n");
 
         if (instructions.isCreateHeader()) {
+            buffer.append("||");
             for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++){
                 String columnName = model.getColumnName(columnIndex);
-                buffer.append("                <th><b>").append(columnName).append("</b></th>\n");
+                buffer.append(columnName).append("||");
             }
+            buffer.append("\n");
         }
-
-        buffer.append("            </tr>\n");
 
         Formatter formatter = getFormatter(connectionHandler.getProject());
 
         for (int rowIndex=0; rowIndex < model.getRowCount(); rowIndex++) {
-            buffer.append("            <tr>\n");
+            buffer.append("|");
 
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
                 checkCancelled();
                 GenericDataType genericDataType = model.getGenericDataType(columnIndex);
                 Object object = model.getValue(rowIndex, columnIndex);
                 String value = formatValue(formatter, object);
-                value = value.replaceAll("<", "&lt;");
-                value = value.replaceAll(">", "&gt;");
+                value = value.replaceAll("\\|", "\\|");
+                value = value.replaceAll("\\*", "\\*");
+                // TODO add more markup escapes
 
-                if (StringUtil.isEmptyOrSpaces(value)) value = "&nbsp;";
+                if (StringUtil.isEmptyOrSpaces(value)) value = " ";
 
-                boolean isNoWrap =
+/*                boolean isNoWrap =
                         genericDataType == GenericDataType.NUMERIC ||
                         genericDataType == GenericDataType.DATE_TIME ||
                         value.length() < 100;
 
                 boolean isAlignRight = genericDataType == GenericDataType.NUMERIC;
 
-                buffer.append("                <td");
                 if (isNoWrap) buffer.append(" nowrap");
-                if (isAlignRight) buffer.append(" align=\"right\"");
-                buffer.append(">");
+                if (isAlignRight) buffer.append(" align=\"right\"");*/
                 buffer.append(value);
-                buffer.append("</td>\n");
+                buffer.append("|");
             }
-
-            buffer.append("            </tr>\n");
+            buffer.append("\n");
         }
-        buffer.append("        </table>\n");
-        buffer.append("    </body>\n");
-        buffer.append("</html>\n");
-
 
         writeContent(instructions, buffer.toString());
     }

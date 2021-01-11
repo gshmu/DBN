@@ -29,9 +29,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class ExportDataForm extends DBNFormImpl {
@@ -41,12 +39,13 @@ public class ExportDataForm extends DBNFormImpl {
     private JRadioButton scopeGlobalRadioButton;
     private JRadioButton scopeSelectionRadioButton;
     private JRadioButton formatSQLRadioButton;
-    private JRadioButton formatExcelRadioButton;
-    private JRadioButton formatCSVRadioButton;
-    private JRadioButton formatCustomRadioButton;
     private JRadioButton formatHTMLRadioButton;
     private JRadioButton formatXMLRadioButton;
+    private JRadioButton formatJiraRadioButton;
+    private JRadioButton formatExcelRadioButton;
     private JRadioButton formatExcelXRadioButton;
+    private JRadioButton formatCSVRadioButton;
+    private JRadioButton formatCustomRadioButton;
 
     private JTextField valueSeparatorTextField;
     private JRadioButton destinationClipboardRadioButton;
@@ -87,6 +86,7 @@ public class ExportDataForm extends DBNFormImpl {
         formatSQLRadioButton.addActionListener(actionListener);
         formatHTMLRadioButton.addActionListener(actionListener);
         formatXMLRadioButton.addActionListener(actionListener);
+        formatJiraRadioButton.addActionListener(actionListener);
         formatExcelRadioButton.addActionListener(actionListener);
         formatExcelXRadioButton.addActionListener(actionListener);
         formatCSVRadioButton.addActionListener(actionListener);
@@ -109,6 +109,7 @@ public class ExportDataForm extends DBNFormImpl {
         formatExcelXRadioButton.setSelected(format == DataExportFormat.EXCELX);
         formatHTMLRadioButton.setSelected(format == DataExportFormat.HTML);
         formatXMLRadioButton.setSelected(format == DataExportFormat.XML);
+        formatJiraRadioButton.setSelected(format == DataExportFormat.JIRA);
         formatCSVRadioButton.setSelected(format == DataExportFormat.CSV);
         formatCustomRadioButton.setSelected(format == DataExportFormat.CUSTOM);
 
@@ -190,10 +191,11 @@ public class ExportDataForm extends DBNFormImpl {
     private DataExportFormat getFormat() {
         return
             formatSQLRadioButton.isSelected() ? DataExportFormat.SQL :
-            formatExcelRadioButton.isSelected() ? DataExportFormat.EXCEL :
-            formatExcelXRadioButton.isSelected() ? DataExportFormat.EXCELX :
             formatHTMLRadioButton.isSelected() ? DataExportFormat.HTML :
             formatXMLRadioButton.isSelected() ? DataExportFormat.XML :
+            formatJiraRadioButton.isSelected() ? DataExportFormat.JIRA :
+            formatExcelRadioButton.isSelected() ? DataExportFormat.EXCEL :
+            formatExcelXRadioButton.isSelected() ? DataExportFormat.EXCELX :
             formatCSVRadioButton.isSelected() ? DataExportFormat.CSV :
             formatCustomRadioButton.isSelected() ? DataExportFormat.CUSTOM : null;
     }
