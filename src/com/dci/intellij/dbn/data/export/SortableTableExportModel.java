@@ -1,16 +1,30 @@
 package com.dci.intellij.dbn.data.export;
 
+import com.dci.intellij.dbn.common.latent.MapLatent;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.grid.ui.table.sortable.SortableTable;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModel;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelCell;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
+import com.google.common.base.CaseFormat;
 import com.intellij.openapi.project.Project;
 
 public class SortableTableExportModel implements DataExportModel{
-    private boolean selection;
-    private SortableTable<? extends SortableDataModel> table;
+    private final boolean selection;
+    private final SortableTable<? extends SortableDataModel> table;
+
+    private final MapLatent<String, String, RuntimeException> columnFriendlyNames = MapLatent.create(key -> {
+        if (StringUtil.isNotEmpty(key)) {
+            key = key.trim().toUpperCase();
+            if (key.matches("[A-Z][A-Z0-9_]*")) {
+                key = key.replaceAll("_", " _");
+                return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, key);
+            }
+        }
+        return key;
+    });
 
     int[] selectedRows;
     int[] selectedColumns;
@@ -61,6 +75,12 @@ public class SortableTableExportModel implements DataExportModel{
     public String getColumnName(int columnIndex) {
         int realColumnIndex = getRealColumnIndex(columnIndex);
         return table.getModel().getColumnName(realColumnIndex);
+    }
+
+    @Override
+    public String getColumnFriendlyName(int columnIndex) {
+        String columnName = getColumnName(columnIndex);
+        return columnFriendlyNames.get(columnName);
     }
 
     @Override
