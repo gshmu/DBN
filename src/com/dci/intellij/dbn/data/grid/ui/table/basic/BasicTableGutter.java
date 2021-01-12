@@ -29,6 +29,8 @@ public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
                     Component component = (Component) cellRenderer;
                     component.setFont(font);
                 }
+            } else if (e.getPropertyName().equals("rowHeight")) {
+                setFixedCellHeight(table.getRowHeight());
             }
         });
     }

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data.ui.table.renderer;
 import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.Borders;
+import com.dci.intellij.dbn.common.ui.table.DBNTableGutterRenderer;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableGutter;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelRow;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
@@ -16,12 +17,9 @@ import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import java.awt.*;
 
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DELETED;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTED;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
-public class DatasetEditorTableGutterRenderer extends JPanel implements ListCellRenderer {
+public class DatasetEditorTableGutterRenderer extends JPanel implements DBNTableGutterRenderer {
     private final JLabel textLabel;
     private final JLabel imageLabel;
     private final JPanel textPanel;
