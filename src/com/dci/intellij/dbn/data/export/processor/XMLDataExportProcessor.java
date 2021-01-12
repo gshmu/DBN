@@ -25,36 +25,19 @@ public class XMLDataExportProcessor extends DataExportProcessor{
     }
 
     @Override
+    public boolean supports(DataExportFeature feature) {
+        return feature.isOneOf(
+                DataExportFeature.EXPORT_TO_FILE,
+                DataExportFeature.EXPORT_TO_CLIPBOARD,
+                DataExportFeature.FILE_ENCODING);
+    }
+
+    @Override
     public String adjustFileName(String fileName) {
         if (!fileName.contains(".xml")) {
             fileName = fileName + ".xml";
         }
         return fileName;
-    }
-
-    @Override
-    public boolean canCreateHeader() {
-        return false;
-    }
-
-    @Override
-    public boolean canExportToFile() {
-        return true;
-    }
-
-    @Override
-    public boolean canExportToClipboard() {
-        return true;
-    }
-
-    @Override
-    public boolean canQuoteValues() {
-        return false;
-    }
-
-    @Override
-    public boolean supportsFileEncoding() {
-        return true;
     }
 
     @Override
@@ -76,7 +59,7 @@ public class XMLDataExportProcessor extends DataExportProcessor{
             buffer.append("\">\n");
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
                 checkCancelled();
-                String columnName = model.getColumnName(columnIndex);
+                String columnName = getColumnName(model, instructions, columnIndex);
                 GenericDataType genericDataType = model.getGenericDataType(columnIndex);
 
                 String value = null;

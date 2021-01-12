@@ -29,38 +29,20 @@ public class SQLDataExportProcessor extends DataExportProcessor{
     }
 
     @Override
+    public boolean supports(DataExportFeature feature) {
+        return feature.isOneOf(
+                DataExportFeature.EXPORT_TO_FILE,
+                DataExportFeature.EXPORT_TO_CLIPBOARD,
+                DataExportFeature.FILE_ENCODING);
+    }
+
+    @Override
     public String adjustFileName(String fileName) {
         if (fileName != null && !fileName.contains(".sql")) {
             fileName = fileName + ".sql";
         }
         return fileName;
     }
-
-    @Override
-    public boolean canCreateHeader() {
-        return false;
-    }
-
-    @Override
-    public boolean canExportToFile() {
-        return true;
-    }
-
-    @Override
-    public boolean canExportToClipboard() {
-        return true;
-    }
-
-    @Override
-    public boolean canQuoteValues() {
-        return false;
-    }
-
-    @Override
-    public boolean supportsFileEncoding() {
-        return true;
-    }
-
 
     @Override
     public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {

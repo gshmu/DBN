@@ -28,36 +28,21 @@ public class JIRAMarkupDataExportProcessor extends DataExportProcessor{
     }
 
     @Override
+    public boolean supports(DataExportFeature feature) {
+        return feature.isOneOf(
+                DataExportFeature.HEADER_CREATION,
+                DataExportFeature.FRIENDLY_HEADER,
+                DataExportFeature.EXPORT_TO_FILE,
+                DataExportFeature.EXPORT_TO_CLIPBOARD,
+                DataExportFeature.FILE_ENCODING);
+    }
+
+    @Override
     public String adjustFileName(String fileName) {
         if (!fileName.endsWith(".txt")) {
             fileName = fileName + ".txt";
         }
         return fileName;
-    }
-
-    @Override
-    public boolean canCreateHeader() {
-        return true;
-    }
-
-    @Override
-    public boolean canExportToFile() {
-        return true;
-    }
-
-    @Override
-    public boolean canExportToClipboard() {
-        return true;
-    }
-
-    @Override
-    public boolean canQuoteValues() {
-        return false;
-    }
-
-    @Override
-    public boolean supportsFileEncoding() {
-        return true;
     }
 
     @Override
@@ -105,7 +90,7 @@ public class JIRAMarkupDataExportProcessor extends DataExportProcessor{
         if (instructions.isCreateHeader()) {
             buffer.append("||");
             for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++){
-                String columnName = model.getColumnName(columnIndex);
+                String columnName = getColumnName(model, instructions, columnIndex);
                 buffer.append(columnName).append("||");
             }
             buffer.append("\n");
