@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.ui.table;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.event.ApplicationEvents;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.editor.colors.EditorColorsListener;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -25,6 +26,7 @@ public abstract class DBNTableGutter<T extends DBNTableWithGutter> extends JList
         int rowHeight = table.getRowHeight();
         if (rowHeight != 0) setFixedCellHeight(rowHeight);
         setBackground(UIUtil.getPanelBackground());
+        setBorder(Borders.EMPTY_BORDER);
 
         setCellRenderer(createCellRenderer());
 
