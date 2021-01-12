@@ -14,8 +14,14 @@ public class CustomDataExportProcessor extends DataExportProcessor{
     }
 
     @Override
-    public boolean supportsFileEncoding() {
-        return true;
+    public boolean supports(DataExportFeature feature) {
+        return feature.isOneOf(
+                DataExportFeature.HEADER_CREATION,
+                DataExportFeature.FRIENDLY_HEADER,
+                DataExportFeature.EXPORT_TO_FILE,
+                DataExportFeature.EXPORT_TO_CLIPBOARD,
+                DataExportFeature.VALUE_QUOTING,
+                DataExportFeature.FILE_ENCODING);
     }
 
     @Override
@@ -24,31 +30,11 @@ public class CustomDataExportProcessor extends DataExportProcessor{
     }
 
     @Override
-    public boolean canCreateHeader() {
-        return true;
-    }
-
-    @Override
-    public boolean canExportToFile() {
-        return true;
-    }
-
-    @Override
-    public boolean canExportToClipboard() {
-        return true;
-    }
-
-    @Override
-    public boolean canQuoteValues() {
-        return true;
-    }
-
-    @Override
     public void performExport(DataExportModel model, DataExportInstructions instructions, ConnectionHandler connectionHandler) throws DataExportException {
         StringBuilder buffer = new StringBuilder();
         if (instructions.isCreateHeader()) {
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
-                String columnName = model.getColumnName(columnIndex);
+                String columnName = getColumnName(model, instructions, columnIndex);
                 String separator = instructions.getValueSeparator();
                 boolean containsSeparator = columnName.contains(separator);
                 boolean quote =
@@ -86,7 +72,7 @@ public class CustomDataExportProcessor extends DataExportProcessor{
         for (int rowIndex=0; rowIndex < model.getRowCount(); rowIndex++) {
             for (int columnIndex=0; columnIndex < model.getColumnCount(); columnIndex++){
                 checkCancelled();
-                String columnName = model.getColumnName(columnIndex);
+                String columnName = getColumnName(model, instructions, columnIndex);
                 Object object = model.getValue(rowIndex, columnIndex);
                 String value = formatValue(formatter, object);
                 String separator = instructions.getValueSeparator();
@@ -124,4 +110,5 @@ public class CustomDataExportProcessor extends DataExportProcessor{
         }
         writeContent(instructions, buffer.toString());
     }
+
 }

@@ -13,6 +13,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 @Data
 public class DataExportInstructions implements PersistentStateElement, Cloneable {
     private boolean createHeader = true;
+    private boolean friendlyHeaders = false;
     private boolean quoteValuesContainingSeparator = true;
     private boolean quoteAllValues = false;
     private String valueSeparator;
@@ -52,6 +53,7 @@ public class DataExportInstructions implements PersistentStateElement, Cloneable
         element.addContent(child);
 
         setBoolean(child, "create-header", createHeader);
+        setBoolean(child, "friendly-headers", friendlyHeaders);
         setBoolean(child, "quote-values-containing-separator", quoteValuesContainingSeparator);
         setBoolean(child, "quote-all-values", quoteAllValues);
         setString(child, "value-separator", valueSeparator);
@@ -68,6 +70,7 @@ public class DataExportInstructions implements PersistentStateElement, Cloneable
         Element child = element.getChild("export-instructions");
         if (child != null) {
             createHeader = getBoolean(child, "create-header", createHeader);
+            friendlyHeaders = getBoolean(child, "friendly-headers", friendlyHeaders);
             quoteValuesContainingSeparator = getBoolean(child, "quote-values-containing-separator", quoteValuesContainingSeparator);
             quoteAllValues = getBoolean(child, "quote-all-values", quoteAllValues);
             valueSeparator = getString(child, "value-separator", valueSeparator);

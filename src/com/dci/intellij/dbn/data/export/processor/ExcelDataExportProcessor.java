@@ -38,28 +38,11 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
     }
 
     @Override
-    public boolean canCreateHeader() {
-        return true;
-    }
-
-    @Override
-    public boolean canExportToFile() {
-        return true;
-    }
-
-    @Override
-    public boolean canExportToClipboard() {
-        return false;
-    }
-
-    @Override
-    public boolean canQuoteValues() {
-        return false;
-    }
-
-    @Override
-    public boolean supportsFileEncoding() {
-        return false;
+    public boolean supports(DataExportFeature feature) {
+        return feature.isOneOf(
+                DataExportFeature.HEADER_CREATION,
+                DataExportFeature.FRIENDLY_HEADER,
+                DataExportFeature.EXPORT_TO_FILE);
     }
 
     @Override
@@ -81,7 +64,7 @@ public class ExcelDataExportProcessor extends DataExportProcessor{
                 Row headerRow = sheet.createRow(0);
 
                 for (int columnIndex = 0; columnIndex < model.getColumnCount(); columnIndex++){
-                    String columnName = model.getColumnName(columnIndex);
+                    String columnName = getColumnName(model, instructions, columnIndex);
 
                     Cell cell = headerRow.createCell(columnIndex);
                     cell.setCellValue(columnName);
