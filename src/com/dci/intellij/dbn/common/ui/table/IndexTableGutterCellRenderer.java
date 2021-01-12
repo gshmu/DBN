@@ -11,10 +11,10 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import java.awt.*;
 
-public class IndexTableGutterCellRenderer extends JPanel implements ListCellRenderer {
+public class IndexTableGutterCellRenderer extends JPanel implements DBNTableGutterRenderer {
 
     private static final Border BORDER = new CompoundBorder(new CustomLineBorder(UIUtil.getPanelBackground(), 0, 0, 1, 1), Borders.TEXT_FIELD_BORDER);
-    private JLabel textLabel;
+    private final JLabel textLabel;
 
     public IndexTableGutterCellRenderer() {
         setBackground(UIUtil.getPanelBackground());

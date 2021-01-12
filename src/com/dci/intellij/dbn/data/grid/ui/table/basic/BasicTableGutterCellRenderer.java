@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Colors;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
+import com.dci.intellij.dbn.common.ui.table.DBNTableGutterRenderer;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorFontType;
 import com.intellij.ui.border.CustomLineBorder;
@@ -13,7 +14,7 @@ import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import java.awt.*;
 
-public class BasicTableGutterCellRenderer extends JPanel implements ListCellRenderer {
+public class BasicTableGutterCellRenderer extends JPanel implements DBNTableGutterRenderer {
 
     private final JLabel textLabel;
 
@@ -49,7 +50,7 @@ public class BasicTableGutterCellRenderer extends JPanel implements ListCellRend
                         Colors.tableCaretRowColor() :
                         UIUtil.getPanelBackground());
         textLabel.setForeground(isSelected ?
-                Colors.tableSelectionBackgroundColor() :
+                Colors.tableSelectionForegroundColor() :
                 Colors.tableLineNumberColor());
         return this;
     }
