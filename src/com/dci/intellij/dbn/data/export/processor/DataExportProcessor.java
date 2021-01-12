@@ -138,6 +138,8 @@ public abstract class DataExportProcessor {
     }
 
     protected String getColumnName(DataExportModel model, DataExportInstructions instructions, int columnIndex) {
-        return model.getColumnName(columnIndex);
+        return instructions.isFriendlyHeaders() ?
+                model.getColumnFriendlyName(columnIndex) :
+                model.getColumnName(columnIndex);
     }
 }

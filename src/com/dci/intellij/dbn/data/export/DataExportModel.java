@@ -9,6 +9,7 @@ public interface DataExportModel {
     int getRowCount();
     Object getValue(int rowIndex, int columnIndex);
     String getColumnName(int columnIndex);
+    String getColumnFriendlyName(int columnIndex);
     GenericDataType getGenericDataType(int columnIndex);
     Project getProject();
 }
