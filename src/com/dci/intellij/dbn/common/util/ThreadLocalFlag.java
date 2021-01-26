@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.util;
 
 public class ThreadLocalFlag {
-    private boolean defaultValue;
-    private ThreadLocal<Boolean> flag = new ThreadLocal<Boolean>();
+    private final boolean defaultValue;
+    private final ThreadLocal<Boolean> flag = new ThreadLocal<Boolean>();
 
     public ThreadLocalFlag(boolean defaultValue) {
         this.defaultValue = defaultValue;

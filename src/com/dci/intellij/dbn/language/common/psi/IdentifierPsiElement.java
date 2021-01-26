@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.common.psi;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.QuotePair;
 import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
@@ -44,9 +45,9 @@ import java.util.Set;
 
 public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElementType> {
     private PsiResolveResult ref;
-    private boolean resolvingUnderlyingObject;
+    private final ThreadLocalFlag resolvingUnderlyingObject = new ThreadLocalFlag(false);
     private final Latent<DBObject> underlyingObject = Latent.mutable(
-            () -> ref == null ? 0 : ref.getLastResolveInvocation(),
+            () -> getChars() + "-" + (ref == null ? 0 : ref.getLastResolveInvocation()),
             () -> loadUnderlyingObject());
 
     public IdentifierPsiElement(ASTNode astNode, IdentifierElementType elementType) {
@@ -234,16 +235,12 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     @Override
     @Nullable
     public DBObject getUnderlyingObject() {
-        if (!resolvingUnderlyingObject) {
-            synchronized (this) {
-                if (!resolvingUnderlyingObject) {
-                    try {
-                        resolvingUnderlyingObject = true;
-                        return underlyingObject.get();
-                    } finally {
-                        resolvingUnderlyingObject = false;
-                    }
-                }
+        if (!resolvingUnderlyingObject.get()) {
+            try {
+                resolvingUnderlyingObject.set(true);
+                return underlyingObject.get();
+            } finally {
+                resolvingUnderlyingObject.set(false);
             }
         }
         return underlyingObject.value();
