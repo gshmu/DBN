@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
+import com.dci.intellij.dbn.common.consumer.Consumer;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
@@ -21,8 +22,6 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
-import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
-import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Background;
@@ -653,7 +652,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     @Override
-    public void lookupObjectsOfType(LookupConsumer consumer, DBObjectType objectType) throws ConsumerStoppedException {
+    public void lookupObjectsOfType(Consumer consumer, DBObjectType objectType) {
         if (getConnectionObjectTypeFilter().accepts(objectType)) {
             if (objectType == SCHEMA) consumer.consume(getSchemas()); else
             if (objectType == USER) consumer.consume(getUsers()); else
@@ -664,7 +663,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     @Override
-    public void lookupChildObjectsOfType(LookupConsumer consumer, DBObject parentObject, DBObjectType objectType, ObjectTypeFilter filter, DBSchema currentSchema) throws ConsumerStoppedException {
+    public void lookupChildObjectsOfType(Consumer consumer, DBObject parentObject, DBObjectType objectType, ObjectTypeFilter filter, DBSchema currentSchema) {
         if (getConnectionObjectTypeFilter().accepts(objectType)) {
             if (parentObject != null && currentSchema != null) {
                 if (parentObject instanceof DBSchema) {
@@ -672,7 +671,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                     if (objectType.isGeneric()) {
                         Set<DBObjectType> concreteTypes = objectType.getInheritingTypes();
                         for (DBObjectType concreteType : concreteTypes) {
-                            consumer.check();
+                            consumer.checkCancelled();
                             if (filter.acceptsObject(schema, currentSchema, concreteType)) {
                                 consumer.consume(schema.getChildObjects(concreteType));
                             }
@@ -686,7 +685,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                     boolean synonymsSupported = DatabaseCompatibilityInterface.getInstance(parentObject).supportsObjectType(SYNONYM.getTypeId());
                     if (synonymsSupported && filter.acceptsObject(schema, currentSchema, SYNONYM)) {
                         for (DBSynonym synonym : schema.getSynonyms()) {
-                            consumer.check();
+                            consumer.checkCancelled();
                             DBObject underlyingObject = synonym.getUnderlyingObject();
                             if (underlyingObject != null && underlyingObject.isOfType(objectType)) {
                                 consumer.consume(synonym);
@@ -697,7 +696,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                     if (objectType.isGeneric()) {
                         Set<DBObjectType> concreteTypes = objectType.getInheritingTypes();
                         for (DBObjectType concreteType : concreteTypes) {
-                            consumer.check();
+                            consumer.checkCancelled();
                             if (filter.acceptsRootObject(objectType)) {
                                 consumer.consume(parentObject.getChildObjects(concreteType));
                             }

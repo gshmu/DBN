@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.code.common.completion;
 
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
+import com.dci.intellij.dbn.common.consumer.Consumer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.lookup.ConsumerStoppedException;
-import com.dci.intellij.dbn.common.lookup.LookupConsumer;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -88,19 +87,15 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
     }
 
     private void collectCompletionVariants(CodeCompletionLookupConsumer consumer, LeafPsiElement leafBeforeCaret) {
-        try {
-            if (leafBeforeCaret == null) {
-                collectRootCompletionVariants(consumer);
-            } else {
-                leafBeforeCaret = (LeafPsiElement) leafBeforeCaret.getOriginalElement();
-                collectElementRelativeVariants(leafBeforeCaret, consumer);
-            }
-        } catch (ConsumerStoppedException ignore) {
-
+        if (leafBeforeCaret == null) {
+            collectRootCompletionVariants(consumer);
+        } else {
+            leafBeforeCaret = (LeafPsiElement) leafBeforeCaret.getOriginalElement();
+            collectElementRelativeVariants(leafBeforeCaret, consumer);
         }
     }
 
-    private static void collectRootCompletionVariants(CodeCompletionLookupConsumer consumer) throws ConsumerStoppedException {
+    private static void collectRootCompletionVariants(CodeCompletionLookupConsumer consumer) {
         CodeCompletionContext context = consumer.getContext();
         DBLanguagePsiFile file = context.getFile();
 
@@ -130,7 +125,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         return null;
     }
 
-    private static void collectElementRelativeVariants(LeafPsiElement element, CodeCompletionLookupConsumer consumer) throws ConsumerStoppedException {
+    private static void collectElementRelativeVariants(LeafPsiElement element, CodeCompletionLookupConsumer consumer) {
 
         CodeCompletionContext context = consumer.getContext();
         ConnectionHandler connectionHandler = context.getConnectionHandler();
@@ -202,7 +197,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         }
 
         for (LeafElementType nextPossibleLeaf : nextPossibleLeafs.values()) {
-            consumer.check();
+            consumer.checkCancelled();
             //boolean addParenthesis =
             //        nextPossibleLeaf.getLookupCache().getNextRequiredTokens().contains(
             //                element.getLanguage().getSharedTokenTypes().getLeftParenthesis());
@@ -316,11 +311,11 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
     }
 
     private static void collectObjectMatchingScope(
-            LookupConsumer consumer,
+            Consumer consumer,
             IdentifierElementType identifierElementType,
             ObjectTypeFilter filter,
             @NotNull  BasePsiElement sourceScope,
-            CodeCompletionContext context) throws ConsumerStoppedException {
+            CodeCompletionContext context) {
         DBObjectType objectType = identifierElementType.getObjectType();
         PsiElement sourceElement = context.getElementAtCaret();
         ConnectionHandler connectionHandler = context.getConnectionHandler();
