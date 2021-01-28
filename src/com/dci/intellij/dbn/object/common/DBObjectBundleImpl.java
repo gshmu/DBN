@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
-import com.dci.intellij.dbn.common.consumer.QualifiedConsumer;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
@@ -97,6 +96,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -652,7 +652,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     @Override
-    public void lookupObjectsOfType(QualifiedConsumer consumer, DBObjectType objectType) {
+    public void lookupObjectsOfType(Consumer consumer, DBObjectType objectType) {
         if (getConnectionObjectTypeFilter().accepts(objectType)) {
             if (objectType == SCHEMA) consumer.consume(getSchemas()); else
             if (objectType == USER) consumer.consume(getUsers()); else
@@ -663,7 +663,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     @Override
-    public void lookupChildObjectsOfType(QualifiedConsumer consumer, DBObject parentObject, DBObjectType objectType, ObjectTypeFilter filter, DBSchema currentSchema) {
+    public void lookupChildObjectsOfType(Consumer consumer, DBObject parentObject, DBObjectType objectType, ObjectTypeFilter filter, DBSchema currentSchema) {
         if (getConnectionObjectTypeFilter().accepts(objectType)) {
             if (parentObject != null && currentSchema != null) {
                 if (parentObject instanceof DBSchema) {
@@ -671,7 +671,6 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                     if (objectType.isGeneric()) {
                         Set<DBObjectType> concreteTypes = objectType.getInheritingTypes();
                         for (DBObjectType concreteType : concreteTypes) {
-                            consumer.checkCancelled();
                             if (filter.acceptsObject(schema, currentSchema, concreteType)) {
                                 consumer.consume(schema.getChildObjects(concreteType));
                             }
@@ -685,7 +684,6 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                     boolean synonymsSupported = DatabaseCompatibilityInterface.getInstance(parentObject).supportsObjectType(SYNONYM.getTypeId());
                     if (synonymsSupported && filter.acceptsObject(schema, currentSchema, SYNONYM)) {
                         for (DBSynonym synonym : schema.getSynonyms()) {
-                            consumer.checkCancelled();
                             DBObject underlyingObject = synonym.getUnderlyingObject();
                             if (underlyingObject != null && underlyingObject.isOfType(objectType)) {
                                 consumer.consume(synonym);
@@ -696,7 +694,6 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                     if (objectType.isGeneric()) {
                         Set<DBObjectType> concreteTypes = objectType.getInheritingTypes();
                         for (DBObjectType concreteType : concreteTypes) {
-                            consumer.checkCancelled();
                             if (filter.acceptsRootObject(objectType)) {
                                 consumer.consume(parentObject.getChildObjects(concreteType));
                             }
