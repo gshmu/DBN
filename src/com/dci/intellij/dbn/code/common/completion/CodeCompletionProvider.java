@@ -111,7 +111,6 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
     }
 
     private static void collectElementRelativeVariants(LeafPsiElement element, CodeCompletionLookupConsumer consumer) {
-
         CodeCompletionContext context = consumer.getContext();
 
         IdentifierPsiElement parentIdentifierPsiElement = null;
@@ -146,6 +145,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                 parentIdentifierPsiElement = (IdentifierPsiElement) parentPsiElement;
                 parentObject = parentIdentifierPsiElement.getUnderlyingObject();
             }
+
         } else if (parent instanceof BasePsiElement) {
             BasePsiElement basePsiElement = (BasePsiElement) parent;
             ElementTypeBase elementType = basePsiElement.elementType;
@@ -155,7 +155,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             }
         }
 
-        if (context.hasCompletionCandidates()) {
+        if (!context.hasCompletionCandidates()) {
             LeafElementType elementType = (LeafElementType) element.elementType;
             PathNode pathNode = new ASTPathNode(element.node);
             ElementLookupContext lookupContext = computeParseBranches(element.node, context.getDatabaseVersion());

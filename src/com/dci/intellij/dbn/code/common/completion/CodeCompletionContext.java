@@ -56,7 +56,7 @@ public class CodeCompletionContext {
 
     private @Getter @Setter DBObject parentObject;
     private @Getter @Setter IdentifierPsiElement parentIdentifierPsiElement;
-    private Map<String, LeafElementType> completionCandidates = new HashMap<>();
+    private final Map<String, LeafElementType> completionCandidates = new HashMap<>();
 
 
     private final Latent<ExecutorService> executor = Latent.basic(() ->  ThreadFactory.getCodeCompletionExecutor());
