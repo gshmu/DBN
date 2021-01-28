@@ -337,7 +337,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
 
     @Nullable
     public T ensure(long timeoutSeconds) {
-        return Timeout.call(timeoutSeconds, null, false, () -> get());
+        return Timeout.call(timeoutSeconds, null, true, () -> get());
     }
 
     public T ensure(){

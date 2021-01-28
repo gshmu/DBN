@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import com.dci.intellij.dbn.common.consumer.SetConsumer;
+import com.dci.intellij.dbn.common.consumer.SetCollector;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -100,7 +100,7 @@ public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiE
     }
 
     public static Set<DBObject> identifyPotentialParentObjects(DBObjectType objectType, @Nullable ObjectTypeFilter filter, @NotNull BasePsiElement sourceScope, LeafPsiElement lookupIssuer) {
-        SetConsumer<DBObject> parentObjects = SetConsumer.create();
+        SetCollector<DBObject> parentObjects = SetCollector.create();
         Set<DBObjectType> parentTypes = objectType.getGenericParents();
         if (parentTypes.size() > 0) {
             if (objectType.isSchemaObject()) {

@@ -46,21 +46,21 @@ public abstract class PsiLookupAdapter {
     }
 
 
-    public final void collectInParentScopeOf(@NotNull BasePsiElement source, Consumer<BasePsiElement> consumer) {
+    public final void collectInParentScopeOf(@NotNull BasePsiElement source, Consumer<? super BasePsiElement> consumer) {
         PsiScopeVisitor.visit(source, scope -> {
             scope.collectPsiElements(PsiLookupAdapter.this, 1, consumer);
             return false;
         });
     }
 
-    public final void collectInScope(@NotNull BasePsiElement scope, @NotNull Consumer<BasePsiElement> consumer) {
+    public final void collectInScope(@NotNull BasePsiElement scope, @NotNull Consumer<? super BasePsiElement> consumer) {
         BasePsiElement collectScope = scope.isScopeBoundary() ? scope : scope.getEnclosingScopePsiElement();
         if (collectScope != null) {
             collectScope.collectPsiElements(this, 100, consumer);
         }
     }
 
-    public final void collectInElement(@NotNull BasePsiElement element, @NotNull Consumer<BasePsiElement> consumer) {
+    public final void collectInElement(@NotNull BasePsiElement element, @NotNull Consumer<? super BasePsiElement> consumer) {
         element.collectPsiElements(this, 100, consumer);
     }
 }

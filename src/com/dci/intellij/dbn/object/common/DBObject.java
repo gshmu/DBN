@@ -25,6 +25,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -84,6 +85,8 @@ public interface DBObject extends
 
     @NotNull
     List<DBObject> getChildObjects(DBObjectType objectType);
+
+    void collectChildObjects(DBObjectType objectType, Consumer<? super DBObject> consumer);
 
     @Nullable
     DBObjectList<? extends DBObject> getChildObjectList(DBObjectType objectType);

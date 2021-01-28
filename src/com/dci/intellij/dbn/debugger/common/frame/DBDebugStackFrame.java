@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.consumer.ListConsumer;
+import com.dci.intellij.dbn.common.consumer.ListCollector;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
@@ -177,7 +177,7 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
                     String variableName = objectCaseOption.format(basePsiElement.getText());
                     //DBObject object = basePsiElement.resolveUnderlyingObject();
 
-                    ListConsumer<String> childVariableNames = ListConsumer.unique();
+                    ListCollector<String> childVariableNames = ListCollector.unique();
                     if (basePsiElement instanceof IdentifierPsiElement) {
                         IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
                         identifierPsiElement.findQualifiedUsages(qualifiedUsage -> {

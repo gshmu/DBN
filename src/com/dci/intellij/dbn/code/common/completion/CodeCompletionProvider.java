@@ -47,7 +47,6 @@ import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 public class CodeCompletionProvider extends CompletionProvider<CompletionParameters> {
@@ -176,7 +175,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
 
     private static void collectTokenElements(CodeCompletionLookupConsumer consumer) {
         CodeCompletionContext context = consumer.getContext();
-        context.async(() -> {
+        context.async("KEYWORD TOKENS", () -> {
             Collection<LeafElementType> completionCandidates = context.getCompletionCandidates();
             completionCandidates.stream().filter(elementType -> elementType instanceof TokenElementType).forEach(elementType -> {
                 TokenElementType tokenElementType = (TokenElementType) elementType;
@@ -198,21 +197,21 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                 DBObjectType objectType = identifierElementType.getObjectType();
                 if (parentIdentifierPsiElement == null) {
                     if (identifierElementType.isObject()) {
-                        context.async(() -> collectObjectElements(element, consumer, identifierElementType, objectType));
+                        context.async("LOCAL " + objectType + " OBJECTS", () -> collectObjectElements(element, consumer, identifierElementType, objectType));
 
                     } else if (identifierElementType.isAlias()) {
-                        context.async(() -> collectAliasElements(element, consumer, objectType));
+                        context.async("LOCAL " + objectType + " ALIASES", () -> collectAliasElements(element, consumer, objectType));
 
                     } else if (identifierElementType.isVariable()) {
-                        context.async(() -> collectVariableElements(element, consumer, objectType));
+                        context.async("LOCAL " + objectType + " VARIABLES", () -> collectVariableElements(element, consumer, objectType));
                     }
                 }
                 if (parentObject != null && (context.isLiveConnection() || parentObject instanceof DBVirtualObject)) {
-                    context.async(() -> collectChildObjects(consumer, parentObject, identifierElementType.getObjectType()));
+                    context.async("DATABASE " + objectType + " OBJECTS", () -> collectChildObjects(consumer, parentObject, objectType));
                 }
             } else if (identifierElementType.isDefinition()) {
                 if (identifierElementType.isAlias()) {
-                    context.async(() -> buildAliasDefinitionNames(element, consumer));
+                    context.async("LOCAL ALIAS DEFINITIONS", () -> buildAliasDefinitionNames(element, consumer));
                 }
             }
         });
@@ -252,8 +251,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
     }
 
     private static void collectChildObjects(CodeCompletionLookupConsumer consumer, DBObject object, DBObjectType objectType) {
-        List<DBObject> childObjects = object.getChildObjects(objectType);
-        consumer.consume(childObjects);
+        object.collectChildObjects(objectType, consumer);
     }
 
     @NotNull

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import com.dci.intellij.dbn.common.consumer.SetConsumer;
+import com.dci.intellij.dbn.common.consumer.SetCollector;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -21,7 +21,7 @@ public class NamedPsiElement extends SequencePsiElement<NamedElementType> {
 
     @Nullable
     public String createSubjectList() {
-        SetConsumer<IdentifierPsiElement> subjects = SetConsumer.create();
+        SetCollector<IdentifierPsiElement> subjects = SetCollector.create();
         collectSubjectPsiElements(subjects);
         return subjects.isNotEmpty() ? NamingUtil.createNamesList(subjects.elements(), 3) : null;
     }

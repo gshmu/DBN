@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.filter.quick.ObjectQuickFilter;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,8 +37,13 @@ public interface DBObjectList<T extends DBObject> extends BrowserTreeNode, Dynam
     void setQuickFilter(@Nullable ObjectQuickFilter quickFilter);
 
     List<T> getObjects();
+
     List<T> getObjects(String name);
+
     T getObject(String name);
     T getObject(String name, short overload);
     T getObject(String name, String parentName);
+
+    void collectObjects(Consumer<? super DBObject> consumer);
+
 }
