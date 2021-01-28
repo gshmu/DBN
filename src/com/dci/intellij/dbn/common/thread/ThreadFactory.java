@@ -1,29 +1,39 @@
 package com.dci.intellij.dbn.common.thread;
 
+import com.dci.intellij.dbn.common.LoggerFactory;
+import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThreadFactory {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
+    private static final Map<String, AtomicInteger> THREAD_COUNTERS = new ConcurrentHashMap<>();
 
-    private static final ExecutorService DATABASE_INTERFACE_EXECUTOR = Executors.newCachedThreadPool(createThreadFactory("DBN - Database Interface Thread", true));
+    private static final ExecutorService DATABASE_INTERFACE = Executors.newCachedThreadPool(createThreadFactory("dbn-database-interface", true));
 
-    private static final ExecutorService CANCELLABLE_EXECUTOR = Executors.newCachedThreadPool(createThreadFactory("DBN - Cancellable Call Thread", true));
+    private static final ExecutorService CANCELLABLE_EXECUTOR = Executors.newCachedThreadPool(createThreadFactory("dbn-cancellable-call", true));
 
-    private static final ExecutorService BACKGROUND_EXECUTOR = Executors.newCachedThreadPool(createThreadFactory("DBN - Background Thread", true));
+    private static final ExecutorService BACKGROUND_EXECUTOR = Executors.newCachedThreadPool(createThreadFactory("dbn-background-executor", true));
 
-    private static final ExecutorService DEBUG_EXECUTOR = Executors.newCachedThreadPool(createThreadFactory("DBN - Database Debug Thread", true));
+    private static final ExecutorService DEBUG_EXECUTOR = Executors.newCachedThreadPool(createThreadFactory("dbn-database-debugger", true));
 
-    private static final ExecutorService TIMEOUT_DAEMON_EXECUTOR = Executors.newCachedThreadPool(createThreadFactory("DBN - Timed-out Execution Thread", true));
+    private static final ExecutorService TIMEOUT_EXECUTOR = Executors.newCachedThreadPool(createThreadFactory("dbn-timeout-executor", false));
 
-    private static final ExecutorService TIMEOUT_EXECUTOR = Executors.newCachedThreadPool(createThreadFactory("DBN - Timed-out Execution Thread (non-daemon)", false));
+    private static final ExecutorService TIMEOUT_DAEMON_EXECUTOR = Executors.newCachedThreadPool(createThreadFactory("dbn-timeout-executor-daemon", true));
 
 
     @NotNull
-    private static java.util.concurrent.ThreadFactory createThreadFactory(final String name, final boolean daemon) {
+    private static java.util.concurrent.ThreadFactory createThreadFactory(String name, boolean daemon) {
         return runnable -> {
-            Thread thread = new Thread(runnable, name);
+            AtomicInteger index = THREAD_COUNTERS.computeIfAbsent(name, s -> new AtomicInteger(0));
+            String indexedName = name + "-" + index.incrementAndGet();
+            LOGGER.info("Creating thread " + indexedName);
+            Thread thread = new Thread(runnable, indexedName);
             thread.setPriority(Thread.MIN_PRIORITY);
             thread.setDaemon(daemon);
             return thread;
@@ -48,6 +58,10 @@ public class ThreadFactory {
     }
 
     public static ExecutorService databaseInterfaceExecutor() {
-        return DATABASE_INTERFACE_EXECUTOR;
+        return DATABASE_INTERFACE;
+    }
+
+    public static ExecutorService getCodeCompletionExecutor() {
+        return Executors.newCachedThreadPool(createThreadFactory("dbn-code-completion", true));
     }
 }
