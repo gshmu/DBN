@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.code.common.lookup.BasicLookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.IdentifierLookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.VariableLookupItemBuilder;
+import com.dci.intellij.dbn.common.consumer.CancellableConsumer;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -18,14 +19,13 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.util.Consumer;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-public class CodeCompletionLookupConsumer implements Consumer<Object> {
+public class CodeCompletionLookupConsumer implements CancellableConsumer<Object> {
     private final CodeCompletionContext context;
     private @Getter @Setter @Deprecated boolean addParenthesis;
 
@@ -119,7 +119,7 @@ public class CodeCompletionLookupConsumer implements Consumer<Object> {
         }
     }
 
-    public void checkCancelled() {
+    public void checkCancelled() throws ProcessCanceledException{
         if (context.getResult().isStopped()) {
             throw AlreadyDisposedException.INSTANCE;
         }

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.execution.statement;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.action.UserDataKeys;
-import com.dci.intellij.dbn.common.consumer.ListConsumer;
+import com.dci.intellij.dbn.common.consumer.ListCollector;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
@@ -355,7 +355,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         for (StatementExecutionProcessor executionProcessor : executionProcessors) {
             executionProcessor.initExecutionInput(bulkExecution);
             StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-            ListConsumer<ExecVariablePsiElement> psiElements = ListConsumer.basic();
+            ListCollector<ExecVariablePsiElement> psiElements = ListCollector.basic();
             ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
             if (executablePsiElement != null) {
                 executablePsiElement.collectExecVariablePsiElements(psiElements);

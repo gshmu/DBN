@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
-import com.dci.intellij.dbn.common.consumer.ListConsumer;
+import com.dci.intellij.dbn.common.consumer.ListCollector;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
@@ -308,7 +308,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
         BasePsiElement sourceScope = getEnclosingScopePsiElement();
         DBObjectType objectType = getObjectType();
         PsiLookupAdapter lookupAdapter = LookupAdapterCache.ALIAS_DEFINITION.get(objectType);
-        ListConsumer<BasePsiElement> consumer = ListConsumer.basic();
+        ListCollector<BasePsiElement> consumer = ListCollector.basic();
         lookupAdapter.collectInScope(statement, consumer);
 
         return consumer.isEmpty() ? new Object[0] : consumer.elements().toArray();

@@ -7,14 +7,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SetConsumer<T> implements Consumer<T> {
+public class SetCollector<T> implements Consumer<T> {
     private Set<T> elements;
 
-    private SetConsumer() {}
+    private SetCollector() {}
 
 
-    public static <T> SetConsumer<T> create() {
-        return new SetConsumer<>();
+    public static <T> SetCollector<T> create() {
+        return new SetCollector<>();
     }
 
     @Override

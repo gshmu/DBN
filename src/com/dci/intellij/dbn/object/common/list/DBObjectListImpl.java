@@ -32,6 +32,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -157,6 +158,11 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @NotNull
     public List<T> getObjects() {
         return getAllElements();
+    }
+
+    @Override
+    public void collectObjects(Consumer<? super DBObject> consumer) {
+        getAllElements().forEach(object -> consumer.consume(object));
     }
 
     @Override

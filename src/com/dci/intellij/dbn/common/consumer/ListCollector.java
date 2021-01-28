@@ -7,18 +7,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ListConsumer<T> implements Consumer<T> {
+public class ListCollector<T> implements Consumer<T> {
     private List<T> elements;
 
-    private ListConsumer() {}
+    private ListCollector() {}
 
 
-    public static <T> ListConsumer<T> basic() {
-        return new ListConsumer<>();
+    public static <T> ListCollector<T> basic() {
+        return new ListCollector<>();
     }
 
-    public static <T> ListConsumer<T> unique() {
-        return new ListConsumer<T>() {
+    public static <T> ListCollector<T> unique() {
+        return new ListCollector<T>() {
             @Override
             public void consume(T element) {
                 if (!elements().contains(element)) {
