@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.sql;
 
-import com.dci.intellij.dbn.common.consumer.SetConsumer;
+import com.dci.intellij.dbn.common.consumer.SetCollector;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.language.common.DBLanguageFoldingBuilder;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -76,7 +76,7 @@ public class SQLFoldingBuilder extends DBLanguageFoldingBuilder {
         }
         if (psiElement instanceof BasePsiElement) {
             BasePsiElement basePsiElement = (BasePsiElement) psiElement;
-            SetConsumer<IdentifierPsiElement> subjects = SetConsumer.create();
+            SetCollector<IdentifierPsiElement> subjects = SetCollector.create();
 
             basePsiElement.collectSubjectPsiElements(subjects);
             StringBuilder buffer = new StringBuilder(" ");

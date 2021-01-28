@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common.psi;
 
-import com.dci.intellij.dbn.common.consumer.SetConsumer;
+import com.dci.intellij.dbn.common.consumer.SetCollector;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -86,7 +86,7 @@ public class PsiUtil {
             }
 
             if (objectPsiElement != null) {
-                SetConsumer<BasePsiElement> virtualObjectPsiElements = SetConsumer.create();
+                SetCollector<BasePsiElement> virtualObjectPsiElements = SetCollector.create();
                 scope.collectVirtualObjectPsiElements(objectType, virtualObjectPsiElements);
                 for (BasePsiElement virtualObjectPsiElement : virtualObjectPsiElements.elements()) {
                     if (virtualObjectPsiElement.containsPsiElement(objectPsiElement))

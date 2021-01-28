@@ -2,42 +2,25 @@ package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
+import lombok.SneakyThrows;
 
 public interface Unsafe {
+
+    @SneakyThrows
     static void run(ThrowableRunnable<Throwable> runnable) {
-        try {
-            runnable.run();
-        } catch (Throwable e) {
-            throw new UnsafeRuntimeException(e);
-        }
+        runnable.run();
     }
 
+    @SneakyThrows
     static <T> T call(ThrowableCallable<T, Throwable> callable) {
-        try {
-            return callable.call();
-        } catch (Throwable e) {
-            throw new UnsafeRuntimeException(e);
-        }
-    }
-
-    class UnsafeRuntimeException extends RuntimeException {
-        UnsafeRuntimeException(Throwable cause) {
-            super(cause.getMessage(), cause);
-        }
-    }
-
-    static Throwable cause(Throwable throwable) {
-        if (throwable instanceof UnsafeRuntimeException) {
-            return throwable.getCause();
-        }
-        return throwable;
+        return callable.call();
     }
 
     static <T> T cast(Object o) {
         return (T) o;
     }
 
-    static void silent(Runnable runnable) {
+    static void silent(ThrowableRunnable<Throwable> runnable) {
         try {
             runnable.run();
         } catch (Throwable ignore) {

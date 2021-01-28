@@ -10,6 +10,8 @@ import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.browser.ui.ToolTipProvider;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.sql.color.SQLTextAttributesKeys;
+import com.dci.intellij.dbn.common.consumer.CancellableConsumer;
+import com.dci.intellij.dbn.common.consumer.ListCollector;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
@@ -63,6 +65,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -462,47 +465,44 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @Override
     @NotNull
     public List<DBObject> getChildObjects(DBObjectType objectType) {
+        ListCollector<DBObject> collector = ListCollector.basic();
+        collectChildObjects(objectType, collector);
+        return collector.elements();
+    }
+
+    @Override
+    public void collectChildObjects(DBObjectType objectType, Consumer<? super DBObject> consumer) {
         if (objectType.getFamilyTypes().size() > 1) {
-            List<DBObject> list = new ArrayList<>();
             for (DBObjectType childObjectType : objectType.getFamilyTypes()) {
+                CancellableConsumer.checkCancelled(consumer);
                 if (objectType != childObjectType) {
-                    List<DBObject> childObjects = getChildObjects(childObjectType);
-                    list.addAll(childObjects);
+                    collectChildObjects(childObjectType, consumer);
                 } else {
-                    DBObjectList<? extends DBObject> objectList = childObjects == null ? null : childObjects.getObjectList(objectType);
+                    DBObjectList<?> objectList = childObjects == null ? null : childObjects.getObjectList(objectType);
                     if (objectList != null) {
-                        list.addAll(objectList.getObjects());
+                        objectList.collectObjects(consumer);
                     }
                 }
             }
-            return list;
-        } else {
+        } else if (childObjects != null) {
             if (objectType == DBObjectType.ANY) {
-                if (childObjects != null) {
-                    List<DBObject> objects = new ArrayList<DBObject>();
-                    forEach(
-                            childObjects.getObjectLists(),
-                            objectList -> {
-                                if (!objectList.isInternal() && Failsafe.check(objectList)) {
-                                    objects.addAll(objectList.getObjects());
-                                }
-                            });
-                    return objects;
-                }
-
-                return EMPTY_OBJECT_LIST;
-            } else {
-                DBObjectList objectList = null;
-                if (childObjects != null) {
-                    objectList = childObjects.getObjectList(objectType);
-                    if (objectList == null) {
-                        objectList = childObjects.getInternalObjectList(objectType);
+                for (DBObjectList<DBObject> objectList : childObjects.getObjectLists()) {
+                    CancellableConsumer.checkCancelled(consumer);
+                    if (!objectList.isInternal() && Failsafe.check(objectList)) {
+                        objectList.collectObjects(consumer);
                     }
                 }
-                return objectList == null ? EMPTY_OBJECT_LIST : objectList.getObjects();
+            } else {
+                DBObjectList objectList = childObjects.getObjectList(objectType);
+                if (objectList == null) {
+                    objectList = childObjects.getInternalObjectList(objectType);
+                }
+                if (objectList != null) objectList.collectObjects(consumer);
             }
         }
     }
+
+
 
     @Nullable
     @Override

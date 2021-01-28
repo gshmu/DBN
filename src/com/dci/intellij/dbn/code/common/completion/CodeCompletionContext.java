@@ -3,9 +3,10 @@ package com.dci.intellij.dbn.code.common.completion;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
-import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.ThreadFactory;
+import com.dci.intellij.dbn.common.util.Measured;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -37,11 +38,17 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class CodeCompletionContext {
+
     private @Getter @Setter boolean extended;
     private final PsiFileRef<DBLanguagePsiFile> file;
     private final ConnectionHandlerRef connectionHandler;
@@ -57,10 +64,7 @@ public class CodeCompletionContext {
     private @Getter @Setter DBObject parentObject;
     private @Getter @Setter IdentifierPsiElement parentIdentifierPsiElement;
     private final Map<String, LeafElementType> completionCandidates = new HashMap<>();
-
-
-    private final Latent<ExecutorService> executor = Latent.basic(() ->  ThreadFactory.getCodeCompletionExecutor());
-
+    private final Set<Future> completionTasks = new HashSet<>();
 
     public CodeCompletionContext(DBLanguagePsiFile file, CompletionParameters parameters, CompletionResultSet result) {
         this.file = PsiFileRef.of(file);
@@ -136,30 +140,22 @@ public class CodeCompletionContext {
         return connectionHandler != null && !connectionHandler.isVirtual();
     }
 
-    private ExecutorService getExecutor() {
-        return executor.get();
-    }
-
-    public void async(Runnable runnable) {
-        getExecutor().execute(() -> {
-            try {
-                runnable.run();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+    public void async(String identifier, Runnable runnable) {
+        ExecutorService executor = ThreadFactory.getCodeCompletionExecutor();
+        completionTasks.add(executor.submit(() ->
+                Unsafe.silent(() ->
+                        Measured.run("code completion " + identifier + " load", () -> runnable.run()))));
     }
 
     public void awaitCompletion() {
-        if (this.executor.loaded()) {
-            try {
-                ExecutorService executor = this.executor.get();
-                executor.shutdown();
-                executor.awaitTermination(1, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        ExecutorService executor = ThreadFactory.getCodeCompletionExecutor();
+        Unsafe.silent(() -> executor.invokeAll(
+                completionTasks.
+                        stream().
+                        map(future -> (Callable<Object>) () -> future.get()).
+                        collect(Collectors.toList()),
+                200,
+                TimeUnit.MILLISECONDS));
     }
 
     public void addCompletionCandidate(@Nullable LeafElementType leafElementType) {
