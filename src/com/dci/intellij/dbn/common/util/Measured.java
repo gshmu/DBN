@@ -16,7 +16,7 @@ public interface Measured {
         try {
             runnable.run();
         } finally {
-            LOGGER.info("Executed " + identifier + " - took " + (start - System.currentTimeMillis()) + "ms");
+            LOGGER.info("Executed " + identifier + " - took " + (System.currentTimeMillis() - start) + "ms");
         }
     }
 
@@ -26,7 +26,7 @@ public interface Measured {
         try {
             return callable.call();
         } finally {
-            LOGGER.info("Executed " + identifier + " - took " + (start - System.currentTimeMillis()) + "ms");
+            LOGGER.info("Executed " + identifier + " - took " + (System.currentTimeMillis() - start) + "ms");
         }
     }
 }
