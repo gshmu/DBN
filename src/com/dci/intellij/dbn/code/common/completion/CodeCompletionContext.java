@@ -3,6 +3,8 @@ package com.dci.intellij.dbn.code.common.completion;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
+import com.dci.intellij.dbn.common.latent.Latent;
+import com.dci.intellij.dbn.common.thread.ThreadFactory;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -10,9 +12,14 @@ import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.PsiFileRef;
+import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
+import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
+import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
+import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
+import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.codeInsight.completion.CompletionParameters;
@@ -28,6 +35,12 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+
 public class CodeCompletionContext {
     private @Getter @Setter boolean extended;
     private final PsiFileRef<DBLanguagePsiFile> file;
@@ -40,6 +53,13 @@ public class CodeCompletionContext {
     private final @Getter String userInput;
     private final @Getter PsiElement elementAtCaret;
     private final @Getter boolean newLine;
+
+    private @Getter @Setter DBObject parentObject;
+    private @Getter @Setter IdentifierPsiElement parentIdentifierPsiElement;
+    private Map<String, LeafElementType> completionCandidates = new HashMap<>();
+
+
+    private final Latent<ExecutorService> executor = Latent.basic(() ->  ThreadFactory.getCodeCompletionExecutor());
 
 
     public CodeCompletionContext(DBLanguagePsiFile file, CompletionParameters parameters, CompletionResultSet result) {
@@ -109,5 +129,60 @@ public class CodeCompletionContext {
     public DBLanguage getLanguage() {
         DBLanguageDialect languageDialect = getFile().getLanguageDialect();
         return languageDialect == null ? SQLLanguage.INSTANCE : languageDialect.getBaseLanguage();
+    }
+
+    public boolean isLiveConnection() {
+        ConnectionHandler connectionHandler = getConnectionHandler();
+        return connectionHandler != null && !connectionHandler.isVirtual();
+    }
+
+    private ExecutorService getExecutor() {
+        return executor.get();
+    }
+
+    public void async(Runnable runnable) {
+        getExecutor().execute(runnable);
+    }
+
+    public void awaitCompletion() {
+        if (this.executor.loaded()) {
+            try {
+                ExecutorService executor = this.executor.get();
+                executor.shutdown();
+                executor.awaitTermination(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void addCompletionCandidate(@Nullable LeafElementType leafElementType) {
+        if (leafElementType != null) {
+            String leafUniqueKey = getLeafUniqueKey(leafElementType);
+            if (leafUniqueKey != null) {
+                completionCandidates.put(leafUniqueKey, leafElementType);
+            }
+        }
+    }
+
+    public boolean hasCompletionCandidates() {
+        return !completionCandidates.isEmpty();
+    }
+
+    public Collection<LeafElementType> getCompletionCandidates() {
+        return completionCandidates.values();
+    }
+
+    private static String getLeafUniqueKey(LeafElementType leaf) {
+        if (leaf instanceof TokenElementType) {
+            TokenElementType tokenElementType = (TokenElementType) leaf;
+            String text = tokenElementType.getText();
+            String id = tokenElementType.tokenType.getId();
+            return StringUtil.isEmpty(text) ? id : id + text;
+        } else if (leaf instanceof IdentifierElementType){
+            IdentifierElementType identifierElementType = (IdentifierElementType) leaf;
+            return identifierElementType.getQualifiedObjectTypeName();
+        }
+        return null;
     }
 }
