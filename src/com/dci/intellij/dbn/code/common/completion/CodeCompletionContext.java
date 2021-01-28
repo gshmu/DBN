@@ -63,6 +63,8 @@ public class CodeCompletionContext {
 
     private @Getter @Setter DBObject parentObject;
     private @Getter @Setter IdentifierPsiElement parentIdentifierPsiElement;
+    private @Getter boolean finished;
+
     private final Map<String, LeafElementType> completionCandidates = new HashMap<>();
     private final Set<Future> completionTasks = new HashSet<>();
 
@@ -148,14 +150,17 @@ public class CodeCompletionContext {
     }
 
     public void awaitCompletion() {
-        ExecutorService executor = ThreadFactory.getCodeCompletionExecutor();
-        Unsafe.silent(() -> executor.invokeAll(
-                completionTasks.
-                        stream().
-                        map(future -> (Callable<Object>) () -> future.get()).
-                        collect(Collectors.toList()),
-                200,
-                TimeUnit.MILLISECONDS));
+        Measured.run("overall code completion", () -> {
+            ExecutorService executor = ThreadFactory.getCodeCompletionExecutor();
+            Unsafe.silent(() -> executor.invokeAll(
+                    completionTasks.
+                            stream().
+                            map(future -> (Callable<Object>) () -> future.get()).
+                            collect(Collectors.toList()),
+                    200,
+                    TimeUnit.MILLISECONDS));
+            finished = true;
+        });
     }
 
     public void addCompletionCandidate(@Nullable LeafElementType leafElementType) {
