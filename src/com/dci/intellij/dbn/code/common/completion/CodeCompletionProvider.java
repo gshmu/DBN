@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.code.common.completion;
 
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
-import com.dci.intellij.dbn.common.consumer.QualifiedConsumer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -43,6 +42,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.FileElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.Consumer;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -304,7 +304,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
     }
 
     private static void collectObjectMatchingScope(
-            QualifiedConsumer consumer,
+            Consumer consumer,
             IdentifierElementType identifierElementType,
             ObjectTypeFilter filter,
             @NotNull  BasePsiElement sourceScope,
