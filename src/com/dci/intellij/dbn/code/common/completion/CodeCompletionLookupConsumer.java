@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.code.common.lookup.BasicLookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.IdentifierLookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.VariableLookupItemBuilder;
-import com.dci.intellij.dbn.common.consumer.Consumer;
+import com.dci.intellij.dbn.common.consumer.QualifiedConsumer;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
@@ -22,7 +22,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import lombok.Getter;
 import lombok.Setter;
 
-public class CodeCompletionLookupConsumer implements Consumer {
+public class CodeCompletionLookupConsumer implements QualifiedConsumer<Object> {
     private final CodeCompletionContext context;
     private @Getter @Setter @Deprecated boolean addParenthesis;
 

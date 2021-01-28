@@ -12,7 +12,7 @@ import com.intellij.xdebugger.frame.XValueNode;
 import com.intellij.xdebugger.frame.XValuePlace;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
+import java.util.List;
 
 public class DBJdbcDebuggerEvaluator extends DBDebuggerEvaluator<DBJdbcDebugStackFrame, DBJdbcDebugValue> {
 
@@ -22,7 +22,7 @@ public class DBJdbcDebuggerEvaluator extends DBDebuggerEvaluator<DBJdbcDebugStac
 
     @Override
     public void computePresentation(@NotNull DBJdbcDebugValue debugValue, @NotNull final XValueNode node, @NotNull XValuePlace place) {
-        Set<String> childVariableNames = debugValue.getChildVariableNames();
+        List<String> childVariableNames = debugValue.getChildVariableNames();
         try {
             DBJdbcDebugProcess debugProcess = debugValue.getDebugProcess();
             String variableName = debugValue.getVariableName();

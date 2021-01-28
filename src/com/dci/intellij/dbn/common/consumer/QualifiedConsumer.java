@@ -5,7 +5,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import java.util.Arrays;
 import java.util.Collection;
 
-public interface Consumer<T> extends com.intellij.util.Consumer<T> {
+public interface QualifiedConsumer<T> extends com.intellij.util.Consumer<T> {
 
     default void consume(T[] array) {
         checkCancelled();
@@ -27,5 +27,5 @@ public interface Consumer<T> extends com.intellij.util.Consumer<T> {
         }
     }
 
-    void checkCancelled() throws ProcessCanceledException;
+    default void checkCancelled() throws ProcessCanceledException {};
 }

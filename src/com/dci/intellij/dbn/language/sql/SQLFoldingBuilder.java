@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.sql;
 
+import com.dci.intellij.dbn.common.consumer.SetConsumer;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.language.common.DBLanguageFoldingBuilder;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
@@ -18,9 +19,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class SQLFoldingBuilder extends DBLanguageFoldingBuilder {
 
@@ -77,13 +76,14 @@ public class SQLFoldingBuilder extends DBLanguageFoldingBuilder {
         }
         if (psiElement instanceof BasePsiElement) {
             BasePsiElement basePsiElement = (BasePsiElement) psiElement;
-            Set<IdentifierPsiElement> subjects = new HashSet<>();
+            SetConsumer<IdentifierPsiElement> subjects = SetConsumer.create();
+
             basePsiElement.collectSubjectPsiElements(subjects);
             StringBuilder buffer = new StringBuilder(" ");
             buffer.append(basePsiElement.getSpecificElementType().getDescription());
-            if (subjects.size() > 0) {
+            if (subjects.isNotEmpty()) {
                 buffer.append(" (");
-                buffer.append(NamingUtil.createNamesList(subjects, 3));
+                buffer.append(NamingUtil.createNamesList(subjects.elements(), 3));
                 buffer.append(")");
             }
             return buffer.toString();

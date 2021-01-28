@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import com.dci.intellij.dbn.common.consumer.SetConsumer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -16,8 +17,8 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.util.Consumer;
 import com.intellij.util.IncorrectOperationException;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -99,7 +100,7 @@ public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiE
     }
 
     public static Set<DBObject> identifyPotentialParentObjects(DBObjectType objectType, @Nullable ObjectTypeFilter filter, @NotNull BasePsiElement sourceScope, LeafPsiElement lookupIssuer) {
-        Set<DBObject> parentObjects = null;
+        SetConsumer<DBObject> parentObjects = SetConsumer.create();
         Set<DBObjectType> parentTypes = objectType.getGenericParents();
         if (parentTypes.size() > 0) {
             if (objectType.isSchemaObject()) {
@@ -110,50 +111,44 @@ public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiE
 
                     if (filter == null || filter.acceptsCurrentSchemaObject(objectType)) {
                         DBSchema currentSchema = sourceScope.getDatabaseSchema();
-                        parentObjects = addObjectToSet(parentObjects, currentSchema);
+                        collectObject(parentObjects, currentSchema);
                     }
 
                     if (filter == null || filter.acceptsPublicSchemaObject(objectType)) {
                         DBSchema publicSchema = objectBundle.getPublicSchema();
-                        parentObjects = addObjectToSet(parentObjects, publicSchema);
+                        collectObject(parentObjects, publicSchema);
                     }
                 }
             }
 
-            Set<BasePsiElement> parentObjectPsiElements = null;
+            Consumer<BasePsiElement> parentObjectPsiElements = parentObjectPsiElement -> {
+                if (!parentObjectPsiElement.containsPsiElement(sourceScope)) {
+                    DBObject parentObject = parentObjectPsiElement.getUnderlyingObject();
+                    collectObject(parentObjects, parentObject);
+                }
+            };
             for (DBObjectType parentObjectType : parentTypes) {
                 PsiLookupAdapter lookupAdapter = new ObjectLookupAdapter(lookupIssuer, parentObjectType, null);
                 lookupAdapter.setAssertResolved(true);
 
-                parentObjectPsiElements = !objectType.isSchemaObject() && parentObjectType.isSchemaObject() ?
-                        lookupAdapter.collectInScope(sourceScope, parentObjectPsiElements) :
+                if (!objectType.isSchemaObject() && parentObjectType.isSchemaObject())
+                        lookupAdapter.collectInScope(sourceScope, parentObjectPsiElements); else
                         lookupAdapter.collectInParentScopeOf(sourceScope, parentObjectPsiElements);
-            }
-
-            if (parentObjectPsiElements != null) {
-                for (BasePsiElement parentObjectPsiElement : parentObjectPsiElements) {
-                    if (!parentObjectPsiElement.containsPsiElement(sourceScope)) {
-                        DBObject parentObject = parentObjectPsiElement.getUnderlyingObject();
-                        parentObjects = addObjectToSet(parentObjects, parentObject);
-                    }
-                }
             }
         }
 
         DBObject fileObject = sourceScope.getFile().getUnderlyingObject();
         if (fileObject != null && fileObject.getObjectType().isParentOf(objectType)) {
-            parentObjects = addObjectToSet(parentObjects, fileObject);
+            collectObject(parentObjects, fileObject);
         }
 
-        return parentObjects;
+        return parentObjects.elements();
     }
 
-    private static Set<DBObject> addObjectToSet(Set<DBObject> objects, DBObject object) {
+    private static void collectObject(Consumer<DBObject> objects, DBObject object) {
         if (Failsafe.check(object)) {
-            if (objects == null) objects = new THashSet<>();
-            objects.add(object);
+            objects.consume(object);
         }
-        return objects;
     }
 
     @Override
