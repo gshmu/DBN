@@ -55,7 +55,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     private static final PsiLookupAdapter CHR_STAR_LOOKUP_ADAPTER = new PsiLookupAdapter() {
@@ -132,20 +131,19 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                 name = relevantPsiElement.getText();
             }
         } else if (objectType == DBObjectType.DATASET) {
-            ObjectLookupAdapter lookupAdapter = new ObjectLookupAdapter(null, IdentifierCategory.REFERENCE, DBObjectType.DATASET);
-            Set<BasePsiElement> basePsiElements = lookupAdapter.collectInElement(psiElement, null);
             List<String> tableNames = new ArrayList<String>();
-            if (basePsiElements != null) {
-                for (BasePsiElement basePsiElement : basePsiElements) {
-                    if (basePsiElement instanceof IdentifierPsiElement) {
-                        IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
-                        String tableName = identifierPsiElement.getText().toUpperCase();
-                        if (!tableNames.contains(tableName)) {
-                            tableNames.add(tableName);
-                        }
+
+            ObjectLookupAdapter lookupAdapter = new ObjectLookupAdapter(null, IdentifierCategory.REFERENCE, DBObjectType.DATASET);
+            lookupAdapter.collectInElement(psiElement, basePsiElement -> {
+                if (basePsiElement instanceof IdentifierPsiElement) {
+                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
+                    String tableName = identifierPsiElement.getText().toUpperCase();
+                    if (!tableNames.contains(tableName)) {
+                        tableNames.add(tableName);
                     }
                 }
-            }
+            });
+
             Collections.sort(tableNames);
 
             StringBuilder nameBuilder = new StringBuilder();
@@ -237,63 +235,61 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
         }
 
         if (objectList != null && objectList.isEmpty()) {
-            VirtualObjectLookupAdapter lookupAdapter = new VirtualObjectLookupAdapter(getObjectType(), objectType);
-            BasePsiElement underlyingPsiElement = getUnderlyingPsiElement();
-            if (underlyingPsiElement != null) {
-                Set<BasePsiElement> children = underlyingPsiElement.collectPsiElements(lookupAdapter, null, 100);
-                if (children != null) {
-                    for (BasePsiElement child : children) {
+            loadChildObjects(objectType, objectList);
+            objectList.set(DynamicContentStatus.LOADED, true);
+        }
+        return objectList;
+    }
 
-                        // handle STAR column
-                        if (objectType == DBObjectType.COLUMN) {
-                            LeafPsiElement starPsiElement = (LeafPsiElement) CHR_STAR_LOOKUP_ADAPTER.findInElement(child);
-                            if (starPsiElement != null) {
-                                if (starPsiElement.getParent() instanceof QualifiedIdentifierPsiElement) {
-                                    QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = (QualifiedIdentifierPsiElement) starPsiElement.getParent();
-                                    int index = qualifiedIdentifierPsiElement.getIndexOf(starPsiElement);
-                                    if (index > 0) {
-                                        IdentifierPsiElement parentPsiElement = qualifiedIdentifierPsiElement.getLeafAtIndex(index - 1);
-                                        DBObject object = parentPsiElement.getUnderlyingObject();
-                                        if (object != null && object.getObjectType().matches(DBObjectType.DATASET)) {
-                                            List<DBObject> columns = object.getChildObjects(DBObjectType.COLUMN);
-                                            for (DBObject column : columns) {
-                                                objectList.addObject(column);
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    Set<BasePsiElement> basePsiElements = DATASET_LOOKUP_ADAPTER.collectInElement(underlyingPsiElement, null);
-                                    if (basePsiElements != null) {
-                                        for (BasePsiElement basePsiElement : basePsiElements) {
-                                            DBObject object = basePsiElement.getUnderlyingObject();
-                                            if (object != null && object != this && object.getObjectType().matches(DBObjectType.DATASET)) {
-                                                List<DBObject> columns = object.getChildObjects(DBObjectType.COLUMN);
-                                                for (DBObject column : columns) {
-                                                    objectList.addObject(column);
-                                                }
-                                            }
-                                        }
+    private void loadChildObjects(DBObjectType objectType, DBObjectList<DBObject> objectList) {
+        VirtualObjectLookupAdapter lookupAdapter = new VirtualObjectLookupAdapter(getObjectType(), objectType);
+        BasePsiElement underlyingPsiElement = getUnderlyingPsiElement();
+        if (underlyingPsiElement != null) {
+            underlyingPsiElement.collectPsiElements(lookupAdapter, 100, element -> {
+                BasePsiElement child = (BasePsiElement) element;
+                // handle STAR column
+                if (objectType == DBObjectType.COLUMN) {
+                    LeafPsiElement starPsiElement = (LeafPsiElement) CHR_STAR_LOOKUP_ADAPTER.findInElement(child);
+                    if (starPsiElement != null) {
+                        if (starPsiElement.getParent() instanceof QualifiedIdentifierPsiElement) {
+                            QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement = (QualifiedIdentifierPsiElement) starPsiElement.getParent();
+                            int index = qualifiedIdentifierPsiElement.getIndexOf(starPsiElement);
+                            if (index > 0) {
+                                IdentifierPsiElement parentPsiElement = qualifiedIdentifierPsiElement.getLeafAtIndex(index - 1);
+                                DBObject object = parentPsiElement.getUnderlyingObject();
+                                if (object != null && object.getObjectType().matches(DBObjectType.DATASET)) {
+                                    List<DBObject> columns = object.getChildObjects(DBObjectType.COLUMN);
+                                    for (DBObject column : columns) {
+                                        objectList.addObject(column);
                                     }
                                 }
-
                             }
-                        }
-
-                        DBObject object = child.getUnderlyingObject();
-                        if (object != null && object.getObjectType().isChildOf(getObjectType()) && !objectList.getAllElements().contains(object)) {
-                            if (object instanceof DBVirtualObject) {
-                                DBVirtualObject virtualObject = (DBVirtualObject) object;
-                                virtualObject.setParentObject(this);
-                            }
-                            objectList.addObject(object);
+                        } else {
+                            DATASET_LOOKUP_ADAPTER.collectInElement(underlyingPsiElement, basePsiElement -> {
+                                DBObject object = basePsiElement.getUnderlyingObject();
+                                if (object != null && object != this && object.getObjectType().matches(DBObjectType.DATASET)) {
+                                    List<DBObject> columns = object.getChildObjects(DBObjectType.COLUMN);
+                                    for (DBObject column : columns) {
+                                        objectList.addObject(column);
+                                    }
+                                }
+                            });
                         }
 
                     }
                 }
-            }
-            objectList.set(DynamicContentStatus.LOADED, true);
+
+                DBObject object = child.getUnderlyingObject();
+                if (object != null && object.getObjectType().isChildOf(getObjectType()) && !objectList.getAllElements().contains(object)) {
+                    if (object instanceof DBVirtualObject) {
+                        DBVirtualObject virtualObject = (DBVirtualObject) object;
+                        virtualObject.setParentObject(this);
+                    }
+                    objectList.addObject(object);
+                }
+
+            });
         }
-        return objectList;
     }
 
     @Override

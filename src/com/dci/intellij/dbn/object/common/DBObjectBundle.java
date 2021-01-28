@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.common;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
-import com.dci.intellij.dbn.common.consumer.Consumer;
+import com.dci.intellij.dbn.common.consumer.QualifiedConsumer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -82,8 +82,9 @@ public interface DBObjectBundle extends BrowserTreeNode, StatefulDisposable {
     @Nullable
     DBObject getObject(DBObjectType objectType, String name, short overload);
 
-    void lookupObjectsOfType(Consumer consumer, DBObjectType objectType);
-    void lookupChildObjectsOfType(Consumer consumer, DBObject parentObject, DBObjectType objectType, ObjectTypeFilter filter, DBSchema currentSchema);
+    void lookupObjectsOfType(QualifiedConsumer consumer, DBObjectType objectType);
+
+    void lookupChildObjectsOfType(QualifiedConsumer consumer, DBObject parentObject, DBObjectType objectType, ObjectTypeFilter filter, DBSchema currentSchema);
 
     void refreshObjectsStatus(DBSchemaObject requester);
 

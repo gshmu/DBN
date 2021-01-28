@@ -56,7 +56,7 @@ import com.intellij.psi.SingleRootFileViewProvider;
 import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.testFramework.LightVirtualFile;
-import gnu.trove.THashSet;
+import com.intellij.util.Consumer;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -380,15 +380,14 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         return psiFile;
     }
 
-    public Set<BasePsiElement> lookupVariableDefinition(int offset) {
+    public void lookupVariableDefinition(int offset, Consumer<BasePsiElement> consumer) {
         BasePsiElement scope = PsiUtil.lookupElementAtOffset(this, ElementTypeAttribute.SCOPE_DEMARCATION, offset);
-        Set<BasePsiElement> variableDefinitions = new THashSet<>();
         while (scope != null) {
             PsiLookupAdapter lookupAdapter = new IdentifierDefinitionLookupAdapter(null, DBObjectType.ARGUMENT, null);
-            variableDefinitions = scope.collectPsiElements(lookupAdapter, variableDefinitions, 0);
+            scope.collectPsiElements(lookupAdapter, 0, consumer);
 
             lookupAdapter = LookupAdapterCache.VARIABLE_DEFINITION.get(DBObjectType.ANY);
-            variableDefinitions = scope.collectPsiElements(lookupAdapter, variableDefinitions, 0);
+            scope.collectPsiElements(lookupAdapter, 0, consumer);
 
             PsiElement parent = scope.getParent();
             if (parent instanceof BasePsiElement) {
@@ -399,7 +398,6 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
                 scope = null;
             }
         }
-        return variableDefinitions;
     }
 
     /********************************************************

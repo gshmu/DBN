@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.execution.statement;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.action.UserDataKeys;
+import com.dci.intellij.dbn.common.consumer.ListConsumer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
@@ -56,7 +57,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.PsiDocumentTransactionListener;
-import gnu.trove.THashSet;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +69,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
@@ -356,22 +355,23 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         for (StatementExecutionProcessor executionProcessor : executionProcessors) {
             executionProcessor.initExecutionInput(bulkExecution);
             StatementExecutionInput executionInput = executionProcessor.getExecutionInput();
-            Set<ExecVariablePsiElement> bucket = new THashSet<>();
+            ListConsumer<ExecVariablePsiElement> psiElements = ListConsumer.basic();
             ExecutablePsiElement executablePsiElement = executionInput.getExecutablePsiElement();
             if (executablePsiElement != null) {
-                executablePsiElement.collectExecVariablePsiElements(bucket);
+                executablePsiElement.collectExecVariablePsiElements(psiElements);
             }
 
             StatementExecutionVariablesBundle executionVariables = executionInput.getExecutionVariables();
-            if (bucket.isEmpty()) {
+            if (psiElements.isEmpty()) {
                 executionVariables = null;
                 executionInput.setExecutionVariables(null);
             } else {
+                List<ExecVariablePsiElement> varPsiElements = psiElements.elements();
                 if (executionVariables == null){
-                    executionVariables = new StatementExecutionVariablesBundle(bucket);
+                    executionVariables = new StatementExecutionVariablesBundle(varPsiElements);
                     executionInput.setExecutionVariables(executionVariables);
                 }
-                executionVariables.initialize(bucket);
+                executionVariables.initialize(varPsiElements);
             }
 
             if (executionVariables != null) {
@@ -387,7 +387,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                     } else {
                         reuseVariables = dialog.isReuseVariables();
                         if (reuseVariables) {
-                            Set<StatementExecutionVariable> variables = executionVariables.getVariables();
+                            List<StatementExecutionVariable> variables = executionVariables.getVariables();
                             for (StatementExecutionVariable variable : variables) {
                                 variableCache.put(variable.getName().toUpperCase(), variable);
                             }

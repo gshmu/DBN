@@ -8,10 +8,9 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.lang.ASTNode;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
 
 public class UnknownPsiElement extends BasePsiElement<ElementTypeBase> {
     public UnknownPsiElement(ASTNode astNode, ElementTypeBase elementType) {
@@ -30,12 +29,11 @@ public class UnknownPsiElement extends BasePsiElement<ElementTypeBase> {
 
     @Nullable
     @Override public BasePsiElement findPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount) {return null;}
-    @Nullable
-    @Override public Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, @Nullable Set<BasePsiElement> bucket, int scopeCrossCount) {return bucket;}
+    @Override public void collectPsiElements(PsiLookupAdapter lookupAdapter, int scopeCrossCount, @NotNull Consumer<BasePsiElement> consumer) {}
 
 
-    @Override public void collectExecVariablePsiElements(@NotNull Set<ExecVariablePsiElement> bucket) {}
-    @Override public void collectSubjectPsiElements(@NotNull Set<IdentifierPsiElement> bucket) {}
+    @Override public void collectExecVariablePsiElements(@NotNull Consumer<ExecVariablePsiElement> consumer) {}
+    @Override public void collectSubjectPsiElements(@NotNull Consumer<IdentifierPsiElement> consumer) {}
     @Override public NamedPsiElement findNamedPsiElement(String id) {return null;}
     @Override public BasePsiElement findFirstPsiElement(ElementTypeAttribute attribute) {return null;}
     @Override public BasePsiElement findFirstPsiElement(Class<? extends ElementType> clazz) { return null; }

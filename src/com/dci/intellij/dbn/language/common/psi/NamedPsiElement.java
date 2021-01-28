@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import com.dci.intellij.dbn.common.consumer.SetConsumer;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -9,11 +10,9 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Set;
 
 public class NamedPsiElement extends SequencePsiElement<NamedElementType> {
     public NamedPsiElement(ASTNode astNode, NamedElementType elementType) {
@@ -22,9 +21,9 @@ public class NamedPsiElement extends SequencePsiElement<NamedElementType> {
 
     @Nullable
     public String createSubjectList() {
-        Set<IdentifierPsiElement> subjects = new THashSet<>();
+        SetConsumer<IdentifierPsiElement> subjects = SetConsumer.create();
         collectSubjectPsiElements(subjects);
-        return subjects.size() > 0 ? NamingUtil.createNamesList(subjects, 3) : null;
+        return subjects.isNotEmpty() ? NamingUtil.createNamesList(subjects.elements(), 3) : null;
     }
 
     @Override

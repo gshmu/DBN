@@ -9,7 +9,7 @@ import com.dci.intellij.dbn.browser.model.LoadInProgressTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
-import com.dci.intellij.dbn.common.consumer.Consumer;
+import com.dci.intellij.dbn.common.consumer.QualifiedConsumer;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
@@ -652,7 +652,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     @Override
-    public void lookupObjectsOfType(Consumer consumer, DBObjectType objectType) {
+    public void lookupObjectsOfType(QualifiedConsumer consumer, DBObjectType objectType) {
         if (getConnectionObjectTypeFilter().accepts(objectType)) {
             if (objectType == SCHEMA) consumer.consume(getSchemas()); else
             if (objectType == USER) consumer.consume(getUsers()); else
@@ -663,7 +663,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     @Override
-    public void lookupChildObjectsOfType(Consumer consumer, DBObject parentObject, DBObjectType objectType, ObjectTypeFilter filter, DBSchema currentSchema) {
+    public void lookupChildObjectsOfType(QualifiedConsumer consumer, DBObject parentObject, DBObjectType objectType, ObjectTypeFilter filter, DBSchema currentSchema) {
         if (getConnectionObjectTypeFilter().accepts(objectType)) {
             if (parentObject != null && currentSchema != null) {
                 if (parentObject instanceof DBSchema) {

@@ -2,7 +2,8 @@ package com.dci.intellij.dbn.language.common.psi.lookup;
 
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 
-public abstract class LookupScopeVisitor extends PsiScopeVisitor<BasePsiElement> {
+@Deprecated
+public abstract class LookupScopeVisitor extends PsiScopeVisitor {
     private BasePsiElement result;
 
     @Override
@@ -11,12 +12,10 @@ public abstract class LookupScopeVisitor extends PsiScopeVisitor<BasePsiElement>
         return result != null;
     }
 
-    @Override
     public BasePsiElement getResult() {
         return result;
     }
 
-    @Override
     public void setResult(BasePsiElement result) {
         this.result = result;
     }

@@ -9,11 +9,11 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Set;
 
 public class TokenPsiElement extends LeafPsiElement<TokenElementType> {
     public TokenPsiElement(ASTNode astNode, TokenElementType elementType) {
@@ -29,13 +29,14 @@ public class TokenPsiElement extends LeafPsiElement<TokenElementType> {
         return null;
     }
     @Override
-    @Nullable
-    public Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, @Nullable Set<BasePsiElement> bucket, int scopeCrossCount) {return bucket;}
+    public void collectPsiElements(PsiLookupAdapter lookupAdapter, int scopeCrossCount, @NotNull Consumer<BasePsiElement> consumer) {}
 
     @Override
-    public void collectExecVariablePsiElements(@NotNull Set<ExecVariablePsiElement> bucket) {}
+    public void collectExecVariablePsiElements(@NotNull Consumer<ExecVariablePsiElement> consumer) {}
+
     @Override
-    public void collectSubjectPsiElements(@NotNull Set<IdentifierPsiElement> bucket) {}
+    public void collectSubjectPsiElements(@NotNull Consumer<IdentifierPsiElement> consumer) {}
+
     @Override
     public NamedPsiElement findNamedPsiElement(String id) {return null;}
     @Override

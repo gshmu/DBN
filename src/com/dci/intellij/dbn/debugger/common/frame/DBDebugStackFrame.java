@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.consumer.ListConsumer;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.debugger.DBDebugUtil;
@@ -43,10 +44,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDebugValue> extends XStackFrame {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -145,7 +144,7 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
     protected abstract V createSuspendReasonDebugValue();
 
     @NotNull
-    public abstract V createDebugValue(String variableName, V parentValue, Set<String> childVariableNames, Icon icon);
+    public abstract V createDebugValue(String variableName, V parentValue, List<String> childVariableNames, Icon icon);
 
     @Override
     public void computeChildren(@NotNull XCompositeNode node) {
@@ -171,34 +170,30 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
 
             if (document != null && psiFile != null) {
                 int offset = document.getLineStartOffset(sourcePosition.getLine());
-                Set<BasePsiElement> variables = psiFile.lookupVariableDefinition(offset);
                 CodeStyleCaseSettings codeStyleCaseSettings = DBLCodeStyleManager.getInstance(psiFile.getProject()).getCodeStyleCaseSettings(PSQLLanguage.INSTANCE);
                 CodeStyleCaseOption objectCaseOption = codeStyleCaseSettings.getObjectCaseOption();
 
-                for (final BasePsiElement basePsiElement : variables) {
+                psiFile.lookupVariableDefinition(offset, basePsiElement -> {
                     String variableName = objectCaseOption.format(basePsiElement.getText());
                     //DBObject object = basePsiElement.resolveUnderlyingObject();
 
-                    Set<String> childVariableNames = null;
+                    ListConsumer<String> childVariableNames = ListConsumer.unique();
                     if (basePsiElement instanceof IdentifierPsiElement) {
                         IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
-                        List<BasePsiElement> qualifiedUsages = identifierPsiElement.findQualifiedUsages();
-                        for (BasePsiElement qualifiedUsage : qualifiedUsages) {
-                            if (childVariableNames == null) childVariableNames = new HashSet<>();
-
+                        identifierPsiElement.findQualifiedUsages(qualifiedUsage -> {
                             String childVariableName = objectCaseOption.format(qualifiedUsage.getText());
-                            childVariableNames.add(childVariableName);
-                        }
+                            childVariableNames.consume(childVariableName);
+                        });
                     }
 
                     String valueCacheKey = variableName.toUpperCase();
                     if (!valuesMap.containsKey(valueCacheKey)) {
                         Icon icon = basePsiElement.getIcon(true);
-                        V value = createDebugValue(variableName, null, childVariableNames, icon);
+                        V value = createDebugValue(variableName, null, childVariableNames.elements(), icon);
                         values.add(value);
                         valuesMap.put(valueCacheKey, value);
                     }
-                }
+                });
             }
         }
 

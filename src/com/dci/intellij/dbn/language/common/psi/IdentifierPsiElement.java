@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
+import com.dci.intellij.dbn.common.consumer.ListConsumer;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
@@ -34,13 +35,11 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
-import gnu.trove.THashSet;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElementType> {
@@ -137,30 +136,26 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     }
 
     @Override
-    @Nullable
-    public Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, @Nullable Set<BasePsiElement> bucket, int scopeCrossCount) {
+    public void collectPsiElements(PsiLookupAdapter lookupAdapter, int scopeCrossCount, @NotNull Consumer<BasePsiElement> consumer) {
         if (lookupAdapter instanceof IdentifierLookupAdapter) {
             IdentifierLookupAdapter identifierLookupAdapter = (IdentifierLookupAdapter) lookupAdapter;
             if (identifierLookupAdapter.matchesName(this)) {
                 if (lookupAdapter.matches(this)) {
-                    if (bucket == null) bucket = new THashSet<>();
-                    bucket.add(this);
+                    consumer.consume(this);
                 }
             }
         }
-
-        return bucket;
     }
 
     @Override
-    public void collectSubjectPsiElements(@NotNull Set<IdentifierPsiElement> bucket) {
+    public void collectSubjectPsiElements(@NotNull Consumer<IdentifierPsiElement> consumer) {
         if (elementType.is(ElementTypeAttribute.SUBJECT)) {
-            bucket.add(this);
+            consumer.consume(this);
         }
     }
 
     @Override
-    public void collectExecVariablePsiElements(@NotNull Set<ExecVariablePsiElement> bucket) {
+    public void collectExecVariablePsiElements(@NotNull Consumer<ExecVariablePsiElement> consumer) {
     }
 
     /**
@@ -313,8 +308,10 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
         BasePsiElement sourceScope = getEnclosingScopePsiElement();
         DBObjectType objectType = getObjectType();
         PsiLookupAdapter lookupAdapter = LookupAdapterCache.ALIAS_DEFINITION.get(objectType);
-        Set<BasePsiElement> aliasDefinitions = lookupAdapter.collectInScope(statement, null);
-        return aliasDefinitions == null ? new Object[0] : aliasDefinitions.toArray();
+        ListConsumer<BasePsiElement> consumer = ListConsumer.basic();
+        lookupAdapter.collectInScope(statement, consumer);
+
+        return consumer.isEmpty() ? new Object[0] : consumer.elements().toArray();
     }
 
     /********************************************************
@@ -600,24 +597,19 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
         return elementType.getIdentifierType();
     }
 
-    public List<BasePsiElement> findQualifiedUsages() {
-        List<BasePsiElement> qualifiedUsages= new ArrayList<>();
+    public void findQualifiedUsages(Consumer<BasePsiElement> consumer) {
         BasePsiElement scopePsiElement = getEnclosingScopePsiElement();
         if (scopePsiElement != null) {
             IdentifierLookupAdapter identifierLookupAdapter = new IdentifierLookupAdapter(this, null, null, null, getChars());
-            Set<BasePsiElement> basePsiElements = identifierLookupAdapter.collectInElement(scopePsiElement, null);
-            if (basePsiElements != null) {
-                for (BasePsiElement basePsiElement : basePsiElements) {
-                    QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement =
-                            (QualifiedIdentifierPsiElement) basePsiElement.findEnclosingPsiElement(QualifiedIdentifierPsiElement.class);
+            identifierLookupAdapter.collectInElement(scopePsiElement, basePsiElement -> {
+                QualifiedIdentifierPsiElement qualifiedIdentifierPsiElement =
+                        (QualifiedIdentifierPsiElement) basePsiElement.findEnclosingPsiElement(QualifiedIdentifierPsiElement.class);
 
-                    if (qualifiedIdentifierPsiElement != null && qualifiedIdentifierPsiElement.getElementsCount() > 1) {
-                        qualifiedUsages.add(qualifiedIdentifierPsiElement);
-                    }
+                if (qualifiedIdentifierPsiElement != null && qualifiedIdentifierPsiElement.getElementsCount() > 1) {
+                    consumer.consume(qualifiedIdentifierPsiElement);
                 }
-            }
+            });
         }
-        return qualifiedUsages;
     }
 
     @Nullable

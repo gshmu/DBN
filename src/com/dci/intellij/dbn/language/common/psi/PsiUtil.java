@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.psi;
 
+import com.dci.intellij.dbn.common.consumer.SetConsumer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -24,12 +25,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiWhiteSpace;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
-import java.util.Set;
 
 public class PsiUtil {
 
@@ -87,9 +86,9 @@ public class PsiUtil {
             }
 
             if (objectPsiElement != null) {
-                Set<BasePsiElement> virtualObjectPsiElements = new THashSet<>();
-                scope.collectVirtualObjectPsiElements(virtualObjectPsiElements, objectType);
-                for (BasePsiElement virtualObjectPsiElement : virtualObjectPsiElements) {
+                SetConsumer<BasePsiElement> virtualObjectPsiElements = SetConsumer.create();
+                scope.collectVirtualObjectPsiElements(objectType, virtualObjectPsiElements);
+                for (BasePsiElement virtualObjectPsiElement : virtualObjectPsiElements.elements()) {
                     if (virtualObjectPsiElement.containsPsiElement(objectPsiElement))
                         return virtualObjectPsiElement;
 

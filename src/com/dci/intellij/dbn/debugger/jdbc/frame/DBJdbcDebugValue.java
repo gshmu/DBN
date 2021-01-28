@@ -6,12 +6,12 @@ import com.intellij.xdebugger.frame.XValueModifier;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Set;
+import java.util.List;
 
 public class DBJdbcDebugValue extends DBDebugValue<DBJdbcDebugStackFrame>{
     private DBJdbcDebugValueModifier modifier;
 
-    DBJdbcDebugValue(DBJdbcDebugStackFrame stackFrame, DBJdbcDebugValue parentValue, String variableName, @Nullable Set<String> childVariableNames, Icon icon) {
+    DBJdbcDebugValue(DBJdbcDebugStackFrame stackFrame, DBJdbcDebugValue parentValue, String variableName, @Nullable List<String> childVariableNames, Icon icon) {
         super(stackFrame, variableName, childVariableNames, parentValue, icon);
     }
 
