@@ -141,7 +141,13 @@ public class CodeCompletionContext {
     }
 
     public void async(Runnable runnable) {
-        getExecutor().execute(runnable);
+        getExecutor().execute(() -> {
+            try {
+                runnable.run();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public void awaitCompletion() {
@@ -149,7 +155,7 @@ public class CodeCompletionContext {
             try {
                 ExecutorService executor = this.executor.get();
                 executor.shutdown();
-                executor.awaitTermination(5, TimeUnit.SECONDS);
+                executor.awaitTermination(1, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
