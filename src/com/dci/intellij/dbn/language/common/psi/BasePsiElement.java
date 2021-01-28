@@ -59,11 +59,11 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.SharedImplUtil;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.HashSet;
 import java.util.Set;
 
 public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDelegatePsiElement implements ItemPresentation, FormattingProviderPsiElement {
@@ -412,51 +412,41 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
     /*********************************************************
      *                   Lookup routines                     *
      *********************************************************/
-    public Set<BasePsiElement> collectObjectPsiElements(Set<BasePsiElement> bucket, Set<DBObjectType> objectTypes, IdentifierCategory identifierCategory) {
+    public void collectObjectPsiElements(Set<DBObjectType> objectTypes, IdentifierCategory identifierCategory, Consumer<BasePsiElement> consume) {
         for (DBObjectType objectType : objectTypes) {
             PsiLookupAdapter lookupAdapter = new ObjectLookupAdapter(null, identifierCategory, objectType, null);
-            bucket = lookupAdapter.collectInElement(this, bucket);
+            lookupAdapter.collectInElement(this, consume);
         }
-        return bucket;
     }
 
-    @Nullable
-    public Set<DBObject> collectObjectReferences(DBObjectType objectType) {
+    public void collectObjectReferences(DBObjectType objectType, Consumer<DBObject> consumer) {
         PsiLookupAdapter lookupAdapter = new ObjectReferenceLookupAdapter(null, objectType, null);
-        Set<BasePsiElement> bucket = lookupAdapter.collectInElement(this, null);
-        Set<DBObject> objects = null;
-        if (bucket != null) {
-            for (BasePsiElement basePsiElement : bucket) {
-                if (basePsiElement instanceof IdentifierPsiElement) {
-                    IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
-                    PsiElement reference = identifierPsiElement.resolve();
-                    if (reference instanceof DBObjectPsiElement) {
-                        DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) reference;
-                        if (objects == null) {
-                            objects = new HashSet<>();
-                        }
-                        objects.add(objectPsiElement.ensureObject());
-                    }
+        lookupAdapter.collectInElement(this, basePsiElement -> {
+            if (basePsiElement instanceof IdentifierPsiElement) {
+                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) basePsiElement;
+                PsiElement reference = identifierPsiElement.resolve();
+                if (reference instanceof DBObjectPsiElement) {
+                    DBObjectPsiElement objectPsiElement = (DBObjectPsiElement) reference;
+                    consumer.consume(objectPsiElement.ensureObject());
                 }
             }
-
-        }
-
-        return objects;
+        });
     }
 
     public abstract @Nullable BasePsiElement findPsiElement(PsiLookupAdapter lookupAdapter, int scopeCrossCount);
-    public abstract @Nullable Set<BasePsiElement> collectPsiElements(PsiLookupAdapter lookupAdapter, @Nullable Set<BasePsiElement> bucket, int scopeCrossCount);
 
-    public abstract void collectExecVariablePsiElements(@NotNull Set<ExecVariablePsiElement> bucket);
-    public abstract void collectSubjectPsiElements(@NotNull Set<IdentifierPsiElement> bucket);
+    public abstract void collectPsiElements(PsiLookupAdapter lookupAdapter, int scopeCrossCount, @NotNull Consumer<BasePsiElement> consumer);
+
+    public abstract void collectExecVariablePsiElements(@NotNull Consumer<ExecVariablePsiElement> consumer);
+
+    public abstract void collectSubjectPsiElements(@NotNull Consumer<IdentifierPsiElement> consumer);
 
 
-    public void collectVirtualObjectPsiElements(Set<BasePsiElement> bucket, DBObjectType objectType) {
+    public void collectVirtualObjectPsiElements(DBObjectType objectType, Consumer<BasePsiElement> consumer) {
         if (elementType.isVirtualObject()) {
             DBObjectType virtualObjectType = elementType.getVirtualObjectType();
             if (objectType == virtualObjectType) {
-                bucket.add(this);
+                consumer.consume(this);
             }
         }
     }

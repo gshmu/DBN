@@ -14,11 +14,9 @@ import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import gnu.trove.THashSet;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
 
 public class SequencePsiElement<T extends ElementTypeBase> extends BasePsiElement<T> {
     public SequencePsiElement(ASTNode astNode, T elementType) {
@@ -73,15 +71,13 @@ public class SequencePsiElement<T extends ElementTypeBase> extends BasePsiElemen
     }
 
     @Override
-    @Nullable
-    public Set<BasePsiElement> collectPsiElements(
+    public void collectPsiElements(
             PsiLookupAdapter lookupAdapter,
-            @Nullable Set<BasePsiElement> bucket,
-            int scopeCrossCount) {
+            int scopeCrossCount,
+            @NotNull Consumer<BasePsiElement> consumer) {
 
         if (lookupAdapter.matches(this)) {
-            if (bucket == null) bucket = new THashSet<>();
-            bucket.add(this);
+            consumer.consume(this);
 
         }
         PsiElement child = getFirstChild();
@@ -89,57 +85,56 @@ public class SequencePsiElement<T extends ElementTypeBase> extends BasePsiElemen
             if (child instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) child;
 
-                if (lookupAdapter.accepts(basePsiElement) || bucket == null) {
+                if (lookupAdapter.accepts(basePsiElement)) {
                     boolean isScopeBoundary = basePsiElement.isScopeBoundary();
                     if (!isScopeBoundary || scopeCrossCount > 0) {
                         int childScopeCrossCount = isScopeBoundary ? scopeCrossCount-1 : scopeCrossCount;
-                        bucket = basePsiElement.collectPsiElements(lookupAdapter, bucket, childScopeCrossCount);
+                        basePsiElement.collectPsiElements(lookupAdapter, childScopeCrossCount, consumer);
                     }
                 }
             }
             child = child.getNextSibling();
         }
-        return bucket;
     }
 
     @Override
-    public void collectExecVariablePsiElements(@NotNull Set<ExecVariablePsiElement> bucket) {
+    public void collectExecVariablePsiElements(@NotNull Consumer<ExecVariablePsiElement> consumer) {
         PsiElement child = getFirstChild();
         while (child != null) {
             if (child instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) child;
-                basePsiElement.collectExecVariablePsiElements(bucket);
+                basePsiElement.collectExecVariablePsiElements(consumer);
             }
             child = child.getNextSibling();
         }
     }
 
     @Override
-    public void collectSubjectPsiElements(@NotNull Set<IdentifierPsiElement> bucket) {
+    public void collectSubjectPsiElements(@NotNull Consumer<IdentifierPsiElement> consumer) {
         PsiElement child = getFirstChild();
         while (child != null) {
             if (child instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) child;
-                basePsiElement.collectSubjectPsiElements(bucket);
+                basePsiElement.collectSubjectPsiElements(consumer);
             }
             child = child.getNextSibling();
         }
     }
 
     @Override
-    public void collectVirtualObjectPsiElements(Set<BasePsiElement> bucket, DBObjectType objectType) {
+    public void collectVirtualObjectPsiElements(DBObjectType objectType, Consumer<BasePsiElement> consumer) {
         //if (getElementType().getLookupCache().containsVirtualObject(objectType)) {
             if (elementType.isVirtualObject()) {
                 DBObjectType virtualObjectType = elementType.getVirtualObjectType();
                 if (objectType == virtualObjectType) {
-                    bucket.add(this);
+                    consumer.consume(this);
                 }
             }
             PsiElement child = getFirstChild();
             while (child != null) {
                 if (child instanceof BasePsiElement) {
                     BasePsiElement basePsiElement = (BasePsiElement) child;
-                    basePsiElement.collectVirtualObjectPsiElements(bucket, objectType);
+                    basePsiElement.collectVirtualObjectPsiElements(objectType, consumer);
                 }
                 child = child.getNextSibling();
             }

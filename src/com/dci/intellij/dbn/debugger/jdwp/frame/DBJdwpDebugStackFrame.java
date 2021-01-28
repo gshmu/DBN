@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Set;
+import java.util.List;
 
 public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess, DBJdwpDebugValue> implements DBJdwpDebugUtil {
     private long childrenComputed = 0;
@@ -94,7 +94,7 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
 
     @NotNull
     @Override
-    public DBJdwpDebugValue createDebugValue(String variableName, DBJdwpDebugValue parentValue, Set<String> childVariableNames, Icon icon) {
+    public DBJdwpDebugValue createDebugValue(String variableName, DBJdwpDebugValue parentValue, List<String> childVariableNames, Icon icon) {
         return new DBJdwpDebugValue(this, parentValue, variableName, childVariableNames, icon);
     }
 

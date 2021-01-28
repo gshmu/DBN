@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Set;
+import java.util.List;
 
 public class DBJdbcDebugStackFrame extends DBDebugStackFrame<DBJdbcDebugProcess, DBJdbcDebugValue> {
     private final DebuggerRuntimeInfo runtimeInfo;
@@ -50,7 +50,7 @@ public class DBJdbcDebugStackFrame extends DBDebugStackFrame<DBJdbcDebugProcess,
 
     @NotNull
     @Override
-    public DBJdbcDebugValue createDebugValue(String variableName, DBJdbcDebugValue parentValue, Set<String> childVariableNames, Icon icon) {
+    public DBJdbcDebugValue createDebugValue(String variableName, DBJdbcDebugValue parentValue, List<String> childVariableNames, Icon icon) {
         return new DBJdbcDebugValue(this, parentValue, variableName, childVariableNames, icon);
     }
 

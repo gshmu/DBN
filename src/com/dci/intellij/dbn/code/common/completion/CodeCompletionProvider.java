@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.code.common.completion;
 
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
-import com.dci.intellij.dbn.common.consumer.Consumer;
+import com.dci.intellij.dbn.common.consumer.QualifiedConsumer;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
@@ -45,9 +45,9 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.FileElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ProcessingContext;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -132,7 +132,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         boolean isValidConnection = connectionHandler != null && !connectionHandler.isVirtual();
 
         CodeCompletionFilterSettings filterSettings = context.getCodeCompletionFilterSettings();
-        Map<String, LeafElementType> nextPossibleLeafs = new THashMap<String, LeafElementType>();
+        Map<String, LeafElementType> nextPossibleLeafs = new HashMap<>();
         IdentifierPsiElement parentIdentifierPsiElement = null;
 
         DBObject parentObject = null;
@@ -212,11 +212,10 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                 IdentifierElementType identifierElementType = (IdentifierElementType) nextPossibleLeaf;
                 if (identifierElementType.isReference()) {
                     DBObjectType objectType = identifierElementType.getObjectType();
-                    if (identifierElementType.isObject()) {
-                        PsiLookupAdapter lookupAdapter = LookupAdapterCache.OBJECT_DEFINITION.get(objectType);
-                        Set<BasePsiElement> objectDefinitions = lookupAdapter.collectInParentScopeOf(element);
-                        if (objectDefinitions != null && parentIdentifierPsiElement == null) {
-                            for (BasePsiElement psiElement : objectDefinitions) {
+                    if (parentIdentifierPsiElement == null) {
+                        if (identifierElementType.isObject()) {
+                            PsiLookupAdapter lookupAdapter = LookupAdapterCache.OBJECT_DEFINITION.get(objectType);
+                            lookupAdapter.collectInParentScopeOf(element, psiElement -> {
                                 if (psiElement instanceof IdentifierPsiElement) {
                                     IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
                                     PsiElement referencedPsiElement = identifierPsiElement.resolve();
@@ -227,24 +226,18 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                                         consumer.consume(identifierPsiElement);
                                     }
                                 }
-                            }
-                        }
+                            });
 
-                        if (parentIdentifierPsiElement == null) {
                             BasePsiElement scope = element.getEnclosingScopePsiElement();
                             if (scope != null) {
                                 collectObjectMatchingScope(consumer, identifierElementType, filterSettings, scope, context);
                             }
-                        }
-                    } else if (parentIdentifierPsiElement == null) {
-                        if (identifierElementType.isAlias()) {
+                        } else if (identifierElementType.isAlias()) {
                             PsiLookupAdapter lookupAdapter = LookupAdapterCache.ALIAS_DEFINITION.get(objectType);
-                            Set<BasePsiElement> aliasPsiElements = lookupAdapter.collectInParentScopeOf(element);
-                            consumer.consume(aliasPsiElements);
+                            lookupAdapter.collectInParentScopeOf(element, psiElement -> consumer.consume(psiElement));
                         } else if (identifierElementType.isVariable()) {
                             PsiLookupAdapter lookupAdapter = LookupAdapterCache.VARIABLE_DEFINITION.get(objectType);
-                            Set<BasePsiElement> variablePsiElements = lookupAdapter.collectInParentScopeOf(element);
-                            consumer.consume(variablePsiElements);
+                            lookupAdapter.collectInParentScopeOf(element, psiElement -> consumer.consume(psiElement));
                         }
                     }
 
@@ -311,7 +304,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
     }
 
     private static void collectObjectMatchingScope(
-            Consumer consumer,
+            QualifiedConsumer consumer,
             IdentifierElementType identifierElementType,
             ObjectTypeFilter filter,
             @NotNull  BasePsiElement sourceScope,

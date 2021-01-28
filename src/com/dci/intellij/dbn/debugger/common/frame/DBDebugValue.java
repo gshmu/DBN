@@ -14,18 +14,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Set;
+import java.util.List;
 
 public abstract class DBDebugValue<T extends DBDebugStackFrame> extends XNamedValue implements Comparable<DBDebugValue>{
     protected String value;
     protected String type;
     protected Icon icon;
-    protected Set<String> childVariableNames;
+    protected List<String> childVariableNames;
 
-    private T stackFrame;
-    private DBDebugValue parentValue;
+    private final T stackFrame;
+    private final DBDebugValue parentValue;
 
-    protected DBDebugValue(T stackFrame, @NotNull String variableName, @Nullable Set<String> childVariableNames, @Nullable DBDebugValue parentValue, @Nullable Icon icon) {
+    protected DBDebugValue(T stackFrame, @NotNull String variableName, @Nullable List<String> childVariableNames, @Nullable DBDebugValue parentValue, @Nullable Icon icon) {
         super(variableName);
         this.stackFrame = stackFrame;
         this.parentValue = parentValue;
@@ -103,7 +103,7 @@ public abstract class DBDebugValue<T extends DBDebugStackFrame> extends XNamedVa
         return getName().compareTo(remote.getName());
     }
 
-    public Set<String> getChildVariableNames() {
+    public List<String> getChildVariableNames() {
         return childVariableNames;
     }
 

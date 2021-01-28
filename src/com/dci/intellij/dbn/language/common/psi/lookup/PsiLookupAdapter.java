@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.language.common.psi.lookup;
 
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class PsiLookupAdapter {
     private boolean assertResolved = false;
@@ -21,16 +22,19 @@ public abstract class PsiLookupAdapter {
 
     public abstract boolean accepts(BasePsiElement element);
 
-    public final BasePsiElement findInParentScopeOf(final BasePsiElement source) {
-        //System.out.println(this);
-        LookupScopeVisitor finder = new LookupScopeVisitor() {
-            @Override
-            protected BasePsiElement performLookup(BasePsiElement scope) {
-                BasePsiElement result = scope.findPsiElement(PsiLookupAdapter.this, 10);
-                return result == null || result == source ? null : result;
+    @Nullable
+    public final BasePsiElement findInParentScopeOf(BasePsiElement source) {
+        AtomicReference<BasePsiElement> psiElement = new AtomicReference<>();
+        PsiScopeVisitor.visit(source, scope -> {
+            BasePsiElement result = scope.findPsiElement(PsiLookupAdapter.this, 10);
+            if (result == source) {
+                result = null;
             }
-        };
-        return finder.visit(source);
+            psiElement.set(result);
+            return result != null;
+        });
+
+        return psiElement.get();
     }
 
     public final BasePsiElement findInScope(@NotNull BasePsiElement scope) {
@@ -42,34 +46,21 @@ public abstract class PsiLookupAdapter {
     }
 
 
-    public final Set<BasePsiElement> collectInParentScopeOf(@NotNull BasePsiElement source) {
-        return collectInParentScopeOf(source, null);
+    public final void collectInParentScopeOf(@NotNull BasePsiElement source, Consumer<BasePsiElement> consumer) {
+        PsiScopeVisitor.visit(source, scope -> {
+            scope.collectPsiElements(PsiLookupAdapter.this, 1, consumer);
+            return false;
+        });
     }
 
-
-    public final Set<BasePsiElement> collectInParentScopeOf(@NotNull BasePsiElement source, Set<BasePsiElement> bucket) {
-        CollectScopeVisitor collector = new CollectScopeVisitor() {
-            @Override
-            protected Set<BasePsiElement> performCollect(BasePsiElement scope) {
-                return scope.collectPsiElements(PsiLookupAdapter.this, getResult(), 1);
-            }
-
-        };
-        collector.setResult(bucket);
-        return collector.visit(source);
-    }
-
-    @Nullable
-    public final Set<BasePsiElement> collectInScope(@NotNull BasePsiElement scope, @Nullable Set<BasePsiElement> bucket) {
+    public final void collectInScope(@NotNull BasePsiElement scope, @NotNull Consumer<BasePsiElement> consumer) {
         BasePsiElement collectScope = scope.isScopeBoundary() ? scope : scope.getEnclosingScopePsiElement();
         if (collectScope != null) {
-            return collectScope.collectPsiElements(this, bucket, 100);
+            collectScope.collectPsiElements(this, 100, consumer);
         }
-        return bucket;
     }
 
-    @Nullable
-    public final Set<BasePsiElement> collectInElement(@NotNull BasePsiElement element, @Nullable Set<BasePsiElement> bucket) {
-        return element.collectPsiElements(this, bucket, 100);
+    public final void collectInElement(@NotNull BasePsiElement element, @NotNull Consumer<BasePsiElement> consumer) {
+        element.collectPsiElements(this, 100, consumer);
     }
 }

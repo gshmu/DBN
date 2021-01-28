@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import gnu.trove.THashMap;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +26,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class StatementExecutionVariablesBundle extends StatefulDisposable.Base implements StatefulDisposable {
     public static final Comparator<StatementExecutionVariable> NAME_COMPARATOR = (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName());
@@ -35,14 +33,14 @@ public class StatementExecutionVariablesBundle extends StatefulDisposable.Base i
     public static final Comparator<StatementExecutionVariable> OFFSET_COMPARATOR = (o1, o2) -> o1.getOffset() - o2.getOffset();
 
     private Map<StatementExecutionVariable, String> errorMap;
-    private Set<StatementExecutionVariable> variables = new THashSet<>();
+    private List<StatementExecutionVariable> variables = new ArrayList<>();
 
-    public StatementExecutionVariablesBundle(Set<ExecVariablePsiElement> variablePsiElements) {
+    public StatementExecutionVariablesBundle(List<ExecVariablePsiElement> variablePsiElements) {
         initialize(variablePsiElements);
     }
 
-    public void initialize(Set<ExecVariablePsiElement> variablePsiElements) {
-        Set<StatementExecutionVariable> newVariables = new THashSet<StatementExecutionVariable>();
+    public void initialize(List<ExecVariablePsiElement> variablePsiElements) {
+        List<StatementExecutionVariable> newVariables = new ArrayList<>();
         for (ExecVariablePsiElement variablePsiElement : variablePsiElements) {
             StatementExecutionVariable variable = getVariable(variablePsiElement.getText());
             if (variable == null) {
@@ -116,7 +114,7 @@ public class StatementExecutionVariablesBundle extends StatefulDisposable.Base i
         return null;
     }
 
-    public Set<StatementExecutionVariable> getVariables() {
+    public List<StatementExecutionVariable> getVariables() {
         return variables;
     }
 
