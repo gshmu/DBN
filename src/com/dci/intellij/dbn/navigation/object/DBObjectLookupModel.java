@@ -16,7 +16,6 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.ide.util.gotoByName.ChooseByNameModel;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import lombok.Getter;
@@ -24,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Comparator;
 
 import static com.dci.intellij.dbn.common.load.ProgressMonitor.getProgressIndicator;
 
@@ -115,7 +115,7 @@ public class DBObjectLookupModel extends StatefulDisposable.Base implements Choo
     @Override
     @NotNull
     public String[] getNames(boolean checkBoxState) {
-        try {
+        return Safe.call(EMPTY_STRING_ARRAY, () -> {
             boolean databaseLoadActive = settings.getForceDatabaseLoad().value();
             boolean forceLoad = checkBoxState && databaseLoadActive;
 
@@ -130,13 +130,11 @@ public class DBObjectLookupModel extends StatefulDisposable.Base implements Choo
 
             return data.elements().
                     stream().
+                    sorted(Comparator.comparing(DBObject::getQualifiedName)).
                     map(object -> object.getName()).
                     distinct().
                     toArray(String[]::new);
-
-        } catch (ProcessCanceledException ignore) {}
-
-        return EMPTY_STRING_ARRAY;
+        });
     }
 
     @NotNull
@@ -147,10 +145,10 @@ public class DBObjectLookupModel extends StatefulDisposable.Base implements Choo
     @Override
     @NotNull
     public Object[] getElementsByName(@NotNull String name, boolean checkBoxState, @NotNull String pattern) {
-        return Safe.call(EMPTY_ARRAY, () -> data.
-                elements().
+        return Safe.call(EMPTY_ARRAY, () -> data.elements().
                 stream().
                 filter(object -> object.getName().equals(name)).
+                sorted(Comparator.comparing(DBObject::getQualifiedName)).
                 toArray());
     }
 

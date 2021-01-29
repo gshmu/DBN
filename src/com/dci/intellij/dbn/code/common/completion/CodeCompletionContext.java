@@ -4,7 +4,7 @@ import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSetting
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.routine.AsyncTaskExecutor;
-import com.dci.intellij.dbn.common.thread.ThreadFactory;
+import com.dci.intellij.dbn.common.thread.ThreadPool;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
@@ -59,7 +59,7 @@ public class CodeCompletionContext {
 
     private final Map<String, LeafElementType> completionCandidates = new HashMap<>();
     private final @Getter AsyncTaskExecutor queue = new AsyncTaskExecutor(
-            ThreadFactory.getCodeCompletionExecutor(),
+            ThreadPool.getCodeCompletionExecutor(),
             "code completion",
             200, TimeUnit.MILLISECONDS);
 

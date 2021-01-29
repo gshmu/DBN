@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.navigation.object;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.routine.AsyncTaskExecutor;
+import com.dci.intellij.dbn.common.thread.ThreadPool;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -10,12 +12,16 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.common.list.DBObjectListVisitor;
+import com.dci.intellij.dbn.object.type.DBObjectType;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectListVisitor {
     private final DBObjectLookupModel model;
     private final boolean forceLoad;
+    private final AsyncTaskExecutor asyncScanner = new AsyncTaskExecutor(
+            ThreadPool.objectLookupExecutor(), "object lookup", 3, TimeUnit.SECONDS);
 
     DBObjectLookupScanner(DBObjectLookupModel model, boolean forceLoad) {
         this.model = model;
@@ -25,17 +31,20 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
     @Override
     public void visit(DBObjectList<DBObject> objectList) {
         if (isScannable(objectList)) {
-            boolean lookupEnabled = model.isObjectLookupEnabled(objectList.getObjectType());
-            for (DBObject object : objectList.getObjects()) {
-                checkDisposed();
+            DBObjectType objectType = objectList.getObjectType();
+            asyncScanner.submit(objectType.getName().toUpperCase(), () -> {
+                boolean lookupEnabled = model.isObjectLookupEnabled(objectType);
+                for (DBObject object : objectList.getObjects()) {
+                    checkDisposed();
 
-                if (lookupEnabled) {
-                    model.getData().consume(object);
+                    if (lookupEnabled) {
+                        model.getData().consume(object);
+                    }
+
+                    DBObjectListContainer childObjects = object.getChildObjects();
+                    if (childObjects != null) childObjects.visitLists(this, false);
                 }
-
-                DBObjectListContainer childObjects = object.getChildObjects();
-                if (childObjects != null) childObjects.visitLists(this, false);
-            }
+            });
         }
     }
 
@@ -63,13 +72,18 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
                 objectListContainer.visitLists(this, false);
             }
         }
+        asyncScanner.awaitCompletion();
     }
 
     private boolean isScannable(DBObjectList<DBObject> objectList) {
-        return objectList != null &&
-                !objectList.isInternal() &&
-                model.isListLookupEnabled(objectList.getObjectType()) &&
-                (objectList.isLoaded() || objectList.canLoadFast() || forceLoad);
+        if (objectList != null && !objectList.isInternal()) {
+            if (model.isListLookupEnabled(objectList.getObjectType())) {
+                if (objectList.isLoaded() || objectList.canLoadFast() || forceLoad) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

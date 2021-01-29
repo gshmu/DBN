@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.routine;
 
-import com.dci.intellij.dbn.common.thread.ThreadFactory;
 import com.dci.intellij.dbn.common.util.Measured;
 import com.dci.intellij.dbn.common.util.Unsafe;
 import lombok.Getter;
@@ -37,7 +36,6 @@ public final class AsyncTaskExecutor {
 
     public void awaitCompletion() {
         Measured.run(topic + " OVERALL", () -> {
-            ExecutorService executor = ThreadFactory.getCodeCompletionExecutor();
             Unsafe.silent(() -> executor.invokeAll(
                     tasks.stream().
                         map(future -> (Callable<Object>) () -> future.get()).
