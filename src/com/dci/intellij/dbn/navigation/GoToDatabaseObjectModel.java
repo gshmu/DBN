@@ -23,12 +23,12 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -92,9 +92,10 @@ public class GoToDatabaseObjectModel extends StatefulDisposable.Base implements 
     public void saveInitialCheckBoxState(boolean state) {
     }
 
+    @NotNull
     @Override
     public ListCellRenderer getListCellRenderer() {
-        return new DatabaseObjectListCellRenderer();
+        return DatabaseObjectListCellRenderer.INSTANCE;
     }
 
     @Override
@@ -140,7 +141,7 @@ public class GoToDatabaseObjectModel extends StatefulDisposable.Base implements 
 
     @Override
     @NotNull
-    public Object[] getElementsByName(String name, boolean checkBoxState, String pattern) {
+    public Object[] getElementsByName(@NotNull String name, boolean checkBoxState, @NotNull String pattern) {
         try {
             boolean forceLoad = checkBoxState && objectsLookupSettings.getForceDatabaseLoad().value();
             checkDisposed();
@@ -193,7 +194,7 @@ public class GoToDatabaseObjectModel extends StatefulDisposable.Base implements 
         }
 
         @Override
-        public void visitObjectList(DBObjectList<DBObject> objectList) {
+        public void visit(DBObjectList<DBObject> objectList) {
             if (isListScannable(objectList) && isParentRelationValid(objectList)) {
                 DBObjectType objectType = objectList.getObjectType();
                 if (isLookupEnabled(objectType)) {
@@ -207,7 +208,7 @@ public class GoToDatabaseObjectModel extends StatefulDisposable.Base implements 
                                     ProgressMonitor.checkCancelled();
 
                                     if (isLookupEnabled) {
-                                        if (bucket == null) bucket = new THashSet<String>();
+                                        if (bucket == null) bucket = new HashSet<>();
                                         bucket.add(object.getName());
                                     }
 
@@ -255,8 +256,8 @@ public class GoToDatabaseObjectModel extends StatefulDisposable.Base implements 
 
 
     private class ObjectCollector extends Base implements DBObjectListVisitor {
-        private String objectName;
-        private boolean forceLoad;
+        private final String objectName;
+        private final boolean forceLoad;
         private DBObject parentObject;
         private List<DBObject> bucket;
 
@@ -266,7 +267,7 @@ public class GoToDatabaseObjectModel extends StatefulDisposable.Base implements 
         }
 
         @Override
-        public void visitObjectList(DBObjectList<DBObject> objectList) {
+        public void visit(DBObjectList<DBObject> objectList) {
             if (isListScannable(objectList) && isParentRelationValid(objectList)) {
                 DBObjectType objectType = objectList.getObjectType();
                 if (isLookupEnabled(objectType)) {
@@ -315,13 +316,13 @@ public class GoToDatabaseObjectModel extends StatefulDisposable.Base implements 
 
 
     @Override
-    public String getElementName(Object element) {
+    public String getElementName(@NotNull Object element) {
         if (element instanceof DBObject) {
             DBObject object = (DBObject) element;
             return object.getQualifiedName();
         }
 
-        return element == null ? null : element.toString();
+        return element.toString();
     }
 
     @Override
@@ -331,7 +332,7 @@ public class GoToDatabaseObjectModel extends StatefulDisposable.Base implements 
     }
 
     @Override
-    public String getFullName(Object element) {
+    public String getFullName(@NotNull Object element) {
         return getElementName(element);
     }
 
@@ -340,7 +341,9 @@ public class GoToDatabaseObjectModel extends StatefulDisposable.Base implements 
         return null;
     }
 
-    public class DatabaseObjectListCellRenderer extends ColoredListCellRenderer {
+    public static class DatabaseObjectListCellRenderer extends ColoredListCellRenderer {
+        private static final DatabaseObjectListCellRenderer INSTANCE = new DatabaseObjectListCellRenderer();
+
         @Override
         protected void customizeCellRenderer(JList list, Object value, int index, boolean selected, boolean hasFocus) {
             if (value instanceof DBObject) {

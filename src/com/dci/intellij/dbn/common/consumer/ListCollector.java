@@ -10,8 +10,7 @@ import java.util.List;
 public class ListCollector<T> implements Consumer<T> {
     private List<T> elements;
 
-    private ListCollector() {}
-
+    protected ListCollector() {}
 
     public static <T> ListCollector<T> basic() {
         return new ListCollector<>();
@@ -31,9 +30,13 @@ public class ListCollector<T> implements Consumer<T> {
     @Override
     public void consume(T element) {
         if (elements == null) {
-            elements = new ArrayList<>();
+            elements = createList();
         }
         elements.add(element);
+    }
+
+    protected List<T> createList() {
+        return new ArrayList<>();
     }
 
     public List<T> elements() {

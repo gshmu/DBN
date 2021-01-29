@@ -57,7 +57,7 @@ public class DBObjectListContainer extends StatefulDisposable.Base implements St
                         checkDisposed(visitor);
                         ProgressMonitor.checkCancelled();
 
-                        visitor.visitObjectList(objectList);
+                        visitor.visit(objectList);
                     }
                 }
             }
