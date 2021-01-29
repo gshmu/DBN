@@ -28,6 +28,8 @@ public class ThreadFactory {
 
     private static final ExecutorService CODE_COMPLETION_EXECUTOR = Executors.newCachedThreadPool(createThreadFactory("DBN - Code Completion Thread", true));
 
+    private static final ExecutorService OBJECT_LOOKUP_EXECUTOR = Executors.newCachedThreadPool(createThreadFactory("DBN - Object Lookup Thread", true));
+
 
     @NotNull
     private static java.util.concurrent.ThreadFactory createThreadFactory(String name, boolean daemon) {
@@ -65,5 +67,9 @@ public class ThreadFactory {
 
     public static ExecutorService getCodeCompletionExecutor() {
         return CODE_COMPLETION_EXECUTOR;
+    }
+
+    public static ExecutorService getObjectLookupExecutor() {
+        return OBJECT_LOOKUP_EXECUTOR;
     }
 }
