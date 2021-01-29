@@ -16,7 +16,7 @@ public class DBObjectRecursiveLoaderVisitor extends StatefulDisposable.Base impl
     }
 
     @Override
-    public void visitObjectList(DBObjectList<DBObject> objectList) {
+    public void visit(DBObjectList<DBObject> objectList) {
         if (!objectList.getDependencyAdapter().isSubContent()) {
             List<DBObject> objects = objectList.getObjects();
             CollectionUtil.forEach(objects, object -> {

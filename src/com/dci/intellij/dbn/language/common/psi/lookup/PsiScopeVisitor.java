@@ -1,10 +1,11 @@
 package com.dci.intellij.dbn.language.common.psi.lookup;
 
+import com.dci.intellij.dbn.common.lookup.Visitor;
 import com.dci.intellij.dbn.common.routine.ParametricCallable;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.intellij.psi.PsiElement;
 
-public abstract class PsiScopeVisitor {
+public abstract class PsiScopeVisitor implements Visitor<BasePsiElement> {
 
     protected PsiScopeVisitor() {}
 
