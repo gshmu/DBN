@@ -8,7 +8,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
-import com.dci.intellij.dbn.navigation.GoToDatabaseObjectModel;
+import com.dci.intellij.dbn.navigation.object.DBObjectLookupModel;
 import com.dci.intellij.dbn.navigation.options.ObjectsLookupSettings;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.action.AnObjectAction;
@@ -194,7 +194,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
             // remove action lock here since the pop-up will not be fired to remove it onClose()
             removeActionLock();
         } else {
-            GoToDatabaseObjectModel model = new GoToDatabaseObjectModel(project, connectionHandler, selectedSchema);
+            DBObjectLookupModel model = new DBObjectLookupModel(project, connectionHandler, selectedSchema);
             String predefinedText = getPredefinedText(project);
 
             popup = ChooseByNamePopup.createPopup(project, model, getPsiContext(e), predefinedText);
@@ -250,9 +250,9 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
     }
 
     private class Callback extends ChooseByNamePopupComponent.Callback {
-        private final GoToDatabaseObjectModel model;
+        private final DBObjectLookupModel model;
 
-        private Callback(GoToDatabaseObjectModel model) {
+        private Callback(DBObjectLookupModel model) {
             this.model = model;
         }
 
