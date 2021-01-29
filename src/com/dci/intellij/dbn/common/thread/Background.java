@@ -11,7 +11,7 @@ public interface Background {
 
     static void run(ThrowableRunnable<Throwable> runnable) {
         ThreadInfo threadInfo = ThreadMonitor.current();
-        ExecutorService executorService = ThreadFactory.backgroundExecutor();
+        ExecutorService executorService = ThreadPool.backgroundExecutor();
         executorService.submit(() -> {
             try {
                 ThreadMonitor.run(

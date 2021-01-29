@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.database.common.statement;
 
-import com.dci.intellij.dbn.common.thread.ThreadFactory;
+import com.dci.intellij.dbn.common.thread.ThreadPool;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 
 import java.sql.SQLException;
@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public interface StatementExecutor {
     static <T> T execute(int timeout, AtomicReference<Statement> statement, Callable<T> callable) throws SQLException {
         try {
-            ExecutorService executorService = ThreadFactory.databaseInterfaceExecutor();
+            ExecutorService executorService = ThreadPool.databaseInterfaceExecutor();
             Future<T> future = executorService.submit(callable);
             return future.get(timeout, TimeUnit.SECONDS);
 
