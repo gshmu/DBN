@@ -19,7 +19,7 @@ public interface Timeout {
     static <T> T call(long seconds, T defaultValue, boolean daemon, ThrowableCallable<T, Throwable> callable) {
         try {
             ThreadInfo invoker = ThreadMonitor.current();
-            ExecutorService executorService = ThreadFactory.timeoutExecutor(daemon);
+            ExecutorService executorService = ThreadPool.timeoutExecutor(daemon);
             Future<T> future = executorService.submit(
                     () -> {
                         try {
@@ -50,7 +50,7 @@ public interface Timeout {
     static void run(long seconds, boolean daemon, ThrowableRunnable<Throwable> runnable) {
         try {
             ThreadInfo invoker = ThreadMonitor.current();
-            ExecutorService executorService = ThreadFactory.timeoutExecutor(daemon);
+            ExecutorService executorService = ThreadPool.timeoutExecutor(daemon);
             Future future = executorService.submit(
                     () -> {
                         try {
