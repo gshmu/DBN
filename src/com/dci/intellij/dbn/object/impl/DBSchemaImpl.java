@@ -216,7 +216,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
     }
 
     private class ConstraintColumnComparator implements Comparator {
-        private DBConstraint constraint;
+        private final DBConstraint constraint;
         ConstraintColumnComparator(DBConstraint constraint) {
             this.constraint = constraint;
         }
@@ -338,7 +338,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
 
     @Override
     public List<DBDataset> getDatasets() {
-        List<DBDataset> datasets = new ArrayList<DBDataset>();
+        List<DBDataset> datasets = new ArrayList<>();
         datasets.addAll(getTables());
         datasets.addAll(getViews());
         datasets.addAll(getMaterializedViews());
@@ -524,10 +524,10 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
     }
 
     class ObjectStatusUpdater extends Base implements DBObjectListVisitor {
-        private Set<BrowserTreeNode> refreshNodes = new HashSet<BrowserTreeNode>();
+        private final Set<BrowserTreeNode> refreshNodes = new HashSet<>();
 
         @Override
-        public void visitObjectList(DBObjectList<DBObject> objectList) {
+        public void visit(DBObjectList<DBObject> objectList) {
             if (objectList.isLoaded() && !objectList.isDirty() && !objectList.isLoading()) {
                 List<DBObject> objects = objectList.getObjects();
                 for (DBObject object : objects) {

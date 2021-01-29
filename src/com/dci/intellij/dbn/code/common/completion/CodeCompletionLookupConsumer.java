@@ -120,7 +120,7 @@ public class CodeCompletionLookupConsumer implements CancellableConsumer<Object>
     }
 
     public void checkCancelled() throws ProcessCanceledException{
-        if (context.getResult().isStopped() || context.isFinished()) {
+        if (context.getResult().isStopped() || context.getQueue().isFinished()) {
             throw AlreadyDisposedException.INSTANCE;
         }
     }
