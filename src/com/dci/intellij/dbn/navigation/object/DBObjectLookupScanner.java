@@ -21,7 +21,7 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
     private final DBObjectLookupModel model;
     private final boolean forceLoad;
     private final AsyncTaskExecutor asyncScanner = new AsyncTaskExecutor(
-            ThreadPool.objectLookupExecutor(), "object lookup", 3, TimeUnit.SECONDS);
+            ThreadPool.objectLookupExecutor(), 3, TimeUnit.SECONDS);
 
     DBObjectLookupScanner(DBObjectLookupModel model, boolean forceLoad) {
         this.model = model;
@@ -32,7 +32,7 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
     public void visit(DBObjectList<DBObject> objectList) {
         if (isScannable(objectList)) {
             DBObjectType objectType = objectList.getObjectType();
-            asyncScanner.submit(objectType.getName().toUpperCase(), () -> {
+            asyncScanner.submit(() -> {
                 boolean lookupEnabled = model.isObjectLookupEnabled(objectType);
                 for (DBObject object : objectList.getObjects()) {
                     checkDisposed();

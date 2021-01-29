@@ -175,7 +175,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
 
     private static void collectTokenElements(CodeCompletionLookupConsumer consumer) {
         CodeCompletionContext context = consumer.getContext();
-        context.queue("KEYWORD TOKENS", () -> {
+        context.queue(() -> {
             Collection<LeafElementType> completionCandidates = context.getCompletionCandidates();
             completionCandidates.stream().filter(elementType -> elementType instanceof TokenElementType).forEach(elementType -> {
                 TokenElementType tokenElementType = (TokenElementType) elementType;
@@ -197,21 +197,21 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
                 DBObjectType objectType = identifierElementType.getObjectType();
                 if (parentIdentifierPsiElement == null) {
                     if (identifierElementType.isObject()) {
-                        context.queue("LOCAL " + objectType + " OBJECTS", () -> collectObjectElements(element, consumer, identifierElementType, objectType));
+                        context.queue(() -> collectObjectElements(element, consumer, identifierElementType, objectType));
 
                     } else if (identifierElementType.isAlias()) {
-                        context.queue("LOCAL " + objectType + " ALIASES", () -> collectAliasElements(element, consumer, objectType));
+                        context.queue(() -> collectAliasElements(element, consumer, objectType));
 
                     } else if (identifierElementType.isVariable()) {
-                        context.queue("LOCAL " + objectType + " VARIABLES", () -> collectVariableElements(element, consumer, objectType));
+                        context.queue(() -> collectVariableElements(element, consumer, objectType));
                     }
                 }
                 if (parentObject != null && (context.isLiveConnection() || parentObject instanceof DBVirtualObject)) {
-                    context.queue("DATABASE " + objectType + " OBJECTS", () -> collectChildObjects(consumer, parentObject, objectType));
+                    context.queue(() -> collectChildObjects(consumer, parentObject, objectType));
                 }
             } else if (identifierElementType.isDefinition()) {
                 if (identifierElementType.isAlias()) {
-                    context.queue("LOCAL ALIAS DEFINITIONS", () -> buildAliasDefinitionNames(element, consumer));
+                    context.queue(() -> buildAliasDefinitionNames(element, consumer));
                 }
             }
         });

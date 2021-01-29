@@ -60,7 +60,6 @@ public class CodeCompletionContext {
     private final Map<String, LeafElementType> completionCandidates = new HashMap<>();
     private final @Getter AsyncTaskExecutor queue = new AsyncTaskExecutor(
             ThreadPool.getCodeCompletionExecutor(),
-            "code completion",
             200, TimeUnit.MILLISECONDS);
 
     public CodeCompletionContext(DBLanguagePsiFile file, CompletionParameters parameters, CompletionResultSet result) {
@@ -137,8 +136,8 @@ public class CodeCompletionContext {
         return connectionHandler != null && !connectionHandler.isVirtual();
     }
 
-    public void queue(String identifier, Runnable runnable) {
-        queue.submit(identifier, runnable);
+    public void queue(Runnable runnable) {
+        queue.submit(runnable);
     }
 
     public void awaitCompletion() {
