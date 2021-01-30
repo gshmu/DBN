@@ -2,13 +2,13 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.2.1395.0</version>
+    <version>3.2.2143.0</version>
     <category>Database</category>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
     <depends optional="true" config-file="JavaPlugin.xml">com.intellij.modules.java</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
-    <idea-version since-build="200.0001" until-build="203.*"/>
+    <idea-version since-build="200.0001" until-build="211.*"/>
     <description><![CDATA[
             <b>Database development, scripting and navigation tool</b><br>
             This product adds extensive database development and maintenance capabilities to the IntelliJ IDEA development environment and related products.
@@ -31,6 +31,14 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
+            <li><b>3.2.2143</b>
+            <ul>
+                <li>New Jira-Markup data-export format
+                <li>Code completion - overall performance improvements
+                <li>Database-object lookup (Ctrl+Shift+D) - performance improvements
+                <li>Support for latest IDE EAP versions
+                <li>Bug fixes
+            </ul>
             <li><b>3.2.1395</b>
             <ul>
                 <li>Resource monitor enhancements
