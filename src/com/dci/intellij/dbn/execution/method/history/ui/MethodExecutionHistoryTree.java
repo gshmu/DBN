@@ -14,6 +14,7 @@ import javax.swing.*;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.util.Collections;
 import java.util.List;
@@ -102,16 +103,18 @@ public class MethodExecutionHistoryTree extends DBNTree implements Disposable {
     }
 
     void removeSelectedEntries() {
-        MethodExecutionHistoryTreeNode treeNode = (MethodExecutionHistoryTreeNode)
-                getSelectionPath().getLastPathComponent();
-        MethodExecutionHistoryTreeNode parentTreeNode = (MethodExecutionHistoryTreeNode) treeNode.getParent();
-        while (parentTreeNode != null &&
-                parentTreeNode.getChildCount() == 1 && 
-                !parentTreeNode.isRoot()) {
-            getSelectionModel().setSelectionPath(TreeUtil.getPathFromRoot(parentTreeNode));
-            parentTreeNode = (MethodExecutionHistoryTreeNode) parentTreeNode.getParent();
+        TreePath selectionPath = getSelectionPath();
+        if (selectionPath != null) {
+            MethodExecutionHistoryTreeNode treeNode = (MethodExecutionHistoryTreeNode) selectionPath.getLastPathComponent();
+            MethodExecutionHistoryTreeNode parentTreeNode = (MethodExecutionHistoryTreeNode) treeNode.getParent();
+            while (parentTreeNode != null &&
+                    parentTreeNode.getChildCount() == 1 &&
+                    !parentTreeNode.isRoot()) {
+                getSelectionModel().setSelectionPath(TreeUtil.getPathFromRoot(parentTreeNode));
+                parentTreeNode = (MethodExecutionHistoryTreeNode) parentTreeNode.getParent();
+            }
+            TreeUtil.removeSelected(this);
         }
-        TreeUtil.removeSelected(this);
     }
 
     /**********************************************************

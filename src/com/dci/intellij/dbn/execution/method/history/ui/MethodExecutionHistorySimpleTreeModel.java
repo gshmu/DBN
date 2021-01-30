@@ -18,29 +18,33 @@ public class MethodExecutionHistorySimpleTreeModel extends MethodExecutionHistor
             if (!executionInput.isObsolete() &&
                     !executionInput.isInactive() &&
                     (!debug || DatabaseFeature.DEBUGGING.isSupported(executionInput.getConnectionHandler()))) {
-                RootTreeNode rootNode = getRoot();
-
-                ConnectionTreeNode connectionNode = rootNode.getConnectionNode(executionInput);
-                SchemaTreeNode schemaNode = connectionNode.getSchemaNode(executionInput);
-                schemaNode.getMethodNode(executionInput);
+                RootTreeNode root = getRoot();
+                if (root != null) {
+                    ConnectionTreeNode connectionNode = root.getConnectionNode(executionInput);
+                    SchemaTreeNode schemaNode = connectionNode.getSchemaNode(executionInput);
+                    schemaNode.getMethodNode(executionInput);
+                }
             }
         }
     }
 
     @Override
     public List<MethodExecutionInput> getExecutionInputs() {
-        List<MethodExecutionInput> executionInputs = new ArrayList<MethodExecutionInput>();
-        for (TreeNode connectionTreeNode : getRoot().getChildren()) {
-            ConnectionTreeNode connectionNode = (ConnectionTreeNode) connectionTreeNode;
-            for (TreeNode schemaTreeNode : connectionNode.getChildren()) {
-                SchemaTreeNode schemaNode = (SchemaTreeNode) schemaTreeNode;
-                for (TreeNode node : schemaNode.getChildren()) {
-                    MethodTreeNode methodNode = (MethodTreeNode) node;
-                    MethodExecutionInput executionInput =
-                            getExecutionInput(connectionNode, schemaNode, methodNode);
+        List<MethodExecutionInput> executionInputs = new ArrayList<>();
+        RootTreeNode root = getRoot();
+        if (root != null) {
+            for (TreeNode connectionTreeNode : root.getChildren()) {
+                ConnectionTreeNode connectionNode = (ConnectionTreeNode) connectionTreeNode;
+                for (TreeNode schemaTreeNode : connectionNode.getChildren()) {
+                    SchemaTreeNode schemaNode = (SchemaTreeNode) schemaTreeNode;
+                    for (TreeNode node : schemaNode.getChildren()) {
+                        MethodTreeNode methodNode = (MethodTreeNode) node;
+                        MethodExecutionInput executionInput =
+                                getExecutionInput(connectionNode, schemaNode, methodNode);
 
-                    if (executionInput != null) {
-                        executionInputs.add(executionInput);
+                        if (executionInput != null) {
+                            executionInputs.add(executionInput);
+                        }
                     }
                 }
             }
@@ -73,15 +77,18 @@ public class MethodExecutionHistorySimpleTreeModel extends MethodExecutionHistor
     @Override
     public TreePath getTreePath(MethodExecutionInput executionInput) {
         List<MethodExecutionHistoryTreeNode> path = new ArrayList<MethodExecutionHistoryTreeNode>();
-        MethodExecutionHistoryTreeModel.RootTreeNode rootTreeNode = getRoot();
-        path.add(rootTreeNode);
-        ConnectionTreeNode connectionTreeNode = rootTreeNode.getConnectionNode(executionInput);
-        path.add(connectionTreeNode);
-        SchemaTreeNode schemaTreeNode = connectionTreeNode.getSchemaNode(executionInput);
-        path.add(schemaTreeNode);
-        MethodTreeNode methodTreeNode = schemaTreeNode.getMethodNode(executionInput);
-        path.add(methodTreeNode);
-        
+        RootTreeNode root = getRoot();
+        if (root != null) {
+            ConnectionTreeNode connectionTreeNode = root.getConnectionNode(executionInput);
+            SchemaTreeNode schemaTreeNode = connectionTreeNode.getSchemaNode(executionInput);
+            MethodTreeNode methodTreeNode = schemaTreeNode.getMethodNode(executionInput);
+
+            path.add(root);
+            path.add(connectionTreeNode);
+            path.add(schemaTreeNode);
+            path.add(methodTreeNode);
+        }
+
         return new TreePath(path.toArray());
     }
 }

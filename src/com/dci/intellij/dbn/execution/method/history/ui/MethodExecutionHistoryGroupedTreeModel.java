@@ -22,18 +22,20 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
             if (!executionInput.isObsolete() &&
                     !executionInput.isInactive() &&
                     (!debug || DatabaseFeature.DEBUGGING.isSupported(executionInput.getConnectionHandler()))) {
-                RootTreeNode rootNode = getRoot();
+                RootTreeNode root = getRoot();
 
-                ConnectionTreeNode connectionNode = rootNode.getConnectionNode(executionInput);
-                SchemaTreeNode schemaNode = connectionNode.getSchemaNode(executionInput);
+                if (root != null) {
+                    ConnectionTreeNode connectionNode = root.getConnectionNode(executionInput);
+                    SchemaTreeNode schemaNode = connectionNode.getSchemaNode(executionInput);
 
-                DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
-                DBObjectRef parentRef = methodRef.getParentRef(DBObjectType.PROGRAM);
-                if (parentRef != null) {
-                    ProgramTreeNode programNode = schemaNode.getProgramNode(executionInput);
-                    programNode.getMethodNode(executionInput);
-                } else {
-                    schemaNode.getMethodNode(executionInput);
+                    DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
+                    DBObjectRef<?> parentRef = methodRef.getParentRef(DBObjectType.PROGRAM);
+                    if (parentRef != null) {
+                        ProgramTreeNode programNode = schemaNode.getProgramNode(executionInput);
+                        programNode.getMethodNode(executionInput);
+                    } else {
+                        schemaNode.getMethodNode(executionInput);
+                    }
                 }
             }
         }
@@ -47,20 +49,23 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
     @Override
     public TreePath getTreePath(MethodExecutionInput executionInput) {
         List<MethodExecutionHistoryTreeNode> path = new ArrayList<>();
-        MethodExecutionHistoryTreeModel.RootTreeNode rootTreeNode = getRoot();
-        path.add(rootTreeNode);
-        ConnectionTreeNode connectionTreeNode = rootTreeNode.getConnectionNode(executionInput);
-        path.add(connectionTreeNode);
-        SchemaTreeNode schemaTreeNode = connectionTreeNode.getSchemaNode(executionInput);
-        path.add(schemaTreeNode);
-        if (executionInput.getMethodRef().getParentObject(DBObjectType.PROGRAM) != null) {
-            ProgramTreeNode programTreeNode = schemaTreeNode.getProgramNode(executionInput);
-            path.add(programTreeNode);
-            MethodTreeNode methodTreeNode = programTreeNode.getMethodNode(executionInput);
-            path.add(methodTreeNode);
-        } else {
-            MethodTreeNode methodTreeNode = schemaTreeNode.getMethodNode(executionInput);
-            path.add(methodTreeNode);
+        RootTreeNode root = getRoot();
+        if (root != null) {
+            ConnectionTreeNode connectionTreeNode = root.getConnectionNode(executionInput);
+            SchemaTreeNode schemaTreeNode = connectionTreeNode.getSchemaNode(executionInput);
+
+            path.add(root);
+            path.add(connectionTreeNode);
+            path.add(schemaTreeNode);
+            if (executionInput.getMethodRef().getParentObject(DBObjectType.PROGRAM) != null) {
+                ProgramTreeNode programTreeNode = schemaTreeNode.getProgramNode(executionInput);
+                path.add(programTreeNode);
+                MethodTreeNode methodTreeNode = programTreeNode.getMethodNode(executionInput);
+                path.add(methodTreeNode);
+            } else {
+                MethodTreeNode methodTreeNode = schemaTreeNode.getMethodNode(executionInput);
+                path.add(methodTreeNode);
+            }
         }
 
         return new TreePath(path.toArray());
@@ -69,39 +74,41 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
     @Override
     public List<MethodExecutionInput> getExecutionInputs() {
         RootTreeNode root = getRoot();
-        List<TreeNode> children = root.getChildren();
-        if (children != null && !children.isEmpty()) {
-            List<MethodExecutionInput> executionInputs = new ArrayList<>();
-            for (TreeNode connectionTreeNode : children) {
-                ConnectionTreeNode connectionNode = (ConnectionTreeNode) connectionTreeNode;
-                for (TreeNode schemaTreeNode : connectionNode.getChildren()) {
-                    SchemaTreeNode schemaNode = (SchemaTreeNode) schemaTreeNode;
-                    for (TreeNode node : schemaNode.getChildren()) {
-                        if (node instanceof ProgramTreeNode) {
-                            ProgramTreeNode programNode = (ProgramTreeNode) node;
-                            for (TreeNode methodTreeNode : programNode.getChildren()) {
-                                MethodTreeNode methodNode = (MethodTreeNode) methodTreeNode;
+        if (root != null) {
+            List<TreeNode> children = root.getChildren();
+            if (children != null && !children.isEmpty()) {
+                List<MethodExecutionInput> executionInputs = new ArrayList<>();
+                for (TreeNode connectionTreeNode : children) {
+                    ConnectionTreeNode connectionNode = (ConnectionTreeNode) connectionTreeNode;
+                    for (TreeNode schemaTreeNode : connectionNode.getChildren()) {
+                        SchemaTreeNode schemaNode = (SchemaTreeNode) schemaTreeNode;
+                        for (TreeNode node : schemaNode.getChildren()) {
+                            if (node instanceof ProgramTreeNode) {
+                                ProgramTreeNode programNode = (ProgramTreeNode) node;
+                                for (TreeNode methodTreeNode : programNode.getChildren()) {
+                                    MethodTreeNode methodNode = (MethodTreeNode) methodTreeNode;
+                                    MethodExecutionInput executionInput =
+                                            getExecutionInput(connectionNode, schemaNode, programNode, methodNode);
+
+                                    if (executionInput != null) {
+                                        executionInputs.add(executionInput);
+                                    }
+                                }
+
+                            } else {
+                                MethodTreeNode methodNode = (MethodTreeNode) node;
                                 MethodExecutionInput executionInput =
-                                        getExecutionInput(connectionNode, schemaNode, programNode, methodNode);
+                                        getExecutionInput(connectionNode, schemaNode, null, methodNode);
 
                                 if (executionInput != null) {
                                     executionInputs.add(executionInput);
                                 }
                             }
-
-                        } else {
-                            MethodTreeNode methodNode = (MethodTreeNode) node;
-                            MethodExecutionInput executionInput =
-                                    getExecutionInput(connectionNode, schemaNode, null, methodNode);
-
-                            if (executionInput != null) {
-                                executionInputs.add(executionInput);
-                            }
                         }
                     }
                 }
+                return executionInputs;
             }
-            return executionInputs;
         }
         return Collections.emptyList();
     }
@@ -119,7 +126,7 @@ public class MethodExecutionHistoryGroupedTreeModel extends MethodExecutionHisto
                 StringUtil.equalsIgnoreCase(methodRef.objectName, methodNode.getName()) &&
                 methodRef.overload == methodNode.getOverload() ) {
 
-                DBObjectRef programRef = methodRef.getParentRef(DBObjectType.PROGRAM);
+                DBObjectRef<?> programRef = methodRef.getParentRef(DBObjectType.PROGRAM);
                 if (programNode == null && programRef == null) {
                     return executionInput;
                 } else if (programNode != null && programRef != null){
