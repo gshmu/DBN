@@ -11,19 +11,19 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 public class SshTunnelConnector {
-    private String proxyHost;
-    private int proxyPort;
-    private String proxyUser;
-    private String proxyPassword;
-    private SshAuthType authType;
-    private String keyFile;
-    private String keyPassphrase;
+    private final String proxyHost;
+    private final int proxyPort;
+    private final String proxyUser;
+    private final String proxyPassword;
+    private final SshAuthType authType;
+    private final String keyFile;
+    private final String keyPassphrase;
 
-    private String localHost = "localhost";
+    private final String localHost = "localhost";
     private int localPort;
 
-    private String remoteHost;
-    private int remotePort;
+    private final String remoteHost;
+    private final int remotePort;
 
     private Session session;
 
@@ -42,18 +42,20 @@ public class SshTunnelConnector {
     }
 
     public Session createTunnel() throws Exception {
-        try {
-            ServerSocket serverSocket = new ServerSocket(0);
-            try {
-                localPort = serverSocket.getLocalPort();
-            } finally {
-                serverSocket.close();
-            }
-        } catch (IOException e) {
-            throw new JSchException("Can\'t find a free port", e);
+        try (ServerSocket serverSocket = new ServerSocket(0)) {
+            localPort = serverSocket.getLocalPort();
+        }
+        catch (IOException e) {
+            throw new JSchException("Can't find a free port", e);
         }
 
         JSch jsch = new JSch();
+/*
+        TODO open ssl config file
+        ConfigRepository configRepository = OpenSSHConfig.parse("");
+        jsch.setConfigRepository(configRepository);
+*/
+
         JSch.setConfig("kex", "diffie-hellman-group1-sha1,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1,diffie-hellman-group-exchange-sha256");
         session = jsch.getSession(proxyUser, proxyHost, proxyPort);
 
