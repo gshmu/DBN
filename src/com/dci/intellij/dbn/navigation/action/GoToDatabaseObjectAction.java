@@ -132,11 +132,11 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
 
 
     private class SelectConnectionAction extends ActionGroup {
-        private ConnectionHandlerRef connectionHandlerRef;
+        private final ConnectionHandlerRef connectionHandler;
 
         private SelectConnectionAction(ConnectionHandler connectionHandler) {
             super();
-            connectionHandlerRef = ConnectionHandlerRef.from(connectionHandler);
+            this.connectionHandler = ConnectionHandlerRef.from(connectionHandler);
             Presentation presentation = getTemplatePresentation();
             presentation.setText(connectionHandler.getName(), false);
             presentation.setIcon(connectionHandler.getIcon());
@@ -144,7 +144,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
         }
 
         public ConnectionHandler getConnectionHandler() {
-            return connectionHandlerRef.ensure();
+            return connectionHandler.ensure();
         }
 
         @Override
