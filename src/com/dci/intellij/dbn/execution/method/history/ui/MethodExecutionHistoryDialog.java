@@ -20,8 +20,8 @@ public class MethodExecutionHistoryDialog extends DBNDialog<MethodExecutionHisto
     private DebugAction debugAction;
     private SaveAction saveAction;
     private CloseAction closeAction;
-    private boolean editable;
-    private boolean debug;
+    private final boolean editable;
+    private final boolean debug;
     private WeakRef<MethodExecutionInput> selectedExecutionInput;  // TODO dialog result - Disposable.nullify(...)
 
     public MethodExecutionHistoryDialog(
