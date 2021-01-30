@@ -10,7 +10,7 @@ import java.util.Set;
 public class SetCollector<T> implements Consumer<T> {
     private Set<T> elements;
 
-    private SetCollector() {}
+    protected SetCollector() {}
 
 
     public static <T> SetCollector<T> create() {
@@ -20,9 +20,13 @@ public class SetCollector<T> implements Consumer<T> {
     @Override
     public void consume(T element) {
         if (elements == null) {
-            elements = new HashSet<>();
+            elements = createSet();
         }
         elements.add(element);
+    }
+
+    protected Set<T> createSet() {
+        return new HashSet<>();
     }
 
     public Set<T> elements() {

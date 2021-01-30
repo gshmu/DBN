@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -33,7 +34,16 @@ public class ThreadPool {
             AtomicInteger index = THREAD_COUNTERS.computeIfAbsent(name, s -> new AtomicInteger(0));
             String indexedName = name + " (" + index.incrementAndGet() + ")";
             LOGGER.info("Creating thread \"" + indexedName + "\"");
-            Thread thread = new Thread(runnable, name);
+            Thread thread = new Thread(() -> {
+                    try {
+                        runnable.run();
+                    } catch (StackOverflowError e) {
+                        LOGGER.error("Failed to execute task", e);
+                    } catch (ProcessCanceledException ignore) {
+                    } catch (Throwable t) {
+                        LOGGER.warn(name + " - Execution failed: " + t.getMessage());
+                    }
+                }, name);
             thread.setPriority(Thread.MIN_PRIORITY);
             thread.setDaemon(daemon);
             return thread;
