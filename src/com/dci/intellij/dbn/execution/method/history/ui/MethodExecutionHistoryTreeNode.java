@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.method.history.ui;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.Getter;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -19,8 +20,8 @@ public class MethodExecutionHistoryTreeNode extends DefaultMutableTreeNode {
         FUNCTION,
         UNKNOWN
     }
-    private String name;
-    private Type type;
+    private final @Getter String name;
+    private final @Getter Type type;
 
     public MethodExecutionHistoryTreeNode(MethodExecutionHistoryTreeNode parent, Type type, String name) {
         this.name = name;
@@ -29,14 +30,6 @@ public class MethodExecutionHistoryTreeNode extends DefaultMutableTreeNode {
             parent.add(this);
         }
     }
-    public String getName() {
-        return name;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
     public Icon getIcon() {
         return
             type == Type.CONNECTION? Icons.CONNECTION_CONNECTED :

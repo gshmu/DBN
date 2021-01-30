@@ -111,7 +111,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
 
         ProgramTreeNode getProgramNode(MethodExecutionInput executionInput) {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
-            DBObjectRef programRef = methodRef.getParentRef(DBObjectType.PROGRAM);
+            DBObjectRef<?> programRef = methodRef.getParentRef(DBObjectType.PROGRAM);
             String programName = programRef.objectName;
             if (!isLeaf())
                 for (TreeNode node : getChildren()) {
