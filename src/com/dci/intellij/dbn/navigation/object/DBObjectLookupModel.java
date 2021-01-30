@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.navigation.object;
 
-import com.dci.intellij.dbn.common.consumer.ConcurrentListCollector;
-import com.dci.intellij.dbn.common.consumer.ListCollector;
+import com.dci.intellij.dbn.common.consumer.ConcurrentSetCollector;
+import com.dci.intellij.dbn.common.consumer.SetCollector;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
@@ -35,7 +35,7 @@ public class DBObjectLookupModel extends StatefulDisposable.Base implements Choo
     private final ConnectionHandlerRef selectedConnection;
     private final DBObjectRef<DBSchema> selectedSchema;
     private final @Getter ObjectsLookupSettings settings;
-    private final @Getter ListCollector<DBObject> data = ConcurrentListCollector.basic();
+    private final @Getter SetCollector<DBObject> data = ConcurrentSetCollector.create();
 
     private final ProgressIndicator progressIndicator = getProgressIndicator();
 
