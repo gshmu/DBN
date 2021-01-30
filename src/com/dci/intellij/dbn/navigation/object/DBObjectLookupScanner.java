@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.navigation.object;
 
+import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.routine.AsyncTaskExecutor;
 import com.dci.intellij.dbn.common.thread.ThreadPool;
@@ -31,20 +32,37 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
     @Override
     public void visit(DBObjectList<DBObject> objectList) {
         if (isScannable(objectList)) {
-            DBObjectType objectType = objectList.getObjectType();
-            asyncScanner.submit(() -> {
-                boolean lookupEnabled = model.isObjectLookupEnabled(objectType);
-                for (DBObject object : objectList.getObjects()) {
-                    checkDisposed();
-
-                    if (lookupEnabled) {
-                        model.getData().consume(object);
+            boolean sync = objectList.isLoaded();
+            if (!sync) {
+                BrowserTreeNode parent = objectList.getParent();
+                if (parent instanceof DBObject) {
+                    DBObject object = (DBObject) parent;
+                    if (object.getParentObject() instanceof DBSchema) {
+                        sync = true;
                     }
-
-                    DBObjectListContainer childObjects = object.getChildObjects();
-                    if (childObjects != null) childObjects.visitLists(this, false);
                 }
-            });
+            }
+
+            if (sync) {
+                doVisit(objectList);
+            } else {
+                asyncScanner.submit(() -> doVisit(objectList));
+            }
+        }
+    }
+
+    private void doVisit(DBObjectList<DBObject> objectList) {
+        DBObjectType objectType = objectList.getObjectType();
+        boolean lookupEnabled = model.isObjectLookupEnabled(objectType);
+        for (DBObject object : objectList.getObjects()) {
+            checkDisposed();
+
+            if (lookupEnabled) {
+                model.getData().consume(object);
+            }
+
+            DBObjectListContainer childObjects = object.getChildObjects();
+            if (childObjects != null) childObjects.visitLists(this, false);
         }
     }
 

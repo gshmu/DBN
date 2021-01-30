@@ -240,7 +240,7 @@ public class GoToDatabaseObjectAction extends GotoActionBase implements DumbAwar
     }
 
     private static boolean isValidPredefinedText(String predefinedText) {
-        return predefinedText != null && !predefinedText.contains("\n") && predefinedText.trim().length() < 50;
+        return predefinedText != null && predefinedText.length() < 40 && predefinedText.matches("^[a-zA-Z0-9 _\\-$#]*$");
     }
 
     private static void removeActionLock() {
