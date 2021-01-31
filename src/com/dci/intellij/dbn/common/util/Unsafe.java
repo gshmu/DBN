@@ -41,4 +41,15 @@ public interface Unsafe {
         }
     }
 
+    static <T> T warned(T defaultValue, ThrowableCallable<T, Throwable> callable) {
+        try {
+            return callable.call();
+        } catch (ProcessCanceledException ignore) {
+        } catch (Throwable t) {
+            String message = t.getMessage();
+            LOGGER.warn(message == null ? t.getClass().getSimpleName() : message);
+        }
+        return defaultValue;
+    }
+
 }

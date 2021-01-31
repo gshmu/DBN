@@ -14,8 +14,8 @@ public class DatabaseBrowserGeneralSettings
         extends BasicProjectConfiguration<DatabaseBrowserSettings, DatabaseBrowserGeneralSettingsForm> {
 
     private BrowserDisplayMode displayMode = BrowserDisplayMode.TABBED;
-    private IntegerSetting navigationHistorySize = new IntegerSetting("navigation-history-size", 100);
-    private BooleanSetting showObjectDetails = new BooleanSetting("show-object-details", false);
+    private final IntegerSetting navigationHistorySize = new IntegerSetting("navigation-history-size", 100);
+    private final BooleanSetting showObjectDetails = new BooleanSetting("show-object-details", false);
 
     DatabaseBrowserGeneralSettings(DatabaseBrowserSettings parent) {
         super(parent);
