@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.dispose;
 
+import com.dci.intellij.dbn.common.util.Safe;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import lombok.Getter;
@@ -34,7 +35,7 @@ public interface StatefulDisposable extends com.intellij.openapi.Disposable {
         public final void dispose() {
             if (!disposed) {
                 disposed = true;
-                disposeInner();
+                Safe.run(() -> disposeInner());
             }
         }
 
