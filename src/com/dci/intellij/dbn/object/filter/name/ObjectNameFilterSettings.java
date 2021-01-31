@@ -15,21 +15,15 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ObjectNameFilterSettings
         extends BasicProjectConfiguration<ConnectionFilterSettings, ObjectNameFilterSettingsForm>
         implements TreeModel {
 
-    private List<ObjectNameFilter> filters = new ArrayList<ObjectNameFilter>();
-    private Map<DBObjectType, Filter<DBObject>> objectFilterMap = new EnumMap<>(DBObjectType.class);
-    private ConnectionRef connectionRef;
+    private final List<ObjectNameFilter> filters = new ArrayList<ObjectNameFilter>();
+    private final Map<DBObjectType, Filter<DBObject>> objectFilterMap = new EnumMap<>(DBObjectType.class);
+    private final ConnectionRef connectionRef;
 
     public ObjectNameFilterSettings(ConnectionFilterSettings parent, ConnectionRef connectionRef) {
         super(parent);
@@ -121,7 +115,7 @@ public class ObjectNameFilterSettings
     /*********************************************************
      *                       TreeModel                       *
      *********************************************************/
-    private Set<TreeModelListener> listeners = new HashSet<>();
+    private final Set<TreeModelListener> listeners = new HashSet<>();
 
     @Override
     public Object getRoot() {
@@ -130,7 +124,7 @@ public class ObjectNameFilterSettings
 
     @Override
     public Object getChild(Object parent, int index) {
-        List children = getChildren(parent);
+        List<?> children = getChildren(parent);
         return children.size() > index ? children.get(index) : null;
     }
 
@@ -139,7 +133,7 @@ public class ObjectNameFilterSettings
         return getChildren(parent).size();
     }
 
-    private List getChildren(Object parent) {
+    private List<?> getChildren(Object parent) {
         if (parent instanceof ObjectNameFilterSettings) {
             ObjectNameFilterSettings filterSettings = (ObjectNameFilterSettings) parent;
             return filterSettings.filters;
@@ -173,7 +167,7 @@ public class ObjectNameFilterSettings
     }
 
     public void notifyNodeRemoved(int index, FilterCondition condition) {
-        if (listeners.size()> 0) {
+        if (listeners.size()> 0 && index > -1) {
             TreeModelEvent event = createTreeModelEvent(index, condition);
             for (TreeModelListener listener: listeners) {
                 listener.treeNodesRemoved(event);
