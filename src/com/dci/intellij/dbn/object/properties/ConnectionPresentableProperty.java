@@ -7,14 +7,14 @@ import com.intellij.pom.Navigatable;
 import javax.swing.*;
 
 public class ConnectionPresentableProperty extends PresentableProperty{
-    private ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connectionHandler;
 
     public ConnectionPresentableProperty(ConnectionHandler connectionHandler) {
-        this.connectionHandlerRef = connectionHandler.getRef();
+        this.connectionHandler = connectionHandler.getRef();
     }
 
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     @Override

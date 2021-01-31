@@ -6,20 +6,16 @@ import com.dci.intellij.dbn.common.ui.MouseUtil;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
 import com.dci.intellij.dbn.object.properties.PresentableProperty;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.pom.Navigatable;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
-public class ObjectPropertiesTable extends DBNTable {
+public class ObjectPropertiesTable extends DBNTable<DBNTableModel> {
     ObjectPropertiesTable(DBNForm parent, DBNTableModel tableModel) {
         super(parent, tableModel, false);
         setDefaultRenderer(String.class, cellRenderer);
@@ -90,27 +86,31 @@ public class ObjectPropertiesTable extends DBNTable {
     private final TableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            PresentableProperty property = (PresentableProperty) value;
-            if (property != null) {
-                if (column == 0) {
-                    setIcon(null);
-                    setText(property.getName());
-                    //setFont(GUIUtil.BOLD_FONT);
-                } else if (column == 1) {
-                    setText(property.getValue());
-                    setIcon(property.getIcon());
-                    //setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                    //setFont(property.getIcon() == null ? GUIUtil.BOLD_FONT : GUIUtil.REGULAR_FONT);
+            try {
+                Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                PresentableProperty property = (PresentableProperty) value;
+                if (property != null) {
+                    if (column == 0) {
+                        setIcon(null);
+                        setText(property.getName());
+                        //setFont(GUIUtil.BOLD_FONT);
+                    } else if (column == 1) {
+                        setText(property.getValue());
+                        setIcon(property.getIcon());
+                        //setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                        //setFont(property.getIcon() == null ? GUIUtil.BOLD_FONT : GUIUtil.REGULAR_FONT);
+                    }
                 }
+
+                Dimension dimension = getSize();
+                dimension.setSize(dimension.getWidth(), 30);
+                setSize(dimension);
+                setBorder(Borders.TEXT_FIELD_BORDER);
+
+                return component;
+            } catch (ProcessCanceledException e) {
+                return this;
             }
-
-            Dimension dimension = getSize();
-            dimension.setSize(dimension.getWidth(), 30);
-            setSize(dimension);
-            setBorder(Borders.TEXT_FIELD_BORDER);
-
-            return component;
         }
 
     };
