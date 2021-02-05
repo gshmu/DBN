@@ -11,10 +11,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ROOT_OBJECT;
+
 public class DBSystemPrivilegeImpl extends DBPrivilegeImpl<DBPrivilegeMetadata> implements DBSystemPrivilege {
 
     public DBSystemPrivilegeImpl(ConnectionHandler connectionHandler, DBPrivilegeMetadata metadata) throws SQLException {
         super(connectionHandler, metadata);
+    }
+
+    @Override
+    protected void initProperties() {
+        properties.set(ROOT_OBJECT, true);
     }
 
     @NotNull

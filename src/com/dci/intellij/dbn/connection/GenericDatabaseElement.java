@@ -12,6 +12,11 @@ public interface GenericDatabaseElement extends ConnectionProvider, StatefulDisp
     String getName();
 
     @NotNull
+    default String getQualifiedName() {
+        return getName();
+    }
+
+    @NotNull
     Project getProject();
 
     @Nullable GenericDatabaseElement getParentElement();
