@@ -94,11 +94,30 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
     }
 
     private boolean isScannable(DBObjectList<DBObject> objectList) {
-        if (objectList != null && !objectList.isInternal()) {
-            if (model.isListLookupEnabled(objectList.getObjectType())) {
+        if (objectList != null) {
+            DBObjectType objectType = objectList.getObjectType();
+            if (model.isListLookupEnabled(objectType)) {
+                if (objectType.isRootObject() || objectList.isInternal()) {
+                    if (objectList.isLoaded()) {
+                        return true;
+                    } else {
+                        // todo touch?
+                    }
+                }
+
+                if (objectType.isSchemaObject() && objectList.getParentElement() instanceof DBSchema) {
+                    if (objectList.isLoaded()) {
+                        return true;
+                    } else {
+                        // todo touch?
+                    }
+                }
+
+/*
                 if (objectList.isLoaded() || objectList.canLoadFast() || forceLoad) {
                     return true;
                 }
+*/
             }
         }
         return false;

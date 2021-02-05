@@ -33,6 +33,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ROOT_OBJECT;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SESSION_USER;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
@@ -67,6 +68,10 @@ public class DBUserImpl extends DBObjectImpl<DBUserMetadata> implements DBUser {
         privileges = childObjects.createSubcontentObjectList(GRANTED_PRIVILEGE, this, sourceContentHolder, DBObjectRelationType.USER_PRIVILEGE);
     }
 
+    @Override
+    protected void initProperties() {
+        properties.set(ROOT_OBJECT, true);;
+    }
 
     @NotNull
     @Override
