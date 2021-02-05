@@ -263,6 +263,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         return getObjectType().getIcon();
     }
 
+    @NotNull
     @Override
     public String getQualifiedName() {
         return objectRef.getPath();

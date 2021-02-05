@@ -145,7 +145,9 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
     }
 
     @Override
-    public void initProperties() {}
+    public void initProperties() {
+        properties.set(ROOT_OBJECT, true);
+    }
 
     @Nullable
     @Override

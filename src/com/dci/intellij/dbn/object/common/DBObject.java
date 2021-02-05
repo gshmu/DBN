@@ -53,13 +53,9 @@ public interface DBObject extends
     DBObjectAttribute getNameAttribute();
 
     @Override
-    @NotNull
-    String getName();
-    @Override
     short getOverload();
     String getQuotedName(boolean quoteAlways);
     boolean needsNameQuoting();
-    String getQualifiedName();
     String getQualifiedNameWithType();
     String getNavigationTooltipText();
     String getTypeName();
