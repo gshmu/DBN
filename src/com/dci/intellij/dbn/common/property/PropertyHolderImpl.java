@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>, Cloneable<PropertyHolder<T>> {
     //private static PrimeNumberIndex INDEX = new PrimeNumberIndex(100);
 
-    private int computed = 0;
+    private long computed = 0;
 
     public PropertyHolderImpl(T ... properties) {
         for (T property : properties()) {
@@ -37,7 +37,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
 
     @Override
     public final boolean is(T property) {
-        int idx = property.index();
+        long idx = property.index();
         return (computed & idx) == idx;
     }
 
@@ -87,7 +87,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
         }
     }
 
-    public void computed(int computed) {
+    public void computed(long computed) {
         this.computed = computed;
     }
 
