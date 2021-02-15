@@ -5,9 +5,10 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
+import org.jetbrains.annotations.NotNull;
 
 public class NavigateToObjectAction extends DumbAwareAction {
-    private DBObjectRef<DBObject> objectRef;
+    private final DBObjectRef<DBObject> objectRef;
 
     public NavigateToObjectAction(DBObject object) {
         super();
@@ -31,7 +32,7 @@ public class NavigateToObjectAction extends DumbAwareAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent event) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         DBObjectRef.ensure(objectRef).navigate(true);
     }
 }

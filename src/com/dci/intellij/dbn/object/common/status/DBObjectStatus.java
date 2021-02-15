@@ -10,7 +10,7 @@ public enum DBObjectStatus implements Property {
     DEBUG(true, true),
     COMPILING(false, false);
 
-    private final int index = Property.idx(this);
+    private final long index = Property.idx(this);
     private final boolean propagable;
     private final boolean defaultValue;
 
@@ -20,7 +20,7 @@ public enum DBObjectStatus implements Property {
     }
 
     @Override
-    public int index() {
+    public long index() {
         return index;
     }
 

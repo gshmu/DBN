@@ -8,10 +8,10 @@ public enum ExecutionStatus implements Property {
     EXECUTING,
     CANCELLED;
 
-    private final int index = Property.idx(this);
+    private final long index = Property.idx(this);
 
     @Override
-    public int index() {
+    public long index() {
         return index;
     }
 }
