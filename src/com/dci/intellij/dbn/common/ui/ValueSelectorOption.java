@@ -6,10 +6,10 @@ public enum ValueSelectorOption implements Property {
     HIDE_ICON,
     HIDE_DESCRIPTION;
 
-    private final int index = Property.idx(this);
+    private final long index = Property.idx(this);
 
     @Override
-    public int index() {
+    public long index() {
         return index;
     }
 

@@ -36,13 +36,13 @@ public enum ElementTypeAttribute implements Property{
     COLUMN_PARAMETER_PROVIDER("COLUMN_PARAMETER_PROVIDER", "Column parameter provider"),
     ;
 
-    private String name;
-    private String description;
-    private boolean specific;
-    private final int index = Property.idx(this);
+    private final String name;
+    private final String description;
+    private final boolean specific;
+    private final long index = Property.idx(this);
 
     @Override
-    public int index() {
+    public long index() {
         return index;
     }
 
