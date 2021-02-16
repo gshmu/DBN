@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ObjectQuickFilter implements Filter<DBObject>, Cloneable<ObjectQuickFilter>, PersistentStateElement {
-    private DBObjectType objectType;
+    private final DBObjectType objectType;
+    private final List<ObjectQuickFilterCondition> conditions = new ArrayList<>();
     private ConditionJoinType joinType = ConditionJoinType.AND;
-    private List<ObjectQuickFilterCondition> conditions = new ArrayList<ObjectQuickFilterCondition>();
 
     private ObjectQuickFilter(DBObjectType objectType, ConditionJoinType joinType) {
         this.objectType = objectType;
