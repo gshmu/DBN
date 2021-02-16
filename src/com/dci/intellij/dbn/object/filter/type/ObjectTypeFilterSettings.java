@@ -94,7 +94,7 @@ public class ObjectTypeFilterSettings extends BasicProjectConfiguration<ProjectC
         return typeFilter;
     }
 
-    private Filter<BrowserTreeNode> elementFilter = treeNode -> {
+    private final Filter<BrowserTreeNode> elementFilter = treeNode -> {
         if (treeNode == null) {
             return false;
         }

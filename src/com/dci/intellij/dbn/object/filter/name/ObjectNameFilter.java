@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jdom.Element;
 
 public class ObjectNameFilter extends CompoundFilterCondition {
-    private ObjectNameFilterSettings settings;
+    private final ObjectNameFilterSettings settings;
     private DBObjectType objectType;
     private int hashCode;
 
