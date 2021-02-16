@@ -1,13 +1,13 @@
 package com.dci.intellij.dbn.editor.session.model;
 
-import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.data.model.DataModelState;
 import com.dci.intellij.dbn.data.model.resultSet.ResultSetDataModel;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
-import com.dci.intellij.dbn.editor.session.SessionBrowserFilterState;
+import com.dci.intellij.dbn.editor.session.SessionBrowserFilter;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilterType;
 import com.dci.intellij.dbn.editor.session.SessionBrowserState;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelRow, SessionBrowserModelCell>{
-    private long timestamp = System.currentTimeMillis();
+    private final long timestamp = System.currentTimeMillis();
     private String loadError;
 
     public SessionBrowserModel(ConnectionHandler connectionHandler) {
@@ -50,8 +50,8 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
 
     @Nullable
     @Override
-    public SessionBrowserFilterState getFilter() {
-        return (SessionBrowserFilterState) super.getFilter();
+    public SessionBrowserFilter getFilter() {
+        return (SessionBrowserFilter) super.getFilter();
     }
 
     @Override
@@ -98,9 +98,9 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
     private List<String> getDistinctValues(String columnName, String selectedValue) {
         ArrayList<String> values = new ArrayList<String>();
         List<SessionBrowserModelRow> rows = getRows();
-        if (rows instanceof FiltrableList) {
-            FiltrableList<SessionBrowserModelRow> filtrableList = (FiltrableList<SessionBrowserModelRow>) rows;
-            rows  = filtrableList.getFullList();
+        if (rows instanceof FilteredList) {
+            FilteredList<SessionBrowserModelRow> filteredList = (FilteredList<SessionBrowserModelRow>) rows;
+            rows  = filteredList.getFullList();
         }
         for (SessionBrowserModelRow row : rows) {
             String value = (String) row.getCellValue(columnName);
@@ -121,6 +121,6 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
      *********************************************************/
     @Override
     public SessionBrowserModelCell getCellAt(int rowIndex, int columnIndex) {
-        return (SessionBrowserModelCell) super.getCellAt(rowIndex, columnIndex);
+        return super.getCellAt(rowIndex, columnIndex);
     }
 }

@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.common.dispose;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.MapLatent;
-import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -26,8 +26,12 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
+import java.util.Timer;
 
 public interface SafeDisposer {
     MapLatent<Class<?>, List<Field>, RuntimeException> CLASS_FIELDS = MapLatent.create(clazz -> ReflectionUtil.collectFields(clazz));
@@ -95,9 +99,9 @@ public interface SafeDisposer {
                 Background.run(() -> dispose(collection, registered, false));
             } else {
                 Collection<?> disposeCollection;
-                if (collection instanceof FiltrableList) {
-                    FiltrableList<?> filtrableList = (FiltrableList<?>) collection;
-                    disposeCollection = new ArrayList<>(filtrableList.getFullList());
+                if (collection instanceof FilteredList) {
+                    FilteredList<?> filteredList = (FilteredList<?>) collection;
+                    disposeCollection = new ArrayList<>(filteredList.getFullList());
                 } else {
                     disposeCollection = new ArrayList<>(collection);
                 }

@@ -5,8 +5,7 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.list.FiltrableList;
-import com.dci.intellij.dbn.common.list.FiltrableListImpl;
+import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
 import com.dci.intellij.dbn.common.project.ProjectRef;
@@ -135,20 +134,20 @@ public class BasicDataModel<
     public void setFilter(Filter<R> filter) {
         List<R> rows = getRows();
         if (filter == null) {
-            if (rows instanceof FiltrableList) {
-                FiltrableList<R> filtrableList = (FiltrableList<R>) rows;
-                this.rows = filtrableList.getFullList();
+            if (rows instanceof FilteredList) {
+                FilteredList<R> filteredList = (FilteredList<R>) rows;
+                this.rows = filteredList.getFullList();
             }
         }
         else {
-            FiltrableListImpl<R> filtrableList;
-            if (rows instanceof FiltrableList) {
-                filtrableList = (FiltrableListImpl<R>) rows;
+            FilteredList<R> filteredList;
+            if (rows instanceof FilteredList) {
+                filteredList = (FilteredList<R>) rows;
+                filteredList.setFilter(filter);
             } else {
-                filtrableList = new FiltrableListImpl<>(rows);
-                this.rows = filtrableList;
+                filteredList = FilteredList.stateful(filter, rows);
+                this.rows = filteredList;
             }
-            filtrableList.setFilter(filter);
         }
         this.filter = filter;
     }
@@ -171,7 +170,7 @@ public class BasicDataModel<
 
     public void setRows(List<R> rows) {
         if (filter != null) {
-            this.rows = new FiltrableListImpl<>(rows, filter);
+            this.rows = FilteredList.stateful(filter, rows);
         } else {
             this.rows = rows;
         }
