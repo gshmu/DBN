@@ -127,7 +127,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     private class InternalFilter implements Filter<T> {
-        private ObjectQuickFilter quickFilter;
+        private final ObjectQuickFilter quickFilter;
 
         InternalFilter(ObjectQuickFilter quickFilter) {
             this.quickFilter = quickFilter;
@@ -173,7 +173,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     @Override
     public void addObject(T object) {
         if (elements == EMPTY_CONTENT || elements == EMPTY_UNTOUCHED_CONTENT) {
-            elements = new ArrayList<T>();
+            elements = new ArrayList<>();
         }
         elements.add(object);
     }
@@ -329,7 +329,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     @Override
-    public Enumeration children() {
+    public Enumeration<? extends BrowserTreeNode> children() {
         return Collections.enumeration(getChildren());
     }
 

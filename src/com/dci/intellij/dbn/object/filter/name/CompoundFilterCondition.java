@@ -6,13 +6,15 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.Data;
 import org.jdom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public class CompoundFilterCondition implements Filter<DBObject>, FilterCondition {
-    private List<FilterCondition> conditions = new ArrayList<FilterCondition>();
+    private final List<FilterCondition> conditions = new ArrayList<>();
     private CompoundFilterCondition parent;
     private ConditionJoinType joinType = ConditionJoinType.AND;
 
