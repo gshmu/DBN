@@ -6,9 +6,7 @@ import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapt
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
-import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.list.AbstractFiltrableList;
-import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.property.DisposablePropertyHolder;
@@ -340,13 +338,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         } else {
             sortElements(elements);
         }
-        this.elements = new AbstractFiltrableList<T>(elements) {
-            @Nullable
-            @Override
-            public Filter<T> getFilter() {
-                return DynamicContentImpl.this.getFilter();
-            }
-        };
+        this.elements = FilteredList.stateless(getFilter(), elements);
         compact();
         if (oldElements.size() != 0 || elements.size() != 0 ){
             notifyChangeListeners();
@@ -384,16 +376,16 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     @Override
     public List<T> getAllElements() {
         List<T> elements = getElements();
-        if (elements instanceof FiltrableList) {
-            FiltrableList<T> filteredElements = (FiltrableList<T>) elements;
+        if (elements instanceof FilteredList) {
+            FilteredList<T> filteredElements = (FilteredList<T>) elements;
             return filteredElements.getFullList();
         }
         return elements;
     }
 
     public List<T> getAllElementsNoLoad() {
-        if (elements instanceof FiltrableList) {
-            FiltrableList<T> filteredElements = (FiltrableList<T>) elements;
+        if (elements instanceof FilteredList) {
+            FilteredList<T> filteredElements = (FilteredList<T>) elements;
             return filteredElements.getFullList();
         }
         return elements;

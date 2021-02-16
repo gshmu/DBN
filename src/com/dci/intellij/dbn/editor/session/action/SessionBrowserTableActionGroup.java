@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
-import com.dci.intellij.dbn.editor.session.SessionBrowserFilterState;
+import com.dci.intellij.dbn.editor.session.SessionBrowserFilter;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilterType;
 import com.dci.intellij.dbn.editor.session.SessionInterruptionType;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserColumnInfo;
@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelCell;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
 import com.dci.intellij.dbn.editor.session.ui.table.SessionBrowserTable;
+import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -22,15 +23,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SessionBrowserTableActionGroup extends DefaultActionGroup {
-    boolean isHeaderAction;
-    private SessionBrowser sessionBrowser;
-    private SessionBrowserModelRow row;
+    boolean headerAction;
+    private final WeakRef<SessionBrowser> sessionBrowser;
+    private final WeakRef<SessionBrowserModelRow> row;
+
     public SessionBrowserTableActionGroup(SessionBrowser sessionBrowser, @Nullable SessionBrowserModelCell cell, SessionBrowserColumnInfo columnInfo) {
-        this.sessionBrowser = sessionBrowser;
+        this.sessionBrowser = WeakRef.of(sessionBrowser);
         SessionBrowserTable table = sessionBrowser.getEditorTable();
 
-        isHeaderAction = cell == null;
-        row = cell == null ? null : cell.getRow();
+        headerAction = cell == null;
+        row = WeakRef.of(cell == null ? null : cell.getRow());
         SessionBrowserModel tableModel = sessionBrowser.getTableModel();
 
         add(new ReloadSessionsAction());
@@ -51,7 +53,7 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
             if (userValue instanceof String) {
                 SessionBrowserFilterType filterType = columnInfo.getFilterType();
                 if (filterType != null && tableModel != null) {
-                    SessionBrowserFilterState filter = tableModel.getFilter();
+                    SessionBrowserFilter filter = tableModel.getFilter();
                     if (filter == null || StringUtil.isEmpty(filter.getFilterValue(filterType))) {
                         add(new FilterByAction(filterType, userValue.toString()));
                     }
@@ -65,8 +67,18 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
     }
 
     @NotNull
+    public SessionBrowser getSessionBrowser() {
+        return sessionBrowser.ensure();
+    }
+
+    @Nullable
+    public SessionBrowserModelRow getRow() {
+        return row.get();
+    }
+
+    @NotNull
     private ConnectionHandler getConnectionHandler() {
-        return Failsafe.nn(sessionBrowser.getConnectionHandler());
+        return Failsafe.nn(getSessionBrowser().getConnectionHandler());
     }
 
     private class ReloadSessionsAction extends DumbAwareAction {
@@ -75,8 +87,8 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
-            sessionBrowser.loadSessions(true);
+        public void actionPerformed(@NotNull AnActionEvent e) {
+            getSessionBrowser().loadSessions(true);
         }
     }
 
@@ -86,9 +98,10 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
+            SessionBrowserModelRow row = getRow();
             if (row != null) {
-                sessionBrowser.interruptSession(
+                getSessionBrowser().interruptSession(
                         row.getSessionId(),
                         row.getSerialNumber(),
                         SessionInterruptionType.KILL);
@@ -103,9 +116,10 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
+            SessionBrowserModelRow row = getRow();
             if (row != null) {
-                sessionBrowser.interruptSession(
+                getSessionBrowser().interruptSession(
                         row.getSessionId(),
                         row.getSerialNumber(),
                         SessionInterruptionType.DISCONNECT);
@@ -119,14 +133,14 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
-            sessionBrowser.clearFilter();
+        public void actionPerformed(@NotNull AnActionEvent e) {
+            getSessionBrowser().clearFilter();
         }
     }
 
     private class FilterByAction extends DumbAwareAction {
-        private SessionBrowserFilterType filterType;
-        private String name;
+        private final SessionBrowserFilterType filterType;
+        private final String name;
         private FilterByAction(SessionBrowserFilterType filterType, String name) {
             super("Filter by " + filterType.name().toLowerCase() + " \"" + name + "\"", null, Icons.DATASET_FILTER);
             this.filterType = filterType;
@@ -134,11 +148,13 @@ public class SessionBrowserTableActionGroup extends DefaultActionGroup {
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
+            SessionBrowserModelRow row = getRow();
             if (row != null) {
+                SessionBrowser sessionBrowser = getSessionBrowser();
                 SessionBrowserModel tableModel = sessionBrowser.getTableModel();
                 if (tableModel != null) {
-                    SessionBrowserFilterState filterState = tableModel.getState().getFilterState();
+                    SessionBrowserFilter filterState = tableModel.getState().getFilterState();
                     filterState.setFilterValue(filterType, name);
 
                     SessionBrowserSettings sessionBrowserSettings = sessionBrowser.getSettings();

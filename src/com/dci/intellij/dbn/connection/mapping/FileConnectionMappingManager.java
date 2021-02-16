@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.action.ProjectAction;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -513,7 +513,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         Project project = getProject();
         ConnectionManager connectionManager = ConnectionManager.getInstance(project);
         ConnectionBundle connectionBundle = connectionManager.getConnectionBundle();
-        FiltrableList<ConnectionHandler> connectionHandlers = connectionBundle.getConnectionHandlers();
+        FilteredList<ConnectionHandler> connectionHandlers = connectionBundle.getConnectionHandlers();
 
         DefaultActionGroup actionGroup = new DefaultActionGroup();
         if (connectionHandlers.size() > 0) {

@@ -4,55 +4,60 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
-public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
-    private List<T> list;
+final class StatelessFilteredList<T> extends FilteredListBase<T> {
 
-    public AbstractFiltrableList() {
-        list = new ArrayList<T>();
+    protected StatelessFilteredList(Filter<T> filter, List<T> base) {
+        super(filter, base);
     }
 
-    public AbstractFiltrableList(List<T> list) {
-        this.list = list;
+    protected StatelessFilteredList(Filter<T> filter) {
+        super(filter);
     }
 
     @Override
-    public List<T> getFullList() {return list;}
+    public List<T> getFullList() {return base;}
 
     // update methods should not be affected by filtering
     @Override
     public void sort(Comparator<? super T> comparator)          {
-        list.sort(comparator);}
+        base.sort(comparator);}
 
     @Override
     public boolean add(T o) {
-        return list.add(o);
+        return base.add(o);
     }
 
     @Override
     public boolean addAll(@NotNull Collection<? extends T> c) {
-        return list.addAll(c);
+        return base.addAll(c);
     }
 
     @Override
     public boolean remove(Object o) {
-        return list.remove(o);
+        return base.remove(o);
     }
 
     @Override
     public boolean removeAll(@NotNull Collection c) {
-        return list.removeAll(c);
+        return base.removeAll(c);
     }
 
     @Override
     public boolean retainAll(@NotNull Collection c) {
-        return list.retainAll(c);
+        return base.retainAll(c);
     }
 
     @Override
     public void clear() {
-        if (!list.isEmpty()) list.clear();
+        if (!base.isEmpty()) base.clear();
     }
 
     @Override
@@ -68,9 +73,9 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
     public int size() {
         Filter<T> filter = getFilter();
         if (filter != null) {
-            return (int) list.stream().filter(e -> filter.accepts(e)).count();
+            return (int) base.stream().filter(e -> filter.accepts(e)).count();
         } else {
-            return list.size();
+            return base.size();
 
         }
     }
@@ -81,7 +86,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
         final Filter<T> filter = getFilter();
         if (filter != null) {
             return new Iterator<T>() {
-                private final Iterator<T> iterator = list.iterator();
+                private final Iterator<T> iterator = base.iterator();
                 private T next = findNext();
                 private T findNext() {
                     while (iterator.hasNext()) {
@@ -105,7 +110,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
                 }
             };
         } else {
-            return list.iterator();
+            return base.iterator();
 
         }
     }
@@ -116,10 +121,10 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
         Filter<T> filter = getFilter();
         if (filter != null) {
             List<T> result = new ArrayList<T>();
-            for (T object : list) if (filter.accepts(object)) result.add(object);
+            for (T object : base) if (filter.accepts(object)) result.add(object);
             return result.toArray();
         } else {
-            return list.toArray();
+            return base.toArray();
         }
     }
 
@@ -129,10 +134,10 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
         Filter<T> filter = getFilter();
         if (filter != null) {
             List<T> result = new ArrayList<T>();
-            for (T object : list) if (filter.accepts(object)) result.add(object);
+            for (T object : base) if (filter.accepts(object)) result.add(object);
             return result.toArray(e);
         } else {
-            return list.toArray(e);
+            return base.toArray(e);
         }
 
     }
@@ -142,7 +147,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
         if (isFiltered()) {
             return indexOf(o) > -1;
         } else {
-            return list.contains(o);
+            return base.contains(o);
         }
 
     }
@@ -154,13 +159,13 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
             if (!filter.accepts((T) o)) return -1;
 
             int index = 0;
-            for (T object : list) {
+            for (T object : base) {
                 if (object.equals(o)) return index;
                 if (filter.accepts(object)) index++;
             }
             return -1;
         } else {
-            return list.indexOf(o);
+            return base.indexOf(o);
         }
     }
 
@@ -171,14 +176,14 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
             if (!filter.accepts((T) o)) return -1;
 
             int index = size()-1;
-            for (int i = list.size()-1; i > -1; i--) {
-                T object = list.get(i);
+            for (int i = base.size()-1; i > -1; i--) {
+                T object = base.get(i);
                 if (object.equals(o)) return index;
                 if (filter.accepts(object)) index--;
             }
             return -1;
         } else {
-            return list.lastIndexOf(o);
+            return base.lastIndexOf(o);
         }
 
     }
@@ -189,7 +194,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
             List list = Arrays.asList(toArray());
             return list.containsAll(c);
         } else {
-            return list.containsAll(c);
+            return base.containsAll(c);
         }
     }
 
@@ -198,7 +203,7 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
             List list = Arrays.asList(toArray());
             return list.equals(o);
         } else {
-            return list.equals(o);
+            return base.equals(o);
         }
 
     }
@@ -206,8 +211,8 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
     private int findIndex(int index) {
         int count = -1;
         Filter<T> filter = getFilter();
-        for (int i = 0; i < list.size(); i++) {
-            T object = list.get(i);
+        for (int i = 0; i < base.size(); i++) {
+            T object = base.get(i);
             if (filter == null || filter.accepts(object)) count++;
             if (count == index) return i;
         }
@@ -218,9 +223,9 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
     public void add(int index, T element){
         if (isFiltered()) {
             int idx = findIndex(index);
-            list.add(idx, element);
+            base.add(idx, element);
         } else {
-            list.add(index, element);
+            base.add(index, element);
         }
     }
 
@@ -228,9 +233,9 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
     public boolean addAll(int index, @NotNull Collection<? extends T> c){
         if (isFiltered()) {
             int idx = findIndex(index);
-            return list.addAll(idx, c);
+            return base.addAll(idx, c);
         } else {
-            return list.addAll(index, c);
+            return base.addAll(index, c);
         }
     }
 
@@ -238,9 +243,9 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
     public T get(int index){
         if (isFiltered()) {
             int idx = findIndex(index);
-            return idx == -1 ? null : list.get(idx);
+            return idx == -1 ? null : base.get(idx);
         } else {
-            return list.get(index);
+            return base.get(index);
         }
     }
 
@@ -248,10 +253,10 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
     public T set(int index, T element) {
         if (isFiltered()) {
             int idx = findIndex(index);
-            list.set(idx, element);
-            return list.get(idx);
+            base.set(idx, element);
+            return base.get(idx);
         } else {
-            return list.set(index, element);
+            return base.set(index, element);
         }
     }
 
@@ -259,9 +264,9 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
     public T remove(int index) {
         if (isFiltered()) {
             int idx = findIndex(index);
-            return list.remove(idx);
+            return base.remove(idx);
         } else {
-            return list.remove(index);
+            return base.remove(index);
         }
     }
 
@@ -285,6 +290,6 @@ public abstract class AbstractFiltrableList<T> implements FiltrableList<T> {
 
     @Override
     public void trimToSize() {
-        list = CollectionUtil.compact(list);
+        base = CollectionUtil.compact(base);
     }
 }

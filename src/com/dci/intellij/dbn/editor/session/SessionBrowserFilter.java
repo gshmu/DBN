@@ -7,16 +7,16 @@ import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import lombok.Data;
 
 @Data
-public class SessionBrowserFilterState implements Filter<SessionBrowserModelRow>, Cloneable<SessionBrowserFilterState> {
+public class SessionBrowserFilter implements Filter<SessionBrowserModelRow>, Cloneable<SessionBrowserFilter> {
     private String user;
     private String host;
     private String status;
 
 
-    public SessionBrowserFilterState() {
+    public SessionBrowserFilter() {
     }
 
-    private SessionBrowserFilterState(String user, String host, String status) {
+    private SessionBrowserFilter(String user, String host, String status) {
         this.user = user;
         this.host = host;
         this.status = status;
@@ -60,7 +60,7 @@ public class SessionBrowserFilterState implements Filter<SessionBrowserModelRow>
     }
 
     @Override
-    public SessionBrowserFilterState clone(){
-        return new SessionBrowserFilterState(user, host, status);
+    public SessionBrowserFilter clone(){
+        return new SessionBrowserFilter(user, host, status);
     }
 }

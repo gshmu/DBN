@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.data.model.sortable;
 
-import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSortingSettings;
 import com.dci.intellij.dbn.data.model.DataModelRow;
@@ -70,9 +70,9 @@ public class SortableDataModel<
     }
 
     protected void sort(List<R> rows) {
-        if (rows instanceof FiltrableList) {
-            FiltrableList<R> filtrableList = (FiltrableList<R>) rows;
-            rows = filtrableList.getFullList();
+        if (rows instanceof FilteredList) {
+            FilteredList<R> filteredList = (FilteredList<R>) rows;
+            rows = filteredList.getFullList();
         }
         if (getSortingState().isValid()) {
             boolean nullsFirst = DataGridSettings.getInstance(getProject()).getSortingSettings().isNullsFirst();

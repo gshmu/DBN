@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.editor.session.action;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
-import com.dci.intellij.dbn.editor.session.SessionBrowserFilterState;
+import com.dci.intellij.dbn.editor.session.SessionBrowserFilter;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -39,7 +39,7 @@ public class ClearFiltersAction extends AbstractSessionBrowserAction {
         if (sessionBrowser != null) {
             SessionBrowserModel tableModel = sessionBrowser.getTableModel();
             if (tableModel != null) {
-                SessionBrowserFilterState filter = tableModel.getFilter();
+                SessionBrowserFilter filter = tableModel.getFilter();
                 if (filter != null) {
                     enabled = !filter.isEmpty();
                 }

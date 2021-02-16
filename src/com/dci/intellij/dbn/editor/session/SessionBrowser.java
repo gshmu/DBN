@@ -137,7 +137,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
 
     public void clearFilter() {
         SessionBrowserTable editorTable = getEditorTable();
-        SessionBrowserFilterState filter = editorTable.getModel().getFilter();
+        SessionBrowserFilter filter = editorTable.getModel().getFilter();
         if (filter != null) {
             filter.clear();
             refreshTable();

@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.list.FiltrableList;
+import com.dci.intellij.dbn.common.list.FilteredList;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -68,9 +68,9 @@ public class CollectionUtil {
             boolean empty = size == 0;
             boolean single = size == 1;
 
-            if (elements instanceof FiltrableList) {
-                FiltrableList<?> filtrableList = (FiltrableList<?>) elements;
-                filtrableList.trimToSize();
+            if (elements instanceof FilteredList) {
+                FilteredList<?> filteredList = (FilteredList<?>) elements;
+                filteredList.trimToSize();
 
             } else  if (elements instanceof List) {
                 if (empty) {
