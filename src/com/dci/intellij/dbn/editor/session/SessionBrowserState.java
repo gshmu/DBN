@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class SessionBrowserState extends SortableDataModelState implements FileEditorState, PersistentStateElement, Cloneable<SessionBrowserState> {
     public static final SessionBrowserState VOID = new SessionBrowserState();
-    private SessionBrowserFilterState filterState = new SessionBrowserFilterState();
+    private SessionBrowserFilter filterState = new SessionBrowserFilter();
     private int refreshInterval = 0;
 
     @Override
@@ -73,11 +73,11 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
         return clone;
     }
 
-    public void setFilterState(SessionBrowserFilterState filterState) {
+    public void setFilterState(SessionBrowserFilter filterState) {
         this.filterState = filterState;
     }
 
-    public SessionBrowserFilterState getFilterState() {
+    public SessionBrowserFilter getFilterState() {
         return filterState;
     }
 

@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
-import com.dci.intellij.dbn.editor.session.SessionBrowserFilterState;
+import com.dci.intellij.dbn.editor.session.SessionBrowserFilter;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilterType;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
@@ -41,7 +41,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction imp
         if (sessionBrowser != null) {
             SessionBrowserModel model = sessionBrowser.getTableModel();
             if (model != null) {
-                SessionBrowserFilterState filter = model.getFilter();
+                SessionBrowserFilter filter = model.getFilter();
                 String selectedFilterValue = filter == null ? null : filter.getFilterValue(filterType);
                 List<String> filterValues = model.getDistinctValues(filterType, selectedFilterValue);
                 for (String filterValue : filterValues) {
@@ -63,7 +63,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction imp
         if (sessionBrowser != null) {
             SessionBrowserModel model = sessionBrowser.getTableModel();
             if (model != null) {
-                SessionBrowserFilterState modelFilter = model.getFilter();
+                SessionBrowserFilter modelFilter = model.getFilter();
                 if (modelFilter != null) {
                     String filterValue = modelFilter.getFilterValue(filterType);
                     if (StringUtil.isNotEmpty(filterValue)) {
@@ -117,7 +117,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction imp
             if (sessionBrowser != null) {
                 SessionBrowserModel model = sessionBrowser.getTableModel();
                 if (model !=  null) {
-                    SessionBrowserFilterState modelFilter = model.getFilter();
+                    SessionBrowserFilter modelFilter = model.getFilter();
                     if (modelFilter != null) {
                         modelFilter.setFilterValue(filterType, filterValue);
                         SessionBrowserSettings sessionBrowserSettings = sessionBrowser.getSettings();
