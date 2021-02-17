@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public interface FilteredList<T> extends List<T> {
-    List<T> getFullList();
+    List<T> getBase();
 
     @Nullable
     Filter<T> getFilter();

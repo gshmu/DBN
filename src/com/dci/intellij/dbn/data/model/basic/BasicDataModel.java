@@ -136,7 +136,7 @@ public class BasicDataModel<
         if (filter == null) {
             if (rows instanceof FilteredList) {
                 FilteredList<R> filteredList = (FilteredList<R>) rows;
-                this.rows = filteredList.getFullList();
+                this.rows = filteredList.getBase();
             }
         }
         else {

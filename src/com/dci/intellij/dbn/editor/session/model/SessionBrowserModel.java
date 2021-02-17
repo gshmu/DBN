@@ -100,7 +100,7 @@ public class SessionBrowserModel extends ResultSetDataModel<SessionBrowserModelR
         List<SessionBrowserModelRow> rows = getRows();
         if (rows instanceof FilteredList) {
             FilteredList<SessionBrowserModelRow> filteredList = (FilteredList<SessionBrowserModelRow>) rows;
-            rows  = filteredList.getFullList();
+            rows  = filteredList.getBase();
         }
         for (SessionBrowserModelRow row : rows) {
             String value = (String) row.getCellValue(columnName);
