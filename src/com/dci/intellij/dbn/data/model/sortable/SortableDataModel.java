@@ -72,7 +72,7 @@ public class SortableDataModel<
     protected void sort(List<R> rows) {
         if (rows instanceof StatelessFilteredList) {
             FilteredList<R> filteredList = (FilteredList<R>) rows;
-            rows = filteredList.getFullList();
+            rows = filteredList.getBase();
         }
         if (getSortingState().isValid()) {
             this.sortingNullsFirst = DataGridSettings.getInstance(getProject()).getSortingSettings().isNullsFirst();

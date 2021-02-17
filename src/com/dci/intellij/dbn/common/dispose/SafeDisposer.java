@@ -101,7 +101,7 @@ public interface SafeDisposer {
                 Collection<?> disposeCollection;
                 if (collection instanceof FilteredList) {
                     FilteredList<?> filteredList = (FilteredList<?>) collection;
-                    disposeCollection = new ArrayList<>(filteredList.getFullList());
+                    disposeCollection = new ArrayList<>(filteredList.getBase());
                 } else {
                     disposeCollection = new ArrayList<>(collection);
                 }

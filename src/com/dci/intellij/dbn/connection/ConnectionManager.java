@@ -384,7 +384,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
      *********************************************************/
     @Nullable
     public ConnectionHandler getConnectionHandler(ConnectionId connectionId) {
-         for (ConnectionHandler connectionHandler : getConnectionBundle().getConnectionHandlers().getFullList()) {
+         for (ConnectionHandler connectionHandler : getConnectionBundle().getConnectionHandlers().getBase()) {
             if (connectionHandler.getConnectionId() == connectionId) {
                 return connectionHandler;
             }
