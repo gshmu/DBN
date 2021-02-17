@@ -378,7 +378,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         List<T> elements = getElements();
         if (elements instanceof FilteredList) {
             FilteredList<T> filteredElements = (FilteredList<T>) elements;
-            return filteredElements.getFullList();
+            return filteredElements.getBase();
         }
         return elements;
     }
@@ -386,7 +386,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
     public List<T> getAllElementsNoLoad() {
         if (elements instanceof FilteredList) {
             FilteredList<T> filteredElements = (FilteredList<T>) elements;
-            return filteredElements.getFullList();
+            return filteredElements.getBase();
         }
         return elements;
     }

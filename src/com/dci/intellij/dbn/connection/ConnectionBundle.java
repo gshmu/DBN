@@ -92,7 +92,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
 
     public void applySettings(ConnectionBundleSettings configuration) {
         FilteredList<ConnectionHandler> newConnectionHandlers = FilteredList.stateful(createActiveConnectionsFilter());
-        List<ConnectionHandler> oldConnectionHandlers = new ArrayList<>(this.connectionHandlers.getFullList());
+        List<ConnectionHandler> oldConnectionHandlers = new ArrayList<>(this.connectionHandlers.getBase());
         List<ConnectionSettings> connectionSettings = configuration.getConnections();
         boolean listChanged = false;
         for (ConnectionSettings connectionSetting : connectionSettings) {
@@ -186,7 +186,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     }
 
     public ConnectionHandler getConnection(ConnectionId id) {
-        for (ConnectionHandler connectionHandler : connectionHandlers.getFullList()){
+        for (ConnectionHandler connectionHandler : connectionHandlers.getBase()){
             if (connectionHandler.getConnectionId() == id) return connectionHandler;
         }
         return null;
@@ -197,7 +197,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
     }
 
     public List<ConnectionHandler> getAllConnectionHandlers() {
-        return connectionHandlers.getFullList();
+        return connectionHandlers.getBase();
     }
 
     /*********************************************************
@@ -335,7 +335,7 @@ public class ConnectionBundle extends BrowserTreeNodeBase implements BrowserTree
 
 
     public boolean isEmpty() {
-        return connectionHandlers.getFullList().isEmpty();
+        return connectionHandlers.getBase().isEmpty();
     }
 
 

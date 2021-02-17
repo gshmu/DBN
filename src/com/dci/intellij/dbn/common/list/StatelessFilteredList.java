@@ -23,7 +23,7 @@ public final class StatelessFilteredList<T> extends FilteredListBase<T> {
     }
 
     @Override
-    public List<T> getFullList() {return base;}
+    public List<T> getBase() {return base;}
 
     // update methods should not be affected by filtering
     @Override
