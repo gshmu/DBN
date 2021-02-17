@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-final class StatelessFilteredList<T> extends FilteredListBase<T> {
+public final class StatelessFilteredList<T> extends FilteredListBase<T> {
 
     protected StatelessFilteredList(Filter<T> filter, List<T> base) {
         super(filter, base);

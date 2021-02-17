@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.data.model.sortable;
 
 import com.dci.intellij.dbn.common.list.FilteredList;
+import com.dci.intellij.dbn.common.list.StatelessFilteredList;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
 import com.dci.intellij.dbn.data.grid.options.DataGridSortingSettings;
 import com.dci.intellij.dbn.data.model.DataModelRow;
@@ -11,7 +12,6 @@ import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -61,7 +61,7 @@ public class SortableDataModel<
 
 
     protected void sortByIndex() {
-        Collections.sort(getRows(), INDEX_COMPARATOR);
+        getRows().sort(INDEX_COMPARATOR);
         updateRowIndexes(0);
     }
 
@@ -70,24 +70,18 @@ public class SortableDataModel<
     }
 
     protected void sort(List<R> rows) {
-        if (rows instanceof FilteredList) {
+        if (rows instanceof StatelessFilteredList) {
             FilteredList<R> filteredList = (FilteredList<R>) rows;
             rows = filteredList.getFullList();
         }
         if (getSortingState().isValid()) {
-            boolean nullsFirst = DataGridSettings.getInstance(getProject()).getSortingSettings().isNullsFirst();
-            this.sortingNullsFirst = nullsFirst;
-            Collections.sort(rows);
+            this.sortingNullsFirst = DataGridSettings.getInstance(getProject()).getSortingSettings().isNullsFirst();
+            rows.sort(null);
         }
         updateRowIndexes(rows, 0);
     }
 
-    private static final Comparator<DataModelRow> INDEX_COMPARATOR = new Comparator<DataModelRow>() {
-        @Override
-        public int compare(DataModelRow row1, DataModelRow row2) {
-            return row1.getIndex() - row2.getIndex();
-        }
-    };
+    private static final Comparator<DataModelRow> INDEX_COMPARATOR = Comparator.comparingInt(DataModelRow::getIndex);
 
 
 /*
