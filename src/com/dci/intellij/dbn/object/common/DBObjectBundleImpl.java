@@ -543,7 +543,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                     append(false, " - active", true);
                 } else if (connectionHandler.canConnect() && !connectionHandler.isValid()) {
                     append(false, " - invalid", true);
-                    append(true, connectionHandler.getConnectionStatus().getStatusMessage(), "-2", "red", false);
+                    append(true, connectionHandler.getConnectionStatus().getStatusMessage(), null, "red", false);
                 }
                 createEmptyRow();
 
@@ -552,7 +552,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                 append(false, connectionHandler.getName(), false);
 
                 ConnectionPool connectionPool = connectionHandler.getConnectionPool();
-                append(true, "Pool size: ", "-2", null, false);
+                append(true, "Pool size: ", null, null, false);
                 append(false, String.valueOf(connectionPool.getSize()), false);
                 append(false, " (", false);
                 append(false, "peak&nbsp;" + connectionPool.getPeakPoolSize(), false);
