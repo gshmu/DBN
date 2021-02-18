@@ -62,7 +62,7 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
             }
 
             DBObjectListContainer childObjects = object.getChildObjects();
-            if (childObjects != null) childObjects.visitLists(this, false);
+            if (childObjects != null) childObjects.visitLists(this, true);
         }
     }
 
@@ -79,7 +79,7 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
                         model.checkCancelled();
 
                         DBObjectListContainer objectListContainer = connectionHandler.getObjectBundle().getObjectListContainer();
-                        objectListContainer.visitLists(this, false);
+                        objectListContainer.visitLists(this, true);
                     }));
         } else {
             DBObjectListContainer objectListContainer =
@@ -87,18 +87,37 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
                             selectedConnection.getObjectBundle().getObjectListContainer() :
                             selectedSchema.getChildObjects();
             if (objectListContainer != null) {
-                objectListContainer.visitLists(this, false);
+                objectListContainer.visitLists(this, true);
             }
         }
         asyncScanner.awaitCompletion();
     }
 
     private boolean isScannable(DBObjectList<DBObject> objectList) {
-        if (objectList != null && !objectList.isInternal()) {
-            if (model.isListLookupEnabled(objectList.getObjectType())) {
+        if (objectList != null) {
+            DBObjectType objectType = objectList.getObjectType();
+            if (model.isListLookupEnabled(objectType)) {
+                if (objectType.isRootObject() || objectList.isInternal()) {
+                    if (objectList.isLoaded()) {
+                        return true;
+                    } else {
+                        // todo touch?
+                    }
+                }
+
+                if (objectType.isSchemaObject() && objectList.getParentElement() instanceof DBSchema) {
+                    if (objectList.isLoaded()) {
+                        return true;
+                    } else {
+                        // todo touch?
+                    }
+                }
+
+/*
                 if (objectList.isLoaded() || objectList.canLoadFast() || forceLoad) {
                     return true;
                 }
+*/
             }
         }
         return false;

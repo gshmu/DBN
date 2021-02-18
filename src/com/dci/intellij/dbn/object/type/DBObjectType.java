@@ -148,6 +148,10 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
         return parents.contains(SCHEMA);
     }
 
+    public boolean isRootObject() {
+        return parents.isEmpty();
+    }
+
     public Icon getIcon(DBContentType contentType) {
         Icon icon = null;
         if (icons != null) {
