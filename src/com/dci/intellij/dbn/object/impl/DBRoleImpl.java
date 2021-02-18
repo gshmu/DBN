@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.ROOT_OBJECT;
 import static com.dci.intellij.dbn.object.type.DBObjectType.*;
 
 public class DBRoleImpl extends DBObjectImpl<DBRoleMetadata> implements DBRole {
@@ -45,6 +46,11 @@ public class DBRoleImpl extends DBObjectImpl<DBRoleMetadata> implements DBRole {
         DBObjectBundle sourceContentHolder = getConnectionHandler().getObjectBundle();
         privileges = ol.createSubcontentObjectList(GRANTED_PRIVILEGE, this, sourceContentHolder, DBObjectRelationType.ROLE_PRIVILEGE);
         grantedRoles = ol.createSubcontentObjectList(GRANTED_ROLE, this, sourceContentHolder, DBObjectRelationType.ROLE_ROLE);
+    }
+
+    @Override
+    protected void initProperties() {
+        properties.set(ROOT_OBJECT, true);
     }
 
     @NotNull

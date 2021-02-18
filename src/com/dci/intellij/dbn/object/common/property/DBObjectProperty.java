@@ -12,6 +12,7 @@ public enum DBObjectProperty implements Property {
     DEBUGABLE,
     INVALIDABLE,
     REFERENCEABLE,
+    ROOT_OBJECT,
     SCHEMA_OBJECT,
     SYSTEM_OBJECT,
 
