@@ -17,8 +17,8 @@ public class LogOutputContext {
         STOPPED,     // interrupted by user
         CLOSED      // cancelled completely (console closed)
     }
-    private ConnectionHandlerRef connectionHandlerRef;
-    private WeakRef<VirtualFile> sourceFile;
+    private final ConnectionHandlerRef connectionHandler;
+    private final WeakRef<VirtualFile> sourceFile;
     private WeakRef<Process> process;
     private Status status = Status.NEW;
     private boolean hideEmptyLines = false;
@@ -28,14 +28,14 @@ public class LogOutputContext {
     }
 
     public LogOutputContext(@NotNull ConnectionHandler connectionHandler, @Nullable VirtualFile sourceFile, @Nullable Process process) {
-        this.connectionHandlerRef = connectionHandler.getRef();
+        this.connectionHandler = connectionHandler.getRef();
         this.sourceFile = WeakRef.of(sourceFile);
         this.process = WeakRef.of(process);
     }
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     @Nullable
@@ -103,7 +103,7 @@ public class LogOutputContext {
     }
 
     public boolean isActive() {
-        return status == Status.ACTIVE;
+        return isProcessAlive() && status == Status.ACTIVE;
     }
 
     public boolean isClosed() {
@@ -123,6 +123,6 @@ public class LogOutputContext {
     }
 
     public ConnectionId getConnectionId() {
-        return connectionHandlerRef.getConnectionId();
+        return connectionHandler.getConnectionId();
     }
 }

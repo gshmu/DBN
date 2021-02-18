@@ -6,29 +6,29 @@ import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import lombok.Data;
+import lombok.Getter;
 
 import java.util.Date;
 
+@Data
 public class LogOutput {
+
     public enum Type {
         SYS(ProcessOutputTypes.SYSTEM),
         STD(ProcessOutputTypes.STDOUT),
         ERR(ProcessOutputTypes.STDERR);
-        private Key key;
+        private final @Getter Key<?> key;
 
-        Type(Key key) {
+        Type(Key<?> key) {
             this.key = key;
-        }
-
-        public Key getKey() {
-            return key;
         }
     }
 
-    private String text;
-    private Type type;
-    private boolean scrollToEnd;
-    private boolean clearBuffer;
+    private final String text;
+    private final Type type;
+    private final boolean scrollToEnd;
+    private final boolean clearBuffer;
 
     private LogOutput(String text, Type type) {
         this(text, type, false, false);
@@ -38,22 +38,6 @@ public class LogOutput {
         this.type = type;
         this.scrollToEnd = scrollToEnd;
         this.clearBuffer = clearBuffer;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public boolean isScrollToEnd() {
-        return scrollToEnd;
-    }
-
-    public boolean isClearBuffer() {
-        return clearBuffer;
     }
 
     public static LogOutput createErrOutput(String text) {
