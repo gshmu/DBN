@@ -88,8 +88,8 @@ public class ObjectsLookupSettings extends BasicProjectConfiguration<NavigationS
         lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.TABLE, true));
         lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.VIEW, true));
         lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.MATERIALIZED_VIEW, true));
-        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.NESTED_TABLE, false));
-        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.COLUMN, false));
+        //lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.NESTED_TABLE, false));
+        //lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.COLUMN, false));
         lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.INDEX, true));
         lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.CONSTRAINT, true));
         lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.DATASET_TRIGGER, true));
@@ -100,8 +100,8 @@ public class ObjectsLookupSettings extends BasicProjectConfiguration<NavigationS
         lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.FUNCTION, true));
         lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.PACKAGE, true));
         lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.TYPE, true));
-        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.TYPE_ATTRIBUTE, false));
-        lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.ARGUMENT, false));
+        //lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.TYPE_ATTRIBUTE, false));
+        //lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.ARGUMENT, false));
 
         lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.DIMENSION, false));
         lookupObjectTypes.add(new ObjectTypeEntry(DBObjectType.CLUSTER, false));
@@ -154,8 +154,8 @@ public class ObjectsLookupSettings extends BasicProjectConfiguration<NavigationS
         promptSchemaSelection.writeConfiguration(element);
     }
     
-    private class ObjectTypeEntry implements Selectable<ObjectTypeEntry> {
-        private DBObjectType objectType;
+    private static class ObjectTypeEntry implements Selectable<ObjectTypeEntry> {
+        private final DBObjectType objectType;
         private boolean enabled = true;
 
         private ObjectTypeEntry(DBObjectType objectType) {
