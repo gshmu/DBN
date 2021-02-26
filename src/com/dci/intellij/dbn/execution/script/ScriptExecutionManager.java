@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -70,12 +71,14 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     public static final String COMPONENT_NAME = "DBNavigator.Project.ScriptExecutionManager";
 
     private static final SecureRandom TMP_FILE_RANDOMIZER = new SecureRandom();
+    private final ExecutionManager executionManager;
     private final Map<VirtualFile, Process> activeProcesses = new HashMap<>();
-    private Map<DatabaseType, String> recentlyUsedInterfaces = new HashMap<>();
+    private final Map<DatabaseType, String> recentlyUsedInterfaces = new HashMap<>();
     private boolean clearOutputOption = true;
 
     private ScriptExecutionManager(Project project) {
         super(project);
+        executionManager = ExecutionManager.getInstance(project);
     }
 
     public static ScriptExecutionManager getInstance(@NotNull Project project) {
@@ -145,7 +148,6 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         Project project = getProject();
         AtomicReference<File> tempScriptFile = new AtomicReference<>();
         LogOutputContext outputContext = new LogOutputContext(connectionHandler, sourceFile, null);
-        ExecutionManager executionManager = ExecutionManager.getInstance(project);
         int timeout = input.getExecutionTimeout();
         executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput(outputContext, " - Initializing script execution", input.isClearOutput()));
 
@@ -202,16 +204,12 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                         LineReader lineReader = new LineReader(inputStream);
                         while (outputContext.isProcessAlive()) {
                             while (outputContext.isActive()) {
-                                byte[] bytes = lineReader.readLine();
-
-                                if (bytes != null) {
-                                    String line = new String(bytes);
-                                    LogOutput stdOutput = LogOutput.createStdOutput(line);
-                                    executionManager.writeLogOutput(outputContext, stdOutput);
-                                }
+                                consumeProcessOutput(lineReader, outputContext);
                             }
-                            Thread.sleep(1000);
+                            Unsafe.silent(() -> Thread.sleep(1000));
                         }
+
+                        consumeProcessOutput(lineReader, outputContext);
                     }
 
                     LogOutput logOutput = LogOutput.createSysOutput(outputContext,
@@ -266,6 +264,16 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                 executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput("Deleting temporary script file " + temporaryScriptFile));
                 FileUtil.delete(temporaryScriptFile);
             }
+        }
+    }
+
+    private void consumeProcessOutput(LineReader lineReader, LogOutputContext outputContext) throws IOException {
+        byte[] bytes = lineReader.readLine();
+        while (bytes != null) {
+            String line = new String(bytes);
+            LogOutput stdOutput = LogOutput.createStdOutput(line);
+            executionManager.writeLogOutput(outputContext, stdOutput);
+            bytes = lineReader.readLine();
         }
     }
 
