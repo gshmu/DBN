@@ -204,12 +204,12 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                         LineReader lineReader = new LineReader(inputStream);
                         while (outputContext.isProcessAlive()) {
                             while (outputContext.isActive()) {
-                                consumeProcessOutput(lineReader, outputContext);
+                                consumeProcessOutput(lineReader, outputContext, false);
                             }
                             Unsafe.silent(() -> Thread.sleep(1000));
                         }
 
-                        consumeProcessOutput(lineReader, outputContext);
+                        consumeProcessOutput(lineReader, outputContext, true);
                     }
 
                     LogOutput logOutput = LogOutput.createSysOutput(outputContext,
@@ -267,13 +267,13 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         }
     }
 
-    private void consumeProcessOutput(LineReader lineReader, LogOutputContext outputContext) throws IOException {
+    private void consumeProcessOutput(LineReader lineReader, LogOutputContext outputContext, boolean eager) throws IOException {
         byte[] bytes = lineReader.readLine();
         while (bytes != null) {
             String line = new String(bytes);
             LogOutput stdOutput = LogOutput.createStdOutput(line);
             executionManager.writeLogOutput(outputContext, stdOutput);
-            bytes = lineReader.readLine();
+            bytes = eager ? lineReader.readLine() : null;
         }
     }
 
