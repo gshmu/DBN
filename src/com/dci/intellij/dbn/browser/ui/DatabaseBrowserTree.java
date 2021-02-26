@@ -355,7 +355,7 @@ public final class DatabaseBrowserTree extends DBNTree {
                     BrowserTreeNode lastPathEntity = (BrowserTreeNode) path.getLastPathComponent();
                     if (lastPathEntity.isDisposed()) return;
 
-                    Progress.modal(
+                    Progress.background(
                             lastPathEntity.getProject(),
                             "Loading object information", true,
                             (progress) -> {
