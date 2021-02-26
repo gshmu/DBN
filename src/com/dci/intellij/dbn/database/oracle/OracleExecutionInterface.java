@@ -71,6 +71,11 @@ public class OracleExecutionInterface implements DatabaseExecutionInterface {
         contentBuilder.insert(0, "set pagesize 40000;\n");
         contentBuilder.insert(0, "set long 50000;\n");
 
+        int lastStatementIndex = contentBuilder.lastIndexOf(";");
+        if (lastStatementIndex > -1 && contentBuilder.substring(lastStatementIndex + 1).trim().length() != 0) {
+            // make sure exit is not impacted by script errors
+            contentBuilder.append(";\n");
+        }
         contentBuilder.append("\nexit;\n");
 
         return executionInput;
