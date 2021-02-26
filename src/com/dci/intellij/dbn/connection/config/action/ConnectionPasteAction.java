@@ -4,12 +4,11 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionBundleSettingsForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 
 public class ConnectionPasteAction extends ConnectionSettingsAction {
@@ -34,10 +33,10 @@ public class ConnectionPasteAction extends ConnectionSettingsAction {
             @Nullable ConnectionBundleSettingsForm target) {
 
         try {
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            Object clipboardData = clipboard.getData(DataFlavor.stringFlavor);
-            if (clipboardData instanceof String) {
-                String clipboardString = (String) clipboardData;
+            CopyPasteManager copyPasteManager = CopyPasteManager.getInstance();
+            Object data = copyPasteManager.getContents(DataFlavor.stringFlavor);;
+            if (data instanceof String) {
+                String clipboardString = (String) data;
                 presentation.setEnabled(clipboardString.contains("connection-configurations"));
             } else {
                 presentation.setEnabled(false);

@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.common.util;
 
+import com.intellij.openapi.ide.CopyPasteManager;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -54,8 +53,8 @@ public class ClipboardUtil {
     @Nullable
     public static String getStringContent() {
         try {
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            Object data = clipboard.getData(DataFlavor.stringFlavor);
+            CopyPasteManager copyPasteManager = CopyPasteManager.getInstance();
+            Object data = copyPasteManager.getContents(DataFlavor.stringFlavor);;
             if (data instanceof String) {
                 return (String) data;
             } else {

@@ -382,7 +382,7 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Override
     public boolean isLeaf() {
-        return getChildren().size() == 0;
+        return getChildren().isEmpty();
     }
 
     @Override

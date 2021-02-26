@@ -10,19 +10,14 @@ import com.dci.intellij.dbn.data.export.DataExportFormat;
 import com.dci.intellij.dbn.data.export.DataExportInstructions;
 import com.dci.intellij.dbn.data.export.DataExportModel;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
+import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -81,8 +76,10 @@ public abstract class DataExportProcessor {
     }
 
     private void writeToClipboard(String content) {
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(createClipboardContent(content), null);
+        Transferable clipboardContent = createClipboardContent(content);
+
+        CopyPasteManager copyPasteManager = CopyPasteManager.getInstance();
+        copyPasteManager.setContents(clipboardContent);
     }
 
     public Transferable createClipboardContent(String content) {
