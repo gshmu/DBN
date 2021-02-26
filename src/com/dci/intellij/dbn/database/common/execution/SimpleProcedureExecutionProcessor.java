@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.database.common.execution;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBProcedure;
 
-public class SimpleProcedureExecutionProcessor extends MethodExecutionProcessorImpl<DBProcedure> {
+public class SimpleProcedureExecutionProcessor extends MethodExecutionProcessorImpl {
     public SimpleProcedureExecutionProcessor(DBProcedure procedure) {
         super(procedure);
     }
