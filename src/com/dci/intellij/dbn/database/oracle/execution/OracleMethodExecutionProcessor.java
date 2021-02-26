@@ -19,7 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-public class OracleMethodExecutionProcessor extends MethodExecutionProcessorImpl<DBMethod> {
+public class OracleMethodExecutionProcessor extends MethodExecutionProcessorImpl {
     public OracleMethodExecutionProcessor(DBMethod method) {
         super(method);
     }

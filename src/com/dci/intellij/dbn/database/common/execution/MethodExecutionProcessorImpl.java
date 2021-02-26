@@ -34,22 +34,22 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implements MethodExecutionProcessor<T> {
+public abstract class MethodExecutionProcessorImpl implements MethodExecutionProcessor {
     private static final Logger LOGGER = LoggerFactory.createLogger();
-    private DBObjectRef<T> methodRef;
+    private final DBObjectRef<DBMethod> method;
 
-    protected MethodExecutionProcessorImpl(T method) {
-        this.methodRef = DBObjectRef.of(method);
+    protected MethodExecutionProcessorImpl(DBMethod method) {
+        this.method = DBObjectRef.of(method);
     }
 
     @Override
     @NotNull
-    public T getMethod() {
-        return DBObjectRef.ensure(methodRef);
+    public DBMethod getMethod() {
+        return DBObjectRef.ensure(method);
     }
 
     public List<DBArgument> getArguments() {
-        T method = getMethod();
+        DBMethod method = getMethod();
         return method.getArguments();
     }
 
@@ -90,13 +90,13 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
 
         try {
             String command = buildExecutionCommand(executionInput);
-            T method = getMethod();
+            DBMethod method = getMethod();
             loggingEnabled = loggingEnabled && loggingManager.supportsLogging(connectionHandler);
             if (loggingEnabled) {
                 loggingEnabled = loggingManager.enableLogger(connectionHandler, connection);
             }
 
-            DBNPreparedStatement statement = isQuery() ?
+            DBNPreparedStatement<?> statement = isQuery() ?
                     connection.prepareStatement(command) :
                     connection.prepareCall(command);
 
@@ -183,7 +183,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
         }
     }
 
-    public void loadValues(MethodExecutionResult executionResult, DBNPreparedStatement preparedStatement) throws SQLException {
+    public void loadValues(MethodExecutionResult executionResult, DBNPreparedStatement<?> preparedStatement) throws SQLException {
         for (DBArgument argument : getArguments()) {
             if (argument.isOutput() && preparedStatement instanceof CallableStatement) {
                 CallableStatement callableStatement = (CallableStatement) preparedStatement;
@@ -194,7 +194,7 @@ public abstract class MethodExecutionProcessorImpl<T extends DBMethod> implement
     }
 
     private Project getProject() {
-        T method = getMethod();
+        DBMethod method = getMethod();
         return method.getProject();
     }
 
