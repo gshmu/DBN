@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableHeaderRenderer;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.openapi.util.text.StringUtil;
@@ -22,12 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
+import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -97,8 +91,8 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
         updateComponentColors();
         Colors.subscribe(this, () -> updateComponentColors());
 
-        Disposer.register(parent, this);
-        Disposer.register(this, tableModel);
+        SafeDisposer.register(parent, this);
+        SafeDisposer.register(this, tableModel);
     }
 
     @Override

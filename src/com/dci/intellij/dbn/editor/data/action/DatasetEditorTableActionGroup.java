@@ -1,18 +1,14 @@
 package com.dci.intellij.dbn.editor.data.action;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
-import com.dci.intellij.dbn.editor.data.filter.ConditionJoinType;
-import com.dci.intellij.dbn.editor.data.filter.ConditionOperator;
-import com.dci.intellij.dbn.editor.data.filter.DatasetBasicFilter;
-import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
-import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
-import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
+import com.dci.intellij.dbn.editor.data.filter.*;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.language.common.WeakRef;
@@ -23,18 +19,20 @@ import com.dci.intellij.dbn.object.action.ObjectNavigationListActionGroup;
 import com.dci.intellij.dbn.object.common.list.DBObjectNavigationList;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
 
 public class DatasetEditorTableActionGroup extends DefaultActionGroup {
+    private static final Logger LOGGER = LoggerFactory.createLogger();
+
     private final ColumnInfo columnInfo;
     private final Object columnValue;
     boolean isHeaderAction;
@@ -129,8 +127,8 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
 
     private static String getClipboardContent(int maxLength) {
         try {
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            Transferable transferable = clipboard.getContents(null);
+            CopyPasteManager copyPasteManager = CopyPasteManager.getInstance();
+            Transferable transferable = copyPasteManager.getContents();;
             if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 String text = (String) transferable.getTransferData(DataFlavor.stringFlavor);
                 if (text == null) {
@@ -145,7 +143,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to load clipboard content", e);
         }
         return null;
     }
