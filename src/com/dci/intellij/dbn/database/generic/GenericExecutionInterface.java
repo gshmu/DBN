@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 public class GenericExecutionInterface extends DatabaseExecutionInterfaceImpl {
 
     @Override
-    public MethodExecutionProcessor createExecutionProcessor(DBMethod method) {
+    public MethodExecutionProcessor createExecutionProcessor(DBMethod method){
         return createSimpleMethodExecutionProcessor(method);
     }
 

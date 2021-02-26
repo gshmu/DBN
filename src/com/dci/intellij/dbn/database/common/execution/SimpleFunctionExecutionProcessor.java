@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.database.common.execution;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.object.DBFunction;
 
-public class SimpleFunctionExecutionProcessor extends MethodExecutionProcessorImpl<DBFunction> {
+public class SimpleFunctionExecutionProcessor extends MethodExecutionProcessorImpl {
     public SimpleFunctionExecutionProcessor(DBFunction function) {
         super(function);
     }

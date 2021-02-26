@@ -12,12 +12,12 @@ import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
 public class MethodExecutionMessage extends ConsoleMessage {
-    private @Getter @Setter MethodExecutionProcessor<?> executionProcessor;
+    private @Getter @Setter MethodExecutionProcessor executionProcessor;
     private DBEditableObjectVirtualFile databaseFile;
     private DBContentVirtualFile contentFile;
     private DBContentType contentType;
 
-    public MethodExecutionMessage(MethodExecutionProcessor<?> executionProcessor, String message, MessageType messageType) {
+    public MethodExecutionMessage(MethodExecutionProcessor executionProcessor, String message, MessageType messageType) {
         super(messageType, message);
         this.executionProcessor = executionProcessor;
     }

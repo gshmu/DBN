@@ -12,7 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
-public class PostgresMethodExecutionProcessor extends MethodExecutionProcessorImpl<DBMethod> {
+public class PostgresMethodExecutionProcessor extends MethodExecutionProcessorImpl {
     private Boolean isQuery;
 
     public PostgresMethodExecutionProcessor(DBMethod method) {
