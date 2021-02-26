@@ -40,7 +40,7 @@ public class StatementExecutionVariablesBundle extends StatefulDisposable.Base i
     }
 
     public void initialize(List<ExecVariablePsiElement> variablePsiElements) {
-        List<StatementExecutionVariable> newVariables = new ArrayList<>();
+        List<StatementExecutionVariable> variables = new ArrayList<>();
         for (ExecVariablePsiElement variablePsiElement : variablePsiElements) {
             StatementExecutionVariable variable = getVariable(variablePsiElement.getText());
             if (variable == null) {
@@ -57,9 +57,15 @@ public class StatementExecutionVariablesBundle extends StatefulDisposable.Base i
                     variable.setDataType(GenericDataType.LITERAL);
                 }
             }
-            newVariables.add(variable);
+            uniqueAddVariable(variables, variable);
         }
-        variables = newVariables;
+        this.variables = variables;
+    }
+
+    private void uniqueAddVariable(List<StatementExecutionVariable> variables, StatementExecutionVariable variable) {
+        if (variables.stream().noneMatch(var -> var.getName().equals(variable.getName()))) {
+            variables.add(variable);
+        }
     }
 
     public boolean isProvided() {

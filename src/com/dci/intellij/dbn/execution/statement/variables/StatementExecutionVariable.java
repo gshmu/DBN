@@ -4,12 +4,16 @@ import com.dci.intellij.dbn.common.list.MostRecentStack;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.intellij.openapi.components.PersistentStateComponent;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.StringTokenizer;
 
+@Getter
+@Setter
 public class StatementExecutionVariable extends VariableValueProvider implements Comparable<StatementExecutionVariable>, PersistentStateComponent<Element>{
     private GenericDataType dataType;
     private String name;
@@ -33,27 +37,6 @@ public class StatementExecutionVariable extends VariableValueProvider implements
         this.offset = variablePsiElement.getTextOffset();
     }
 
-    public int getOffset() {
-        return offset;
-    }
-
-    public void setOffset(int offset) {
-        this.offset = offset;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public GenericDataType getDataType() {
-        return dataType;
-    }
-
-    public void setDataType(GenericDataType dataType) {
-        this.dataType = dataType;
-    }
-
     @Override
     public String getValue() {
         return valueHistory.get();
@@ -72,10 +55,6 @@ public class StatementExecutionVariable extends VariableValueProvider implements
         return previewValueProvider == null ? this : previewValueProvider;
     }
 
-    public void setPreviewValueProvider(VariableValueProvider previewValueProvider) {
-        this.previewValueProvider = previewValueProvider;
-    }
-
     public boolean isProvided() {
         return useNull || valueHistory.get() != null;
     }
@@ -83,25 +62,6 @@ public class StatementExecutionVariable extends VariableValueProvider implements
     @Override
     public boolean useNull() {
         return useNull;
-    }
-
-    public void setUseNull(boolean isNull) {
-        this.useNull = isNull;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        StatementExecutionVariable that = (StatementExecutionVariable) o;
-
-        return name.equals(that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return name.hashCode();
     }
 
     @Override
