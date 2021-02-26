@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.object.properties.ui.ObjectPropertiesForm;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.GuiUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -157,7 +156,7 @@ public class BrowserToolWindowForm extends DBNFormImpl {
 
     @Override
     protected void disposeInner() {
-        Disposer.dispose(browserForm);
+        SafeDisposer.dispose(browserForm);
         super.disposeInner();
     }
 }

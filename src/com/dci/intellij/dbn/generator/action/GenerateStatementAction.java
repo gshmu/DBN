@@ -14,11 +14,10 @@ import com.dci.intellij.dbn.language.sql.SQLFileType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorModificationUtil;
+import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
 public abstract class GenerateStatementAction extends DumbAwareProjectAction implements ConnectionProvider {
@@ -50,8 +49,10 @@ public abstract class GenerateStatementAction extends DumbAwareProjectAction imp
     }
 
     private static void pasteToClipboard(StatementGeneratorResult result, Project project) {
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(new StringSelection(result.getStatement()), null);
+        StringSelection content = new StringSelection(result.getStatement());
+
+        CopyPasteManager copyPasteManager = CopyPasteManager.getInstance();
+        copyPasteManager.setContents(content);
         MessageUtil.showInfoDialog(project, "Statement extracted", "SQL statement exported to clipboard.");
     }
 
