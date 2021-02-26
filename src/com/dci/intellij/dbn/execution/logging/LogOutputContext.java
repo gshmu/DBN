@@ -17,8 +17,8 @@ public class LogOutputContext {
         STOPPED,     // interrupted by user
         CLOSED      // cancelled completely (console closed)
     }
-    private ConnectionHandlerRef connectionHandlerRef;
-    private WeakRef<VirtualFile> sourceFile;
+    private final ConnectionHandlerRef connectionHandler;
+    private final WeakRef<VirtualFile> sourceFile;
     private WeakRef<Process> process;
     private Status status = Status.NEW;
     private boolean hideEmptyLines = false;
@@ -28,14 +28,14 @@ public class LogOutputContext {
     }
 
     public LogOutputContext(@NotNull ConnectionHandler connectionHandler, @Nullable VirtualFile sourceFile, @Nullable Process process) {
-        this.connectionHandlerRef = connectionHandler.getRef();
+        this.connectionHandler = connectionHandler.getRef();
         this.sourceFile = WeakRef.of(sourceFile);
         this.process = WeakRef.of(process);
     }
 
     @NotNull
     public ConnectionHandler getConnectionHandler() {
-        return connectionHandlerRef.ensure();
+        return connectionHandler.ensure();
     }
 
     @Nullable
@@ -55,6 +55,11 @@ public class LogOutputContext {
     public boolean isProcessAlive() {
         Process process = getProcess();
         if (process != null) {
+            if (process.isAlive()) {
+                return true;
+            }
+
+            // legacy
             try {
                 process.exitValue();
             } catch(IllegalThreadStateException e) {
@@ -82,7 +87,7 @@ public class LogOutputContext {
     }
 
     public void finish() {
-        if (isActive()) {
+        if (status == Status.ACTIVE) {
             status = Status.FINISHED;
         }
         destroyProcess();
@@ -90,7 +95,7 @@ public class LogOutputContext {
 
 
     public void stop() {
-        if (isActive()) {
+        if (status == Status.ACTIVE) {
             status = Status.STOPPED;
         }
         destroyProcess();
@@ -103,6 +108,9 @@ public class LogOutputContext {
     }
 
     public boolean isActive() {
+        if (status == Status.ACTIVE && !isProcessAlive()) {
+            finish();
+        }
         return status == Status.ACTIVE;
     }
 
@@ -123,6 +131,6 @@ public class LogOutputContext {
     }
 
     public ConnectionId getConnectionId() {
-        return connectionHandlerRef.getConnectionId();
+        return connectionHandler.getConnectionId();
     }
 }
