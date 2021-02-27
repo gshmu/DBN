@@ -2,11 +2,11 @@ package com.dci.intellij.dbn.common.util;
 
 import com.dci.intellij.dbn.common.Constants;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.message.Message;
 import com.dci.intellij.dbn.common.message.MessageBundle;
 import com.dci.intellij.dbn.common.message.MessageCallback;
 import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
@@ -46,7 +46,7 @@ public class MessageUtil {
         }
 
         if (exception != null) {
-            if (exception == AlreadyDisposedException.INSTANCE) {
+            if (exception instanceof ProcessCanceledException) {
                 return; // process was interrupted
             }
 
