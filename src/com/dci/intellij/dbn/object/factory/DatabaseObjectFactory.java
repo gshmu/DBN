@@ -135,6 +135,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
                         String objectName = object.getQualifiedName();
                         String objectTypeName = object.getTypeName();
                         DatabaseDDLInterface ddlInterface = provider.getDDLInterface();
+                        DBObjectList<?> objectList = (DBObjectList<?>) object.getParent();
                         if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
                             DBObjectStatusHolder objectStatus = object.getStatus();
                             if (objectStatus.is(DBContentType.CODE_BODY, DBObjectStatus.PRESENT)) {
@@ -149,9 +150,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
                             ddlInterface.dropObject(objectTypeName, objectName, connection);
                         }
 
-                        DBObjectList objectList = (DBObjectList) object.getParent();
                         objectList.reload();
-
                         notifyFactoryEvent(new ObjectFactoryEvent(object, ObjectFactoryEvent.EVENT_TYPE_DROP));
                     });
         } catch (SQLException e) {

@@ -2,10 +2,11 @@ package com.dci.intellij.dbn.object.common.status;
 
 import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 import com.dci.intellij.dbn.editor.DBContentType;
+import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
 public class DBObjectStatusHolder {
-    private DBContentType mainContentType;
+    private final DBContentType mainContentType;
     private Entry[] statusEntries;
 
     public DBObjectStatusHolder(DBContentType mainContentType) {
@@ -102,8 +103,9 @@ public class DBObjectStatusHolder {
         return !is(contentType, status);
     }
 
-    private class Entry extends PropertyHolderImpl<DBObjectStatus>{
-        private DBContentType contentType;
+    @Getter
+    private static class Entry extends PropertyHolderImpl<DBObjectStatus>{
+        private final DBContentType contentType;
 
         @Override
         protected DBObjectStatus[] properties() {
@@ -112,10 +114,6 @@ public class DBObjectStatusHolder {
 
         Entry(DBContentType contentType) {
             this.contentType = contentType;
-        }
-
-        DBContentType getContentType() {
-            return contentType;
         }
     }
 }
