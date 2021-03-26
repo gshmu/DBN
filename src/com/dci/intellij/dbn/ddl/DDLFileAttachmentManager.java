@@ -318,10 +318,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
 
     public void attachDDLFiles(DBObjectRef<DBSchemaObject> objectRef) {
         DDLFileNameProvider ddlFileNameProvider = getDDLFileNameProvider(objectRef);
-        if (ddlFileNameProvider == null) {
-            showMissingFileAssociations(objectRef);
-
-        } else {
+        if (ddlFileNameProvider != null) {
             List<VirtualFile> virtualFiles = lookupDetachedDDLFiles(objectRef);
             if (virtualFiles.size() == 0) {
                 List<String> fileUrls = getAttachedFileUrls(objectRef);
@@ -385,7 +382,10 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     @Nullable
     private DDLFileNameProvider getDDLFileNameProvider(DBObjectRef<DBSchemaObject> objectRef) {
         List<DDLFileType> ddlFileTypes = getDdlFileTypes(objectRef);
-        if (ddlFileTypes.size() == 1 && ddlFileTypes.get(0).getExtensions().size() == 1) {
+        if (ddlFileTypes.size() == 0) {
+            showMissingFileAssociations(objectRef);
+
+        } else if (ddlFileTypes.size() == 1 && ddlFileTypes.get(0).getExtensions().size() == 1) {
             DDLFileType ddlFileType = ddlFileTypes.get(0);
             return new DDLFileNameProvider(objectRef, ddlFileType, ddlFileType.getExtensions().get(0));
         } else if (ddlFileTypes.size() > 1) {

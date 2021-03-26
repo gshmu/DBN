@@ -3,13 +3,13 @@ package com.dci.intellij.dbn.editor.session.action;
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.ui.DBNComboBoxAction;
+import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.session.SessionBrowser;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilter;
 import com.dci.intellij.dbn.editor.session.SessionBrowserFilterType;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
-import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -80,7 +80,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction imp
 
     @Nullable
     public static SessionBrowser getSessionBrowser(JComponent component) {
-        DataContext dataContext = DataManager.getInstance().getDataContext(component);
+        DataContext dataContext = Context.getDataContext(component);
         SessionBrowser sessionBrowser = DataKeys.SESSION_BROWSER.getData(dataContext);
         if (sessionBrowser == null) {
             FileEditor fileEditor = PlatformDataKeys.FILE_EDITOR.getData(dataContext);

@@ -45,8 +45,9 @@ public class BlockElementType extends SequenceElementType {
         return new BlockPsiElement(astNode, this);
     }
 
+    @NotNull
     @Override
-    public String getDebugName() {
+    public String getName() {
         return "block (" + getId() + ")";
     }
 

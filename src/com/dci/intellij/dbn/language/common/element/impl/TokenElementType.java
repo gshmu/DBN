@@ -32,7 +32,7 @@ public class TokenElementType extends LeafElementType implements LookupItemBuild
     public static final String SEPARATOR = "SEPARATOR";
 
 
-    private TokenLookupItemBuilder lookupItemBuilder = new TokenLookupItemBuilder(this);
+    private final TokenLookupItemBuilder lookupItemBuilder = new TokenLookupItemBuilder(this);
     private TokenTypeCategory flavor;
     private List<TokenElementTypeChain> possibleTokenChains;
     private String text;
@@ -78,8 +78,9 @@ public class TokenElementType extends LeafElementType implements LookupItemBuild
         return new TokenElementTypeParser(this);
     }
 
+    @NotNull
     @Override
-    public String getDebugName() {
+    public String getName() {
         return "token (" + getId() + " - " + tokenType.getId() + ")";
     }
 

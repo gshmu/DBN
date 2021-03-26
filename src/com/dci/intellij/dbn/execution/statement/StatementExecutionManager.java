@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
+import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -43,6 +44,7 @@ import com.dci.intellij.dbn.language.common.psi.ExecVariablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -225,20 +227,23 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
         }
     }
 
-    public void executeStatement(@NotNull StatementExecutionProcessor executionProcessor) {
+    public void executeStatement(@NotNull StatementExecutionProcessor executionProcessor, DataContext dataContext) {
         executeStatements(
                 executionProcessor.getVirtualFile(),
-                Collections.singletonList(executionProcessor));
+                Collections.singletonList(executionProcessor),
+                dataContext);
     }
 
-    private void executeStatements(@Nullable VirtualFile virtualFile, List<StatementExecutionProcessor> executionProcessors) {
+    private void executeStatements(@Nullable VirtualFile virtualFile, List<StatementExecutionProcessor> executionProcessors, DataContext dataContext) {
         if (virtualFile != null && executionProcessors.size() > 0) {
             try {
                 Project project = getProject();
                 FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
 
-                DBLanguagePsiFile file = Failsafe.nn(executionProcessors.get(0).getPsiFile());
-                connectionMappingManager.selectConnectionAndSchema(file,
+                DBLanguagePsiFile databaseFile = Failsafe.nn(executionProcessors.get(0).getPsiFile());
+                connectionMappingManager.selectConnectionAndSchema(
+                        databaseFile,
+                        dataContext,
                         () -> ConnectionAction.invoke(
                                 "the statement execution", false,
                                 () -> connectionMappingManager.getConnectionHandler(virtualFile),
@@ -300,9 +305,10 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
     public void executeStatementAtCursor(@NotNull FileEditor fileEditor) {
         Editor editor = EditorUtil.getEditor(fileEditor);
         if (editor != null) {
+            DataContext dataContext = Context.getDataContext(editor);
             StatementExecutionProcessor executionProcessor = getExecutionProcessorAtCursor(fileEditor);
             if (executionProcessor != null) {
-                executeStatement(executionProcessor);
+                executeStatement(executionProcessor, dataContext);
             } else {
                 MessageUtil.showQuestionDialog(
                         getProject(),
@@ -314,7 +320,7 @@ public class StatementExecutionManager extends AbstractProjectComponent implemen
                                 int offset = option == 0 ? 0 : editor.getCaretModel().getOffset();
                                 List<StatementExecutionProcessor> executionProcessors = getExecutionProcessorsFromOffset(fileEditor, offset);
                                 VirtualFile virtualFile = DocumentUtil.getVirtualFile(editor);
-                                executeStatements(virtualFile, executionProcessors);
+                                executeStatements(virtualFile, executionProcessors, dataContext);
                             }
                         });
             }

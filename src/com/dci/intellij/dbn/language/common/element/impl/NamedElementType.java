@@ -64,8 +64,9 @@ public class NamedElementType extends SequenceElementType {
         return definitionLoaded;
     }
 
+    @NotNull
     @Override
-    public String getDebugName() {
+    public String getName() {
         return getId().toUpperCase();
     }
 

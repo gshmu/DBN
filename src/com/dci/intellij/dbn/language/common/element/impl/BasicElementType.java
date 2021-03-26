@@ -33,8 +33,9 @@ public class BasicElementType extends ElementTypeBase {
         return true;
     }
 
+    @NotNull
     @Override
-    public String getDebugName() {
+    public String getName() {
         return getId();
     }
 
