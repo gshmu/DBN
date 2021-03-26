@@ -39,8 +39,9 @@ public class ExecVariableElementType extends LeafElementType {
         return new ExecVariablePsiElement(astNode, this);
     }
 
+    @NotNull
     @Override
-    public String getDebugName() {
+    public String getName() {
         return "variable (" + getId() + ")";
     }
 

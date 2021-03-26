@@ -59,8 +59,9 @@ public class OneOfElementType extends ElementTypeBase {
         return false;
     }
 
+    @NotNull
     @Override
-    public String getDebugName() {
+    public String getName() {
         return "one-of (" + getId() + ")";
     }
 

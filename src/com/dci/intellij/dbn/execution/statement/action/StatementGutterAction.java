@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
@@ -81,6 +82,8 @@ public class StatementGutterAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         StatementExecutionProcessor executionProcessor = getExecutionProcessor(false);
+        DataContext dataContext = e.getDataContext();
+
         if (executionProcessor != null && !executionProcessor.isDirty()) {
             Project project = executionProcessor.getProject();
             StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
@@ -90,7 +93,7 @@ public class StatementGutterAction extends AnAction {
             } else {
                 StatementExecutionResult executionResult = executionProcessor.getExecutionResult();
                 if (executionResult == null || !(executionProcessor instanceof StatementExecutionCursorProcessor) || executionProcessor.isDirty()) {
-                    executionManager.executeStatement(executionProcessor);
+                    executionManager.executeStatement(executionProcessor, dataContext);
                 } else {
                     executionProcessor.navigateToResult();
                 }
@@ -100,7 +103,7 @@ public class StatementGutterAction extends AnAction {
             if (executionProcessor != null) {
                 Project project = executionProcessor.getProject();
                 StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
-                executionManager.executeStatement(executionProcessor);
+                executionManager.executeStatement(executionProcessor, dataContext);
             }
         }
     }

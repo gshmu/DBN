@@ -1,7 +1,8 @@
 package com.dci.intellij.dbn.editor.data.model;
 
+import com.dci.intellij.dbn.common.notification.NotificationGroup;
+import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
-import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
@@ -82,7 +83,7 @@ public class DatasetEditorModelRow
             reset();
             set(RecordStatus.DELETED, true);
         } catch (SQLException e) {
-            MessageUtil.showErrorDialog(getProject(), "Could not delete row at index " + getIndex() + '.', e);
+            NotificationSupport.sendErrorNotification(getProject(), NotificationGroup.DATA, "Could not delete row at index " + getIndex() + ". Cause: {0}", e.getMessage());
         }
     }
 

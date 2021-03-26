@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class ChameleonTokenType extends SimpleTokenType implements ElementType {
-    private DBLanguageDialect injectedLanguage;
+    private final DBLanguageDialect injectedLanguage;
     public ChameleonTokenType(@Nullable DBLanguageDialect hostLanguage, DBLanguageDialect injectedLanguage) {
         super(injectedLanguage.getID() + " block", hostLanguage);
         this.injectedLanguage = injectedLanguage;
@@ -40,9 +40,10 @@ public class ChameleonTokenType extends SimpleTokenType implements ElementType {
         return injectedLanguage;
     }
 
+    @NotNull
     @Override
-    public String getDebugName() {
-        return toString();
+    public String getName() {
+        return getId();
     }
 
     @Override

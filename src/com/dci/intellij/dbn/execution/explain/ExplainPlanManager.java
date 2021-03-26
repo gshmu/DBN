@@ -16,6 +16,7 @@ import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -45,16 +46,19 @@ public class ExplainPlanManager extends AbstractProjectComponent {
      *                       Execution                       *
      *********************************************************/
 
-    public void explainPlan(
+    public void executeExplainPlan(
             @NotNull ExecutablePsiElement executable,
+            @NotNull DataContext dataContext,
             @Nullable ParametricRunnable.Basic<ExplainPlanResult> callback) {
 
         Project project = getProject();
         String elementDescription = executable.getSpecificElementType().getDescription();
 
-        DBLanguagePsiFile psiFile = executable.getFile();
+        DBLanguagePsiFile databaseFile = executable.getFile();
         FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-        connectionMappingManager.selectConnectionAndSchema(psiFile,
+        connectionMappingManager.selectConnectionAndSchema(
+                databaseFile,
+                dataContext,
                 ()-> ConnectionAction.invoke("generating the explain plan", false, executable.getFile(),
                         (action) -> Progress.prompt(getProject(), "Extracting explain plan for " + elementDescription, true,
                                 (progress) -> {

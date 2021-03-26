@@ -1,10 +1,12 @@
 package com.dci.intellij.dbn.code.common.intention;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.intellij.codeInsight.intention.LowPriorityAction;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -45,7 +47,8 @@ public class SelectSchemaIntentionAction extends GenericIntentionAction implemen
         if (psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile dbLanguageFile = (DBLanguagePsiFile) psiFile;
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
-            connectionMappingManager.promptSchemaSelector(dbLanguageFile, null);
+            DataContext dataContext = Context.getDataContext(editor);
+            connectionMappingManager.promptSchemaSelector(dbLanguageFile, dataContext, null);
         }
     }
 

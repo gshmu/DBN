@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.code.common.intention;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionManager;
@@ -9,6 +10,7 @@ import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.codeInsight.intention.HighPriorityAction;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
@@ -67,7 +69,8 @@ public class ExecuteStatementIntentionAction extends GenericIntentionAction impl
             StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);
             StatementExecutionProcessor executionProcessor = executionManager.getExecutionProcessor(fileEditor, executable, true);
             if (executionProcessor != null) {
-                executionManager.executeStatement(executionProcessor);
+                DataContext dataContext = Context.getDataContext(editor);
+                executionManager.executeStatement(executionProcessor, dataContext);
             }
         }
     }

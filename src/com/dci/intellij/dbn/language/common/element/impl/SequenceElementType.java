@@ -93,7 +93,9 @@ public class SequenceElementType extends ElementTypeBase {
         return index <= exitIndex;
     }
 
-    public String getDebugName() {
+    @NotNull
+    @Override
+    public String getName() {
         return "sequence (" + getId() + ")";
     }
 

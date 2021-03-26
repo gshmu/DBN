@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.KeyAdapter;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
-import com.intellij.ide.DataManager;
+import com.dci.intellij.dbn.common.util.Context;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -90,7 +90,7 @@ public abstract class TextFieldPopupProviderForm extends DBNFormImpl implements 
         if (!e.isConsumed()) {
             for (AnAction action : actions) {
                 if (KeyUtil.match(action.getShortcutSet().getShortcuts(), e)) {
-                    DataContext dataContext = DataManager.getInstance().getDataContext(this.getComponent());
+                    DataContext dataContext = Context.getDataContext(this);
                     ActionManager actionManager = ActionManager.getInstance();
                     AnActionEvent actionEvent = new AnActionEvent(null, dataContext, "", action.getTemplatePresentation(), actionManager, 2);
                     action.actionPerformed(actionEvent);

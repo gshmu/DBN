@@ -16,17 +16,23 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
 public interface ElementType extends Indexable, PropertyHolder<ElementTypeAttribute>{
 
+    @NotNull
     String getId();
 
-    String getDescription();
+    @NotNull
+    String getName();
 
+    @NotNull
     String getDebugName();
+
+    String getDescription();
 
     Icon getIcon();
 

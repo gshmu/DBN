@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
+import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.data.record.ColumnSortingType;
 import com.dci.intellij.dbn.data.record.DatasetRecord;
@@ -21,7 +22,6 @@ import com.dci.intellij.dbn.object.DBView;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
-import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -115,7 +115,7 @@ public class DatasetEditorManager extends AbstractProjectComponent implements Pe
             ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(
                     "Select Navigation Target",
                     actionGroup,
-                    DataManager.getInstance().getDataContext(component),
+                    Context.getDataContext(component),
                     JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
                     true, null, 10);
 

@@ -62,7 +62,7 @@ public class ChameleonPsiElement extends ASTDelegatePsiElement implements Execut
 
     @Override
     public String toString() {
-        return elementType.getDebugName();
+        return elementType.getName();
     }
 
     @Override

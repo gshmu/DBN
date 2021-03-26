@@ -2,8 +2,8 @@ package com.dci.intellij.dbn.common.editor;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.message.MessageType;
+import com.dci.intellij.dbn.common.util.Context;
 import com.intellij.codeInsight.hint.HintUtil;
-import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -93,8 +93,8 @@ public class EditorNotificationPanel extends JPanel{
     }
 
     private void executeAction(final String actionId) {
-        final AnAction action = ActionManager.getInstance().getAction(actionId);
-        final AnActionEvent event = new AnActionEvent(null, DataManager.getInstance().getDataContext(this), ActionPlaces.UNKNOWN,
+        AnAction action = ActionManager.getInstance().getAction(actionId);
+        AnActionEvent event = new AnActionEvent(null, Context.getDataContext(this), ActionPlaces.UNKNOWN,
                 action.getTemplatePresentation(), ActionManager.getInstance(),
                 0);
         action.beforeActionPerformedUpdate(event);

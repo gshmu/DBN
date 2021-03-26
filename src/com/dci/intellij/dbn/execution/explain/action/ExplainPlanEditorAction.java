@@ -32,7 +32,7 @@ public class ExplainPlanEditorAction extends DumbAwareProjectAction {
             ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
             if (fileEditor != null && executable != null && executable.is(ElementTypeAttribute.DATA_MANIPULATION)) {
                 ExplainPlanManager explainPlanManager = ExplainPlanManager.getInstance(project);
-                explainPlanManager.explainPlan(executable, null);
+                explainPlanManager.executeExplainPlan(executable, e.getDataContext(), null);
             }
         }
     }
