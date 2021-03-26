@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.info.ConnectionInfo;
 import com.intellij.diagnostic.AbstractMessage;
 import com.intellij.diagnostic.LogMessage;
-import com.intellij.ide.DataManager;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.idea.IdeaLogger;
@@ -77,7 +76,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
                           @NotNull Component parentComponent,
                           @NotNull Consumer consumer){
 
-        DataContext dataContext = DataManager.getInstance().getDataContext(parentComponent);
+        DataContext dataContext = Context.getDataContext(parentComponent);
         Project project = PlatformDataKeys.PROJECT.getData(dataContext);
 
         String localPluginVersion = getPluginDescriptor().getVersion();
