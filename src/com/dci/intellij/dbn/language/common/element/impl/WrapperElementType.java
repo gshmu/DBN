@@ -109,8 +109,9 @@ public class WrapperElementType extends ElementTypeBase {
         return false;
     }
 
+    @NotNull
     @Override
-    public String getDebugName() {
+    public String getName() {
         return "wrapper (" + getId() + ")";
     }
     @Override

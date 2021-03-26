@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.object.dependency.ui;
 
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.load.LoadInProgressRegistry;
@@ -12,9 +13,11 @@ import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectSelectionHistory;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
+import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyManager;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -64,26 +67,29 @@ public class ObjectDependencyTree extends DBNTree{
 
             @Override
             public void mouseReleased(final MouseEvent event) {
-                if (false && event.getButton() == MouseEvent.BUTTON3) {
+                if (event.getButton() == MouseEvent.BUTTON3) {
                     final TreePath path = getPathForLocation(event.getX(), event.getY());
                     if (path != null) {
                         final ObjectDependencyTreeNode node = (ObjectDependencyTreeNode) path.getLastPathComponent();
-                        DefaultActionGroup actionGroup = new DefaultActionGroup();
                         if (node != null) {
+                            DefaultActionGroup actionGroup = new DefaultActionGroup();
                             ObjectDependencyTreeNode rootNode = node.getModel().getRoot();
                             DBObject object = node.getObject();
                             if (object instanceof DBSchemaObject && !Safe.equal(rootNode.getObject(), object)) {
                                 actionGroup.add(new SelectObjectAction((DBSchemaObject) object));
+                                DBSchemaObject schemaObject = (DBSchemaObject) object;
+                                if (schemaObject.is(DBObjectProperty.EDITABLE)) {
+                                    actionGroup.add(new EditObjectAction((DBSchemaObject) object));
+                                }
+                                ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
+                                JPopupMenu popupMenu = actionPopupMenu.getComponent();
+                                Dispatch.run(() -> {
+                                    if (isShowing()) {
+                                        popupMenu.show(ObjectDependencyTree.this, event.getX(), event.getY());
+                                    }
+                                });
                             }
                         }
-
-                        ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
-                        JPopupMenu popupMenu = actionPopupMenu.getComponent();
-                        Dispatch.run(() -> {
-                            if (isShowing()) {
-                                popupMenu.show(ObjectDependencyTree.this, event.getX(), event.getY());
-                            }
-                        });
                     }
                 }
             }
@@ -124,7 +130,16 @@ public class ObjectDependencyTree extends DBNTree{
                 DBObject object = getMouseEventObject(e);
                 if (object != null && TimeUtil.isOlderThan(selectionTimestamp, TimeUtil.Millis.ONE_SECOND)) {
                     selectionTimestamp = System.currentTimeMillis();
-                    setRootObject((DBSchemaObject) object, true);
+
+                    if (object instanceof DBSchemaObject) {
+                        DBSchemaObject schemaObject = (DBSchemaObject) object;
+                        if (schemaObject.is(DBObjectProperty.EDITABLE)) {
+                            DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+                            databaseFileSystem.connectAndOpenEditor(schemaObject, null, true, true);
+                        }
+                    }
+
+                    //setRootObject((DBSchemaObject) object, true);
                     e.consume();
                 }
             }
@@ -177,6 +192,31 @@ public class ObjectDependencyTree extends DBNTree{
         public void update(@NotNull AnActionEvent e) {
             Presentation presentation = e.getPresentation();
             presentation.setText("Select");
+        }
+    }
+
+    public class EditObjectAction extends DumbAwareAction {
+        private final DBObjectRef<DBSchemaObject> objectRef;
+
+        EditObjectAction(DBSchemaObject object) {
+            super("Edit", null, Icons.ACTION_EDIT);
+            objectRef = DBObjectRef.of(object);
+        }
+
+        @Override
+        public void actionPerformed(@NotNull AnActionEvent e) {
+            DBSchemaObject schemaObject = DBObjectRef.get(objectRef);
+            if (schemaObject != null) {
+                DatabaseFileSystem databaseFileSystem = DatabaseFileSystem.getInstance();
+                databaseFileSystem.connectAndOpenEditor(schemaObject, null, true, true);
+            }
+        }
+
+        @Override
+        public void update(@NotNull AnActionEvent e) {
+            Presentation presentation = e.getPresentation();
+            presentation.setText("Edit");
+            presentation.setIcon(Icons.ACTION_EDIT);
         }
     }
 

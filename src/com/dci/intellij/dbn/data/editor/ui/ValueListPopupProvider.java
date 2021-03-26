@@ -7,8 +7,8 @@ import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.KeyUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
+import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -157,7 +157,7 @@ public class ValueListPopupProvider implements TextFieldPopupProvider{
             popup = JBPopupFactory.getInstance().createActionGroupPopup(
                     null,
                     actionGroup,
-                    DataManager.getInstance().getDataContext(editorComponent),
+                    Context.getDataContext(editorComponent),
                     JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
                     true, null, 10);
         }

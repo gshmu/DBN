@@ -68,7 +68,7 @@ public class DatabaseBrowserTreeSpeedSearch extends SpeedSearchBase<JTree> imple
         return elements.get().length;
     }
 
-    @Override
+    //@Override
     protected Object getElementAt(int viewIndex) {
         return elements.get()[viewIndex];
     }

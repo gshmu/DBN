@@ -111,8 +111,9 @@ public class QualifiedIdentifierElementType extends ElementTypeBase {
         return new QualifiedIdentifierPsiElement(astNode, this);
     }
 
+    @NotNull
     @Override
-    public String getDebugName() {
+    public String getName() {
         return "identifier sequence (" + getId() + ")";
     }
 

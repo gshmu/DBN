@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.code.common.intention;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseFeature;
@@ -11,6 +12,7 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.codeInsight.intention.HighPriorityAction;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
@@ -60,8 +62,9 @@ public class ExplainPlanIntentionAction extends GenericIntentionAction implement
         ExecutablePsiElement executable = PsiUtil.lookupExecutableAtCaret(editor, true);
         FileEditor fileEditor = EditorUtil.getFileEditor(editor);
         if (executable != null && fileEditor != null) {
+            DataContext dataContext = Context.getDataContext(editor);
             ExplainPlanManager explainPlanManager = ExplainPlanManager.getInstance(project);
-            explainPlanManager.explainPlan(executable, null);
+            explainPlanManager.executeExplainPlan(executable, dataContext, null);
         }
     }
 

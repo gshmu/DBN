@@ -66,12 +66,12 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
 
     @Override
     public String getDescription() {
-        return getDebugName();
+        return getName();
     }
 
-    @Override
     @NotNull
-    public String getDebugName() {
+    @Override
+    public String getName() {
         return "chameleon (" + getLanguage().getDisplayName() + ")";
     }
 

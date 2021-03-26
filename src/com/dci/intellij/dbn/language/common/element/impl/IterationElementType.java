@@ -115,8 +115,9 @@ public class IterationElementType extends ElementTypeBase {
         return false;
     }
 
+    @NotNull
     @Override
-    public String getDebugName() {
+    public String getName() {
         return "iteration (" + getId() + ")";
     }
 

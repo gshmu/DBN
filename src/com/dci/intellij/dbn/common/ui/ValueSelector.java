@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -178,7 +178,7 @@ public abstract class ValueSelector<T extends Presentable> extends JPanel{
         popup = JBPopupFactory.getInstance().createActionGroupPopup(
                 null,
                 actionGroup,
-                DataManager.getInstance().getDataContext(this),
+                Context.getDataContext(this),
                 false,
                 false,
                 false,

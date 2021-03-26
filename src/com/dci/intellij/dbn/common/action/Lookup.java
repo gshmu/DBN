@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.common.action;
 
+import com.dci.intellij.dbn.common.util.Context;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -27,7 +28,7 @@ public interface Lookup {
 
     @Nullable
     static VirtualFile getVirtualFile(@NotNull Component component) {
-        DataContext dataContext = getDataContext(component);
+        DataContext dataContext = Context.getDataContext(component);
         return PlatformDataKeys.VIRTUAL_FILE.getData(dataContext);
     }
 
@@ -50,12 +51,8 @@ public interface Lookup {
     }
 
     static Project getProject(Component component){
-        DataContext dataContext = getDataContext(component);
+        DataContext dataContext = Context.getDataContext(component);
         return PlatformDataKeys.PROJECT.getData(dataContext);
-    }
-
-    static DataContext getDataContext(Component component) {
-        return DataManager.getInstance().getDataContext(component);
     }
 
     @Nullable

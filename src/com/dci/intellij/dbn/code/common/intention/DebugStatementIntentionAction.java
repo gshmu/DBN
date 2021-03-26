@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.code.common.intention;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
@@ -13,6 +14,7 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.codeInsight.intention.HighPriorityAction;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
@@ -57,10 +59,12 @@ public class DebugStatementIntentionAction extends GenericIntentionAction implem
         FileEditor fileEditor = EditorUtil.getFileEditor(editor);
         if (executable != null && fileEditor != null && psiFile instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile databasePsiFile = (DBLanguagePsiFile) psiFile;
+            DataContext dataContext = Context.getDataContext(editor);
 
             FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(project);
             connectionMappingManager.selectConnectionAndSchema(
                     databasePsiFile,
+                    dataContext,
                     () -> ConnectionAction.invoke("", false, databasePsiFile,
                             (action) -> {
                                 StatementExecutionManager executionManager = StatementExecutionManager.getInstance(project);

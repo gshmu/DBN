@@ -93,8 +93,9 @@ public class IdentifierElementType extends LeafElementType {
                 new IdentifierRefPsiElement(astNode, this);
     }
 
+    @NotNull
     @Override
-    public String getDebugName() {
+    public String getName() {
         String prefix =
                 isObject() ? (isReference() ? "object-ref " : "object-def ") :
                 isAlias() ? (isReference() ? "alias-ref " : "alias-def ") :
