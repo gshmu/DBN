@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.action;
 
 import com.dci.intellij.dbn.common.util.Context;
-import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataProvider;
@@ -40,14 +39,6 @@ public interface Lookup {
     @Nullable
     static FileEditor getFileEditor(@NotNull AnActionEvent e) {
         return e.getData(PlatformDataKeys.FILE_EDITOR);
-    }
-
-    /**
-     * @deprecated use getProject(Component)
-     */
-    static Project getProject(){
-        DataContext dataContext = DataManager.getInstance().getDataContextFromFocus().getResult();
-        return PlatformDataKeys.PROJECT.getData(dataContext);
     }
 
     static Project getProject(Component component){
