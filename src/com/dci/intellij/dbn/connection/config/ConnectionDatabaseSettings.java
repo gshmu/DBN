@@ -6,7 +6,12 @@ import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.AuthenticationType;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectivityStatus;
+import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.DatabaseUrlPattern;
+import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
 import com.dci.intellij.dbn.driver.DriverSource;
@@ -28,10 +33,10 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSettings, ConnectionDatabaseSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private @Getter @Setter ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
     private @Setter String name;
-    private @Getter @Setter String description;
     private @Getter DatabaseType databaseType;
+    private @Getter @Setter String description;
+    private @Getter @Setter ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
     private @Getter @Setter DatabaseType resolvedDatabaseType = DatabaseType.GENERIC;
     private @Getter @Setter DatabaseUrlPattern urlPattern;
     private @Getter @Setter double databaseVersion = 9999;
@@ -118,7 +123,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         return configType == ConnectionConfigType.BASIC ?
                 urlPattern.getUrl(databaseInfo) :
                 databaseInfo.getUrl();
-    };
+    }
 
     public String getConnectionUrl(String host, String port) {
         if (configType == ConnectionConfigType.BASIC) {
@@ -163,7 +168,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
     }
 
     public void checkConfiguration() throws ConfigurationException{
-        List<String> errors = new ArrayList<String>();
+        List<String> errors = new ArrayList<>();
         DatabaseType databaseType = getDatabaseType();
 // TODO: clean up. Now it is allowed generic JDBC database configuration
 //        if (databaseType == DatabaseType.UNKNOWN) {
@@ -282,8 +287,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         // TODO backward compatibility (to remove)
         Element propertiesElement = element.getChild("properties");
         if (propertiesElement != null) {
-            for (Object o : propertiesElement.getChildren()) {
-                Element propertyElement = (Element) o;
+            for (Element propertyElement : propertiesElement.getChildren()) {
                 Map<String, String> properties = getParent().getPropertiesSettings().getProperties();
                 properties.put(
                         propertyElement.getAttributeValue("key"),
