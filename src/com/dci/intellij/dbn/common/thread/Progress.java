@@ -19,7 +19,7 @@ public interface Progress {
     static void background(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
         if (Failsafe.check(project)) {
             ThreadInfo invoker = ThreadMonitor.current();
-            Task task = new Task.Backgroundable(Failsafe.nd(project), title, cancellable, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
+            start(new Task.Backgroundable(Failsafe.nd(project), title, cancellable, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
@@ -27,15 +27,14 @@ public interface Progress {
                             ThreadProperty.PROGRESS,
                             () -> Safe.run(() -> runnable.run(indicator)));
                 }
-            };
-            start(task);
+            });
         }
     }
 
     static void prompt(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
         if (Failsafe.check(project)) {
             ThreadInfo invoker = ThreadMonitor.current();
-            Task task = new Task.Backgroundable(Failsafe.nd(project), title, cancellable, PerformInBackgroundOption.DEAF) {
+            start(new Task.Backgroundable(Failsafe.nd(project), title, cancellable, PerformInBackgroundOption.DEAF) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
@@ -43,15 +42,14 @@ public interface Progress {
                             ThreadProperty.PROGRESS,
                             () -> Safe.run(() -> runnable.run(indicator)));
                 }
-            };
-            start(task);
+            });
         }
     }
 
     static void modal(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
         if (Failsafe.check(project)) {
             ThreadInfo invoker = ThreadMonitor.current();
-            Task task = new Task.Modal(project, title, cancellable) {
+            start(new Task.Modal(project, title, cancellable) {
                 @Override
                 public void run(@NotNull ProgressIndicator indicator) {
                     ThreadMonitor.run(
@@ -60,8 +58,7 @@ public interface Progress {
                             () -> Safe.run(() -> runnable.run(indicator)));
 
                 }
-            };
-            start(task);
+            });
         }
     }
 
