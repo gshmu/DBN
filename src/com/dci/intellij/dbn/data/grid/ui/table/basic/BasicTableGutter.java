@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableCellEditor;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 
@@ -70,7 +71,12 @@ public class BasicTableGutter<T extends BasicTable> extends DBNTableGutter<T> {
         if (hasFocus()) {
             if (justGainedFocus) {
                 justGainedFocus = false;
-                if (table.isEditing()) table.getCellEditor().cancelCellEditing();
+                if (table.isEditing()) {
+                    TableCellEditor cellEditor = table.getCellEditor();
+                    if (cellEditor != null) {
+                        cellEditor.cancelCellEditing();
+                    }
+                }
                 table.clearSelection();
                 int columnCount = table.getColumnCount();
                 if (columnCount > 0) {

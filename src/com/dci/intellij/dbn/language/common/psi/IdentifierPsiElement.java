@@ -3,8 +3,8 @@ package com.dci.intellij.dbn.language.common.psi;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.Capture;
 import com.dci.intellij.dbn.common.consumer.ListCollector;
+import com.dci.intellij.dbn.common.util.RecursivityGate;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.common.util.ThreadLocalFlag;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.language.common.QuotePair;
 import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
@@ -44,7 +44,7 @@ import java.util.Set;
 
 public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElementType> {
     private PsiResolveResult ref;
-    private final ThreadLocalFlag resolvingUnderlyingObject = new ThreadLocalFlag(false);
+    private final RecursivityGate underlyingObjectResolver = new RecursivityGate(3);
     private final Capture<DBObject> underlyingObject = new Capture<>();
 
     public IdentifierPsiElement(ASTNode astNode, IdentifierElementType elementType) {
@@ -228,14 +228,10 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
     @Override
     @Nullable
     public DBObject getUnderlyingObject() {
-        if (!resolvingUnderlyingObject.get() && (underlyingObject.get() == null || !underlyingObject.valid(getChars()))) {
-            try {
-                resolvingUnderlyingObject.set(true);
-                DBObject underlyingObject = loadUnderlyingObject();
-                this.underlyingObject.capture(underlyingObject, getChars());
-            } finally {
-                resolvingUnderlyingObject.set(false);
-            }
+        if (underlyingObject.get() == null || !underlyingObject.valid(getChars())) {
+            underlyingObjectResolver.run(() -> this.underlyingObject.capture(
+                    loadUnderlyingObject(),
+                    getChars()));
         }
         return underlyingObject.get();
     }
