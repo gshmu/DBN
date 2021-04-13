@@ -208,6 +208,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
         scopeIsolation = is(ElementTypeAttribute.SCOPE_ISOLATION);
     }
 
+    @NotNull
     @Override
     public String getId() {
         return id;

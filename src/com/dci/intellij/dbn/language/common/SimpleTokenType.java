@@ -96,6 +96,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
         formatting = FormattingDefinitionFactory.mergeDefinitions(formatting, defaultFormatting);
     }
 
+    @NotNull
     @Override
     public String getId() {
         return id;
