@@ -4,18 +4,19 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.editor.data.state.sorting.ui.DatasetEditorSortingForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
+import org.jetbrains.annotations.NotNull;
 
 
 public class AddSortingColumnAction extends DumbAwareAction {
-    private DatasetEditorSortingForm sortingForm;
+    private final DatasetEditorSortingForm form;
 
-    public AddSortingColumnAction(DatasetEditorSortingForm sortingForm) {
+    public AddSortingColumnAction(DatasetEditorSortingForm form) {
         super("Add sorting column ", null, Icons.DATASET_FILTER_CONDITION_NEW);
-        this.sortingForm = sortingForm;
+        this.form = form;
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
-        sortingForm.addSortingColumn(null);
+    public void actionPerformed(@NotNull AnActionEvent e) {
+        form.addSortingColumn(null);
     }
 }

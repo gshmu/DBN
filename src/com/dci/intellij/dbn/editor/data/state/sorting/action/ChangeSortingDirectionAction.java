@@ -6,11 +6,12 @@ import com.dci.intellij.dbn.data.sorting.SortingInstruction;
 import com.dci.intellij.dbn.editor.data.state.sorting.ui.DatasetSortingColumnForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
 public class ChangeSortingDirectionAction extends DumbAwareAction {
-    private DatasetSortingColumnForm form;
+    private final DatasetSortingColumnForm form;
 
     public ChangeSortingDirectionAction(DatasetSortingColumnForm form) {
         this.form = form;
@@ -28,7 +29,7 @@ public class ChangeSortingDirectionAction extends DumbAwareAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         form.getSortingInstruction().switchDirection();
     }
 
