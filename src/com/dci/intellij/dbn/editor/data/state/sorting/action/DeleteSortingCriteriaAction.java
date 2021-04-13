@@ -4,9 +4,10 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.editor.data.state.sorting.ui.DatasetSortingColumnForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
+import org.jetbrains.annotations.NotNull;
 
 public class DeleteSortingCriteriaAction extends DumbAwareAction {
-    private DatasetSortingColumnForm form;
+    private final DatasetSortingColumnForm form;
 
     public DeleteSortingCriteriaAction(DatasetSortingColumnForm form) {
         this.form = form;
@@ -19,7 +20,7 @@ public class DeleteSortingCriteriaAction extends DumbAwareAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         form.remove();
     }
 
