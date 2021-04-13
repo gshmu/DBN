@@ -30,7 +30,9 @@ public interface ElementType extends Indexable, PropertyHolder<ElementTypeAttrib
     String getName();
 
     @NotNull
-    String getDebugName();
+    default String getDebugName() {
+        return getName();
+    }
 
     String getDescription();
 
