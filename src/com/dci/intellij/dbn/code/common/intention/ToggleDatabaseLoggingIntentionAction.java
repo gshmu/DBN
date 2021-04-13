@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.code.common.intention;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
@@ -51,7 +52,7 @@ public class ToggleDatabaseLoggingIntentionAction extends GenericIntentionAction
 
 
     ConnectionHandler getLastCheckedConnection() {
-        PsiFile psiFile = PsiFileRef.from(lastChecked);
+        PsiFile psiFile = Read.call(() -> PsiFileRef.from(lastChecked));
         if (psiFile != null) {
             ConnectionHandler connectionHandler = getConnectionHandler(psiFile);
             if (supportsLogging(connectionHandler)) {
