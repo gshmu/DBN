@@ -105,12 +105,6 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
         return idx;
     }
 
-    //@Override
-    @NotNull
-    public final String getDebugName() {
-        return getName();
-    }
-
     @Override
     public WrappingDefinition getWrapping() {
         return wrapping;
