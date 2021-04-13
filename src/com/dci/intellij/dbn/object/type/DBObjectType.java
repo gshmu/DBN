@@ -486,5 +486,4 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
         genericType.inheritingTypes.add(this);
     }
 
-
 }
