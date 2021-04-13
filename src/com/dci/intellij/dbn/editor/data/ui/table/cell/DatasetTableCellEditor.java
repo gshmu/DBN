@@ -80,7 +80,7 @@
             highlight(cell.hasError() ? HIGHLIGHT_TYPE_ERROR : HIGHLIGHT_TYPE_NONE);
             Object userValue = cell.getUserValue();
             if (genericDataType == GenericDataType.LITERAL) {
-                String value = (String) userValue;
+                String value = userValue == null ? null : userValue.toString();
                 setEditable(value == null || value.indexOf('\n') == -1);
             } else if (genericDataType.is(GenericDataType.DATE_TIME, GenericDataType.NUMERIC)) {
                 setEditable(true);
