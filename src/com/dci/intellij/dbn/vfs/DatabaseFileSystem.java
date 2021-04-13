@@ -497,7 +497,7 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
         databaseFile.setSelectedEditorProviderId(editorProviderId);
 
         invokeFileOpen(handle, () -> {
-            if (Failsafe.check(object)) {
+            if (Failsafe.check(object) && databaseFile.isValid()) {
                 // open / reopen (select) the file
                 if (isFileOpened(object) || promptFileOpen(databaseFile)) {
                     boolean focusEditor = handle.getEditorInstructions().isFocus();
