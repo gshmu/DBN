@@ -50,6 +50,7 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.SingleRootFileViewProvider;
@@ -372,12 +373,14 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
     @Nullable
     public static DBLanguagePsiFile createFromText(Project project, String fileName, DBLanguageDialect languageDialect, String text, ConnectionHandler activeConnection, SchemaId currentSchema) {
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(project);
-        DBLanguagePsiFile psiFile = (DBLanguagePsiFile) psiFileFactory.createFileFromText(fileName, languageDialect, text);
-        if (psiFile != null) {
+        PsiFile rawPsiFile = psiFileFactory.createFileFromText(fileName, languageDialect, text);
+        if (rawPsiFile instanceof DBLanguagePsiFile) {
+            DBLanguagePsiFile psiFile = (DBLanguagePsiFile) rawPsiFile;
             psiFile.setConnectionHandler(activeConnection);
             psiFile.setDatabaseSchema(currentSchema);
+            return psiFile;
         }
-        return psiFile;
+        return null;
     }
 
     public void lookupVariableDefinition(int offset, Consumer<BasePsiElement> consumer) {
