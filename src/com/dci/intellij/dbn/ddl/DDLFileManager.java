@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
-import com.dci.intellij.dbn.common.thread.Dispatch;
+import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseDDLInterface;
@@ -17,7 +17,6 @@ import com.dci.intellij.dbn.language.common.DBLanguageFileType;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
-import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -60,7 +59,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
 
     public void registerExtensions(DDLFileExtensionSettings settings) {
         Safe.queueRequest(extensionRegisterer, 0, false, () ->
-                Dispatch.run(() -> WriteCommandAction.writeCommandAction(getProject()).run(() -> {
+                Write.run(getProject(), () -> {
                     FileTypeManager fileTypeManager = FileTypeManager.getInstance();
                     List<DDLFileType> ddlFileTypeList = settings.getDDLFileTypes();
                     for (DDLFileType ddlFileType : ddlFileTypeList) {
@@ -68,7 +67,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
                             fileTypeManager.associateExtension(ddlFileType.getLanguageFileType(), extension);
                         }
                     }
-                })));
+                }));
     }
 
     public static DDLFileManager getInstance(@NotNull Project project) {
@@ -145,7 +144,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
                     }
                 }
 
-                Dispatch.run(() -> WriteCommandAction.writeCommandAction(getProject()).run(() -> {
+                Write.run(getProject(), () -> {
                     StringBuilder restoredAssociations = new StringBuilder();
                     for (String extension : ddlFileType.getExtensions()) {
                         if (!registeredExtension.contains(extension)) {
@@ -165,7 +164,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
                                         "They are registered as DDL file types in project \"" + getProject().getName() + "\".\n" +
                                         "Please remove them from project DDL configuration first (Project Settings > DB Navigator > DDL File Settings).");
                     }
-                }));
+                });
             }
 
         }
