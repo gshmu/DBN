@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.Context;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -38,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 import static com.intellij.openapi.diagnostic.SubmittedReportInfo.SubmissionStatus.FAILED;
 import static com.intellij.openapi.diagnostic.SubmittedReportInfo.SubmissionStatus.NEW_ISSUE;
 
@@ -101,7 +101,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         addEnvInfo(description, "DBN Version", localPluginVersion);
         addEnvInfo(description, "Database Version", connectionString == null ? "NA" : connectionString);
         addEnvInfo(description, "Driver Version", driverString == null ? "NA" : driverString);
-        addEnvInfo(description, "Last Action Id", IdeaLogger.ourLastActionId);
+        addEnvInfo(description, "Last Action Id", nvl(IdeaLogger.ourLastActionId, "NA"));
 
         if (StringUtil.isNotEmpty(additionalInfo)) {
             description.append(getMarkupElement(MarkupElement.PANEL, "User Message"));
@@ -205,7 +205,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
     public abstract String getTicketUrlStub();
     public abstract String getTicketUrl(String ticketId);
     public String getMarkupElement(MarkupElement element) {return getMarkupElement(element, null);}
-    public String getMarkupElement(MarkupElement element, String title) {return CommonUtil.nvl(title, "");}
+    public String getMarkupElement(MarkupElement element, String title) {return nvl(title, "");}
 
     @NotNull
     public abstract TicketResponse submit(@NotNull IdeaLoggingEvent[] events, String pluginVersion, String summary, String description) throws Exception;
