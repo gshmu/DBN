@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.dispose.Failsafe.nd;
+import static com.dci.intellij.dbn.common.dispose.Failsafe.nn;
 
 public class ProjectRef extends WeakRef<Project> {
     private ProjectRef(Project project) {
@@ -28,6 +28,6 @@ public class ProjectRef extends WeakRef<Project> {
     @NotNull
     @Override
     public Project ensure() {
-        return nd(super.ensure());
+        return nn(super.ensure());
     }
 }
