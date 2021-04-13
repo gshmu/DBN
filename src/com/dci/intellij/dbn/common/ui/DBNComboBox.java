@@ -126,7 +126,8 @@ public class DBNComboBox<T extends Presentable> extends JComboBox<T> implements 
                 preselect -> {
                     if (preselect instanceof DBNComboBox.SelectValueAction) {
                         SelectValueAction action = (SelectValueAction) preselect;
-                        return action.value.equals(getSelectedValue());
+                        T value = action.value;
+                        return value != null && value.equals(getSelectedValue());
                     }
                     return false;
                 });
