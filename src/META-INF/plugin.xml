@@ -567,7 +567,7 @@
         <fileTemplateGroup implementation="com.dci.intellij.dbn.common.file.DBNFileTemplateGroupDescriptorFactory"/>
         <statusBarWidgetFactory implementation="com.dci.intellij.dbn.editor.data.statusbar.DatasetEditorStatusBarWidgetFactory"/>
 
-
+        <applicationInitializedListener implementation="com.dci.intellij.dbn.options.DefaultProjectSettingsManager"/>
         <intentionAction>
             <className>com.dci.intellij.dbn.code.common.intention.ExecuteScriptIntentionAction</className>
             <category>Database/Script execution</category>
