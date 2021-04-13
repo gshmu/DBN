@@ -40,6 +40,7 @@ public class ChameleonElementType extends ILazyParseableElementType implements E
         return uniqueIndex;
     }
 
+    @NotNull
     @Override
     public String getId() {
         return "";
