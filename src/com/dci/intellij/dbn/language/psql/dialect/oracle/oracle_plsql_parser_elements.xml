@@ -5763,9 +5763,9 @@
                     <token id="000003007" type-id="FN_DEREF" />
                     <token flavor="function" id="000003008" type-id="KW_REF" />
                     <token id="000003009" type-id="FN_REFTOHEX" />
-                    <token id="000003010" type-id="KW_VALUE" />
+                    <token flavor="function" id="000003010" type-id="KW_VALUE" />
                 </one-of>
-                <wrapper id="000003011" template="PARENTHESES">
+                <wrapper id="000003011" template="PARENTHESES" optional="true">
                     <element ref-id="expression" />
                 </wrapper>
             </sequence>
