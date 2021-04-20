@@ -49,8 +49,11 @@ public class DefaultProjectSettingsManager implements ApplicationComponent, Pers
     @Nullable
     @Override
     public Element getState() {
-        if (LoadingState.COMPONENTS_LOADED.isOccurred()) {
-            ProjectSettings projectSettings = getDefaultProjectSettings();
+        ProjectSettings projectSettings = LoadingState.COMPONENTS_LOADED.isOccurred() ?
+                getDefaultProjectSettings() :
+                defaultProjectSettings.value();
+
+        if (projectSettings != null) {
             Element element = new Element("state");
             projectSettings.writeConfiguration(element);
             return element;
