@@ -69,13 +69,8 @@ import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.List;
 
-import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.CONNECTED;
-import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.LOADED;
-import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.LOADING;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.DELIBERATE_ACTION;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.PRESERVE_CHANGES;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.REBUILD;
-import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.USE_CURRENT_FILTER;
+import static com.dci.intellij.dbn.editor.data.DatasetEditorStatus.*;
+import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
 
@@ -379,7 +374,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
                                             "The operation was timed out. Please check your timeout configuration in Data Editor settings." :
                                             "Filter \"" + filter.getName() + "\" may be invalid.\n" +
                                                     "Database error message: " + e.getMessage());
-                    String[] options = {"Edit filter", "Remove filter", "Ignore filter", "Cancel"};
+                    String[] options = {"Retry", "Edit filter", "Remove filter", "Ignore filter", "Cancel"};
 
                     MessageUtil.showErrorDialog(project, "Error", message, options, 0,
                             (option) -> {
@@ -387,14 +382,16 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
                                 instructions.setDeliberateAction(true);
 
                                 if (option == 0) {
+                                    loadData(instructions);
+                                } else if (option == 1) {
                                     filterManager.openFiltersDialog(dataset, false, false, DatasetFilterType.NONE);
                                     instructions.setUseCurrentFilter(true);
                                     loadData(instructions);
-                                } else if (option == 1) {
+                                } else if (option == 2) {
                                     filterManager.setActiveFilter(dataset, null);
                                     instructions.setUseCurrentFilter(true);
                                     loadData(instructions);
-                                } else if (option == 2) {
+                                } else if (option == 3) {
                                     filter.setError(e.getMessage());
                                     instructions.setUseCurrentFilter(false);
                                     loadData(instructions);
