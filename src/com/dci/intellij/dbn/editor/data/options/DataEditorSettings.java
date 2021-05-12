@@ -11,13 +11,14 @@ import com.intellij.openapi.project.Project;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
 public class DataEditorSettings extends CompositeProjectConfiguration<ProjectSettings, DataEditorSettingsForm> implements TopLevelConfig {
-    private final @Getter DataEditorPopupSettings popupSettings                       = new DataEditorPopupSettings(this);
-    private final @Getter DataEditorValueListPopupSettings valueListPopupSettings     = new DataEditorValueListPopupSettings(this);
-    private final @Getter DataEditorFilterSettings filterSettings                     = new DataEditorFilterSettings(this);
-    private final @Getter DataEditorGeneralSettings generalSettings                   = new DataEditorGeneralSettings(this);
-    private final @Getter DataEditorQualifiedEditorSettings qualifiedEditorSettings   = new DataEditorQualifiedEditorSettings(this);
-    private final @Getter DataEditorRecordNavigationSettings recordNavigationSettings = new DataEditorRecordNavigationSettings(this);
+    private final DataEditorPopupSettings popupSettings                       = new DataEditorPopupSettings(this);
+    private final DataEditorValueListPopupSettings valueListPopupSettings     = new DataEditorValueListPopupSettings(this);
+    private final DataEditorFilterSettings filterSettings                     = new DataEditorFilterSettings(this);
+    private final DataEditorGeneralSettings generalSettings                   = new DataEditorGeneralSettings(this);
+    private final DataEditorQualifiedEditorSettings qualifiedEditorSettings   = new DataEditorQualifiedEditorSettings(this);
+    private final DataEditorRecordNavigationSettings recordNavigationSettings = new DataEditorRecordNavigationSettings(this);
 
     public DataEditorSettings(ProjectSettings parent) {
         super(parent);

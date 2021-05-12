@@ -6,6 +6,8 @@ import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorQualifiedEditorSettingsForm;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +15,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 public class DataEditorQualifiedEditorSettings extends BasicConfiguration<DataEditorSettings, DataEditorQualifiedEditorSettingsForm> {
     private final Latent<List<TextContentType>> contentTypes = Latent.basic(() -> {
         List<TextContentType> contentTypes = new ArrayList<>();
@@ -87,14 +91,6 @@ public class DataEditorQualifiedEditorSettings extends BasicConfiguration<DataEd
             }
         }
         return null;
-    }
-
-    public int getTextLengthThreshold() {
-        return textLengthThreshold;
-    }
-
-    public void setTextLengthThreshold(int textLengthThreshold) {
-        this.textLengthThreshold = textLengthThreshold;
     }
 
     /****************************************************

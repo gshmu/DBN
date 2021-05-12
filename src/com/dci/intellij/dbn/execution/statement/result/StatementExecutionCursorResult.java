@@ -36,8 +36,10 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
             DBNResultSet resultSet,
             int updateCount) throws SQLException {
         super(executionProcessor, resultName, updateCount);
-        int fetchBlockSize = getQueryExecutionSettings().getResultSetFetchBlockSize();
-        dataModel = new ResultSetDataModel<>(resultSet, executionProcessor.getConnectionHandler(), fetchBlockSize);
+
+        ConnectionHandler connectionHandler = Failsafe.nd(executionProcessor.getConnectionHandler());
+        int fetchBlockSize = executionProcessor.getExecutionInput().getResultSetFetchBlockSize();
+        dataModel = new ResultSetDataModel<>(resultSet, connectionHandler, fetchBlockSize);
     }
 
     private StatementExecutionSettings getQueryExecutionSettings() {
@@ -124,7 +126,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
                         resultForm.highlightLoading(true);
                         try {
                             if (hasResult() && !dataModel.isResultSetExhausted()) {
-                                int fetchBlockSize = getQueryExecutionSettings().getResultSetFetchBlockSize();
+                                int fetchBlockSize = getExecutionInput().getResultSetFetchBlockSize();
                                 dataModel.fetchNextRecords(fetchBlockSize, false);
                                 //tResult.accommodateColumnsSize();
                                 if (dataModel.isResultSetExhausted()) {

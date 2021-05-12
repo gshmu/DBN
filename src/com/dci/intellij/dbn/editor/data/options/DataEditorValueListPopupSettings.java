@@ -3,9 +3,13 @@ package com.dci.intellij.dbn.editor.data.options;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.editor.data.options.ui.DatatEditorValueListPopupSettingsForm;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Setter
 public class DataEditorValueListPopupSettings extends BasicConfiguration<DataEditorSettings, DatatEditorValueListPopupSettingsForm> {
     private boolean showPopupButton = true;
     private int elementCountThreshold = 1000;
@@ -23,33 +27,6 @@ public class DataEditorValueListPopupSettings extends BasicConfiguration<DataEdi
     @Override
     public String getHelpTopic() {
         return "dataEditor";
-    }
-
-    /*********************************************************
-    *                       Settings                        *
-    *********************************************************/
-    public boolean isShowPopupButton() {
-        return showPopupButton;
-    }
-
-    public void setShowPopupButton(boolean showPopupButton) {
-        this.showPopupButton = showPopupButton;
-    }
-
-    public int getElementCountThreshold() {
-        return elementCountThreshold;
-    }
-
-    public void setElementCountThreshold(int elementCountThreshold) {
-        this.elementCountThreshold = elementCountThreshold;
-    }
-
-    public int getDataLengthThreshold() {
-        return dataLengthThreshold;
-    }
-
-    public void setDataLengthThreshold(int dataLengthThreshold) {
-        this.dataLengthThreshold = dataLengthThreshold;
     }
 
     /****************************************************

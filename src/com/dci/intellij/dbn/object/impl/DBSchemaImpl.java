@@ -248,7 +248,7 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
 
     @Override
     public List<DBIndex> getIndexes() {
-        return (List<DBIndex>) initChildObjects().getObjects(INDEX, true);
+        return initChildObjects().getObjects(INDEX, true);
     }
 
     @Override
@@ -278,12 +278,12 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
 
     @Override
     public List<DBDatasetTrigger> getDatasetTriggers() {
-        return (List<DBDatasetTrigger>) initChildObjects().getObjects(DATASET_TRIGGER, true);
+        return initChildObjects().getObjects(DATASET_TRIGGER, true);
     }
 
     @Override
     public List<DBDatabaseTrigger> getDatabaseTriggers() {
-        return (List<DBDatabaseTrigger>) initChildObjects().getObjects(DATABASE_TRIGGER, false);
+        return initChildObjects().getObjects(DATABASE_TRIGGER, false);
     }
 
     @Override
@@ -525,13 +525,13 @@ public class DBSchemaImpl extends DBObjectImpl<DBSchemaMetadata> implements DBSc
         return updater.getRefreshNodes();
     }
 
-    class ObjectStatusUpdater extends Base implements DBObjectListVisitor {
+    static class ObjectStatusUpdater extends Base implements DBObjectListVisitor {
         private final Set<BrowserTreeNode> refreshNodes = new HashSet<>();
 
         @Override
-        public void visit(DBObjectList<DBObject> objectList) {
+        public void visit(DBObjectList<?> objectList) {
             if (objectList.isLoaded() && !objectList.isDirty() && !objectList.isLoading()) {
-                List<DBObject> objects = objectList.getObjects();
+                List<DBObject> objects = (List<DBObject>) objectList.getObjects();
                 for (DBObject object : objects) {
                     checkDisposed();
                     ProgressMonitor.checkCancelled();
