@@ -80,6 +80,7 @@ public class StatementExecutionCursorResult extends StatementExecutionBasicResul
                                     DBNConnection connection = connectionHandler.getMainConnection(currentSchema);
                                     DBNStatement<?> statement = connection.createStatement();
                                     statement.setQueryTimeout(executionInput.getExecutionTimeout());
+                                    statement.setFetchSize(executionInput.getResultSetFetchBlockSize());
                                     statement.execute(executionInput.getExecutableStatementText());
                                     DBNResultSet resultSet = statement.getResultSet();
                                     if (resultSet != null) {
