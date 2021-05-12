@@ -30,7 +30,7 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
     }
 
     @Override
-    public void visit(DBObjectList<DBObject> objectList) {
+    public void visit(DBObjectList<?> objectList) {
         if (isScannable(objectList)) {
             boolean sync = objectList.isLoaded();
             if (!sync) {
@@ -51,7 +51,7 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
         }
     }
 
-    private void doVisit(DBObjectList<DBObject> objectList) {
+    private void doVisit(DBObjectList<?> objectList) {
         DBObjectType objectType = objectList.getObjectType();
         boolean lookupEnabled = model.isObjectLookupEnabled(objectType);
         for (DBObject object : objectList.getObjects()) {
@@ -93,7 +93,7 @@ class DBObjectLookupScanner extends StatefulDisposable.Base implements DBObjectL
         asyncScanner.awaitCompletion();
     }
 
-    private boolean isScannable(DBObjectList<DBObject> objectList) {
+    private boolean isScannable(DBObjectList<?> objectList) {
         if (objectList != null) {
             DBObjectType objectType = objectList.getObjectType();
             if (model.isListLookupEnabled(objectType)) {

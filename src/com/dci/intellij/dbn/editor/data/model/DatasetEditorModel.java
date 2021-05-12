@@ -211,6 +211,7 @@ public class DatasetEditorModel
             statement.setQueryTimeout(timeout);
         }
 
+        statement.setFetchSize(getSettings().getGeneralSettings().getFetchBlockSize().value());
         return statement.executeQuery(selectStatement);
     }
 
