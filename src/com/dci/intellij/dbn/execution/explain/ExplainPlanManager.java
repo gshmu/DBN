@@ -80,6 +80,7 @@ public class ExplainPlanManager extends AbstractProjectComponent {
                                                         String explainPlanStatementPrefix = compatibilityInterface.getExplainPlanStatementPrefix();
                                                         String explainPlanQuery = explainPlanStatementPrefix + "\n" + executable.prepareStatementText();
                                                         statement = connection.createStatement();
+                                                        statement.setFetchSize(500);
                                                         statement.execute(explainPlanQuery);
 
                                                         resultSet = metadataInterface.loadExplainPlan(connection);

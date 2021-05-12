@@ -436,9 +436,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
         DBNConnection connection = context.getConnection();
         DBNStatement statement = connection.createStatement();
 
-
-        int fetchSize = executionInput.getResultSetFetchBlockSize();
-        statement.setFetchSize(fetchSize);
+        statement.setFetchSize(executionInput.getResultSetFetchBlockSize());
         context.setStatement(statement);
 
         int timeout = context.getTimeout();
