@@ -19,20 +19,19 @@ import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static com.dci.intellij.dbn.common.dispose.Failsafe.check;
 
 public class DBObjectListContainer extends StatefulDisposable.Base implements StatefulDisposable, Compactable {
     private GenericDatabaseElement owner;
-    private Map<DBObjectType, DBObjectList<DBObject>> objectLists;
+    private List<DBObjectList<?>> objectLists;
 
     public DBObjectListContainer(@NotNull GenericDatabaseElement owner) {
         this.owner = owner;
@@ -44,15 +43,15 @@ public class DBObjectListContainer extends StatefulDisposable.Base implements St
     }
 
     @Nullable
-    public Collection<DBObjectList<DBObject>> getObjectLists() {
-        return objectLists == null ? null : objectLists.values();
+    public Collection<DBObjectList<?>> getObjectLists() {
+        return objectLists;
     }
 
     public void visitLists(@NotNull DBObjectListVisitor visitor, boolean visitInternal) {
         if (objectLists != null) {
             Safe.run(() -> {
                 checkDisposed(visitor);
-                for (DBObjectList<DBObject> objectList : objectLists.values()) {
+                for (DBObjectList<?> objectList : objectLists) {
                     if (check(objectList) && (visitInternal || !objectList.isInternal())) {
                         checkDisposed(visitor);
                         ProgressMonitor.checkCancelled();
@@ -70,7 +69,7 @@ public class DBObjectListContainer extends StatefulDisposable.Base implements St
     }
 
     @NotNull
-    public List<? extends DBObject> getObjects(DBObjectType objectType, boolean internal) {
+    public <T extends DBObject> List<T> getObjects(DBObjectType objectType, boolean internal) {
         DBObjectList objectList = internal ?
                 getInternalObjectList(objectType) :
                 getObjectList(objectType);
@@ -82,23 +81,24 @@ public class DBObjectListContainer extends StatefulDisposable.Base implements St
     }
 
     @Nullable
-    public DBObjectList getObjectList(DBObjectType objectType) {
-        if (objectLists != null) {
-            DBObjectList<DBObject> objectList = objectLists.get(objectType);
-            if (check(objectList) && !objectList.isInternal()) {
-                return objectList;
-            }
+    private <T extends DBObject> DBObjectList<T> findObjectList(DBObjectType objectType) {
+        return objectLists == null ? null : (DBObjectList<T>) objectLists.stream().filter(list -> list.getObjectType() == objectType).findFirst().orElse(null);
+    }
+
+    @Nullable
+    public <T extends DBObject> DBObjectList<T> getObjectList(DBObjectType objectType) {
+        DBObjectList<T> objectList = findObjectList(objectType);
+        if (check(objectList) && !objectList.isInternal()) {
+            return objectList;
         }
         return null;
     }
 
     @Nullable
-    public DBObjectList getInternalObjectList(DBObjectType objectType) {
-        if (objectLists != null) {
-            DBObjectList<DBObject> objectList = objectLists.get(objectType);
-            if (check(objectList) && objectList.isInternal()) {
-                return objectList;
-            }
+    public <T extends DBObject> DBObjectList<T> getInternalObjectList(DBObjectType objectType) {
+        DBObjectList<T> objectList = findObjectList(objectType);
+        if (check(objectList) && objectList.isInternal()) {
+            return objectList;
         }
         return null;
     }
@@ -149,7 +149,7 @@ public class DBObjectListContainer extends StatefulDisposable.Base implements St
 
     public DBObject getObject(String name, short overload) {
         if (objectLists != null) {
-            for (DBObjectList objectList : objectLists.values()) {
+            for (DBObjectList objectList : objectLists) {
                 DBObject object = objectList.getObject(name, overload);
                 if (object != null) {
                     return object;
@@ -162,7 +162,7 @@ public class DBObjectListContainer extends StatefulDisposable.Base implements St
     @Nullable
     public DBObject getObjectForParentType(DBObjectType parentObjectType, String name, short overload, boolean lookupInternal) {
         if (objectLists != null) {
-            for (DBObjectList objectList : objectLists.values()) {
+            for (DBObjectList objectList : objectLists) {
                 if ((!objectList.isInternal() || lookupInternal) && check(objectList)) {
                     DBObjectType objectType = objectList.getObjectType();
                     if (objectType.getParents().contains(parentObjectType)) {
@@ -187,7 +187,7 @@ public class DBObjectListContainer extends StatefulDisposable.Base implements St
 
     public DBObject getObjectNoLoad(String name, short overload) {
         if (objectLists != null) {
-            for (DBObjectList objectList : objectLists.values()) {
+            for (DBObjectList objectList : objectLists) {
                 if (check(objectList) && objectList.isLoaded() && !objectList.isDirty()) {
                     DBObject object = objectList.getObject(name, overload);
                     if (object != null) {
@@ -289,17 +289,17 @@ public class DBObjectListContainer extends StatefulDisposable.Base implements St
         return objectList;
     }
 
-    public void addObjectList(DBObjectList objectList) {
+    public void addObjectList(DBObjectList<?> objectList) {
         if (objectList != null) {
             // enum map holds an array of all enum elements!!
-            if (objectLists == null) objectLists = new THashMap<>();
-            objectLists.put(objectList.getObjectType(), objectList);
+            if (objectLists == null) objectLists = new ArrayList<>();
+            objectLists.add(objectList);
         }
     }
 
     public void reload() {
         if (objectLists != null)  {
-            for (DBObjectList objectList : objectLists.values()) {
+            for (DBObjectList objectList : objectLists) {
                 objectList.reload();
                 checkDisposed();
             }
@@ -308,7 +308,7 @@ public class DBObjectListContainer extends StatefulDisposable.Base implements St
 
     public void refresh() {
         if (objectLists != null)  {
-            for (DBObjectList objectList : objectLists.values()) {
+            for (DBObjectList objectList : objectLists) {
                 if (check(objectList)) {
                     objectList.refresh();
                     checkDisposed();
@@ -319,7 +319,7 @@ public class DBObjectListContainer extends StatefulDisposable.Base implements St
 
     public void load() {
         if (objectLists != null)  {
-            for (DBObjectList objectList : objectLists.values()) {
+            for (DBObjectList objectList : objectLists) {
                 if (!objectList.isInternal()) {
                     objectList.ensure();
                 }

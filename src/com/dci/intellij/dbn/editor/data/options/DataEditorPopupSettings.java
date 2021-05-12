@@ -3,9 +3,13 @@ package com.dci.intellij.dbn.editor.data.options;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorPopupSettingsForm;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Setter
 public class DataEditorPopupSettings extends BasicConfiguration<DataEditorSettings, DataEditorPopupSettingsForm> {
     private boolean active = false;
     private boolean activeIfEmpty = false;
@@ -14,38 +18,6 @@ public class DataEditorPopupSettings extends BasicConfiguration<DataEditorSettin
 
     public DataEditorPopupSettings(DataEditorSettings parent) {
         super(parent);
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public boolean isActiveIfEmpty() {
-        return activeIfEmpty;
-    }
-
-    public void setActiveIfEmpty(boolean activeIfEmpty) {
-        this.activeIfEmpty = activeIfEmpty;
-    }
-
-    public int getDataLengthThreshold() {
-        return dataLengthThreshold;
-    }
-
-    public void setDataLengthThreshold(int dataLengthThreshold) {
-        this.dataLengthThreshold = dataLengthThreshold;
-    }
-
-    public int getDelay() {
-        return delay;
-    }
-
-    public void setDelay(int delay) {
-        this.delay = delay;
     }
 
     @Override

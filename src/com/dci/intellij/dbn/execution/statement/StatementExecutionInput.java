@@ -15,6 +15,8 @@ import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionOption;
 import com.dci.intellij.dbn.execution.ExecutionTarget;
 import com.dci.intellij.dbn.execution.LocalExecutionInput;
+import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
+import com.dci.intellij.dbn.execution.statement.options.StatementExecutionSettings;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.execution.statement.variables.StatementExecutionVariablesBundle;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -212,5 +214,15 @@ public class StatementExecutionInput extends LocalExecutionInput {
     public boolean isDatabaseLogProducer() {
         ExecutablePsiElement executablePsiElement = getExecutablePsiElement();
         return executablePsiElement != null && executablePsiElement.elementType.is(ElementTypeAttribute.DATABASE_LOG_PRODUCER);
+    }
+
+
+    public StatementExecutionSettings getStatementExecutionSettings() {
+        ExecutionEngineSettings settings = ExecutionEngineSettings.getInstance(getProject());
+        return settings.getStatementExecutionSettings();
+    }
+
+    public int getResultSetFetchBlockSize() {
+        return getStatementExecutionSettings().getResultSetFetchBlockSize();
     }
 }

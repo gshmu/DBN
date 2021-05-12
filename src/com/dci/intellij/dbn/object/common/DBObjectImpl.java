@@ -487,7 +487,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
             }
         } else if (childObjects != null) {
             if (objectType == DBObjectType.ANY) {
-                for (DBObjectList<DBObject> objectList : childObjects.getObjectLists()) {
+                for (DBObjectList<?> objectList : childObjects.getObjectLists()) {
                     CancellableConsumer.checkCancelled(consumer);
                     if (!objectList.isInternal() && Failsafe.check(objectList)) {
                         objectList.collectObjects(consumer);

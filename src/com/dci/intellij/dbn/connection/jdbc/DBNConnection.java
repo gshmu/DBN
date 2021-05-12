@@ -57,6 +57,7 @@ public class DBNConnection extends DBNConnectionBase {
             MapLatent.create(sql -> {
                 DBNPreparedStatement preparedStatement = prepareStatement(sql);
                 preparedStatement.setCached(true);
+                preparedStatement.setFetchSize(10000);
                 return preparedStatement;
             });
 

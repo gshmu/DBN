@@ -4,9 +4,13 @@ import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilterType;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorFilterSettingsForm;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Setter
 public class DataEditorFilterSettings extends BasicConfiguration<DataEditorSettings, DataEditorFilterSettingsForm> {
     private boolean promptFilterDialog = true;
     private DatasetFilterType defaultFilterType = DatasetFilterType.BASIC;
@@ -23,26 +27,6 @@ public class DataEditorFilterSettings extends BasicConfiguration<DataEditorSetti
     @Override
     public String getHelpTopic() {
         return "dataEditor";
-    }
-
-    /*********************************************************
-     *                       Custom                          *
-     *********************************************************/
-
-    public boolean isPromptFilterDialog() {
-        return promptFilterDialog;
-    }
-
-    public void setPromptFilterDialog(boolean promptFilterDialog) {
-        this.promptFilterDialog = promptFilterDialog;
-    }
-
-    public DatasetFilterType getDefaultFilterType() {
-        return defaultFilterType;
-    }
-
-    public void setDefaultFilterType(DatasetFilterType defaultFilterType) {
-        this.defaultFilterType = defaultFilterType;
     }
 
     /****************************************************
