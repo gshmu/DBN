@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSetting
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.routine.AsyncTaskExecutor;
+import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.thread.ThreadPool;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -137,7 +138,7 @@ public class CodeCompletionContext {
     }
 
     public void queue(Runnable runnable) {
-        queue.submit(runnable);
+        queue.submit(() -> Read.run(runnable));
     }
 
     public void awaitCompletion() {
