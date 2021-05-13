@@ -19,11 +19,17 @@ import org.jetbrains.annotations.Nullable;
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
 public class DefaultProjectSettingsManager implements ApplicationComponent, PersistentStateComponent<Element> {
+    private Element stateCapture;
 
     private final Latent<ProjectSettings> defaultProjectSettings = Latent.basic(() ->  {
         ProjectManager projectManager = ProjectManager.getInstance();
         Project defaultProject = projectManager.getDefaultProject();
-        return new ProjectSettings(defaultProject);
+        ProjectSettings projectSettings = new ProjectSettings(defaultProject);
+        if (stateCapture != null) {
+            projectSettings.readConfiguration(stateCapture);
+            stateCapture = null;
+        }
+        return projectSettings;
     });
 
     private DefaultProjectSettingsManager() {}
@@ -49,21 +55,34 @@ public class DefaultProjectSettingsManager implements ApplicationComponent, Pers
     @Nullable
     @Override
     public Element getState() {
-        ProjectSettings projectSettings = LoadingState.COMPONENTS_LOADED.isOccurred() ?
-                getDefaultProjectSettings() :
-                defaultProjectSettings.value();
-
+        ProjectSettings projectSettings = attemptLoadProjectSettings();
         if (projectSettings != null) {
             Element element = new Element("state");
             projectSettings.writeConfiguration(element);
             return element;
+        } else {
+            return stateCapture;
         }
-        return null;
     }
+
 
     @Override
     public void loadState(@NotNull Element element) {
-        ProjectSettings projectSettings = getDefaultProjectSettings();
-        projectSettings.readConfiguration(element);
+        ProjectSettings projectSettings = attemptLoadProjectSettings();
+        if (projectSettings != null) {
+            projectSettings.readConfiguration(element);
+            stateCapture = null;
+        } else {
+            stateCapture = element;
+        }
     }
+
+    @Nullable
+    private ProjectSettings attemptLoadProjectSettings() {
+        return LoadingState.COMPONENTS_LOADED.isOccurred() ?
+                getDefaultProjectSettings() :
+                defaultProjectSettings.value();
+    }
+
+
 }
