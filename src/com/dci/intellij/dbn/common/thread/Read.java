@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
-import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -13,8 +12,7 @@ public interface Read {
     }
 
     static <T> T call(ThrowableCallable<T, RuntimeException> callable, T defaultValue) {
-        Application application = ApplicationManager.getApplication();
-        return application.runReadAction((Computable<T>) () -> {
+        return getApplication().runReadAction((Computable<T>) () -> {
             try {
                 return callable.call();
             } catch (ProcessCanceledException ignore) {
@@ -23,12 +21,38 @@ public interface Read {
         });
     }
 
-    static void run(ThrowableRunnable<RuntimeException> runnable) {
-        Application application = ApplicationManager.getApplication();
+    static <T> T conditional(ThrowableCallable<T, RuntimeException> callable) {
+        if (getApplication().isReadAccessAllowed()) {
+            return callable.call();
+        } else {
+            return call(callable);
+        }
+    }
+
+
+    static <T> T conditional(ThrowableCallable<T, RuntimeException> callable, T defaultValue) {
+        if (getApplication().isReadAccessAllowed()) {
+            try {
+                return callable.call();
+            } catch (ProcessCanceledException e) {
+                return defaultValue;
+            }
+        } else {
+            return call(callable, defaultValue);
+        }
+    }
+
+    static void run(Runnable runnable) {
+        Application application = getApplication();
         application.runReadAction(() -> {
             try {
                 runnable.run();
             } catch (ProcessCanceledException ignore) {}
         });
+    }
+
+
+    static Application getApplication() {
+        return ApplicationManager.getApplication();
     }
 }
