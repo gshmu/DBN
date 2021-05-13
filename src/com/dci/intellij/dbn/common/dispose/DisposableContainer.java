@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.dispose;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -26,13 +25,13 @@ public interface DisposableContainer {
     abstract class Impl {
         private static class DisposableList<T extends Disposable> extends ArrayList<T> implements Disposable{
             public DisposableList(@NotNull Disposable parent) {
-                Disposer.register(parent, this);
+                SafeDisposer.register(parent, this);
             }
 
             @Override
             public void dispose() {
                 for (T disposable : this) {
-                    Disposer.dispose(disposable);
+                    SafeDisposer.dispose(disposable);
                 }
                 clear();
             }
@@ -40,7 +39,7 @@ public interface DisposableContainer {
             @Override
             public T remove(int index) {
                 T removed = super.remove(index);
-                Disposer.dispose(removed);
+                SafeDisposer.dispose(removed);
                 return removed;
             }
 
@@ -49,7 +48,7 @@ public interface DisposableContainer {
                 boolean removed = super.remove(o);
                 if (removed && o instanceof Disposable) {
                     Disposable disposable = (Disposable) o;
-                    Disposer.dispose(disposable);
+                    SafeDisposer.dispose(disposable);
                 }
                 return removed;
             }
@@ -57,13 +56,13 @@ public interface DisposableContainer {
 
         private static class DisposableConcurrentList<T extends Disposable> extends CopyOnWriteArrayList<T> implements Disposable{
             public DisposableConcurrentList(@NotNull Disposable parent) {
-                Disposer.register(parent, this);
+                SafeDisposer.register(parent, this);
             }
 
             @Override
             public void dispose() {
                 for (T disposable : this) {
-                    Disposer.dispose(disposable);
+                    SafeDisposer.dispose(disposable);
                 }
                 clear();
             }
@@ -71,7 +70,7 @@ public interface DisposableContainer {
             @Override
             public T remove(int index) {
                 T removed = super.remove(index);
-                Disposer.dispose(removed);
+                SafeDisposer.dispose(removed);
                 return removed;
             }
 
@@ -80,7 +79,7 @@ public interface DisposableContainer {
                 boolean removed = super.remove(o);
                 if (removed && o instanceof Disposable) {
                     Disposable disposable = (Disposable) o;
-                    Disposer.dispose(disposable);
+                    SafeDisposer.dispose(disposable);
                 }
                 return removed;
             }
@@ -89,13 +88,13 @@ public interface DisposableContainer {
 
         private static class DisposableMap<K, V extends Disposable> extends HashMap<K, V> implements Disposable{
             public DisposableMap(@NotNull Disposable parent) {
-                Disposer.register(parent, this);
+                SafeDisposer.register(parent, this);
             }
 
             @Override
             public void dispose() {
                 for (V disposable : values()) {
-                    Disposer.dispose(disposable);
+                    SafeDisposer.dispose(disposable);
                 }
                 clear();
             }
@@ -105,7 +104,7 @@ public interface DisposableContainer {
                 boolean removed = super.remove(key, value);
                 if (removed && value instanceof Disposable) {
                     Disposable disposable = (Disposable) value;
-                    Disposer.dispose(disposable);
+                    SafeDisposer.dispose(disposable);
                 }
                 return removed;
             }
