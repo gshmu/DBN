@@ -2,11 +2,11 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.2.3225.0</version>
+    <version>3.2.3351.0</version>
     <category>Database</category>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
-    <depends optional="true" config-file="JavaPlugin.xml">com.intellij.modules.java</depends>
+    <depends optional="true" config-file="dbn-java-support.xml">com.intellij.modules.java</depends>
     <vendor email="dancioca@bluewin.ch" logo="/img/project/DatabaseNavigator.png">Dan Cioca</vendor>
     <idea-version since-build="200.0001" until-build="211.*"/>
     <description><![CDATA[
@@ -31,7 +31,7 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.2.3225</b>
+            <li><b>3.2.3351</b>
             <ul>
                 <li>Bug fixes
             </ul>
@@ -446,8 +446,6 @@
         <!--<applicationInitializedListener implementation="com.dci.intellij.dbn.init.DatabaseNavigatorInitializer"/>-->
         <virtualFileSystem implementationClass="com.dci.intellij.dbn.vfs.DatabaseFileSystem" key="db" physical="false"/>
 
-        <debugger.nodeRenderer order="first" implementation="com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpNodeRenderer"/>
-        <debugger.positionManagerFactory id="dbJdwpPositionManagerFactory" order="first" implementation="com.dci.intellij.dbn.debugger.jdwp.frame.DBJdwpDebugPositionManagerFactory"/>
         <spellchecker.support language="DBN-SQL" implementationClass="com.dci.intellij.dbn.language.sql.SQLSpellcheckingStrategy"/>
         <spellchecker.support language="DBN-PSQL" implementationClass="com.dci.intellij.dbn.language.psql.PSQLSpellcheckingStrategy"/>
 
@@ -527,8 +525,6 @@
         <xdebugger.breakpointType implementation="com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointType"/>
         <programRunner implementation="com.dci.intellij.dbn.debugger.jdbc.process.DBMethodJdbcRunner"/>
         <programRunner implementation="com.dci.intellij.dbn.debugger.jdbc.process.DBStatementJdbcRunner"/>
-        <programRunner implementation="com.dci.intellij.dbn.debugger.jdwp.process.DBMethodJdwpRunner"/>
-        <programRunner implementation="com.dci.intellij.dbn.debugger.jdwp.process.DBStatementJdwpRunner"/>
         <!--<executionTargetProvider implementation="com.dci.intellij.dbn.debugger.jdbc.execution.common.DBExecutionTargetProvider"/>-->
         <configurationType implementation="com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigType"/>
         <configurationType implementation="com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfigType"/>
