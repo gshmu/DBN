@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common;
 import com.dci.intellij.dbn.common.event.ApplicationEvents;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
 import com.intellij.openapi.Disposable;
@@ -98,7 +99,7 @@ public interface Colors {
 
         UIManager.addPropertyChangeListener(evt -> {
             if ("lookAndFeel".equals(evt.getPropertyName())) {
-                runnable.run();
+                Safe.run(runnable);
             }
         });
     }
