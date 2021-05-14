@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.action;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.CommonUtil;
+import com.dci.intellij.dbn.common.util.Safe;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -49,7 +50,7 @@ public abstract class ProjectAction extends AnAction {
         try {
             Project project = Lookup.getProject(e);
             if (Failsafe.check(project)) {
-                update(e, project);
+                Safe.run(() -> update(e, project));
             }
         } catch (ProcessCanceledException ignore){}
     }
