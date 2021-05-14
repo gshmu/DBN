@@ -73,7 +73,7 @@ public class BasicDataModelRow<
     @Nullable
     @Override
     public C getCellAtIndex(int index) {
-        return cells.size() > index ? cells.get(index) : null;
+        return index > -1 && cells.size() > index ? cells.get(index) : null;
     }
 
     @Override
