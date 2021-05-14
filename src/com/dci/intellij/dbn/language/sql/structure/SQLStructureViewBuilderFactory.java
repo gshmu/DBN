@@ -26,7 +26,7 @@ public class SQLStructureViewBuilderFactory implements PsiStructureViewFactory {
             @NotNull
             @Override
             public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
-                return Read.call(() -> {
+                return Read.conditional(() -> {
                     try {
                         return !psiFile.isValid() ||
                                 psiFile.getProject().isDisposed() ||
