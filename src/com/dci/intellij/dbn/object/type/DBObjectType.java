@@ -10,14 +10,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public enum DBObjectType implements DynamicContentType<DBObjectType> {
     
@@ -447,7 +440,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
 
     public static DBObjectType forListName(String name, DBObjectType parent) {
         for (DBObjectType objectType : values()) {
-            if (objectType.getListName().equals(name) && (parent == null || objectType.getParents().contains(parent))) {
+            if (Objects.equals(objectType.getListName(), name) && (parent == null || objectType.getParents().contains(parent))) {
                 return objectType;
             }
         }
