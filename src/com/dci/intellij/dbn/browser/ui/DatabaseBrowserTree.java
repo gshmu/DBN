@@ -3,11 +3,7 @@ package com.dci.intellij.dbn.browser.ui;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.TreeNavigationHistory;
-import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
-import com.dci.intellij.dbn.browser.model.BrowserTreeModel;
-import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
-import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
-import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
+import com.dci.intellij.dbn.browser.model.*;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -46,13 +42,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
 public final class DatabaseBrowserTree extends DBNTree {
     private BrowserTreeNode targetSelection;
@@ -179,7 +169,7 @@ public final class DatabaseBrowserTree extends DBNTree {
 
             if (pathBounds != null) {
                 Point mouseLocation = GUIUtil.getRelativeMouseLocation(event.getComponent());
-                if (pathBounds.contains(mouseLocation)) {
+                if (mouseLocation != null && pathBounds.contains(mouseLocation)) {
                     Object object = path.getLastPathComponent();
                     if (object instanceof ToolTipProvider) {
                         ToolTipProvider toolTipProvider = (ToolTipProvider) object;
