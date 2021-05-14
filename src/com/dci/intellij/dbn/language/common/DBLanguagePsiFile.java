@@ -46,14 +46,7 @@ import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.SingleRootFileViewProvider;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.testFramework.LightVirtualFile;
@@ -337,7 +330,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
             return DBObjectPsiFacade.asPsiDirectory(parentObject);
 
         }
-        return Read.call(() -> DBLanguagePsiFile.super.getParent());
+        return Read.conditional(() -> DBLanguagePsiFile.super.getParent());
     }
 
     @Override
@@ -345,7 +338,7 @@ public abstract class DBLanguagePsiFile extends PsiFileImpl implements FileConne
         VirtualFile virtualFile = getViewProvider().getVirtualFile();
         return virtualFile.getFileSystem() instanceof DatabaseFileSystem ?
                 virtualFile.isValid() :
-                Read.call(() -> super.isValid());
+                Read.conditional(() -> super.isValid(), false);
     }
 
     public String getParseRootId() {
