@@ -1,12 +1,14 @@
 package com.dci.intellij.dbn.execution.method.history.ui;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import lombok.Getter;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
+import java.util.Collections;
 import java.util.List;
 
 public class MethodExecutionHistoryTreeNode extends DefaultMutableTreeNode {
@@ -54,7 +56,7 @@ public class MethodExecutionHistoryTreeNode extends DefaultMutableTreeNode {
     }
 
     public List<TreeNode> getChildren() {
-        return children;
+        return CommonUtil.nvl(children, () -> Collections.emptyList());
     }
 
     @Override
