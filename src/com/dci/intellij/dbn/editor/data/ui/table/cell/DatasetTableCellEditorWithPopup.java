@@ -142,20 +142,21 @@ public class DatasetTableCellEditorWithPopup extends DatasetTableCellEditor {
         @Override
         public void customizeButton(final JLabel button) {
             JTable table = getTableComponent();
-
-            button.setBorder(BUTTON_BORDER);
-            button.setBackground(UIUtil.getTableBackground());
-            button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            int rowHeight = table.getRowHeight();
-            button.setPreferredSize(new Dimension(Math.max(20, rowHeight), rowHeight - 2));
-            button.getParent().setBackground(getTextField().getBackground());
-            table.addPropertyChangeListener(e -> {
-                Object newProperty = e.getNewValue();
-                if (newProperty instanceof Font) {
-                    int rowHeight1 = table.getRowHeight();
-                    button.setPreferredSize(new Dimension(Math.max(20, rowHeight1), table.getRowHeight() - 2));
-                }
-            });
+            if (table != null) {
+                button.setBorder(BUTTON_BORDER);
+                button.setBackground(UIUtil.getTableBackground());
+                button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                int rowHeight = table.getRowHeight();
+                button.setPreferredSize(new Dimension(Math.max(20, rowHeight), rowHeight - 2));
+                button.getParent().setBackground(getTextField().getBackground());
+                table.addPropertyChangeListener(e -> {
+                    Object newProperty = e.getNewValue();
+                    if (newProperty instanceof Font) {
+                        int rowHeight1 = table.getRowHeight();
+                        button.setPreferredSize(new Dimension(Math.max(20, rowHeight1), table.getRowHeight() - 2));
+                    }
+                });
+            }
         }
 
         JTable getTableComponent() {
