@@ -29,6 +29,8 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +43,8 @@ import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
     name = ProjectSettingsManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
+@Getter
+@Setter
 public class ProjectSettingsManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.Settings";
 
@@ -62,14 +66,6 @@ public class ProjectSettingsManager extends AbstractProjectComponent implements 
         } else {
             return ProjectSettingsManager.getInstance(project).getProjectSettings();
         }
-    }
-
-    public ConfigId getLastConfigId() {
-        return lastConfigId;
-    }
-
-    public void setLastConfigId(ConfigId lastConfigId) {
-        this.lastConfigId = lastConfigId;
     }
 
     public ProjectSettings getProjectSettings() {
