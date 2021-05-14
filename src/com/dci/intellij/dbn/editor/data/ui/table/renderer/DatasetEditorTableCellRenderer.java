@@ -15,9 +15,7 @@ import com.intellij.ui.SimpleTextAttributes;
 import javax.swing.border.Border;
 import java.awt.*;
 
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.DELETED;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
-import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
+import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
 public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
 
@@ -27,7 +25,7 @@ public class DatasetEditorTableCellRenderer extends BasicTableCellRenderer {
         DatasetEditorModelCell cell = (DatasetEditorModelCell) value;
         DatasetEditorTable datasetEditorTable = (DatasetEditorTable) table;
 
-        if (cell != null && !datasetEditorTable.isDisposed() && !datasetEditorTable.getProject().isDisposed()) {
+        if (Failsafe.check(cell, datasetEditorTable, datasetEditorTable.getProject())) {
             DatasetEditorModelRow row = cell.getRow();
             DatasetEditorColumnInfo columnInfo = cell.getColumnInfo();
             boolean isDirty = datasetEditorTable.getModel().isDirty();
