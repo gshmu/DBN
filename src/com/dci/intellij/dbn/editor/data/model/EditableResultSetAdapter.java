@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.editor.data.model;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.connection.transaction.ConnectionSavepoint;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -19,8 +20,9 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
     }
 
     @Override
-    public void scroll(final int rowIndex) throws SQLException {
+    public void scroll(int rowIndex) throws SQLException {
         if (!isInsertMode()) {
+            DBNResultSet resultSet = getResultSet();
             if (isUseSavePoints()) {
                 ConnectionSavepoint.run(resultSet, () -> absolute(resultSet, rowIndex));
             } else {
@@ -32,6 +34,7 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
     @Override
     public void updateRow() throws SQLException {
         if (!isInsertMode())  {
+            DBNResultSet resultSet = getResultSet();
             if (isUseSavePoints()) {
                 ConnectionSavepoint.run(resultSet, () -> updateRow(resultSet));
             } else {
@@ -43,6 +46,7 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
     @Override
     public void refreshRow() throws SQLException {
         if (!isInsertMode())  {
+            DBNResultSet resultSet = getResultSet();
             if (isUseSavePoints()) {
                 ConnectionSavepoint.run(resultSet, () -> refreshRow(resultSet));
             } else {
@@ -54,6 +58,7 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
     @Override
     public void startInsertRow() throws SQLException {
         if (!isInsertMode())  {
+            DBNResultSet resultSet = getResultSet();
             if (isUseSavePoints()) {
                 ConnectionSavepoint.run(resultSet, () -> {
                     moveToInsertRow(resultSet);
@@ -69,6 +74,7 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
     @Override
     public void cancelInsertRow() throws SQLException {
         if (isInsertMode())  {
+            DBNResultSet resultSet = getResultSet();
             if (isUseSavePoints()) {
                 ConnectionSavepoint.run(resultSet, () -> {
                     moveToCurrentRow(resultSet);
@@ -84,6 +90,7 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
     @Override
     public void insertRow() throws SQLException {
         if (isInsertMode())  {
+            DBNResultSet resultSet = getResultSet();
             if (isUseSavePoints()) {
                 ConnectionSavepoint.run(resultSet, () -> {
                     insertRow(resultSet);
@@ -101,6 +108,7 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
     @Override
     public void deleteRow() throws SQLException {
         if (!isInsertMode())  {
+            DBNResultSet resultSet = getResultSet();
             if (isUseSavePoints()) {
                 ConnectionSavepoint.run(resultSet, () -> deleteRow(resultSet));
             } else {
@@ -110,7 +118,8 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
     }
 
     @Override
-    public void setValue(final int columnIndex, @NotNull final ValueAdapter valueAdapter, @Nullable final Object value) throws SQLException {
+    public void setValue(int columnIndex, @NotNull ValueAdapter valueAdapter, @Nullable Object value) throws SQLException {
+        DBNResultSet resultSet = getResultSet();
         Connection connection = resultSet.getConnection();
         if (isUseSavePoints()) {
             ConnectionSavepoint.run(resultSet,
@@ -121,7 +130,8 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
     }
 
     @Override
-    public void setValue(final int columnIndex, @NotNull final DBDataType dataType, @Nullable final Object value) throws SQLException {
+    public void setValue(int columnIndex, @NotNull DBDataType dataType, @Nullable Object value) throws SQLException {
+        DBNResultSet resultSet = getResultSet();
         if (isUseSavePoints()) {
             ConnectionSavepoint.run(resultSet,
                     () -> dataType.setValueToResultSet(resultSet, columnIndex, value));
@@ -130,6 +140,10 @@ public class EditableResultSetAdapter extends ResultSetAdapter {
         }
     }
 
+    @NotNull
+    DBNResultSet getResultSet() {
+        return Failsafe.nn(resultSet);
+    }
 
     @Override
     protected void disposeInner() {
