@@ -11,6 +11,7 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.popup.list.ListPopupImpl;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -57,15 +58,17 @@ public class GUIUtil{
             }
         }
     }
-    
+
+    @Nullable
     public static Point getRelativeMouseLocation(Component component) {
-        PointerInfo pointerInfo = MouseInfo.getPointerInfo();
-        if (pointerInfo == null) {
-            return new Point();
-        } else {
-            Point mouseLocation = pointerInfo.getLocation();
-            return getRelativeLocation(mouseLocation, component);
-        }
+        try {
+            PointerInfo pointerInfo = MouseInfo.getPointerInfo();
+            if (pointerInfo != null) {
+                Point mouseLocation = pointerInfo.getLocation();
+                return getRelativeLocation(mouseLocation, component);
+            }
+        } catch (IllegalComponentStateException ignore) {}
+        return null;
     }
     
     public static Point getRelativeLocation(Point locationOnScreen, Component component) {
