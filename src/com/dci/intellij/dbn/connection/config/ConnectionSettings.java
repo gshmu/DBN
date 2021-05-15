@@ -7,16 +7,20 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionIdProvider;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBooleanAttribute;
 
+@Getter
+@Setter
 public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionBundleSettings, ConnectionSettingsForm>
         implements ConnectionRef, ConnectionIdProvider, Cloneable {
 
     private ConnectionId connectionId;
-    private boolean isActive = true;
+    private boolean active = true;
     private boolean isNew;
 
     private final ConnectionDatabaseSettings databaseSettings;
@@ -34,30 +38,6 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         databaseSettings = new ConnectionDatabaseSettings(this, databaseType, configType);
     }
 
-    public ConnectionDatabaseSettings getDatabaseSettings() {
-        return databaseSettings;
-    }
-
-    public ConnectionPropertiesSettings getPropertiesSettings() {
-        return propertiesSettings;
-    }
-
-    public ConnectionSshTunnelSettings getSshTunnelSettings() {
-        return sshTunnelSettings;
-    }
-
-    public ConnectionSslSettings getSslSettings() {
-        return sslSettings;
-    }
-
-    public ConnectionDetailSettings getDetailSettings() {
-        return detailSettings;
-    }
-
-    public ConnectionFilterSettings getFilterSettings() {
-        return filterSettings;
-    }
-
     @Override
     protected Configuration[] createConfigurations() {
         return new Configuration[] {
@@ -73,19 +53,10 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         connectionId = ConnectionId.create();
     }
 
-    public void setConnectionId(ConnectionId connectionId) {
-        this.connectionId = connectionId;
-    }
-
     @NotNull
     @Override
     public ConnectionSettingsForm createConfigurationEditor() {
         return new ConnectionSettingsForm(this);
-    }
-
-    @Override
-    public ConnectionId getConnectionId() {
-        return connectionId;
     }
 
     @Override
@@ -95,7 +66,7 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         } else {
             connectionId = ConnectionId.get(element.getAttributeValue("id"));
         }
-        isActive = getBooleanAttribute(element, "active", isActive);
+        active = getBooleanAttribute(element, "active", active);
         super.readConfiguration(element);
     }
 
@@ -107,18 +78,10 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         this.isNew = isNew;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean isActive) {
-        this.isActive = isActive;
-    }
-
     @Override
     public void writeConfiguration(Element element) {
         element.setAttribute("id", connectionId.id());
-        element.setAttribute("active", Boolean.toString(isActive));
+        element.setAttribute("active", Boolean.toString(active));
         super.writeConfiguration(element);
     }
 

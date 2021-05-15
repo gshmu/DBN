@@ -13,6 +13,8 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterSettings;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBooleanAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
 
+@Getter
+@Setter
 public class ConnectionFilterSettings extends CompositeProjectConfiguration<ConnectionSettings, ConnectionFilterSettingsForm> implements ConnectionIdProvider {
     private final ObjectTypeFilterSettings objectTypeFilterSettings;
     private final ObjectNameFilterSettings objectNameFilterSettings;
@@ -71,22 +75,6 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
         objectNameFilterSettings = new ObjectNameFilterSettings(this, connectionSettings);
     }
 
-    public boolean isHideEmptySchemas() {
-        return hideEmptySchemas;
-    }
-
-    public void setHideEmptySchemas(boolean hideEmptySchemas) {
-        this.hideEmptySchemas = hideEmptySchemas;
-    }
-
-    public boolean isHidePseudoColumns() {
-        return hidePseudoColumns;
-    }
-
-    public void setHidePseudoColumns(boolean hidePseudoColumns) {
-        this.hidePseudoColumns = hidePseudoColumns;
-    }
-
     public ConnectionId getConnectionId() {
         return connectionSettings.getConnectionId();
     }
@@ -99,18 +87,6 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
     @Override
     public String getHelpTopic() {
         return "connectionFilterSettings";
-    }
-
-    /*********************************************************
-     *                        Custom                         *
-     *********************************************************/
-
-    public ObjectTypeFilterSettings getObjectTypeFilterSettings() {
-        return objectTypeFilterSettings;
-    }
-
-    public ObjectNameFilterSettings getObjectNameFilterSettings() {
-        return objectNameFilterSettings;
     }
 
     /*********************************************************
