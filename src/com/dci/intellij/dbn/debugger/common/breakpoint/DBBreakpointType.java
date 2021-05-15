@@ -80,9 +80,12 @@ public class DBBreakpointType extends XLineBreakpointType<XBreakpointProperties>
 
             if (element instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) element;
-                int elementLine = document.getLineNumber(basePsiElement.getTextOffset());
-                if (elementLine == line) {
-                    return basePsiElement;
+                int textOffset = basePsiElement.getTextOffset();
+                if (textOffset< document.getTextLength()) {
+                    int elementLine = document.getLineNumber(textOffset);
+                    if (elementLine == line) {
+                        return basePsiElement;
+                    }
                 }
             }
         }
