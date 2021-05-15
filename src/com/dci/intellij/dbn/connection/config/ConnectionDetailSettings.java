@@ -18,23 +18,25 @@ import java.nio.charset.StandardCharsets;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
+@Getter
+@Setter
 public class ConnectionDetailSettings extends BasicProjectConfiguration<ConnectionSettings, ConnectionDetailSettingsForm> {
-    private @Getter @Setter Charset charset = StandardCharsets.UTF_8;
-    private @Getter @Setter EnvironmentTypeId environmentTypeId = EnvironmentTypeId.DEFAULT;
-    private @Getter @Setter boolean enableSessionManagement = true;
-    private @Getter @Setter boolean enableDdlFileBinding = true;
-    private @Getter @Setter boolean enableDatabaseLogging = false;
-    private @Getter @Setter boolean connectAutomatically = true;
-    private @Getter @Setter boolean restoreWorkspace = true;
-    private @Setter boolean restoreWorkspaceDeep = true;
-    private @Getter @Setter int connectivityTimeout = 5;
-    private @Getter @Setter int idleTimeToDisconnect = 30;
-    private @Getter @Setter int idleTimeToDisconnectPool = 5;
-    private @Getter @Setter int credentialExpiryTime = 10;
-    private @Getter @Setter int maxConnectionPoolSize = 7;
+    private Charset charset = StandardCharsets.UTF_8;
+    private EnvironmentTypeId environmentTypeId = EnvironmentTypeId.DEFAULT;
+    private boolean enableSessionManagement = true;
+    private boolean enableDdlFileBinding = true;
+    private boolean enableDatabaseLogging = false;
+    private boolean connectAutomatically = true;
+    private boolean restoreWorkspace = true;
+    private boolean restoreWorkspaceDeep = true;
+    private int connectivityTimeout = 5;
+    private int idleTimeToDisconnect = 30;
+    private int idleTimeToDisconnectPool = 5;
+    private int credentialExpiryTime = 10;
+    private int maxConnectionPoolSize = 7;
 
 
-    private @Getter @Setter String alternativeStatementDelimiter;
+    private String alternativeStatementDelimiter;
 
     public ConnectionDetailSettings(ConnectionSettings parent) {
         super(parent);

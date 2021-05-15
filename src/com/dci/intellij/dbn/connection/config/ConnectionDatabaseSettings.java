@@ -6,12 +6,7 @@ import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.AuthenticationType;
-import com.dci.intellij.dbn.connection.ConnectionId;
-import com.dci.intellij.dbn.connection.ConnectivityStatus;
-import com.dci.intellij.dbn.connection.DatabaseType;
-import com.dci.intellij.dbn.connection.DatabaseUrlPattern;
-import com.dci.intellij.dbn.connection.DatabaseUrlType;
+import com.dci.intellij.dbn.connection.*;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
 import com.dci.intellij.dbn.driver.DriverSource;
@@ -30,25 +25,27 @@ import java.util.Map;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
+@Getter
+@Setter
 public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSettings, ConnectionDatabaseSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private @Setter String name;
-    private @Getter DatabaseType databaseType;
-    private @Getter @Setter String description;
-    private @Getter @Setter ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
-    private @Getter @Setter DatabaseType resolvedDatabaseType = DatabaseType.GENERIC;
-    private @Getter @Setter DatabaseUrlPattern urlPattern;
-    private @Getter @Setter double databaseVersion = 9999;
+    private String name;
+    private DatabaseType databaseType;
+    private String description;
+    private ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
+    private DatabaseType resolvedDatabaseType = DatabaseType.GENERIC;
+    private DatabaseUrlPattern urlPattern;
+    private double databaseVersion = 9999;
     private int hashCode;
 
-    private final @Getter DatabaseInfo databaseInfo;
-    private @Getter @Setter DriverSource driverSource;
-    private @Getter @Setter String driverLibrary;
-    private @Setter String driver;
+    private final DatabaseInfo databaseInfo;
+    private DriverSource driverSource;
+    private String driverLibrary;
+    private String driver;
 
     private ConnectionConfigType configType;
-    private final @Getter AuthenticationInfo authenticationInfo = new AuthenticationInfo(this, false);
+    private final AuthenticationInfo authenticationInfo = new AuthenticationInfo(this, false);
 
     public ConnectionDatabaseSettings(ConnectionSettings parent, @NotNull DatabaseType databaseType, ConnectionConfigType configType) {
         super(parent);
