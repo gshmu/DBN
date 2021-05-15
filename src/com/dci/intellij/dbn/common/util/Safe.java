@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.common.util;
 
-import com.dci.intellij.dbn.common.routine.BasicCallable;
 import com.dci.intellij.dbn.common.routine.ParametricCallable;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
+import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.util.Alarm;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 public interface Safe {
     @NotNull
-    static <R> R call(@NotNull R defaultValue, @NotNull BasicCallable<R> callable){
+    static <R, E extends Throwable> R call(@NotNull R defaultValue, @NotNull ThrowableCallable<R, E> callable) throws E{
         try {
             return callable.call();
         } catch (ProcessCanceledException e){
