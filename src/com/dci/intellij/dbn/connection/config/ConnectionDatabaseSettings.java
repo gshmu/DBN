@@ -236,9 +236,9 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
         databaseVersion  = getDouble(element, "database-version", databaseVersion);
 
         if (configType == ConnectionConfigType.BASIC) {
-            databaseInfo.setHost(getString(element, "host", databaseInfo.getHost()));
-            databaseInfo.setPort(getString(element, "port", databaseInfo.getPort()));
-            databaseInfo.setDatabase(getString(element, "database", databaseInfo.getDatabase()));
+            databaseInfo.setHost(getString(element, "host", null));
+            databaseInfo.setPort(getString(element, "port", null));
+            databaseInfo.setDatabase(getString(element, "database", null));
 
             DatabaseUrlType urlType = getEnum(element, "url-type", databaseType.getDefaultUrlPattern().getUrlType());
             databaseInfo.setUrlType(urlType);
