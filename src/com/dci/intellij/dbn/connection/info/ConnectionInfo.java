@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.connection.info;
 
+import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +37,7 @@ public class ConnectionInfo {
 
     @NotNull
     private static String resolveProductVersion(DatabaseMetaData metaData) throws SQLException {
-        String productVersion = metaData.getDatabaseProductVersion();
+        String productVersion = Safe.call("UNKNOWN", () -> metaData.getDatabaseProductVersion());
         int index = productVersion.indexOf('\n');
         productVersion = index > -1 ? productVersion.substring(0, index) : productVersion;
         return productVersion;
