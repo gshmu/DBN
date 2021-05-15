@@ -76,40 +76,43 @@ public class DataSearchResultController {
             DataModel dataModel = table.getModel();
             DataSearchResult searchResult = dataModel.getSearchResult();
 
-            long updateTimestamp = System.currentTimeMillis();
-            searchResult.startUpdating(updateTimestamp);
+            try {
+                long updateTimestamp = System.currentTimeMillis();
+                searchResult.startUpdating(updateTimestamp);
 
-            FindManager findManager = FindManager.getInstance(table.getProject());
+                FindManager findManager = FindManager.getInstance(table.getProject());
 
-            List<DataSearchResultMatch> matches = new ArrayList<>();
-            for (Object r : dataModel.getRows()) {
-                DataModelRow row = (DataModelRow) r;
-                for (Object c : row.getCells()) {
-                    DataModelCell cell = (DataModelCell) c;
-                    String userValue = cell.getFormattedUserValue();
-                    if (userValue != null) {
-                        int findOffset = 0;
-                        while (true) {
-                            FindResult findResult = findManager.findString(userValue, findOffset, findModel);
-                            if (findResult.isStringFound()) {
-                                int startOffset = findResult.getStartOffset();
-                                int endOffset = findResult.getEndOffset();
+                List<DataSearchResultMatch> matches = new ArrayList<>();
+                for (Object r : dataModel.getRows()) {
+                    DataModelRow row = (DataModelRow) r;
+                    for (Object c : row.getCells()) {
+                        DataModelCell cell = (DataModelCell) c;
+                        String userValue = cell.getFormattedUserValue();
+                        if (userValue != null) {
+                            int findOffset = 0;
+                            while (true) {
+                                FindResult findResult = findManager.findString(userValue, findOffset, findModel);
+                                if (findResult.isStringFound()) {
+                                    int startOffset = findResult.getStartOffset();
+                                    int endOffset = findResult.getEndOffset();
 
-                                searchResult.checkTimestamp(updateTimestamp);
-                                DataSearchResultMatch match = new DataSearchResultMatch(cell, startOffset, endOffset);
-                                matches.add(match);
+                                    searchResult.checkTimestamp(updateTimestamp);
+                                    DataSearchResultMatch match = new DataSearchResultMatch(cell, startOffset, endOffset);
+                                    matches.add(match);
 
-                                findOffset = endOffset;
-                            } else {
-                                break;
+                                    findOffset = endOffset;
+                                } else {
+                                    break;
+                                }
                             }
                         }
                     }
                 }
+                searchResult.setMatches(matches);
+            } finally {
+                searchResult.stopUpdating();
             }
-            searchResult.setMatches(matches);
 
-            searchResult.stopUpdating();
             Dispatch.run(() -> {
                 int selectedRowIndex = table.getSelectedRow();
                 int selectedColumnIndex = table.getSelectedRow();
