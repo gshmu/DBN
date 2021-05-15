@@ -6,19 +6,23 @@ import com.dci.intellij.dbn.common.ui.ListUtil;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.data.model.DataModelCell;
 import com.intellij.openapi.Disposable;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+@Getter
+@Setter
 public class DataSearchResult implements Disposable {
-    private Set<DataSearchResultListener> listeners = new HashSet<>();
+    private final Set<DataSearchResultListener> listeners = new HashSet<>();
     private List<DataSearchResultMatch> matches = java.util.Collections.emptyList();
     private DataSearchResultMatch selectedMatch;
     private int matchesLimit;
     private long updateTimestamp = 0;
-    private boolean isUpdating;
+    private boolean updating;
 
     public void clear() {
         selectedMatch = null;
@@ -31,22 +35,6 @@ public class DataSearchResult implements Disposable {
 
     public boolean isEmpty() {
         return matches.isEmpty();
-    }
-
-    public DataSearchResultMatch getSelectedMatch() {
-        return selectedMatch;
-    }
-
-    public void setSelectedMatch(DataSearchResultMatch selectedMatch) {
-        this.selectedMatch = selectedMatch;
-    }
-
-    public void setMatchesLimit(int value) {
-        matchesLimit = value;
-    }
-
-    public int getMatchesLimit() {
-        return matchesLimit;
     }
 
     public void addListener(DataSearchResultListener listener) {
@@ -65,16 +53,8 @@ public class DataSearchResult implements Disposable {
         }
     }
 
-    public boolean isUpdating() {
-        return isUpdating;
-    }
-
-    public void setMatches(List<DataSearchResultMatch> matches) {
-        this.matches = matches;
-    }
-
-    public Iterator<DataSearchResultMatch> getMatches(final DataModelCell cell) {
-        final DataSearchResultMatch first = matches.isEmpty() ? null : findMatch(null, cell);
+    public Iterator<DataSearchResultMatch> getMatches(DataModelCell cell) {
+        DataSearchResultMatch first = matches.isEmpty() ? null : findMatch(null, cell);
         if (first != null) {
             return new Iterator<DataSearchResultMatch>() {
                 private DataSearchResultMatch next = first;
@@ -115,12 +95,12 @@ public class DataSearchResult implements Disposable {
     }
 
     public DataSearchResultMatch selectFirst(int fromRowIndex, int fromColumnIndex, DataSearchResultScrollPolicy scrollPolicy) {
-        if (isUpdating) return null;
+        if (updating) return null;
         return getNext(fromRowIndex, fromColumnIndex, scrollPolicy);
     }
     
     public DataSearchResultMatch selectNext(DataSearchResultScrollPolicy scrollPolicy) {
-        if (isUpdating) return null;
+        if (updating) return null;
         int fromRowIndex = 0;
         int fromColumnIndex = 0;
         
@@ -137,7 +117,7 @@ public class DataSearchResult implements Disposable {
     }
 
     public DataSearchResultMatch selectPrevious(DataSearchResultScrollPolicy scrollPolicy) {
-        if (isUpdating) return null;
+        if (updating) return null;
         int fromRowIndex = 999999;
         int fromColumnIndex = 999999;
 
@@ -223,11 +203,11 @@ public class DataSearchResult implements Disposable {
 
     public void startUpdating(long updateTimestamp) {
         this.updateTimestamp = updateTimestamp;
-        this.isUpdating = true;
+        this.updating = true;
         clear();
     }
 
     public void stopUpdating() {
-        this.isUpdating = false;
+        this.updating = false;
     }
 }
