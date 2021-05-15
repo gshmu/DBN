@@ -3,11 +3,15 @@ package com.dci.intellij.dbn.connection.config;
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSslSettingsForm;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
+@Getter
+@Setter
 public class ConnectionSslSettings extends BasicProjectConfiguration<ConnectionSettings, ConnectionSslSettingsForm> {
     private boolean active = false;
     private String certificateAuthorityFile;
@@ -26,42 +30,6 @@ public class ConnectionSslSettings extends BasicProjectConfiguration<ConnectionS
     @Override
     public String getHelpTopic() {
         return "connectionSslSettings";
-    }
-
-    /*********************************************************
-     *                        Custom                         *
-     *********************************************************/
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public String getCertificateAuthorityFile() {
-        return certificateAuthorityFile;
-    }
-
-    public void setCertificateAuthorityFile(String certificateAuthorityFile) {
-        this.certificateAuthorityFile = certificateAuthorityFile;
-    }
-
-    public String getClientCertificateFile() {
-        return clientCertificateFile;
-    }
-
-    public void setClientCertificateFile(String clientCertificateFile) {
-        this.clientCertificateFile = clientCertificateFile;
-    }
-
-    public String getClientKeyFile() {
-        return clientKeyFile;
-    }
-
-    public void setClientKeyFile(String clientKeyFile) {
-        this.clientKeyFile = clientKeyFile;
     }
 
     /*********************************************************

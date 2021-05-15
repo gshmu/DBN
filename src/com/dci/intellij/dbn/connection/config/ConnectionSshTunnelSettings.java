@@ -5,11 +5,15 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSshTunnelSettingsForm;
 import com.dci.intellij.dbn.connection.ssh.SshAuthType;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
+@Getter
+@Setter
 public class ConnectionSshTunnelSettings extends BasicProjectConfiguration<ConnectionSettings, ConnectionSshTunnelSettingsForm> {
     @Deprecated // TODO move to keychain
     private static final String OLD_PWD_ATTRIBUTE = "proxy-password";
@@ -37,74 +41,6 @@ public class ConnectionSshTunnelSettings extends BasicProjectConfiguration<Conne
     @Override
     public String getHelpTopic() {
         return "connectionSshTunnelSettings";
-    }
-
-    /*********************************************************
-     *                        Custom                         *
-     *********************************************************/
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getPort() {
-        return port;
-    }
-
-    public void setPort(String port) {
-        this.port = port;
-    }
-
-    public SshAuthType getAuthType() {
-        return authType;
-    }
-
-    public void setAuthType(SshAuthType authType) {
-        this.authType = authType;
-    }
-
-    public String getKeyFile() {
-        return keyFile;
-    }
-
-    public void setKeyFile(String keyFile) {
-        this.keyFile = keyFile;
-    }
-
-    public String getKeyPassphrase() {
-        return keyPassphrase;
-    }
-
-    public void setKeyPassphrase(String keyPassphrase) {
-        this.keyPassphrase = StringUtil.isEmpty(keyPassphrase) ? null : keyPassphrase;
     }
 
     /*********************************************************
