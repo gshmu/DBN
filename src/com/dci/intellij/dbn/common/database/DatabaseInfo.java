@@ -6,7 +6,11 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class DatabaseInfo implements Cloneable<DatabaseInfo> {
     public interface Default {
         DatabaseInfo ORACLE   = new DatabaseInfo("oracle", "localhost", "1521", "XE",       DatabaseUrlType.SID);
@@ -44,55 +48,6 @@ public class DatabaseInfo implements Cloneable<DatabaseInfo> {
 
     public boolean isEmpty() {
         return StringUtil.isEmpty(host) && StringUtil.isEmpty(port) && StringUtil.isEmpty(database) && (files == null || StringUtil.isEmpty(files.getMainFile().getPath()));
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public String getVendor() {
-        return vendor;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public String getPort() {
-        return port;
-    }
-
-    public void setPort(String port) {
-        this.port = port;
-    }
-
-    public String getDatabase() {
-        return database;
-    }
-
-    public void setDatabase(String database) {
-        this.database = database;
-    }
-
-
-    public DatabaseUrlType getUrlType() {
-        return urlType;
-    }
-
-    public void setUrlType(DatabaseUrlType urlType) {
-        this.urlType = urlType;
-    }
-
-    public DatabaseFiles getFiles() {
-        return files;
     }
 
     public String getMainFile() {
