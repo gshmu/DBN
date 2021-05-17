@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.function.Supplier;
 
 public class CommonUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -130,6 +131,16 @@ public class CommonUtil {
     @NotNull
     public static <T> T[] list(T... values) {
         return values;
+    }
+
+    public static <T> T resolve(Supplier<T>... resolvers) {
+        for (Supplier<T> resolver : resolvers) {
+            T result = resolver.get();
+            if (result != null) {
+                return result;
+            }
+        }
+        return null;
     }
 
 }

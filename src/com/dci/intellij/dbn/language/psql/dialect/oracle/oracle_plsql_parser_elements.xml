@@ -35,7 +35,7 @@
         </one-of>
     </element-def>
 
-    <element-def attributes="EXECUTABLE, DEBUGGABLE, STRUCTURE, FOLDABLE_BLOCK, SCOPE_ISOLATION, STATEMENT, GENERIC, DATABASE_LOG_PRODUCER, POTENTIALLY_TRANSACTIONAL" description="DECLARE block" formatting-indent="ABSOLUTE_NONE" id="declare_block">
+    <element-def attributes="EXECUTABLE, DEBUGGABLE, STRUCTURE, FOLDABLE_BLOCK, SCOPE_ISOLATION, STATEMENT, GENERIC, DATABASE_LOG_PRODUCER, TRANSACTIONAL_CANDIDATE" description="DECLARE block" formatting-indent="ABSOLUTE_NONE" id="declare_block">
         <element ref-id="anonymous_block" />
         <token id="000000009" optional="true" type-id="CHR_SEMICOLON" />
         <element optional="true" ref-id="end" />

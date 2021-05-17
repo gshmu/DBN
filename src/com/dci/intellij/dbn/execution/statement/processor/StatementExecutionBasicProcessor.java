@@ -499,7 +499,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
             if (psiElement.isTransactional()) {
                 notifyChanges = true;
             }
-            else if (psiElement.isPotentiallyTransactional()) {
+            else if (psiElement.isTransactionalCandidate()) {
                 if (connectionHandler.hasPendingTransactions(connection)) {
                     notifyChanges = true;
                 }
@@ -672,6 +672,13 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
     @Override
     @Nullable
     public SchemaId getTargetSchema() {
+        ExecutablePsiElement cachedExecutable = getCachedExecutable();
+        if (cachedExecutable != null) {
+            SchemaId schemaId = cachedExecutable.getContextSchema();
+            if (schemaId != null) {
+                return schemaId;
+            }
+        }
         DBLanguagePsiFile psiFile = getPsiFile();
         return psiFile == null ? null : psiFile.getSchemaId();
     }
