@@ -8,7 +8,7 @@ public enum ElementTypeAttribute implements Property{
     EXECUTABLE("EXECUTABLE", "Executable statement"),
     DEBUGGABLE("DEBUGGABLE", "Debuggable"),
     TRANSACTIONAL("TRANSACTIONAL", "Transactional statement"),
-    POTENTIALLY_TRANSACTIONAL("POTENTIALLY_TRANSACTIONAL", "Transactional statement"),
+    TRANSACTIONAL_CANDIDATE("TRANSACTIONAL_CANDIDATE", "Transactional statement"),
     QUERY("QUERY", "Query statement", true),
     DATA_DEFINITION("DATA_DEFINITION", "Data definition statement", true),
     DATA_MANIPULATION("DATA_MANIPULATION", "Data manipulation statement", true),
@@ -30,10 +30,12 @@ public enum ElementTypeAttribute implements Property{
     ACTION("ACTION", "Action"),
     GENERIC("GENERIC", "Generic element"),
     SPECIFIC("SPECIFIC", "Specific element"),
+    SPECIFIC_OVERRIDE("SPECIFIC_OVERRIDE", "Specific override element"),
     DATABASE_LOG_PRODUCER("DATABASE_LOG_PRODUCER", "Database logging"),
     METHOD_PARAMETER_HANDLER("METHOD_PARAMETER_HANDLER", "Method parameter handler"),
     COLUMN_PARAMETER_HANDLER("COLUMN_PARAMETER_HANDLER", "Column parameter handler"),
     COLUMN_PARAMETER_PROVIDER("COLUMN_PARAMETER_PROVIDER", "Column parameter provider"),
+    SCHEMA_CHANGE_CLAUSE("SCHEMA_CHANGE_CLAUSE", "Schema change clause"),
     ;
 
     private final String name;

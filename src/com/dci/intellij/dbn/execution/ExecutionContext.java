@@ -6,11 +6,15 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
+@Getter
+@Setter
 public abstract class ExecutionContext extends PropertyHolderImpl<ExecutionStatus> implements PropertyHolder<ExecutionStatus> {
     private transient int timeout;
     private transient boolean logging = false;
@@ -31,42 +35,6 @@ public abstract class ExecutionContext extends PropertyHolderImpl<ExecutionStatu
 
     @Nullable
     public abstract SchemaId getTargetSchema();
-
-    public int getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(int timeout) {
-        this.timeout = timeout;
-    }
-
-    public boolean isLogging() {
-        return logging;
-    }
-
-    public void setLogging(boolean logging) {
-        this.logging = logging;
-    }
-
-    public long getExecutionTimestamp() {
-        return executionTimestamp;
-    }
-
-    public DBNConnection getConnection() {
-        return connection;
-    }
-
-    public void setConnection(DBNConnection connection) {
-        this.connection = connection;
-    }
-
-    public DBNStatement getStatement() {
-        return statement;
-    }
-
-    public void setStatement(DBNStatement statement) {
-        this.statement = statement;
-    }
 
     public boolean canExecute() {
         return isNot(QUEUED) && isNot(EXECUTING) && isNot(CANCELLED);

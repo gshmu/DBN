@@ -19,7 +19,7 @@ import java.util.Set;
 
 public class OneOfElementType extends ElementTypeBase {
     protected final ElementTypeRef[] children;
-    private boolean sortable;
+    private final boolean sortable;
     private boolean sorted;
 
     public OneOfElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
@@ -70,10 +70,10 @@ public class OneOfElementType extends ElementTypeBase {
         return new SequencePsiElement(astNode, this);
     }
 
-    public synchronized void sort() {
-        if (sortable && ! sorted) {
-            Arrays.sort(children, ONE_OF_COMPARATOR);
+    public void sort() {
+        if (sortable && !sorted) {
             sorted = true;
+            Arrays.sort(children, ONE_OF_COMPARATOR);
         }
     }
 
