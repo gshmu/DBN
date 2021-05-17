@@ -2,7 +2,9 @@ package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
+import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.util.Cloneable;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -18,6 +20,8 @@ import javax.swing.*;
 
 public class ExecutablePsiElement extends NamedPsiElement implements Cloneable<ExecutablePsiElement> {
     private WeakRef<StatementExecutionProcessor> executionProcessor;
+    private final Latent<ElementType> specificElementType = Latent.mutable(() -> getTextLength(), () -> resolveSpecificElementType());
+    private final Latent<SchemaId> contextSchema = Latent.mutable(() -> getTextOffset(), () -> resolveContextSchema());
 
     public String prepareStatementText(){
         PsiElement lastChild = getLastChild();
@@ -38,6 +42,11 @@ public class ExecutablePsiElement extends NamedPsiElement implements Cloneable<E
         super(astNode, elementType);
     }
 
+    @Override
+    public ElementType getSpecificElementType() {
+        return specificElementType.get();
+    }
+
     public boolean isQuery() {
         return getSpecificElementType().is(ElementTypeAttribute.QUERY);
     }
@@ -46,12 +55,47 @@ public class ExecutablePsiElement extends NamedPsiElement implements Cloneable<E
         return is(ElementTypeAttribute.TRANSACTIONAL) || getSpecificElementType().is(ElementTypeAttribute.TRANSACTIONAL);
     }
 
-    public boolean isPotentiallyTransactional() {
-        return is(ElementTypeAttribute.POTENTIALLY_TRANSACTIONAL) || getSpecificElementType().is(ElementTypeAttribute.POTENTIALLY_TRANSACTIONAL);
+    public boolean isTransactionalCandidate() {
+        return is(ElementTypeAttribute.TRANSACTIONAL_CANDIDATE) || getSpecificElementType().is(ElementTypeAttribute.TRANSACTIONAL_CANDIDATE);
     }
 
     public boolean isTransactionControl() {
         return getSpecificElementType().is(ElementTypeAttribute.TRANSACTION_CONTROL);
+    }
+
+    public boolean isSchemaChangeClause() {
+        return is(ElementTypeAttribute.SCHEMA_CHANGE_CLAUSE) || getSpecificElementType().is(ElementTypeAttribute.SCHEMA_CHANGE_CLAUSE);
+    }
+
+    @Nullable
+    public ExecutablePsiElement resolveSchemaChangeExecutable() {
+        BasePsiElement psiElement = getPrevElement();
+        while (psiElement != null && psiElement != this) {
+            if (psiElement instanceof ExecutablePsiElement) {
+                ExecutablePsiElement executablePsiElement = (ExecutablePsiElement) psiElement;
+                if (executablePsiElement.isSchemaChangeClause()) {
+                    return executablePsiElement;
+                }
+            }
+            psiElement = psiElement.getPrevElement();
+        }
+        return null;
+    }
+
+    @Nullable
+    private SchemaId resolveContextSchema() {
+        ExecutablePsiElement executablePsiElement = resolveSchemaChangeExecutable();
+        if (executablePsiElement != null) {
+            BasePsiElement subjectPsiElement = executablePsiElement.findFirstPsiElement(ElementTypeAttribute.SUBJECT);
+            if (subjectPsiElement != null) {
+                return SchemaId.get(subjectPsiElement.getText());
+            }
+        }
+        return null;
+    }
+
+    public SchemaId getContextSchema() {
+        return contextSchema.get();
     }
 
     public boolean isNestedExecutable() {
