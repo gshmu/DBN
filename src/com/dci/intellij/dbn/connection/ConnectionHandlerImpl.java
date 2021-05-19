@@ -414,7 +414,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     @Nullable
     @Override
     public SchemaId getSchemaId(String name) {
-        return getSchemaId(name);
+        return getSchemaIds().stream().filter(schemaId -> schemaId.is(name)).findFirst().orElse(null);
     }
 
     @Override
