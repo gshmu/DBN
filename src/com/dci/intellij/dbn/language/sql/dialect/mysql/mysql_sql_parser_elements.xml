@@ -764,7 +764,7 @@
         </one-of>
     </element-def>
 
-    <element-def attributes="SCHEMA_CHANGE_CLAUSE, SPECIFIC" description="USE statement" id="use_statement">
+    <element-def attributes="SCHEMA_CHANGE, SPECIFIC" description="USE statement" id="use_statement">
         <token type-id="KW_USE" id="000000395" />
         <object-ref attributes="SUBJECT" type="SCHEMA" id="000000396" />
     </element-def>

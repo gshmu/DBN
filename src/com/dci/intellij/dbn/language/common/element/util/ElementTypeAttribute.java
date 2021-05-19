@@ -35,7 +35,7 @@ public enum ElementTypeAttribute implements Property{
     METHOD_PARAMETER_HANDLER("METHOD_PARAMETER_HANDLER", "Method parameter handler"),
     COLUMN_PARAMETER_HANDLER("COLUMN_PARAMETER_HANDLER", "Column parameter handler"),
     COLUMN_PARAMETER_PROVIDER("COLUMN_PARAMETER_PROVIDER", "Column parameter provider"),
-    SCHEMA_CHANGE_CLAUSE("SCHEMA_CHANGE_CLAUSE", "Schema change clause"),
+    SCHEMA_CHANGE("SCHEMA_CHANGE", "Schema change clause"),
     ;
 
     private final String name;

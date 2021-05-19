@@ -2836,7 +2836,7 @@
                         <token id="000001630" type-id="KW_DEFAULT" />
                     </one-of>
                 </sequence>
-                <sequence id="000001631" attributes="SCHEMA_CHANGE_CLAUSE, SPECIFIC_OVERRIDE">
+                <sequence id="000001631" attributes="SCHEMA_CHANGE, SPECIFIC_OVERRIDE">
                     <token id="000001632" type-id="PRM_CURRENT_SCHEMA" />
                     <token id="000001633" type-id="CHR_EQUAL" />
                     <object-ref id="000001634" type="SCHEMA" attributes="SUBJECT"/>
