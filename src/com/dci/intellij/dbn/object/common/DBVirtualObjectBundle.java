@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.VirtualConnectionHandler;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
@@ -41,6 +42,11 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
 
     @Override
     public List<DBSchema> getSchemas() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<SchemaId> getSchemaIds() {
         return Collections.emptyList();
     }
 

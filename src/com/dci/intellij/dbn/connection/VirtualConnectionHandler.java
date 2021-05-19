@@ -281,6 +281,12 @@ public class VirtualConnectionHandler extends StatefulDisposable.Base implements
 
     @Nullable
     @Override
+    public SchemaId getSchemaId(String name) {
+        return null;
+    }
+
+    @Nullable
+    @Override
     public DBSchema getSchema(SchemaId schema) {
         return null;
     }

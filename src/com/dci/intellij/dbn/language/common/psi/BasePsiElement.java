@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.editor.BasicTextEditor;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.thread.Read;
-import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -51,7 +50,12 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiComment;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiErrorElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.tree.SharedImplUtil;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
@@ -654,16 +658,20 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
     }
 
     public ElementType getSpecificElementType() {
-        return resolveSpecificElementType();
+        return getSpecificElementType(false);
     }
 
-    protected ElementType resolveSpecificElementType() {
+    public ElementType getSpecificElementType(boolean override) {
+        return resolveSpecificElementType(override);
+    }
+
+    protected ElementType resolveSpecificElementType(boolean override) {
         ElementType elementType = this.elementType;
         if (elementType.is(ElementTypeAttribute.GENERIC)) {
 
-            BasePsiElement specificElement = CommonUtil.resolve(
-                    () -> findFirstPsiElement(ElementTypeAttribute.SPECIFIC_OVERRIDE),
-                    () -> findFirstPsiElement(ElementTypeAttribute.SPECIFIC));
+            BasePsiElement specificElement = override ?
+                    findFirstPsiElement(ElementTypeAttribute.SPECIFIC_OVERRIDE) :
+                    findFirstPsiElement(ElementTypeAttribute.SPECIFIC);
             if (specificElement != null) {
                 elementType = specificElement.elementType;
             }

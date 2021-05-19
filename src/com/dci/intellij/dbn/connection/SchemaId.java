@@ -43,4 +43,7 @@ public final class SchemaId extends PseudoConstant<SchemaId> implements Presenta
         }
     }
 
+    public boolean is(String id){
+        return id().equalsIgnoreCase(id);
+    }
 }

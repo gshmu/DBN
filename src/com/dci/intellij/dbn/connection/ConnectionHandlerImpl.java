@@ -50,7 +50,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -409,12 +408,13 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
     @NotNull
     @Override
     public List<SchemaId> getSchemaIds() {
-        List<DBSchema> schemaObjects = getObjectBundle().getSchemas();
-        List<SchemaId> schemas = new ArrayList<>();
-        for (DBSchema schemaObject : schemaObjects) {
-            schemas.add(SchemaId.get(schemaObject.getName()));
-        }
-        return schemas;
+        return getObjectBundle().getSchemaIds();
+    }
+
+    @Nullable
+    @Override
+    public SchemaId getSchemaId(String name) {
+        return getSchemaId(name);
     }
 
     @Override

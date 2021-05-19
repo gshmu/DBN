@@ -116,6 +116,7 @@ public interface ConnectionHandler extends StatefulDisposable, EnvironmentTypePr
     @Nullable
     SchemaId getDefaultSchema();
     @NotNull List<SchemaId> getSchemaIds();
+    @Nullable SchemaId getSchemaId(String name);
 
     @Nullable
     DBSchema getSchema(SchemaId schema);

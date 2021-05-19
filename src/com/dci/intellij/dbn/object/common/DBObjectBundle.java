@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
@@ -27,6 +28,8 @@ import java.util.List;
 
 public interface DBObjectBundle extends BrowserTreeNode, StatefulDisposable {
     List<DBSchema> getSchemas();
+
+    List<SchemaId> getSchemaIds();
 
     @Nullable
     List<DBUser> getUsers();
