@@ -12,9 +12,9 @@ public interface Constant<T extends Constant<T>> {
 
     default boolean is(String id){
         return id().equals(id);
-    };
+    }
 
-    default boolean isOneOf(T... constants){return ConstantUtil.isOneOf(this, constants);};
+    default boolean isOneOf(T... constants){return ConstantUtil.isOneOf(this, constants);}
 
     static <T> T[] array(T ... constants) {
         return constants;

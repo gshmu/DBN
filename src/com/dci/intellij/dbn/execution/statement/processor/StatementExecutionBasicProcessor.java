@@ -15,9 +15,14 @@ import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ResourceUtil;
+import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.jdbc.DBNStatement;
+import com.dci.intellij.dbn.connection.mapping.FileConnectionMappingManager;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.editor.DBContentType;
@@ -25,7 +30,12 @@ import com.dci.intellij.dbn.editor.EditorProviderId;
 import com.dci.intellij.dbn.execution.ExecutionContext;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.dci.intellij.dbn.execution.ExecutionOption;
-import com.dci.intellij.dbn.execution.compiler.*;
+import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
+import com.dci.intellij.dbn.execution.compiler.CompileType;
+import com.dci.intellij.dbn.execution.compiler.CompilerAction;
+import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
+import com.dci.intellij.dbn.execution.compiler.CompilerResult;
+import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
 import com.dci.intellij.dbn.execution.logging.DatabaseLoggingManager;
 import com.dci.intellij.dbn.execution.statement.DataDefinitionChangeListener;
 import com.dci.intellij.dbn.execution.statement.StatementExecutionInput;
@@ -40,7 +50,11 @@ import com.dci.intellij.dbn.language.common.PsiElementRef;
 import com.dci.intellij.dbn.language.common.PsiFileRef;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
-import com.dci.intellij.dbn.language.common.psi.*;
+import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
+import com.dci.intellij.dbn.language.common.psi.ChameleonPsiElement;
+import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
+import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -315,6 +329,7 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
                         consumeLoggerOutput(context);
                         notifyDataDefinitionChanges(context);
                         notifyDataManipulationChanges(context);
+                        notifySchemaSelectionChanges(context);
                     }
                 } catch (SQLException e) {
                     ResourceUtil.cancel(context.getStatement());
@@ -528,6 +543,20 @@ public class StatementExecutionBasicProcessor extends StatefulDisposable.Base im
         } else if (resetChanges) {
             if (!connection.isPoolConnection()) {
                 connection.resetDataChanges();
+            }
+        }
+    }
+
+    private void notifySchemaSelectionChanges(ExecutionContext context) {
+        DatabaseSession targetSession = getTargetSession();
+        if (targetSession != null && !targetSession.isPool()) {
+            ExecutablePsiElement executablePsiElement = getCachedExecutable();
+            if (executablePsiElement != null && executablePsiElement.isSchemaChange()) {
+                SchemaId schemaId = executablePsiElement.getSchemaChangeTargetId();
+                if (schemaId != null) {
+                    FileConnectionMappingManager connectionMappingManager = FileConnectionMappingManager.getInstance(getProject());
+                    connectionMappingManager.setDatabaseSchema(getVirtualFile(), schemaId);
+                }
             }
         }
     }
