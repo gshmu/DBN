@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.common;
 
+import lombok.Getter;
+
+@Getter
 public enum TokenTypeCategory {
     UNKNOWN("unknown"),
     KEYWORD("keyword"),
@@ -18,13 +21,10 @@ public enum TokenTypeCategory {
     LITERAL("literal")
     ;
 
-    private String name;
+    private final String name;
+
     TokenTypeCategory(String name) {
         this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public static TokenTypeCategory getCategory(String categoryName) {

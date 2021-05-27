@@ -4,12 +4,14 @@ import com.intellij.lang.BracePair;
 import com.intellij.lang.PairedBraceMatcher;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Getter
 public abstract class DBLanguageBraceMatcher implements PairedBraceMatcher {
     private final BracePair[] bracePairs;
-    private DBLanguage language;
+    private final DBLanguage language;
 
     public DBLanguageBraceMatcher(DBLanguage language) {
         this.language = language;
@@ -19,6 +21,7 @@ public abstract class DBLanguageBraceMatcher implements PairedBraceMatcher {
             new BracePair(tt.getTokenType("CHR_LEFT_BRACKET"), tt.getTokenType("CHR_RIGHT_BRACKET"), false)};
     }
 
+    @NotNull
     @Override
     public BracePair[] getPairs() {
         return bracePairs;

@@ -22,9 +22,9 @@ import static com.dci.intellij.dbn.language.common.element.util.ElementTypeAttri
 
 public class ExecutablePsiElement extends NamedPsiElement implements Cloneable<ExecutablePsiElement> {
     private WeakRef<StatementExecutionProcessor> executionProcessor;
-    private final Latent<ElementType> specificElementType = Latent.mutable(() -> getTextLength(), () -> resolveSpecificElementType(false));
-    private final Latent<ElementType> specificOverrideElementType = Latent.mutable(() -> getTextLength(), () -> resolveSpecificElementType(true));
-    private final Latent<SchemaId> contextSchema = Latent.mutable(() -> getTextOffset(), () -> resolveContextSchema());
+    private final Latent<ElementType> specificElementType =         Latent.mutable(() -> getFileModificationStamp(), () -> resolveSpecificElementType(false));
+    private final Latent<ElementType> specificOverrideElementType = Latent.mutable(() -> getFileModificationStamp(), () -> resolveSpecificElementType(true));
+    private final Latent<SchemaId> contextSchema =                  Latent.mutable(() -> getFileModificationStamp(), () -> resolveContextSchema());
 
     public String prepareStatementText(){
         PsiElement lastChild = getLastChild();
