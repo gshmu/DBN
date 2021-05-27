@@ -212,6 +212,10 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
         return null;
     }
 
+    public long getFileModificationStamp() {
+        return getFile().getModificationStamp();
+    }
+
     public String toString() {
         //return elementType.is(ElementTypeAttribute.SCOPE_DEMARCATION);
         return hasErrors() ?

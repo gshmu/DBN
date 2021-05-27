@@ -37,7 +37,7 @@ public abstract class DBLanguageTokenTypeBundle {
     private Map<String, SimpleTokenType> operatorsMap;
 
     private final Map<String, SimpleTokenType> tokenTypes = new THashMap<>();
-    private final Map<String, TokenSet> tokenSets = new THashMap<String, TokenSet>();
+    private final Map<String, TokenSet> tokenSets = new THashMap<>();
 
     public Map<String, SimpleTokenType> getTokenTypes() {
         return tokenTypes;
@@ -76,10 +76,9 @@ public abstract class DBLanguageTokenTypeBundle {
         List<SimpleTokenType> objectsList = new ArrayList<>();
         List<SimpleTokenType> characterList = new ArrayList<>();
         List<SimpleTokenType> operatorList = new ArrayList<>();
-        for (Object o : tokenDefs.getChildren()) {
-            Element element = (Element) o;
-            String tokenTypeId = element.getAttributeValue("id").intern();
-            SimpleTokenType tokenType = new SimpleTokenType(element, language, isRegisteredToken(tokenSetIds, tokenTypeId));
+        for (Element o : tokenDefs.getChildren()) {
+            String tokenTypeId = o.getAttributeValue("id").intern();
+            SimpleTokenType tokenType = new SimpleTokenType(o, language, isRegisteredToken(tokenSetIds, tokenTypeId));
             log.debug("Creating token type '" + tokenType.getId() + "'");
             tokenTypes.put(tokenType.getId(), tokenType);
             switch(tokenType.getCategory()) {
@@ -94,56 +93,56 @@ public abstract class DBLanguageTokenTypeBundle {
             }
         }
         keywords = new SimpleTokenType[keywordList.size()];
-        keywordsMap = new THashMap<String, SimpleTokenType>();
+        keywordsMap = new THashMap<>();
         for (SimpleTokenType keyword : keywordList) {
             keywords[keyword.getLookupIndex()] = keyword;
             keywordsMap.put(keyword.getValue(), keyword);
         }
 
         functions = new SimpleTokenType[functionList.size()];
-        functionsMap = new THashMap<String, SimpleTokenType>();
+        functionsMap = new THashMap<>();
         for (SimpleTokenType function : functionList) {
             functions[function.getLookupIndex()] = function;
             functionsMap.put(function.getValue(), function);
         }
 
         parameters = new SimpleTokenType[parameterList.size()];
-        parametersMap = new THashMap<String, SimpleTokenType>();
+        parametersMap = new THashMap<>();
         for (SimpleTokenType parameter : parameterList) {
             parameters[parameter.getLookupIndex()] = parameter;
             parametersMap.put(parameter.getValue(), parameter);
         }
 
         dataTypes = new SimpleTokenType[dataTypeList.size()];
-        dataTypesMap = new THashMap<String, SimpleTokenType>();
+        dataTypesMap = new THashMap<>();
         for (SimpleTokenType dataType : dataTypeList) {
             dataTypes[dataType.getLookupIndex()] = dataType;
             dataTypesMap.put(dataType.getValue(), dataType);
         }
 
         exceptions = new SimpleTokenType[exceptionList.size()];
-        exceptionsMap = new THashMap<String, SimpleTokenType>();
+        exceptionsMap = new THashMap<>();
         for (SimpleTokenType exception : exceptionList) {
             exceptions[exception.getLookupIndex()] = exception;
             exceptionsMap.put(exception.getValue(), exception);
         }
 
         objects = new SimpleTokenType[objectsList.size()];
-        objectsMap = new THashMap<String, SimpleTokenType>();
+        objectsMap = new THashMap<>();
         for (SimpleTokenType object : objectsList) {
             objects[object.getLookupIndex()] = object;
             objectsMap.put(object.getValue(), object);
         }
 
         characters = new SimpleTokenType[characterList.size()];
-        charactersMap = new THashMap<String, SimpleTokenType>();
+        charactersMap = new THashMap<>();
         for (SimpleTokenType character : characterList) {
             characters[character.getLookupIndex()] = character;
             charactersMap.put(character.getValue(), character);
         }
 
         operators = new SimpleTokenType[characterList.size()];
-        operatorsMap = new THashMap<String, SimpleTokenType>();
+        operatorsMap = new THashMap<>();
         for (SimpleTokenType operator : operatorList) {
             operators[operator.getLookupIndex()] = operator;
             operatorsMap.put(operator.getValue(), operator);
@@ -182,13 +181,12 @@ public abstract class DBLanguageTokenTypeBundle {
     }
 
     private Map<String, Set<String>> parseTokenSets(Element tokenSetDefs) {
-        Map<String, Set<String>> tokenSetDef = new HashMap<String, Set<String>>();
-        for (Object o : tokenSetDefs.getChildren()) {
-            Element element = (Element) o;
-            String tokenSetId = element.getAttributeValue("id").intern();
-            Set<String> tokenIds = new HashSet<String>();
+        Map<String, Set<String>> tokenSetDef = new HashMap<>();
+        for (Element o : tokenSetDefs.getChildren()) {
+            String tokenSetId = o.getAttributeValue("id").intern();
+            Set<String> tokenIds = new HashSet<>();
 
-            for (String tokenId : element.getText().split(",")) {
+            for (String tokenId : o.getText().split(",")) {
                 if (StringUtil.isNotEmpty(tokenId)) {
                     tokenIds.add(tokenId.trim());
                 }
@@ -202,7 +200,7 @@ public abstract class DBLanguageTokenTypeBundle {
     private void createTokenSets(Map<String, Set<String>> tokenSetIds) {
         for (String tokenSetId : tokenSetIds.keySet()) {
             Set<String> tokenIds = tokenSetIds.get(tokenSetId);
-            List<SimpleTokenType> tokenSetList = new ArrayList<SimpleTokenType>();
+            List<SimpleTokenType> tokenSetList = new ArrayList<>();
             for (String tokenId : tokenIds) {
                 SimpleTokenType tokenType = tokenTypes.get(tokenId);
                 if (tokenType == null) {
