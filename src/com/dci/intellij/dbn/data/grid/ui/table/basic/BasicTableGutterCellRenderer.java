@@ -45,12 +45,12 @@ public class BasicTableGutterCellRenderer extends JPanel implements DBNTableGutt
                 table.getSelectedRowCount() == 1;
 
         setBackground(isSelected ?
-                Colors.tableSelectionBackgroundColor() :
+                Colors.tableSelectionBackgroundColor(cellHasFocus) :
                 isCaretRow ?
                         Colors.tableCaretRowColor() :
                         UIUtil.getPanelBackground());
         textLabel.setForeground(isSelected ?
-                Colors.tableSelectionForegroundColor() :
+                Colors.tableSelectionForegroundColor(cellHasFocus) :
                 Colors.tableLineNumberColor());
         return this;
     }

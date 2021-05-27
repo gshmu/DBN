@@ -71,14 +71,14 @@ public class DatasetEditorTableGutterRenderer extends JPanel implements DBNTable
 
         boolean isCaretRow = table.getCellSelectionEnabled() && table.getSelectedRow() == index && table.getSelectedRowCount() == 1;
         Color background = isSelected ?
-                Colors.tableSelectionBackgroundColor() :
+                Colors.tableSelectionBackgroundColor(cellHasFocus) :
                 isCaretRow ?
                         Colors.tableCaretRowColor() :
                         UIUtil.getPanelBackground();
         setBackground(background);
         textPanel.setBackground(background);
         textLabel.setForeground(isSelected ?
-                Colors.tableSelectionForegroundColor() :
+                Colors.tableSelectionForegroundColor(cellHasFocus) :
                 Colors.tableLineNumberColor());
         return this;
     }

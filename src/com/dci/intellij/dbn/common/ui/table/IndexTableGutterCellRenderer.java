@@ -34,12 +34,12 @@ public class IndexTableGutterCellRenderer extends JPanel implements DBNTableGutt
         boolean isCaretRow = table.getCellSelectionEnabled() && table.getSelectedRow() == index && table.getSelectedRowCount() == 1;
 
         setBackground(isSelected ?
-                Colors.tableSelectionBackgroundColor() :
+                Colors.tableSelectionBackgroundColor(true) :
                 isCaretRow ?
                         Colors.tableCaretRowColor() :
                         UIUtil.getPanelBackground());
         textLabel.setForeground(isSelected ?
-                Colors.tableSelectionForegroundColor() :
+                Colors.tableSelectionForegroundColor(cellHasFocus) :
                 Colors.tableLineNumberColor());
         return this;
     }
