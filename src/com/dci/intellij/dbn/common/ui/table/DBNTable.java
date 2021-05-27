@@ -111,8 +111,8 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
     private void updateComponentColors() {
         setGridColor(Colors.tableGridColor());
 
-        setSelectionBackground(Colors.tableSelectionBackgroundColor());
-        setSelectionForeground(Colors.tableSelectionForegroundColor());
+        setSelectionBackground(Colors.tableSelectionBackgroundColor(true));
+        setSelectionForeground(Colors.tableSelectionForegroundColor(true));
     }
 
     protected void adjustRowHeight(int padding) {
