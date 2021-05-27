@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.language.common.element.TokenPairTemplate;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.tree.IElementType;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 public class SimpleTokenType extends IElementType implements TokenType {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -30,6 +32,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
     private FormattingDefinition formatting;
     private TokenPairTemplate tokenPairTemplate;
     private static final AtomicInteger REGISTERED_COUNT = new AtomicInteger();
+    private TextAttributesKey[] textAttributesKeys;
 
     public SimpleTokenType(@NotNull @NonNls String debugName, @Nullable Language language) {
         super(debugName, language, false);
@@ -266,5 +269,12 @@ public class SimpleTokenType extends IElementType implements TokenType {
             if (this == tokenType) return true;
         }
         return false;
+    }
+
+    public TextAttributesKey[] getTokenHighlights(Supplier<TextAttributesKey[]> supplier) {
+        if (textAttributesKeys == null) {
+            textAttributesKeys = supplier.get();
+        }
+        return textAttributesKeys;
     }
 }

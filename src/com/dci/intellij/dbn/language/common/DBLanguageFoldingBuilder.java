@@ -82,8 +82,8 @@ public abstract class DBLanguageFoldingBuilder implements FoldingBuilder, DumbAw
     }
 
     protected static class FoldingContext {
-        private Document document;
-        private List<FoldingDescriptor> descriptors;
+        private final Document document;
+        private final List<FoldingDescriptor> descriptors;
         public boolean folded;
         public int nestingIndex;
 

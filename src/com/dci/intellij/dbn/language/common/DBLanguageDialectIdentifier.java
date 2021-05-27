@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.common;
 
+import lombok.Getter;
+
+@Getter
 public enum DBLanguageDialectIdentifier {
     ORACLE_SQL("ORACLE-SQL"),
     ORACLE_PLSQL("ORACLE-PLSQL"),
@@ -11,13 +14,9 @@ public enum DBLanguageDialectIdentifier {
     SQLITE_PSQL("SQLITE-PSQL"),
     ISO92_SQL("ISO92-SQL");
 
-    private String value;
+    private final String value;
 
     DBLanguageDialectIdentifier(String value) {
         this.value = value;
-    }
-
-    public String getValue() {
-        return value;
     }
 }

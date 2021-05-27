@@ -11,17 +11,15 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
 public abstract class DBLanguageParserDefinition implements ParserDefinition {
     private final DBLanguageParser parser;
 
     public DBLanguageParserDefinition(DBLanguageParser parser) {
         this.parser = parser;
-    }
-
-    public DBLanguageParser getParser() {
-        return parser;
     }
 
     @Override
