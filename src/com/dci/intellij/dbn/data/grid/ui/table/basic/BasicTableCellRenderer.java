@@ -128,4 +128,9 @@ public class BasicTableCellRenderer extends DBNColoredTableCellRenderer {
         }
         return false;
     }
+
+    @Override
+    protected SimpleTextAttributes modifyAttributes(SimpleTextAttributes attributes) {
+        return attributes;
+    }
 }

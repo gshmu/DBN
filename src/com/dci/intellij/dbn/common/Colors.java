@@ -40,12 +40,16 @@ public interface Colors {
         return get().tableCaretRowColor;
     }
 
-    static Color tableSelectionBackgroundColor() {
-        return get().tableSelectionBackgroundColor;
+    static Color tableSelectionBackgroundColor(boolean focused) {
+        return focused ?
+                get().tableSelectionBackgroundColorFocused :
+                get().tableSelectionBackgroundColor;
     }
 
-    static Color tableSelectionForegroundColor() {
-        return get().tableSelectionForegroundColor;
+    static Color tableSelectionForegroundColor(boolean focused) {
+        return focused ?
+                get().tableSelectionForegroundColorFocused :
+                get().tableSelectionForegroundColor;
     }
 
     static Color tableLineNumberColor() {
@@ -64,12 +68,22 @@ public interface Colors {
         private final Color tableSelectionBackgroundColor = nvlf(
                 BasicTableTextAttributes.get().getSelection().getBgColor(),
                 getGlobalScheme().getColor(EditorColors.SELECTION_BACKGROUND_COLOR),
-                UIUtil.getTableSelectionBackground());
+                UIUtil.getTableSelectionBackground(false));
+
+        private final Color tableSelectionBackgroundColorFocused = nvlf(
+                BasicTableTextAttributes.get().getSelection().getBgColor(),
+                getGlobalScheme().getColor(EditorColors.SELECTION_BACKGROUND_COLOR),
+                UIUtil.getTableSelectionBackground(true));
 
         private final Color tableSelectionForegroundColor = nvlf(
                 BasicTableTextAttributes.get().getSelection().getFgColor(),
                 getGlobalScheme().getColor(EditorColors.SELECTION_FOREGROUND_COLOR),
-                UIUtil.getTableSelectionForeground());
+                UIUtil.getTableSelectionForeground(false));
+
+        private final Color tableSelectionForegroundColorFocused = nvlf(
+                BasicTableTextAttributes.get().getSelection().getFgColor(),
+                getGlobalScheme().getColor(EditorColors.SELECTION_FOREGROUND_COLOR),
+                UIUtil.getTableSelectionForeground(true));
 
 
         private final Color tableLineNumberColor = getGlobalScheme().getColor(EditorColors.LINE_NUMBERS_COLOR);
