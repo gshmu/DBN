@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.browser;
 
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.common.filter.Filter;
+import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
@@ -58,12 +59,13 @@ public class DatabaseBrowserUtils {
     }
 
     public static List<BrowserTreeNode> createList(BrowserTreeNode... treeNodes) {
-        List<BrowserTreeNode> treeNodeList = new ArrayList<BrowserTreeNode>();
+        List<BrowserTreeNode> treeNodeList = new ArrayList<>();
         for (BrowserTreeNode treeNode : treeNodes) {
             if (treeNode != null) {
                 treeNodeList.add(treeNode);
             }
         }
+        treeNodeList = CollectionUtil.compact(treeNodeList);
         return treeNodeList;
     }
 }

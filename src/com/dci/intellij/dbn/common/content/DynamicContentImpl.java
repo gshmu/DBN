@@ -435,4 +435,9 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         parent = null;
         nullify();
     }
+
+    @Override
+    protected DynamicContentStatus getDisposedProperty() {
+        return DISPOSED;
+    }
 }

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class LinkedContentDependency extends ContentDependency {
     private GenericDatabaseElement sourceContentOwner;
-    private DynamicContentType sourceContentType;
+    private final DynamicContentType sourceContentType;
 
     public LinkedContentDependency(@NotNull GenericDatabaseElement sourceContentOwner, @NotNull DynamicContentType sourceContentType) {
         this.sourceContentOwner = sourceContentOwner;

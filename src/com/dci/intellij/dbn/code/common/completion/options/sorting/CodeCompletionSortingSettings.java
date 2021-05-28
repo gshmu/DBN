@@ -23,7 +23,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoo
 
 public class CodeCompletionSortingSettings extends BasicConfiguration<CodeCompletionSettings, CodeCompletionSortingSettingsForm> {
     private boolean enabled = true;
-    private List<CodeCompletionSortingItem> sortingItems = new ArrayList<CodeCompletionSortingItem>();
+    private final List<CodeCompletionSortingItem> sortingItems = new ArrayList<>();
 
     public CodeCompletionSortingSettings(CodeCompletionSettings parent) {
         super(parent);
@@ -106,10 +106,9 @@ public class CodeCompletionSortingSettings extends BasicConfiguration<CodeComple
     @Override
     public void readConfiguration(Element element) {
         enabled = getBooleanAttribute(element, "enabled", enabled);
-        for (Object child : element.getChildren()) {
-            Element childElement = (Element) child;
+        for (Element child : element.getChildren()) {
             CodeCompletionSortingItem sortingItem = new CodeCompletionSortingItem(this);
-            sortingItem.readConfiguration(childElement);
+            sortingItem.readConfiguration(child);
             sortingItems.remove(sortingItem);
             sortingItems.add(sortingItem);
         }

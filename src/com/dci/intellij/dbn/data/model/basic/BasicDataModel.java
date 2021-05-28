@@ -365,4 +365,9 @@ public class BasicDataModel<
         SafeDisposer.dispose(rows, false, false);
         nullify();
     }
+
+    @Override
+    protected RecordStatus getDisposedProperty() {
+        return RecordStatus.DISPOSED;
+    }
 }
