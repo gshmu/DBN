@@ -99,4 +99,9 @@ public class BasicDataModelRow<
         SafeDisposer.dispose(cells, false, false);
         nullify();
     }
+
+    @Override
+    protected RecordStatus getDisposedProperty() {
+        return RecordStatus.DISPOSED;
+    }
 }

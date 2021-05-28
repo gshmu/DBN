@@ -4,31 +4,21 @@ import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CheckedTree
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeCompletionFilterTreeNode;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.intellij.ui.CheckedTreeNode;
+import lombok.Getter;
 import org.jdom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class CodeCompletionFilterOptionBundle implements CheckedTreeNodeProvider, PersistentConfiguration {
-    private List<CodeCompletionFilterOption> options = new ArrayList<CodeCompletionFilterOption>();
-    private CodeCompletionFilterSettings filterSettings;
-    private String name;
+    private final List<CodeCompletionFilterOption> options = new ArrayList<>();
+    private final CodeCompletionFilterSettings filterSettings;
+    private final String name;
 
     public CodeCompletionFilterOptionBundle(String name, CodeCompletionFilterSettings filterSettings) {
         this.name = name;
         this.filterSettings = filterSettings;
-    }
-
-    public List<CodeCompletionFilterOption> getOptions() {
-        return options;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public CodeCompletionFilterSettings getFilterSettings() {
-        return filterSettings;
     }
 
     @Override

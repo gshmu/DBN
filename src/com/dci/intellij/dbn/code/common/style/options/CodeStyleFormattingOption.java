@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CodeStyleFormattingOption implements PersistentConfiguration {
-    private List<CodeStylePreset> presets = new ArrayList<CodeStylePreset>();
+    private final List<CodeStylePreset> presets = new ArrayList<>();
     private CodeStylePreset preset;
     private String name;
-    private String displayName;
+    private final String displayName;
 
     public CodeStyleFormattingOption(String name, String displayName) {
         this.name = name;

@@ -51,7 +51,8 @@ public class DBObjectListContainer extends StatefulDisposable.Base implements St
         if (objectLists != null) {
             Safe.run(() -> {
                 checkDisposed(visitor);
-                for (DBObjectList<?> objectList : objectLists) {
+                for (int i = 0; i < objectLists.size(); i++) {
+                    DBObjectList<?> objectList = objectLists.get(i);
                     if (check(objectList) && (visitInternal || !objectList.isInternal())) {
                         checkDisposed(visitor);
                         ProgressMonitor.checkCancelled();
@@ -82,7 +83,15 @@ public class DBObjectListContainer extends StatefulDisposable.Base implements St
 
     @Nullable
     private <T extends DBObject> DBObjectList<T> findObjectList(DBObjectType objectType) {
-        return objectLists == null ? null : (DBObjectList<T>) objectLists.stream().filter(list -> list.getObjectType() == objectType).findFirst().orElse(null);
+        if (objectLists != null) {
+            for (int i = 0; i < objectLists.size(); i++) {
+                DBObjectList<?> objectList = objectLists.get(i);
+                if (objectList.getObjectType() == objectType) {
+                    return (DBObjectList<T>) objectList;
+                }
+            }
+        }
+        return null;
     }
 
     @Nullable

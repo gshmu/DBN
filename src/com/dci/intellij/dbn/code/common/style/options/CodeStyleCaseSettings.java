@@ -12,7 +12,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoo
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
 
 public abstract class CodeStyleCaseSettings extends BasicConfiguration<CodeStyleCustomSettings, CodeStyleCaseSettingsForm> {
-    private List<CodeStyleCaseOption> options = new ArrayList<>();
+    private final List<CodeStyleCaseOption> options = new ArrayList<>();
     private boolean enabled = true;
 
     public CodeStyleCaseSettings(CodeStyleCustomSettings parent) {

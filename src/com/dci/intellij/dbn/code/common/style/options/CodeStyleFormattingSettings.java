@@ -12,7 +12,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoo
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
 
 public abstract class CodeStyleFormattingSettings extends BasicConfiguration<CodeStyleCustomSettings, CodeStyleFormattingSettingsForm> {
-    private List<CodeStyleFormattingOption> options = new ArrayList<CodeStyleFormattingOption>();
+    private List<CodeStyleFormattingOption> options = new ArrayList<>();
     private boolean enabled = false;
 
     public CodeStyleFormattingSettings(CodeStyleCustomSettings parent) {
@@ -64,12 +64,11 @@ public abstract class CodeStyleFormattingSettings extends BasicConfiguration<Cod
     @Override
     public void readConfiguration(Element element) {
         enabled = getBooleanAttribute(element, "enabled", enabled);
-        for (Object object : element.getChildren()) {
-            Element optionElement = (Element) object;
-            String name = optionElement.getAttributeValue("name");
+        for (Element child : element.getChildren()) {
+            String name = child.getAttributeValue("name");
             CodeStyleFormattingOption option = getCodeStyleCaseOption(name);
             if (option != null) {
-                option.readConfiguration(optionElement);
+                option.readConfiguration(child);
             }
         }
     }

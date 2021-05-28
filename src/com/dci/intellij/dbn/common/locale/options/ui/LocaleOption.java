@@ -1,39 +1,31 @@
 package com.dci.intellij.dbn.common.locale.options.ui;
 
 import com.dci.intellij.dbn.common.ui.Presentable;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+@Getter
 public class LocaleOption implements Presentable{
-    public static List<LocaleOption> ALL = new ArrayList<LocaleOption>();
+    public static final List<LocaleOption> ALL = new ArrayList<>();
     static {
         Locale[] locales = Locale.getAvailableLocales();
         for (Locale locale : locales) {
             ALL.add(new LocaleOption(locale));
         }
-        Collections.sort(ALL, new Comparator<LocaleOption>() {
-            @Override
-            public int compare(LocaleOption localeOption1, LocaleOption localeOption2) {
-                return localeOption1.getName().compareTo(localeOption2.getName());
-            }
-        });
+        ALL.sort(Comparator.comparing(LocaleOption::getName));
     }
 
 
-    private Locale locale;
+    private final Locale locale;
 
     public LocaleOption(Locale locale) {
         this.locale = locale;
-    }
-
-    public Locale getLocale() {
-        return locale;
     }
 
     @NotNull

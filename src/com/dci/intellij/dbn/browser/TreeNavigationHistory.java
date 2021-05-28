@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TreeNavigationHistory implements Disposable{
-    private final List<BrowserTreeNode> history = new ArrayList<BrowserTreeNode>();
+    private final List<BrowserTreeNode> history = new ArrayList<>();
     private int offset;
 
     public synchronized void add(BrowserTreeNode treeNode) {
