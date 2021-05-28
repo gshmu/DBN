@@ -1,8 +1,11 @@
 package com.dci.intellij.dbn.common.message;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class MessageBundle {
     private List<Message> infoMessages;
     private List<Message> warningMessages;
@@ -29,21 +32,9 @@ public class MessageBundle {
     }
 
     private static List<Message> addMessage(Message message, List<Message> list) {
-        if (list == null) list = new ArrayList<Message>();
+        if (list == null) list = new ArrayList<>();
         if (!list.contains(message)) list.add(message);
         return list;
-    }
-
-    public List<Message> getInfoMessages() {
-        return infoMessages;
-    }
-
-    public List<Message> getWarningMessages() {
-        return warningMessages;
-    }
-
-    public List<Message> getErrorMessages() {
-        return errorMessages;
     }
 
     public boolean hasErrors() {

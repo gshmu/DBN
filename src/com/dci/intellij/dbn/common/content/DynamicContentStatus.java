@@ -11,6 +11,7 @@ public enum DynamicContentStatus implements Property {
     DIRTY,
     ERROR,
     LOADED,
+    DISPOSED,
 
     CHANGING,
     REFRESHING,
