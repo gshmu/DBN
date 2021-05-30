@@ -21,7 +21,7 @@ public class ObjectListItemForm extends DBNFormImpl {
     ObjectListItemForm(@NotNull ObjectListForm<?> parent, ObjectFactoryInputForm<?> inputForm) {
         super(parent);
         this.inputForm = inputForm;
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
+        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(removeActionPanel,
                 "DBNavigator.ObjectFactory.AddElement", true,
                 new RemoveObjectAction());
         removeActionPanel.add(actionToolbar.getComponent(), BorderLayout.NORTH);

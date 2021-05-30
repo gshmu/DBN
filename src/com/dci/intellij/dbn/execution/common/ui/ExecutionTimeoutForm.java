@@ -73,6 +73,7 @@ public abstract class ExecutionTimeoutForm extends DBNFormImpl{
         });
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
+                actionsPanel,
                 "DBNavigator.Place.ExecutionTimeoutForm.Settings", true,
                 new SettingsAction());
 

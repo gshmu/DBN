@@ -36,11 +36,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.sql.Timestamp;
 import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implements TableModelListener {
     private static final Font BOLD = new Font(UIUtil.getMenuFont().getFontName(), Font.BOLD, UIUtil.getMenuFont().getSize());
@@ -94,16 +90,21 @@ public class CalendarPopupProviderForm extends TextFieldPopupProviderForm implem
         });*/
 
         ActionToolbar actionToolbarLeft = ActionUtil.createActionToolbar(
+                getMainComponent(),
                 "DBNavigator.Place.DataEditor.CalendarPopup", true,
                 new PreviousYearAction(),
                 new PreviousMonthAction());
         ActionToolbar actionToolbarRight = ActionUtil.createActionToolbar(
+                getMainComponent(),
                 "DBNavigator.Place.DataEditor.CalendarPopup", true,
                 new NextMonthAction(),
                 new NextYearAction());
 
         ActionToolbar actionToolbarBottom = ActionUtil.createActionToolbar(
-                "DBNavigator.Place.DataEditor.CalendarPopup", true, new ClearTimeAction());
+                getMainComponent(),
+                "DBNavigator.Place.DataEditor.CalendarPopup",
+                true,
+                new ClearTimeAction());
 
         actionsLeftPanel.add(actionToolbarLeft.getComponent(), BorderLayout.WEST);
         actionsRightPanel.add(actionToolbarRight.getComponent(), BorderLayout.EAST);

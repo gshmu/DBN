@@ -16,11 +16,7 @@ import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.value.LargeObjectValue;
 import com.dci.intellij.dbn.editor.data.DatasetEditorManager;
 import com.dci.intellij.dbn.language.common.WeakRef;
-import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.actionSystem.ToggleAction;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -74,12 +70,12 @@ public class LargeValuePreviewPopup extends DBNFormImpl {
         if (largeTextLayout) {
             boolean isBasicPreview = !(table instanceof BasicTable);
             if (isBasicPreview) {
-                ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", false, new WrapUnwrapContentAction());
+                ActionToolbar actionToolbar = ActionUtil.createActionToolbar(leftActionsPanel,"", false, new WrapUnwrapContentAction());
                 JComponent toolbarComponent = actionToolbar.getComponent();
                 leftActionsPanel.add(toolbarComponent, BorderLayout.NORTH);
                 topActionsPanel.setVisible(false);
             } else {
-                ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true,
+                ActionToolbar actionToolbar = ActionUtil.createActionToolbar(topActionsPanel,"", true,
                     /*new PinUnpinPopupAction(),
                     new CloseAction(),
                     ActionUtil.SEPARATOR,*/

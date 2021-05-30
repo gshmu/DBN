@@ -69,7 +69,7 @@ public class ObjectQuickFilterConditionForm extends DBNFormImpl {
             }
         });
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
+        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,
                 "DBNavigator.DataEditor.SimpleFilter.Condition", true,
                 new EnableDisableQuickFilterConditionAction(this),
                 new DeleteQuickFilterConditionAction(this));

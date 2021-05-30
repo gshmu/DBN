@@ -54,8 +54,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
 
     public StatementExecutionResultForm(@NotNull StatementExecutionCursorResult executionResult) {
         super(executionResult);
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", false, "DBNavigator.ActionGroup.StatementExecutionResult");
-        actionToolbar.setTargetComponent(actionsPanel);
+        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel, "", false, "DBNavigator.ActionGroup.StatementExecutionResult");
 
         actionsPanel.add(actionToolbar.getComponent());
 

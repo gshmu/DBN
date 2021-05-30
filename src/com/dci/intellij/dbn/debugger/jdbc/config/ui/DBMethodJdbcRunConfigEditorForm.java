@@ -52,7 +52,7 @@ public class DBMethodJdbcRunConfigEditorForm extends DBProgramRunConfigurationEd
             DBNHintForm hintForm = new DBNHintForm(this, DatabaseDebuggerManager.GENERIC_METHOD_RUNNER_HINT, null, true);
             hintPanel.add(hintForm.getComponent());
         } else {
-            ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, new SelectMethodAction());
+            ActionToolbar actionToolbar = ActionUtil.createActionToolbar(selectMethodActionPanel,"", true, new SelectMethodAction());
             selectMethodActionPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
             hintPanel.setVisible(false);
         }

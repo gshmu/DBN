@@ -24,8 +24,7 @@ public class ExplainPlanResultForm extends ExecutionResultFormBase<ExplainPlanRe
 
     public ExplainPlanResultForm(@NotNull ExplainPlanResult explainPlanResult) {
         super(explainPlanResult);
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", false, "DBNavigator.ActionGroup.ExplainPlanResult");
-        actionToolbar.setTargetComponent(actionsPanel);
+        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", false, "DBNavigator.ActionGroup.ExplainPlanResult");
 
         actionsPanel.add(actionToolbar.getComponent());
 

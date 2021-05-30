@@ -67,8 +67,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         connectionsList.setFont(com.intellij.util.ui.UIUtil.getLabelFont());
         connectionsList.setBackground(UIUtil.getTextFieldBackground());
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.ConnectionSettings");
-        actionToolbar.setTargetComponent(actionsPanel);
+        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.ConnectionSettings");
         JComponent component = actionToolbar.getComponent();
         actionsPanel.add(component, BorderLayout.CENTER);
         connectionListScrollPane.setViewportView(connectionsList);
