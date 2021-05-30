@@ -18,7 +18,6 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
@@ -370,13 +369,14 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                         List<DBObjectType> objectTypes = new ArrayList<>();
                         DBObjectListContainer childObjects = schema.getChildObjects();
                         if (childObjects != null) {
-                            CollectionUtil.forEach(
-                                    childObjects.getObjectLists(),
-                                    (objectList) -> {
-                                        if (objectList.isLoaded() || objectList.isLoading()) {
-                                            objectTypes.add(objectList.getObjectType());
-                                        }
-                                    });
+                            DBObjectList[] objectLists = childObjects.getElements();
+                            if (objectLists != null) {
+                                for (DBObjectList objectList : objectLists) {
+                                    if (objectList.isLoaded() || objectList.isLoading()) {
+                                        objectTypes.add(objectList.getObjectType());
+                                    }
+                                }
+                            }
                         }
                         if (objectTypes.size() > 0) {
                             Element schemaElement = new Element("schema");
