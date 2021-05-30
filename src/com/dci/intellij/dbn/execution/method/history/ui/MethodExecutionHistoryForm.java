@@ -50,7 +50,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl {
     MethodExecutionHistoryForm(MethodExecutionHistoryDialog parent, MethodExecutionInput selectedExecutionInput, boolean debug) {
         super(parent);
         this.debug = debug;
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true,
+        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", true,
                 new ShowGroupedTreeAction(),
                 new DeleteHistoryEntryAction(),
                 ActionUtil.SEPARATOR,

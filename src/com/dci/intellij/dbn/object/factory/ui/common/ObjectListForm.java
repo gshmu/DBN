@@ -34,7 +34,7 @@ public abstract class ObjectListForm<T extends ObjectFactoryInput> extends DBNFo
         this.connectionHandler = connectionHandler.getRef();
         listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
+        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,
                 "DBNavigator.ObjectFactory.AddElement", true,
                 new CreateObjectAction());
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);

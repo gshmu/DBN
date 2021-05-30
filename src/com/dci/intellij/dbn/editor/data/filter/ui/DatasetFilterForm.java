@@ -49,6 +49,7 @@ public class DatasetFilterForm extends ConfigurationEditorForm<DatasetFilterGrou
 
         DatasetFilterList filters = getFilterList();
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
+                actionsPanel,
                 "DBNavigator.DataEditor.FiltersList", true,
                 new CreateFilterAction(filters),
                 new DeleteFilterAction(filters),

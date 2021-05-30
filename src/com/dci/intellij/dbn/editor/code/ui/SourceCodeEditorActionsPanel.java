@@ -33,8 +33,7 @@ public class SourceCodeEditorActionsPanel extends DBNFormImpl{
         this.sourceCodeEditor = WeakRef.of(sourceCodeEditor);
         Editor editor = sourceCodeEditor.getEditor();
         JComponent editorComponent = editor.getComponent();
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.SourceEditor");
-        actionToolbar.setTargetComponent(editorComponent);
+        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.SourceEditor");
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
         loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);
         loadingDataPanel.setVisible(false);

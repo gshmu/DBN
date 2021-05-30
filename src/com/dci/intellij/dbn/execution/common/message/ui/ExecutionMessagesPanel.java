@@ -4,11 +4,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.navigation.NavigationInstructions;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.execution.common.message.action.ExecutedStatementViewAction;
-import com.dci.intellij.dbn.execution.common.message.action.ExecutionEngineSettingsAction;
-import com.dci.intellij.dbn.execution.common.message.action.MessagesTreeCollapseAction;
-import com.dci.intellij.dbn.execution.common.message.action.MessagesTreeExpandAction;
-import com.dci.intellij.dbn.execution.common.message.action.MessagesWindowCloseAction;
+import com.dci.intellij.dbn.execution.common.message.action.*;
 import com.dci.intellij.dbn.execution.common.message.ui.tree.MessagesTree;
 import com.dci.intellij.dbn.execution.common.ui.ExecutionConsoleForm;
 import com.dci.intellij.dbn.execution.compiler.CompilerMessage;
@@ -36,6 +32,7 @@ public class ExecutionMessagesPanel extends DBNFormImpl{
         messagesScrollPane.setViewportView(messagesTree);
         messagesPanel.setBorder(IdeBorderFactory.createBorder());
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
+                actionsPanel,
                 "DBNavigator.ExecutionMessages.Controls", false,
                 new MessagesWindowCloseAction(messagesTree),
                 new ExecutedStatementViewAction(messagesTree),

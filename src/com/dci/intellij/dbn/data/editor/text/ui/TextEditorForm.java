@@ -1,12 +1,7 @@
 package com.dci.intellij.dbn.data.editor.text.ui;
 
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.common.util.ActionUtil;
-import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.EditorUtil;
-import com.dci.intellij.dbn.common.util.MessageUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.common.util.*;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.editor.text.TextEditorAdapter;
 import com.dci.intellij.dbn.data.editor.text.actions.TextContentTypeComboBoxAction;
@@ -65,7 +60,7 @@ public class TextEditorForm extends DBNFormImpl {
             userValueHolder.setContentType(TextContentType.getPlainText(project));
         }
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
+        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,
                 "DBNavigator.Place.DataEditor.LobContentTypeEditor", true,
                 new TextContentTypeComboBoxAction(this));
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);

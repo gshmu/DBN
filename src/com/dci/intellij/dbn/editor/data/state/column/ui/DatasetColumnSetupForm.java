@@ -7,11 +7,7 @@ import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
 import com.dci.intellij.dbn.editor.data.state.column.DatasetColumnSetup;
 import com.dci.intellij.dbn.editor.data.state.column.DatasetColumnState;
-import com.dci.intellij.dbn.editor.data.state.column.action.MoveDownAction;
-import com.dci.intellij.dbn.editor.data.state.column.action.MoveUpAction;
-import com.dci.intellij.dbn.editor.data.state.column.action.OrderAlphabeticallyAction;
-import com.dci.intellij.dbn.editor.data.state.column.action.RevertColumnOrderAction;
-import com.dci.intellij.dbn.editor.data.state.column.action.SelectAllColumnsAction;
+import com.dci.intellij.dbn.editor.data.state.column.action.*;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -44,7 +40,7 @@ public class DatasetColumnSetupForm extends DBNFormImpl {
         columnList = new CheckBoxList<>(columnStateSel, true);
         columnListScrollPane.setViewportView(columnList);
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", false,
+        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionPanel,"", false,
                 new SelectAllColumnsAction(columnList),
                 ActionUtil.SEPARATOR,
                 new MoveUpAction(columnList),

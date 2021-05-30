@@ -52,10 +52,12 @@ public class TextEditorPopupProviderForm extends TextFieldPopupProviderForm {
         textEditorScrollPane.setBorder(Borders.COMPONENT_LINE_BORDER);
 
         ActionToolbar leftActionToolbar = ActionUtil.createActionToolbar(
+                leftActionPanel,
                 "DBNavigator.Place.DataEditor.TextAreaPopup", true);
         leftActionPanel.add(leftActionToolbar.getComponent(), BorderLayout.WEST);
 
         ActionToolbar rightActionToolbar = ActionUtil.createActionToolbar(
+                rightActionPanel,
                 "DBNavigator.Place.DataEditor.TextAreaPopup", true,
                 new DeleteAction(),
                 new RevertAction(),

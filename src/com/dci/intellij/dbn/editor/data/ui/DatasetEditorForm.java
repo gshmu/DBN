@@ -81,15 +81,13 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
             panel.setBorder(UIUtil.getTableHeaderCellBorder());
             datasetTableScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
 
-            ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.DataEditor");
-            actionToolbar.setTargetComponent(actionsPanel);
+            ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.DataEditor");
 
             actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
             loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);
             hideLoadingHint();
 
-            ActionToolbar loadingActionToolbar = ActionUtil.createActionToolbar("", true, new CancelLoadingAction());
-            actionToolbar.setTargetComponent(actionsPanel);
+            ActionToolbar loadingActionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", true, new CancelLoadingAction());
             loadingActionPanel.add(loadingActionToolbar.getComponent(), BorderLayout.CENTER);
 
             Disposer.register(this, autoCommitLabel);
