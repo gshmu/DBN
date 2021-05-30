@@ -64,6 +64,7 @@ public class ResultSetRecordViewerForm extends DBNFormImpl {
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(
+                actionsPanel,
                 "DBNavigator.Place.DataEditor.TextAreaPopup", true,
                 new SortAlphabeticallyAction(),
                 ActionUtil.SEPARATOR,

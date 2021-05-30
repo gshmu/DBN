@@ -13,10 +13,11 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public interface Progress {
+public final class Progress {
 
+    private Progress() {}
 
-    static void background(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
+    public static void background(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
         if (Failsafe.check(project)) {
             ThreadInfo invoker = ThreadMonitor.current();
             start(new Task.Backgroundable(Failsafe.nd(project), title, cancellable, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
@@ -31,7 +32,7 @@ public interface Progress {
         }
     }
 
-    static void prompt(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
+    public static void prompt(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
         if (Failsafe.check(project)) {
             ThreadInfo invoker = ThreadMonitor.current();
             start(new Task.Backgroundable(Failsafe.nd(project), title, cancellable, PerformInBackgroundOption.DEAF) {
@@ -46,7 +47,7 @@ public interface Progress {
         }
     }
 
-    static void modal(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
+    public static void modal(Project project, String title, boolean cancellable, ProgressRunnable runnable) {
         if (Failsafe.check(project)) {
             ThreadInfo invoker = ThreadMonitor.current();
             start(new Task.Modal(project, title, cancellable) {
@@ -62,7 +63,7 @@ public interface Progress {
         }
     }
 
-    static void start(Task task) {
+    public static void start(Task task) {
         Application application = ApplicationManager.getApplication();
         application.invokeLater(() -> {
             if (Failsafe.check(task) && Failsafe.check(task.getProject())) {
@@ -72,7 +73,7 @@ public interface Progress {
         });
     }
 
-    static void check(ProgressIndicator progress) {
+    public static void check(ProgressIndicator progress) {
         if (progress.isCanceled()) {
             throw AlreadyDisposedException.INSTANCE;
         }

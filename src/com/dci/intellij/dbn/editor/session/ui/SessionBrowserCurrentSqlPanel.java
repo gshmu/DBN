@@ -60,7 +60,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
         this.sessionBrowser = WeakRef.of(sessionBrowser);
         createStatementViewer();
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, new RefreshAction(), new WrapUnwrapContentAction());
+        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel, "", true, new RefreshAction(), new WrapUnwrapContentAction());
         actionsPanel.add(actionToolbar.getComponent(),BorderLayout.WEST);
 
     }

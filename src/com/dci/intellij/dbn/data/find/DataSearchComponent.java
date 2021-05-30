@@ -4,22 +4,16 @@ import com.dci.intellij.dbn.common.compatibility.CompatibilityUtil;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
+import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.data.find.action.CloseOnESCAction;
-import com.dci.intellij.dbn.data.find.action.NextOccurrenceAction;
-import com.dci.intellij.dbn.data.find.action.PrevOccurrenceAction;
-import com.dci.intellij.dbn.data.find.action.ShowHistoryAction;
-import com.dci.intellij.dbn.data.find.action.ToggleMatchCase;
-import com.dci.intellij.dbn.data.find.action.ToggleRegex;
-import com.dci.intellij.dbn.data.find.action.ToggleWholeWordsOnlyAction;
+import com.dci.intellij.dbn.data.find.action.*;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.model.DataModel;
 import com.dci.intellij.dbn.data.model.DataModelListener;
 import com.intellij.featureStatistics.FeatureUsageTracker;
+import com.intellij.find.FindInProjectSettings;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindModel;
-import com.intellij.find.FindSettings;
-import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
@@ -190,7 +184,7 @@ public class DataSearchComponent extends DBNFormImpl implements SelectionListene
         myActionsGroup.add(new ToggleMatchCase(this));
         myActionsGroup.add(new ToggleRegex(this));
 
-        actionsToolbar = ActionManager.getInstance().createActionToolbar("SearchBar", myActionsGroup, true);
+        actionsToolbar = ActionUtil.createActionToolbar(actionsPanel, "SearchBar", true, myActionsGroup);
 
         myActionsGroup.addAction(new ToggleWholeWordsOnlyAction(this));
 
@@ -308,9 +302,9 @@ public class DataSearchComponent extends DBNFormImpl implements SelectionListene
 
     public void showHistory(boolean byClickingToolbarButton, JTextField textField) {
         FeatureUsageTracker.getInstance().triggerFeatureUsed("find.recent.search");
-        FindSettings settings = FindSettings.getInstance();
+        FindInProjectSettings settings = getFindSettings();
         String[] recent = textField == searchField ? settings.getRecentFindStrings() : settings.getRecentReplaceStrings();
-        JBList<String> list = new JBList<>((String[]) ArrayUtil.reverseArray(recent));
+        JBList<String> list = new JBList<>(ArrayUtil.reverseArray(recent));
         CompatibilityUtil.showSearchCompletionPopup(byClickingToolbarButton, actionsPanel, list, "Recent Searches", textField);
     }
 
@@ -360,11 +354,15 @@ public class DataSearchComponent extends DBNFormImpl implements SelectionListene
         final String text = textField.getText();
         if (text.length() > 0) {
             if (textField == searchField) {
-                FindSettings.getInstance().addStringToFind(text);
+                getFindSettings().addStringToFind(text);
             } else {
-                FindSettings.getInstance().addStringToReplace(text);
+                getFindSettings().addStringToReplace(text);
             }
         }
+    }
+
+    private FindInProjectSettings getFindSettings() {
+        return FindInProjectSettings.getInstance(ensureProject());
     }
 
     @Override

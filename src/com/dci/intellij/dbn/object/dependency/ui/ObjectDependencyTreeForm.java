@@ -22,9 +22,7 @@ import javax.swing.*;
 import javax.swing.tree.TreeModel;
 import java.awt.*;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 
 public class ObjectDependencyTreeForm extends DBNFormImpl{
     private JPanel mainPanel;
@@ -72,7 +70,7 @@ public class ObjectDependencyTreeForm extends DBNFormImpl{
         headerForm = new DBNHeaderForm(this, schemaObject);
         headerPanel.add(headerForm.getComponent(), BorderLayout.CENTER);
 
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true,
+        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", true,
                 new PreviousSelectionAction(),
                 new NextSelectionAction(),
                 ActionUtil.SEPARATOR,

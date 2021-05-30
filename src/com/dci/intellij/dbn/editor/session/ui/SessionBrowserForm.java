@@ -77,8 +77,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
             panel.setBorder(UIUtil.getTableHeaderCellBorder());
             editorTableScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
 
-            ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.SessionBrowser");
-            actionToolbar.setTargetComponent(actionsPanel);
+            ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.SessionBrowser");
 
             actionsPanel.add(actionToolbar.getComponent(), BorderLayout.WEST);
             loadingIconPanel.add(new AsyncProcessIcon("Loading"), BorderLayout.CENTER);

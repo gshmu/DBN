@@ -25,8 +25,7 @@ public class DBLanguageFileEditorToolbarForm extends DBNFormImpl {
 
     public DBLanguageFileEditorToolbarForm(Disposable parent, Project project, VirtualFile file) {
         super(parent, project);
-        ActionToolbar actionToolbar = ActionUtil.createActionToolbar("", true, "DBNavigator.ActionGroup.FileEditor");
-        actionToolbar.setTargetComponent(actionsPanel);
+        ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.FileEditor");
         actionsPanel.add(actionToolbar.getComponent(), BorderLayout.CENTER);
 
         FileConnectionMappingManager mappingManager = FileConnectionMappingManager.getInstance(project);

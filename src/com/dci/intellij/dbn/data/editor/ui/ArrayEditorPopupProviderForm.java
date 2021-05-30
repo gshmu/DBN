@@ -50,12 +50,14 @@ public class ArrayEditorPopupProviderForm extends TextFieldPopupProviderForm {
         super(textField, autoPopup, true);
 
         ActionToolbar leftActionToolbar = ActionUtil.createActionToolbar(
+                leftActionPanel,
                 "DBNavigator.Place.DataEditor.TextAreaPopup", true,
                 new AddAction(),
                 new RemoveAction());
         leftActionPanel.add(leftActionToolbar.getComponent(), BorderLayout.WEST);
 
         ActionToolbar rightActionToolbar = ActionUtil.createActionToolbar(
+                rightActionPanel,
                 "DBNavigator.Place.DataEditor.TextAreaPopup", true,
                 new DeleteAction(),
                 new RevertAction(),

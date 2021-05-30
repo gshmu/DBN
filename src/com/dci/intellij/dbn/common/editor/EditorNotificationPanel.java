@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.util.Context;
 import com.intellij.codeInsight.hint.HintUtil;
 import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.ui.HyperlinkAdapter;
@@ -17,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.*;
+import java.util.UUID;
 
 public class EditorNotificationPanel extends JPanel{
     protected final JLabel label = new JLabel();
@@ -94,7 +94,7 @@ public class EditorNotificationPanel extends JPanel{
 
     private void executeAction(final String actionId) {
         AnAction action = ActionManager.getInstance().getAction(actionId);
-        AnActionEvent event = new AnActionEvent(null, Context.getDataContext(this), ActionPlaces.UNKNOWN,
+        AnActionEvent event = new AnActionEvent(null, Context.getDataContext(this), UUID.randomUUID().toString(),
                 action.getTemplatePresentation(), ActionManager.getInstance(),
                 0);
         action.beforeActionPerformedUpdate(event);
