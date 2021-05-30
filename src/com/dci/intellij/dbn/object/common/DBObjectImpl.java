@@ -122,9 +122,6 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
         initStatus(metadata);
         initProperties();
         initLists();
-
-        compact(childObjects);
-        compact(childObjectRelations);
     }
 
     protected abstract String initObject(M metadata) throws SQLException;
@@ -487,7 +484,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
             }
         } else if (childObjects != null) {
             if (objectType == DBObjectType.ANY) {
-                for (DBObjectList<?> objectList : childObjects.getObjectLists()) {
+                for (DBObjectList<?> objectList : childObjects.getElements()) {
                     CancellableConsumer.checkCancelled(consumer);
                     if (!objectList.isInternal() && Failsafe.check(objectList)) {
                         objectList.collectObjects(consumer);

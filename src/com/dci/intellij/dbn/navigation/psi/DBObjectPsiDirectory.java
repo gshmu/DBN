@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.navigation.psi;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.language.common.psi.EmptySearchScope;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -21,7 +20,6 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiReference;
@@ -131,11 +129,14 @@ public class DBObjectPsiDirectory implements PsiDirectory, Disposable{
         List<PsiElement> children = new ArrayList<PsiElement>();
         DBObjectListContainer childObjects = object.getChildObjects();
         if (childObjects != null) {
-            CollectionUtil.forEach(childObjects.getObjectLists(), objectList -> {
-                if (!objectList.isInternal() && Failsafe.check(objectList)) {
-                    children.add(objectList.getPsiDirectory());
+            DBObjectList[] objectLists = childObjects.getElements();
+            if (objectLists != null) {
+                for (DBObjectList objectList : objectLists) {
+                    if (!objectList.isInternal() && Failsafe.check(objectList)) {
+                        children.add(objectList.getPsiDirectory());
+                    }
                 }
-            });
+            }
         }
         return children.toArray(new PsiElement[0]);
     }
