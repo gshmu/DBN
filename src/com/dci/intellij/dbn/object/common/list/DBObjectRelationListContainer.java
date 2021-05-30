@@ -6,35 +6,29 @@ import com.dci.intellij.dbn.common.content.dependency.SubcontentDependencyAdapte
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.util.CollectionUtil;
-import com.dci.intellij.dbn.common.util.Compactable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
-import com.intellij.openapi.Disposable;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
-public class DBObjectRelationListContainer extends StatefulDisposable.Base implements Disposable, Compactable {
+public class DBObjectRelationListContainer implements StatefulDisposable {
+    private static final DBObjectRelationList[] DISPOSED_CONTENT = new DBObjectRelationList[0];
+
     private GenericDatabaseElement owner;
-    private List<DBObjectRelationList> objectRelationLists;
+    private DBObjectRelationList[] elements;
 
     public DBObjectRelationListContainer(GenericDatabaseElement owner) {
         this.owner = owner;
     }
 
-    @Override
-    public void compact() {
-        objectRelationLists = CollectionUtil.compactRecursive(objectRelationLists);
-    }
-
-    public List<DBObjectRelationList> getObjectRelationLists() {
-        return objectRelationLists;
+    @Nullable
+    public DBObjectRelationList[] getElements() {
+        return elements;
     }
 
     private boolean isSupported(DBObjectRelationType objectRelationType) {
@@ -52,8 +46,8 @@ public class DBObjectRelationListContainer extends StatefulDisposable.Base imple
 
     @Nullable
     public DBObjectRelationList getObjectRelationList(DBObjectRelationType objectRelationType) {
-        if (objectRelationLists != null) {
-            for (DBObjectRelationList objectRelationList : objectRelationLists) {
+        if (elements != null) {
+            for (DBObjectRelationList objectRelationList : elements) {
                 if (objectRelationList.getObjectRelationType() == objectRelationType) {
                     return objectRelationList;
                 }
@@ -92,23 +86,39 @@ public class DBObjectRelationListContainer extends StatefulDisposable.Base imple
             ContentDependencyAdapter dependencyAdapter) {
         if (isSupported(type)) {
             DBObjectRelationList objectRelationList = new DBObjectRelationListImpl(type, parent, dependencyAdapter);
-            if (objectRelationLists == null) objectRelationLists = new ArrayList<>();
-            objectRelationLists.add(objectRelationList);
+
+            if (elements == null)
+                elements = new DBObjectRelationList[1]; else
+                elements =  Arrays.copyOf(elements, elements.length + 1);
+
+            elements[elements.length-1] = objectRelationList;
             return objectRelationList;
         }
         return null;
     }
 
+
     @Override
-    public void disposeInner() {
-        SafeDisposer.dispose(objectRelationLists, false, false);
-        owner = null;
-        nullify();
+    public boolean isDisposed() {
+        return elements == DISPOSED_CONTENT;
+    }
+
+    @Override
+    public void dispose() {
+        if (!isDisposed()) {
+            DBObjectRelationList[] objectRelationLists = this.elements;
+            this.elements = DISPOSED_CONTENT;
+            this.owner = null;
+
+            SafeDisposer.dispose(objectRelationLists, false, false);
+        }
     }
 
     public void reload() {
-        for (DBObjectRelationList objectRelationList : objectRelationLists) {
-            objectRelationList.reload();
-        }        
+        if (elements != null) {
+            for (DBObjectRelationList objectRelationList : elements) {
+                objectRelationList.reload();
+            }
+        }
     }
 }

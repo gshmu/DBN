@@ -119,6 +119,23 @@ public interface SafeDisposer {
         }
     }
 
+    static void dispose(@Nullable Object[] array, boolean registered, boolean background) {
+        if (array != null) {
+            if (background && !ThreadMonitor.isBackgroundProcess()) {
+                Background.run(() -> dispose(array, registered, false));
+            } else {
+                for (int i = 0; i < array.length; i++) {
+                    Object object = array[i];
+                    if (object instanceof Disposable) {
+                        Disposable disposable = (Disposable) object;
+                        dispose(disposable, registered);
+                    }
+                    array[i] = null;
+                }
+            }
+        }
+    }
+
     static void dispose(@Nullable Map<?, ?> map, boolean registered, boolean background) {
         if (map != null && !map.isEmpty()) {
             Collection<?> collection = new ArrayList<>(map.values());

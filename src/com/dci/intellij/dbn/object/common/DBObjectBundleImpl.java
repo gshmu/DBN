@@ -185,9 +185,6 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
                 ROLE_PRIVILEGE, this,
                 roles, systemPrivileges);
 
-        objectLists.compact();
-        objectRelationLists.compact();
-
         Project project = connectionHandler.getProject();
 
         PsiFileFactory psiFileFactory = PsiFileFactory.getInstance(project);
