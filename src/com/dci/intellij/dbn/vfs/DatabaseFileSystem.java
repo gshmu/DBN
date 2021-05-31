@@ -643,4 +643,9 @@ public class DatabaseFileSystem extends VirtualFileSystem implements /*NonPhysic
     public boolean isDatabaseUrl(String fileUrl) {
         return fileUrl.startsWith(PROTOCOL_PREFIX);
     }
+
+    @Override
+    public boolean isCaseSensitive() {
+        return false;
+    }
 }
