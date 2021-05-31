@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class DebuggerSettings extends BasicConfiguration<OperationSettings, DebuggerSettingsForm> {
     private boolean useGenericRunners = true;
-    private InteractiveOptionBroker<DebuggerTypeOption> debuggerType =
+    private final InteractiveOptionBroker<DebuggerTypeOption> debuggerType =
             new InteractiveOptionBroker<DebuggerTypeOption>(
                     "debugger-type",
                     "Debugger Type",

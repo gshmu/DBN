@@ -23,7 +23,7 @@ public class DBProgramDebuggerSettings extends XDebuggerSettings<DBProgramDebugg
     }
 
     @Override
-    public void loadState(DBProgramDebuggerState state) {
+    public void loadState(@NotNull DBProgramDebuggerState state) {
         this.state = state;
     }
 

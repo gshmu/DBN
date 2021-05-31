@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.vfs.file.DBConsoleVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBObjectVirtualFile;
 import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -93,7 +92,8 @@ public class DatabaseFileViewProvider extends SingleRootFileViewProvider {
             forceCachedPsi(file);
             Document document = DocumentUtil.getDocument(file);// cache hard reference to document (??)
             if (Failsafe.check(document)) {
-                FileDocumentManagerImpl.registerDocument(document, getVirtualFile());
+                // TODO non-physical fs assertion
+                //FileDocumentManagerImpl.registerDocument(document, getVirtualFile());
             }
         }
         return file;
