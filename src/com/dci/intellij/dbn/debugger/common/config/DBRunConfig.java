@@ -13,14 +13,18 @@ import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAc
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+@Getter
+@Setter
 public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigurationBase implements RunConfigurationWithSuppressedDefaultRunAction, LocatableConfiguration {
-    private boolean isGeneratedName = true;
+    private boolean generatedName = true;
     private boolean compileDependencies = true;
     private boolean canRun = false;
     private DBRunConfigCategory category;
@@ -51,50 +55,17 @@ public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigura
     }
 
     @Override
-    public void writeExternal(Element element) throws WriteExternalException {
+    public void writeExternal(@NotNull Element element) throws WriteExternalException {
         super.writeExternal(element);
         SettingsSupport.setEnum(element, "category", category);
         SettingsSupport.setBoolean(element, "compile-dependencies", compileDependencies);
     }
 
     @Override
-    public void readExternal(Element element) throws InvalidDataException {
+    public void readExternal(@NotNull Element element) throws InvalidDataException {
         super.readExternal(element);
         category = SettingsSupport.getEnum(element, "category", category);
         compileDependencies = SettingsSupport.getBoolean(element, "compile-dependencies", compileDependencies);
-    }
-
-    public DBRunConfigCategory getCategory() {
-        return category;
-    }
-
-    public void setCategory(DBRunConfigCategory category) {
-        this.category = category;
-    }
-
-    public boolean isCompileDependencies() {
-        return compileDependencies;
-    }
-
-    public void setCompileDependencies(boolean compileDependencies) {
-        this.compileDependencies = compileDependencies;
-    }
-
-    public I getExecutionInput() {
-        return executionInput;
-    }
-
-    @Override
-    public boolean isGeneratedName() {
-        return isGeneratedName;
-    }
-
-    public void setGeneratedName(boolean generatedName) {
-        isGeneratedName = generatedName;
-    }
-
-    public void setExecutionInput(I executionInput) {
-        this.executionInput = executionInput;
     }
 
     public abstract List<DBMethod> getMethods();

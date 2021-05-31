@@ -15,15 +15,7 @@ import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.common.debug.DebuggerVersionInfo;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointUpdaterFileEditorListener;
-import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfig;
-import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigFactory;
-import com.dci.intellij.dbn.debugger.common.config.DBMethodRunConfigType;
-import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
-import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
-import com.dci.intellij.dbn.debugger.common.config.DBRunConfigFactory;
-import com.dci.intellij.dbn.debugger.common.config.DBRunConfigType;
-import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfig;
-import com.dci.intellij.dbn.debugger.common.config.DBStatementRunConfigType;
+import com.dci.intellij.dbn.debugger.common.config.*;
 import com.dci.intellij.dbn.debugger.common.process.DBProgramRunner;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBMethodJdbcRunner;
 import com.dci.intellij.dbn.debugger.jdbc.process.DBStatementJdbcRunner;
@@ -34,11 +26,7 @@ import com.dci.intellij.dbn.editor.code.SourceCodeManager;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.statement.processor.StatementExecutionProcessor;
-import com.dci.intellij.dbn.object.DBMethod;
-import com.dci.intellij.dbn.object.DBProgram;
-import com.dci.intellij.dbn.object.DBSchema;
-import com.dci.intellij.dbn.object.DBSystemPrivilege;
-import com.dci.intellij.dbn.object.DBUser;
+import com.dci.intellij.dbn.object.*;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
@@ -51,7 +39,6 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.execution.RunnerRegistry;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
@@ -262,9 +249,9 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
 
             String runnerId =
                     debuggerType == DBDebuggerType.JDBC ? DBMethodJdbcRunner.RUNNER_ID :
-                            debuggerType == DBDebuggerType.JDWP ? DBMethodJdwpRunner.RUNNER_ID : null;
+                    debuggerType == DBDebuggerType.JDWP ? DBMethodJdwpRunner.RUNNER_ID : null;
             if (runnerId != null) {
-                ProgramRunner programRunner = RunnerRegistry.getInstance().findRunnerById(runnerId);
+                ProgramRunner programRunner = ProgramRunner.findRunnerById(runnerId);
                 if (programRunner != null) {
                     try {
                         Executor executorInstance = DefaultDebugExecutor.getDebugExecutorInstance();
@@ -300,7 +287,7 @@ public class DatabaseDebuggerManager extends AbstractProjectComponent implements
                             debuggerType == DBDebuggerType.JDWP ? DBStatementJdwpRunner.RUNNER_ID :
                                     DBProgramRunner.INVALID_RUNNER_ID;
 
-            ProgramRunner programRunner = RunnerRegistry.getInstance().findRunnerById(runnerId);
+            ProgramRunner programRunner = ProgramRunner.findRunnerById(runnerId);
             if (programRunner != null) {
                 try {
                     Executor executorInstance = DefaultDebugExecutor.getDebugExecutorInstance();

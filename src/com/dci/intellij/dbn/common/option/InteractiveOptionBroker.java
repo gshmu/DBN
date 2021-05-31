@@ -18,13 +18,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public class InteractiveOptionBroker<T extends InteractiveOption> implements DialogWrapper.DoNotAskOption, PersistentConfiguration{
-    private String configName;
-    private String title;
-    private String message;
-    private T defaultOption;
+    private final String configName;
+    private final String title;
+    private final String message;
+    private final T defaultOption;
     private T selectedOption;
     private T lastUsedOption;
-    private List<T> options;
+    private final List<T> options;
 
     public InteractiveOptionBroker(String configName, String title, String message, @NotNull T defaultOption, T... options) {
         this.configName = configName;

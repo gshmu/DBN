@@ -15,6 +15,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import gnu.trove.THashSet;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -96,7 +97,7 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
     }
 
     @Override
-    public void writeExternal(Element element) throws WriteExternalException {
+    public void writeExternal(@NotNull Element element) throws WriteExternalException {
         super.writeExternal(element);
         MethodExecutionInput executionInput = getExecutionInput();
         if (executionInput != null && getCategory() == DBRunConfigCategory.CUSTOM) {
@@ -115,7 +116,7 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
     }
 
     @Override
-    public void readExternal(Element element) throws InvalidDataException {
+    public void readExternal(@NotNull Element element) throws InvalidDataException {
         super.readExternal(element);
         MethodExecutionManager executionManager = MethodExecutionManager.getInstance(getProject());
         if (getCategory() == DBRunConfigCategory.CUSTOM) {

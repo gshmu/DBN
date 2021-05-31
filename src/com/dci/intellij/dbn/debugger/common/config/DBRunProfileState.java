@@ -4,7 +4,7 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.runners.ExecutionEnvironment;
 
 public abstract class DBRunProfileState implements RunProfileState {
-    private ExecutionEnvironment environment;
+    private final ExecutionEnvironment environment;
 
     public DBRunProfileState(ExecutionEnvironment environment) {
         this.environment = environment;
