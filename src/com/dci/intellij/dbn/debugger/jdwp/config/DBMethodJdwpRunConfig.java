@@ -58,7 +58,7 @@ public class DBMethodJdwpRunConfig extends DBMethodRunConfig implements DBJdwpRu
     }
 
     @Override
-    public void readExternal(Element element) throws InvalidDataException {
+    public void readExternal(@NotNull Element element) throws InvalidDataException {
         super.readExternal(element);
         Element rangeElement = element.getChild("tcp-port-range");
         if (rangeElement != null) {
@@ -69,7 +69,7 @@ public class DBMethodJdwpRunConfig extends DBMethodRunConfig implements DBJdwpRu
     }
 
     @Override
-    public void writeExternal(Element element) throws WriteExternalException {
+    public void writeExternal(@NotNull Element element) throws WriteExternalException {
         super.writeExternal(element);
         Element rangeElement = new Element("tcp-port-range");
         element.addContent(rangeElement);
