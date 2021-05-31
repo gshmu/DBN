@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtualFile, Presentable, VirtualFilePathWrapper {
-    private static AtomicInteger ID_STORE = new AtomicInteger(1000);
+    private static final AtomicInteger ID_STORE = new AtomicInteger(1000);
     private final int id;
     private final ProjectRef projectRef;
     private final WeakRef<DatabaseFileSystem> fileSystem;
