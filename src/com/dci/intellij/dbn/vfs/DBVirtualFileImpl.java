@@ -12,7 +12,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFilePathWrapper;
-import com.intellij.openapi.vfs.ex.dummy.DummyFileIdGenerator;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.DebugUtil;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +23,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtualFile, Presentable, VirtualFilePathWrapper {
-    private static AtomicInteger ID_STORE = new AtomicInteger(0);
+    private static AtomicInteger ID_STORE = new AtomicInteger(1000);
     private final int id;
     private final ProjectRef projectRef;
     private final WeakRef<DatabaseFileSystem> fileSystem;
@@ -36,8 +35,8 @@ public abstract class DBVirtualFileImpl extends VirtualFile implements DBVirtual
     private boolean valid = true;
 
     public DBVirtualFileImpl(@NotNull Project project) {
-        //id = ID_STORE.getAndIncrement();
-        id = DummyFileIdGenerator.next();
+        id = ID_STORE.incrementAndGet();
+        //id = DummyFileIdGenerator.next();
         projectRef = ProjectRef.of(project);
         fileSystem = WeakRef.of(DatabaseFileSystem.getInstance());
     }
