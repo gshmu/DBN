@@ -30,4 +30,8 @@ public class MySqlMessageParserInterface implements DatabaseMessageParserInterfa
         return false;
     }
 
+    @Override
+    public boolean isSuccessException(SQLException exception) {
+        return false;
+    }
 }

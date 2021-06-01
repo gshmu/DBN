@@ -169,7 +169,7 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
         ConnectionHandler connectionHandler = getConnectionHandler();
         DBNConnection connection = connectionHandler.getPoolConnection(getSchemaIdentifier(), true);
         try {
-            DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+            DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDdlInterface();
             ddlInterface.updateObject(getName(), getObjectType().getName(), oldCode,  newCode, connection);
         } finally {
             connectionHandler.freePoolConnection(connection);

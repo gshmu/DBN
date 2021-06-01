@@ -12,14 +12,17 @@ import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
 import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
+import lombok.Getter;
 
+@Getter
 public class PostgresInterfaceProvider extends DatabaseInterfaceProviderImpl {
-    private DatabaseMessageParserInterface MESSAGE_PARSER_INTERFACE = new PostgresMessageParserInterface();
-    private DatabaseCompatibilityInterface COMPATIBILITY_INTERFACE = new PostgresCompatibilityInterface(this);
-    private DatabaseMetadataInterface METADATA_INTERFACE = new PostgresMetadataInterface(this);
-    private DatabaseDDLInterface DDL_INTERFACE = new PostgresDDLInterface(this);
-    private DatabaseExecutionInterface EXECUTION_INTERFACE = new PostgresExecutionInterface();
-    private DatabaseNativeDataTypes NATIVE_DATA_TYPES = new PostgresNativeDataTypes();
+    private final DatabaseMessageParserInterface messageParserInterface = new PostgresMessageParserInterface();
+    private final DatabaseCompatibilityInterface compatibilityInterface = new PostgresCompatibilityInterface(this);
+    private final DatabaseMetadataInterface metadataInterface = new PostgresMetadataInterface(this);
+    private final DatabaseDDLInterface ddlInterface = new PostgresDDLInterface(this);
+    private final DatabaseExecutionInterface executionInterface = new PostgresExecutionInterface();
+    private final DatabaseNativeDataTypes nativeDataTypes = new PostgresNativeDataTypes();
+    private final DatabaseDebuggerInterface debuggerInterface = null;
 
     public PostgresInterfaceProvider() {
         super(
@@ -31,41 +34,4 @@ public class PostgresInterfaceProvider extends DatabaseInterfaceProviderImpl {
     public DatabaseType getDatabaseType() {
         return DatabaseType.POSTGRES;
     }
-
-    @Override
-    public DatabaseNativeDataTypes getNativeDataTypes() {
-        return NATIVE_DATA_TYPES;
-    }
-
-    @Override
-    public DatabaseMessageParserInterface getMessageParserInterface() {
-        return MESSAGE_PARSER_INTERFACE;
-    }
-
-    @Override
-    public DatabaseCompatibilityInterface getCompatibilityInterface() {
-        return COMPATIBILITY_INTERFACE;
-    }
-
-    @Override
-    public DatabaseMetadataInterface getMetadataInterface() {
-        return METADATA_INTERFACE;
-    }
-
-    @Override
-    public DatabaseDebuggerInterface getDebuggerInterface() {
-        return null;
-    }
-
-    @Override
-    public DatabaseDDLInterface getDDLInterface() {
-        return DDL_INTERFACE;
-    }
-
-    @Override
-    public DatabaseExecutionInterface getDatabaseExecutionInterface() {
-        return EXECUTION_INTERFACE;
-    }
-
-
 }

@@ -30,4 +30,9 @@ public class GenericMessageParserInterface implements DatabaseMessageParserInter
     public boolean isModelException(SQLException e) {
         return e instanceof SQLFeatureNotSupportedException || e instanceof SQLSyntaxErrorException;
     }
+
+    @Override
+    public boolean isSuccessException(SQLException exception) {
+        return false;
+    }
 }

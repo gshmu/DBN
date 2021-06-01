@@ -11,14 +11,17 @@ import com.dci.intellij.dbn.database.common.DatabaseInterfaceProviderImpl;
 import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
 import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
+import lombok.Getter;
 
-public class GenericInterfaceProvider extends DatabaseInterfaceProviderImpl {
-    private DatabaseMessageParserInterface MESSAGE_PARSER_INTERFACE = new GenericMessageParserInterface();
-    private DatabaseCompatibilityInterface COMPATIBILITY_INTERFACE = new GenericCompatibilityInterface(this);
-    private DatabaseMetadataInterface METADATA_INTERFACE = new GenericMetadataInterface(this);
-    private DatabaseDDLInterface DDL_INTERFACE = new GenericDDLInterface(this);
-    private DatabaseExecutionInterface EXECUTION_INTERFACE = new GenericExecutionInterface();
-    private DatabaseNativeDataTypes NATIVE_DATA_TYPES = new GenericNativeDataTypes();
+@Getter
+public final class GenericInterfaceProvider extends DatabaseInterfaceProviderImpl {
+    private final DatabaseMessageParserInterface messageParserInterface = new GenericMessageParserInterface();
+    private final DatabaseCompatibilityInterface compatibilityInterface = new GenericCompatibilityInterface(this);
+    private final DatabaseMetadataInterface metadataInterface = new GenericMetadataInterface(this);
+    private final DatabaseDDLInterface ddlInterface = new GenericDDLInterface(this);
+    private final DatabaseExecutionInterface executionInterface = new GenericExecutionInterface();
+    private final DatabaseNativeDataTypes nativeDataTypes = new GenericNativeDataTypes();
+    private final DatabaseDebuggerInterface debuggerInterface = null;
 
     public GenericInterfaceProvider() {
         super(SQLLanguage.INSTANCE.getLanguageDialect(DBLanguageDialectIdentifier.ISO92_SQL), null);
@@ -28,41 +31,4 @@ public class GenericInterfaceProvider extends DatabaseInterfaceProviderImpl {
     public DatabaseType getDatabaseType() {
         return DatabaseType.GENERIC;
     }
-
-    @Override
-    public DatabaseNativeDataTypes getNativeDataTypes() {
-        return NATIVE_DATA_TYPES;
-    }
-
-    @Override
-    public DatabaseMessageParserInterface getMessageParserInterface() {
-        return MESSAGE_PARSER_INTERFACE;
-    }
-
-    @Override
-    public DatabaseCompatibilityInterface getCompatibilityInterface() {
-        return COMPATIBILITY_INTERFACE;
-    }
-
-    @Override
-    public DatabaseMetadataInterface getMetadataInterface() {
-        return METADATA_INTERFACE;
-    }
-
-    @Override
-    public DatabaseDebuggerInterface getDebuggerInterface() {
-        return null;
-    }
-
-    @Override
-    public DatabaseDDLInterface getDDLInterface() {
-        return DDL_INTERFACE;
-    }
-
-    @Override
-    public DatabaseExecutionInterface getDatabaseExecutionInterface() {
-        return EXECUTION_INTERFACE;
-    }
-
-
 }

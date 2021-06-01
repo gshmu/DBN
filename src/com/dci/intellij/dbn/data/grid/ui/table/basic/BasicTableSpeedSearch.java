@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelHeader;
 import com.dci.intellij.dbn.data.model.basic.BasicDataModel;
 import com.intellij.ui.SpeedSearchBase;
+import org.jetbrains.annotations.NotNull;
 
 public class BasicTableSpeedSearch extends SpeedSearchBase<BasicTable<? extends BasicDataModel>> {
 
@@ -23,19 +24,34 @@ public class BasicTableSpeedSearch extends SpeedSearchBase<BasicTable<? extends 
         return columnIndex;
     }
 
+    @NotNull
     @Override
     protected Object[] getAllElements() {
-        if (columnInfos == null) {
-            DataModelHeader<? extends ColumnInfo> modelHeader = getTable().getModel().getHeader();
-            columnInfos = modelHeader.getColumnInfos().toArray(new ColumnInfo[modelHeader.getColumnCount()]);
-        }
-        return columnInfos;
+        return getColumnInfos();
+    }
+
+    @Override
+    protected int getElementCount() {
+        return getColumnInfos().length;
+    }
+
+    @Override
+    protected Object getElementAt(int viewIndex) {
+        return getColumnInfos()[viewIndex];
     }
 
     @Override
     protected String getElementText(Object o) {
         ColumnInfo columnInfo = (ColumnInfo) o;
         return columnInfo.getName();
+    }
+
+    public ColumnInfo[] getColumnInfos() {
+        if (columnInfos == null) {
+            DataModelHeader<? extends ColumnInfo> modelHeader = getTable().getModel().getHeader();
+            columnInfos = modelHeader.getColumnInfos().toArray(new ColumnInfo[modelHeader.getColumnCount()]);
+        }
+        return columnInfos;
     }
 
     @Override

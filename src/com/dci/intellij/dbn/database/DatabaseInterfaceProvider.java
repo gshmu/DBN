@@ -23,9 +23,9 @@ public interface DatabaseInterfaceProvider {
 
     DatabaseDebuggerInterface getDebuggerInterface();
 
-    DatabaseDDLInterface getDDLInterface();
+    DatabaseDDLInterface getDdlInterface();
 
-    DatabaseExecutionInterface getDatabaseExecutionInterface();
+    DatabaseExecutionInterface getExecutionInterface();
 
     void reset();
 }

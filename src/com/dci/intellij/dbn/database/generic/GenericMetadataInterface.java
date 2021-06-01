@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.database.generic;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
@@ -13,7 +12,6 @@ import com.dci.intellij.dbn.database.common.util.CachedResultSet.Columns;
 import com.dci.intellij.dbn.database.common.util.CachedResultSetRow;
 import com.dci.intellij.dbn.database.common.util.MultipartResultSet;
 import com.dci.intellij.dbn.database.common.util.ResultSetCondition;
-import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
@@ -29,7 +27,6 @@ import static com.dci.intellij.dbn.database.generic.GenericMetadataTranslators.M
 
 
 public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     // TODO review (ORACLE behavior - package methods come back with FUNCTION_CAT / PROCEDURE_CAT as package name)
     //  filtering them out for now
@@ -87,7 +84,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     }
 
     @Override
-    public ResultSet loadCompileObjectErrors(String ownerName, String objectName, DBNConnection connection) throws SQLException {
+    public ResultSet loadCompileObjectErrors(String ownerName, String objectName, DBNConnection connection) {
         return null;
     }
 
@@ -114,7 +111,7 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
 
         return new SchemasResultSet(schemasRs) {
             @Override
-            protected boolean isEmpty(String schemaName) throws SQLException {
+            protected boolean isEmpty(String schemaName) {
                 return false;
 /*
                 TODO does not scale for large dbs (find another way or disable option)

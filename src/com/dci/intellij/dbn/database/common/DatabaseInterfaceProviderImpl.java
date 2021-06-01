@@ -30,7 +30,7 @@ public abstract class DatabaseInterfaceProviderImpl implements DatabaseInterface
     @Override
     public void reset() {
         getMetadataInterface().reset();
-        getDDLInterface().reset();
+        getDdlInterface().reset();
         DatabaseDebuggerInterface debuggerInterface = getDebuggerInterface();
         if (debuggerInterface != null) debuggerInterface.reset();
     }

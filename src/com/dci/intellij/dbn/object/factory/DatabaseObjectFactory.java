@@ -87,7 +87,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
             try {
                 ConnectionHandler connectionHandler = schema.getConnectionHandler();
                 DBNConnection connection = connectionHandler.getMainConnection(SchemaId.from(schema));
-                connectionHandler.getInterfaceProvider().getDDLInterface().createMethod(methodFactoryInput, connection);
+                connectionHandler.getInterfaceProvider().getDdlInterface().createMethod(methodFactoryInput, connection);
                 DBObjectType objectType = methodFactoryInput.isFunction() ? DBObjectType.FUNCTION : DBObjectType.PROCEDURE;
                 Failsafe.nn(schema.getChildObjectList(objectType)).reload();
 
@@ -134,7 +134,7 @@ public class DatabaseObjectFactory extends AbstractProjectComponent {
 
                         String objectName = object.getQualifiedName();
                         String objectTypeName = object.getTypeName();
-                        DatabaseDDLInterface ddlInterface = provider.getDDLInterface();
+                        DatabaseDDLInterface ddlInterface = provider.getDdlInterface();
                         DBObjectList<?> objectList = (DBObjectList<?>) object.getParent();
                         if (contentType == DBContentType.CODE_SPEC_AND_BODY) {
                             DBObjectStatusHolder objectStatus = object.getStatus();

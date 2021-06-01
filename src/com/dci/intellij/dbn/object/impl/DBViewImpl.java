@@ -99,7 +99,7 @@ public class DBViewImpl extends DBDatasetImpl<DBViewMetadata> implements DBView 
                 (provider) -> {
                     DBNConnection connection = connectionHandler.getPoolConnection(getSchemaIdentifier(), false);
                     try {
-                        DatabaseDDLInterface ddlInterface = provider.getDDLInterface();
+                        DatabaseDDLInterface ddlInterface = provider.getDdlInterface();
                         ddlInterface.updateView(getName(), newCode, connection);
                     } finally {
                         connectionHandler.freePoolConnection(connection);

@@ -41,6 +41,11 @@ public class OracleMessageParserInterface implements DatabaseMessageParserInterf
         return e.getErrorCode() == 1017;
     }
 
+    @Override
+    public boolean isSuccessException(SQLException exception) {
+        return exception.getErrorCode() == 31;
+    }
+
     private DatabaseObjectIdentifier identifyColumn(String message) {
         int startOffset = message.indexOf("\"");
         int endOffset = message.lastIndexOf("\"");

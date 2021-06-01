@@ -185,7 +185,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         } else {
             Project project = method.getProject();
             ConnectionHandler connectionHandler = Failsafe.nn(method.getConnectionHandler());
-            DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
+            DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getExecutionInterface();
             MethodExecutionProcessor executionProcessor = executionInterface.createExecutionProcessor(method);
 
             Progress.prompt(project, "Executing method", true,
@@ -233,7 +233,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         DBMethod method = executionInput.getMethod();
         if (method != null) {
             ConnectionHandler connectionHandler = method.getConnectionHandler();
-            DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
+            DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getExecutionInterface();
             MethodExecutionProcessor executionProcessor = debuggerType == DBDebuggerType.JDWP ?
                     executionInterface.createExecutionProcessor(method) :
                     executionInterface.createDebugExecutionProcessor(method);
