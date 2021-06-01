@@ -164,7 +164,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
                     executionManager.writeLogOutput(outputContext, LogOutput.createSysOutput("Creating temporary script file " + temporaryScriptFile));
                     tempScriptFile.set(temporaryScriptFile);
 
-                    DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getDatabaseExecutionInterface();
+                    DatabaseExecutionInterface executionInterface = connectionHandler.getInterfaceProvider().getExecutionInterface();
                     CmdLineInterface cmdLineInterface = input.getCmdLineInterface();
                     CmdLineExecutionInput executionInput = executionInterface.createScriptExecutionInput(cmdLineInterface,
                             temporaryScriptFile.getPath(),

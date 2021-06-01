@@ -47,4 +47,8 @@ public class PostgresMessageParserInterface implements DatabaseMessageParserInte
         return "";
     }
 
+    @Override
+    public boolean isSuccessException(SQLException exception) {
+        return false;
+    }
 }

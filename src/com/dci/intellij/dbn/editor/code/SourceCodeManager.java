@@ -319,7 +319,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
         String objectName = object.getName();
         DBObjectType objectType = object.getObjectType();
 
-        DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+        DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDdlInterface();
         ddlInterface.computeSourceCodeOffsets(sourceCodeContent, objectType.getTypeId(), objectName);
         return sourceCodeContent;
     }
@@ -465,7 +465,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     private boolean isValidObjectTypeAndName(@NotNull DBLanguagePsiFile psiFile, @NotNull DBSchemaObject object, DBContentType contentType) {
         ConnectionHandler connectionHandler = object.getConnectionHandler();
-        DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+        DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDdlInterface();
         if (ddlInterface.includesTypeAndNameInSourceContent(object.getObjectType().getTypeId())) {
             PsiElement psiElement = PsiUtil.getFirstLeaf(psiFile);
 

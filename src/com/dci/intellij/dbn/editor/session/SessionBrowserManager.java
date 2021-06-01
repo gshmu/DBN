@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNResultSet;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterface;
+import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModel;
 import com.dci.intellij.dbn.editor.session.options.SessionBrowserSettings;
@@ -159,8 +160,8 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
     }
 
     private void doInterruptSessions(@NotNull SessionBrowser sessionBrowser, Map<Object, Object> sessionIds, SessionInterruptionType type, SessionInterruptionOption option) {
-        String killedAction = type == SessionInterruptionType.KILL ? "killed" : "disconnected";
-        String killingAction = type == SessionInterruptionType.KILL? "killing" : "disconnecting";
+        String disconnectedAction = type == SessionInterruptionType.KILL ? "killed" : "disconnected";
+        String disconnectingAction = type == SessionInterruptionType.KILL? "killing" : "disconnecting";
         String taskAction = (type == SessionInterruptionType.KILL? "Killing" : "Disconnecting") + (sessionIds.size() == 1 ? " Session" : " Sessions");
 
         Project project = getProject();
@@ -195,27 +196,50 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                                         }
                                     }
 
+                                    DatabaseMessageParserInterface messageParserInterface = connectionHandler.getInterfaceProvider().getMessageParserInterface();
                                     if (sessionIds.size() == 1) {
                                         Object sessionId = sessionIds.keySet().iterator().next();
                                         if (errors.size() == 0) {
-                                            MessageUtil.showInfoDialog(project, "Info", "Session " + sessionId + " " + killedAction + ".");
+                                            MessageUtil.showInfoDialog(project, "Info", "Session " + sessionId + " " + disconnectedAction + ".");
                                         } else {
                                             SQLException exception = errors.get(sessionId);
-                                            MessageUtil.showErrorDialog(project, "Error " + killingAction + " session " + sessionId + ".", exception);
+                                            if (messageParserInterface.isSuccessException(exception)) {
+                                                MessageUtil.showInfoDialog(project, "Info", "Session " + sessionId + " " + disconnectingAction + " requested. " + exception.getMessage());
+                                            } else {
+                                                MessageUtil.showErrorDialog(project, "Error " + disconnectingAction + " session " + sessionId + ".", exception);
+                                            }
+
                                         }
                                     } else {
                                         if (errors.size() == 0) {
-                                            MessageUtil.showInfoDialog(project, "Info", sessionIds.size() + " sessions " + killedAction + ".");
+                                            MessageUtil.showInfoDialog(project, "Info", sessionIds.size() + " sessions " + disconnectedAction + ".");
                                         } else {
-                                            StringBuilder message = new StringBuilder("Error " + killingAction + " one or more of the selected sessions:");
+                                            StringBuilder message = new StringBuilder();
+                                            boolean success = errors.values().stream().allMatch(error -> messageParserInterface.isSuccessException(error));
+                                            if (success) {
+                                                message.append(sessionIds.size());
+                                                message.append(" sessions ");
+                                                message.append(disconnectingAction);
+                                                message.append(" requested:");
+                                            } else {
+                                                message.append("Error ");
+                                                message.append(disconnectingAction);
+                                                message.append(" one or more of the selected sessions:");
+                                            }
                                             for (Object sessionId : sessionIds.keySet()) {
                                                 SQLException exception = errors.get(sessionId);
                                                 message.append("\n - session id ").append(sessionId).append(": ");
-                                                if (exception == null) message.append(killedAction);
-                                                else message.append(exception.getMessage().trim());
-
+                                                if (exception == null) {
+                                                    message.append(disconnectedAction);
+                                                } else {
+                                                    message.append(exception.getMessage().trim());
+                                                }
                                             }
-                                            MessageUtil.showErrorDialog(project, message.toString());
+                                            if (success) {
+                                                MessageUtil.showInfoDialog(project, "Info", message.toString());
+                                            } else {
+                                                MessageUtil.showErrorDialog(project, message.toString());
+                                            }
                                         }
 
                                     }

@@ -12,14 +12,17 @@ import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
 import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
+import lombok.Getter;
 
-public class MySqlInterfaceProvider extends DatabaseInterfaceProviderImpl {
-    private DatabaseMessageParserInterface MESSAGE_PARSER_INTERFACE = new MySqlMessageParserInterface();
-    private DatabaseCompatibilityInterface COMPATIBILITY_INTERFACE = new MySqlCompatibilityInterface(this);
-    private DatabaseMetadataInterface METADATA_INTERFACE = new MySqlMetadataInterface(this);
-    private DatabaseDDLInterface DDL_INTERFACE = new MySqlDDLInterface(this);
-    private DatabaseExecutionInterface EXECUTION_INTERFACE = new MySqlExecutionInterface();
-    private DatabaseNativeDataTypes NATIVE_DATA_TYPES = new MySqlNativeDataTypes();
+@Getter
+public final class MySqlInterfaceProvider extends DatabaseInterfaceProviderImpl {
+    private final DatabaseMessageParserInterface messageParserInterface = new MySqlMessageParserInterface();
+    private final DatabaseCompatibilityInterface compatibilityInterface = new MySqlCompatibilityInterface(this);
+    private final DatabaseMetadataInterface metadataInterface = new MySqlMetadataInterface(this);
+    private final DatabaseDDLInterface ddlInterface = new MySqlDDLInterface(this);
+    private final DatabaseExecutionInterface executionInterface = new MySqlExecutionInterface();
+    private final DatabaseNativeDataTypes nativeDataTypes = new MySqlNativeDataTypes();
+    private final DatabaseDebuggerInterface debuggerInterface = null;
 
     public MySqlInterfaceProvider() {
         super(SQLLanguage.INSTANCE.getLanguageDialect(DBLanguageDialectIdentifier.MYSQL_SQL),
@@ -30,41 +33,4 @@ public class MySqlInterfaceProvider extends DatabaseInterfaceProviderImpl {
     public DatabaseType getDatabaseType() {
         return DatabaseType.MYSQL;
     }
-
-    @Override
-    public DatabaseNativeDataTypes getNativeDataTypes() {
-        return NATIVE_DATA_TYPES;
-    }
-
-    @Override
-    public DatabaseMessageParserInterface getMessageParserInterface() {
-        return MESSAGE_PARSER_INTERFACE;
-    }
-
-    @Override
-    public DatabaseCompatibilityInterface getCompatibilityInterface() {
-        return COMPATIBILITY_INTERFACE;
-    }
-
-    @Override
-    public DatabaseMetadataInterface getMetadataInterface() {
-        return METADATA_INTERFACE;
-    }
-
-    @Override
-    public DatabaseDebuggerInterface getDebuggerInterface() {
-        return null;
-    }
-
-    @Override
-    public DatabaseDDLInterface getDDLInterface() {
-        return DDL_INTERFACE;
-    }
-
-    @Override
-    public DatabaseExecutionInterface getDatabaseExecutionInterface() {
-        return EXECUTION_INTERFACE;
-    }
-
-
 }
