@@ -16,7 +16,6 @@ import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.code.options.CodeEditorSettings;
 import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
-import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettings;
@@ -29,14 +28,12 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<ProjectSettings> {
+public class ProjectSettingsForm extends CompositeConfigurationEditorForm<ProjectSettings> {
     private JPanel mainPanel;
     private JPanel tabsPanel;
     private final TabbedPane configurationTabs;
 
-    private WeakRef<ProjectSettingsDialog> dialogRef;
-
-    public ProjectSettingsEditorForm(ProjectSettings globalSettings) {
+    public ProjectSettingsForm(ProjectSettings globalSettings) {
         super(globalSettings);
 
         configurationTabs = new TabbedPane(this);
@@ -71,10 +68,6 @@ public class ProjectSettingsEditorForm extends CompositeConfigurationEditorForm<
 
         tabsPanel.setFocusable(true);
    }
-
-    public void setDialog(ProjectSettingsDialog dialog) {
-        this.dialogRef = WeakRef.of(dialog);
-    }
 
     private void addSettingsPanel(BasicConfiguration configuration) {
         JComponent component = configuration.createComponent();

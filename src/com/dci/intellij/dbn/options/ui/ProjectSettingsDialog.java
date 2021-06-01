@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
-public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> {
+public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsForm> {
     private JButton bApply;
     private final ProjectSettings projectSettings;
 
@@ -30,14 +30,12 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> 
         ProjectSettings projectSettings = ProjectSettingsManager.getSettings(project);
         this.projectSettings = projectSettings.clone();
         this.projectSettings.createCustomComponent();
-        ProjectSettingsEditorForm component = getForm();
-        component.setDialog(this);
         init();
     }
 
     @NotNull
     @Override
-    protected ProjectSettingsEditorForm createForm() {
+    protected ProjectSettingsForm createForm() {
         return projectSettings.ensureSettingsEditor();
     }
 
@@ -132,14 +130,14 @@ public class ProjectSettingsDialog extends DBNDialog<ProjectSettingsEditorForm> 
     }
 
     public void selectConnectionSettings(@Nullable ConnectionId connectionId) {
-        ProjectSettingsEditorForm settingsEditor = projectSettings.getSettingsEditor();
+        ProjectSettingsForm settingsEditor = projectSettings.getSettingsEditor();
         if (settingsEditor != null) {
             settingsEditor.selectConnectionSettings(connectionId);
         }
     }
 
     public void selectSettings(ConfigId configId) {
-        ProjectSettingsEditorForm globalSettingsEditor = projectSettings.getSettingsEditor();
+        ProjectSettingsForm globalSettingsEditor = projectSettings.getSettingsEditor();
         if (globalSettingsEditor != null) {
             globalSettingsEditor.selectSettingsEditor(configId);
         }
