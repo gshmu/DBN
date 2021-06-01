@@ -71,6 +71,7 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
      *                     VirtualFile                       *
      *********************************************************/
 
+    @NotNull
     @Override
     public String getPresentableName() {
         return name;
@@ -153,6 +154,7 @@ public class DBObjectListVirtualFile<T extends DBObjectList> extends DBVirtualFi
 
     }
 
+    @NotNull
     @Override
     public InputStream getInputStream() throws IOException {
         return DevNullStreams.INPUT_STREAM;

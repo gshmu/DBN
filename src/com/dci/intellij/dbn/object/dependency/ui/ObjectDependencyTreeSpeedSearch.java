@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.Disposable;
 import com.intellij.ui.SpeedSearchBase;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -40,9 +41,10 @@ public class ObjectDependencyTreeSpeedSearch extends SpeedSearchBase<JTree> impl
         return null;
     }
 
+    @NotNull
     @Override
     protected Object[] getAllElements() {
-        List<ObjectDependencyTreeNode> nodes = new ArrayList<ObjectDependencyTreeNode>();
+        List<ObjectDependencyTreeNode> nodes = new ArrayList<>();
         ObjectDependencyTreeNode root = getComponent().getModel().getRoot();
         loadElements(nodes, root);
         return nodes.toArray();

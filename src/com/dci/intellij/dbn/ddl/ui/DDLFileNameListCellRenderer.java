@@ -3,12 +3,13 @@ package com.dci.intellij.dbn.ddl.ui;
 import com.dci.intellij.dbn.ddl.DDLFileNameProvider;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
 public class DDLFileNameListCellRenderer extends ColoredListCellRenderer {
     @Override
-    protected void customizeCellRenderer(JList list, Object value, int index, boolean selected, boolean hasFocus) {
+    protected void customizeCellRenderer(@NotNull JList list, Object value, int index, boolean selected, boolean hasFocus) {
         DDLFileNameProvider fileNameProvider = (DDLFileNameProvider) value;
 
         append(fileNameProvider.getFileName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);

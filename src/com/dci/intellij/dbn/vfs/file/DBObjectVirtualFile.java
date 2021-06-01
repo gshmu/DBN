@@ -153,6 +153,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
 
     }
 
+    @NotNull
     @Override
     public InputStream getInputStream() throws IOException {
         return DevNullStreams.INPUT_STREAM;

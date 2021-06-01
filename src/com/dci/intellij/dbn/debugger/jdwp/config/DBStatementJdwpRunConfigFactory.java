@@ -27,11 +27,13 @@ public class DBStatementJdwpRunConfigFactory extends DBStatementRunConfigFactory
         return Icons.EXEC_STATEMENT_CONFIG;
     }
 
+    @NotNull
     @Override
-    public RunConfiguration createTemplateConfiguration(Project project) {
+    public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new DBStatementJdwpRunConfig(project, this, "", DBRunConfigCategory.TEMPLATE);
     }
 
+    @NotNull
     @Override
     public String getName() {
         return super.getName() + " (JDWP)";

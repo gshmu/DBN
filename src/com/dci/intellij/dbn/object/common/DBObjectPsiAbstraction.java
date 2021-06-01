@@ -187,10 +187,10 @@ public class DBObjectPsiAbstraction extends StatefulDisposable.Base implements P
     public boolean processDeclarations(@NotNull PsiScopeProcessor psiScopeProcessor, @NotNull ResolveState resolveState, @Nullable PsiElement psiElement, @NotNull PsiElement psiElement1) {return false;}
 
     @Override
-    public <T> T getCopyableUserData(Key<T> key) {return null;}
+    public <T> T getCopyableUserData(@NotNull Key<T> key) {return null;}
 
     @Override
-    public <T> void putCopyableUserData(Key<T> key, T value) {}
+    public <T> void putCopyableUserData(@NotNull Key<T> key, T value) {}
 
     @Override
     public <T> T getUserData(@NotNull Key<T> key) {return null;}

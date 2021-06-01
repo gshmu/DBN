@@ -32,7 +32,7 @@ public class BasicTextEditorState implements FileEditorState {
     private CodeFoldingState foldingState;
 
     @Override
-    public boolean canBeMergedWith(FileEditorState fileEditorState, FileEditorStateLevel fileEditorStateLevel) {
+    public boolean canBeMergedWith(@NotNull FileEditorState fileEditorState, @NotNull FileEditorStateLevel fileEditorStateLevel) {
         return fileEditorState instanceof BasicTextEditorState;
     }
 

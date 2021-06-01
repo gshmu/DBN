@@ -111,6 +111,6 @@ public class EnvironmentManager extends AbstractProjectComponent implements Pers
     }
 
     @Override
-    public void loadState(Element element) {
+    public void loadState(@NotNull Element element) {
     }
 }

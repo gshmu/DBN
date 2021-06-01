@@ -50,6 +50,6 @@ public class CodeCompletionManager extends AbstractProjectComponent implements P
     }
 
     @Override
-    public void loadState(Element element) {
+    public void loadState(@NotNull Element element) {
     }
 }

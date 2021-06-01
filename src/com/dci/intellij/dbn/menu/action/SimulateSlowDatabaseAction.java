@@ -7,12 +7,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class SimulateSlowDatabaseAction extends ToggleAction {
     @Override
-    public boolean isSelected(AnActionEvent e) {
+    public boolean isSelected(@NotNull AnActionEvent e) {
         return DatabaseNavigator.getInstance().isSlowDatabaseModeEnabled();
     }
 
     @Override
-    public void setSelected(AnActionEvent e, boolean state) {
+    public void setSelected(@NotNull AnActionEvent e, boolean state) {
         DatabaseNavigator.getInstance().setSlowDatabaseModeEnabled(state);
     }
 

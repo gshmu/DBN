@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAware;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -20,7 +21,7 @@ public abstract class DataSearchHeaderToggleAction extends DBNCheckboxAction imp
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         super.update(e);
     }
 

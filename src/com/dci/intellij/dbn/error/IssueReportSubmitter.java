@@ -57,6 +57,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
         return pluginDescriptor;
     }
 
+    @NotNull
     @Override
     public String getReportActionText() {
         return "Submit Issue Report";

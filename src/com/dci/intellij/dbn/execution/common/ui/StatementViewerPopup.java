@@ -20,14 +20,15 @@ import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 
 public class StatementViewerPopup implements Disposable {
+    private final String resultName;
     private EditorEx viewer;
-    private String resultName;
 
     public StatementViewerPopup(ExecutionResult executionResult) {
         this.resultName = executionResult.getName();
@@ -89,7 +90,7 @@ public class StatementViewerPopup implements Disposable {
 
         popup.addListener(new JBPopupAdapter() {
             @Override
-            public void onClosed(LightweightWindowEvent event) {
+            public void onClosed(@NotNull LightweightWindowEvent event) {
                 dispose();
             }
         });

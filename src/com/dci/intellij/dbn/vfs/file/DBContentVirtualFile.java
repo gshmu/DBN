@@ -164,6 +164,7 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
 
     }
 
+    @NotNull
     @Override
     public InputStream getInputStream() throws IOException {
         return DevNullStreams.INPUT_STREAM;

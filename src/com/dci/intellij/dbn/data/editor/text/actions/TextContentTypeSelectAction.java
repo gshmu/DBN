@@ -4,10 +4,11 @@ import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.data.editor.text.ui.TextEditorForm;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class TextContentTypeSelectAction extends AnAction {
-    private TextEditorForm editorForm;
-    private TextContentType contentType;
+    private final TextEditorForm editorForm;
+    private final TextContentType contentType;
 
     public TextContentTypeSelectAction(TextEditorForm editorForm, TextContentType contentType) {
         super(contentType.getName(), null, contentType.getIcon());
@@ -20,7 +21,7 @@ public class TextContentTypeSelectAction extends AnAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         editorForm.setContentType(contentType);
 
     }

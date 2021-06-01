@@ -4,9 +4,10 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class DataRevertAction extends AnAction{
-    private DatasetEditorModelCell cell;
+    private final DatasetEditorModelCell cell;
 
     public DataRevertAction(DatasetEditorModelCell cell) {
         super("Revert Changes", null, Icons.ACTION_REVERT_CHANGES);
@@ -14,7 +15,7 @@ public class DataRevertAction extends AnAction{
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         cell.revertChanges();
     }
 

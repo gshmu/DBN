@@ -15,7 +15,7 @@ public class ShowDetailsNodeProvider implements FileStructureNodeProvider {
 
     @NotNull
     @Override
-    public Collection<TreeElement> provideNodes(TreeElement node) {
+    public Collection<TreeElement> provideNodes(@NotNull TreeElement node) {
         return Collections.emptyList();
     }
 

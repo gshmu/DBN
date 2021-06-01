@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetFilterList;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class MoveFilterUpAction extends AbstractFilterListAction {
 
@@ -12,7 +13,7 @@ public class MoveFilterUpAction extends AbstractFilterListAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         DatasetFilterList filterList = getFilterList();
         DatasetFilter filter = (DatasetFilter) filterList.getSelectedValue();
         getFilterGroup().moveFilterUp(filter);

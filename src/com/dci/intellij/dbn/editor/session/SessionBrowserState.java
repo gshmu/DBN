@@ -16,7 +16,7 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
     private int refreshInterval = 0;
 
     @Override
-    public boolean canBeMergedWith(FileEditorState fileEditorState, FileEditorStateLevel fileEditorStateLevel) {
+    public boolean canBeMergedWith(@NotNull FileEditorState fileEditorState, @NotNull FileEditorStateLevel fileEditorStateLevel) {
         return false;
     }
 
@@ -67,7 +67,7 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
         clone.setSortingState(getSortingState().clone());
         clone.filterState = filterState.clone();
         if (contentTypesMap != null) {
-            clone.contentTypesMap = new THashMap<String, String>(contentTypesMap);
+            clone.contentTypesMap = new THashMap<>(contentTypesMap);
         }
 
         return clone;

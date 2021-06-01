@@ -130,7 +130,7 @@ public class DBLCodeStyleManager extends AbstractProjectComponent implements Per
     }
 
     @Override
-    public void loadState(Element element) {
+    public void loadState(@NotNull Element element) {
 
     }
 }

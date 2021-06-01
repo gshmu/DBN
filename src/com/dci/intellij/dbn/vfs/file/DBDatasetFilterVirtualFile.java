@@ -156,6 +156,7 @@ public class DBDatasetFilterVirtualFile extends DBVirtualFileImpl implements DBP
     public void refresh(boolean asynchronous, boolean recursive, Runnable postRunnable) {
     }
 
+    @NotNull
     @Override
     public InputStream getInputStream() throws IOException {
         return new ByteArrayInputStream(contentsToByteArray());

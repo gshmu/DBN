@@ -26,8 +26,9 @@ public class DBStatementJdbcRunConfigFactory extends DBStatementRunConfigFactory
         return Icons.EXEC_STATEMENT_CONFIG;
     }
 
+    @NotNull
     @Override
-    public RunConfiguration createTemplateConfiguration(Project project) {
+    public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new DBStatementJdbcRunConfig(project, this, "", DBRunConfigCategory.TEMPLATE);
     }
 }

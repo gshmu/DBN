@@ -62,7 +62,7 @@ public class DatasetEditorStateManager extends AbstractProjectComponent implemen
     }
 
     @Override
-    public void loadState(Element element) {
+    public void loadState(@NotNull Element element) {
     }
 
 }

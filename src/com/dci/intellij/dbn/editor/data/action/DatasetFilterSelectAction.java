@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class DatasetFilterSelectAction extends DumbAwareAction {
     private DBDataset dataset;
@@ -19,7 +20,7 @@ public class DatasetFilterSelectAction extends DumbAwareAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         final Project project = dataset.getProject();
         DatasetFilterManager filterManager = DatasetFilterManager.getInstance(project);
         DatasetFilter activeFilter = filterManager.getActiveFilter(dataset);
