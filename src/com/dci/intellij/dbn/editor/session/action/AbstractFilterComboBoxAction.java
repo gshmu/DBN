@@ -25,7 +25,7 @@ import javax.swing.*;
 import java.util.List;
 
 public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction implements DumbAware {
-    private SessionBrowserFilterType filterType;
+    private final SessionBrowserFilterType filterType;
 
     public AbstractFilterComboBoxAction(SessionBrowserFilterType filterType) {
         this.filterType = filterType;

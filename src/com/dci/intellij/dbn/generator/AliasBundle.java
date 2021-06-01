@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AliasBundle {
-    private Map<DBObject, String> aliases = new HashMap<DBObject, String>();
+    private final Map<DBObject, String> aliases = new HashMap<>();
 
     public String getAlias(DBObject object) {
         String alias = aliases.get(object);

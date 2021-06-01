@@ -9,8 +9,8 @@ public enum ConditionOperator implements Presentable{
     LIKE("like", true),
     NOT_LIKE("not like", true);
 
-    private String name;
-    private boolean allowsWildcards;
+    private final String name;
+    private final boolean allowsWildcards;
 
     ConditionOperator(String text, boolean allowsWildcards) {
         this.name = text;

@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractRecordsOpenAction extends DumbAwareAction{
-    private DatasetFilterInput filterInput;
+    private final DatasetFilterInput filterInput;
 
     AbstractRecordsOpenAction(String text, DatasetFilterInput filterInput) {
         super();

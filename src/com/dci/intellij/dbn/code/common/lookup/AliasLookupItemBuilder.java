@@ -5,17 +5,17 @@ import com.dci.intellij.dbn.code.common.completion.CodeCompletionContext;
 import javax.swing.*;
 
 public class AliasLookupItemBuilder extends LookupItemBuilder {
-    private CharSequence text;
-    private boolean isDefinition;
+    private final CharSequence text;
+    private final boolean definition;
 
-    public AliasLookupItemBuilder(CharSequence text, boolean isDefinition) {
+    public AliasLookupItemBuilder(CharSequence text, boolean definition) {
         this.text = text;
-        this.isDefinition = isDefinition;
+        this.definition = definition;
     }
 
     @Override
     public String getTextHint() {
-        return isDefinition ? "alias def" : "alias ref";
+        return definition ? "alias def" : "alias ref";
     }
 
     @Override
