@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.content.loader;
 
-import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
@@ -16,6 +15,7 @@ import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadataFactory;
+import com.dci.intellij.dbn.environment.Environment;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
@@ -61,7 +61,7 @@ public abstract class DynamicContentResultSetLoader<
     }
 
     private DebugInfo preLoadContent(DynamicContent<T> dynamicContent) {
-        if (DatabaseNavigator.DEBUG) {
+        if (Environment.DEBUG_MODE) {
             DebugInfo debugInfo = new DebugInfo();
             LOGGER.info(
                     "[DBN-INFO] Loading " + dynamicContent.getContentDescription() +
@@ -102,7 +102,7 @@ public abstract class DynamicContentResultSetLoader<
                             DynamicContentType<?> contentType = dynamicContent.getContentType();
                             M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
 
-                            boolean addDelay = DatabaseNavigator.getInstance().isSlowDatabaseModeEnabled();
+                            boolean addDelay = Environment.isSlowDatabaseModeEnabled();
                             if (addDelay) Thread.sleep(500);
                             LoaderCache loaderCache = new LoaderCache();
                             int count = 0;

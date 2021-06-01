@@ -14,10 +14,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MetadataDiagnosticsTable extends DBNTable<MetadataDiagnosticsTableModel> {
+public class DiagnosticsTable<T extends DiagnosticsTableModel> extends DBNTable<T> {
     private final Map<Integer, Comparator<DiagnosticEntry>> comparators = new HashMap<>();
 
-    MetadataDiagnosticsTable(@NotNull DBNComponent parent, MetadataDiagnosticsTableModel model) {
+    DiagnosticsTable(@NotNull DBNComponent parent, T model) {
         super(parent, model, true);
         setDefaultRenderer(DiagnosticEntry.class, new CellRenderer());
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -28,11 +28,11 @@ public class MetadataDiagnosticsTable extends DBNTable<MetadataDiagnosticsTableM
     }
 
     @NotNull
-    private TableRowSorter<MetadataDiagnosticsTableModel> createSorter(MetadataDiagnosticsTableModel model) {
-        return new TableRowSorter<MetadataDiagnosticsTableModel>(model) {
+    private TableRowSorter<T> createSorter(T model) {
+        return new TableRowSorter<T>(model) {
             @Override
             public Comparator<?> getComparator(int column) {
-                return MetadataDiagnosticsTable.this.getComparator(column);
+                return DiagnosticsTable.this.getComparator(column);
             }
 
             @Override
@@ -43,28 +43,16 @@ public class MetadataDiagnosticsTable extends DBNTable<MetadataDiagnosticsTableM
     }
 
     private Comparator<DiagnosticEntry> getComparator(int column) {
-        return comparators.computeIfAbsent(column, col -> (Comparator<DiagnosticEntry>) Comparator.comparing(o -> getColumnValue((DiagnosticEntry) o, col)));
+        return comparators.computeIfAbsent(column, col -> (Comparator<DiagnosticEntry>) Comparator.comparing(o -> getModel().getColumnValue((DiagnosticEntry) o, col)));
     }
 
-    private static class CellRenderer extends DBNColoredTableCellRenderer {
+    private class CellRenderer extends DBNColoredTableCellRenderer {
         @Override
         protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
             DiagnosticEntry entry = (DiagnosticEntry) value;
-            Object columnValue = getColumnValue(entry, column);
+            Object columnValue = getModel().getColumnValue(entry, column);
             append(columnValue.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
             setBorder(Borders.TEXT_FIELD_BORDER);
         }
-    }
-
-    private static Comparable getColumnValue(DiagnosticEntry entry, int column) {
-        switch (column) {
-            case 0: return entry.getIdentifier();
-            case 1: return entry.getInvocationCount();
-            case 2: return entry.getFailureCount();
-            case 3: return entry.getTimeoutCount();
-            case 4: return entry.getAverageExecutionTime();
-            case 5: return entry.getTotalExecutionTime();
-        }
-        return "";
     }
 }

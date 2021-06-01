@@ -25,7 +25,8 @@ import java.util.concurrent.ConcurrentHashMap;
 )
 public class DiagnosticsManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DiagnosticsManager";
-    private final Map<ConnectionId, Map<DiagnosticType, DiagnosticBundle>> diagnostics = new ConcurrentHashMap<>();
+    private final Map<ConnectionId, DiagnosticBundle> metadataInterfaceDiagnostics = new ConcurrentHashMap<>();
+    private final DiagnosticBundle fileParserDiagnostics = new DiagnosticBundle(DiagnosticType.FILE_PARSER);
 
     public static DiagnosticsManager getInstance(@NotNull Project project) {
         return Failsafe.getComponent(project, DiagnosticsManager.class);
@@ -35,10 +36,13 @@ public class DiagnosticsManager extends AbstractProjectComponent implements Pers
         super(project);
     }
 
-    public DiagnosticBundle getDiagnostics(ConnectionId connectionId, DiagnosticType diagnosticType) {
-        return diagnostics.
-                computeIfAbsent(connectionId, connId -> new ConcurrentHashMap<>()).
-                computeIfAbsent(diagnosticType, type -> new DiagnosticBundle(type));
+    public DiagnosticBundle getMetadataInterfaceDiagnostics(ConnectionId connectionId) {
+        return metadataInterfaceDiagnostics.
+                computeIfAbsent(connectionId, connId -> new DiagnosticBundle(DiagnosticType.METADATA_INTERFACE));
+    }
+
+    public DiagnosticBundle getFileParserDiagnostics() {
+        return fileParserDiagnostics;
     }
 
     public void openDiagnosticsMonitorDialog() {
@@ -69,6 +73,6 @@ public class DiagnosticsManager extends AbstractProjectComponent implements Pers
 
     @Override
     protected void disposeInner() {
-        diagnostics.clear();
+        metadataInterfaceDiagnostics.clear();
     }
 }
