@@ -12,6 +12,10 @@ import com.dci.intellij.dbn.database.DatabaseActivityTrace;
 import com.dci.intellij.dbn.database.DatabaseCompatibility;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
+import com.dci.intellij.dbn.database.common.statement.StatementExecutor.Context;
+import com.dci.intellij.dbn.diagnostics.DiagnosticsManager;
+import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
+import com.dci.intellij.dbn.diagnostics.data.DiagnosticType;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +29,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static com.dci.intellij.dbn.DatabaseNavigator.DEBUG;
 
@@ -55,8 +58,7 @@ public class StatementExecutionProcessor {
             String statementText = element.getContent(0).getValue().trim();
             readStatements(statementText, null);
         } else {
-            for (Object object : element.getChildren()) {
-                Element child = (Element) object;
+            for (Element child : element.getChildren()) {
                 String statementText = child.getContent(0).getValue().trim();
                 String prefixes = child.getAttributeValue("prefixes");
                 readStatements(statementText, prefixes);
@@ -115,10 +117,9 @@ public class StatementExecutionProcessor {
         DatabaseActivityTrace activityTrace = compatibility.getActivityTrace(statementDefinition.getId());
 
         if (forceExecution || activityTrace.canExecute(hasFallback)) {
-            AtomicReference<Statement> statementRef = new AtomicReference<>();
+            Context context = createExecutionContext(connection);
             return StatementExecutor.execute(
-                    timeout,
-                    statementRef,
+                    context,
                     () -> {
                         DBNStatement statement = null;
                         ResultSet resultSet = null;
@@ -132,6 +133,7 @@ public class StatementExecutionProcessor {
                             if (prepared) {
                                 DBNPreparedStatement preparedStatement = statementDefinition.prepareStatement(connection, arguments);
                                 statement = preparedStatement;
+                                context.setStatement(statement);
                                 preparedStatement.setQueryTimeout(timeout);
                                 resultSet = preparedStatement.executeQuery();
                                 return resultSet;
@@ -139,6 +141,7 @@ public class StatementExecutionProcessor {
                                 if (statementText == null)
                                     statementText = statementDefinition.prepareStatementText(arguments);
                                 statement = connection.createStatement();
+                                context.setStatement(statement);
                                 statement.setQueryTimeout(timeout);
                                 statement.execute(statementText);
                                 if (query) {
@@ -208,16 +211,15 @@ public class StatementExecutionProcessor {
             @Nullable T outputReader,
             Object... arguments) throws SQLException {
 
-        AtomicReference<Statement> statementRef = new AtomicReference<>();
+        Context context = createExecutionContext(connection);
         return StatementExecutor.execute(
-                timeout,
-                statementRef,
+                context,
                 () -> {
                     String statementText = statementDefinition.prepareStatementText(arguments);
                     if (DEBUG) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
 
                     CallableStatement statement = connection.prepareCall(statementText);
-                    statementRef.set(statement);
+                    context.setStatement(statement);
                     try {
                         if (outputReader != null) outputReader.registerParameters(statement);
                         statement.setQueryTimeout(timeout);
@@ -258,18 +260,15 @@ public class StatementExecutionProcessor {
             @NotNull StatementDefinition statementDefinition,
             @NotNull DBNConnection connection,
             Object... arguments) throws SQLException {
-
-
-        AtomicReference<Statement> statementRef = new AtomicReference<>();
+        Context context = createExecutionContext(connection);
         StatementExecutor.execute(
-                timeout,
-                statementRef,
+                context,
                 () -> {
                     String statementText = statementDefinition.prepareStatementText(arguments);
                     if (DEBUG) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
 
                     Statement statement = connection.createStatement();
-                    statementRef.set(statement);
+                    context.setStatement(statement);
                     try {
                         statement.setQueryTimeout(timeout);
                         statement.executeUpdate(statementText);
@@ -308,16 +307,14 @@ public class StatementExecutionProcessor {
             @NotNull DBNConnection connection,
             Object... arguments) throws SQLException {
 
-        AtomicReference<Statement> statementRef = new AtomicReference<>();
-        return StatementExecutor.execute(
-                timeout,
-                statementRef,
+        Context context = createExecutionContext(connection);
+        return StatementExecutor.execute(context,
                 () -> {
                     String statementText = statementDefinition.prepareStatementText(arguments);
                     if (DEBUG) LOGGER.info("[DBN-INFO] Executing statement: " + statementText);
 
                     Statement statement = connection.createStatement();
-                    statementRef.set(statement);
+                    context.setStatement(statement);
                     try {
                         statement.setQueryTimeout(timeout);
                         return statement.execute(statementText);
@@ -332,5 +329,12 @@ public class StatementExecutionProcessor {
                         ResourceUtil.close(statement);
                     }
                 });
+    }
+
+    @NotNull
+    private Context createExecutionContext(@NotNull DBNConnection connection) {
+        DiagnosticsManager diagnosticsManager = DiagnosticsManager.getInstance(connection.getProject());
+        DiagnosticBundle diagnostics =  diagnosticsManager.getDiagnostics(connection.getId(), DiagnosticType.METADATA_LOAD);
+        return StatementExecutor.context(diagnostics, id, timeout);
     }
 }
