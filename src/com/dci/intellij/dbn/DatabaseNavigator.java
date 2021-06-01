@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn;
 
 import com.dci.intellij.dbn.common.component.ApplicationComponent;
+import com.dci.intellij.dbn.environment.Environment;
 import com.dci.intellij.dbn.execution.ExecutionManager;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
@@ -38,10 +39,6 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
         return COMPONENT_NAME;
     }
 
-    public static boolean DEBUG = false;
-    public static boolean SLOW = false;
-    public static boolean DEVELOPER = false;
-
     private boolean showPluginConflictDialog;
 
     public DatabaseNavigator() {
@@ -63,14 +60,6 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
         return ApplicationManager.getApplication().getComponent(DatabaseNavigator.class);
     }
 
-    public boolean isSlowDatabaseModeEnabled() {
-        return DEVELOPER && SLOW;
-    }
-
-    public void setSlowDatabaseModeEnabled(boolean slowDatabaseModeEnabled) {
-        SLOW = slowDatabaseModeEnabled;
-    }
-
     public String getName() {
         return null;
     }
@@ -82,16 +71,16 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
     @Override
     public Element getState() {
         Element element = new Element("state");
-        setBoolean(element, "enable-debug-mode", DEBUG);
-        setBoolean(element, "enable-developer-mode", DEVELOPER);
+        setBoolean(element, "enable-debug-mode", Environment.DEBUG_MODE);
+        setBoolean(element, "enable-developer-mode", Environment.DEVELOPER_MODE);
         setBoolean(element, "show-plugin-conflict-dialog", showPluginConflictDialog);
         return element;
     }
 
     @Override
     public void loadState(@NotNull Element element) {
-        DEBUG = getBoolean(element, "enable-debug-mode", false);
-        DEVELOPER = getBoolean(element, "enable-developer-mode", false);
+        Environment.DEBUG_MODE = getBoolean(element, "enable-debug-mode", false);
+        Environment.DEVELOPER_MODE = getBoolean(element, "enable-developer-mode", false);
         showPluginConflictDialog = getBoolean(element, "show-plugin-conflict-dialog", true);
     }
 

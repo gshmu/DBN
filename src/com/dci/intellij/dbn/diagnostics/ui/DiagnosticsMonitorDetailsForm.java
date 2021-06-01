@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
+import com.dci.intellij.dbn.diagnostics.ui.model.MetadataDiagnosticsTableModel;
 import com.intellij.ui.components.JBScrollPane;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +31,7 @@ public class DiagnosticsMonitorDetailsForm extends DBNFormImpl {
 
 
         MetadataDiagnosticsTableModel diagnosticsTableModel = new MetadataDiagnosticsTableModel(connectionHandler);
-        diagnosticsTable = new MetadataDiagnosticsTable(this, diagnosticsTableModel);
+        diagnosticsTable = new DiagnosticsTable<>(this, diagnosticsTableModel);
         diagnosticsTableScrollPane.setViewportView(diagnosticsTable);
         diagnosticsTableScrollPane.getViewport().setBackground(diagnosticsTable.getBackground());
 
