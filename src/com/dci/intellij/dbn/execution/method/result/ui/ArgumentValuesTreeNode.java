@@ -10,9 +10,9 @@ import java.util.Enumeration;
 import java.util.List;
 
 public class ArgumentValuesTreeNode implements TreeNode{
-    private Object userValue;
-    private ArgumentValuesTreeNode parent;
-    private List<ArgumentValuesTreeNode> children = new ArrayList<ArgumentValuesTreeNode>();
+    private final Object userValue;
+    private final ArgumentValuesTreeNode parent;
+    private final List<ArgumentValuesTreeNode> children = new ArrayList<>();
 
     protected ArgumentValuesTreeNode(ArgumentValuesTreeNode parent, Object userValue) {
         this.parent = parent;
