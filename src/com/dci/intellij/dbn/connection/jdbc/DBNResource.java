@@ -26,7 +26,7 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
         this.type = type;
 
         if (this instanceof CloseableResource) {
-            final CloseableResource closeable = (CloseableResource) this;
+            CloseableResource closeable = (CloseableResource) this;
             closed = new ResourceStatusAdapterImpl<CloseableResource>(closeable,
                     ResourceStatus.CLOSED,
                     ResourceStatus.CLOSED_SETTING,

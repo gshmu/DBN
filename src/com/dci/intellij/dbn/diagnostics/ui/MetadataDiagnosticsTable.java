@@ -18,10 +18,11 @@ public class MetadataDiagnosticsTable extends DBNTable<MetadataDiagnosticsTableM
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setCellSelectionEnabled(true);
         adjustRowHeight(2);
+        //setRowSorter(new TableRowSorter());
         accommodateColumnsSize();
     }
 
-    public static class CellRenderer extends DBNColoredTableCellRenderer {
+    private static class CellRenderer extends DBNColoredTableCellRenderer {
         @Override
         protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
             DiagnosticEntry transaction = (DiagnosticEntry) value;
