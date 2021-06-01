@@ -40,4 +40,8 @@ public final class DiagnosticBundle {
     private DiagnosticEntry find(String identifier) {
         return entries.stream().filter(entry -> entry.getIdentifier().equals(identifier)).findFirst().orElseGet(() -> null);
     }
+
+    public int size() {
+        return entries.size();
+    }
 }

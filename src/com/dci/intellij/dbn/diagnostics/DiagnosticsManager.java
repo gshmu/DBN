@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.diagnostics;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticBundle;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticType;
 import com.dci.intellij.dbn.diagnostics.ui.DiagnosticsMonitorDialog;
@@ -24,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 )
 public class DiagnosticsManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.DiagnosticsManager";
-    private final Map<DiagnosticType, DiagnosticBundle> diagnostics = new ConcurrentHashMap<>();
+    private final Map<ConnectionId, Map<DiagnosticType, DiagnosticBundle>> diagnostics = new ConcurrentHashMap<>();
 
     public static DiagnosticsManager getInstance(@NotNull Project project) {
         return Failsafe.getComponent(project, DiagnosticsManager.class);
@@ -34,8 +35,10 @@ public class DiagnosticsManager extends AbstractProjectComponent implements Pers
         super(project);
     }
 
-    public DiagnosticBundle getDiagnostics(DiagnosticType diagnosticType) {
-        return diagnostics.computeIfAbsent(diagnosticType, type -> new DiagnosticBundle(type));
+    public DiagnosticBundle getDiagnostics(ConnectionId connectionId, DiagnosticType diagnosticType) {
+        return diagnostics.
+                computeIfAbsent(connectionId, connId -> new ConcurrentHashMap<>()).
+                computeIfAbsent(diagnosticType, type -> new DiagnosticBundle(type));
     }
 
     public void openDiagnosticsMonitorDialog() {
