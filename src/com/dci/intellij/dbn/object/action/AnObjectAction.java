@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public abstract class AnObjectAction<T extends DBObject> extends DumbAwareContextAction<T> {
-    private DBObjectRef<T> objectRef;
+    private final DBObjectRef<T> objectRef;
     private boolean custom;
 
     public AnObjectAction(String text, Icon icon, @NotNull T object) {

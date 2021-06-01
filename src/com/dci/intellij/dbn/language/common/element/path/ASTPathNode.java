@@ -9,7 +9,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
 
 public class ASTPathNode implements PathNode{
-    private ASTNode astNode;
+    private final ASTNode astNode;
 
     public ASTPathNode(ASTNode astNode) {
         this.astNode = astNode;

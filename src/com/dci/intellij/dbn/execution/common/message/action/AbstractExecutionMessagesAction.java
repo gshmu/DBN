@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 abstract class AbstractExecutionMessagesAction extends DumbAwareContextAction<MessagesTree> {
-    private WeakRef<MessagesTree> messagesTree;
+    private final WeakRef<MessagesTree> messagesTree;
 
     AbstractExecutionMessagesAction(MessagesTree messagesTree, String text, Icon icon) {
         super(text, null, icon);

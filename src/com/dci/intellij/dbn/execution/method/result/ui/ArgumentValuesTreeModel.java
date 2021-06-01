@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import lombok.Getter;
 
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
@@ -14,8 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Getter
 public class ArgumentValuesTreeModel implements TreeModel {
-    private ArgumentValuesTreeNode root;
+    private final ArgumentValuesTreeNode root;
+
     ArgumentValuesTreeModel(DBMethod method, List<ArgumentValue> inputArgumentValues, List<ArgumentValue> outputArgumentValues) {
         root = new ArgumentValuesTreeNode(null, method);
         ArgumentValuesTreeNode inputNode = new ArgumentValuesTreeNode(root, "Input");
@@ -44,11 +47,6 @@ public class ArgumentValuesTreeModel implements TreeModel {
                 new ArgumentValuesTreeNode(treeNode, argumentValue);
             }
         }
-    }
-
-    @Override
-    public Object getRoot() {
-        return root;
     }
 
     @Override

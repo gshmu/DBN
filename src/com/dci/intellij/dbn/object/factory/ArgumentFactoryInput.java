@@ -2,33 +2,23 @@ package com.dci.intellij.dbn.object.factory;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.Getter;
 
 import java.util.List;
 
 
+@Getter
 public class ArgumentFactoryInput extends ObjectFactoryInput{
 
-    private String dataType;
-    private boolean isInput;
-    private boolean isOutput;
+    private final String dataType;
+    private final boolean input;
+    private final boolean output;
 
     public ArgumentFactoryInput(ObjectFactoryInput parent, int index, String objectName, String dataType, boolean input, boolean output) {
         super(objectName, DBObjectType.ARGUMENT, parent, index);
         this.dataType = dataType == null ? "" : dataType.trim();
-        this.isInput = input;
-        this.isOutput = output;
-    }
-
-    public String getDataType() {
-        return dataType;
-    }
-
-    public boolean isInput() {
-        return isInput;
-    }
-
-    public boolean isOutput() {
-        return isOutput;
+        this.input = input;
+        this.output = output;
     }
 
     @Override

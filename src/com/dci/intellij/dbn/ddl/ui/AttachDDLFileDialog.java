@@ -14,9 +14,9 @@ import java.awt.event.ActionEvent;
 import java.util.List;
 
 public class AttachDDLFileDialog extends DBNDialog<SelectDDLFileForm> {
-    private DBObjectRef<DBSchemaObject> objectRef;
-    private boolean showLookupOption;
-    private List<VirtualFile> virtualFiles;
+    private final DBObjectRef<DBSchemaObject> objectRef;
+    private final boolean showLookupOption;
+    private final List<VirtualFile> virtualFiles;
 
     public AttachDDLFileDialog(List<VirtualFile> virtualFiles, @NotNull DBSchemaObject object, boolean showLookupOption) {
         super(object.getProject(), "Attach DDL file", true);

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.ResultSet;
 
 public class ArgumentValue {
-    private DBObjectRef<DBArgument> argumentRef;
+    private final DBObjectRef<DBArgument> argumentRef;
     private DBObjectRef<DBTypeAttribute> attributeRef;
     private ArgumentValueHolder valueHolder;
 
