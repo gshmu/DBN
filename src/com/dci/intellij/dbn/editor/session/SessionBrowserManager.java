@@ -204,7 +204,7 @@ public class SessionBrowserManager extends AbstractProjectComponent implements P
                                         } else {
                                             SQLException exception = errors.get(sessionId);
                                             if (messageParserInterface.isSuccessException(exception)) {
-                                                MessageUtil.showInfoDialog(project, "Info", "Session " + sessionId + " " + disconnectingAction + " requested. " + exception.getMessage());
+                                                MessageUtil.showInfoDialog(project, "Info", "Session " + sessionId + " " + disconnectingAction + " requested.\n" + exception.getMessage());
                                             } else {
                                                 MessageUtil.showErrorDialog(project, "Error " + disconnectingAction + " session " + sessionId + ".", exception);
                                             }
