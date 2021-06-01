@@ -21,10 +21,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.sql.*;
+import java.sql.DatabaseMetaData;
+import java.sql.Driver;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLRecoverableException;
+import java.sql.Savepoint;
 import java.util.Collection;
 
-import static com.dci.intellij.dbn.DatabaseNavigator.DEBUG;
+import static com.dci.intellij.dbn.environment.Environment.DEBUG_MODE;
 
 public class ResourceUtil {
     private static final Logger LOGGER = LoggerFactory.createLogger();
@@ -41,9 +46,9 @@ public class ResourceUtil {
         if (statement != null) {
             try {
                 long start = System.currentTimeMillis();
-                if (DEBUG) LOGGER.debug("Cancelling statement (" + statement + ")");
+                if (DEBUG_MODE) LOGGER.debug("Cancelling statement (" + statement + ")");
                 statement.cancel();
-                if (DEBUG) LOGGER.debug("Done cancelling statement (" + statement + ") - " + (System.currentTimeMillis() - start) + "ms");
+                if (DEBUG_MODE) LOGGER.debug("Done cancelling statement (" + statement + ") - " + (System.currentTimeMillis() - start) + "ms");
             } catch (SQLRecoverableException ignore) {
             } catch (Throwable e) {
                 LOGGER.warn("Failed to cancel statement (" + statement + "): " + e.getMessage());
@@ -57,9 +62,9 @@ public class ResourceUtil {
         if (resource != null) {
             try {
                 long start = System.currentTimeMillis();
-                if (DEBUG) LOGGER.debug("Closing resource (" + resource + ")");
+                if (DEBUG_MODE) LOGGER.debug("Closing resource (" + resource + ")");
                 resource.close();
-                if (DEBUG) LOGGER.debug("Done closing resource (" + resource + ") - " + (System.currentTimeMillis() - start) + "ms");
+                if (DEBUG_MODE) LOGGER.debug("Done closing resource (" + resource + ") - " + (System.currentTimeMillis() - start) + "ms");
             } catch (SQLRecoverableException ignore) {
             } catch (Throwable e) {
                 LOGGER.warn("Failed to close resource (" + resource + ")", e);

@@ -1,8 +1,8 @@
 package com.dci.intellij.dbn.options.general.ui;
 
-import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
+import com.dci.intellij.dbn.environment.Environment;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,15 +50,15 @@ public class GeneralProjectSettingsForm extends CompositeConfigurationEditorForm
 
     @Override
     public void applyFormChanges() {
-        DatabaseNavigator.DEBUG = enableDebugCheckBox.isSelected();
-        DatabaseNavigator.DEVELOPER = enableDeveloperCheckBox.isSelected();
+        Environment.DEBUG_MODE = enableDebugCheckBox.isSelected();
+        Environment.DEVELOPER_MODE = enableDeveloperCheckBox.isSelected();
     }
 
     @Override
     public void resetFormChanges() {
-        enableDebugCheckBox.setSelected(DatabaseNavigator.DEBUG);
+        enableDebugCheckBox.setSelected(Environment.DEBUG_MODE);
         debugInfoLabel.setVisible(enableDebugCheckBox.isSelected());
-        enableDeveloperCheckBox.setSelected(DatabaseNavigator.DEVELOPER);
+        enableDeveloperCheckBox.setSelected(Environment.DEVELOPER_MODE);
         developerInfoLabel.setVisible(enableDeveloperCheckBox.isSelected());
     }
 }

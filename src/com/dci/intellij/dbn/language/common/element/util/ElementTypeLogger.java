@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.util;
 
-import com.dci.intellij.dbn.DatabaseNavigator;
+import com.dci.intellij.dbn.environment.Environment;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
 import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
@@ -21,7 +21,7 @@ public class ElementTypeLogger {
 
     public void logBegin(ParserBuilder builder, boolean optional, int depth) {
         // GTK enable disable debug
-        if (DatabaseNavigator.DEBUG) {
+        if (Environment.DEBUG_MODE) {
             StringBuilder buffer = new StringBuilder();
             for (int i = 0; i < depth; i++) buffer.append('\t');
             buffer.append('"').append(elementType.getId()).append("\" [");
@@ -36,7 +36,7 @@ public class ElementTypeLogger {
     }
 
     public void logEnd(ParseResultType resultType, int depth) {
-        if (DatabaseNavigator.DEBUG) {
+        if (Environment.DEBUG_MODE) {
             StringBuilder buffer = new StringBuilder();
             if (!elementType.isLeaf()) {
                 for (int i = 0; i < depth; i++) buffer.append('\t');

@@ -1,10 +1,10 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.ExceptionUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
+import com.dci.intellij.dbn.environment.Environment;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -178,7 +178,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
 
         SQLException exception = Timeout.call(10, null, daemon, () -> {
             try {
-                if (DatabaseNavigator.DEBUG)
+                if (Environment.DEBUG_MODE)
                     LOGGER.info("Started changing " + resourceType + " resource " + subject + " status to " + value);
 
                 changeInner(value);
@@ -190,7 +190,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
             } finally {
                 set(changing, false);
 
-                if (DatabaseNavigator.DEBUG)
+                if (Environment.DEBUG_MODE)
                     LOGGER.info("Done changing " + resourceType + " resource " + subject + " status to " + value);
             }
             return null;
