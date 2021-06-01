@@ -19,10 +19,10 @@ import java.util.Set;
 
 public class ElementLookupContext {
     public static double MAX_DB_VERSION = 9999;
-    private Set<NamedElementType> scannedElements = new THashSet<>();
+    private final Set<NamedElementType> scannedElements = new THashSet<>();
+    private final Set<ElementTypeAttribute> breakOnAttributes = new HashSet<>();
+    private final Map<Branch, NamedElementType> branchMarkers = new HashMap<>();
     protected Set<Branch> branches;
-    private Map<Branch, NamedElementType> branchMarkers = new HashMap<>();
-    private Set<ElementTypeAttribute> breakOnAttributes = new HashSet<>();
 
     private double databaseVersion = MAX_DB_VERSION;
 

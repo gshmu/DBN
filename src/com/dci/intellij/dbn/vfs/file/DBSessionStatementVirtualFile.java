@@ -160,6 +160,7 @@ public class DBSessionStatementVirtualFile extends DBVirtualFileImpl implements 
     public void refresh(boolean asynchronous, boolean recursive, Runnable postRunnable) {
     }
 
+    @NotNull
     @Override
     public InputStream getInputStream() throws IOException {
         return new ByteArrayInputStream(contentsToByteArray());

@@ -4,9 +4,10 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.object.filter.quick.ui.ObjectQuickFilterConditionForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
+import org.jetbrains.annotations.NotNull;
 
 public class DeleteQuickFilterConditionAction extends DumbAwareAction {
-    private ObjectQuickFilterConditionForm conditionForm;
+    private final ObjectQuickFilterConditionForm conditionForm;
 
     public DeleteQuickFilterConditionAction(ObjectQuickFilterConditionForm conditionForm) {
         this.conditionForm = conditionForm;
@@ -19,7 +20,7 @@ public class DeleteQuickFilterConditionAction extends DumbAwareAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         conditionForm.remove();
     }
 

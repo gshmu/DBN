@@ -64,7 +64,7 @@ public class ObjectDependencyManager extends AbstractProjectComponent implements
     }
 
     @Override
-    public void loadState(final Element element) {
+    public void loadState(@NotNull final Element element) {
         lastUserDependencyType = SettingsSupport.getEnum(element, "last-used-dependency-type", lastUserDependencyType);
     }
 

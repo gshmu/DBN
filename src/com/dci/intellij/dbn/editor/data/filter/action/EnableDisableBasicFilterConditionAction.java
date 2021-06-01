@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetBasicFilterConditionForm;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
+import org.jetbrains.annotations.NotNull;
 
 public class EnableDisableBasicFilterConditionAction extends DumbAwareAction {
     private DatasetBasicFilterConditionForm conditionForm;
@@ -25,7 +26,7 @@ public class EnableDisableBasicFilterConditionAction extends DumbAwareAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         conditionForm.setActive(!conditionForm.isActive());
     }
 }

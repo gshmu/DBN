@@ -19,6 +19,7 @@ import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.intellij.find.FindModel;
 import com.intellij.find.FindSettings;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class ToggleRegex extends DataSearchHeaderToggleAction {
 
@@ -27,18 +28,18 @@ public class ToggleRegex extends DataSearchHeaderToggleAction {
     }
 
     @Override
-    public boolean isSelected(AnActionEvent e) {
+    public boolean isSelected(@NotNull AnActionEvent e) {
         return getEditorSearchComponent().getFindModel().isRegularExpressions();
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         super.update(e);
     }
 
     @Override
-    public void setSelected(AnActionEvent e, boolean state) {
-        final FindModel findModel = getEditorSearchComponent().getFindModel();
+    public void setSelected(@NotNull AnActionEvent e, boolean state) {
+        FindModel findModel = getEditorSearchComponent().getFindModel();
         findModel.setRegularExpressions(state);
         if (state) {
             findModel.setWholeWordsOnly(false);

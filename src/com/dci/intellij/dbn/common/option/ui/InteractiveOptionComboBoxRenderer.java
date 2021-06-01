@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.common.option.ui;
 import com.dci.intellij.dbn.common.option.InteractiveOption;
 import com.intellij.ui.ColoredListCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -12,7 +13,7 @@ public class InteractiveOptionComboBoxRenderer extends ColoredListCellRenderer<I
     private InteractiveOptionComboBoxRenderer() {}
 
     @Override
-    protected void customizeCellRenderer(JList list, InteractiveOption value, int index, boolean selected, boolean hasFocus) {
+    protected void customizeCellRenderer(@NotNull JList list, InteractiveOption value, int index, boolean selected, boolean hasFocus) {
         if (value != null) {
             setIcon(value.getIcon());
             append(value.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);

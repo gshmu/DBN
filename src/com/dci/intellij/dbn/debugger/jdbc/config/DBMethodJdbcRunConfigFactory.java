@@ -17,8 +17,9 @@ public class DBMethodJdbcRunConfigFactory extends DBMethodRunConfigFactory<DBMet
         super(type, DBDebuggerType.JDBC);
     }
 
+    @NotNull
     @Override
-    public RunConfiguration createTemplateConfiguration(Project project) {
+    public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new DBMethodJdbcRunConfig(project, this, "", DBRunConfigCategory.TEMPLATE);
     }
 

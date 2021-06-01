@@ -204,9 +204,9 @@ public class DatasetBasicFilterConditionForm extends ConfigurationEditorForm<Dat
         }
     }
 
-    private ListCellRenderer<?> cellRenderer = new ColoredListCellRenderer() {
+    private final ListCellRenderer<?> cellRenderer = new ColoredListCellRenderer() {
         @Override
-        protected void customizeCellRenderer(JList list, Object value, int index, boolean selected, boolean hasFocus) {
+        protected void customizeCellRenderer(@NotNull JList list, Object value, int index, boolean selected, boolean hasFocus) {
             DBObjectRef<DBColumn> columnRef = (DBObjectRef<DBColumn>) value;
             DBColumn column = DBObjectRef.get(columnRef);
             if (column != null) {

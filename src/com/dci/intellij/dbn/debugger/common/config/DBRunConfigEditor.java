@@ -38,12 +38,12 @@ public abstract class DBRunConfigEditor<T extends DBRunConfig, F extends DBProgr
     }
 
     @Override
-    protected void resetEditorFrom(T configuration) {
+    protected void resetEditorFrom(@NotNull T configuration) {
         getConfigurationEditorForm(true).readConfiguration(configuration);
     }
 
     @Override
-    protected void applyEditorTo(T configuration) throws ConfigurationException {
+    protected void applyEditorTo(@NotNull T configuration) throws ConfigurationException {
         getConfigurationEditorForm(true).writeConfiguration(configuration);
     }
 

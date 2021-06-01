@@ -39,6 +39,7 @@ public class DBModuleType<T extends DBModuleBuilder> extends ModuleType<T> {
         return Icons.DATABASE_MODULE;
     }
 
+    @NotNull
     @Override
     public Icon getNodeIcon(boolean isOpened) {
         return isOpened ? Icons.DATABASE_MODULE_SMALL_OPEN : Icons.DATABASE_MODULE_SMALL_CLOSED;

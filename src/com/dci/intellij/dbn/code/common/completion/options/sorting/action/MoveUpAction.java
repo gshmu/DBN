@@ -5,12 +5,13 @@ import com.dci.intellij.dbn.common.Icons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.ui.ListUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
 public class MoveUpAction extends AnAction {
-    private CodeCompletionSortingSettings settings;
-    private JList list;
+    private final CodeCompletionSortingSettings settings;
+    private final JList list;
 
     public MoveUpAction(JList list, CodeCompletionSortingSettings settings)  {
         super("Move Up", null, Icons.ACTION_MOVE_UP);
@@ -29,7 +30,7 @@ public class MoveUpAction extends AnAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         ListUtil.moveSelectedItemsUp(list);
         settings.setModified(true);
     }

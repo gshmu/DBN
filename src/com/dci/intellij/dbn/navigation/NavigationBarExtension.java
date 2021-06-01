@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Processor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -35,7 +36,7 @@ public class NavigationBarExtension extends AbstractNavBarModelExtension {
     }
 
     @Override
-    public PsiElement adjustElement(PsiElement psiElement) {
+    public PsiElement adjustElement(@NotNull PsiElement psiElement) {
         if (psiElement instanceof DBLanguagePsiFile) {
             DBLanguagePsiFile databaseFile = (DBLanguagePsiFile) psiElement;
             VirtualFile virtualFile = databaseFile.getVirtualFile();
@@ -49,6 +50,7 @@ public class NavigationBarExtension extends AbstractNavBarModelExtension {
         return psiElement;
     }
 
+    @NotNull
     @Override
     public Collection<VirtualFile> additionalRoots(Project project) {
         return Collections.emptyList();

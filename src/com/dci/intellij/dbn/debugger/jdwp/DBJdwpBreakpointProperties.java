@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.debugger.common.breakpoint.DBBreakpointProperties;
 import com.intellij.util.xmlb.annotations.Attribute;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperties;
 
@@ -46,7 +47,7 @@ public class DBJdwpBreakpointProperties extends JavaBreakpointProperties<DBJdwpB
     }
 
     @Override
-    public void loadState(DBJdwpBreakpointProperties state) {
+    public void loadState(@NotNull DBJdwpBreakpointProperties state) {
         super.loadState(state);
         connectionId = state.connectionId;
         connectionHandlerRef = state.connectionHandlerRef;

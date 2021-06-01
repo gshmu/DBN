@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.IconLoader;
+import org.jetbrains.annotations.NotNull;
 
 public class FindAllAction extends DataSearchHeaderAction implements DumbAware {
     public FindAllAction(DataSearchComponent searchComponent) {
@@ -18,7 +19,7 @@ public class FindAllAction extends DataSearchHeaderAction implements DumbAware {
     }
 
     @Override
-    public void update(final AnActionEvent e) {
+    public void update(@NotNull final AnActionEvent e) {
         super.update(e);
 /*
         Editor editor = getEditorSearchComponent().getEditor();
@@ -31,7 +32,7 @@ public class FindAllAction extends DataSearchHeaderAction implements DumbAware {
     }
 
     @Override
-    public void actionPerformed(final AnActionEvent e) {
+    public void actionPerformed(@NotNull final AnActionEvent e) {
 /*
         Editor editor = getEditorSearchComponent().getEditor();
         Project project = editor.getProject();

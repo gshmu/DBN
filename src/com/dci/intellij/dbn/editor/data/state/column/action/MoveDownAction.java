@@ -4,11 +4,12 @@ import com.dci.intellij.dbn.common.Icons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.ui.ListUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
 public class MoveDownAction extends AnAction {
-    private JList list;
+    private final JList list;
     public MoveDownAction(JList list) {
         super("Move Down", null, Icons.ACTION_MOVE_DOWN);
         this.list = list;
@@ -25,7 +26,7 @@ public class MoveDownAction extends AnAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         ListUtil.moveSelectedItemsDown(list);
     }
 }

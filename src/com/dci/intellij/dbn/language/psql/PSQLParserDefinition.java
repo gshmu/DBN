@@ -41,6 +41,7 @@ public class PSQLParserDefinition extends DBLanguageParserDefinition {
         return getParser().getTokenTypes();
     }
 
+    @NotNull
     @Override
     protected PsiFile createPsiFile(FileViewProvider viewProvider) {
         return new PSQLFile(viewProvider, PSQLLanguage.INSTANCE);

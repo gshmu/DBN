@@ -61,6 +61,7 @@ public class DBConnectionVirtualFile extends DBVirtualFileImpl {
         return super.isValid() && connectionHandler.isValid();
     }
 
+    @NotNull
     @Override
     public String getPresentableName() {
         return getName();
@@ -125,6 +126,7 @@ public class DBConnectionVirtualFile extends DBVirtualFileImpl {
 
     }
 
+    @NotNull
     @Override
     public InputStream getInputStream() throws IOException {
         return DevNullStreams.INPUT_STREAM;

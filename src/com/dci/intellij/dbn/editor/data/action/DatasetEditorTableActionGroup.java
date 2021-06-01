@@ -8,7 +8,12 @@ import com.dci.intellij.dbn.data.sorting.SortDirection;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.editor.data.DatasetEditor;
-import com.dci.intellij.dbn.editor.data.filter.*;
+import com.dci.intellij.dbn.editor.data.filter.ConditionJoinType;
+import com.dci.intellij.dbn.editor.data.filter.ConditionOperator;
+import com.dci.intellij.dbn.editor.data.filter.DatasetBasicFilter;
+import com.dci.intellij.dbn.editor.data.filter.DatasetFilter;
+import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
+import com.dci.intellij.dbn.editor.data.filter.DatasetFilterManager;
 import com.dci.intellij.dbn.editor.data.model.DatasetEditorModelCell;
 import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.language.common.WeakRef;
@@ -202,7 +207,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             DBDataset dataset = getDatasetEditor().getDataset();
             DatasetFilterManager datasetFilterManager = DatasetFilterManager.getInstance(dataset.getProject());
             Object value = filterByValue ? columnValue : null;
@@ -212,7 +217,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
 
     private class CreateClipboardFilterAction extends DumbAwareAction {
         private final String text;
-        private boolean like;
+        private final boolean like;
         private CreateClipboardFilterAction(String text, boolean like) {
             super("Filter by clipboard value" + (like ? " (like)" : ""));
             this.text = text;
@@ -220,7 +225,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             DBDataset dataset = getDatasetEditor().getDataset();
             DatasetFilterManager datasetFilterManager = DatasetFilterManager.getInstance(dataset.getProject());
             String value = like ? '%' + text + '%' : text;
@@ -237,7 +242,7 @@ public class DatasetEditorTableActionGroup extends DefaultActionGroup {
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             DBDataset dataset = getDatasetEditor().getDataset();
             DatasetFilterManager filterManager = DatasetFilterManager.getInstance(dataset.getProject());
             DatasetBasicFilter basicFilter = (DatasetBasicFilter) filterManager.getActiveFilter(dataset);
