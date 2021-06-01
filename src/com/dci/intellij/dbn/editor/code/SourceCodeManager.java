@@ -46,7 +46,6 @@ import com.dci.intellij.dbn.vfs.file.DBContentVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBEditableObjectVirtualFile;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
 import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.SettingsSavingComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.editor.Document;
@@ -81,7 +80,7 @@ import static com.intellij.openapi.util.text.StringUtil.equalsIgnoreCase;
     name = SourceCodeManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
-public class SourceCodeManager extends AbstractProjectComponent implements PersistentStateComponent<Element>, SettingsSavingComponent {
+public class SourceCodeManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.SourceCodeManager";
 
     public static SourceCodeManager getInstance(@NotNull Project project) {
@@ -684,12 +683,5 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     @Override
     public void loadState(@NotNull Element element) {
-    }
-
-    /*********************************************
-     *            SettingsSavingComponent        *
-     *********************************************/
-    @Override
-    public void save() {
     }
 }
