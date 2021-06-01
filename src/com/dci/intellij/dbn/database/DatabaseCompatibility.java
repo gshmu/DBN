@@ -11,7 +11,7 @@ import java.util.Map;
 public class DatabaseCompatibility extends PropertyHolderImpl<JdbcProperty> {
 
     private String identifierQuote;
-    private Map<TransientId, DatabaseActivityTrace> activityTraces = new HashMap<>();
+    private final Map<TransientId, DatabaseActivityTrace> activityTraces = new HashMap<>();
 
     private DatabaseCompatibility() {}
 
