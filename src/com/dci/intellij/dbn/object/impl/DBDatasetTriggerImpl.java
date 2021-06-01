@@ -99,7 +99,7 @@ public class DBDatasetTriggerImpl extends DBTriggerImpl implements DBDatasetTrig
         DBSchema schema = getSchema();
         DBNConnection connection = connectionHandler.getPoolConnection(SchemaId.from(schema), false);
         try {
-            DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDDLInterface();
+            DatabaseDDLInterface ddlInterface = connectionHandler.getInterfaceProvider().getDdlInterface();
             DBDataset dataset = getDataset();
             ddlInterface.updateTrigger(dataset.getSchema().getName(), dataset.getName(), getName(), oldCode, newCode, connection);
         } finally {

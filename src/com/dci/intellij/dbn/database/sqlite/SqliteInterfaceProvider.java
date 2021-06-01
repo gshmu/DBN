@@ -12,14 +12,17 @@ import com.dci.intellij.dbn.database.common.DatabaseNativeDataTypes;
 import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 import com.dci.intellij.dbn.language.psql.PSQLLanguage;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
+import lombok.Getter;
 
+@Getter
 public class SqliteInterfaceProvider extends DatabaseInterfaceProviderImpl {
-    private DatabaseMessageParserInterface MESSAGE_PARSER_INTERFACE = new SqliteMessageParserInterface();
-    private DatabaseCompatibilityInterface COMPATIBILITY_INTERFACE = new SqliteCompatibilityInterface(this);
-    private DatabaseMetadataInterface METADATA_INTERFACE = new SqliteMetadataInterface(this);
-    private DatabaseDDLInterface DDL_INTERFACE = new SqliteDDLInterface(this);
-    private DatabaseExecutionInterface EXECUTION_INTERFACE = new SqliteExecutionInterface();
-    private DatabaseNativeDataTypes NATIVE_DATA_TYPES = new SqliteNativeDataTypes();
+    private final DatabaseMessageParserInterface messageParserInterface = new SqliteMessageParserInterface();
+    private final DatabaseCompatibilityInterface compatibilityInterface = new SqliteCompatibilityInterface(this);
+    private final DatabaseMetadataInterface metadataInterface = new SqliteMetadataInterface(this);
+    private final DatabaseDDLInterface ddlInterface = new SqliteDDLInterface(this);
+    private final DatabaseExecutionInterface executionInterface = new SqliteExecutionInterface();
+    private final DatabaseNativeDataTypes nativeDataTypes = new SqliteNativeDataTypes();
+    private final DatabaseDebuggerInterface debuggerInterface = null;
 
     public SqliteInterfaceProvider() {
         super(SQLLanguage.INSTANCE.getLanguageDialect(DBLanguageDialectIdentifier.SQLITE_SQL),
@@ -30,41 +33,4 @@ public class SqliteInterfaceProvider extends DatabaseInterfaceProviderImpl {
     public DatabaseType getDatabaseType() {
         return DatabaseType.SQLITE;
     }
-
-    @Override
-    public DatabaseNativeDataTypes getNativeDataTypes() {
-        return NATIVE_DATA_TYPES;
-    }
-
-    @Override
-    public DatabaseMessageParserInterface getMessageParserInterface() {
-        return MESSAGE_PARSER_INTERFACE;
-    }
-
-    @Override
-    public DatabaseCompatibilityInterface getCompatibilityInterface() {
-        return COMPATIBILITY_INTERFACE;
-    }
-
-    @Override
-    public DatabaseMetadataInterface getMetadataInterface() {
-        return METADATA_INTERFACE;
-    }
-
-    @Override
-    public DatabaseDebuggerInterface getDebuggerInterface() {
-        return null;
-    }
-
-    @Override
-    public DatabaseDDLInterface getDDLInterface() {
-        return DDL_INTERFACE;
-    }
-
-    @Override
-    public DatabaseExecutionInterface getDatabaseExecutionInterface() {
-        return EXECUTION_INTERFACE;
-    }
-
-
 }

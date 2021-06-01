@@ -104,7 +104,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction imp
     }
 
     private class SelectFilterValueAction extends AnAction {
-        private String filterValue;
+        private final String filterValue;
 
         public SelectFilterValueAction(String filterValue) {
             super(filterValue == null ? "No Filter" : filterValue, null, filterValue == null ? null : filterType.getIcon());
@@ -112,7 +112,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction imp
         }
 
         @Override
-        public void actionPerformed(AnActionEvent e) {
+        public void actionPerformed(@NotNull AnActionEvent e) {
             SessionBrowser sessionBrowser = getSessionBrowser(e);
             if (sessionBrowser != null) {
                 SessionBrowserModel model = sessionBrowser.getTableModel();
@@ -132,7 +132,7 @@ public abstract class AbstractFilterComboBoxAction extends DBNComboBoxAction imp
         }
 
         @Override
-        public void update(AnActionEvent e) {
+        public void update(@NotNull AnActionEvent e) {
             if (filterValue != null) {
                 e.getPresentation().setText(filterValue, false);
             }

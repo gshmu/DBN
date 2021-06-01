@@ -24,9 +24,9 @@ import java.util.Map;
 public class DatabaseInterfaceImpl implements DatabaseInterface{
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private String fileName;
-    private DatabaseInterfaceProvider provider;
-    protected Map<String, StatementExecutionProcessor> processors = new HashMap<String, StatementExecutionProcessor>();
+    private final String fileName;
+    private final DatabaseInterfaceProvider provider;
+    protected Map<String, StatementExecutionProcessor> processors = new HashMap<>();
 
     public DatabaseInterfaceImpl(String fileName, DatabaseInterfaceProvider provider) {
         this.fileName = fileName;
@@ -39,9 +39,8 @@ public class DatabaseInterfaceImpl implements DatabaseInterface{
         processors.clear();
         Document document = CommonUtil.loadXmlFile(getClass(), fileName);
         Element root = document.getRootElement();
-        for (Object child : root.getChildren()) {
-            Element element = (Element) child;
-            StatementExecutionProcessor executionProcessor = new StatementExecutionProcessor(element, provider);
+        for (Element child : root.getChildren()) {
+            StatementExecutionProcessor executionProcessor = new StatementExecutionProcessor(child, provider);
             String id = executionProcessor.getId();
             processors.put(id, executionProcessor);
         }

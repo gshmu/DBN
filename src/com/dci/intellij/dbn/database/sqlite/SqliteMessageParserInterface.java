@@ -30,4 +30,8 @@ class SqliteMessageParserInterface implements DatabaseMessageParserInterface {
         return false;
     }
 
+    @Override
+    public boolean isSuccessException(SQLException exception) {
+        return false;
+    }
 }

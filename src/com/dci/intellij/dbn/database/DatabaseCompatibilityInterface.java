@@ -19,7 +19,7 @@ import java.sql.SQLFeatureNotSupportedException;
 public abstract class DatabaseCompatibilityInterface implements DatabaseInterface{
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private DatabaseInterfaceProvider provider;
+    private final DatabaseInterfaceProvider provider;
 
     public DatabaseCompatibilityInterface(DatabaseInterfaceProvider parent) {
         this.provider = parent;
