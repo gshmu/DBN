@@ -173,7 +173,22 @@
 
     <statement-execution-processor id="dataset-columns" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
-            select DISTINCT
+            with DBN_CONSTRAINTS as (
+                select distinct
+                    c.owner,
+                    c.table_name,
+                    cc.column_name,
+                    c.constraint_name,
+                    c.constraint_type
+                from [PREFIX]_CONSTRAINTS c
+                     inner join [PREFIX]_CONS_COLUMNS cc
+                             on cc.OWNER = c.owner
+                            and cc.TABLE_NAME = c.TABLE_NAME
+                            and cc.CONSTRAINT_NAME = c.CONSTRAINT_NAME
+                            and (cc.POSITION is null or cc.POSITION = 1)
+                where c.OWNER = {0}
+                  and c.TABLE_NAME = {1})
+            select distinct
                 col.TABLE_NAME as DATASET_NAME,
                 col.COLUMN_NAME,
                 col.COLUMN_ID as POSITION,
@@ -194,33 +209,21 @@
                          on o.OWNER = col.OWNER
                         and o.OBJECT_NAME = col.TABLE_NAME
                         and o.OBJECT_TYPE in ('TABLE', 'VIEW', 'MATERIALIZED VIEW')
-                  left join [PREFIX]_CONSTRAINTS pk
-                 inner join [PREFIX]_CONS_COLUMNS pkcc
-                         on pkcc.OWNER = pk.owner
-                        and pkcc.TABLE_NAME = pk.TABLE_NAME
-                        and pkcc.CONSTRAINT_NAME = pk.CONSTRAINT_NAME
+                  left join DBN_CONSTRAINTS pk
                          on pk.CONSTRAINT_TYPE = 'P'
                         and pk.OWNER = col.OWNER
                         and pk.TABLE_NAME = col.TABLE_NAME
-                        and pkcc.COLUMN_NAME = col.COLUMN_NAME
-                  left join [PREFIX]_CONSTRAINTS fk
-                 inner join [PREFIX]_CONS_COLUMNS fkcc
-                         on fkcc.OWNER = fk.owner
-                        and fkcc.TABLE_NAME = fk.TABLE_NAME
-                        and fkcc.CONSTRAINT_NAME = fk.CONSTRAINT_NAME
+                        and pk.COLUMN_NAME = col.COLUMN_NAME
+                  left join DBN_CONSTRAINTS fk
                          on fk.CONSTRAINT_TYPE = 'R'
                         and fk.OWNER = col.OWNER
                         and fk.TABLE_NAME = col.TABLE_NAME
-                        and fkcc.COLUMN_NAME = col.COLUMN_NAME
-                  left join [PREFIX]_CONSTRAINTS uk
-                 inner join [PREFIX]_CONS_COLUMNS ukcc
-                         on ukcc.OWNER = uk.owner
-                        and ukcc.TABLE_NAME = uk.TABLE_NAME
-                        and ukcc.CONSTRAINT_NAME = uk.CONSTRAINT_NAME
+                        and fk.COLUMN_NAME = col.COLUMN_NAME
+                  left join DBN_CONSTRAINTS uk
                          on uk.CONSTRAINT_TYPE = 'U'
                         and uk.OWNER = col.OWNER
                         and uk.TABLE_NAME = col.TABLE_NAME
-                        and ukcc.COLUMN_NAME = col.COLUMN_NAME
+                        and uk.COLUMN_NAME = col.COLUMN_NAME
             where
                 col.OWNER = {0} and
                 col.TABLE_NAME = {1}
@@ -306,6 +309,20 @@
 
     <statement-execution-processor id="all-dataset-columns" is-query="true" is-prepared-statement="true" timeout="90">
         <statement prefixes="DBA, ALL">
+            with DBN_CONSTRAINTS as (
+                select distinct
+                    c.owner,
+                    c.table_name,
+                    cc.column_name,
+                    c.constraint_name,
+                    c.constraint_type
+                from [PREFIX]_CONSTRAINTS c
+                     inner join [PREFIX]_CONS_COLUMNS cc
+                             on cc.OWNER = c.owner
+                            and cc.TABLE_NAME = c.TABLE_NAME
+                            and cc.CONSTRAINT_NAME = c.CONSTRAINT_NAME
+                            and (cc.POSITION is null or cc.POSITION = 1)
+                where c.OWNER = {0})        
             select DISTINCT
                 col.TABLE_NAME as DATASET_NAME,
                 col.COLUMN_NAME,
@@ -327,33 +344,21 @@
                          on o.OWNER = col.OWNER
                         and o.OBJECT_NAME = col.TABLE_NAME
                         and o.OBJECT_TYPE in ('TABLE', 'VIEW', 'MATERIALIZED VIEW')
-                  left join [PREFIX]_CONSTRAINTS pk
-                 inner join [PREFIX]_CONS_COLUMNS pkcc
-                         on pkcc.OWNER = pk.owner
-                        and pkcc.TABLE_NAME = pk.TABLE_NAME
-                        and pkcc.CONSTRAINT_NAME = pk.CONSTRAINT_NAME
+                  left join DBN_CONSTRAINTS pk
                          on pk.CONSTRAINT_TYPE = 'P'
                         and pk.OWNER = col.OWNER
                         and pk.TABLE_NAME = col.TABLE_NAME
-                        and pkcc.COLUMN_NAME = col.COLUMN_NAME
-                  left join [PREFIX]_CONSTRAINTS fk
-                 inner join [PREFIX]_CONS_COLUMNS fkcc
-                         on fkcc.OWNER = fk.owner
-                        and fkcc.TABLE_NAME = fk.TABLE_NAME
-                        and fkcc.CONSTRAINT_NAME = fk.CONSTRAINT_NAME
+                        and pk.COLUMN_NAME = col.COLUMN_NAME
+                  left join DBN_CONSTRAINTS fk
                          on fk.CONSTRAINT_TYPE = 'R'
                         and fk.OWNER = col.OWNER
                         and fk.TABLE_NAME = col.TABLE_NAME
-                        and fkcc.COLUMN_NAME = col.COLUMN_NAME
-                  left join [PREFIX]_CONSTRAINTS uk
-                 inner join [PREFIX]_CONS_COLUMNS ukcc
-                         on ukcc.OWNER = uk.owner
-                        and ukcc.TABLE_NAME = uk.TABLE_NAME
-                        and ukcc.CONSTRAINT_NAME = uk.CONSTRAINT_NAME
+                        and fk.COLUMN_NAME = col.COLUMN_NAME
+                  left join DBN_CONSTRAINTS uk
                          on uk.CONSTRAINT_TYPE = 'U'
                         and uk.OWNER = col.OWNER
                         and uk.TABLE_NAME = col.TABLE_NAME
-                        and ukcc.COLUMN_NAME = col.COLUMN_NAME
+                        and uk.COLUMN_NAME = col.COLUMN_NAME
             where col.OWNER = {0}
             order by col.TABLE_NAME asc
         </statement>
