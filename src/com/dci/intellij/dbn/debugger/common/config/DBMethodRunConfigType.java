@@ -15,6 +15,7 @@ public class DBMethodRunConfigType extends DBRunConfigType<DBMethodRunConfigFact
             new DBMethodJdwpRunConfigFactory(this)};
 
 
+    @NotNull
     @Override
     public String getDisplayName() {
         return "DB Method";

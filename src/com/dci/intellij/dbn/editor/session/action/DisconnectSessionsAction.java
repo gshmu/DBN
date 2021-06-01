@@ -25,7 +25,7 @@ public class DisconnectSessionsAction extends AbstractSessionBrowserAction {
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(@NotNull AnActionEvent e) {
         SessionBrowser sessionBrowser = getSessionBrowser(e);
         boolean visible = false;
         boolean enabled = false;

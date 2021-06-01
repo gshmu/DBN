@@ -8,9 +8,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class NavigationGutterRenderer extends GutterIconRenderer {
-    private AnAction action;
-    private Alignment alignment;
-    public NavigationGutterRenderer(AnAction action, Alignment alignment) {
+    private final AnAction action;
+    private final Alignment alignment;
+    public NavigationGutterRenderer(@NotNull AnAction action, @NotNull Alignment alignment) {
         this.action = action;
         this.alignment = alignment;
     }
@@ -52,6 +52,7 @@ public class NavigationGutterRenderer extends GutterIconRenderer {
         return action.hashCode();
     }
 
+    @NotNull
     @Override
     public Alignment getAlignment() {
         return alignment;

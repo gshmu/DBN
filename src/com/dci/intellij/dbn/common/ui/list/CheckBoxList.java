@@ -22,8 +22,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public class CheckBoxList<T extends Selectable> extends JList {
-    private boolean mutable;
-    private MouseAdapter mouseAdapter;
+    private final boolean mutable;
+    private final MouseAdapter mouseAdapter;
 
     public CheckBoxList(List<T> elements) {
         this(elements, false);
@@ -179,11 +179,11 @@ public class CheckBoxList<T extends Selectable> extends JList {
 
 
     private class Entry<T extends Selectable> extends JPanel implements Comparable<Entry<T>> {
-        private JPanel textPanel;
-        private JCheckBox checkBox;
-        private JLabel label;
-        private JLabel errorLabel;
-        private T presentable;
+        private final JPanel textPanel;
+        private final JCheckBox checkBox;
+        private final JLabel label;
+        private final JLabel errorLabel;
+        private final T presentable;
 
         @Override
         public void addMouseListener(MouseListener l) {

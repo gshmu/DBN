@@ -212,7 +212,7 @@ public class DatasetEditorManager extends AbstractProjectComponent implements Pe
     }
 
     @Override
-    public void loadState(Element element) {
+    public void loadState(@NotNull Element element) {
         recordViewColumnSortingType = SettingsSupport.getEnum(element, "record-view-column-sorting-type", recordViewColumnSortingType);
         valuePreviewTextWrapping = SettingsSupport.getBoolean(element, "value-preview-text-wrapping", valuePreviewTextWrapping);
         valuePreviewTextWrapping = SettingsSupport.getBoolean(element, "value-preview-pinned", valuePreviewPinned);

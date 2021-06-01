@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ScopeProcessor implements PsiScopeProcessor {
     @Override
-    public boolean execute(@NotNull PsiElement psiElement, ResolveState resolveState) {
+    public boolean execute(@NotNull PsiElement psiElement, @NotNull ResolveState resolveState) {
         return false;
     }
 
@@ -22,7 +22,7 @@ public class ScopeProcessor implements PsiScopeProcessor {
     }
 
     @Override
-    public void handleEvent(Event event, Object associated) {
+    public void handleEvent(@NotNull Event event, Object associated) {
 
     }
 }

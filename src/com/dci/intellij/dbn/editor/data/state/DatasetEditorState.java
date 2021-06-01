@@ -16,7 +16,7 @@ public class DatasetEditorState extends SortableDataModelState implements FileEd
     private DatasetColumnSetup columnSetup = new DatasetColumnSetup();
 
     @Override
-    public boolean canBeMergedWith(FileEditorState fileEditorState, FileEditorStateLevel fileEditorStateLevel) {
+    public boolean canBeMergedWith(@NotNull FileEditorState fileEditorState, @NotNull FileEditorStateLevel fileEditorStateLevel) {
         return fileEditorState instanceof DatasetEditorState && fileEditorStateLevel == FileEditorStateLevel.FULL;
     }
 

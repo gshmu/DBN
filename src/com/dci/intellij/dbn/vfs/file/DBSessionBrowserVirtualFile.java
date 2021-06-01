@@ -135,6 +135,7 @@ public class DBSessionBrowserVirtualFile extends DBVirtualFileImpl implements Co
     public void refresh(boolean asynchronous, boolean recursive, Runnable postRunnable) {
     }
 
+    @NotNull
     @Override
     public InputStream getInputStream() throws IOException {
         return new ByteArrayInputStream(contentsToByteArray());

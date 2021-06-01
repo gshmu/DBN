@@ -114,7 +114,7 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
     @Override
     @NotNull
     public PsiElement[] getChildren() {
-        List<PsiElement> children = new ArrayList<PsiElement>();
+        List<PsiElement> children = new ArrayList<>();
         DBObjectList[] objectLists = virtualFile.getConnectionHandler().getObjectBundle().getObjectListContainer().getElements();
         if (objectLists != null) {
             for (DBObjectList objectList : objectLists) {
@@ -315,12 +315,12 @@ public class DBConnectionPsiDirectory implements PsiDirectory, Disposable {
     }
 
     @Override
-    public <T> T getCopyableUserData(Key<T> key) {
+    public <T> T getCopyableUserData(@NotNull Key<T> key) {
         return null;  
     }
 
     @Override
-    public <T> void putCopyableUserData(Key<T> key, T value) {
+    public <T> void putCopyableUserData(@NotNull Key<T> key, T value) {
         
     }
 

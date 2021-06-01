@@ -211,6 +211,7 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
     public void refresh(boolean asynchronous, boolean recursive, Runnable postRunnable) {
     }
 
+    @NotNull
     @Override
     public InputStream getInputStream() throws IOException {
         return new ByteArrayInputStream(contentsToByteArray());
@@ -227,7 +228,7 @@ public class DBConsoleVirtualFile extends DBObjectVirtualFile<DBConsole> impleme
     }
 
     @Override
-    public void beforeDocumentChange(DocumentEvent event) {
+    public void beforeDocumentChange(@NotNull DocumentEvent event) {
 
     }
 

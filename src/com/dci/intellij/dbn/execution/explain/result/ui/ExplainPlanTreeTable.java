@@ -120,7 +120,7 @@ public class ExplainPlanTreeTable extends TreeTable implements StatefulDisposabl
         }
 
         @Override
-        public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+        public void customizeCellRenderer(@NotNull JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
             try {
                 ExplainPlanEntry entry = (ExplainPlanEntry) value;
 
@@ -152,7 +152,7 @@ public class ExplainPlanTreeTable extends TreeTable implements StatefulDisposabl
 
     private final ColoredTableCellRenderer tableCellRenderer = new ColoredTableCellRenderer() {
         @Override
-        protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
+        protected void customizeCellRenderer(@NotNull JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
             SimpleTextAttributes attributes = selected ?
                     SimpleTextAttributes.SELECTED_SIMPLE_CELL_ATTRIBUTES :
                     BasicTableTextAttributes.get().getPlainData(false, false);

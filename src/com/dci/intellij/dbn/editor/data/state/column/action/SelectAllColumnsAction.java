@@ -4,9 +4,10 @@ import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.list.CheckBoxList;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class SelectAllColumnsAction extends AnAction {
-    private CheckBoxList list;
+    private final CheckBoxList list;
 
     public SelectAllColumnsAction(CheckBoxList list)  {
         super("Select All Columns", null, Icons.ACTION_SELECT_ALL);
@@ -14,7 +15,7 @@ public class SelectAllColumnsAction extends AnAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         list.selectAll();
     }
 }

@@ -5,10 +5,11 @@ import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
+import org.jetbrains.annotations.NotNull;
 
 public class ObjectsStatusRefreshAction extends DumbAwareAction {
 
-    private ConnectionHandlerRef connectionHandlerRef;
+    private final ConnectionHandlerRef connectionHandlerRef;
 
     public ObjectsStatusRefreshAction(ConnectionHandler connectionHandler) {
         super("Refresh objects status", "", Icons.ACTION_REFRESH);
@@ -16,7 +17,7 @@ public class ObjectsStatusRefreshAction extends DumbAwareAction {
     }
 
     @Override
-    public void actionPerformed(AnActionEvent anActionEvent) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
         connectionHandlerRef.ensure().getObjectBundle().refreshObjectsStatus(null);
     }
 }

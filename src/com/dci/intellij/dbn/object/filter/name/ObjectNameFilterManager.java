@@ -226,7 +226,7 @@ public class ObjectNameFilterManager extends AbstractProjectComponent implements
     }
 
     @Override
-    public void loadState(Element element) {
+    public void loadState(@NotNull Element element) {
 
     }
 }

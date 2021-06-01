@@ -32,7 +32,7 @@ public class DBModuleBuilder extends ModuleBuilder /*implements SourcePathsBuild
     }
 
     @Override
-    public void setupRootModel(ModifiableRootModel rootModel) throws ConfigurationException {
+    public void setupRootModel(@NotNull ModifiableRootModel rootModel) throws ConfigurationException {
         String moduleRootPath = getContentEntryPath();
         if (moduleRootPath != null) {
             LocalFileSystem localFileSystem = LocalFileSystem.getInstance();

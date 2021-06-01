@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.object.common.ui;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.ui.SpeedSearchBase;
 import com.intellij.util.ui.tree.TreeUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -32,6 +33,7 @@ public class ObjectTreeSpeedSearch extends SpeedSearchBase {
         return 0;
     }
 
+    @NotNull
     @Override
     protected Object[] getAllElements() {
         return getComponent().getModel().getAllElements();
