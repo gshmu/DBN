@@ -1,18 +1,22 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
+import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRendererBase;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class BasicTableHeaderRenderer extends DBNTableHeaderRendererBase {
     private JPanel mainPanel;
     private JLabel nameLabel;
+    private JLabel sortingLabel;
 
     public BasicTableHeaderRenderer() {
         mainPanel.setOpaque(true);
         mainPanel.setBackground(UIUtil.getPanelBackground());
+        sortingLabel.setText("");
     }
 
     @Override
@@ -27,6 +31,23 @@ public class BasicTableHeaderRenderer extends DBNTableHeaderRendererBase {
         int height = fontMetrics.getHeight() + 6;
         mainPanel.setPreferredSize(new Dimension(width, height));
         mainPanel.setBorder(columnIndex == 0 ? BORDER_LBR.get() : BORDER_BR.get());
+
+        Icon icon = null;
+        RowSorter rowSorter = table.getRowSorter();
+        if (rowSorter != null) {
+            List<? extends RowSorter.SortKey> sortKeys = rowSorter.getSortKeys();
+            if (sortKeys.size() == 1) {
+                RowSorter.SortKey sortKey = sortKeys.get(0);
+                if (sortKey.getColumn() == columnIndex) {
+                    SortOrder sortOrder = sortKey.getSortOrder();
+                    icon =
+                            sortOrder == SortOrder.ASCENDING ? Icons.DATA_EDITOR_SORT_ASC :
+                            sortOrder == SortOrder.DESCENDING ? Icons.DATA_EDITOR_SORT_DESC :
+                            null;
+                }
+            }
+        }
+        sortingLabel.setIcon(icon);
         return mainPanel;
     }
 
