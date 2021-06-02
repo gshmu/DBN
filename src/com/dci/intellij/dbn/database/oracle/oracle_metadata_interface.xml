@@ -130,18 +130,20 @@
 
     <statement-execution-processor id="tables" is-query="true" is-prepared-statement="true">
         <statement prefixes="DBA, ALL">
-            select
-                TABLE_NAME,
-                TEMPORARY as IS_TEMPORARY
-            from  [PREFIX]_ALL_TABLES
-            where OWNER = {0}
-            minus
-            select
-                MVIEW_NAME as TABLE_NAME,
-                'N' as IS_TEMPORARY
-            from [PREFIX]_MVIEWS
-            where OWNER = {0}
-            order by TABLE_NAME asc
+            with DBN_MVIEWS as (
+                    select MVIEW_NAME,
+                           OWNER
+                      from [PREFIX]_MVIEWS
+                     where OWNER = {0})
+            select t.TABLE_NAME,
+                   t.TEMPORARY as IS_TEMPORARY
+              from [PREFIX]_ALL_TABLES t
+                   left join DBN_MVIEWS v
+                          on v.MVIEW_NAME = t.TABLE_NAME
+                         and v.OWNER = t.OWNER
+             where t.OWNER = {0}
+               and v.MVIEW_NAME is null
+            order by t.TABLE_NAME asc
         </statement>
     </statement-execution-processor>
 
