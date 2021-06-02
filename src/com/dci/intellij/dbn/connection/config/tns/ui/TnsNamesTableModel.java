@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class TnsNamesTableModel extends StatefulDisposable.Base implements DBNTableModel {
+public class TnsNamesTableModel extends StatefulDisposable.Base implements DBNTableModel<TnsName> {
     private final List<TnsName> tnsNames;
     private final Set<TableModelListener> listeners = new HashSet<>();
 
@@ -53,7 +53,7 @@ public class TnsNamesTableModel extends StatefulDisposable.Base implements DBNTa
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        return String.class;
+        return TnsName.class;
     }
 
     @Override
@@ -63,21 +63,8 @@ public class TnsNamesTableModel extends StatefulDisposable.Base implements DBNTa
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        TnsName tnsName = tnsNames.get(rowIndex);
-
-        switch (columnIndex) {
-            case 0: return tnsName.getName();
-            case 1: return tnsName.getProtocol();
-            case 2: return tnsName.getHost();
-            case 3: return tnsName.getPort();
-            case 4: return tnsName.getSid();
-            case 5: return tnsName.getServiceName();
-            case 6: return tnsName.getGlobalName();
-            case 7: return tnsName.getFailover();
-            case 8: return tnsName.getFailoverType();
-            case 9: return tnsName.getFailoverMethod();
-            default: return "";
-        }
+        return tnsNames.get(rowIndex);
+        //return getColumnValue(tnsName, columnIndex);
     }
 
     @Override
@@ -98,5 +85,22 @@ public class TnsNamesTableModel extends StatefulDisposable.Base implements DBNTa
     @Override
     protected void disposeInner() {
         nullify();
+    }
+
+    @Override
+    public Comparable getColumnValue(TnsName tnsName, int column) {
+        switch (column) {
+            case 0: return tnsName.getName();
+            case 1: return tnsName.getProtocol();
+            case 2: return tnsName.getHost();
+            case 3: return tnsName.getPort();
+            case 4: return tnsName.getSid();
+            case 5: return tnsName.getServiceName();
+            case 6: return tnsName.getGlobalName();
+            case 7: return tnsName.getFailover();
+            case 8: return tnsName.getFailoverType();
+            case 9: return tnsName.getFailoverMethod();
+            default: return "";
+        }
     }
 }
