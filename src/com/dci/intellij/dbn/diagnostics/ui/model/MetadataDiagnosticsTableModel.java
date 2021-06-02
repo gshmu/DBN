@@ -17,8 +17,8 @@ public class MetadataDiagnosticsTableModel extends DiagnosticsTableModel {
             "Invocations",
             "Failures",
             "Timeouts",
-            "Average Execution Time",
-            "Total Execution Time"};
+            "Average Execution Time (ms)",
+            "Total Execution Time (ms)"};
 
     public MetadataDiagnosticsTableModel(ConnectionHandler connectionHandler) {
         super(connectionHandler.getProject());

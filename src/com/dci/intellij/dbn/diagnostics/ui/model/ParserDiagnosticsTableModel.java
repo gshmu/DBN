@@ -11,8 +11,8 @@ public class ParserDiagnosticsTableModel extends DiagnosticsTableModel {
     private static final String[] COLUMN_NAMES = new String[] {
             "Identifier",
             "Invocations",
-            "Average Execution Time",
-            "Total Execution Time"};
+            "Average Execution Time (ms)",
+            "Total Execution Time (ms)"};
 
     public ParserDiagnosticsTableModel(Project project) {
         super(project);
