@@ -108,6 +108,10 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
         SafeDisposer.dispose(oldDataModel, false, true);
     }
 
+    protected void initTableSorter() {
+        setRowSorter(new DBNTableSorter<>(getModel()));
+    }
+
     private void updateComponentColors() {
         setGridColor(Colors.tableGridColor());
 

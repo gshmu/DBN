@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.TableModelListener;
 
-public abstract class DiagnosticsTableModel implements DBNTableModel, Disposable {
+public abstract class DiagnosticsTableModel implements DBNTableModel<DiagnosticEntry>, Disposable {
     private final ProjectRef project;
     private final Latent<DiagnosticBundle> diagnostics = Latent.basic(() -> resolveDiagnostics());
 
@@ -24,8 +24,6 @@ public abstract class DiagnosticsTableModel implements DBNTableModel, Disposable
 
     @NotNull
     protected abstract DiagnosticBundle resolveDiagnostics();
-
-    protected abstract Comparable getColumnValue(DiagnosticEntry entry, int column);
 
     @NotNull
     public Project getProject() {

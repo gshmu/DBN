@@ -39,7 +39,7 @@ public class MetadataDiagnosticsTableModel extends DiagnosticsTableModel {
     }
 
     @Override
-    protected Comparable getColumnValue(DiagnosticEntry entry, int column) {
+    public Comparable getColumnValue(DiagnosticEntry entry, int column) {
         switch (column) {
             case 0: return entry.getIdentifier();
             case 1: return entry.getInvocationCount();

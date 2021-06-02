@@ -9,41 +9,24 @@ import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.table.TableRowSorter;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import javax.swing.table.TableModel;
 
 public class DiagnosticsTable<T extends DiagnosticsTableModel> extends DBNTable<T> {
-    private final Map<Integer, Comparator<DiagnosticEntry>> comparators = new HashMap<>();
 
     DiagnosticsTable(@NotNull DBNComponent parent, T model) {
         super(parent, model, true);
-        setDefaultRenderer(DiagnosticEntry.class, new CellRenderer());
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        setDefaultRenderer(DiagnosticEntry.class, new CellRenderer());
+        initTableSorter();
         setCellSelectionEnabled(true);
         adjustRowHeight(2);
-        setRowSorter(createSorter(model));
         accommodateColumnsSize();
     }
 
-    @NotNull
-    private TableRowSorter<T> createSorter(T model) {
-        return new TableRowSorter<T>(model) {
-            @Override
-            public Comparator<?> getComparator(int column) {
-                return DiagnosticsTable.this.getComparator(column);
-            }
-
-            @Override
-            protected boolean useToString(int column) {
-                return false;
-            }
-        };
-    }
-
-    private Comparator<DiagnosticEntry> getComparator(int column) {
-        return comparators.computeIfAbsent(column, col -> (Comparator<DiagnosticEntry>) Comparator.comparing(o -> getModel().getColumnValue((DiagnosticEntry) o, col)));
+    @Override
+    public void setModel(@NotNull TableModel dataModel) {
+        super.setModel(dataModel);
+        initTableSorter();
     }
 
     private class CellRenderer extends DBNColoredTableCellRenderer {
