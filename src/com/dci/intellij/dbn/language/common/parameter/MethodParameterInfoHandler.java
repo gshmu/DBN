@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.parameter;
 
+import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
@@ -34,18 +35,21 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     public static final ObjectReferenceLookupAdapter ARGUMENT_LOOKUP_ADAPTER = new ObjectReferenceLookupAdapter(null, DBObjectType.ARGUMENT, null);
 
     @Override
+    @Compatibility
     public boolean couldShowInLookup() {
         return true;
     }
 
     @Nullable
     @Override
+    @Compatibility
     public Object[] getParametersForLookup(LookupElement item, ParameterInfoContext context) {
         return null;
     }
 
     @Nullable
     @Override
+    @Compatibility
     public Object[] getParametersForDocumentation(DBMethod method, ParameterInfoContext context) {
         return null;
     }
@@ -116,6 +120,7 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
             if (iterationPsiElement != null) {
                 IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.elementType;
                 PsiElement paramPsiElement = iterationPsiElement.getFirstChild();
+                int paramIndex = -1;
                 BasePsiElement iteratedPsiElement = null;
                 while (paramPsiElement != null) {
                     ElementType elementType = PsiUtil.getElementType(paramPsiElement);
@@ -129,10 +134,12 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                     }
                     if (elementType == iterationElementType.iteratedElementType) {
                         iteratedPsiElement = (BasePsiElement) paramPsiElement;
+                        paramIndex++;
                     }
 
                     paramPsiElement = paramPsiElement.getNextSibling();
                 }
+                context.setCurrentParameter(paramIndex);
                 return iteratedPsiElement;
             } else {
                 if (handlerPsiElement.getTextOffset()< offset && handlerPsiElement.getTextRange().contains(offset)) {
@@ -181,11 +188,13 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
 
     @Nullable
     @Override
+    @Compatibility
     public String getParameterCloseChars() {
         return ",";
     }
 
     @Override
+    @Compatibility
     public boolean tracksParameterIndex() {
         return false;
     }
@@ -221,5 +230,10 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
             text.append("<no parameters>");
         }
         context.setupUIComponentPresentation(text.toString(), highlightStartOffset, highlightEndOffset, disable, false, false, context.getDefaultParameterColor());
+    }
+
+    @Override
+    public void processFoundElementForUpdatingParameterInfo(@Nullable BasePsiElement basePsiElement, @NotNull UpdateParameterInfoContext context) {
+        context.setParameterOwner(basePsiElement);
     }
 }
