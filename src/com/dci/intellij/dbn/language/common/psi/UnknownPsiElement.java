@@ -58,7 +58,7 @@ public class UnknownPsiElement extends BasePsiElement<ElementTypeBase> {
 
     @Override
     public String toString() {
-        return elementType.getDebugName();
+        return elementType.getId();
 
     }
 }

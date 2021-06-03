@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.data.find.DataSearchComponent;
 import com.dci.intellij.dbn.data.find.SearchableDataComponent;
@@ -18,7 +19,6 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.ui.IdeBorderFactory;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,7 +59,7 @@ public class MethodExecutionCursorResultForm extends DBNFormImpl implements Sear
         resultTable.initTableGutter();
 
         JPanel panel = new JPanel();
-        panel.setBorder(UIUtil.getTableHeaderCellBorder());
+        panel.setBorder(DBNTableHeaderRenderer.BORDER_LBR.get());
         resultScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
 
         ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel, "", true, "DBNavigator.ActionGroup.MethodExecutionCursorResult");

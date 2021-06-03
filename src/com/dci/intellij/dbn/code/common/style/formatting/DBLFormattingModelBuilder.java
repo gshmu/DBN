@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.code.common.style.formatting;
 
 import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCustomSettings;
+import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -9,6 +10,7 @@ import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.formatting.Block;
+import com.intellij.formatting.FormattingContext;
 import com.intellij.formatting.FormattingModel;
 import com.intellij.formatting.FormattingModelBuilder;
 import com.intellij.formatting.FormattingModelProvider;
@@ -27,7 +29,17 @@ public class DBLFormattingModelBuilder implements FormattingModelBuilder {
 
     @Override
     @NotNull
+    @Compatibility
     public FormattingModel createModel(final PsiElement element, final CodeStyleSettings codeStyleSettings) {
+        FormattingContext formattingContext = FormattingContext.create(element, codeStyleSettings);
+        return createModel(formattingContext);
+    }
+
+    @Override
+    public @NotNull FormattingModel createModel(@NotNull FormattingContext formattingContext) {
+        PsiElement element = formattingContext.getPsiElement();
+        CodeStyleSettings codeStyleSettings = formattingContext.getCodeStyleSettings();
+
         DBLanguage language = (DBLanguage) PsiUtil.getLanguage(element);
 
         PsiFile psiFile = element.getContainingFile();

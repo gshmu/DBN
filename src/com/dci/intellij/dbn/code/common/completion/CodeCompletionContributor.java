@@ -33,11 +33,6 @@ public class CodeCompletionContributor extends CompletionContributor {
     }
 
     @Override
-    public String advertise(@NotNull CompletionParameters parameters) {
-        return super.advertise(parameters);
-    }
-
-    @Override
     public String handleEmptyLookup(@NotNull CompletionParameters parameters, Editor editor) {
         if (parameters.getCompletionType() == CompletionType.BASIC && parameters.getInvocationCount() == 1) {
             Shortcut[] basicShortcuts = KeyUtil.getShortcuts(IdeActions.ACTION_CODE_COMPLETION);
