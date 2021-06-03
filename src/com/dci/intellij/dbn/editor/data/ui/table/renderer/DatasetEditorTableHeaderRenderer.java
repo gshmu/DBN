@@ -74,6 +74,7 @@ public class DatasetEditorTableHeaderRenderer extends DBNTableHeaderRendererBase
             int height = fontMetrics.getHeight() + 6;
             mainPanel.setPreferredSize(new Dimension(width, height));
             mainPanel.setBorder(columnIndex == 0 ? BORDER_TLBR.get() : BORDER_TBR.get());
+            mainPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             updateTooltip(column);
             return mainPanel;
         });

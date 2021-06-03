@@ -111,6 +111,10 @@ public abstract class DBNTable<T extends DBNTableModel> extends JTable implement
 
     protected void initTableSorter() {
         setRowSorter(new DBNTableSorter(getModel()));
+        JTableHeader tableHeader = getTableHeader();
+        if (tableHeader != null) {
+            tableHeader.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        }
     }
 
     private void updateComponentColors() {
