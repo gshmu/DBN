@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.vfs;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.thread.Dispatch;
@@ -27,7 +28,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
@@ -204,7 +204,8 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                                     }
                                 }
                             });
-                    throw new ProcessCanceledException();
+                    // TODO this prevents the other files from being closed in a "close all.." bulk action
+                    throw AlreadyDisposedException.INSTANCE;
                 }
             }
 
