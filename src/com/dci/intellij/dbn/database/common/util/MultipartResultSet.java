@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.database.common.util;
 
 import com.dci.intellij.dbn.connection.ResourceUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.Queue;
 
 public class MultipartResultSet extends WrappedResultSet {
-    private Queue<ResultSet> queue = ContainerUtil.newLinkedList();
+    private final Queue<ResultSet> queue = new LinkedList<>();
 
     public MultipartResultSet(ResultSet ... resultSets) {
         super(null);

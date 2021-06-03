@@ -12,6 +12,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.JBColor;
+import com.intellij.util.ui.TimerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,9 +22,7 @@ import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 
 
 public class ConnectionDriverSettingsForm extends DBNFormImpl{
@@ -84,7 +83,7 @@ public class ConnectionDriverSettingsForm extends DBNFormImpl{
                 reloadDriversCheckLabel.setText(ex.getMessage());
             }
             reloadDriversCheckLabel.setVisible(true);
-            Timer timer = UIUtil.createNamedTimer(
+            Timer timer = TimerUtil.createNamedTimer(
                     "TemporaryLabelTimeout",
                     3000,
                     listener -> {

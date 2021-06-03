@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.execution.explain.result.ui;
 
+import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.execution.ExecutionManager;
@@ -9,7 +10,6 @@ import com.dci.intellij.dbn.execution.explain.result.ExplainPlanResult;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.IdeBorderFactory;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -36,7 +36,7 @@ public class ExplainPlanResultForm extends ExecutionResultFormBase<ExplainPlanRe
         resultScrollPane.getViewport().setBackground(explainPlanTreeTable.getBackground());
 
         JPanel panel = new JPanel();
-        panel.setBorder(UIUtil.getTableHeaderCellBorder());
+        panel.setBorder(DBNTableHeaderRenderer.BORDER_LBR.get());
     }
 
     public ExplainPlanTreeTable getExplainPlanTreeTable() {

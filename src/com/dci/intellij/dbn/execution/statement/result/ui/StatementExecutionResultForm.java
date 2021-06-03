@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.SessionId;
@@ -24,7 +25,6 @@ import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.IdeBorderFactory;
-import com.intellij.util.ui.UIUtil;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
@@ -72,7 +72,7 @@ public class StatementExecutionResultForm extends ExecutionResultFormBase<Statem
         resultTable.initTableGutter();
 
         JPanel panel = new JPanel();
-        panel.setBorder(UIUtil.getTableHeaderCellBorder());
+        panel.setBorder(DBNTableHeaderRenderer.BORDER_LBR.get());
         resultScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
 
         Disposer.register(this, executionResult);

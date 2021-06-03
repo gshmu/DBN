@@ -1,15 +1,13 @@
 package com.dci.intellij.dbn.common.util;
 
-import com.intellij.openapi.util.objectTree.ThrowableInterner;
-
 public class Traceable {
     private static final ThreadLocal<Traceable> LOCAL = new ThreadLocal<Traceable>();
-    private Throwable trace;
+    private final Throwable trace;
 
     public Traceable() {
         Traceable traceable = LOCAL.get();
         Throwable trace = traceable == null ? new Throwable() : new Throwable(traceable.trace);
-        this.trace = ThrowableInterner.intern(trace);
+        this.trace = InternalApiUtil.getThrowableIntern(trace);
     }
 
     public Throwable getTrace() {

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.code.common.completion.options.filter.ui;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterOption;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterOptionBundle;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
+import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.intellij.ui.CheckboxTree;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.SimpleTextAttributes;
@@ -14,7 +15,13 @@ public class CodeCompletionFilterTreeCellRenderer extends CheckboxTree.CheckboxT
     public static final CodeCompletionFilterTreeCellRenderer CELL_RENDERER = new CodeCompletionFilterTreeCellRenderer();
 
     @Override
+    @Compatibility
     public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+        customizeRenderer(tree, value, selected, expanded, leaf, row, hasFocus);
+    }
+
+    @Override
+    public void customizeRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
         CheckedTreeNode node = (CheckedTreeNode) value;
         Object userObject = node.getUserObject();
 
@@ -35,7 +42,6 @@ public class CodeCompletionFilterTreeCellRenderer extends CheckboxTree.CheckboxT
             getTextRenderer().append(codeCompletionFilterSettings.getDisplayName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
 
-        setBackground(UIUtil.getTextFieldBackground());
-    }
+        setBackground(UIUtil.getTextFieldBackground());    }
 }
 

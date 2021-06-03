@@ -62,7 +62,7 @@ public class ElementTypeLogger {
         if (elementType instanceof OneOfElementType) return "one-of";
         if (elementType instanceof IdentifierElementType) {
             IdentifierElementType iet = (IdentifierElementType) elementType;
-            return  iet.getDebugName();
+            return  iet.getId();
         }
         return null;
     }

@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.debugger.jdwp.frame;
 
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
 import com.intellij.debugger.DebuggerContext;
 import com.intellij.debugger.engine.DebugProcess;
@@ -160,6 +161,7 @@ public class DBJdwpNodeRenderer extends NodeRendererImpl {
 
     @Nullable
     @Override
+    @Compatibility
     public String getIdLabel(Value value, DebugProcess process) {
         String label = super.getIdLabel(value, process);
         if (label != null && !label.toLowerCase().startsWith("deprecated")) {
