@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.table.DBNColoredTableCellRenderer;
 import com.dci.intellij.dbn.common.ui.table.DBNTable;
+import com.dci.intellij.dbn.common.ui.table.DBNTableTransferHandler;
 import com.dci.intellij.dbn.diagnostics.data.DiagnosticEntry;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +18,7 @@ public class DiagnosticsTable<T extends DiagnosticsTableModel> extends DBNTable<
         super(parent, model, true);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setDefaultRenderer(DiagnosticEntry.class, new CellRenderer());
+        setTransferHandler(DBNTableTransferHandler.INSTANCE);
         initTableSorter();
         setCellSelectionEnabled(true);
         adjustRowHeight(2);
@@ -33,7 +35,7 @@ public class DiagnosticsTable<T extends DiagnosticsTableModel> extends DBNTable<
         @Override
         protected void customizeCellRenderer(DBNTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
             DiagnosticEntry entry = (DiagnosticEntry) value;
-            Object columnValue = getModel().getColumnValue(entry, column);
+            Object columnValue = getModel().getPresentableValue(entry, column);
             append(columnValue.toString(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
             setBorder(Borders.TEXT_FIELD_BORDER);
         }

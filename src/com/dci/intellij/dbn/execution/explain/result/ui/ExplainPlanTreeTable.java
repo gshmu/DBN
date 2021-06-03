@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.execution.explain.result.ui;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.project.ProjectRef;
+import com.dci.intellij.dbn.common.ui.Borders;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
 import com.dci.intellij.dbn.common.ui.tree.TreeUtil;
@@ -9,6 +10,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
 import com.dci.intellij.dbn.data.editor.ui.UserValueHolderImpl;
 import com.dci.intellij.dbn.data.grid.color.BasicTableTextAttributes;
+import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTableHeaderRenderer;
 import com.dci.intellij.dbn.data.preview.LargeValuePreviewPopup;
 import com.dci.intellij.dbn.execution.explain.result.ExplainPlanEntry;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -66,6 +68,9 @@ public class ExplainPlanTreeTable extends TreeTable implements StatefulDisposabl
         setTreeCellRenderer(treeCellRenderer);
         setDefaultRenderer(String.class, tableCellRenderer);
         setDefaultRenderer(BigDecimal.class, tableCellRenderer);
+        JTableHeader tableHeader = getTableHeader();
+        tableHeader.setDefaultRenderer(new BasicTableHeaderRenderer());
+        tableHeader.setBorder(Borders.EMPTY_BORDER);
         setAutoResizeMode(AUTO_RESIZE_OFF);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         SimpleTextAttributes plainDataAttributes = BasicTableTextAttributes.get().getPlainData(false, false);

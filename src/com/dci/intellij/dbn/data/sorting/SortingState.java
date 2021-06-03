@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SortingState implements PersistentStateElement, Cloneable<SortingState> {
-    private List<SortingInstruction> sortingInstructions = new ArrayList<SortingInstruction>();
+    private final List<SortingInstruction> sortingInstructions = new ArrayList<>();
 
     public boolean applySorting(String columnName, SortDirection direction, boolean keepExisting, int maxColumns) {
         SortingInstruction instruction = getInstruction(columnName);

@@ -1,25 +1,39 @@
 package com.dci.intellij.dbn.common.ui.tree;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
+import com.intellij.openapi.ide.CopyPasteManager;
+
 import javax.swing.*;
 import javax.swing.tree.TreePath;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 
 public class DBNTreeTransferHandler extends TransferHandler {
+    public static DBNTreeTransferHandler INSTANCE = new DBNTreeTransferHandler();
+
+    private DBNTreeTransferHandler() {}
+
     @Override
     public void exportToClipboard(JComponent comp, Clipboard clip, int action) {
         JTree tree = (JTree)comp;
         TreePath[] paths = tree.getSelectionPaths();
         if(paths != null && paths.length > 0) {
-            StringBuilder buffer = new StringBuilder();
+            StringBuilder builder = new StringBuilder();
             for (TreePath path : paths) {
-                buffer.append(path.getLastPathComponent().toString());
-                buffer.append("\n");
+                builder.append(path.getLastPathComponent().toString());
+                builder.append("\n");
             }
-            buffer.delete(buffer.length() - 1, buffer.length());
+            builder.delete(builder.length() - 1, builder.length());
 
-            StringSelection contents = new StringSelection(buffer.toString());
-            clip.setContents(contents, null);
+            String contentString = builder.toString().trim();
+            if (StringUtil.isNotEmpty(contentString)) {
+                StringSelection contents = new StringSelection(contentString);
+                //clip.setContents(contents, null);
+
+                CopyPasteManager copyPasteManager = CopyPasteManager.getInstance();
+                copyPasteManager.setContents(contents);
+            }
+
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.resource.ui;
 
-import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
+import com.dci.intellij.dbn.common.ui.table.DBNReadonlyTableModel;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -11,9 +11,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.event.TableModelListener;
-
-public class ResourceMonitorTransactionsTableModel implements DBNTableModel, Disposable {
+public class ResourceMonitorTransactionsTableModel implements DBNReadonlyTableModel, Disposable {
     private final ConnectionHandlerRef connectionHandler;
     private DBNConnection connection;
 
@@ -59,11 +57,6 @@ public class ResourceMonitorTransactionsTableModel implements DBNTableModel, Dis
     }
 
     @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return false;
-    }
-
-    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         PendingTransactionBundle dataChanges = connection == null ? null : connection.getDataChanges();
         if (dataChanges != null) {
@@ -71,15 +64,6 @@ public class ResourceMonitorTransactionsTableModel implements DBNTableModel, Dis
         }
         return null;
     }
-
-    @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
-
-    @Override
-    public void addTableModelListener(TableModelListener l) {}
-
-    @Override
-    public void removeTableModelListener(TableModelListener l) {}
 
     @Override
     public void dispose() {

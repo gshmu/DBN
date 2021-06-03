@@ -102,6 +102,11 @@ public class ExplainPlanEntry extends StatefulDisposable.Base {
     }
 
     @Override
+    public String toString() {
+        return super.toString();
+    }
+
+    @Override
     public void disposeInner() {
         SafeDisposer.dispose(children, false, false);
         nullify();
