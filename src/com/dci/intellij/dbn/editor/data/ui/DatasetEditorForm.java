@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.AutoCommitLabel;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -33,7 +34,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.AsyncProcessIcon;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,7 +78,7 @@ public class DatasetEditorForm extends DBNFormImpl implements SearchableDataComp
 
 
             JPanel panel = new JPanel();
-            panel.setBorder(UIUtil.getTableHeaderCellBorder());
+            panel.setBorder(DBNTableHeaderRenderer.BORDER_LBR.get());
             datasetTableScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
 
             ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.DataEditor");

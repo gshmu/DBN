@@ -219,8 +219,8 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
     public String toString() {
         //return elementType.is(ElementTypeAttribute.SCOPE_DEMARCATION);
         return hasErrors() ?
-                "[INVALID] " + elementType.getDebugName() :
-                elementType.getDebugName() +
+                "[INVALID] " + elementType.getId() :
+                elementType.getId() +
                         (elementType.isScopeDemarcation() ? " SCOPE_DEMARCATION" : "") +
                         (elementType.isScopeIsolation() ? " SCOPE_ISOLATION" : "");
     }

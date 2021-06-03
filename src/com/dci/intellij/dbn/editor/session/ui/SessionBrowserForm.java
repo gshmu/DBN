@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
+import com.dci.intellij.dbn.common.ui.table.DBNTableHeaderRenderer;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -24,7 +25,6 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBSplitter;
 import com.intellij.util.text.DateFormatUtil;
 import com.intellij.util.ui.AsyncProcessIcon;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,7 +74,7 @@ public class SessionBrowserForm extends DBNFormImpl implements SearchableDataCom
             refreshLoadTimestamp();
 
             JPanel panel = new JPanel();
-            panel.setBorder(UIUtil.getTableHeaderCellBorder());
+            panel.setBorder(DBNTableHeaderRenderer.BORDER_LBR.get());
             editorTableScrollPane.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, panel);
 
             ActionToolbar actionToolbar = ActionUtil.createActionToolbar(actionsPanel,"", true, "DBNavigator.ActionGroup.SessionBrowser");

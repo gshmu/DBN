@@ -1,8 +1,12 @@
 package com.dci.intellij.dbn.debugger.jdwp.frame;
 
+import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
+import com.dci.intellij.dbn.language.sql.SQLLanguage;
+import com.intellij.xdebugger.XExpression;
 import com.intellij.xdebugger.frame.XValueModifier;
+import com.intellij.xdebugger.impl.breakpoints.XExpressionImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +18,15 @@ public class DBJdwpDebugValueModifier extends XValueModifier {
     }
 
     @Override
+    @Compatibility
     public void setValue(@NotNull String expression, @NotNull XModificationCallback callback) {
+        setValue(new XExpressionImpl(expression, SQLLanguage.INSTANCE, null), callback);
+    }
+
+    @Override
+    public void setValue(@NotNull XExpression expr, @NotNull XModificationCallback callback) {
+        String expression = expr.getExpression();
+
         DBJdwpDebugProcess debugProcess = value.getDebugProcess();
         try {
             if (StringUtil.isNotEmpty(expression)) {
@@ -43,8 +55,6 @@ public class DBJdwpDebugValueModifier extends XValueModifier {
             callback.errorOccurred(e.getMessage());
         }
     }
-
-
 
     @Nullable
     @Override

@@ -1,8 +1,10 @@
 package com.dci.intellij.dbn.debugger.common.config.target;
 
+import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
 import com.intellij.execution.ExecutionTarget;
 import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.configurations.RunConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,7 +45,13 @@ public class DBExecutionTarget extends ExecutionTarget{
     }
 
     @Override
+    @Compatibility
     public boolean canRun(@NotNull RunnerAndConfigurationSettings configuration) {
-        return configuration.getConfiguration() instanceof DBRunConfig;
+        return canRun(configuration.getConfiguration());
+    }
+
+    @Override
+    public boolean canRun(@NotNull RunConfiguration configuration) {
+        return configuration instanceof DBRunConfig ;
     }
 }

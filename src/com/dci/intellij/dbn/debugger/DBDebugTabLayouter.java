@@ -13,7 +13,7 @@ public class DBDebugTabLayouter extends XDebugTabLayouter {
     @Override
     public Content registerConsoleContent(@NotNull RunnerLayoutUi ui, @NotNull ExecutionConsole console) {
         Content consoleContent = super.registerConsoleContent(ui, console);
-        ui.getDefaults().initFocusContent(DebuggerContentInfo.FRAME_CONTENT, LayoutViewOptions.STARTUP);
+        ui.getDefaults().initContentAttraction(DebuggerContentInfo.FRAME_CONTENT, LayoutViewOptions.STARTUP);
         return consoleContent;
 /*
         Content content = ui.createContent(DebuggerContentInfo.CONSOLE_CONTENT, console.getComponent(),
