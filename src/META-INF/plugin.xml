@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.2.3411.0</version>
+    <version>3.2.4377.0</version>
     <category>Database</category>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
@@ -31,9 +31,10 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.2.3411</b>
+            <li><b>3.2.4377</b>
             <ul>
-                <li>Bug fixes and memory optimisations
+                <li>Support for latest IDE EAP versions
+                <li>Bug fixes, performance and memory optimisations
             </ul>
             <li><b>3.2.3024</b>
             <ul>
@@ -189,6 +190,7 @@
     </application-components>
     <project-components>
         <!--<component><implementation-class>com.dci.intellij.dbn.options.GlobalProjectSettings</implementation-class></component>-->
+        <component><implementation-class>com.dci.intellij.dbn.diagnostics.DiagnosticsManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.browser.DatabaseBrowserManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.common.environment.EnvironmentManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.ConnectionManager</implementation-class></component>
@@ -226,7 +228,6 @@
         <component><implementation-class>com.dci.intellij.dbn.vfs.DatabaseFileManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.session.DatabaseSessionManager</implementation-class></component>
         <component><implementation-class>com.dci.intellij.dbn.connection.console.DatabaseConsoleManager</implementation-class></component>
-        <component><implementation-class>com.dci.intellij.dbn.diagnostics.DiagnosticsManager</implementation-class></component>
     </project-components>
     <module-components>
         <!--<component><implementation-class>com.dci.intellij.dbn.browser.cache.ModuleBrowserCacheComponent</implementation-class></component>-->
