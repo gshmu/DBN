@@ -35,7 +35,6 @@ public class BasicTableSpeedSearch extends SpeedSearchBase<BasicTable<? extends 
         return getColumnInfos().length;
     }
 
-    @Override
     protected Object getElementAt(int viewIndex) {
         return getColumnInfos()[viewIndex];
     }
