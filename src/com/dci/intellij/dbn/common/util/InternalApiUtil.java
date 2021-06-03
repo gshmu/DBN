@@ -10,7 +10,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class InternalApiUtil {
     public static boolean isApplicationExitInProgress() {
-        return ApplicationManagerEx.getApplicationEx().isExitInProgress();
+        return ApplicationManagerEx.getApplicationEx().isDisposeInProgress();
+        //return ApplicationManagerEx.getApplicationEx().isExitInProgress();
     }
 
     public static boolean isComponentsLoadedOccurred() {
