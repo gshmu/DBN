@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSetting
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.LoggerFactory;
-import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
@@ -145,12 +144,6 @@ public class ProjectSettings
     @Override
     public boolean hasOwnContent() {
         return false;
-    }
-
-    @Override
-    @Compatibility
-    public boolean isVisible() {
-        return true;
     }
 
     @Override
