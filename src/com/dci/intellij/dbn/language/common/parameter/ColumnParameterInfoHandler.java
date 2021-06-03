@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.parameter;
 
+import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
 import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
@@ -25,24 +26,28 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
     public static final ObjectReferenceLookupAdapter ARGUMENT_LOOKUP_ADAPTER = new ObjectReferenceLookupAdapter(null, DBObjectType.ARGUMENT, null);
 
     @Override
+    @Compatibility
     public boolean couldShowInLookup() {
         return true;
     }
 
     @Nullable
     @Override
+    @Compatibility
     public Object[] getParametersForLookup(LookupElement item, ParameterInfoContext context) {
         return null;
     }
 
     @Nullable
     @Override
+    @Compatibility
     public Object[] getParametersForDocumentation(BasePsiElement method, ParameterInfoContext context) {
         return null;
     }
 
     @Nullable
     @Override
+    @Compatibility
     public BasePsiElement findElementForParameterInfo(@NotNull CreateParameterInfoContext context) {
         BasePsiElement handlerPsiElement = lookupHandlerElement(context.getFile(), context.getOffset());
         BasePsiElement providerPsiElement = lookupProviderElement(handlerPsiElement);
@@ -186,11 +191,13 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
 
     @Nullable
     @Override
+    @Compatibility
     public String getParameterCloseChars() {
         return ",";
     }
 
     @Override
+    @Compatibility
     public boolean tracksParameterIndex() {
         return false;
     }
