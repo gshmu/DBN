@@ -13,6 +13,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreePath;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.function.Function;
 
 public class ExplainPlanTreeTableModel implements TreeTableModel, Disposable {
     private final ExplainPlanResult result;
@@ -24,82 +25,23 @@ public class ExplainPlanTreeTableModel implements TreeTableModel, Disposable {
     }
 
     private final Column[] COLUMNS = new Column[]{
-            new Column("OPERATION", TreeTableModel.class) {
-                @Override
-                public Object getValue(ExplainPlanEntry entry) {
-                    String options = entry.getOperationOptions();
-                    return this; /*entry.getOperation() + (StringUtil.isEmpty(options) ? "" : "(" + options + ")");*/
-                }
-            },
+            Column.create("OPERATION", TreeTableModel.class, false, entry -> {
+                String options = entry.getOperationOptions();
+                return this; /*entry.getOperation() + (StringUtil.isEmpty(options) ? "" : "(" + options + ")");*/
+            }),
 /*
-            new Column("OBJECT", DBObjectRef.class) {
-                @Override
-                public Object getValue(ExplainPlanEntry entry) {
-                    return entry.getObjectRef();
-                }
-            },
-            new Column("DEPTH", BigDecimal.class) {
-                @Override
-                public Object getValue(ExplainPlanEntry entry) {
-                    return entry.getDepth();
-                }
-            },
-            new Column("POSITION", BigDecimal.class) {
-                @Override
-                public Object getValue(ExplainPlanEntry entry) {
-                    return entry.getPosition();
-                }
-            },
+            Column.create("OBJECT", DBObjectRef.class, false, entry -> entry.getObjectRef()),
+            Column.create("DEPTH", BigDecimal.class, false, entry -> entry.getDepth()),
+            Column.create("POSITION", BigDecimal.class, false, entry -> entry.getPosition()),
 */
-            new Column("COST", BigDecimal.class) {
-                @Override
-                public Object getValue(ExplainPlanEntry entry) {
-                    return entry.getCost();
-                }
-            },
-            new Column("CARDINALITY", BigDecimal.class) {
-                @Override
-                public Object getValue(ExplainPlanEntry entry) {
-                    return entry.getCardinality();
-                }
-            },
-            new Column("BYTES", BigDecimal.class) {
-                @Override
-                public Object getValue(ExplainPlanEntry entry) {
-                    return entry.getBytes();
-                }
-            },
-            new Column("CPU_COST", BigDecimal.class) {
-                @Override
-                public Object getValue(ExplainPlanEntry entry) {
-                    return entry.getCpuCost();
-                }
-            },
-            new Column("IO_COST", BigDecimal.class) {
-                @Override
-                public Object getValue(ExplainPlanEntry entry) {
-                    return entry.getIoCost();
-                }
-            },
-            new Column("ACCESS_PREDICATES", String.class, true) {
-                @Override
-                public Object getValue(ExplainPlanEntry entry) {
-                    return entry.getAccessPredicates();
-                }
-            },
-            new Column("FILTER_PREDICATES", String.class, true) {
-                @Override
-                public Object getValue(ExplainPlanEntry entry) {
-                    return entry.getFilterPredicates();
-                }
-            },
-            new Column("PROJECTION", String.class, true) {
-                @Override
-                public Object getValue(ExplainPlanEntry entry) {
-                    return entry.getProjection();
-                }
-            }
-
+            Column.create("COST", BigDecimal.class, false, entry -> entry.getCost()),
+            Column.create("CARDINALITY", BigDecimal.class, false, entry -> entry.getCardinality()),
+            Column.create("BYTES", BigDecimal.class, false, entry -> entry.getBytes()),
+            Column.create("CPU_COST", BigDecimal.class, false, entry -> entry.getCpuCost()),
+            Column.create("IO_COST", BigDecimal.class, false, entry -> entry.getIoCost()),
+            Column.create("ACCESS_PREDICATES", String.class, true, entry -> entry.getAccessPredicates()),
+            Column.create("FILTER_PREDICATES", String.class, true, entry -> entry.getFilterPredicates()),
+            Column.create("PROJECTION", String.class, true, entry -> entry.getProjection()),
     };
 
     public Project getProject() {
@@ -189,7 +131,7 @@ public class ExplainPlanTreeTableModel implements TreeTableModel, Disposable {
     @Override public void addTreeModelListener(TreeModelListener l) {}
     @Override public void removeTreeModelListener(TreeModelListener l) {}
 
-    public static abstract class Column {
+    private static abstract class Column {
         @Getter private final String name;
         @Getter private final Class<?> clazz;
         @Getter private boolean large;
@@ -206,6 +148,15 @@ public class ExplainPlanTreeTableModel implements TreeTableModel, Disposable {
         }
 
         public abstract Object getValue(ExplainPlanEntry entry);
+
+        public static Column create(String name, Class<?> clazz, boolean large, Function<ExplainPlanEntry, Object> valueProvider) {
+            return new Column(name, clazz, large) {
+                @Override
+                public Object getValue(ExplainPlanEntry entry) {
+                    return valueProvider.apply(entry);
+                }
+            };
+        }
     }
 
     @Override
