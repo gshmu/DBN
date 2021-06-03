@@ -133,6 +133,7 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
             if (iterationPsiElement != null) {
                 IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.elementType;
                 PsiElement paramPsiElement = iterationPsiElement.getFirstChild();
+                int paramIndex = -1;
                 BasePsiElement iteratedPsiElement = null;
                 while (paramPsiElement != null) {
                     ElementType elementType = PsiUtil.getElementType(paramPsiElement);
@@ -145,10 +146,12 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                         }
                     } else if (paramPsiElement instanceof BasePsiElement) {
                         iteratedPsiElement = (BasePsiElement) paramPsiElement;
+                        paramIndex++;
                     }
 
                     paramPsiElement = paramPsiElement.getNextSibling();
                 }
+                context.setCurrentParameter(paramIndex);
                 return iteratedPsiElement == null ? handlerPsiElement : iteratedPsiElement;
             } else {
                 return handlerPsiElement;
@@ -264,5 +267,10 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
             text.append("<no parameters>");
         }
         context.setupUIComponentPresentation(text.toString(), highlightStartOffset, highlightEndOffset, disable, false, false, context.getDefaultParameterColor());
+    }
+
+    @Override
+    public void processFoundElementForUpdatingParameterInfo(@Nullable BasePsiElement basePsiElement, @NotNull UpdateParameterInfoContext context) {
+        context.setParameterOwner(basePsiElement);
     }
 }
