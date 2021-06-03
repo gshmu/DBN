@@ -35,6 +35,10 @@ public class BasicTableHeaderRenderer extends DBNTableHeaderRendererBase {
         Icon icon = null;
         RowSorter rowSorter = table.getRowSorter();
         if (rowSorter != null) {
+            final Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+            mainPanel.setCursor(handCursor);
+            nameLabel.setCursor(handCursor);
+            sortingLabel.setCursor(handCursor);
             List<? extends RowSorter.SortKey> sortKeys = rowSorter.getSortKeys();
             if (sortKeys.size() == 1) {
                 RowSorter.SortKey sortKey = sortKeys.get(0);
