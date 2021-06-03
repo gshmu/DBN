@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.table.JTableHeader;
+import java.awt.*;
 
 public abstract class SortableTable<T extends SortableDataModel<?, ?>> extends BasicTable<T> {
 
@@ -22,6 +23,7 @@ public abstract class SortableTable<T extends SortableDataModel<?, ?>> extends B
         JTableHeader tableHeader = getTableHeader();
         tableHeader.setDefaultRenderer(new SortableTableHeaderRenderer());
         tableHeader.addMouseListener(new SortableTableHeaderMouseListener(this));
+        tableHeader.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         setCellSelectionEnabled(true);
