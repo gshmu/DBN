@@ -749,4 +749,5 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
         return QuoteDefinition.DEFAULT_IDENTIFIER_QUOTE_DEFINITION;
     }
 
+
 }

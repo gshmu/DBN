@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.InternalApiUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -563,6 +564,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
     @Override
     public boolean canCloseProject() {
+        boolean exitApp = InternalApiUtil.isApplicationExitInProgress();
         boolean canClose = true;
         Project project = getProject();
         FileEditorManager fileEditorManager = FileEditorManager.getInstance(project);
@@ -584,8 +586,8 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
                                 list(objectDescription),
                                 option -> {
                                     switch (option) {
-                                        case SAVE: saveSourceCodeChanges(databaseFile, () -> closeProject()); break;
-                                        case DISCARD: revertSourceCodeChanges(databaseFile, () -> closeProject()); break;
+                                        case SAVE: saveSourceCodeChanges(databaseFile, () -> closeProject(exitApp)); break;
+                                        case DISCARD: revertSourceCodeChanges(databaseFile, () -> closeProject(exitApp)); break;
                                         case SHOW: {
                                             List<DBSourceCodeVirtualFile> sourceCodeFiles = databaseFile.getSourceCodeFiles();
                                             for (DBSourceCodeVirtualFile sourceCodeFile : sourceCodeFiles) {

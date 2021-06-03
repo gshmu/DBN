@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.project.ProjectUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
@@ -70,8 +71,12 @@ public abstract class AbstractProjectComponent extends StatefulDisposable.Base i
         nullify();
     }
 
-    protected void closeProject() {
-        ProjectUtil.closeProject(getProject());
+    protected void closeProject(boolean exitApp) {
+        if (exitApp) {
+            ApplicationManager.getApplication().exit();
+        } else {
+            ProjectUtil.closeProject(getProject());
+        }
     }
 
     @Override
