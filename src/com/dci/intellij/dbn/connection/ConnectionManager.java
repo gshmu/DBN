@@ -17,6 +17,7 @@ import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
 import com.dci.intellij.dbn.common.util.EditorUtil;
+import com.dci.intellij.dbn.common.util.InternalApiUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
@@ -524,6 +525,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
     @Override
     public boolean canCloseProject() {
         if (hasUncommittedChanges()) {
+            boolean exitApp = InternalApiUtil.isApplicationExitInProgress();
             Project project = getProject();
             DatabaseTransactionManager transactionManager = DatabaseTransactionManager.getInstance(project);
             TransactionManagerSettings transactionManagerSettings = transactionManager.getSettings();
@@ -534,11 +536,11 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                     option -> {
                         switch (option) {
                             case COMMIT: {
-                                commitAll(() -> closeProject());
+                                commitAll(() -> closeProject(exitApp));
                                 break;
                             }
                             case ROLLBACK: {
-                                rollbackAll(() -> closeProject());
+                                rollbackAll(() -> closeProject(exitApp));
                                 break;
                             }
                             case REVIEW_CHANGES: {

@@ -44,4 +44,9 @@ public final class DiagnosticBundle {
     public int size() {
         return entries.size();
     }
+
+    @Override
+    public String toString() {
+        return type + " (" + size() + " entries)";
+    }
 }
