@@ -16,7 +16,7 @@ public class CodeCompletionFilterTree extends CheckboxTree {
         TreeNode expandedTreeNode = (TreeNode) getModel().getChild(getModel().getRoot(), 5);
         setExpandedState(TreeUtil.createTreePath(expandedTreeNode), true);
         installSpeedSearch();
-        setTransferHandler(new DBNTreeTransferHandler());
+        setTransferHandler(DBNTreeTransferHandler.INSTANCE);
         setBackground(UIUtil.getTextFieldBackground());
     }
 }

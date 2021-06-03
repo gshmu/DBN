@@ -1,13 +1,11 @@
 package com.dci.intellij.dbn.editor.session.details;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
+import com.dci.intellij.dbn.common.ui.table.DBNReadonlyTableModel;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.event.TableModelListener;
-
-public class SessionDetailsTableModel extends StatefulDisposable.Base implements DBNTableModel {
+public class SessionDetailsTableModel extends StatefulDisposable.Base implements DBNReadonlyTableModel {
     private String sessionId = "";
     private String user = "";
     private String schema = "";
@@ -59,11 +57,6 @@ public class SessionDetailsTableModel extends StatefulDisposable.Base implements
     }
 
     @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return false;
-    }
-
-    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (columnIndex == 0) {
             switch (rowIndex) {
@@ -83,21 +76,6 @@ public class SessionDetailsTableModel extends StatefulDisposable.Base implements
             }
         }
         return null;
-    }
-
-    @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-
-    }
-
-    @Override
-    public void addTableModelListener(TableModelListener l) {
-
-    }
-
-    @Override
-    public void removeTableModelListener(TableModelListener l) {
-
     }
 
     @Override

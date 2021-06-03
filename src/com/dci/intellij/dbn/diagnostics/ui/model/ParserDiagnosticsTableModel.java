@@ -32,12 +32,12 @@ public class ParserDiagnosticsTableModel extends DiagnosticsTableModel {
     }
 
     @Override
-    public Comparable getColumnValue(DiagnosticEntry entry, int column) {
+    public String getPresentableValue(DiagnosticEntry entry, int column) {
         switch (column) {
             case 0: return entry.getIdentifier();
-            case 1: return entry.getInvocationCount();
-            case 2: return entry.getAverageExecutionTime();
-            case 3: return entry.getTotalExecutionTime();
+            case 1: return Long.toString(entry.getInvocationCount());
+            case 2: return Long.toString(entry.getAverageExecutionTime());
+            case 3: return Long.toString(entry.getTotalExecutionTime());
         }
         return "";
     }
