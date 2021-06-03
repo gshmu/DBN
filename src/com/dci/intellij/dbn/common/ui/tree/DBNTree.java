@@ -24,7 +24,7 @@ public class DBNTree extends Tree implements DBNComponent {
 
     public DBNTree(@NotNull DBNComponent parent) {
         this.parent = WeakRef.of(parent);
-        setTransferHandler(new DBNTreeTransferHandler());
+        setTransferHandler(DBNTreeTransferHandler.INSTANCE);
 
         Disposer.register(parent, this);
     }
@@ -32,7 +32,7 @@ public class DBNTree extends Tree implements DBNComponent {
     public DBNTree(@NotNull DBNComponent parent, TreeModel treeModel) {
         super(treeModel);
         this.parent = WeakRef.of(parent);
-        setTransferHandler(new DBNTreeTransferHandler());
+        setTransferHandler(DBNTreeTransferHandler.INSTANCE);
         setFont(UIUtil.getLabelFont());
 
         Disposer.register(parent, this);
@@ -42,7 +42,7 @@ public class DBNTree extends Tree implements DBNComponent {
     public DBNTree(@NotNull DBNComponent parent, TreeNode root) {
         super(root);
         this.parent = WeakRef.of(parent);
-        setTransferHandler(new DBNTreeTransferHandler());
+        setTransferHandler(DBNTreeTransferHandler.INSTANCE);
 
         Disposer.register(parent, this);
         SafeDisposer.register(this, root);

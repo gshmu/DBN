@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.connection.transaction.ui;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
+import com.dci.intellij.dbn.common.ui.table.DBNReadonlyTableModel;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.dci.intellij.dbn.connection.ConnectionType;
@@ -11,12 +11,11 @@ import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.event.TableModelListener;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class PendingTransactionsTableModel extends StatefulDisposable.Base implements DBNTableModel {
+public class PendingTransactionsTableModel extends StatefulDisposable.Base implements DBNReadonlyTableModel {
     private final ConnectionHandlerRef connectionHandler;
     private final List<DBNConnection> connections;
 
@@ -72,11 +71,6 @@ public class PendingTransactionsTableModel extends StatefulDisposable.Base imple
     }
 
     @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return false;
-    }
-
-    @Override
     public PendingTransaction getValueAt(int rowIndex, int columnIndex) {
         return getRows().collect(Collectors.toList()).get(rowIndex);
     }
@@ -87,16 +81,6 @@ public class PendingTransactionsTableModel extends StatefulDisposable.Base imple
             return dataChanges == null ? Stream.empty() : dataChanges.getEntries().stream();
         });
     }
-
-    @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {}
-
-    @Override
-    public void addTableModelListener(TableModelListener l) {}
-
-    @Override
-    public void removeTableModelListener(TableModelListener l) {}
-
 
     @Override
     protected void disposeInner() {

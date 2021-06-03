@@ -1,18 +1,14 @@
 package com.dci.intellij.dbn.connection.config.tns.ui;
 
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
-import com.dci.intellij.dbn.common.ui.table.DBNTableModel;
+import com.dci.intellij.dbn.common.ui.table.DBNReadonlyTableModel;
 import com.dci.intellij.dbn.connection.config.tns.TnsName;
 
-import javax.swing.event.TableModelListener;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-public class TnsNamesTableModel extends StatefulDisposable.Base implements DBNTableModel<TnsName> {
+public class TnsNamesTableModel extends StatefulDisposable.Base implements DBNReadonlyTableModel<TnsName> {
     private final List<TnsName> tnsNames;
-    private final Set<TableModelListener> listeners = new HashSet<>();
 
     TnsNamesTableModel(List<TnsName> tnsNames) {
         super();
@@ -57,29 +53,9 @@ public class TnsNamesTableModel extends StatefulDisposable.Base implements DBNTa
     }
 
     @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return false;
-    }
-
-    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         return tnsNames.get(rowIndex);
         //return getColumnValue(tnsName, columnIndex);
-    }
-
-    @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-
-    }
-
-    @Override
-    public void addTableModelListener(TableModelListener l) {
-        listeners.add(l);
-    }
-
-    @Override
-    public void removeTableModelListener(TableModelListener l) {
-        listeners.remove(l);
     }
 
     @Override
@@ -88,7 +64,7 @@ public class TnsNamesTableModel extends StatefulDisposable.Base implements DBNTa
     }
 
     @Override
-    public Comparable getColumnValue(TnsName tnsName, int column) {
+    public String getPresentableValue(TnsName tnsName, int column) {
         switch (column) {
             case 0: return tnsName.getName();
             case 1: return tnsName.getProtocol();
