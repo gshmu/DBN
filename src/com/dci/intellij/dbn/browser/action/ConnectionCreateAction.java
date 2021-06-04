@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class ConnectionCreateAction extends DumbAwareProjectAction {
-    private DatabaseType databaseType;
+    private final DatabaseType databaseType;
 
     ConnectionCreateAction(@Nullable DatabaseType databaseType) {
         super(getName(databaseType), null, getIcon(databaseType));
