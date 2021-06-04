@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class ConnectionCreateDropdownAction extends GroupPopupAction {
-    private AnAction[] actions = new AnAction[] {
+    private final AnAction[] actions = new AnAction[] {
             new ConnectionCreateAction(DatabaseType.ORACLE),
             new ConnectionCreateAction(DatabaseType.MYSQL),
             new ConnectionCreateAction(DatabaseType.POSTGRES),
