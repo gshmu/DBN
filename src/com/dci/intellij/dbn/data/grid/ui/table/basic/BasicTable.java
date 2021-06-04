@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.grid.ui.table.basic;
 
+import com.dci.intellij.dbn.common.event.ApplicationEvents;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.locale.options.RegionalSettingsListener;
@@ -65,7 +66,7 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
         cellRenderer = createCellRenderer();
         DataGridTextAttributes displayAttributes = cellRenderer.getAttributes();
 
-        EditorColorsManager.getInstance().addEditorColorsListener(this, this);
+        ApplicationEvents.subscribe(this, EditorColorsManager.TOPIC, this);
         Color bgColor = displayAttributes.getPlainData(false, false).getBgColor();
         setBackground(bgColor == null ? UIUtil.getTableBackground() : bgColor);
         addMouseListener(MouseClickedListener.create(e -> {
@@ -140,8 +141,7 @@ public class BasicTable<T extends BasicDataModel<?, ?>> extends DBNTableWithGutt
         });
 
         ProjectEvents.subscribe(project, this, RegionalSettingsListener.TOPIC, regionalSettingsListener);
-        //EventUtil.subscribe(this, EditorColorsManager.TOPIC, this);
-        EditorColorsManager.getInstance().addEditorColorsListener(this, this);
+        ApplicationEvents.subscribe(this, EditorColorsManager.TOPIC, this);
 
         //EventUtil.subscribe(this, UISettingsListener.TOPIC, this);
     }
