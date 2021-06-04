@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.code.common.completion.options.filter.ui;
 
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterOption;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterOptionBundle;
+import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.intellij.ui.CheckedTreeNode;
 
 public class CodeCompletionFilterTreeNode extends CheckedTreeNode {
@@ -110,4 +111,20 @@ public class CodeCompletionFilterTreeNode extends CheckedTreeNode {
         }
     }
 
+    @Override
+    public String toString() {
+        if (userObject instanceof CodeCompletionFilterOptionBundle) {
+            CodeCompletionFilterOptionBundle optionBundle = (CodeCompletionFilterOptionBundle) userObject;
+            return optionBundle.getName();
+        }
+        else if(userObject instanceof CodeCompletionFilterOption) {
+            CodeCompletionFilterOption option = (CodeCompletionFilterOption) userObject;
+            return option.getName();
+        }
+        else if (userObject instanceof CodeCompletionFilterSettings){
+            CodeCompletionFilterSettings codeCompletionFilterSettings = (CodeCompletionFilterSettings) userObject;
+            return codeCompletionFilterSettings.getDisplayName();
+        }
+        return super.toString();
+    }
 }
