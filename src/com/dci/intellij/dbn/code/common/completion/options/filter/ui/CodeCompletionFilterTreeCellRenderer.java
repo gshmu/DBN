@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletion
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterOptionBundle;
 import com.dci.intellij.dbn.code.common.completion.options.filter.CodeCompletionFilterSettings;
 import com.intellij.ui.CheckboxTree;
+import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
 
@@ -18,23 +19,25 @@ public class CodeCompletionFilterTreeCellRenderer extends CheckboxTree.CheckboxT
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
         Object userObject = node.getUserObject();
 
+        ColoredTreeCellRenderer textRenderer = getTextRenderer();
         if (userObject instanceof CodeCompletionFilterOptionBundle) {
             CodeCompletionFilterOptionBundle optionBundle = (CodeCompletionFilterOptionBundle) userObject;
-            getTextRenderer().append(optionBundle.getName(), SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
+            textRenderer.append(optionBundle.getName(), SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES);
         }
         else if(userObject instanceof CodeCompletionFilterOption) {
             CodeCompletionFilterOption option = (CodeCompletionFilterOption) userObject;
             Icon icon = option.getIcon();
-            getTextRenderer().append(option.getName(), icon == null ?
+            textRenderer.append(option.getName(), icon == null ?
                     SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES :
                     SimpleTextAttributes.REGULAR_ATTRIBUTES);
-            getTextRenderer().setIcon(icon);
+            textRenderer.setIcon(icon);
         }
         else if (userObject instanceof CodeCompletionFilterSettings){
             CodeCompletionFilterSettings codeCompletionFilterSettings = (CodeCompletionFilterSettings) userObject;
-            getTextRenderer().append(codeCompletionFilterSettings.getDisplayName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+            textRenderer.append(codeCompletionFilterSettings.getDisplayName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
 
+        textRenderer.setBackground(UIUtil.getTextFieldBackground());
         setBackground(UIUtil.getTextFieldBackground());
     }
 }
