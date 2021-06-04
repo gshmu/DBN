@@ -45,6 +45,25 @@ public class CommonUtil {
         return false;
     }
 
+    public static boolean isCalledThrough(Class clazz, String methodName) {
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        try {
+            for (int i = 3; i < stackTraceElements.length; i++) {
+                StackTraceElement stackTraceElement = stackTraceElements[i];
+                String className = stackTraceElement.getClassName();
+                if (clazz.getName().equals(className) /*|| clazz.isAssignableFrom(Class.forName(className))*/) {
+                    String methName = stackTraceElement.getMethodName();
+                    if (methodName.equals(methName)) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
+    }
+
     public static double getProgressPercentage(int is, int should) {
         BigDecimal fraction = new BigDecimal(is).divide(new BigDecimal(should), 6, RoundingMode.HALF_UP);
         return fraction.doubleValue();
