@@ -1,7 +1,7 @@
 package com.dci.intellij.dbn.common.util;
 
 import com.intellij.diagnostic.LoadingState;
-import com.intellij.openapi.application.ex.ApplicationManagerEx;
+import com.intellij.openapi.application.impl.ApplicationImpl;
 import com.intellij.openapi.util.objectTree.ThrowableInterner;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,7 +10,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class InternalApiUtil {
     public static boolean isApplicationExitInProgress() {
-        return ApplicationManagerEx.getApplicationEx().isDisposeInProgress();
+        return CommonUtil.isCalledThrough(ApplicationImpl.class, "exit");
+        //return ApplicationManagerEx.getApplicationEx().isDisposeInProgress();
         //return ApplicationManagerEx.getApplicationEx().isExitInProgress();
     }
 
