@@ -13,7 +13,6 @@ import com.dci.intellij.dbn.language.sql.dialect.oracle.OraclePLSQLBlockMonitor.
 %class OracleSQLParserFlexLexer
 %implements FlexLexer
 %public
-%pack
 %final
 %unicode
 %ignorecase
