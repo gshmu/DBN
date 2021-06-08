@@ -16,15 +16,16 @@ public class ClipboardUtil {
 
     public static class XmlContent implements Transferable {
         private DataFlavor[] dataFlavors;
-        private String content;
+        private final String content;
 
         public XmlContent(String text) {
             content = text;
             try {
-                dataFlavors = new DataFlavor[3];
+                dataFlavors = new DataFlavor[4];
                 dataFlavors[0] = new DataFlavor("text/xml;class=java.lang.String");
                 dataFlavors[1] = new DataFlavor("text/rtf;class=java.lang.String");
                 dataFlavors[2] = new DataFlavor("text/plain;class=java.lang.String");
+                dataFlavors[3] = DataFlavor.stringFlavor;
 
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
@@ -38,10 +39,11 @@ public class ClipboardUtil {
 
         @Override
         public boolean isDataFlavorSupported(DataFlavor flavor) {
+            String mimeType = flavor.getMimeType();
             return
-                    "text/xml".equals(flavor.getMimeType()) ||
-                            "text/rtf".equals(flavor.getMimeType()) ||
-                            "text/plain".equals(flavor.getMimeType());
+                    "text/xml".equals(mimeType) ||
+                    "text/rtf".equals(mimeType) ||
+                    "text/plain".equals(mimeType);
         }
 
         @Override

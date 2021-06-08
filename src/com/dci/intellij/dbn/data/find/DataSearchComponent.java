@@ -6,7 +6,13 @@ import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.listener.MouseClickedListener;
 import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.data.find.action.*;
+import com.dci.intellij.dbn.data.find.action.CloseOnESCAction;
+import com.dci.intellij.dbn.data.find.action.NextOccurrenceAction;
+import com.dci.intellij.dbn.data.find.action.PrevOccurrenceAction;
+import com.dci.intellij.dbn.data.find.action.ShowHistoryAction;
+import com.dci.intellij.dbn.data.find.action.ToggleMatchCase;
+import com.dci.intellij.dbn.data.find.action.ToggleRegex;
+import com.dci.intellij.dbn.data.find.action.ToggleWholeWordsOnlyAction;
 import com.dci.intellij.dbn.data.grid.ui.table.basic.BasicTable;
 import com.dci.intellij.dbn.data.model.DataModel;
 import com.dci.intellij.dbn.data.model.DataModelListener;
@@ -29,10 +35,17 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -305,7 +318,7 @@ public class DataSearchComponent extends DBNFormImpl implements SelectionListene
         FindInProjectSettings settings = getFindSettings();
         String[] recent = textField == searchField ? settings.getRecentFindStrings() : settings.getRecentReplaceStrings();
         JBList<String> list = new JBList<>(ArrayUtil.reverseArray(recent));
-        CompatibilityUtil.showSearchCompletionPopup(byClickingToolbarButton, actionsPanel, list, "Recent Searches", textField);
+        GUIUtil.showCompletionPopup(byClickingToolbarButton ? actionsPanel : null, list, "Recent Searches", textField, null);
     }
 
     private void initTextField() {
