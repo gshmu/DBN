@@ -1,11 +1,9 @@
 package com.dci.intellij.dbn.language.sql.dialect.oracle;
 
+import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
-import com.dci.intellij.dbn.language.sql.SQLLanguage;
-import com.dci.intellij.dbn.language.common.TokenTypeBundle;
-import com.dci.intellij.dbn.language.common.DBLanguageDialect;
-import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
+
 %%
 
 %class OracleSQLHighlighterFlexLexer
