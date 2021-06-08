@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
+import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.common.util.Safe;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -18,7 +19,6 @@ import com.dci.intellij.dbn.object.dependency.ObjectDependencyManager;
 import com.dci.intellij.dbn.object.dependency.ObjectDependencyType;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
-import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
@@ -29,13 +29,13 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JPopupMenu;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import java.awt.*;
+import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 
 public class ObjectDependencyTree extends DBNTree{
@@ -81,7 +81,7 @@ public class ObjectDependencyTree extends DBNTree{
                                 if (schemaObject.is(DBObjectProperty.EDITABLE)) {
                                     actionGroup.add(new EditObjectAction((DBSchemaObject) object));
                                 }
-                                ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
+                                ActionPopupMenu actionPopupMenu = ActionUtil.createActionPopupMenu(ObjectDependencyTree.this, "", actionGroup);
                                 JPopupMenu popupMenu = actionPopupMenu.getComponent();
                                 Dispatch.run(() -> {
                                     if (isShowing()) {

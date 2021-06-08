@@ -3,7 +3,11 @@ package com.dci.intellij.dbn.browser.ui;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.TreeNavigationHistory;
-import com.dci.intellij.dbn.browser.model.*;
+import com.dci.intellij.dbn.browser.model.BrowserTreeEventListener;
+import com.dci.intellij.dbn.browser.model.BrowserTreeModel;
+import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
+import com.dci.intellij.dbn.browser.model.SimpleBrowserTreeModel;
+import com.dci.intellij.dbn.browser.model.TabbedBrowserTreeModel;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
@@ -14,6 +18,7 @@ import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
+import com.dci.intellij.dbn.common.util.ActionUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionManager;
@@ -28,7 +33,6 @@ import com.dci.intellij.dbn.object.common.list.action.ObjectListActionGroup;
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.vfs.DatabaseFileSystem;
 import com.intellij.openapi.actionSystem.ActionGroup;
-import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPopupMenu;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
@@ -37,12 +41,19 @@ import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JPopupMenu;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public final class DatabaseBrowserTree extends DBNTree {
     private BrowserTreeNode targetSelection;
@@ -364,7 +375,7 @@ public final class DatabaseBrowserTree extends DBNTree {
 
                                 if (actionGroup != null) {
                                     Progress.check(progress);
-                                    ActionPopupMenu actionPopupMenu = ActionManager.getInstance().createActionPopupMenu("", actionGroup);
+                                    ActionPopupMenu actionPopupMenu = ActionUtil.createActionPopupMenu(DatabaseBrowserTree.this, "", actionGroup);
                                     popupMenu = actionPopupMenu.getComponent();
                                     Dispatch.run(() -> {
                                         if (isShowing()) {
