@@ -2,6 +2,7 @@
 
 package com.dci.intellij.dbn.language.sql.dialect.postgres;
 
+import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
