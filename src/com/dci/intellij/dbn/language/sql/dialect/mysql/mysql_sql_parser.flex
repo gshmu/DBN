@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 %class MysqlSQLParserFlexLexer
 %implements FlexLexer
 %public
-%pack
 %final
 %unicode
 %ignorecase
@@ -20,7 +19,6 @@ import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 %eof}
 
 %{
-    private int braceCounter = 0;
     private TokenTypeBundle tt;
     public MysqlSQLParserFlexLexer(TokenTypeBundle tt) {
         this.tt = tt;

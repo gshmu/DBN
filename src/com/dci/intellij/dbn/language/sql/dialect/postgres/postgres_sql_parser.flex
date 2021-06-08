@@ -11,7 +11,6 @@ import com.dci.intellij.dbn.language.common.DBLanguageDialectIdentifier;
 %class PostgresSQLParserFlexLexer
 %implements FlexLexer
 %public
-%pack
 %final
 %unicode
 %ignorecase

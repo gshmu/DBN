@@ -8527,7 +8527,6 @@ public final class OracleSQLHighlighterFlexLexer implements FlexLexer {
   private boolean zzEOFDone;
 
   /* user code: */
-    private int braceCounter = 0;
     private TokenTypeBundle tt;
     public OracleSQLHighlighterFlexLexer(TokenTypeBundle tt) {
         this.tt = tt;

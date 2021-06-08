@@ -9,7 +9,6 @@ import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 %class OraclePLSQLHighlighterFlexLexer
 %implements FlexLexer
 %public
-%pack
 %final
 %unicode
 %ignorecase
@@ -20,7 +19,6 @@ import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 
 
 %{
-    private int braceCounter = 0;
     private TokenTypeBundle tt;
     public OraclePLSQLHighlighterFlexLexer(TokenTypeBundle tt) {
         this.tt = tt;
