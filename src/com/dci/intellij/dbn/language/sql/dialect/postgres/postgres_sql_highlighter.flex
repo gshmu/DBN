@@ -10,7 +10,6 @@ import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 %class PostgresSQLHighlighterFlexLexer
 %implements FlexLexer
 %public
-%pack
 %final
 %unicode
 %ignorecase
@@ -21,7 +20,6 @@ import com.dci.intellij.dbn.language.common.TokenTypeBundle;
 
 
 %{
-    private int braceCounter = 0;
     private TokenTypeBundle tt;
     public PostgresSQLHighlighterFlexLexer(TokenTypeBundle tt) {
         this.tt = tt;
