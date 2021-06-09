@@ -1,7 +1,12 @@
 package com.dci.intellij.dbn.common;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Chained<T extends Chained<T>> {
-    private T previous;
+    private final T previous;
     private T next;
     private int index = -1;
 
@@ -14,29 +19,9 @@ public class Chained<T extends Chained<T>> {
 
     public int getIndex() {
         if (index == -1) {
-            synchronized (this) {
-                if (index == -1) {
-                    T child = (T) this;
-                    while (child != null) {
-                        index++;
-                        child = child.getPrevious();
-                    }
-                }
-            }
+            index = previous == null ? 0 : previous.getIndex() + 1;
         }
         return index;
-    }
-
-    public T getPrevious() {
-        return previous;
-    }
-
-    public T getNext() {
-        return next;
-    }
-
-    void setNext(T next) {
-        this.next = next;
     }
 
     public boolean isLast() {
