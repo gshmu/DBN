@@ -18,7 +18,7 @@ import java.util.Set;
 
 public class NamedElementType extends SequenceElementType {
     private boolean definitionLoaded;
-    private Set<ElementTypeBase> parents;
+    private final Set<ElementTypeBase> parents;
     private boolean truncateOnExecution;
 
     public NamedElementType(ElementTypeBundle bundle, String id) {
