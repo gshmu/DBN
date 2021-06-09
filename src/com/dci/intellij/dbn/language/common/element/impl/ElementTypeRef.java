@@ -13,7 +13,7 @@ public class ElementTypeRef extends Chained<ElementTypeRef> {
     public final ElementTypeBase elementType;
     public final boolean optional;
     public final double version;
-    private Set<BranchCheck> branchChecks;
+    private final Set<BranchCheck> branchChecks;
 
     public ElementTypeRef(ElementTypeRef previous, ElementTypeBase parentElementType, ElementTypeBase elementType, boolean optional, double version, Set<BranchCheck> branchChecks) {
         super(previous);
