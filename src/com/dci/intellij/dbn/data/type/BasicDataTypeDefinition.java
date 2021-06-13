@@ -5,14 +5,16 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 
+@Getter
+@Setter
 public class BasicDataTypeDefinition implements DataTypeDefinition {
-    private final @Getter GenericDataType genericDataType;
-    private final @Getter String name;
-    private final @Getter Class typeClass;
-    private final @Getter int sqlType;
-    private final @Getter boolean pseudoNative;
-    private final @Getter String contentTypeName;
-    private @Getter @Setter DataTypeParseAdapter parseAdapter;
+    private final GenericDataType genericDataType;
+    private final String name;
+    private final Class typeClass;
+    private final int sqlType;
+    private final boolean pseudoNative;
+    private final String contentTypeName;
+    private DataTypeParseAdapter parseAdapter;
 
 
     public BasicDataTypeDefinition(String name, Class typeClass, int sqlType, GenericDataType genericDataType) {

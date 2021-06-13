@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
+import lombok.Getter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -18,6 +19,7 @@ import java.sql.Types;
 import java.util.Date;
 import java.util.List;
 
+@Getter
 public class DBDataType {
     private DBNativeDataType nativeDataType;
     private DBType declaredType;
@@ -113,33 +115,12 @@ public class DBDataType {
     }
 
     public Class getTypeClass() {
-        return nativeDataType == null ? Object.class : nativeDataType.getDataTypeDefinition().getTypeClass();
+        return nativeDataType == null ? Object.class : nativeDataType.getDefinition().getTypeClass();
     }
 
     public int getSqlType() {
         return nativeDataType == null ? Types.CHAR : nativeDataType.getSqlType();
     }
-
-    public DBNativeDataType getNativeDataType() {
-        return nativeDataType;
-    }
-
-    public DBType getDeclaredType() {
-        return declaredType;
-    }
-
-    public long getLength() {
-        return length;
-    }
-
-    public int getPrecision() {
-        return precision;
-    }
-
-    public int getScale() {
-        return scale;
-    }
-
 
     public Object getValueFromResultSet(ResultSet resultSet, int columnIndex) throws SQLException {
         if (nativeDataType != null) {
@@ -216,7 +197,7 @@ public class DBDataType {
     }
 
     public String getContentTypeName() {
-        return nativeDataType == null ? null : nativeDataType.getDataTypeDefinition().getContentTypeName();
+        return nativeDataType == null ? null : nativeDataType.getDefinition().getContentTypeName();
     }
 
     public static class Ref {
@@ -272,7 +253,7 @@ public class DBDataType {
                 }
 
                 DBNativeDataType nDataType = objectBundle.getNativeDataType(dataTypeName);
-                if (nDataType != null && nDataType.getDataTypeDefinition().isPseudoNative()) {
+                if (nDataType != null && nDataType.getDefinition().isPseudoNative()) {
                     nativeDataType = nDataType;
                 }
 

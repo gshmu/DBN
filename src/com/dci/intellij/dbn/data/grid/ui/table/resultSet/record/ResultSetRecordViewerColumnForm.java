@@ -93,7 +93,7 @@ public class ResultSetRecordViewerColumnForm extends DBNFormImpl {
         String textValue = valueTextField.getText().trim();
         if (textValue.length() > 0) {
             Object value = cell.getFormatter().parseObject(clazz, textValue);
-            return dataType.getNativeDataType().getDataTypeDefinition().convert(value);
+            return dataType.getNativeDataType().getDefinition().convert(value);
         } else {
             return null;
         }
