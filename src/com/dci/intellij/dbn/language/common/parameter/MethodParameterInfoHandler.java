@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.language.common.parameter;
 
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
+import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
 import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
@@ -18,11 +20,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.lang.parameterInfo.CreateParameterInfoContext;
-import com.intellij.lang.parameterInfo.ParameterInfoContext;
-import com.intellij.lang.parameterInfo.ParameterInfoHandler;
-import com.intellij.lang.parameterInfo.ParameterInfoUIContext;
-import com.intellij.lang.parameterInfo.UpdateParameterInfoContext;
+import com.intellij.lang.parameterInfo.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -201,6 +199,11 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
 
     @Override
     public void updateUI(DBMethod method, @NotNull ParameterInfoUIContext context) {
+        PSQLCodeStyleSettings codeStyleSettings =
+                PSQLCodeStyleSettings.getInstance(method.getProject());
+        CodeStyleCaseOption datatypeCaseOption = codeStyleSettings.getCaseSettings().getDatatypeCaseOption();
+        CodeStyleCaseOption objectCaseOption = codeStyleSettings.getCaseSettings().getObjectCaseOption();
+
         context.setUIComponentEnabled(true);
         StringBuilder text = new StringBuilder();
         int highlightStartOffset = 0;
@@ -216,7 +219,9 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                 if (text.length() > 0) {
                     text.append(", ");
                 }
-                text.append(argument.getName().toLowerCase());
+                text.append(objectCaseOption.format(argument.getName()));
+                text.append(" ");
+                text.append(datatypeCaseOption.format(argument.getDataType().getName()));
                 //text.append(" ");
                 //text.append(argument.getDataType().getQualifiedName());
                 if (highlight) {
