@@ -50,7 +50,7 @@ public class BasicDataModelCell<
         if (contentTypeName == null) {
             DBDataType dataType = getColumnInfo().getDataType();
             if (dataType.isNative()) {
-                contentTypeName = dataType.getNativeDataType().getDataTypeDefinition().getContentTypeName();
+                contentTypeName = dataType.getNativeDataType().getDefinition().getContentTypeName();
             }
         }
 

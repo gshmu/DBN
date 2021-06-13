@@ -2,13 +2,7 @@ package com.dci.intellij.dbn.editor.data.record.ui;
 
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
-import com.dci.intellij.dbn.data.editor.ui.BasicDataEditorComponent;
-import com.dci.intellij.dbn.data.editor.ui.DataEditorComponent;
-import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProvider;
-import com.dci.intellij.dbn.data.editor.ui.ListPopupValuesProviderImpl;
-import com.dci.intellij.dbn.data.editor.ui.TextFieldWithPopup;
-import com.dci.intellij.dbn.data.editor.ui.TextFieldWithTextEditor;
-import com.dci.intellij.dbn.data.editor.ui.UserValueHolder;
+import com.dci.intellij.dbn.data.editor.ui.*;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.type.DataTypeDefinition;
@@ -31,12 +25,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.text.ParseException;
 import java.util.List;
 
@@ -65,7 +54,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl {
 
         DBNativeDataType nativeDataType = dataType.getNativeDataType();
         if (nativeDataType != null) {
-            DataTypeDefinition dataTypeDefinition = nativeDataType.getDataTypeDefinition();
+            DataTypeDefinition dataTypeDefinition = nativeDataType.getDefinition();
             GenericDataType genericDataType = dataTypeDefinition.getGenericDataType();
 
             DataEditorSettings dataEditorSettings = DataEditorSettings.getInstance(project);
@@ -192,7 +181,7 @@ public class DatasetRecordEditorColumnForm extends DBNFormImpl {
         if (textValue.length() > 0) {
             Object value = cell.getFormatter().parseObject(clazz, textValue);
             DBNativeDataType nativeDataType = dataType.getNativeDataType();
-            return nativeDataType == null ? null : nativeDataType.getDataTypeDefinition().convert(value);
+            return nativeDataType == null ? null : nativeDataType.getDefinition().convert(value);
         } else {
             return null;
         }

@@ -21,7 +21,7 @@ public enum GenericDataType implements Presentable, Constant<GenericDataType> {
     COMPLEX("Complex"),
     ;
 
-    private String name;
+    private final String name;
 
     GenericDataType(String name) {
         this.name = name;

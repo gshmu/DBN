@@ -1,5 +1,8 @@
 package com.dci.intellij.dbn.language.common.parameter;
 
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
+import com.dci.intellij.dbn.code.sql.style.options.SQLCodeStyleSettings;
 import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
@@ -9,13 +12,11 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectReferenceLookupAdapter;
+import com.dci.intellij.dbn.object.DBColumn;
+import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.lang.parameterInfo.CreateParameterInfoContext;
-import com.intellij.lang.parameterInfo.ParameterInfoContext;
-import com.intellij.lang.parameterInfo.ParameterInfoHandler;
-import com.intellij.lang.parameterInfo.ParameterInfoUIContext;
-import com.intellij.lang.parameterInfo.UpdateParameterInfoContext;
+import com.intellij.lang.parameterInfo.*;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -207,6 +208,12 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
 
     @Override
     public void updateUI(BasePsiElement handlerPsiElement, @NotNull ParameterInfoUIContext context) {
+        SQLCodeStyleSettings codeStyleSettings = SQLCodeStyleSettings.getInstance(handlerPsiElement.getProject());
+        CodeStyleCaseSettings caseSettings = codeStyleSettings.getCaseSettings();
+        CodeStyleCaseOption datatypeCaseOption = caseSettings.getDatatypeCaseOption();
+        CodeStyleCaseOption objectCaseOption = caseSettings.getObjectCaseOption();
+
+
         context.setUIComponentEnabled(true);
         StringBuilder text = new StringBuilder();
         int highlightStartOffset = 0;
@@ -228,9 +235,15 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                         if (text.length() > 0) {
                             text.append(", ");
                         }
-                        text.append(basePsiElement.getText());
-                        //text.append(" ");
-                        //text.append(argument.getDataType().getQualifiedName());
+                        text.append(datatypeCaseOption.format(basePsiElement.getText()));
+                        DBObject object = basePsiElement.getUnderlyingObject();
+                        if (object instanceof DBColumn) {
+                            DBColumn column = (DBColumn) object;
+                            String columnType = column.getDataType().getName();
+                            text.append(" ");
+                            text.append(objectCaseOption.format(columnType));
+                        }
+
                         if (highlight) {
                             highlightEndOffset = text.length();
                         }

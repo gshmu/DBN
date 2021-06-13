@@ -22,11 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.EventObject;
@@ -165,7 +161,7 @@ public abstract class AbstractDatasetTableCellEditor extends AbstractCellEditor 
                 if (textValue.length() > 0) {
                     Formatter formatter = cell.getFormatter();
                     Object value = formatter.parseObject(clazz, textValue);
-                    return dataType.getNativeDataType().getDataTypeDefinition().convert(value);
+                    return dataType.getNativeDataType().getDefinition().convert(value);
                 } else {
                     return null;
                 }
