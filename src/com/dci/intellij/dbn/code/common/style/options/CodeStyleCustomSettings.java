@@ -8,8 +8,8 @@ import org.jdom.Element;
 public abstract class CodeStyleCustomSettings<P extends CodeStyleCustomSettings, T extends CompositeConfigurationEditorForm>
         extends CompositeConfiguration<P, T>{
 
-    private CodeStyleCaseSettings caseSettings = createCaseSettings(this);
-    private CodeStyleFormattingSettings formattingSettings = createAttributeSettings(this);
+    private final CodeStyleCaseSettings caseSettings = createCaseSettings(this);
+    private final CodeStyleFormattingSettings formattingSettings = createAttributeSettings(this);
 
     protected CodeStyleCustomSettings(P parent) {
         super(parent);
