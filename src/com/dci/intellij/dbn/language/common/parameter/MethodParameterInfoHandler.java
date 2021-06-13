@@ -1,6 +1,7 @@
 package com.dci.intellij.dbn.language.common.parameter;
 
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
+import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
 import com.dci.intellij.dbn.common.compatibility.Compatibility;
 import com.dci.intellij.dbn.language.common.element.ElementType;
@@ -199,10 +200,10 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
 
     @Override
     public void updateUI(DBMethod method, @NotNull ParameterInfoUIContext context) {
-        PSQLCodeStyleSettings codeStyleSettings =
-                PSQLCodeStyleSettings.getInstance(method.getProject());
-        CodeStyleCaseOption datatypeCaseOption = codeStyleSettings.getCaseSettings().getDatatypeCaseOption();
-        CodeStyleCaseOption objectCaseOption = codeStyleSettings.getCaseSettings().getObjectCaseOption();
+        PSQLCodeStyleSettings codeStyleSettings = PSQLCodeStyleSettings.getInstance(method.getProject());
+        CodeStyleCaseSettings caseSettings = codeStyleSettings.getCaseSettings();
+        CodeStyleCaseOption datatypeCaseOption = caseSettings.getDatatypeCaseOption();
+        CodeStyleCaseOption objectCaseOption = caseSettings.getObjectCaseOption();
 
         context.setUIComponentEnabled(true);
         StringBuilder text = new StringBuilder();
