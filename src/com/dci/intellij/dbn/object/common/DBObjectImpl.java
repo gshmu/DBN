@@ -69,7 +69,7 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
@@ -370,25 +370,17 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     }
 
     @NotNull
-    public DBObjectListContainer initChildObjects() {
+    public synchronized DBObjectListContainer initChildObjects() {
         if (childObjects == null) {
-            synchronized (this) {
-                if (childObjects == null) {
-                    childObjects = new DBObjectListContainer(this);
-                }
-            }
+            childObjects = new DBObjectListContainer(this);
         }
         return childObjects;
     }
 
     @NotNull
-    public DBObjectRelationListContainer initChildObjectRelations() {
+    public synchronized DBObjectRelationListContainer initChildObjectRelations() {
         if (childObjectRelations == null) {
-            synchronized (this) {
-                if (childObjectRelations == null) {
-                    childObjectRelations = new DBObjectRelationListContainer(this);
-                }
-            }
+            childObjectRelations = new DBObjectRelationListContainer(this);
         }
         return childObjectRelations;
 
@@ -702,14 +694,10 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
 
     @NotNull
-    public List<BrowserTreeNode> getAllPossibleTreeChildren() {
+    public synchronized List<BrowserTreeNode> getAllPossibleTreeChildren() {
         if (allPossibleTreeChildren == null) {
-            synchronized (this) {
-                if (allPossibleTreeChildren == null) {
-                    allPossibleTreeChildren = buildAllPossibleTreeChildren();
-                    allPossibleTreeChildren = compact(allPossibleTreeChildren);
-                }
-            }
+            allPossibleTreeChildren = buildAllPossibleTreeChildren();
+            allPossibleTreeChildren = compact(allPossibleTreeChildren);
         }
         return allPossibleTreeChildren;
     }
@@ -717,16 +705,12 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
 
 
     @Override
-    public List<? extends BrowserTreeNode> getChildren() {
+    public synchronized List<? extends BrowserTreeNode> getChildren() {
         if (visibleTreeChildren == null) {
-            synchronized (this) {
-                if (visibleTreeChildren == null) {
-                    visibleTreeChildren = new ArrayList<>();
-                    visibleTreeChildren.add(new LoadInProgressTreeNode(this));
+            visibleTreeChildren = new ArrayList<>();
+            visibleTreeChildren.add(new LoadInProgressTreeNode(this));
 
-                    Background.run(() -> buildTreeChildren());
-                }
-            }
+            Background.run(() -> buildTreeChildren());
         }
         return visibleTreeChildren;
     }

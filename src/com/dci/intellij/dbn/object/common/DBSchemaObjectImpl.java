@@ -66,13 +66,9 @@ public abstract class DBSchemaObjectImpl<M extends DBObjectMetadata> extends DBO
     }
 
     @Override
-    public DBObjectStatusHolder getStatus() {
+    public synchronized DBObjectStatusHolder getStatus() {
         if (objectStatus == null) {
-            synchronized (this) {
-                if (objectStatus == null) {
-                    objectStatus = new DBObjectStatusHolder(getContentType());
-                }
-            }
+            objectStatus = new DBObjectStatusHolder(getContentType());
         }
         return objectStatus;
     }
