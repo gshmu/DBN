@@ -101,7 +101,7 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -434,16 +434,12 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     @Override
-    public List<? extends BrowserTreeNode> getChildren() {
+    public synchronized List<? extends BrowserTreeNode> getChildren() {
         if (visibleTreeChildren == null) {
-            synchronized (this) {
-                if (visibleTreeChildren == null) {
-                    visibleTreeChildren = new ArrayList<>();
-                    visibleTreeChildren.add(new LoadInProgressTreeNode(this));
+            visibleTreeChildren = new ArrayList<>();
+            visibleTreeChildren.add(new LoadInProgressTreeNode(this));
 
-                    Background.run(() -> buildTreeChildren());
-                }
-            }
+            Background.run(() -> buildTreeChildren());
         }
         return visibleTreeChildren;
     }

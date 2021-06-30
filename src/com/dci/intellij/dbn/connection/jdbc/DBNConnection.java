@@ -37,21 +37,23 @@ import java.util.Set;
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.RESERVED;
 
+@Getter
+@Setter
 public class DBNConnection extends DBNConnectionBase {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private final ProjectRef project;
-    private final @Getter String name;
-    private final @Getter ConnectionType type;
-    private final @Getter ConnectionId id;
-    private final @Getter SessionId sessionId;
-    private final @Getter ConnectionProperties properties;
+    private final String name;
+    private final ConnectionType type;
+    private final ConnectionId id;
+    private final SessionId sessionId;
+    private final ConnectionProperties properties;
 
-    private @Getter long lastAccess = System.currentTimeMillis();
-    private @Getter PendingTransactionBundle dataChanges;
-    private @Getter @Setter SchemaId currentSchema;
+    private long lastAccess = System.currentTimeMillis();
+    private PendingTransactionBundle dataChanges;
+    private SchemaId currentSchema;
 
-    private @Getter final Set<DBNStatement> activeStatements = new HashSet<>();
+    private final Set<DBNStatement> activeStatements = new HashSet<>();
 
     private final MapLatent<String, DBNPreparedStatement, SQLException> cachedStatements =
             MapLatent.create(sql -> {
