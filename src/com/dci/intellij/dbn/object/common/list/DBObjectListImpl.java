@@ -36,7 +36,7 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import javax.swing.tree.TreeNode;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -225,7 +225,9 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
 
     @Override
     public void initTreeElement() {
-        getObjects();
+        if (!isLoading() && !isLoaded()) {
+            getObjects();
+        }
     }
 
     @Override
@@ -241,14 +243,10 @@ public class DBObjectListImpl<T extends DBObject> extends DynamicContentImpl<T> 
     }
 
     @Override
-    public PsiDirectory getPsiDirectory() {
+    public synchronized PsiDirectory getPsiDirectory() {
         if (psiDirectory == null) {
-            synchronized (this) {
-                if (psiDirectory == null) {
-                    Failsafe.nd(this);
-                    psiDirectory = new DBObjectListPsiDirectory(this);
-                }
-            }
+            Failsafe.nd(this);
+            psiDirectory = new DBObjectListPsiDirectory(this);
         }
         return psiDirectory;
     }
