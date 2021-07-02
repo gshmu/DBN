@@ -19,17 +19,13 @@ public abstract class BasicProperty<T> {
         return false;
     }
 
-    public T get() {
+    public synchronized T get() {
         if (!loading) {
-            synchronized (this) {
-                if (!loading) {
-                    try {
-                        loading = true;
-                        value = load();
-                    } finally {
-                        loading = false;
-                    }
-                }
+            try {
+                loading = true;
+                value = load();
+            } finally {
+                loading = false;
             }
         }
 
