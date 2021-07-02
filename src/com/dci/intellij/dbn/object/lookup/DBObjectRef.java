@@ -493,19 +493,11 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     @Override
-    public int hashCode() {
+    public synchronized int hashCode() {
         if (hashCode == -1) {
-            synchronized (this) {
-                if (hashCode == -1) {
-                    hashCode = buildHashCode();
-                }
-            }
+            hashCode = (getConnectionId() + PS + serialize()).hashCode();
         }
         return hashCode;
-    }
-
-    private int buildHashCode() {
-        return (getConnectionId() + PS + serialize()).hashCode();
     }
 
     /*

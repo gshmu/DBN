@@ -18,8 +18,17 @@ import com.dci.intellij.dbn.language.common.PsiElementRef;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.IdentifierCategory;
-import com.dci.intellij.dbn.language.common.psi.*;
-import com.dci.intellij.dbn.language.common.psi.lookup.*;
+import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
+import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
+import com.dci.intellij.dbn.language.common.psi.QualifiedIdentifierPsiElement;
+import com.dci.intellij.dbn.language.common.psi.TokenPsiElement;
+import com.dci.intellij.dbn.language.common.psi.lookup.LookupAdapterCache;
+import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
+import com.dci.intellij.dbn.language.common.psi.lookup.ObjectReferenceLookupAdapter;
+import com.dci.intellij.dbn.language.common.psi.lookup.PsiLookupAdapter;
+import com.dci.intellij.dbn.language.common.psi.lookup.SimpleObjectLookupAdapter;
+import com.dci.intellij.dbn.language.common.psi.lookup.VirtualObjectLookupAdapter;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.common.list.DBObjectListContainer;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -189,17 +198,13 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @Override
     @Nullable
-    public DBObjectList<DBObject> getChildObjectList(DBObjectType objectType) {
+    public synchronized DBObjectList<DBObject> getChildObjectList(DBObjectType objectType) {
         if (!loadingChildren) {
-            synchronized (this) {
-                if (!loadingChildren) {
-                    try {
-                        loadingChildren = true;
-                        return loadChildObjectList(objectType);
-                    } finally {
-                        loadingChildren = false;
-                    }
-                }
+            try {
+                loadingChildren = true;
+                return loadChildObjectList(objectType);
+            } finally {
+                loadingChildren = false;
             }
         }
         return null;
