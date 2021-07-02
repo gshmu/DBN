@@ -14,9 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
-import static com.dci.intellij.dbn.execution.ExecutionStatus.QUEUED;
+import static com.dci.intellij.dbn.execution.ExecutionStatus.*;
 
 public final class StatementExecutionQueue extends StatefulDisposable.Base {
 
@@ -45,32 +43,28 @@ public final class StatementExecutionQueue extends StatefulDisposable.Base {
     }
 
 
-    private void execute() {
+    private synchronized void execute() {
         if (!executing) {
-            synchronized (this) {
-                if (!executing) {
-                    executing = true;
-                    Project project = getProject();
-                    Progress.background(project, "Executing statements", true, (progress) -> {
-                        try {
-                            StatementExecutionProcessor processor = processors.poll();
-                            while (processor != null) {
-                                execute(processor);
+            executing = true;
+            Project project = getProject();
+            Progress.background(project, "Executing statements", true, (progress) -> {
+                try {
+                    StatementExecutionProcessor processor = processors.poll();
+                    while (processor != null) {
+                        execute(processor);
 
-                                if (progress.isCanceled()) {
-                                    cancelExecution();
-                                }
-                                processor = processors.poll();
-                            }
-                        } finally {
-                            executing = false;
-                            if (progress.isCanceled()) {
-                                cancelExecution();
-                            }
+                        if (progress.isCanceled()) {
+                            cancelExecution();
                         }
-                    });
+                        processor = processors.poll();
+                    }
+                } finally {
+                    executing = false;
+                    if (progress.isCanceled()) {
+                        cancelExecution();
+                    }
                 }
-            }
+            });
         }
     }
 

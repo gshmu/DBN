@@ -154,13 +154,9 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> e
     }
 
     @Override
-    public boolean startsWithIdentifier() {
+    public synchronized boolean startsWithIdentifier() {
         if (startsWithIdentifier == null) {
-            synchronized (this) {
-                if (startsWithIdentifier == null) {
-                    startsWithIdentifier = checkStartsWithIdentifier();
-                }
-            }
+            startsWithIdentifier = checkStartsWithIdentifier();
         }
         return startsWithIdentifier;
     }

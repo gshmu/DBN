@@ -10,15 +10,11 @@ abstract class WeakRefLatent<T> implements Latent<T>{
     WeakRefLatent() {}
 
     @SneakyThrows
-    public final T get() {
+    public final synchronized T get() {
         if (!loaded) {
-            synchronized (this) {
-                if (!loaded) {
-                    T value = getLoader().load();
-                    valueRef = WeakRef.of(value);
-                    loaded = true;
-                }
-            }
+            T value = getLoader().load();
+            valueRef = WeakRef.of(value);
+            loaded = true;
         }
         return WeakRef.get(valueRef);
     }
