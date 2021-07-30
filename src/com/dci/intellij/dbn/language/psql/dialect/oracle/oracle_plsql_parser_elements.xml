@@ -5152,7 +5152,7 @@
         <element optional="true" ref-id="json_on_null_clause" />
         <element optional="true" ref-id="json_returning_clause" />
     </element-def>
-    <element-def description="JSON ON NULL clause" id="json_on_null_clause">
+    <element-def attributes="CLAUSE" description="JSON ON NULL clause" id="json_on_null_clause">
         <one-of id="000002653">
             <token id="000002654" type-id="KW_NULL" />
             <token id="000002655" type-id="KW_ABSENT" />
@@ -5160,7 +5160,7 @@
         <token id="000002656" type-id="KW_ON" />
         <token id="000002657" type-id="KW_NULL" />
     </element-def>
-    <element-def description="JSON RETURNING clause" id="json_returning_clause">
+    <element-def attributes="CLAUSE" description="JSON RETURNING clause" id="json_returning_clause">
         <token id="000002658" type-id="KW_RETURNING" />
         <token id="000002659" type-id="DT_VARCHAR2" />
         <wrapper id="000002660" optional="true" template="PARENTHESES">
