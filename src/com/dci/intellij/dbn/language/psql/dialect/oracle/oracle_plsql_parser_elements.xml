@@ -6010,7 +6010,7 @@
             <token id="000003136" type-id="CHR_DOT" />
             <object-ref id="000003137" type="ANY" />
             <wrapper id="000003138" optional="true" template="PARENTHESES">
-                <iteration id="000003139" separator="CHR_COMMA">
+                <iteration id="000003139" separator="CHR_COMMA" optional="true">
                     <element ref-id="expression" />
                 </iteration>
             </wrapper>
