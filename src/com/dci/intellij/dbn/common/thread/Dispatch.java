@@ -17,8 +17,7 @@ public interface Dispatch {
     }
 
     static void runConditional(Runnable runnable) {
-        Application application = ApplicationManager.getApplication();
-        if (application.isDispatchThread()) {
+        if (ThreadMonitor.isDispatchThread()) {
             try {
                 runnable.run();
             } catch (ProcessCanceledException ignore) {}
@@ -38,8 +37,7 @@ public interface Dispatch {
     }
 
     static <T, E extends Throwable> T callConditional(ThrowableCallable<T, E> callable) throws E{
-        Application application = ApplicationManager.getApplication();
-        if (application.isDispatchThread()) {
+        if (ThreadMonitor.isDispatchThread()) {
             return callable.call();
         } else {
             return call(callable);

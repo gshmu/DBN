@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.common.psi;
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
 import com.dci.intellij.dbn.common.Capture;
 import com.dci.intellij.dbn.common.consumer.ListCollector;
+import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.util.RecursivityGate;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
@@ -31,7 +32,6 @@ import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
@@ -39,7 +39,7 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.Set;
 
 public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElementType> {
@@ -509,7 +509,7 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
             ref = new PsiResolveResult(this);
             //getNode().putUserData(PsiResolveResult.DATA_KEY, ref);
         }
-        if (ApplicationManager.getApplication().isDispatchThread()) {
+        if (ThreadMonitor.isDispatchThread()) {
             return ref.getReferencedElement();
         }
         if (ref.isDirty()) {
