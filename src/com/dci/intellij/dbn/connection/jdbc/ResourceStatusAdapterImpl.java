@@ -1,12 +1,12 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.LoggerFactory;
+import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.ExceptionUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.environment.Environment;
 import com.dci.intellij.dbn.language.common.WeakRef;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -97,7 +97,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
                 set(subject, checkControlled());
             } else {
                 long currentTimeMillis = System.currentTimeMillis();
-                if (TimeUtil.isOlderThan(checkTimestamp, checkInterval) && !ApplicationManager.getApplication().isDispatchThread()) {
+                if (TimeUtil.isOlderThan(checkTimestamp, checkInterval) && !ThreadMonitor.isDispatchThread()) {
                     checkTimestamp = currentTimeMillis;
                     set(subject, checkControlled());
                 }
