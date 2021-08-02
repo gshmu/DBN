@@ -3,9 +3,9 @@ package com.dci.intellij.dbn.connection.jdbc;
 import com.dci.intellij.dbn.common.property.Property;
 import com.dci.intellij.dbn.common.property.PropertyHolder;
 import com.dci.intellij.dbn.common.thread.Background;
+import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.language.common.WeakRef;
-import com.intellij.openapi.application.ApplicationManager;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class LatentResourceStatus<T extends Property> {
@@ -38,7 +38,7 @@ public abstract class LatentResourceStatus<T extends Property> {
     }
 
     private void checkControlled() {
-        if (ApplicationManager.getApplication().isDispatchThread()) {
+        if (ThreadMonitor.isDispatchThread()) {
             Background.run(() -> checkControlled());
         } else {
             boolean oldValue = get();

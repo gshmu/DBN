@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.object.lookup;
 import com.dci.intellij.dbn.common.Reference;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
+import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionCache;
@@ -351,7 +352,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
 
     protected final T load(Project project) {
         T object = getObject();
-        if (object == null) {
+        if (object == null && !ThreadMonitor.isDispatchThread()) {
             synchronized (this) {
                 object = getObject();
                 if (object == null) {

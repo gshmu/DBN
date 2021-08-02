@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.common.thread;
 
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -92,6 +93,10 @@ public class ThreadMonitor {
     public static boolean isTimeoutProcess() {
         // default false
         return current().is(ThreadProperty.TIMEOUT);
+    }
+
+    public static boolean isDispatchThread() {
+        return ApplicationManager.getApplication().isDispatchThread();
     }
 
     public static int getProcessCount(ThreadProperty property) {
