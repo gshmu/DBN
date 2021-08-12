@@ -9023,7 +9023,7 @@
         </wrapper>
     </element-def>
 
-    <element-def description="JSON_TABLE function" id="json_table_function">
+    <element-def description="JSON_TABLE function" id="json_table_function" virtual-object="DATASET">
         <token id="000004950" type-id="FN_JSON_TABLE" />
         <wrapper id="000004951" template="PARENTHESES">
             <sequence id="000004952">
@@ -9047,7 +9047,7 @@
             </iteration>
         </wrapper>
     </element-def>
-    <element-def description="JSON COLUMN definition" id="json_column_definition">
+    <element-def description="JSON COLUMN definition" id="json_column_definition" virtual-object="COLUMN">
         <one-of id="000004960">
             <sequence id="000004961" original-name="json_nested_path">
                 <token id="000004962" type-id="KW_NESTED" />
@@ -9056,7 +9056,7 @@
                 <element ref-id="json_columns_clause" />
             </sequence>
             <sequence id="000004964">
-                <token id="000004965" original-name="column_name" type-id="IDENTIFIER" />
+                <object-def id="000004965" original-name="column_name" type="COLUMN"/>
                 <one-of id="000004966">
                     <sequence id="000004967">
                         <token id="000004968" type-id="KW_FOR" />
@@ -9070,7 +9070,7 @@
                                 <token id="000004973" type-id="KW_EXISTS" />
                                 <token id="000004974" type-id="KW_PATH" />
                                 <element original-name="json_path_expression" ref-id="expression" />
-                                <element ref-id="json_exists_on_error_clause" />
+                                <element ref-id="json_exists_on_error_clause" optional="true"/>
                             </sequence>
                             <sequence id="000004975">
                                 <token id="000004976" type-id="KW_FORMAT" />
