@@ -352,17 +352,12 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     protected final T load(Project project) {
         T object = getObject();
         if (object == null) {
-            synchronized (this) {
-                object = getObject();
-                if (object == null) {
-                    clearReference();
-                    ConnectionHandler connectionHandler = resolveConnectionHandler(project);
-                    if (Failsafe.check(connectionHandler) && connectionHandler.isEnabled()) {
-                        object = lookup(connectionHandler);
-                        if (object != null) {
-                            reference = WeakRef.of(object);
-                        }
-                    }
+            clearReference();
+            ConnectionHandler connectionHandler = resolveConnectionHandler(project);
+            if (Failsafe.check(connectionHandler) && connectionHandler.isEnabled()) {
+                object = lookup(connectionHandler);
+                if (object != null) {
+                    reference = WeakRef.of(object);
                 }
             }
         }

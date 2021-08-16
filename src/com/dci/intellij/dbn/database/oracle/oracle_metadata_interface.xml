@@ -187,7 +187,6 @@
                              on cc.OWNER = c.owner
                             and cc.TABLE_NAME = c.TABLE_NAME
                             and cc.CONSTRAINT_NAME = c.CONSTRAINT_NAME
-                            and (cc.POSITION is null or cc.POSITION = 1)
                 where c.OWNER = {0}
                   and c.TABLE_NAME = {1})
             select distinct
@@ -323,8 +322,7 @@
                              on cc.OWNER = c.owner
                             and cc.TABLE_NAME = c.TABLE_NAME
                             and cc.CONSTRAINT_NAME = c.CONSTRAINT_NAME
-                            and (cc.POSITION is null or cc.POSITION = 1)
-                where c.OWNER = {0})        
+                where c.OWNER = {0})
             select DISTINCT
                 col.TABLE_NAME as DATASET_NAME,
                 col.COLUMN_NAME,

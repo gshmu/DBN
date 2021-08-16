@@ -14,7 +14,6 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.common.ui.component.DBNComponent;
 import com.dci.intellij.dbn.common.ui.tree.DBNTree;
@@ -184,7 +183,7 @@ public final class DatabaseBrowserTree extends DBNTree {
                     Object object = path.getLastPathComponent();
                     if (object instanceof ToolTipProvider) {
                         ToolTipProvider toolTipProvider = (ToolTipProvider) object;
-                        return Timeout.call(1, null, true, () -> toolTipProvider.getToolTip());
+                        return toolTipProvider.getToolTip();
                     }
                 }
             }
@@ -356,36 +355,26 @@ public final class DatabaseBrowserTree extends DBNTree {
                     BrowserTreeNode lastPathEntity = (BrowserTreeNode) path.getLastPathComponent();
                     if (lastPathEntity.isDisposed()) return;
 
-                    Progress.background(
-                            lastPathEntity.getProject(),
-                            "Loading object information", true,
-                            (progress) -> {
-                                ActionGroup actionGroup = null;
-                                if (lastPathEntity instanceof DBObjectList) {
-                                    DBObjectList<?> objectList = (DBObjectList<?>) lastPathEntity;
-                                    actionGroup = new ObjectListActionGroup(objectList);
-                                } else if (lastPathEntity instanceof DBObject) {
-                                    DBObject object = (DBObject) lastPathEntity;
-                                    actionGroup = new ObjectActionGroup(object);
-                                } else if (lastPathEntity instanceof DBObjectBundle) {
-                                    DBObjectBundle objectsBundle = (DBObjectBundle) lastPathEntity;
-                                    ConnectionHandler connectionHandler = objectsBundle.getConnectionHandler();
-                                    actionGroup = new ConnectionActionGroup(connectionHandler);
-                                }
+                    ActionGroup actionGroup = null;
+                    if (lastPathEntity instanceof DBObjectList) {
+                        DBObjectList<?> objectList = (DBObjectList<?>) lastPathEntity;
+                        actionGroup = new ObjectListActionGroup(objectList);
+                    } else if (lastPathEntity instanceof DBObject) {
+                        DBObject object = (DBObject) lastPathEntity;
+                        actionGroup = new ObjectActionGroup(object);
+                    } else if (lastPathEntity instanceof DBObjectBundle) {
+                        DBObjectBundle objectsBundle = (DBObjectBundle) lastPathEntity;
+                        ConnectionHandler connectionHandler = objectsBundle.getConnectionHandler();
+                        actionGroup = new ConnectionActionGroup(connectionHandler);
+                    }
 
-                                if (actionGroup != null) {
-                                    Progress.check(progress);
-                                    ActionPopupMenu actionPopupMenu = ActionUtil.createActionPopupMenu(DatabaseBrowserTree.this, "", actionGroup);
-                                    popupMenu = actionPopupMenu.getComponent();
-                                    Dispatch.run(() -> {
-                                        if (isShowing()) {
-                                            popupMenu.show(DatabaseBrowserTree.this, event.getX(), event.getY());
-                                        }
-                                    });
-                                } else {
-                                    popupMenu = null;
-                                }
-                    });
+                    if (actionGroup != null) {
+                        ActionPopupMenu actionPopupMenu = ActionUtil.createActionPopupMenu(DatabaseBrowserTree.this, "", actionGroup);
+                        popupMenu = actionPopupMenu.getComponent();
+                        popupMenu.show(DatabaseBrowserTree.this, event.getX(), event.getY());
+                    } else {
+                        popupMenu = null;
+                    }
                 }
             }
         }
