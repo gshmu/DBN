@@ -2,7 +2,7 @@
     <name>Database Navigator</name>
     <id>DBN</id>
     <!--3050 -->
-    <version>3.2.4397.0</version>
+    <version>3.2.4501.0</version>
     <category>Database</category>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
@@ -31,8 +31,9 @@
     ]]></description>
     <change-notes><![CDATA[
         <ul>
-            <li><b>3.2.4397</b>
+            <li><b>3.2.4501</b>
             <ul>
+                <li>Oracle JSON syntax support
                 <li>Support for latest IDE EAP versions
                 <li>Bug fixes, performance and memory optimisations
             </ul>
