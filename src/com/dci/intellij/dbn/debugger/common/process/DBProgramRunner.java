@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.thread.Progress;
-import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.ConnectionAction;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
@@ -13,11 +12,7 @@ import com.dci.intellij.dbn.debugger.common.config.DBRunConfig;
 import com.dci.intellij.dbn.debugger.common.config.ui.CompileDebugDependenciesDialog;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.execution.ExecutionInput;
-import com.dci.intellij.dbn.execution.compiler.CompileManagerListener;
-import com.dci.intellij.dbn.execution.compiler.CompileType;
-import com.dci.intellij.dbn.execution.compiler.CompilerAction;
-import com.dci.intellij.dbn.execution.compiler.CompilerActionSource;
-import com.dci.intellij.dbn.execution.compiler.DatabaseCompilerManager;
+import com.dci.intellij.dbn.execution.compiler.*;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
@@ -37,6 +32,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,8 +53,9 @@ public abstract class DBProgramRunner<T extends ExecutionInput> extends GenericP
 
     @Override
     @Nullable
+    @SneakyThrows
     protected RunContentDescriptor doExecute(@NotNull Project project, @NotNull RunProfileState state, RunContentDescriptor contentToReuse, @NotNull ExecutionEnvironment env) {
-        return Unsafe.call(() -> doExecute(project, env.getExecutor(), state, contentToReuse, env));
+        return doExecute(project, env.getExecutor(), state, contentToReuse, env);
     }
 
     private RunContentDescriptor doExecute(

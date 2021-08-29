@@ -1,13 +1,14 @@
 package com.dci.intellij.dbn.common.property;
 
 import com.dci.intellij.dbn.common.util.Cloneable;
-import com.dci.intellij.dbn.common.util.Unsafe;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>, Cloneable<PropertyHolder<T>> {
-    //private static PrimeNumberIndex INDEX = new PrimeNumberIndex(100);
+import java.util.concurrent.atomic.AtomicLong;
 
-    private long computed = 0;
+public abstract class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>, Cloneable<PropertyHolder<T>> {
+    // TODO consider AtomicInteger for lower memory footprint (properties with up to 32 values)
+    private final AtomicLong computed = new AtomicLong(0);
 
     public PropertyHolderImpl(T ... properties) {
         for (T property : properties()) {
@@ -25,7 +26,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
     protected abstract T[] properties();
 
     protected void replace(PropertyHolderImpl<T> source) {
-        this.computed = source.computed;
+        this.computed.set(source.computed.get());
     }
 
     @Override
@@ -38,7 +39,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
     @Override
     public final boolean is(T property) {
         long idx = property.index();
-        return (computed & idx) == idx;
+        return (computed.get() & idx) == idx;
     }
 
     private boolean set(T property) {
@@ -47,13 +48,13 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
             if (group != null) {
                 for (T prop : properties()) {
                     if (is(prop)) {
-                        computed -= prop.index();
+                        computed.addAndGet(-prop.index());
                         break;
                     }
                 }
             }
 
-            computed += property.index();
+            computed.addAndGet(property.index());
             return true;
         }
         return false;
@@ -61,14 +62,14 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
 
     private boolean unset(T property) {
         if (is(property)) {
-            computed -= property.index();
+            computed.addAndGet(-property.index());
 
             PropertyGroup group = property.group();
             if (group != null) {
                 // set implicit property
                 for (T prop : properties()) {
                     if (prop.group() == group && prop.implicit() && prop != property && !is(prop)) {
-                        computed += prop.index();
+                        computed.addAndGet(prop.index());
                         break;
                     }
                 }
@@ -79,7 +80,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
     }
 
     public void reset() {
-        computed = 0;
+        computed.set(0);
         for (T property : properties()) {
             if (property.implicit()) {
                 set(property);
@@ -88,7 +89,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
     }
 
     public void computed(long computed) {
-        this.computed = computed;
+        this.computed.set(computed);
     }
 
     public void merge(@Nullable PropertyHolder<T> source) {
@@ -127,7 +128,8 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
     }
 
     @Override
+    @SneakyThrows
     public PropertyHolder<T> clone() {
-        return Unsafe.call(() -> (PropertyHolder<T>) super.clone());
+        return (PropertyHolder<T>) super.clone();
     }
 }

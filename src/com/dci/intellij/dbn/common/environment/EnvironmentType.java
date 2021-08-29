@@ -63,7 +63,11 @@ public class EnvironmentType implements Cloneable<EnvironmentType>, PersistentCo
     }
 
     public EnvironmentType() {
-        id = EnvironmentTypeId.create();
+        this(EnvironmentTypeId.create());
+    }
+
+    public EnvironmentType(EnvironmentTypeId id) {
+        this.id = id;
     }
 
     public EnvironmentType(EnvironmentTypeId id, String name, String description, Color regularColor, Color darkColor, boolean readonlyCode, boolean dataEditable) {
