@@ -41,25 +41,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+@Getter
+@Setter
 public class CodeCompletionContext {
 
-    private @Getter @Setter boolean extended;
+    private boolean extended;
     private final PsiFileRef<DBLanguagePsiFile> file;
     private final ConnectionHandlerRef connectionHandler;
-    private final @Getter ProjectCodeStyleSettings codeStyleSettings;
-    private final @Getter CodeCompletionSettings codeCompletionSettings;
-    private final @Getter CompletionParameters parameters;
-    private final @Getter CompletionResultSet result;
-    private final @Getter double databaseVersion;
-    private final @Getter String userInput;
-    private final @Getter PsiElement elementAtCaret;
-    private final @Getter boolean newLine;
+    private final ProjectCodeStyleSettings codeStyleSettings;
+    private final CodeCompletionSettings codeCompletionSettings;
+    private final CompletionParameters parameters;
+    private final CompletionResultSet result;
+    private final double databaseVersion;
+    private final String userInput;
+    private final PsiElement elementAtCaret;
+    private final boolean newLine;
 
-    private @Getter @Setter DBObject parentObject;
-    private @Getter @Setter IdentifierPsiElement parentIdentifierPsiElement;
+    private DBObject parentObject;
+    private IdentifierPsiElement parentIdentifierPsiElement;
 
     private final Map<String, LeafElementType> completionCandidates = new HashMap<>();
-    private final @Getter AsyncTaskExecutor queue = new AsyncTaskExecutor(
+    private final AsyncTaskExecutor queue = new AsyncTaskExecutor(
             ThreadPool.getCodeCompletionExecutor(),
             200, TimeUnit.MILLISECONDS);
 
