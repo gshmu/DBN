@@ -4,11 +4,12 @@ import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.database.common.util.CachedResultSet;
 import com.dci.intellij.dbn.database.common.util.CachedResultSetRow;
 import com.dci.intellij.dbn.database.common.util.WrappedCachedResultSet;
 import com.intellij.openapi.diagnostic.Logger;
+import lombok.SneakyThrows;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
@@ -23,15 +24,17 @@ import static java.sql.DatabaseMetaData.*;
 public interface GenericMetadataTranslators {
     Logger LOGGER = LoggerFactory.createLogger();
 
-    Latent<Map<Integer, String>> DATA_TYPE_NAMES =
-            Latent.basic(
-                    () -> Unsafe.call(() -> {
-                        Map<Integer, String> result = new HashMap<>();
-                        for (Field field : Types.class.getFields()) {
-                            result.put((Integer) field.get(null), field.getName());
-                        }
-                        return result;
-                    }));
+    Latent<Map<Integer, String>> DATA_TYPE_NAMES = Latent.basic(() -> initDataTypeNames());
+
+    @NotNull
+    @SneakyThrows
+    static Map<Integer, String> initDataTypeNames() {
+        Map<Integer, String> result = new HashMap<>();
+        for (Field field : Types.class.getFields()) {
+            result.put((Integer) field.get(null), field.getName());
+        }
+        return result;
+    }
 
     enum MetadataSource {
         FUNCTIONS,
