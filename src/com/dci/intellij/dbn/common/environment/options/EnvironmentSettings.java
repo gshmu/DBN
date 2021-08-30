@@ -57,10 +57,9 @@ public class EnvironmentSettings extends BasicProjectConfiguration<GeneralProjec
         Element environmentTypesElement = element.getChild("environment-types");
         if (environmentTypesElement != null) {
             environmentTypes.clear();
-            for (Object o : environmentTypesElement.getChildren()) {
-                Element environmentTypeElement = (Element) o;
-                EnvironmentType environmentType = new EnvironmentType();
-                environmentType.readConfiguration(environmentTypeElement);
+            for (Element childElement : environmentTypesElement.getChildren()) {
+                EnvironmentType environmentType = new EnvironmentType(null);
+                environmentType.readConfiguration(childElement);
                 environmentTypes.add(environmentType);
             }
         }
