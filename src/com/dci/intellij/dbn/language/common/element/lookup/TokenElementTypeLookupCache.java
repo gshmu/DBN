@@ -12,9 +12,6 @@ public class TokenElementTypeLookupCache extends LeafElementTypeLookupCache<Toke
     }
 
     @Override
-    public void init() {}
-
-    @Override
     public boolean isFirstPossibleToken(TokenType tokenType) {
         return getTokenType() == tokenType;
     }

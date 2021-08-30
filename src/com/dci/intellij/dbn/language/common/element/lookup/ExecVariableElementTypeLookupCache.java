@@ -13,9 +13,6 @@ public class ExecVariableElementTypeLookupCache extends LeafElementTypeLookupCac
     }
 
     @Override
-    public void init() {}
-
-    @Override
     public boolean isFirstPossibleToken(TokenType tokenType) {
         return tokenType.isVariable();
     }

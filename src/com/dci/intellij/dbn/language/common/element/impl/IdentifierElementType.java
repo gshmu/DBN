@@ -17,10 +17,11 @@ import com.dci.intellij.dbn.language.common.resolve.UnderlyingObjectResolver;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import lombok.Getter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-
+@Getter
 public class IdentifierElementType extends LeafElementType {
     public static final FormattingDefinition FORMATTING = new FormattingDefinition(null, null, SpacingDefinition.ONE_SPACE, null);
 
@@ -111,10 +112,6 @@ public class IdentifierElementType extends LeafElementType {
      *                Identifier type accessors               *
      *********************************************************/
 
-    public IdentifierType getIdentifierType() {
-        return identifierType;
-    }
-
     public boolean isObject() {
         return identifierType == IdentifierType.OBJECT;
     }
@@ -135,20 +132,8 @@ public class IdentifierElementType extends LeafElementType {
         return identifierCategory == IdentifierCategory.REFERENCE;
     }
 
-    public boolean isReferenceable() {
-        return referenceable;
-    }
-
-    public boolean isLocalReference() {
-        return localReference;
-    }
-
     public boolean isDefinition() {
         return identifierCategory == IdentifierCategory.DEFINITION;
-    }
-
-    public DBObjectType getObjectType() {
-        return objectType;
     }
 
     public String getObjectTypeName() {

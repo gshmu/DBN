@@ -95,11 +95,11 @@ public class ElementTypeRef extends Chained<ElementTypeRef> {
     }
 
     public ElementTypeLookupCache getLookupCache() {
-        return elementType.lookupCache;
+        return elementType.getLookupCache();
     }
 
     public ElementTypeParser getParser() {
-        return elementType.parser;
+        return elementType.getParser();
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionEx
 import com.dci.intellij.dbn.language.common.psi.SequencePsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import lombok.Getter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+@Getter
 public class IterationElementType extends ElementTypeBase {
 
     public ElementTypeBase iteratedElementType;
@@ -27,7 +29,7 @@ public class IterationElementType extends ElementTypeBase {
 
     private final Latent<Boolean> followedBySeparator = Latent.basic(() -> {
         if (separatorTokens != null) {
-            Set<TokenType> nextPossibleTokens = lookupCache.getNextPossibleTokens();
+            Set<TokenType> nextPossibleTokens = createLookupCache().getNextPossibleTokens();
             for (TokenElementType separatorToken : separatorTokens) {
                 if (nextPossibleTokens.contains(separatorToken.tokenType)) {
                     return true;
@@ -124,14 +126,6 @@ public class IterationElementType extends ElementTypeBase {
     @Override
     public PsiElement createPsiElement(ASTNode astNode) {
         return new SequencePsiElement(astNode, this);
-    }
-
-    public int[] getElementsCountVariants() {
-        return elementsCountVariants;
-    }
-
-    public Integer getMinIterations() {
-        return minIterations;
     }
 
     public boolean isSeparator(TokenElementType tokenElementType) {

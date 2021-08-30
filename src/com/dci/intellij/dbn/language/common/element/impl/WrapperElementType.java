@@ -17,7 +17,7 @@ import java.util.List;
 
 public class WrapperElementType extends ElementTypeBase {
     private WrappingDefinition wrappingDefinition;
-    public ElementTypeBase wrappedElement;
+    private ElementTypeBase wrappedElement;
     public boolean wrappedElementOptional;
 
     public WrapperElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
@@ -117,5 +117,13 @@ public class WrapperElementType extends ElementTypeBase {
     @Override
     public PsiElement createPsiElement(ASTNode astNode) {
         return new SequencePsiElement(astNode, this);
+    }
+
+    public ElementTypeBase getWrappedElement() {
+        return wrappedElement;
+    }
+
+    public void setWrappedElement(ElementTypeBase wrappedElement) {
+        this.wrappedElement = wrappedElement;
     }
 }

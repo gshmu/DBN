@@ -57,7 +57,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
         try {
             marker = marker == null ? node == null ? null : node.getElementMarker() : marker;
             if (resultType == ParseResultType.PARTIAL_MATCH) {
-                Set<TokenType> nextPossibleTokens = elementType.lookupCache.getNextPossibleTokens();
+                Set<TokenType> nextPossibleTokens = elementType.getLookupCache().getNextPossibleTokens();
                 ParseBuilderErrorHandler.updateBuilderError(nextPossibleTokens, context);
             }
             ParserBuilder builder = context.builder;
@@ -116,7 +116,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
             }
 
             ElementTypeBase namedElementType = ElementTypeUtil.getEnclosingNamedElementType(node);
-            if (namedElementType != null && namedElementType.lookupCache.containsToken(tokenType)) {
+            if (namedElementType != null && namedElementType.getLookupCache().containsToken(tokenType)) {
                 LeafElementType lastResolvedLeaf = context.lastResolvedLeaf;
                 return lastResolvedLeaf != null && !lastResolvedLeaf.isNextPossibleToken(tokenType, node, context);
             }
@@ -140,7 +140,7 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
         TokenType tokenType = builder.getTokenType();
 
         return
-            elementType.lookupCache.couldStartWithToken(tokenType) ||
+            elementType.getLookupCache().couldStartWithToken(tokenType) ||
             isSuppressibleReservedWord(tokenType, node, context) ||
             isDummyToken(builder.getTokenText());
     }

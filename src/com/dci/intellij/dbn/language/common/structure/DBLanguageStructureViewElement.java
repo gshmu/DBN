@@ -9,15 +9,17 @@ import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public abstract class DBLanguageStructureViewElement<T> implements StructureViewTreeElement {
-    private PsiElement psiElement;
+    private final PsiElement psiElement;
 
     public DBLanguageStructureViewElement(PsiElement psiElement) {
         this.psiElement = psiElement;
@@ -25,10 +27,6 @@ public abstract class DBLanguageStructureViewElement<T> implements StructureView
 
     @Override
     public Object getValue() {
-        return psiElement;
-    }
-
-    public PsiElement getPsiElement() {
         return psiElement;
     }
 
