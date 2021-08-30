@@ -2,13 +2,17 @@ package com.dci.intellij.dbn.language.common.element.path;
 
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.intellij.lang.PsiBuilder;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 public class ParsePathNode extends BasicPathNode<ParsePathNode> {
-    private int startOffset;
+    private final int startOffset;
+    private final int depth;
     private int currentOffset;
     private int cursorPosition;
     private PsiBuilder.Marker elementMarker;
-    private int depth;
 
     public ParsePathNode(ElementType elementType, ParsePathNode parent, int startOffset, int cursorPosition) {
         super(elementType, parent);
@@ -16,26 +20,6 @@ public class ParsePathNode extends BasicPathNode<ParsePathNode> {
         this.currentOffset = startOffset;
         this.cursorPosition = cursorPosition;
         this.depth = parent == null ? 0 : parent.depth + 1;
-    }
-
-    public int getStartOffset() {
-        return startOffset;
-    }
-
-    public int getCurrentOffset() {
-        return currentOffset;
-    }
-
-    public void setCurrentOffset(int currentOffset) {
-        this.currentOffset = currentOffset;
-    }
-
-    public int getCursorPosition() {
-        return cursorPosition;
-    }
-
-    public void setCursorPosition(int cursorPosition) {
-        this.cursorPosition = cursorPosition;
     }
 
     @Override
@@ -67,18 +51,6 @@ public class ParsePathNode extends BasicPathNode<ParsePathNode> {
         cursorPosition++;
         this.currentOffset = builderOffset;
         return cursorPosition;
-    }
-
-    public PsiBuilder.Marker getElementMarker() {
-        return elementMarker;
-    }
-
-    public void setElementMarker(PsiBuilder.Marker elementMarker) {
-        this.elementMarker = elementMarker;
-    }
-
-    public int getDepth() {
-        return depth;
     }
 
     @Override
