@@ -28,7 +28,7 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
         logBegin(builder, optional, depth);
         ParsePathNode node = stepIn(parentNode, context);
 
-        ElementTypeBase wrappedElement = elementType.wrappedElement;
+        ElementTypeBase wrappedElement = elementType.getWrappedElement();
         TokenElementType beginTokenElement = elementType.getBeginTokenElement();
         TokenElementType endTokenElement = elementType.getEndTokenElement();
 
@@ -56,7 +56,7 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
                     builder.setExplicitRange(beginTokenType, initialExplicitRange);
                     return stepOut(node, context, depth, ParseResultType.NO_MATCH, matchedTokens);
                 } else {
-                    Set<TokenType> possibleTokens = wrappedElement.lookupCache.getFirstPossibleTokens();
+                    Set<TokenType> possibleTokens = wrappedElement.getLookupCache().getFirstPossibleTokens();
                     ParseBuilderErrorHandler.updateBuilderError(possibleTokens, context);
 
                 }

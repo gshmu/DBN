@@ -1,30 +1,14 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
-public class WrappingDefinition {
-    private TokenElementType beginElementType;
-    private TokenElementType endElementType;
+import lombok.Getter;
 
-    public WrappingDefinition() {
-    }
+@Getter
+public class WrappingDefinition {
+    private final TokenElementType beginElementType;
+    private final TokenElementType endElementType;
 
     public WrappingDefinition(TokenElementType beginElementType, TokenElementType endElementType) {
         this.beginElementType = beginElementType;
-        this.endElementType = endElementType;
-    }
-
-    public TokenElementType getBeginElementType() {
-        return beginElementType;
-    }
-
-    public TokenElementType getEndElementType() {
-        return endElementType;
-    }
-
-    public void setBeginElementType(TokenElementType beginElementType) {
-        this.beginElementType = beginElementType;
-    }
-
-    public void setEndElementType(TokenElementType endElementType) {
         this.endElementType = endElementType;
     }
 

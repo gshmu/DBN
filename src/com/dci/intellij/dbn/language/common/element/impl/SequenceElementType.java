@@ -153,7 +153,7 @@ public class SequenceElementType extends ElementTypeBase {
         ElementTypeRef child = children[0];
         while (child != null) {
             ElementTypeBase childElementType = child.elementType;
-            if (childElementType == leafElementType || childElementType.lookupCache.containsLeaf(leafElementType)) {
+            if (childElementType == leafElementType || childElementType.getLookupCache().containsLeaf(leafElementType)) {
                 return child.getIndex();
             }
             child = child.getNext();
