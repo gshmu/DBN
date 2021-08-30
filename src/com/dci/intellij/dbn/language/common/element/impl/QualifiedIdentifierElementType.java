@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Set;
 
 public class QualifiedIdentifierElementType extends ElementTypeBase {
-    private TokenElementType separatorToken;
+    private final TokenElementType separatorToken;
     private final List<LeafElementType[]> variants = new ArrayList<>();
-    private Set<DBObjectType> objectTypeCache = EnumSet.noneOf(DBObjectType.class);
+    private final Set<DBObjectType> objectTypeCache = EnumSet.noneOf(DBObjectType.class);
     private int maxLength;
 
     public QualifiedIdentifierElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {

@@ -4,8 +4,8 @@ import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 
 public class VirtualObjectLookupAdapter extends PsiLookupAdapter {
-    private DBObjectType parentObjectType;
-    private DBObjectType objectType;
+    private final DBObjectType parentObjectType;
+    private final DBObjectType objectType;
 
     public VirtualObjectLookupAdapter(DBObjectType parentObjectType, DBObjectType objectType) {
         this.parentObjectType = parentObjectType;

@@ -16,7 +16,7 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 import static com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute.*;
 
@@ -35,7 +35,7 @@ public class ExecutablePsiElement extends NamedPsiElement implements Cloneable<E
         String text = getText();
         if (basePsiElement != null && basePsiElement.elementType instanceof NamedElementType) {
             NamedElementType namedElementType = (NamedElementType) basePsiElement.elementType;
-            if (namedElementType.truncateOnExecution()) {
+            if (namedElementType.isTruncateOnExecution()) {
                 return text.substring(0, text.length() - basePsiElement.getTextLength());
             }
         }
