@@ -6,10 +6,10 @@ import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.common.util.Unsafe;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,12 +18,7 @@ import java.io.File;
 import java.net.URL;
 import java.sql.Driver;
 import java.sql.DriverManager;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -110,7 +105,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
                     URL[] urls = Arrays.
                             stream(files).
                             filter(file -> file.getName().endsWith(".jar")).
-                            map(file -> Unsafe.call(() -> file.toURI().toURL())).
+                            map(file -> getFileUrl(file)).
                             toArray(URL[]::new);
 
                     ClassLoader classLoader = new DriverClassLoader(urls, parentClassLoader);
@@ -119,7 +114,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
 
                 return drivers;
             } else {
-                URL[] urls = new URL[]{libraryFile.toURI().toURL()};
+                URL[] urls = new URL[]{getFileUrl(libraryFile)};
                 ClassLoader classLoader = new DriverClassLoader(urls, parentClassLoader);
                 return loadDrivers(libraryFile, classLoader);
             }
@@ -128,6 +123,13 @@ public class DatabaseDriverManager implements ApplicationComponent {
             ProgressMonitor.setTaskDescription(taskDescription);
         }
     }
+
+    @NotNull
+    @SneakyThrows
+    private URL getFileUrl(File file) {
+        return file.toURI().toURL();
+    }
+
     private static List<Driver> loadDrivers(File libraryFile, ClassLoader classLoader) {
         List<Driver> drivers = new ArrayList<>();
         try {

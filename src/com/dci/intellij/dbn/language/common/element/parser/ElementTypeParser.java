@@ -21,7 +21,6 @@ import java.util.Set;
 
 public abstract class ElementTypeParser<T extends ElementTypeBase> {
     public final T elementType;
-    private ElementTypeLogger logger;
 
     public ElementTypeParser(T elementType) {
         this.elementType = elementType;
@@ -31,22 +30,15 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
         return tokenText != null && tokenText.contains(CodeCompletionContributor.DUMMY_TOKEN);
     }
 
-    private ElementTypeLogger getLogger() {
-        if (logger == null) {
-            logger = new ElementTypeLogger(elementType);
-        }
-        return logger;
-    }
-
     public void logBegin(ParserBuilder builder, boolean optional, int depth) {
         if (Environment.DEBUG_MODE) {
-            getLogger().logBegin(builder, optional, depth);
+            ElementTypeLogger.logBegin(elementType, builder, optional, depth);
         }
     }
 
     public void logEnd(ParseResultType resultType, int depth) {
         if (Environment.DEBUG_MODE) {
-            getLogger().logEnd(resultType, depth);
+            ElementTypeLogger.logEnd(elementType, resultType, depth);
         }
     }
     public ParsePathNode stepIn(ParsePathNode parentParseNode, ParserContext context) {
