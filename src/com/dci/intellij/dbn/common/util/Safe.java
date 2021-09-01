@@ -73,7 +73,7 @@ public interface Safe {
 
     static void queueRequest(@NotNull Alarm alarm, int delayMillis, boolean cancelRequests, @NotNull Runnable runnable) {
         Dispatch.runConditional(() -> {
-            if (alarm.isDisposed()) {
+            if (!alarm.isDisposed()) {
                 if (cancelRequests) {
                     alarm.cancelAllRequests();
                 }
