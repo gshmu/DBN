@@ -1,58 +1,58 @@
 package com.dci.intellij.dbn.editor.data.options;
 
-import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorQualifiedEditorSettingsForm;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = false)
 public class DataEditorQualifiedEditorSettings extends BasicConfiguration<DataEditorSettings, DataEditorQualifiedEditorSettingsForm> {
-    private final Latent<List<TextContentType>> contentTypes = Latent.basic(() -> {
-        List<TextContentType> contentTypes = new ArrayList<>();
-        createContentType("Text", "PLAIN_TEXT", contentTypes);
-        createContentType("Properties", "Properties", contentTypes);
-        createContentType("XML", "XML", contentTypes);
-        createContentType("DTD", "DTD", contentTypes);
-        createContentType("HTML", "HTML", contentTypes);
-        createContentType("XHTML", "XHTML", contentTypes);
-        createContentType("CSS", "CSS", contentTypes);
-        createContentType("Java", "JAVA", contentTypes);
-        createContentType("SQL", "DBN-SQL", contentTypes);
-        createContentType("PL/SQL", "DBN-PSQL", contentTypes);
-        createContentType("JPA QL", "JPA QL", contentTypes);
-        createContentType("JavaScript", "JavaScript", contentTypes);
-        createContentType("JSON", "JSON", contentTypes);
-        createContentType("JSON5", "JSON5", contentTypes);
-        createContentType("PHP", "PHP", contentTypes);
-        createContentType("JSP", "JSP", contentTypes);
-        createContentType("JSPx", "JSPX", contentTypes);
-        createContentType("Perl", "Perl", contentTypes);
-        createContentType("Groovy", "Groovy", contentTypes);
-        createContentType("FTL", "FTL", contentTypes);
-        createContentType("TML", "TML", contentTypes);
-        createContentType("GSP", "GSP", contentTypes);
-        createContentType("ASP", "ASP", contentTypes);
-        createContentType("VTL", "VTL", contentTypes);
-        createContentType("AIDL", "AIDL", contentTypes);
-        createContentType("YAML", "YAML", contentTypes);
-        createContentType("Flex", "SWF", contentTypes);
-        createContentType("C#", "C#", contentTypes);
-        createContentType("C++", "C++", contentTypes);
-        createContentType("Bash", "Bash", contentTypes);
-        createContentType("Manifest", "Manifest", contentTypes);
-        return contentTypes;
-    });
+    private final List<TextContentType> contentTypes = Stream.of(
+        TextContentType.create("Text", "PLAIN_TEXT"),
+        TextContentType.create("Properties", "Properties"),
+        TextContentType.create("XML", "XML"),
+        TextContentType.create("DTD", "DTD"),
+        TextContentType.create("HTML", "HTML"),
+        TextContentType.create("XHTML", "XHTML"),
+        TextContentType.create("CSS", "CSS"),
+        TextContentType.create("Java", "JAVA"),
+        TextContentType.create("SQL", "DBN-SQL"),
+        TextContentType.create("PL/SQL", "DBN-PSQL"),
+        TextContentType.create("JPA QL", "JPA QL"),
+        TextContentType.create("JavaScript", "JavaScript"),
+        TextContentType.create("JSON", "JSON"),
+        TextContentType.create("JSON5", "JSON5"),
+        TextContentType.create("PHP", "PHP"),
+        TextContentType.create("JSP", "JSP"),
+        TextContentType.create("JSPx", "JSPX"),
+        TextContentType.create("Perl", "Perl"),
+        TextContentType.create("Groovy", "Groovy"),
+        TextContentType.create("FTL", "FTL"),
+        TextContentType.create("TML", "TML"),
+        TextContentType.create("GSP", "GSP"),
+        TextContentType.create("ASP", "ASP"),
+        TextContentType.create("VTL", "VTL"),
+        TextContentType.create("AIDL", "AIDL"),
+        TextContentType.create("YAML", "YAML"),
+        TextContentType.create("Flex", "SWF"),
+        TextContentType.create("C#", "C#"),
+        TextContentType.create("C++", "C++"),
+        TextContentType.create("Bash", "Bash"),
+        TextContentType.create("Manifest", "Manifest")
+    ).filter(e -> e != null).collect(Collectors.toList());
 
     private int textLengthThreshold = 300;
 
@@ -70,21 +70,10 @@ public class DataEditorQualifiedEditorSettings extends BasicConfiguration<DataEd
         return "dataEditor";
     }
 
-    public List<TextContentType> getContentTypes() {
-        return contentTypes.get();
-    }
-
-    private void createContentType(String name, String fileTypeName, List<TextContentType> contentTypes) {
-        TextContentType contentType = TextContentType.create(name, fileTypeName);
-        if (contentType != null) {
-            contentTypes.add(contentType);
-        }
-    }
-
     @Nullable
     public TextContentType getContentType(String name) {
         if (StringUtil.isNotEmpty(name)) {
-            for (TextContentType contentType : getContentTypes()) {
+            for (TextContentType contentType : contentTypes) {
                 if (contentType.getName().equals(name)) {
                     return contentType;
                 }
@@ -111,8 +100,7 @@ public class DataEditorQualifiedEditorSettings extends BasicConfiguration<DataEd
     public void readConfiguration(Element element) {
         textLengthThreshold = SettingsSupport.getIntegerAttribute(element, "text-length-threshold", textLengthThreshold);
         Element contentTypes = element.getChild("content-types");
-        for (Object o : contentTypes.getChildren()) {
-            Element child = (Element) o;
+        for (Element child : contentTypes.getChildren()) {
             String name = child.getAttributeValue("name");
             TextContentType contentType = getContentType(name);
             if (contentType != null) {

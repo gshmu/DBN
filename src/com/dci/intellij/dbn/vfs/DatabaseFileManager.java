@@ -272,7 +272,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
         Element openFilesElement = element.getChild("open-files");
         if (openFilesElement != null && pendingOpenFiles != null) {
             List<Element> fileElements = openFilesElement.getChildren();
-            fileElements.forEach((fileElement) -> {
+            for (Element fileElement : fileElements) {
                 DBObjectRef<DBSchemaObject> objectRef = DBObjectRef.from(fileElement);
                 if (objectRef != null) {
                     ConnectionId connectionId = objectRef.getConnectionId();
@@ -280,7 +280,7 @@ public class DatabaseFileManager extends AbstractProjectComponent implements Per
                             pendingOpenFiles.computeIfAbsent(connectionId, k -> new ArrayList<>());
                     objectRefs.add(objectRef);
                 }
-            });
+            }
         }
     }
 

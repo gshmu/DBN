@@ -6,17 +6,23 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.filter.ConditionJoinType;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
 public class CompoundFilterCondition implements Filter<DBObject>, FilterCondition {
     private final List<FilterCondition> conditions = new ArrayList<>();
-    private CompoundFilterCondition parent;
     private ConditionJoinType joinType = ConditionJoinType.AND;
+
+    @EqualsAndHashCode.Exclude
+    private CompoundFilterCondition parent;
 
     public CompoundFilterCondition() {
     }
@@ -172,13 +178,12 @@ public class CompoundFilterCondition implements Filter<DBObject>, FilterConditio
     public void readConfiguration(Element element) {
         String joinTypeString = element.getAttributeValue("join-type");
         joinType = StringUtil.isEmptyOrSpaces(joinTypeString) ? ConditionJoinType.AND : ConditionJoinType.valueOf(joinTypeString);
-        for (Object o : element.getChildren()) {
-            Element childElement = (Element) o;
+        for (Element child : element.getChildren()) {
             FilterCondition condition =
-                    childElement.getName().equals("simple-condition") ? new SimpleNameFilterCondition() :
-                    childElement.getName().equals("compound-condition") ? new CompoundFilterCondition() : null;
+                    child.getName().equals("simple-condition") ? new SimpleNameFilterCondition() :
+                    child.getName().equals("compound-condition") ? new CompoundFilterCondition() : null;
             if (condition != null) {
-                condition.readConfiguration(childElement);
+                condition.readConfiguration(child);
                 condition.setParent(this);
                 conditions.add(condition);
             }

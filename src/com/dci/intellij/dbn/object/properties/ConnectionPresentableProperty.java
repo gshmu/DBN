@@ -3,9 +3,11 @@ package com.dci.intellij.dbn.object.properties;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionHandlerRef;
 import com.intellij.pom.Navigatable;
+import lombok.EqualsAndHashCode;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
+@EqualsAndHashCode(callSuper = false)
 public class ConnectionPresentableProperty extends PresentableProperty{
     private final ConnectionHandlerRef connectionHandler;
 

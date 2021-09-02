@@ -26,8 +26,6 @@ public class DBFictiveObject extends DBObjectImpl implements PsiReference {
         return true;
     }
 
-
-
     @Override
     protected String initObject(DBObjectMetadata metadata) throws SQLException {
         throw new UnsupportedOperationException();
@@ -41,7 +39,7 @@ public class DBFictiveObject extends DBObjectImpl implements PsiReference {
     @NotNull
     @Override
     public DBObjectType getObjectType() {
-        return getRef().objectType;
+        return getRef().getObjectType();
     }
 
 

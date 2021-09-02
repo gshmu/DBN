@@ -61,7 +61,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
         Safe.queueRequest(extensionRegisterer, 0, false, () ->
                 Write.run(getProject(), () -> {
                     FileTypeManager fileTypeManager = FileTypeManager.getInstance();
-                    List<DDLFileType> ddlFileTypeList = settings.getDDLFileTypes();
+                    List<DDLFileType> ddlFileTypeList = settings.getFileTypes();
                     for (DDLFileType ddlFileType : ddlFileTypeList) {
                         for (String extension : ddlFileType.getExtensions()) {
                             fileTypeManager.associateExtension(ddlFileType.getLanguageFileType(), extension);
@@ -79,11 +79,11 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
     }
 
     public DDLFileType getDDLFileType(DDLFileTypeId ddlFileTypeId) {
-        return getExtensionSettings().getDDLFileType(ddlFileTypeId);
+        return getExtensionSettings().getFileType(ddlFileTypeId);
     }
 
     DDLFileType getDDLFileTypeForExtension(String extension) {
-        return getExtensionSettings().getDDLFileTypeForExtension(extension);
+        return getExtensionSettings().getFileTypeForExtension(extension);
     }
 
     String createDDLStatement(DBSourceCodeVirtualFile sourceCodeFile, DBContentType contentType) {
@@ -132,7 +132,7 @@ public class DDLFileManager extends AbstractProjectComponent implements Persiste
         @Override
         public void fileTypesChanged(@NotNull FileTypeEvent event) {
             FileTypeManager fileTypeManager = FileTypeManager.getInstance();
-            List<DDLFileType> ddlFileTypeList = getExtensionSettings().getDDLFileTypes();
+            List<DDLFileType> ddlFileTypeList = getExtensionSettings().getFileTypes();
             for (DDLFileType ddlFileType : ddlFileTypeList) {
                 DBLanguageFileType fileType = ddlFileType.getLanguageFileType();
                 List<FileNameMatcher> associations = fileTypeManager.getAssociations(fileType);

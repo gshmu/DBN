@@ -23,7 +23,8 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ import java.util.Map;
 import java.util.Timer;
 
 public interface SafeDisposer {
-    MapLatent<Class<?>, List<Field>, RuntimeException> CLASS_FIELDS = MapLatent.create(clazz -> ReflectionUtil.collectFields(clazz));
+    MapLatent<Class<?>, List<Field>> CLASS_FIELDS = MapLatent.create(clazz -> ReflectionUtil.collectFields(clazz));
     Logger LOGGER = LoggerFactory.createLogger();
 
     static void register(@Nullable Disposable parent, @NotNull Object object) {

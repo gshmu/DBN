@@ -7,15 +7,21 @@ import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.MessageFormat;
 
+@Getter
+@Setter
+@EqualsAndHashCode
 public class ConfirmationOptionHandler implements DialogWrapper.DoNotAskOption, PersistentConfiguration{
-    private String configName;
-    private String title;
-    private String message;
+    private final String configName;
+    private final String title;
+    private final String message;
     private boolean confirm;
 
     public ConfirmationOptionHandler(String configName, String title, String message, boolean defaultKeepAsking) {
@@ -33,14 +39,6 @@ public class ConfirmationOptionHandler implements DialogWrapper.DoNotAskOption, 
     @Override
     public void setToBeShown(boolean keepAsking, int selectedIndex) {
         this.confirm = keepAsking;
-    }
-
-    public void setConfirm(boolean confirm) {
-        this.confirm = confirm;
-    }
-
-    public boolean isConfirm() {
-        return confirm;
     }
 
     @Override

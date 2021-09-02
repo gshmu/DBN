@@ -8,12 +8,18 @@ import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class DataGridSettings extends CompositeProjectConfiguration<ProjectSettings, DataGridSettingsForm> implements TopLevelConfig {
-    private DataGridGeneralSettings generalSettings               = new DataGridGeneralSettings(this);
-    private DataGridSortingSettings sortingSettings               = new DataGridSortingSettings(this);
-    private DataGridTrackingColumnSettings trackingColumnSettings = new DataGridTrackingColumnSettings(this);
+    private final DataGridGeneralSettings generalSettings               = new DataGridGeneralSettings(this);
+    private final DataGridSortingSettings sortingSettings               = new DataGridSortingSettings(this);
+    private final DataGridTrackingColumnSettings trackingColumnSettings = new DataGridTrackingColumnSettings(this);
 
     public DataGridSettings(ProjectSettings parent) {
         super(parent);
@@ -48,22 +54,6 @@ public class DataGridSettings extends CompositeProjectConfiguration<ProjectSetti
     @Override
     public DataGridSettings getOriginalSettings() {
         return getInstance(getProject());
-    }
-
-    /*********************************************************
-     *                        Custom                         *
-     *********************************************************/
-
-    public DataGridGeneralSettings getGeneralSettings() {
-        return generalSettings;
-    }
-
-    public DataGridSortingSettings getSortingSettings() {
-        return sortingSettings;
-    }
-
-    public DataGridTrackingColumnSettings getTrackingColumnSettings() {
-       return trackingColumnSettings;
     }
 
     /*********************************************************

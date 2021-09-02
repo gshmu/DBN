@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.data.record.ui;
 
 import com.dci.intellij.dbn.common.locale.Formatter;
-import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
 import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.data.record.DatasetRecord;
 import com.dci.intellij.dbn.data.type.DBDataType;
@@ -11,8 +10,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -26,7 +29,6 @@ public class RecordViewerColumnForm extends DBNFormImpl {
     private final JTextField valueTextField;
 
     private final DBObjectRef<DBColumn> columnRef;
-    private final RegionalSettings regionalSettings;
     private final DatasetRecord record;
 
     RecordViewerColumnForm(RecordViewerForm parentForm, DatasetRecord record, DBColumn column) {
@@ -36,7 +38,6 @@ public class RecordViewerColumnForm extends DBNFormImpl {
         Project project = record.getDataset().getProject();
 
         DBDataType dataType = column.getDataType();
-        regionalSettings = RegionalSettings.getInstance(project);
 
         columnLabel.setIcon(column.getIcon());
         columnLabel.setText(column.getName());
@@ -62,7 +63,7 @@ public class RecordViewerColumnForm extends DBNFormImpl {
 
     private void updateColumnValue(DBColumn column) {
         Object value = record.getColumnValue(column);
-        Formatter formatter = regionalSettings.getFormatter();
+        Formatter formatter = Formatter.getInstance(ensureProject());
         if (value instanceof String) {
             String userValue = (String) value;
             if (userValue.indexOf('\n') > -1) {

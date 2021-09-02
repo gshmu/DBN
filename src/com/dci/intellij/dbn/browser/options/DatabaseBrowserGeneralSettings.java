@@ -4,12 +4,18 @@ import com.dci.intellij.dbn.browser.options.ui.DatabaseBrowserGeneralSettingsFor
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.options.setting.IntegerSetting;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getEnum;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setEnum;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class DatabaseBrowserGeneralSettings
         extends BasicProjectConfiguration<DatabaseBrowserSettings, DatabaseBrowserGeneralSettingsForm> {
 
@@ -30,22 +36,6 @@ public class DatabaseBrowserGeneralSettings
     @Override
     public String getConfigElementName() {
         return "general";
-    }
-
-    public BrowserDisplayMode getDisplayMode() {
-        return displayMode;
-    }
-
-    public void setDisplayMode(BrowserDisplayMode displayMode) {
-        this.displayMode = displayMode;
-    }
-
-    public IntegerSetting getNavigationHistorySize() {
-        return navigationHistorySize;
-    }
-
-    public BooleanSetting getShowObjectDetails() {
-        return showObjectDetails;
     }
 
     @Override

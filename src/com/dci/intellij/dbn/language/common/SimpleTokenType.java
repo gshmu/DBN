@@ -10,6 +10,7 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.tree.IElementType;
+import lombok.Getter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
+@Getter
 public class SimpleTokenType extends IElementType implements TokenType {
     private static final Logger LOGGER = LoggerFactory.createLogger();
     private int idx;
@@ -85,40 +87,13 @@ public class SimpleTokenType extends IElementType implements TokenType {
     }
 
     @Override
-    public int getIdx() {
-        return idx;
-    }
-
-    @Override
-    public TokenPairTemplate getTokenPairTemplate() {
-        return tokenPairTemplate;
-    }
-
-    @Override
     public void setDefaultFormatting(FormattingDefinition defaultFormatting) {
         formatting = FormattingDefinitionFactory.mergeDefinitions(formatting, defaultFormatting);
-    }
-
-    @NotNull
-    @Override
-    public String getId() {
-        return id;
-    }
-
-
-    @Override
-    public int getLookupIndex() {
-        return lookupIndex;
     }
 
     @Override
     public String getValue() {
         return value == null ? "" : value;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
     }
 
     @Override
@@ -206,18 +181,6 @@ public class SimpleTokenType extends IElementType implements TokenType {
         return !isIdentifier();
         //return isKeyword() || isFunction() || isParameter() || isCharacter() || isOperator();
         //return isCharacter() || isOperator() || !isSuppressibleReservedWord();
-    }
-
-    @Override
-    @NotNull
-    public TokenTypeCategory getCategory() {
-        return category;
-    }
-
-    @Nullable
-    @Override
-    public DBObjectType getObjectType() {
-        return objectType;
     }
 
     @Override

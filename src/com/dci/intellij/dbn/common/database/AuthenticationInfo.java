@@ -11,17 +11,23 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.PasswordUtil;
 import com.dci.intellij.dbn.credentials.DatabaseCredentialManager;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSettings, ConfigurationEditorForm> implements Cloneable<AuthenticationInfo>{
     @Deprecated // TODO move to keychain
     private static final String OLD_PWD_ATTRIBUTE = "password";
     @Deprecated // TODO move to keychain
     private static final String TEMP_PWD_ATTRIBUTE = "deprecated-pwd";
 
-    private long timestamp = System.currentTimeMillis();
+    private final long timestamp = System.currentTimeMillis();
 
     private AuthenticationType type = AuthenticationType.USER_PASSWORD;
     private String user;
@@ -37,38 +43,9 @@ public class AuthenticationInfo extends BasicConfiguration<ConnectionDatabaseSet
         return getParent().getConnectionId();
     }
 
-    public AuthenticationType getType() {
-        return type;
-    }
-
-    public void setType(AuthenticationType type) {
-        this.type = type;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public boolean isTemporary() {
-        return temporary;
-    }
-
-    public void setTemporary(boolean temporary) {
-        this.temporary = temporary;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
     public void setPassword(String password) {
         this.password = StringUtil.isEmpty(password) ? null : password;
     }
-
 
     public boolean isProvided() {
         switch (type) {

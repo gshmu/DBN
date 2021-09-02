@@ -85,6 +85,8 @@ public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigura
         return true;
     }
 
+
+
     public DBDebuggerType getDebuggerType() {
         DBRunConfigFactory factory = (DBRunConfigFactory) getFactory();
         return factory == null ? DBDebuggerType.NONE : factory.getDebuggerType();

@@ -4,11 +4,17 @@ import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.NameFilterCondition;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBooleanAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true)
 public class ObjectQuickFilterCondition extends NameFilterCondition implements PersistentStateElement {
     private ObjectQuickFilter filter;
     private boolean active = true;
@@ -21,22 +27,6 @@ public class ObjectQuickFilterCondition extends NameFilterCondition implements P
 
     public ObjectQuickFilterCondition(ObjectQuickFilter filter) {
         this.filter = filter;
-    }
-
-    public ObjectQuickFilter getFilter() {
-        return filter;
-    }
-
-    public void setFilter(ObjectQuickFilter filter) {
-        this.filter = filter;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public boolean accepts(DBObject object) {

@@ -6,9 +6,15 @@ import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.options.ui.DebuggerSettingsForm;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class DebuggerSettings extends BasicConfiguration<OperationSettings, DebuggerSettingsForm> {
     private boolean useGenericRunners = true;
     private final InteractiveOptionBroker<DebuggerTypeOption> debuggerType =
@@ -37,20 +43,6 @@ public class DebuggerSettings extends BasicConfiguration<OperationSettings, Debu
 
     public InteractiveOptionBroker<DebuggerTypeOption> getDebuggerType() {
         return debuggerType;
-    }
-
-    /*********************************************************
-    *                       Settings                        *
-    *********************************************************/
-
-
-
-    public boolean isUseGenericRunners() {
-        return useGenericRunners;
-    }
-
-    public void setUseGenericRunners(boolean useGenericRunners) {
-        this.useGenericRunners = useGenericRunners;
     }
 
     /****************************************************

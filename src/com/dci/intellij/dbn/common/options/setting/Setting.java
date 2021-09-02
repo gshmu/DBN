@@ -2,18 +2,18 @@ package com.dci.intellij.dbn.common.options.setting;
 
 import com.dci.intellij.dbn.common.util.Safe;
 import com.intellij.openapi.options.ConfigurationException;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
+@Getter
+@EqualsAndHashCode
 public abstract class Setting<T, E> {
+    private final String name;
     private T value;
-    private String name;
 
-    protected Setting(String configName, T value) {
-        this.name = configName;
+    protected Setting(String name, T value) {
+        this.name = name;
         this.value = value;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public T value() {
@@ -24,10 +24,6 @@ public abstract class Setting<T, E> {
         boolean response = !Safe.equal(this.value, value);
         this.value = value;
         return response;
-    }
-
-    public T getValue() {
-        return value;
     }
 
     @Override

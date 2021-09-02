@@ -3,36 +3,33 @@ package com.dci.intellij.dbn.execution.method;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
-import gnu.trove.THashMap;
 import org.jdom.Element;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-public class MethodExecutionArgumentValuesCache implements PersistentStateElement {
-    private Map<ConnectionId, Set<MethodExecutionArgumentValue>> variablesMap = new THashMap<ConnectionId, Set<MethodExecutionArgumentValue>>();
+public class MethodExecutionArgumentValueHistory implements PersistentStateElement {
+    private final Map<ConnectionId, Map<String, MethodExecutionArgumentValue>> argumentValues = new HashMap<>();
 
     public MethodExecutionArgumentValue getArgumentValue(ConnectionId connectionId, String name, boolean create) {
-        Set<MethodExecutionArgumentValue> argumentValues = variablesMap.get(connectionId);
+        Map<String, MethodExecutionArgumentValue> argumentValues = this.argumentValues.get(connectionId);
 
         if (argumentValues != null) {
-            for (MethodExecutionArgumentValue argumentValue : argumentValues) {
-                if (StringUtil.equalsIgnoreCase(argumentValue.getName(), name)) {
-                    return argumentValue;
+            for (String argumentName : argumentValues.keySet()) {
+                if (StringUtil.equalsIgnoreCase(argumentName, name)) {
+                    return argumentValues.get(argumentName);
                 }
             }
         }
 
         if (create) {
             if (argumentValues == null) {
-                argumentValues = new HashSet<MethodExecutionArgumentValue>();
-                variablesMap.put(connectionId, argumentValues);
+                argumentValues = new HashMap<>();
+                this.argumentValues.put(connectionId, argumentValues);
             }
 
             MethodExecutionArgumentValue argumentValue = new MethodExecutionArgumentValue(name);
-            argumentValues.add(argumentValue);
+            argumentValues.put(name, argumentValue);
             return argumentValue;
 
         }
@@ -53,12 +50,10 @@ public class MethodExecutionArgumentValuesCache implements PersistentStateElemen
     public void readState(Element element) {
         Element argumentValuesElement = element.getChild("argument-values-cache");
         if (argumentValuesElement != null) {
-            this.variablesMap.clear();
-            List<Element> connectionElements = argumentValuesElement.getChildren();
-            for (Element connectionElement : connectionElements) {
-                ConnectionId connectionId = ConnectionId.get(connectionElement.getAttributeValue("connection-id"));
-                List<Element> argumentElements = connectionElement.getChildren();
-                for (Element argumentElement : argumentElements) {
+            this.argumentValues.clear();
+            for (Element argumentValueElement : argumentValuesElement.getChildren()) {
+                ConnectionId connectionId = ConnectionId.get(argumentValueElement.getAttributeValue("connection-id"));
+                for (Element argumentElement : argumentValueElement.getChildren()) {
                     String name = argumentElement.getAttributeValue("name");
                     MethodExecutionArgumentValue argumentValue = getArgumentValue(connectionId, name, true);
                     argumentValue.readState(argumentElement);
@@ -72,12 +67,13 @@ public class MethodExecutionArgumentValuesCache implements PersistentStateElemen
         Element argumentValuesElement = new Element("argument-values-cache");
         element.addContent(argumentValuesElement);
 
-        for (ConnectionId connectionId : variablesMap.keySet()) {
-            Set<MethodExecutionArgumentValue> argumentValues = variablesMap.get(connectionId);
+        for (ConnectionId connectionId : argumentValues.keySet()) {
+            Map<String, MethodExecutionArgumentValue> argumentValues = this.argumentValues.get(connectionId);
             Element connectionElement = new Element("connection");
             connectionElement.setAttribute("connection-id", connectionId.id());
             argumentValuesElement.addContent(connectionElement);
-            for (MethodExecutionArgumentValue argumentValue : argumentValues) {
+            for (String argumentName : argumentValues.keySet()) {
+                MethodExecutionArgumentValue argumentValue = argumentValues.get(argumentName);
                 if (argumentValue.getValueHistory().size() > 0) {
                     Element argumentElement = new Element("argument");
                     connectionElement.addContent(argumentElement);

@@ -8,11 +8,10 @@ import com.dci.intellij.dbn.execution.compiler.options.CompilerSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettings> {
@@ -68,7 +67,7 @@ public class CompilerSettingsForm extends ConfigurationEditorForm<CompilerSettin
         setSelection(compileTypeComboBox, settings.getCompileType());
         setSelection(compileDependenciesComboBox, settings.getCompileDependenciesOption());
         setSelection(showControlsComboBox,
-                settings.alwaysShowCompilerControls() ?
+                settings.isAlwaysShowCompilerControls() ?
                         ShowControlOption.ALWAYS:
                         ShowControlOption.WHEN_INVALID);
     }

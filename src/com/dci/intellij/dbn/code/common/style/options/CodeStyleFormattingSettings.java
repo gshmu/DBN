@@ -2,6 +2,9 @@ package com.dci.intellij.dbn.code.common.style.options;
 
 import com.dci.intellij.dbn.code.common.style.options.ui.CodeStyleFormattingSettingsForm;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,8 +14,11 @@ import java.util.List;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBooleanAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public abstract class CodeStyleFormattingSettings extends BasicConfiguration<CodeStyleCustomSettings, CodeStyleFormattingSettingsForm> {
-    private List<CodeStyleFormattingOption> options = new ArrayList<>();
+    private final List<CodeStyleFormattingOption> options = new ArrayList<>();
     private boolean enabled = false;
 
     public CodeStyleFormattingSettings(CodeStyleCustomSettings parent) {
@@ -24,27 +30,16 @@ public abstract class CodeStyleFormattingSettings extends BasicConfiguration<Cod
         return "Formatting Options";
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     protected void addOption(CodeStyleFormattingOption option) {
         options.add(option);
     }
 
     private CodeStyleFormattingOption getCodeStyleCaseOption(String name) {
-        for (CodeStyleFormattingOption option : options) {
-            if (option.getName().equals(name)) return option;
-        }
-        return null;
-    }
-
-    public List<CodeStyleFormattingOption> getOptions() {
-        return options;
+        return options.
+                stream().
+                filter(option -> option.getName().equals(name)).
+                findFirst().
+                orElse(null);
     }
 
     /*********************************************************

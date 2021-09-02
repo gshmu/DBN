@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDetailSettingsForm;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
@@ -20,6 +21,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = false)
 public class ConnectionDetailSettings extends BasicProjectConfiguration<ConnectionSettings, ConnectionDetailSettingsForm> {
     private Charset charset = StandardCharsets.UTF_8;
     private EnvironmentTypeId environmentTypeId = EnvironmentTypeId.DEFAULT;

@@ -5,16 +5,16 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.project.ProjectUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionCache implements ApplicationComponent {
-    private static final Map<ConnectionId, ConnectionHandler> CACHE = new THashMap<>();
+    private static final Map<ConnectionId, ConnectionHandler> CACHE = new ConcurrentHashMap<>();
 
     public ConnectionCache() {
         ProjectUtil.projectOpened(project -> initializeCache(project));
@@ -23,24 +23,28 @@ public class ConnectionCache implements ApplicationComponent {
 
     @Nullable
     public static ConnectionHandler findConnectionHandler(ConnectionId connectionId) {
-        ConnectionHandler connectionHandler = CACHE.get(connectionId);
-        ProjectManager projectManager = ProjectManager.getInstance();
-        if (connectionHandler == null && projectManager != null) {
-            synchronized (ConnectionCache.class) {
-                connectionHandler = CACHE.get(connectionId);
-                if (connectionHandler == null) {
-                    for (Project project : projectManager.getOpenProjects()) {
-                        ConnectionManager connectionManager = ConnectionManager.getInstance(project);
-                        connectionHandler = connectionManager.getConnectionHandler(connectionId);
-                        if (Failsafe.check(connectionHandler)) {
-                            CACHE.put(connectionId, connectionHandler);
-                            return connectionHandler;
+        if (connectionId != null) {
+            ConnectionHandler connectionHandler = CACHE.get(connectionId);
+            ProjectManager projectManager = ProjectManager.getInstance();
+            if (connectionHandler == null && projectManager != null) {
+                synchronized (ConnectionCache.class) {
+                    connectionHandler = CACHE.get(connectionId);
+                    if (connectionHandler == null) {
+                        for (Project project : projectManager.getOpenProjects()) {
+                            ConnectionManager connectionManager = ConnectionManager.getInstance(project);
+                            connectionHandler = connectionManager.getConnectionHandler(connectionId);
+                            if (Failsafe.check(connectionHandler)) {
+                                CACHE.put(connectionId, connectionHandler);
+                                return connectionHandler;
+                            }
                         }
                     }
                 }
             }
+            return Failsafe.check(connectionHandler) ? connectionHandler : null;
+        } else{
+            return null;
         }
-        return Failsafe.check(connectionHandler) ? connectionHandler : null;
     }
 
     @NotNull

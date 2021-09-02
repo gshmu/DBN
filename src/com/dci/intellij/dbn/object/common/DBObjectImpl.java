@@ -217,7 +217,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     @Override
     @NotNull
     public String getName() {
-        return objectRef.objectName;
+        return objectRef.getObjectName();
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.object.DBPackage;
 import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.DBType;
 import com.dci.intellij.dbn.object.common.DBObjectBundle;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.lang.reflect.Constructor;
@@ -20,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 @Getter
+@EqualsAndHashCode
 public class DBDataType {
     private DBNativeDataType nativeDataType;
     private DBType declaredType;
@@ -185,11 +187,6 @@ public class DBDataType {
     @Override
     public String toString() {
         return getName();
-    }
-
-    @Override
-    public int hashCode() {
-        return toString().hashCode();
     }
 
     public GenericDataType getGenericDataType() {

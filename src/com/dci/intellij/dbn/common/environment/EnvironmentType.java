@@ -9,16 +9,22 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.ColorIcon;
 import com.intellij.util.ui.UIUtil;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import java.awt.Color;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBooleanAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
 
+@Getter
+@Setter
+@EqualsAndHashCode
 public class EnvironmentType implements Cloneable<EnvironmentType>, PersistentConfiguration, Presentable, SettingsSupport {
 
     private static final Color DEFAULT_REGULAR_COLOR = Color.LIGHT_GRAY;
@@ -80,10 +86,6 @@ public class EnvironmentType implements Cloneable<EnvironmentType>, PersistentCo
         this.readonlyData = dataEditable;
     }
 
-    public EnvironmentTypeId getId() {
-        return id;
-    }
-
     @Override
     @NotNull
     public String getName() {
@@ -95,19 +97,6 @@ public class EnvironmentType implements Cloneable<EnvironmentType>, PersistentCo
     public Icon getIcon() {
         JBColor color = getColor();
         return color == null ? null : new ColorIcon(12, color);
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     @Nullable
@@ -135,22 +124,6 @@ public class EnvironmentType implements Cloneable<EnvironmentType>, PersistentCo
             darkColor = color; else
             regularColor = color;
         this.color = null;
-    }
-
-    public boolean isReadonlyCode() {
-        return readonlyCode;
-    }
-
-    public void setReadonlyCode(boolean readonlyCode) {
-        this.readonlyCode = readonlyCode;
-    }
-
-    public boolean isReadonlyData() {
-        return readonlyData;
-    }
-
-    public void setReadonlyData(boolean readonlyData) {
-        this.readonlyData = readonlyData;
     }
 
     @Override

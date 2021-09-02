@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.MODIFIED;
 
@@ -63,7 +63,7 @@ public class ProgramCompileAction extends AbstractCodeEditorAction {
                 boolean isModified = sourceCodeFile.is(MODIFIED);
 
                 boolean isCompiling = objectStatus.is(contentType, DBObjectStatus.COMPILING);
-                boolean isEnabled = !isModified && isPresent && !isCompiling && (compilerSettings.alwaysShowCompilerControls() || !isValid /*|| isDebug != isDebugActive*/);
+                boolean isEnabled = !isModified && isPresent && !isCompiling && (compilerSettings.isAlwaysShowCompilerControls() || !isValid /*|| isDebug != isDebugActive*/);
 
                 presentation.setEnabled(isEnabled);
                 String text =

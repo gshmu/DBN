@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSshTunnelSettingsForm;
 import com.dci.intellij.dbn.connection.ssh.SshAuthType;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
@@ -14,6 +15,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = false)
 public class ConnectionSshTunnelSettings extends BasicProjectConfiguration<ConnectionSettings, ConnectionSshTunnelSettingsForm> {
     @Deprecated // TODO move to keychain
     private static final String OLD_PWD_ATTRIBUTE = "proxy-password";

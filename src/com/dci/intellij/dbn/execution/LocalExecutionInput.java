@@ -9,11 +9,15 @@ import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.intellij.openapi.project.Project;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 
 import static com.dci.intellij.dbn.execution.ExecutionOption.COMMIT_AFTER_EXECUTION;
 import static com.dci.intellij.dbn.execution.ExecutionOption.ENABLE_LOGGING;
 
+@Getter
+@Setter
 public abstract class LocalExecutionInput extends ExecutionInput{
     private ExecutionOptions options = new ExecutionOptions();
     private SessionId targetSessionId = SessionId.MAIN;
@@ -30,24 +34,8 @@ public abstract class LocalExecutionInput extends ExecutionInput{
         }
     }
 
-    public SessionId getTargetSessionId() {
-        return targetSessionId;
-    }
-
     public void setTargetSession(DatabaseSession databaseSession) {
         setTargetSessionId(databaseSession == null ? SessionId.MAIN : databaseSession.getId());
-    }
-
-    public void setTargetSessionId(SessionId targetSessionId) {
-        this.targetSessionId = targetSessionId;
-    }
-
-    public ExecutionOptions getOptions() {
-        return options;
-    }
-
-    public void setOptions(ExecutionOptions options) {
-        this.options = options;
     }
 
     public abstract boolean hasExecutionVariables();

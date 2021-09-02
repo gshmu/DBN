@@ -24,9 +24,8 @@ public class QualifiedIdentifierElementType extends ElementTypeBase {
 
     public QualifiedIdentifierElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
         super(bundle, parent, id, def);
-        List children = def.getChildren();
-        for (Object o : children) {
-            Element child = (Element) o;
+        List<Element> children = def.getChildren();
+        for (Element child : children) {
             List<LeafElementType[]> childVariants = createVariants(child);
             for (LeafElementType[] childVariant : childVariants) {
                 for (LeafElementType leafElementType : childVariant) {
@@ -60,11 +59,11 @@ public class QualifiedIdentifierElementType extends ElementTypeBase {
     private List<LeafElementType[]> createVariants(Element element) throws ElementTypeDefinitionException {
         List<LeafElementType[]> variants = new ArrayList<>();
 
-        List children = element.getChildren();
+        List<Element> children = element.getChildren();
         LeafElementType[] leafElementTypes = new LeafElementType[children.size()];
         boolean[] optional = new boolean[children.size()];
         for (int i = 0; i < children.size(); i++) {
-            Element child = (Element) children.get(i);
+            Element child = children.get(i);
             String type = child.getName();
             leafElementTypes[i] = (LeafElementType) getElementBundle().resolveElementDefinition(child, type, this);
             optional[i] = getBooleanAttribute(child, "optional");

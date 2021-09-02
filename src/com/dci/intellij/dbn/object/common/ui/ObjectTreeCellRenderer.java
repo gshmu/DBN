@@ -9,7 +9,7 @@ import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 public class ObjectTreeCellRenderer extends ColoredTreeCellRenderer {
@@ -19,11 +19,11 @@ public class ObjectTreeCellRenderer extends ColoredTreeCellRenderer {
             DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) value;
             Object userObject = treeNode.getUserObject();
             if (userObject instanceof DBObjectRef) {
-                DBObjectRef objectRef = (DBObjectRef) userObject;
-                append(objectRef.objectName, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                DBObjectRef<?> objectRef = (DBObjectRef) userObject;
+                append(objectRef.getObjectName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
                 DBObject object = DBObjectRef.get(objectRef);
-                setIcon(object == null ? objectRef.objectType.getIcon() : object.getOriginalIcon());
+                setIcon(object == null ? objectRef.getObjectType().getIcon() : object.getOriginalIcon());
 
                 if (object instanceof DBMethod) {
                     DBMethod method = (DBMethod) object;

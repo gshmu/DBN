@@ -7,13 +7,13 @@ import com.dci.intellij.dbn.connection.config.ConnectionDatabaseSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSshTunnelSettings;
 import com.intellij.openapi.application.ApplicationManager;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class SshTunnelManager implements ApplicationComponent {
-    private final Map<String, SshTunnelConnector> sshTunnelConnectors = new THashMap<>();
+    private final Map<String, SshTunnelConnector> sshTunnelConnectors = new HashMap<>();
 
     public static SshTunnelManager getInstance() {
         return ApplicationManager.getApplication().getComponent(SshTunnelManager.class);

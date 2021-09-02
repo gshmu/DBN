@@ -8,10 +8,12 @@ import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
+@EqualsAndHashCode(callSuper = false)
 public class DataEditorSettings extends CompositeProjectConfiguration<ProjectSettings, DataEditorSettingsForm> implements TopLevelConfig {
     private final DataEditorPopupSettings popupSettings                       = new DataEditorPopupSettings(this);
     private final DataEditorValueListPopupSettings valueListPopupSettings     = new DataEditorValueListPopupSettings(this);

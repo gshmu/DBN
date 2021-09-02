@@ -11,7 +11,7 @@ import com.dci.intellij.dbn.data.editor.ui.UserValueHolderImpl;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
 import com.dci.intellij.dbn.execution.method.MethodExecutionArgumentValue;
-import com.dci.intellij.dbn.execution.method.MethodExecutionArgumentValuesCache;
+import com.dci.intellij.dbn.execution.method.MethodExecutionArgumentValueHistory;
 import com.dci.intellij.dbn.execution.method.MethodExecutionInput;
 import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.object.DBArgument;
@@ -22,9 +22,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +57,7 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl {
         DBDataType dataType = typeAttribute.getDataType();
         GenericDataType genericDataType = dataType.getGenericDataType();
 
-        Project project = getProject();
+        Project project = ensureProject();
 
         String value = getExecutionInput().getInputValue(argument, typeAttribute);
         if (genericDataType.is(GenericDataType.XMLTYPE, GenericDataType.CLOB)) {
@@ -122,7 +125,7 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl {
                 if (argument != null && typeAttribute != null) {
                     ConnectionHandler connectionHandler = argument.getConnectionHandler();
                     MethodExecutionManager executionManager = MethodExecutionManager.getInstance(argument.getProject());
-                    MethodExecutionArgumentValuesCache argumentValuesCache = executionManager.getArgumentValuesCache();
+                    MethodExecutionArgumentValueHistory argumentValuesCache = executionManager.getArgumentValuesHistory();
                     MethodExecutionArgumentValue argumentValue = argumentValuesCache.getArgumentValue(
                             connectionHandler.getConnectionId(),
                             getAttributeQualifiedName(),
@@ -146,7 +149,7 @@ public class MethodExecutionInputTypeAttributeForm extends DBNFormImpl {
 
     @NotNull
     private String getAttributeQualifiedName() {
-        return argument.objectName + '.' + typeAttribute.objectName;
+        return argument.getObjectName() + '.' + typeAttribute.getObjectName();
     }
 
     public DBArgument getArgument() {

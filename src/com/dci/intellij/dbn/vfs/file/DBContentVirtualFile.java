@@ -27,7 +27,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -44,11 +44,11 @@ public abstract class DBContentVirtualFile extends DBVirtualFileImpl implements 
         this.contentType = contentType;
 
         DBObjectRef<DBSchemaObject> objectRef = mainDatabaseFile.getObjectRef();
-        this.name = objectRef.objectName;
+        this.name = objectRef.getObjectName();
 
         Project project = getProject();
         DDLFileManager ddlFileManager = DDLFileManager.getInstance(project);
-        DDLFileType ddlFileType = ddlFileManager.getDDLFileType(objectRef.objectType, contentType);
+        DDLFileType ddlFileType = ddlFileManager.getDDLFileType(objectRef.getObjectType(), contentType);
         this.fileType = ddlFileType == null ? null : ddlFileType.getLanguageFileType();
     }
 

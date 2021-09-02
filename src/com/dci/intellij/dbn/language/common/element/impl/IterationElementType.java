@@ -74,11 +74,11 @@ public class IterationElementType extends ElementTypeBase {
             separatorTokens = separators.toArray(new TokenElementType[0]);
         }
 
-        List children = def.getChildren();
+        List<Element> children = def.getChildren();
         if (children.size() != 1) {
             throw new ElementTypeDefinitionException("[" + getLanguageDialect().getID() + "] Invalid iteration definition (id=" + getId() + "). Element should contain exactly one child.");
         }
-        Element child = (Element) children.get(0);
+        Element child = children.get(0);
         String type = child.getName();
         iteratedElementType = bundle.resolveElementDefinition(child, type, this);
 

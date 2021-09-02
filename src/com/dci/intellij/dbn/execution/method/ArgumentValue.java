@@ -4,11 +4,15 @@ import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 
+@Getter
+@Setter
 public class ArgumentValue {
     private final DBObjectRef<DBArgument> argumentRef;
     private DBObjectRef<DBTypeAttribute> attributeRef;
@@ -25,18 +29,6 @@ public class ArgumentValue {
         this.valueHolder = valueHolder;
     }
 
-    public ArgumentValueHolder getValueHolder() {
-        return valueHolder;
-    }
-
-    public void setValueHolder(ArgumentValueHolder valueHolder) {
-        this.valueHolder = valueHolder;
-    }
-
-    public DBObjectRef<DBArgument> getArgumentRef() {
-        return argumentRef;
-    }
-
     @Nullable
     public DBArgument getArgument() {
         return argumentRef.get();
@@ -49,8 +41,8 @@ public class ArgumentValue {
     public String getName() {
         return
             attributeRef == null ?
-                    argumentRef.objectName :
-                    argumentRef.objectName + '.' + attributeRef.objectName;
+            argumentRef.getObjectName() :
+            argumentRef.getObjectName() + '.' + attributeRef.getObjectName();
     }
 
     public Object getValue() {
@@ -75,7 +67,7 @@ public class ArgumentValue {
     }
 
     public String toString() {
-        return argumentRef.objectName + " = " + getValue();
+        return argumentRef.getObjectName() + " = " + getValue();
     }
 
     public static <T> ArgumentValueHolder<T> createBasicValueHolder(T value) {
