@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 final class StatefulFilteredList<T> extends FilteredListBase<T> {
     private final Latent<List<T>> inner = Latent.mutable(
-            () -> filterHashCode(),
+            () -> filterSignature(),
             () -> base.stream().filter(t -> filter.accepts(t)).collect(Collectors.toList()));
 
 
@@ -226,9 +226,9 @@ final class StatefulFilteredList<T> extends FilteredListBase<T> {
         }
     }
 
-    private int filterHashCode(){
+    private int filterSignature(){
         Filter<T> filter = getFilter();
-        return filter == null ? 0 : filter.hashCode();
+        return filter == null ? 0 : filter.getSignature();
     }
 
     @SneakyThrows

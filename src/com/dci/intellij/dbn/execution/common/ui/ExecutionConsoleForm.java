@@ -52,9 +52,12 @@ import com.intellij.ui.tabs.impl.TabLabel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.tree.TreePath;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,7 +67,6 @@ import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
 
 public class ExecutionConsoleForm extends DBNFormImpl{
     private JPanel mainPanel;
-    //private Map<Component, ExecutionResult> executionResultsMap = new HashMap<Component, ExecutionResult>();
     private TabbedPane resultTabs;
     private final Latent<ExecutionMessagesPanel> executionMessagesPanel = Latent.basic(() -> new ExecutionMessagesPanel(this));
 

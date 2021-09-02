@@ -9,6 +9,8 @@ import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -228,8 +230,12 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
         preparedStatement.executeUpdate();
     }
 
+    @Getter
+    @EqualsAndHashCode
     private static class Cell {
         private final ColumnInfo columnInfo;
+
+        @EqualsAndHashCode.Exclude
         private final Object value;
 
         Cell(ColumnInfo columnInfo, Object value) {
@@ -253,22 +259,6 @@ public class ReadonlyResultSetAdapter extends ResultSetAdapter {
                 throw new SQLException("Operation not supported for " + dataType.getName());
             }
             return nativeDataType;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Cell cell = (Cell) o;
-
-            return columnInfo.getName().equals(cell.getColumnInfo().getName());
-
-        }
-
-        @Override
-        public int hashCode() {
-            return columnInfo.getName().hashCode();
         }
 
         public String getColumnName() {

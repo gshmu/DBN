@@ -2,21 +2,22 @@ package com.dci.intellij.dbn.object.filter.name;
 
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true)
 public class ObjectNameFilter extends CompoundFilterCondition {
-    private final ObjectNameFilterSettings settings;
     private DBObjectType objectType;
-    private int hashCode;
 
+    @EqualsAndHashCode.Exclude
+    private final ObjectNameFilterSettings settings;
 
     public ObjectNameFilter(ObjectNameFilterSettings settings) {
         this.settings = settings;
-    }
-
-    @Override
-    public ObjectNameFilterSettings getSettings() {
-        return settings;
     }
 
     public ObjectNameFilter(ObjectNameFilterSettings settings, DBObjectType objectType, ConditionOperator operator, String text) {
@@ -39,16 +40,6 @@ public class ObjectNameFilter extends CompoundFilterCondition {
         }
     }
 
-    @Override
-    public DBObjectType getObjectType() {
-        return objectType;
-    }
-
-    @Override
-    public int hashCode() {
-        return hashCode;
-    }
-
     /*********************************************************
      *                     Configuration                     *
      *********************************************************/
@@ -56,7 +47,6 @@ public class ObjectNameFilter extends CompoundFilterCondition {
     public void readConfiguration(Element element) {
         super.readConfiguration(element);
         objectType = DBObjectType.get(element.getAttributeValue("object-type"));
-        hashCode = toString().hashCode();
     }
 
     @Override

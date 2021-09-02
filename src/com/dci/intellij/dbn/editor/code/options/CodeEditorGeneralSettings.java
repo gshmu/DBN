@@ -5,9 +5,15 @@ import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.project.ProjectSupplier;
 import com.dci.intellij.dbn.editor.code.options.ui.CodeEditorGeneralSettingsForm;
 import com.intellij.openapi.project.Project;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class CodeEditorGeneralSettings
         extends BasicConfiguration<CodeEditorSettings, CodeEditorGeneralSettingsForm>
         implements ProjectSupplier {
@@ -29,42 +35,6 @@ public class CodeEditorGeneralSettings
     @Override
     public String getHelpTopic() {
         return "codeEditor";
-    }
-
-    /*********************************************************
-    *                       Settings                        *
-    *********************************************************/
-
-    public boolean isShowObjectsNavigationGutter() {
-        return showObjectsNavigationGutter;
-    }
-
-    public void setShowObjectsNavigationGutter(boolean showObjectsNavigationGutter) {
-        this.showObjectsNavigationGutter = showObjectsNavigationGutter;
-    }
-
-    public boolean isShowSpecDeclarationNavigationGutter() {
-        return showSpecDeclarationNavigationGutter;
-    }
-
-    public void setShowSpecDeclarationNavigationGutter(boolean showSpecDeclarationNavigationGutter) {
-        this.showSpecDeclarationNavigationGutter = showSpecDeclarationNavigationGutter;
-    }
-
-    public boolean isEnableSpellchecking() {
-        return enableSpellchecking;
-    }
-
-    public void setEnableSpellchecking(boolean enableSpellchecking) {
-        this.enableSpellchecking = enableSpellchecking;
-    }
-
-    public boolean isEnableReferenceSpellchecking() {
-        return enableReferenceSpellchecking;
-    }
-
-    public void setEnableReferenceSpellchecking(boolean enableReferenceSpellchecking) {
-        this.enableReferenceSpellchecking = enableReferenceSpellchecking;
     }
 
     @NotNull

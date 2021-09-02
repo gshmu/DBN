@@ -6,15 +6,21 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
+@Getter
+@Setter
+@EqualsAndHashCode
 public class TextContentType implements Selectable<TextContentType> {
-    private String name;
-    private FileType fileType;
-    private boolean enabled = true;
+    private final String name;
+    private final FileType fileType;
+    private boolean selected = true;
 
     public TextContentType(String name, FileType fileType) {
         this.name = name;
@@ -42,17 +48,8 @@ public class TextContentType implements Selectable<TextContentType> {
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
     public String getError() {
         return null;
-    }
-
-    public FileType getFileType() {
-        return fileType;
     }
 
     @Override
@@ -61,18 +58,8 @@ public class TextContentType implements Selectable<TextContentType> {
     }
 
     @Override
-    public boolean isSelected() {
-        return enabled;
-    }
-
-    @Override
     public boolean isMasterSelected() {
         return true;
-    }
-
-    @Override
-    public void setSelected(boolean selected) {
-        this.enabled = selected;
     }
 
     @Override

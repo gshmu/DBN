@@ -7,15 +7,21 @@ import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetBasicFilterForm;
 import com.dci.intellij.dbn.object.DBDataset;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true)
 public class DatasetBasicFilter extends DatasetFilterImpl {
-    private List<DatasetBasicFilterCondition> conditions = new ArrayList<>();
+    private final List<DatasetBasicFilterCondition> conditions = new ArrayList<>();
     private ConditionJoinType joinType = ConditionJoinType.AND;
 
 
@@ -53,18 +59,6 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
 
     public void addCondition(DatasetBasicFilterCondition condition) {
         conditions.add(condition);
-    }
-
-    public List<DatasetBasicFilterCondition> getConditions() {
-        return conditions;
-    }
-
-    public void setJoinType(ConditionJoinType joinType) {
-        this.joinType = joinType;
-    }
-
-    public ConditionJoinType getJoinType() {
-        return joinType;
     }
 
     public boolean containsConditionForColumn(String columnName) {
@@ -141,10 +135,9 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
    public void readConfiguration(Element element) {
        super.readConfiguration(element);
        joinType = SettingsSupport.getEnumAttribute(element, "join-type", ConditionJoinType.class);
-       for (Object object : element.getChildren()) {
+       for (Element child : element.getChildren()) {
            DatasetBasicFilterCondition condition = new DatasetBasicFilterCondition(this);
-           Element conditionElement = (Element) object;
-           condition.readConfiguration(conditionElement);
+           condition.readConfiguration(child);
            conditions.add(condition);
        }
    }

@@ -25,8 +25,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import java.awt.BorderLayout;
 
 abstract class SourceCodeEditorProviderBase extends BasicTextEditorProvider implements DumbAware {
     public boolean accept(@NotNull Project project, @NotNull VirtualFile virtualFile) {
@@ -75,10 +76,10 @@ abstract class SourceCodeEditorProviderBase extends BasicTextEditorProvider impl
             EditorUtil.setEditorReadonly(sourceCodeEditor, true);
         }
 
-        int documentTracking = document.hashCode();
-        if (document.hashCode() != sourceCodeFile.getDocumentHashCode()) {
+        int documentSignature = document.hashCode();
+        if (document.hashCode() != sourceCodeFile.getDocumentSignature()) {
             document.addDocumentListener(sourceCodeFile);
-            sourceCodeFile.setDocumentHashCode(documentTracking);
+            sourceCodeFile.setDocumentSignature(documentSignature);
         }
 
         Icon icon = getIcon();

@@ -6,11 +6,15 @@ import com.dci.intellij.dbn.common.options.CompositeConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@EqualsAndHashCode(callSuper = false)
 public class CodeCompletionFiltersSettings extends CompositeConfiguration<CodeCompletionSettings, CodeCompletionFiltersSettingsForm> {
-    private CodeCompletionFilterSettings basicFilterSettings = new CodeCompletionFilterSettings(this, false);
-    private CodeCompletionFilterSettings extendedFilterSettings = new CodeCompletionFilterSettings(this, true);;
+    private final CodeCompletionFilterSettings basicFilterSettings = new CodeCompletionFilterSettings(this, false);
+    private final CodeCompletionFilterSettings extendedFilterSettings = new CodeCompletionFilterSettings(this, true);;
 
     public CodeCompletionFiltersSettings(CodeCompletionSettings parent) {
         super(parent);
@@ -26,14 +30,6 @@ public class CodeCompletionFiltersSettings extends CompositeConfiguration<CodeCo
     *********************************************************/
     public CodeCompletionFilterSettings getFilterSettings(boolean extended) {
         return extended ? extendedFilterSettings : basicFilterSettings;
-    }
-
-    public CodeCompletionFilterSettings getBasicFilterSettings() {
-        return basicFilterSettings;
-    }
-
-    public CodeCompletionFilterSettings getExtendedFilterSettings() {
-        return extendedFilterSettings;
     }
 
     boolean acceptRootObjects(boolean extended, DBObjectType objectType) {

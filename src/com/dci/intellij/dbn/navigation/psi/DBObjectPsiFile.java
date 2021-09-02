@@ -38,7 +38,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class DBObjectPsiFile implements PsiFile, Disposable {
     private final DBObjectRef<?> objectRef;
@@ -63,7 +63,7 @@ public class DBObjectPsiFile implements PsiFile, Disposable {
     @Override
     @NotNull
     public String getName() {
-        return objectRef.objectName;
+        return objectRef.getObjectName();
     }
 
     @Override

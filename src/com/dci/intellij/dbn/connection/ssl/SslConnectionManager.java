@@ -5,20 +5,20 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSslSettings;
 import com.intellij.openapi.application.ApplicationManager;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 public class SslConnectionManager implements ApplicationComponent {
-    private final Map<String, SslConnection> sslConnectors = new THashMap<String, SslConnection>();
+    private final Map<String, SslConnection> sslConnectors = new HashMap<>();
 
     public static SslConnectionManager getInstance() {
         return ApplicationManager.getApplication().getComponent(SslConnectionManager.class);
     }
 
-    public SslConnection ensureSslConnection(ConnectionSettings connectionSettings) throws Exception {
+    public SslConnection ensureSslConnection(ConnectionSettings connectionSettings) {
         ConnectionSslSettings sslSettings = connectionSettings.getSslSettings();
         if (sslSettings.isActive()) {
             String certificateAuthorityFilePath = sslSettings.getCertificateAuthorityFile();

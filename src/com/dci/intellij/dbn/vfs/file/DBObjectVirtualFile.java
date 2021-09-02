@@ -20,7 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -77,7 +77,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
     @Override
     public String getPresentablePath() {
         return getConnectionHandler().getName() + File.separatorChar +
-                getObjectRef().objectType.getListName() + File.separatorChar +
+                getObjectRef().getObjectType().getListName() + File.separatorChar +
                 getObjectRef().getQualifiedName();
     }
 
@@ -118,7 +118,7 @@ public class DBObjectVirtualFile<T extends DBObject> extends DBVirtualFileImpl {
 
     @Override
     public Icon getIcon() {
-        return objectRef.objectType.getIcon();
+        return objectRef.getObjectType().getIcon();
     }
 
     @Override

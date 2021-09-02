@@ -224,7 +224,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj);
+        return this == obj;
     }
 
     @Override

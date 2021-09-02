@@ -21,22 +21,22 @@ import com.dci.intellij.dbn.object.DBTypeAttribute;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.project.Project;
-import gnu.trove.THashSet;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class MethodExecutionInput extends LocalExecutionInput implements Comparable<MethodExecutionInput>, Cloneable<MethodExecutionInput> {
     private DBObjectRef<DBMethod> method;
-    private Set<MethodExecutionArgumentValue> argumentValues = new THashSet<>();
 
-    private MethodExecutionResult executionResult;
-    private final List<ArgumentValue> inputArgumentValues = new ArrayList<>();
+    private transient MethodExecutionResult executionResult;
+    private final List<ArgumentValue> argumentValues = new ArrayList<>();
+    private Map<String, MethodExecutionArgumentValue> argumentValueHistory = new HashMap<>();
 
     public MethodExecutionInput(Project project) {
         super(project, ExecutionTarget.METHOD);
@@ -76,7 +76,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
             @NotNull
             @Override
             public String getTargetName() {
-                return method.objectType.getName() + " " + method.objectName;
+                return method.getObjectType().getName() + " " + method.getObjectName();
             }
 
             @Nullable
@@ -182,24 +182,24 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         return (String) argumentValue.getValue();
     }
 
-    public List<ArgumentValue> getInputArgumentValues() {
-        return inputArgumentValues;
+    public List<ArgumentValue> getArgumentValues() {
+        return argumentValues;
     }
 
     private ArgumentValue getArgumentValue(@NotNull DBArgument argument) {
-        for (ArgumentValue argumentValue : inputArgumentValues) {
+        for (ArgumentValue argumentValue : argumentValues) {
             if (Safe.equal(argument, argumentValue.getArgument())) {
                 return argumentValue;
             }
         }
         ArgumentValue argumentValue = new ArgumentValue(argument, null);
         argumentValue.setValueHolder(getExecutionVariable(argumentValue.getName()));
-        inputArgumentValues.add(argumentValue);
+        argumentValues.add(argumentValue);
         return argumentValue;
     }
 
     private ArgumentValue getArgumentValue(DBArgument argument, DBTypeAttribute attribute) {
-        for (ArgumentValue argumentValue : inputArgumentValues) {
+        for (ArgumentValue argumentValue : argumentValues) {
             if (Safe.equal(argumentValue.getArgument(), argument) &&
                     Safe.equal(argumentValue.getAttribute(), attribute)) {
                 return argumentValue;
@@ -208,23 +208,23 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
 
         ArgumentValue argumentValue = new ArgumentValue(argument, attribute, null);
         argumentValue.setValueHolder(getExecutionVariable(argumentValue.getName()));
-        inputArgumentValues.add(argumentValue);
+        argumentValues.add(argumentValue);
         return argumentValue;
     }
 
-    private synchronized MethodExecutionArgumentValue getExecutionVariable(String name) {
-        for (MethodExecutionArgumentValue executionVariable : argumentValues) {
+    private MethodExecutionArgumentValue getExecutionVariable(String name) {
+        for (MethodExecutionArgumentValue executionVariable : argumentValueHistory.values()) {
             if (StringUtil.equalsIgnoreCase(executionVariable.getName(), name)) {
                 return executionVariable;
             }
         }
         MethodExecutionArgumentValue executionVariable = new MethodExecutionArgumentValue(name);
-        argumentValues.add(executionVariable);
+        argumentValueHistory.put(executionVariable.getName(), executionVariable);
         return executionVariable;
     }
 
-    public Set<MethodExecutionArgumentValue> getArgumentValues() {
-        return argumentValues;
+    public Map<String, MethodExecutionArgumentValue> getArgumentValueHistory() {
+        return argumentValueHistory;
     }
 
     @Nullable
@@ -246,10 +246,9 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         targetSchemaId = SchemaId.get(element.getAttributeValue("execution-schema"));;
         Element argumentsElement = element.getChild("argument-actions");
         if (argumentsElement != null) {
-            for (Object object : argumentsElement.getChildren()) {
-                Element argumentElement = (Element) object;
-                MethodExecutionArgumentValue variable = new MethodExecutionArgumentValue(argumentElement);
-                argumentValues.add(variable);
+            for (Element valueElement : argumentsElement.getChildren()) {
+                MethodExecutionArgumentValue argumentValue = new MethodExecutionArgumentValue(valueElement);
+                argumentValueHistory.put(argumentValue.getName(), argumentValue);
             }
         }
     }
@@ -263,7 +262,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         Element argumentsElement = new Element("argument-actions");
         element.addContent(argumentsElement);
 
-        for (MethodExecutionArgumentValue executionVariable : argumentValues) {
+        for (MethodExecutionArgumentValue executionVariable : argumentValueHistory.values()) {
             Element argumentElement = new Element("argument");
             executionVariable.writeState(argumentElement);
             argumentsElement.addContent(argumentElement);
@@ -278,28 +277,16 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof MethodExecutionInput) {
-            MethodExecutionInput executionInput = (MethodExecutionInput) obj;
-            return method.equals(executionInput.method);
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return method.hashCode();
-    }
-
-    @Override
     public MethodExecutionInput clone() {
         MethodExecutionInput clone = new MethodExecutionInput(getProject());
         clone.method = method;
         clone.targetSchemaId = targetSchemaId;
         clone.setOptions(getOptions().clone());
-        clone.argumentValues = new THashSet<>();
-        for (MethodExecutionArgumentValue executionVariable : argumentValues) {
-            clone.argumentValues.add(executionVariable.clone());
+        clone.argumentValueHistory = new HashMap<>();
+        for (MethodExecutionArgumentValue executionVariable : argumentValueHistory.values()) {
+            clone.argumentValueHistory.put(
+                    executionVariable.getName(),
+                    executionVariable.clone());
         }
         return clone;
     }

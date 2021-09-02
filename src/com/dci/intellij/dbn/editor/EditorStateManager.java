@@ -30,12 +30,12 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import gnu.trove.THashMap;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +46,7 @@ import java.util.Map;
 public class EditorStateManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.EditorStateManager";
 
-    private final Map<DBObjectType, EditorProviderId> lastUsedEditorProviders = new THashMap<>();
+    private final Map<DBObjectType, EditorProviderId> lastUsedEditorProviders = new HashMap<>();
     private EditorStateManager(Project project) {
         super(project);
 
@@ -177,9 +177,9 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
         lastUsedEditorProviders.clear();
         Element editorProvidersElement = element.getChild("last-used-providers");
         if (editorProvidersElement != null) {
-            for (Element objectTypeElement : editorProvidersElement.getChildren()) {
-                DBObjectType objectType = SettingsSupport.getEnumAttribute(objectTypeElement, "object-type", DBObjectType.class);
-                EditorProviderId editorProviderId = SettingsSupport.getEnumAttribute(objectTypeElement, "editor-provider", EditorProviderId.class);
+            for (Element child : editorProvidersElement.getChildren()) {
+                DBObjectType objectType = SettingsSupport.getEnumAttribute(child, "object-type", DBObjectType.class);
+                EditorProviderId editorProviderId = SettingsSupport.getEnumAttribute(child, "editor-provider", EditorProviderId.class);
                 lastUsedEditorProviders.put(objectType, editorProviderId);
             }
         }

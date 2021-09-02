@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.options.UnnamedConfigurable;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public interface DatasetFilter extends UnnamedConfigurable, PersistentConfiguration {
     Icon getIcon();
@@ -17,7 +17,7 @@ public interface DatasetFilter extends UnnamedConfigurable, PersistentConfigurat
     String getVolatileName();
     ConnectionId getConnectionId();
     String getDatasetName();
-    boolean isNew();
+    boolean isPersisted();
     boolean isTemporary();
     boolean isIgnored();
     DatasetFilterType getFilterType();

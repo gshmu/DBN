@@ -1,10 +1,13 @@
 package com.dci.intellij.dbn.data.model.basic;
 
+import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.type.GenericDataType;
+import lombok.Data;
 import org.jetbrains.annotations.NotNull;
 
+@Data
 public class BasicColumnInfo implements ColumnInfo {
     protected String name;
     protected int columnIndex;
@@ -17,19 +20,9 @@ public class BasicColumnInfo implements ColumnInfo {
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public int getColumnIndex() {
-        return columnIndex;
-    }
-
-    @Override
     @NotNull
     public DBDataType getDataType() {
-        return dataType;
+        return Failsafe.nn(dataType);
     }
 
     @Override
@@ -39,7 +32,13 @@ public class BasicColumnInfo implements ColumnInfo {
 
     @Override
     public boolean isSortable() {
-        return dataType.isNative() && dataType.getGenericDataType().is(GenericDataType.LITERAL, GenericDataType.NUMERIC, GenericDataType.DATE_TIME);
+        DBDataType dataType = getDataType();
+        return dataType.isNative() &&
+                dataType.getGenericDataType().is(
+                        GenericDataType.LITERAL,
+                        GenericDataType.NUMERIC,
+                        GenericDataType.DATE_TIME);
     }
+
 
 }

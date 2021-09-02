@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class ObjectLookupItemBuilder extends LookupItemBuilder {
     private final DBLanguage language;
@@ -89,7 +89,7 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
 
     @Override
     public CharSequence getText(CodeCompletionContext context) {
-        String text = objectRef.objectName;
+        String text = objectRef.getObjectName();
         if (StringUtil.isNotEmptyOrSpaces(text)) {
             DBObject object = getObject();
             if (object instanceof DBVirtualObject && text.contains(CodeCompletionContributor.DUMMY_TOKEN)) {
@@ -135,6 +135,6 @@ public class ObjectLookupItemBuilder extends LookupItemBuilder {
     @Override
     public Icon getIcon() {
         DBObject object = getObject();
-        return object == null ? objectRef.objectType.getIcon() : object.getIcon();
+        return object == null ? objectRef.getObjectType().getIcon() : object.getIcon();
     }
 }

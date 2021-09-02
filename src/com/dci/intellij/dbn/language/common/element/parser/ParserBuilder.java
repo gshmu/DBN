@@ -17,8 +17,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 public class ParserBuilder {
-    private PsiBuilder builder;
-    private Map<TokenPairTemplate, TokenPairRangeMonitor> tokenPairRangeMonitors;
+    private final PsiBuilder builder;
+    private final Map<TokenPairTemplate, TokenPairRangeMonitor> tokenPairRangeMonitors;
     private String cachedTokenText;
 
 

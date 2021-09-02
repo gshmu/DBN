@@ -26,8 +26,10 @@ import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTree;
+import java.awt.BorderLayout;
 import java.util.List;
 
 public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExecutionResult> {
@@ -47,7 +49,7 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
 
     public MethodExecutionResultForm(@NotNull MethodExecutionResult executionResult) {
         super(executionResult);
-        List<ArgumentValue> inputArgumentValues = executionResult.getExecutionInput().getInputArgumentValues();
+        List<ArgumentValue> inputArgumentValues = executionResult.getExecutionInput().getArgumentValues();
         List<ArgumentValue> outputArgumentValues = executionResult.getArgumentValues();
         argumentValuesTree = new ArgumentValuesTree(this, inputArgumentValues, outputArgumentValues);
         argumentValuesScrollPane.getViewport().add(argumentValuesTree);
@@ -81,7 +83,7 @@ public class MethodExecutionResultForm extends ExecutionResultFormBase<MethodExe
 
     private void updateArgumentValueTree() {
         MethodExecutionResult executionResult = getExecutionResult();
-        List<ArgumentValue> inputArgumentValues = executionResult.getExecutionInput().getInputArgumentValues();
+        List<ArgumentValue> inputArgumentValues = executionResult.getExecutionInput().getArgumentValues();
         List<ArgumentValue> outputArgumentValues = executionResult.getArgumentValues();
 
         DBMethod method = executionResult.getMethod();

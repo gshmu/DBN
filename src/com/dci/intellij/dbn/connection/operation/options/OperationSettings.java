@@ -12,13 +12,17 @@ import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@EqualsAndHashCode(callSuper = false)
 public class OperationSettings extends CompositeProjectConfiguration<ProjectSettings, OperationsSettingsForm> implements TopLevelConfig {
-    private TransactionManagerSettings transactionManagerSettings = new TransactionManagerSettings(this);
-    private SessionBrowserSettings sessionBrowserSettings         = new SessionBrowserSettings(this);
-    private CompilerSettings compilerSettings                     = new CompilerSettings(this);
-    private DebuggerSettings debuggerSettings                     = new DebuggerSettings(this);
+    private final TransactionManagerSettings transactionManagerSettings = new TransactionManagerSettings(this);
+    private final SessionBrowserSettings sessionBrowserSettings         = new SessionBrowserSettings(this);
+    private final CompilerSettings compilerSettings                     = new CompilerSettings(this);
+    private final DebuggerSettings debuggerSettings                     = new DebuggerSettings(this);
 
 
     public OperationSettings(ProjectSettings parent) {
@@ -54,26 +58,6 @@ public class OperationSettings extends CompositeProjectConfiguration<ProjectSett
     @Override
     public OperationSettings getOriginalSettings() {
         return getInstance(getProject());
-    }
-
-    /*********************************************************
-     *                        Custom                         *
-     *********************************************************/
-
-    public TransactionManagerSettings getTransactionManagerSettings() {
-       return transactionManagerSettings;
-    }
-
-    public SessionBrowserSettings getSessionBrowserSettings() {
-        return sessionBrowserSettings;
-    }
-
-    public CompilerSettings getCompilerSettings() {
-        return compilerSettings;
-    }
-
-    public DebuggerSettings getDebuggerSettings() {
-        return debuggerSettings;
     }
 
     /*********************************************************

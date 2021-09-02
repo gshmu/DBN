@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.common.DBObject;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 
 import java.util.ArrayList;
@@ -19,18 +20,18 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class SelectStatementGenerator extends StatementGenerator {
-    private AliasBundle aliases = new AliasBundle();
-    private List<DBObject> objects;
-    private boolean enforceAliasUsage;
+    private final AliasBundle aliases = new AliasBundle();
+    private final List<DBObjectRef> objects;
+    private final boolean enforceAliasUsage;
 
     public SelectStatementGenerator(DBDataset dataset) {
-        objects = new ArrayList<DBObject>();
-        objects.add(dataset);
+        objects = new ArrayList<>();
+        objects.add(dataset.getRef());
         enforceAliasUsage = false;
     }
 
     public SelectStatementGenerator(List<DBObject> objects, boolean enforceAliasUsage) {
-        this.objects = objects;
+        this.objects = DBObjectRef.from(objects);
         this.enforceAliasUsage = enforceAliasUsage;
     }
 
@@ -39,10 +40,10 @@ public class SelectStatementGenerator extends StatementGenerator {
         StatementGeneratorResult result = new StatementGeneratorResult();
         MessageBundle messages = result.getMessages();
 
-        Set<DBDataset> datasets = new TreeSet<DBDataset>(DATASET_COMPARATOR);
-        Set<DBColumn> columns = new TreeSet<DBColumn>(COLUMN_COMPARATOR);
+        Set<DBDataset> datasets = new TreeSet<>(DATASET_COMPARATOR);
+        Set<DBColumn> columns = new TreeSet<>(COLUMN_COMPARATOR);
 
-        for (DBObject object : objects) {
+        for (DBObject object : DBObjectRef.get(objects)) {
             if (object instanceof DBColumn) {
                 DBColumn column = (DBColumn) object;
                 columns.add(column);
@@ -153,23 +154,15 @@ public class SelectStatementGenerator extends StatementGenerator {
     }
 
 
-    private static final Comparator<DBDataset> DATASET_COMPARATOR = new Comparator<DBDataset>() {
-        @Override
-        public int compare(DBDataset dataset1, DBDataset dataset2) {
-            return dataset1.getName().compareTo(dataset2.getName());
-        }
-    };
+    private static final Comparator<DBDataset> DATASET_COMPARATOR = Comparator.comparing(DBDataset::getName);
 
-    private static final Comparator<DBColumn> COLUMN_COMPARATOR = new Comparator<DBColumn>() {
-        @Override
-        public int compare(DBColumn column1, DBColumn column2) {
-            DBDataset dataset1 = column1.getDataset();
-            DBDataset dataset2 = column2.getDataset();
-            if (dataset1.equals(dataset2)) {
-                return column1.getName().compareTo(column2.getName());
-            }
-            return dataset1.getName().compareTo(dataset2.getName());
+    private static final Comparator<DBColumn> COLUMN_COMPARATOR = (column1, column2) -> {
+        DBDataset dataset1 = column1.getDataset();
+        DBDataset dataset2 = column2.getDataset();
+        if (dataset1.equals(dataset2)) {
+            return column1.getName().compareTo(column2.getName());
         }
+        return dataset1.getName().compareTo(dataset2.getName());
     };
 
 }

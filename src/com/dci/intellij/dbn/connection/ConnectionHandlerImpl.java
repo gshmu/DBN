@@ -48,7 +48,7 @@ import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
@@ -82,7 +82,7 @@ public class ConnectionHandlerImpl extends StatefulDisposable.Base implements Co
                 return new AuthenticationInfo(databaseSettings, true);
             });
 
-    private final MapLatent<SessionId, StatementExecutionQueue, RuntimeException> executionQueues =
+    private final MapLatent<SessionId, StatementExecutionQueue> executionQueues =
             MapLatent.create(key -> new StatementExecutionQueue(ConnectionHandlerImpl.this));
 
     private final Latent<DBConnectionPsiDirectory> psiDirectory =
