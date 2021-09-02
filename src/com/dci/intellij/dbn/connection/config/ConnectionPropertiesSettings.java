@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionPropertiesSettingsForm;
 import com.intellij.openapi.diagnostic.Logger;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
@@ -19,6 +20,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoo
 
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = false)
 public class ConnectionPropertiesSettings extends BasicProjectConfiguration<ConnectionSettings, ConnectionPropertiesSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
 
@@ -60,7 +62,7 @@ public class ConnectionPropertiesSettings extends BasicProjectConfiguration<Conn
                         propertyElement.getAttributeValue("value"));
             }
         }
-        getParent().getDatabaseSettings().updateHashCode();
+        getParent().getDatabaseSettings().updateSignature();
     }
 
     @Override

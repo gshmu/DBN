@@ -6,9 +6,15 @@ import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.execution.compiler.CompileDependenciesOption;
 import com.dci.intellij.dbn.execution.compiler.CompileType;
 import com.dci.intellij.dbn.execution.compiler.options.ui.CompilerSettingsForm;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class CompilerSettings extends BasicConfiguration<OperationSettings, CompilerSettingsForm> {
     private CompileType compileType = CompileType.KEEP;
     private CompileDependenciesOption compileDependenciesOption = CompileDependenciesOption.ASK;
@@ -26,34 +32,6 @@ public class CompilerSettings extends BasicConfiguration<OperationSettings, Comp
     @Override
     public String getHelpTopic() {
         return "executionEngine";
-    }
-
-    /*********************************************************
-    *                       Settings                        *
-    *********************************************************/
-
-    public CompileType getCompileType() {
-        return compileType;
-    }
-
-    public void setCompileType(CompileType compileType) {
-        this.compileType = compileType;
-    }
-
-    public CompileDependenciesOption getCompileDependenciesOption() {
-        return compileDependenciesOption;
-    }
-
-    public void setCompileDependenciesOption(CompileDependenciesOption compileDependenciesOption) {
-        this.compileDependenciesOption = compileDependenciesOption;
-    }
-
-    public boolean alwaysShowCompilerControls() {
-        return alwaysShowCompilerControls;
-    }
-
-    public void setAlwaysShowCompilerControls(boolean alwaysShowCompilerControls) {
-        this.alwaysShowCompilerControls = alwaysShowCompilerControls;
     }
 
     /****************************************************

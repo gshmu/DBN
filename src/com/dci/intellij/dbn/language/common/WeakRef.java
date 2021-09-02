@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.language.common;
 
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
+import com.dci.intellij.dbn.common.util.Safe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,5 +37,20 @@ public class WeakRef<T> extends WeakReference<T> {
     @Override
     public void clear() {
         super.clear();
+    }
+
+    @Override
+    public int hashCode() {
+        T referent = get();
+        return referent == null ? -1 : referent.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof WeakRef) {
+            WeakRef that = (WeakRef) obj;
+            return Safe.equal(this, that, ref -> ref.get());
+        }
+        return false;
     }
 }

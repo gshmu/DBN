@@ -1,9 +1,16 @@
 package com.dci.intellij.dbn.database.common.debug;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true)
 public class DebuggerRuntimeInfo extends BasicOperationInfo {
     private String ownerName;
     private String programName;
@@ -21,42 +28,6 @@ public class DebuggerRuntimeInfo extends BasicOperationInfo {
         this.programName = programName;
         this.namespace = namespace;
         this.lineNumber = Math.max(lineNumber -1, 0) ;
-    }
-
-    public String getOwnerName() {
-        return ownerName;
-    }
-
-    public String getProgramName() {
-        return programName;
-    }
-
-    public int getLineNumber() {
-        return lineNumber;
-    }
-
-    public boolean isTerminated() {
-        return terminated;
-    }
-
-    public int getBreakpointId() {
-        return breakpointId;
-    }
-
-    public Integer getNamespace() {
-        return namespace;
-    }
-
-    public int getReason() {
-        return reason;
-    }
-
-    public Integer getFrameIndex() {
-        return frameIndex;
-    }
-
-    public void setFrameIndex(Integer frameIndex) {
-        this.frameIndex = frameIndex;
     }
 
     @Override
@@ -81,27 +52,6 @@ public class DebuggerRuntimeInfo extends BasicOperationInfo {
         breakpointId = statement.getInt(6);
         reason = statement.getInt(7);
         error = statement.getString(8);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        DebuggerRuntimeInfo that = (DebuggerRuntimeInfo) o;
-
-        if (ownerName != null ? !ownerName.equals(that.ownerName) : that.ownerName != null) return false;
-        if (programName != null ? !programName.equals(that.programName) : that.programName != null) return false;
-        return lineNumber.equals(that.lineNumber);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = ownerName != null ? ownerName.hashCode() : 0;
-        result = 31 * result + (programName != null ? programName.hashCode() : 0);
-        result = 31 * result + lineNumber.hashCode();
-        return result;
     }
 }
 

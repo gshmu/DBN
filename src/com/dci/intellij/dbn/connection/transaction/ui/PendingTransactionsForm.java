@@ -8,6 +8,7 @@ import com.dci.intellij.dbn.common.ui.DBNFormImpl;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.connection.ConnectionBundle;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionManager;
 import com.dci.intellij.dbn.connection.ConnectionType;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
@@ -19,8 +20,10 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.ui.SimpleTextAttributes;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +35,7 @@ public class PendingTransactionsForm extends DBNFormImpl {
     private JList<ConnectionHandler> connectionsList;
     private final List<ConnectionHandler> connectionHandlers = new ArrayList<>();
 
-    private final Map<ConnectionHandler, PendingTransactionsDetailForm> uncommittedChangeForms = DisposableContainer.map(this);
+    private final Map<ConnectionId, PendingTransactionsDetailForm> uncommittedChangeForms = DisposableContainer.map(this);
 
     PendingTransactionsForm(PendingTransactionsDialog parentComponent) {
         super(parentComponent);
@@ -90,10 +93,11 @@ public class PendingTransactionsForm extends DBNFormImpl {
     public void showChangesForm(ConnectionHandler connectionHandler) {
         detailsPanel.removeAll();
         if (connectionHandler != null) {
-            PendingTransactionsDetailForm pendingTransactionsForm = uncommittedChangeForms.get(connectionHandler);
+            ConnectionId connectionId = connectionHandler.getConnectionId();
+            PendingTransactionsDetailForm pendingTransactionsForm = uncommittedChangeForms.get(connectionId);
             if (pendingTransactionsForm == null) {
                 pendingTransactionsForm = new PendingTransactionsDetailForm(this, connectionHandler, null, true);
-                uncommittedChangeForms.put(connectionHandler, pendingTransactionsForm);
+                uncommittedChangeForms.put(connectionId, pendingTransactionsForm);
             }
             detailsPanel.add(pendingTransactionsForm.getComponent(), BorderLayout.CENTER);
         }

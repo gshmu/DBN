@@ -4,9 +4,13 @@ import com.dci.intellij.dbn.common.option.ConfirmationOptionHandler;
 import com.dci.intellij.dbn.common.option.InteractiveOptionBroker;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.editor.code.options.ui.CodeEditorConfirmationSettingsForm;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@EqualsAndHashCode(callSuper = false)
 public class CodeEditorConfirmationSettings extends BasicConfiguration<CodeEditorSettings, CodeEditorConfirmationSettingsForm> {
     public static final String REMEMBER_OPTION_HINT = ""; //"\n\n(you can remember your option and change it at any time in Settings > Operations > Session Manager)";
 
@@ -48,22 +52,6 @@ public class CodeEditorConfirmationSettings extends BasicConfiguration<CodeEdito
         return "codeEditorConfirmationSettings";
     }
 
-
-    /*********************************************************
-     *                       Settings                        *
-     *********************************************************/
-
-    public ConfirmationOptionHandler getSaveChanges() {
-        return saveChanges;
-    }
-
-    public ConfirmationOptionHandler getRevertChanges() {
-        return revertChanges;
-    }
-
-    public InteractiveOptionBroker<CodeEditorChangesOption> getExitOnChanges() {
-        return exitOnChanges;
-    }
 
     /****************************************************
      *                   Configuration                  *

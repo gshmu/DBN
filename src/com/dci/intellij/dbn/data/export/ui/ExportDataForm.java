@@ -22,8 +22,14 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import java.awt.Color;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.nio.charset.Charset;
@@ -277,7 +283,7 @@ public class ExportDataForm extends DBNFormImpl {
         fileLocationTextField.setEnabled(destinationFileRadioButton.isSelected());
         encodingComboBox.setEnabled(destinationFileRadioButton.isSelected() && supportsFileEncoding);
 
-        String fileNameBase = sourceObject == null ? instructions.getBaseName() : sourceObject.objectName;
+        String fileNameBase = sourceObject == null ? instructions.getBaseName() : sourceObject.getObjectName();
         if (fileNameBase != null && processor != null) {
             String fileName = fileNameBase + "." + processor.getFileExtension();
             fileNameTextField.setText(fileName);

@@ -6,14 +6,18 @@ import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.jdesktop.swingx.util.OS;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.UUID;
 
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class CmdLineInterface extends CommonUtil implements Cloneable<CmdLineInterface>, PersistentConfiguration, Presentable {
     public static final String DEFAULT_ID = "DEFAULT";
 
@@ -60,18 +64,6 @@ public class CmdLineInterface extends CommonUtil implements Cloneable<CmdLineInt
         this.description = description;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public DatabaseType getDatabaseType() {
-        return databaseType;
-    }
-
-    public String getExecutablePath() {
-        return executablePath;
-    }
-
     @Nullable
     @Override
     public Icon getIcon() {
@@ -88,18 +80,6 @@ public class CmdLineInterface extends CommonUtil implements Cloneable<CmdLineInt
     @Override
     public String getDescription() {
         return CommonUtil.nvl(description, executablePath);
-    }
-
-    public void setDatabaseType(DatabaseType databaseType) {
-        this.databaseType = databaseType;
-    }
-
-    public void setExecutablePath(String executablePath) {
-        this.executablePath = executablePath;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Override

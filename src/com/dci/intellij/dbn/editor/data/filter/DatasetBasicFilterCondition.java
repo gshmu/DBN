@@ -11,6 +11,9 @@ import com.dci.intellij.dbn.database.DatabaseMetadataInterface;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetBasicFilterConditionForm;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,6 +21,9 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.StringTokenizer;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class DatasetBasicFilterCondition extends BasicConfiguration<DatasetBasicFilter, DatasetBasicFilterConditionForm> {
 
     private String columnName = "";
@@ -53,38 +59,6 @@ public class DatasetBasicFilterCondition extends BasicConfiguration<DatasetBasic
     @Override
     public String getDisplayName() {
         return null;
-    }
-
-    public String getColumnName() {
-        return columnName;
-    }
-
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
-    }
-
-    public ConditionOperator getOperator() {
-        return operator;
-    }
-
-    public void setOperator(ConditionOperator operator) {
-        this.operator = operator;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public void appendConditionString(StringBuilder buffer, DBDataset dataset) {

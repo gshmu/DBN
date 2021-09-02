@@ -17,6 +17,8 @@ import com.dci.intellij.dbn.object.common.DBObjectBundle;
 import com.dci.intellij.dbn.object.common.DBVirtualObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.project.Project;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,11 +29,13 @@ import java.util.StringTokenizer;
 
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.PS;
 
+@Getter
+@Setter
 public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>, PersistentStateElement, ConnectionProvider {
-    public short overload;
-    public DBObjectRef<?> parent;
-    public DBObjectType objectType;
-    public String objectName;
+    private short overload;
+    private DBObjectRef<?> parent;
+    private DBObjectType objectType;
+    private String objectName;
     protected ConnectionId connectionId;
 
     private WeakRef<T> reference;
@@ -72,18 +76,6 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
 
     public DBObjectRef() {
 
-    }
-
-    public String getObjectName() {
-        return objectName;
-    }
-
-    public void setObjectName(String objectName) {
-        this.objectName = objectName;
-    }
-
-    public DBObjectType getObjectType() {
-        return objectType;
     }
 
     public DBObject getParentObject(DBObjectType objectType) {
@@ -305,7 +297,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return Failsafe.nn(object);
     }
 
-    public static List<DBObject> get(List<DBObjectRef<?>> objectRefs) {
+    public static List<DBObject> get(List<DBObjectRef> objectRefs) {
         List<DBObject> objects = new ArrayList<>(objectRefs.size());
         for (DBObjectRef<?> objectRef : objectRefs) {
             objects.add(get(objectRef));
@@ -313,16 +305,16 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         return objects;
     }
 
-    public static List<DBObject> ensure(List<DBObjectRef<?>> objectRefs) {
+    public static List<DBObject> ensure(List<DBObjectRef> objectRefs) {
         List<DBObject> objects = new ArrayList<>(objectRefs.size());
-        for (DBObjectRef<?> objectRef : objectRefs) {
+        for (DBObjectRef objectRef : objectRefs) {
             objects.add(ensure(objectRef));
         }
         return objects;
     }
 
-    public static List<DBObjectRef<?>> from(List<DBObject> objects) {
-        List<DBObjectRef<?>> objectRefs = new ArrayList<>(objects.size());
+    public static List<DBObjectRef> from(List<DBObject> objects) {
+        List<DBObjectRef> objectRefs = new ArrayList<>(objects.size());
         for (DBObject object : objects) {
             objectRefs.add(of(object));
         }
@@ -479,7 +471,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         if (o == null || getClass() != o.getClass()) return false;
 
         DBObjectRef<?> that = (DBObjectRef<?>) o;
-        return this.hashCode() == that.hashCode();
+        return this.serializeFull().equals(that.serializeFull());
     }
 
     @Override
@@ -488,11 +480,16 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     @Override
-    public synchronized int hashCode() {
+    public int hashCode() {
         if (hashCode == -1) {
-            hashCode = (getConnectionId() + PS + serialize()).hashCode();
+            hashCode = serializeFull().hashCode();
         }
         return hashCode;
+    }
+
+    @NotNull
+    private String serializeFull() {
+        return getConnectionId() + PS + serialize();
     }
 
     /*

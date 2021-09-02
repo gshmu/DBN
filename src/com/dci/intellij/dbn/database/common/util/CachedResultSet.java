@@ -39,13 +39,12 @@ public class CachedResultSet extends StatefulDisposable.Base implements ResultSe
         }
     };
 
-    private final MapLatent<Condition, CachedResultSet, RuntimeException> filtered = MapLatent.create(condition -> {
+    private final MapLatent<Condition, CachedResultSet> filtered = MapLatent.create(condition -> {
         if (rows.isEmpty()) {
             return this;
         } else {
             List<CachedResultSetRow> filteredRows = new ArrayList<>();
-            for (int i = 0; i < rows.size(); i++) {
-                CachedResultSetRow element = rows.get(i);
+            for (CachedResultSetRow element : rows) {
                 try {
                     if (condition.evaluate(element)) {
                         filteredRows.add(element);
@@ -58,7 +57,7 @@ public class CachedResultSet extends StatefulDisposable.Base implements ResultSe
         }
     });
 
-    private final MapLatent<Columns, CachedResultSet, RuntimeException> grouped = MapLatent.create(columns -> {
+    private final MapLatent<Columns, CachedResultSet> grouped = MapLatent.create(columns -> {
         if (rows.isEmpty()) {
             return this;
         } else {

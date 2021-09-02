@@ -1,15 +1,22 @@
 package com.dci.intellij.dbn.data.model;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
+@Setter
+@EqualsAndHashCode
 public class DataModelState {
     protected Map<String, String> contentTypesMap;
-    private boolean isReadonly;
+    private boolean readonly;
     private int rowCount;
 
     public void setTextContentType(String columnName, String contentTypeName) {
-        if (contentTypesMap == null) contentTypesMap = new HashMap<String, String>();
+        if (contentTypesMap == null) contentTypesMap = new HashMap<>();
         contentTypesMap.put(columnName, contentTypeName);
     }
 
@@ -18,44 +25,5 @@ public class DataModelState {
             return contentTypesMap.get(columnName);
         }
         return null;
-    }
-
-    public boolean isReadonly() {
-        return isReadonly;
-    }
-
-    public void setReadonly(boolean readonly) {
-        isReadonly = readonly;
-    }
-
-    public int getRowCount() {
-        return rowCount;
-    }
-
-    public void setRowCount(int rowCount) {
-        this.rowCount = rowCount;
-    }
-
-    /*****************************************************************
-     *                     equals / hashCode                         *
-     *****************************************************************/
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        DataModelState that = (DataModelState) o;
-
-        if (isReadonly != that.isReadonly) return false;
-        if (rowCount != that.rowCount) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (isReadonly ? 1 : 0);
-        result = 31 * result + rowCount;
-        return result;
     }
 }

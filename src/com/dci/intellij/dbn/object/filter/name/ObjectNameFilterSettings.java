@@ -8,6 +8,9 @@ import com.dci.intellij.dbn.connection.config.ConnectionRef;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.filter.name.ui.ObjectNameFilterSettingsForm;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,25 +18,35 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class ObjectNameFilterSettings
         extends BasicProjectConfiguration<ConnectionFilterSettings, ObjectNameFilterSettingsForm>
         implements TreeModel {
 
-    private final List<ObjectNameFilter> filters = new ArrayList<ObjectNameFilter>();
+    private final List<ObjectNameFilter> filters = new ArrayList<>();
     private final Map<DBObjectType, Filter<DBObject>> objectFilterMap = new EnumMap<>(DBObjectType.class);
+
+    @EqualsAndHashCode.Exclude
     private final ConnectionRef connectionRef;
+
+    @EqualsAndHashCode.Exclude
+    private final Set<TreeModelListener> listeners = new HashSet<>();
+
 
     public ObjectNameFilterSettings(ConnectionFilterSettings parent, ConnectionRef connectionRef) {
         super(parent);
         this.connectionRef = connectionRef;
     }
-
-    public List<ObjectNameFilter> getFilters() {
-        return filters;
-    }
-
 
     public ConnectionId getConnectionId() {
         return connectionRef.getConnectionId();
@@ -94,10 +107,9 @@ public class ObjectNameFilterSettings
     public void readConfiguration(Element element) {
         filters.clear();
         objectFilterMap.clear();
-        for (Object o : element.getChildren()) {
-            Element filterElement = (Element) o;
+        for (Element child : element.getChildren()) {
             ObjectNameFilter filter = new ObjectNameFilter(this);
-            filter.readConfiguration(filterElement);
+            filter.readConfiguration(child);
             filters.add(filter);
             objectFilterMap.put(filter.getObjectType(), filter);
         }
@@ -115,8 +127,6 @@ public class ObjectNameFilterSettings
     /*********************************************************
      *                       TreeModel                       *
      *********************************************************/
-    private final Set<TreeModelListener> listeners = new HashSet<>();
-
     @Override
     public Object getRoot() {
         return this;
@@ -229,7 +239,7 @@ public class ObjectNameFilterSettings
 
 
     public TreePath createTreePath(Object object) {
-        List path = new ArrayList();
+        List<Object> path = new ArrayList<>();
         if (object instanceof FilterCondition) {
             FilterCondition condition = (FilterCondition) object;
             path.add(condition);

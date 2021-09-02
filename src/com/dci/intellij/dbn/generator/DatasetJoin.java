@@ -2,19 +2,20 @@ package com.dci.intellij.dbn.generator;
 
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.util.text.StringUtil;
 
 import java.util.HashMap;
 import java.util.Map;
 
 class DatasetJoin {
-    private DBDataset dataset1;
-    private DBDataset dataset2;
+    private final DBObjectRef<DBDataset> dataset1;
+    private final DBObjectRef<DBDataset> dataset2;
     private Map<DBColumn, DBColumn> mappings;
 
     DatasetJoin(DBDataset dataset1, DBDataset dataset2, boolean lenient) {
-        this.dataset1 = dataset1;
-        this.dataset2 = dataset2;
+        this.dataset1 = DBObjectRef.of(dataset1);
+        this.dataset2 = DBObjectRef.of(dataset2);
 
         joinByReference(dataset1, dataset2);
         joinByReference(dataset2, dataset1);
@@ -57,7 +58,7 @@ class DatasetJoin {
 
     protected boolean contains(DBDataset... datasets) {
         for (DBDataset dataset : datasets) {
-            if (!dataset1.equals(dataset) && !dataset2.equals(dataset)) {
+            if (!dataset1.equals(dataset.getRef()) && !dataset2.equals(dataset.getRef())) {
                 return false;
             }
         }
@@ -66,11 +67,11 @@ class DatasetJoin {
     }
 
     public DBDataset getDataset1() {
-        return dataset1;
+        return DBObjectRef.get(dataset1);
     }
 
     public DBDataset getDataset2() {
-        return dataset2;
+        return DBObjectRef.get(dataset2);
     }
 
     public Map<DBColumn, DBColumn> getMappings() {

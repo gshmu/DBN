@@ -8,11 +8,15 @@ import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@EqualsAndHashCode(callSuper = false)
 public class DDLFileSettings extends CompositeProjectConfiguration<ProjectSettings, DDFileSettingsForm> implements TopLevelConfig {
-    private DDLFileExtensionSettings extensionSettings = new DDLFileExtensionSettings(this);
-    private DDLFileGeneralSettings generalSettings     = new DDLFileGeneralSettings(this);
+    private final DDLFileExtensionSettings extensionSettings = new DDLFileExtensionSettings(this);
+    private final DDLFileGeneralSettings generalSettings     = new DDLFileGeneralSettings(this);
 
     public DDLFileSettings(ProjectSettings parent) {
         super(parent);
@@ -20,14 +24,6 @@ public class DDLFileSettings extends CompositeProjectConfiguration<ProjectSettin
 
     public static DDLFileSettings getInstance(@NotNull Project project) {
         return ProjectSettingsManager.getSettings(project).getDdlFileSettings();
-    }
-
-    public DDLFileExtensionSettings getExtensionSettings() {
-        return extensionSettings;
-    }
-
-    public DDLFileGeneralSettings getGeneralSettings() {
-        return generalSettings;
     }
 
     @NotNull

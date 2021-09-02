@@ -48,7 +48,8 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -226,7 +227,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
 
     @NotNull
     private List<DDLFileType> getDdlFileTypes(@NotNull DBObjectRef<DBSchemaObject> objectRef) {
-        DBObjectType objectType = objectRef.objectType;
+        DBObjectType objectType = objectRef.getObjectType();
         DDLFileManager ddlFileManager = DDLFileManager.getInstance(getProject());
         return ddlFileManager.getDDLFileTypes(objectType);
     }
@@ -476,12 +477,11 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     @Override
     public void loadState(@NotNull Element element) {
         VirtualFileManager virtualFileManager = VirtualFileManager.getInstance();
-        for (Object child : element.getChildren()) {
-            Element childElement = (Element) child;
-            String fileUrl = childElement.getAttributeValue("file-url");
+        for (Element child : element.getChildren()) {
+            String fileUrl = child.getAttributeValue("file-url");
             if (StringUtil.isEmpty(fileUrl)) {
                 // TODO backward compatibility. Do cleanup
-                fileUrl = childElement.getAttributeValue("file");
+                fileUrl = child.getAttributeValue("file");
             }
 
             if (StringUtil.isNotEmpty(fileUrl)) {
@@ -489,7 +489,7 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
 
                 VirtualFile virtualFile = virtualFileManager.findFileByUrl(fileUrl);
                 if (virtualFile != null) {
-                    DBObjectRef<DBSchemaObject> objectRef = DBObjectRef.from(childElement);
+                    DBObjectRef<DBSchemaObject> objectRef = DBObjectRef.from(child);
                     if (objectRef != null) {
                         mappings.put(fileUrl, objectRef);
                     }

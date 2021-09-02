@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.connection.config;
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSslSettingsForm;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
@@ -12,6 +13,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = false)
 public class ConnectionSslSettings extends BasicProjectConfiguration<ConnectionSettings, ConnectionSslSettingsForm> {
     private boolean active = false;
     private String certificateAuthorityFile;

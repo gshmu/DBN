@@ -7,31 +7,24 @@ import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.language.common.WeakRef;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 
+@Getter
+@Setter
 public abstract class ResultSetAdapter extends ResultSetUtil implements StatefulDisposable {
     private final boolean useSavePoints;
     private boolean insertMode;
     private final WeakRef<DatasetEditorModel> model;
+
     public ResultSetAdapter(DatasetEditorModel model) {
         this.model = WeakRef.of(model);
         ConnectionHandler connectionHandler = model.getConnectionHandler();
         useSavePoints = !DatabaseFeature.CONNECTION_ERROR_RECOVERY.isSupported(connectionHandler);
-    }
-
-    public boolean isUseSavePoints() {
-        return useSavePoints;
-    }
-
-    public boolean isInsertMode() {
-        return insertMode;
-    }
-
-    public void setInsertMode(boolean insertMode) {
-        this.insertMode = insertMode;
     }
 
     public DatasetEditorModel getModel() {

@@ -5,7 +5,7 @@ import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
 public class DatasetSortingState extends SortingState {
-    private DBObjectRef<DBDataset> datasetRef;
+    private final DBObjectRef<DBDataset> datasetRef;
 
     public DatasetSortingState(DBDataset dataset) {
         this.datasetRef = DBObjectRef.of(dataset);

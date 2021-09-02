@@ -9,11 +9,17 @@ import com.dci.intellij.dbn.object.DBSchema;
 import com.dci.intellij.dbn.object.common.ObjectTypeFilter;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.ui.CheckedTreeNode;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class CodeCompletionFilterSettings
         extends BasicConfiguration<CodeCompletionFiltersSettings, CodeCompletionFilterSettingsForm>
         implements CheckedTreeNodeProvider, ObjectTypeFilter {
@@ -22,11 +28,11 @@ public class CodeCompletionFilterSettings
     private static final int SCHEMA_TYPE_PUBLIC = 1;
     private static final int SCHEMA_TYPE_ANY = 2;
 
-    private boolean extended;
-    private CodeCompletionFilterOptionBundle rootFilterOptions;
-    private CodeCompletionFilterOptionBundle userSchemaOptions;
-    private CodeCompletionFilterOptionBundle publicSchemaOptions;
-    private CodeCompletionFilterOptionBundle anySchemaOptions;
+    private final boolean extended;
+    private final CodeCompletionFilterOptionBundle rootFilterOptions;
+    private final CodeCompletionFilterOptionBundle userSchemaOptions;
+    private final CodeCompletionFilterOptionBundle publicSchemaOptions;
+    private final CodeCompletionFilterOptionBundle anySchemaOptions;
 
     public CodeCompletionFilterSettings(CodeCompletionFiltersSettings parent, boolean extended) {
         super(parent);
@@ -44,18 +50,6 @@ public class CodeCompletionFilterSettings
     @Override
     public String getDisplayName() {
         return extended ? "Extended code completion" : "Basic code completion";
-    }
-
-    public CodeCompletionFilterOptionBundle getUserSchemaOptions() {
-        return userSchemaOptions;
-    }
-
-    public CodeCompletionFilterOptionBundle getPublicSchemaOptions() {
-        return publicSchemaOptions;
-    }
-
-    public CodeCompletionFilterOptionBundle getAnySchemaOptions() {
-        return anySchemaOptions;
     }
 
     public boolean acceptReservedWord(TokenTypeCategory tokenTypeCategory) {

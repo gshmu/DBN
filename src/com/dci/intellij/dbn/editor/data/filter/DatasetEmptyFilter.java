@@ -8,7 +8,8 @@ import com.intellij.openapi.options.ConfigurationException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
 
 public class DatasetEmptyFilter implements DatasetFilter{
 
@@ -46,8 +47,11 @@ public class DatasetEmptyFilter implements DatasetFilter{
     public ConnectionId getConnectionId() { return null; }
     @Override
     public String getDatasetName() { return null; }
+
     @Override
-    public boolean isNew() { return false; }
+    public boolean isPersisted() {
+        return true;
+    }
 
     @Override
     public boolean isTemporary() {

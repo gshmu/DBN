@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.filter.name.ObjectNameFilterSettings;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
@@ -24,11 +25,14 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoo
 
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = false)
 public class ConnectionFilterSettings extends CompositeProjectConfiguration<ConnectionSettings, ConnectionFilterSettingsForm> implements ConnectionIdProvider {
     private final ObjectTypeFilterSettings objectTypeFilterSettings;
     private final ObjectNameFilterSettings objectNameFilterSettings;
     private boolean hideEmptySchemas = false;
     private boolean hidePseudoColumns = false;
+
+    @EqualsAndHashCode.Exclude
     private final ConnectionSettings connectionSettings;
 
     private static final Filter<DBSchema> EMPTY_SCHEMAS_FILTER = schema -> !schema.isEmptySchema();
@@ -105,7 +109,9 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
 
     @Override
     protected Configuration[] createConfigurations() {
-        return new Configuration[] {objectTypeFilterSettings, objectNameFilterSettings};
+        return new Configuration[] {
+                objectTypeFilterSettings,
+                objectNameFilterSettings};
     }
 
     @Override

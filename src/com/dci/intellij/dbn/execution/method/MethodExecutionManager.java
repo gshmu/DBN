@@ -33,6 +33,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
+import lombok.Getter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.CANCELLED;
@@ -50,12 +51,13 @@ import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
     name = MethodExecutionManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
+@Getter
 public class MethodExecutionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.MethodExecutionManager";
 
     private final MethodBrowserSettings browserSettings = new MethodBrowserSettings();
     private final MethodExecutionHistory executionHistory = new MethodExecutionHistory(getProject());
-    private final MethodExecutionArgumentValuesCache argumentValuesCache = new MethodExecutionArgumentValuesCache();
+    private final MethodExecutionArgumentValueHistory argumentValuesHistory = new MethodExecutionArgumentValueHistory();
 
     private MethodExecutionManager(Project project) {
         super(project);
@@ -65,14 +67,6 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         return Failsafe.getComponent(project, MethodExecutionManager.class);
     }
 
-    public MethodBrowserSettings getBrowserSettings() {
-        return browserSettings;
-    }
-
-    public MethodExecutionHistory getExecutionHistory() {
-        return executionHistory;
-    }
-
     public MethodExecutionInput getExecutionInput(DBMethod method) {
         return executionHistory.getExecutionInput(method);
     }
@@ -80,10 +74,6 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     @NotNull
     public MethodExecutionInput getExecutionInput(DBObjectRef<DBMethod> methodRef) {
         return executionHistory.getExecutionInput(methodRef, true);
-    }
-
-    public MethodExecutionArgumentValuesCache getArgumentValuesCache() {
-        return argumentValuesCache;
     }
 
     public void startMethodExecution(@NotNull MethodExecutionInput executionInput, @NotNull DBDebuggerType debuggerType) {
@@ -218,9 +208,13 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
     private void cacheArgumentValues(MethodExecutionInput executionInput) {
         ConnectionHandler connectionHandler = executionInput.getExecutionContext().getTargetConnection();
         if (connectionHandler != null) {
-            Set<MethodExecutionArgumentValue> argumentValues = executionInput.getArgumentValues();
-            for (MethodExecutionArgumentValue argumentValue : argumentValues) {
-                argumentValuesCache.cacheVariable(connectionHandler.getConnectionId(), argumentValue.getName(), argumentValue.getValue());
+            Map<String, MethodExecutionArgumentValue> argumentValues = executionInput.getArgumentValueHistory();
+            for (String argumentName : argumentValues.keySet()) {
+                MethodExecutionArgumentValue argumentValue = argumentValues.get(argumentName);
+                argumentValuesHistory.cacheVariable(
+                        connectionHandler.getConnectionId(),
+                        argumentValue.getName(),
+                        argumentValue.getValue());
             }
         }
     }
@@ -317,7 +311,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
 
 
         executionHistory.writeState(element);
-        argumentValuesCache.writeState(element);
+        argumentValuesHistory.writeState(element);
         return element;
     }
 
@@ -329,7 +323,7 @@ public class MethodExecutionManager extends AbstractProjectComponent implements 
         }
 
         executionHistory.readState(element);
-        argumentValuesCache.readState(element);
+        argumentValuesHistory.readState(element);
     }
 
 

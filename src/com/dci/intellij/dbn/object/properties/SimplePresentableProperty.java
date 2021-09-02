@@ -1,18 +1,17 @@
 package com.dci.intellij.dbn.object.properties;
 
 import com.intellij.pom.Navigatable;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
+@Getter
+@EqualsAndHashCode(callSuper = false)
 public class SimplePresentableProperty extends PresentableProperty{
-    private String name;
-    private String value;
-    private Icon icon;
-
-    public SimplePresentableProperty(String name, String value) {
-        this.name = name;
-        this.value = value;
-    }
+    private final String name;
+    private final String value;
+    private final Icon icon;
 
     public SimplePresentableProperty(String name, String value, Icon icon) {
         this.name = name;
@@ -20,19 +19,8 @@ public class SimplePresentableProperty extends PresentableProperty{
         this.icon = icon;
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getValue() {
-        return value;
-    }
-
-    @Override
-    public Icon getIcon() {
-        return icon;
+    public SimplePresentableProperty(String name, String value) {
+        this(name, value, null);
     }
 
     @Override

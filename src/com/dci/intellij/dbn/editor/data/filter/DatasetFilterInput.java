@@ -2,17 +2,17 @@ package com.dci.intellij.dbn.editor.data.filter;
 
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class DatasetFilterInput {
-    private DBDataset dataset;
-    private List<DBColumn> columns = new ArrayList<DBColumn>();
-    private Map<DBColumn, Object> values = new THashMap<DBColumn, Object>();
+    private final DBDataset dataset;
+    private final List<DBColumn> columns = new ArrayList<>();
+    private final Map<DBColumn, Object> values = new HashMap<>();
 
     public DatasetFilterInput(DBDataset dataset) {
         this.dataset = dataset;

@@ -5,14 +5,20 @@ import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.editor.session.options.ui.SessionBrowserSettingsForm;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class SessionBrowserSettings extends BasicConfiguration<OperationSettings, SessionBrowserSettingsForm> {
     public static final String REMEMBER_OPTION_HINT = ""; //"\n\n(you can remember your option and change it at any time in Settings > Operations > Session Manager)";
 
     private boolean reloadOnFilterChange = false;
-    private InteractiveOptionBroker<SessionInterruptionOption> disconnectSession =
+    private final InteractiveOptionBroker<SessionInterruptionOption> disconnectSession =
             new InteractiveOptionBroker<SessionInterruptionOption>(
                     "disconnect-session",
                     "Disconnect Sessions",
@@ -23,7 +29,7 @@ public class SessionBrowserSettings extends BasicConfiguration<OperationSettings
                     SessionInterruptionOption.POST_TRANSACTION,
                     SessionInterruptionOption.CANCEL);
 
-    private InteractiveOptionBroker<SessionInterruptionOption> killSession =
+    private final InteractiveOptionBroker<SessionInterruptionOption> killSession =
             new InteractiveOptionBroker<SessionInterruptionOption>(
                     "kill-session",
                     "Kill Sessions",
@@ -48,26 +54,6 @@ public class SessionBrowserSettings extends BasicConfiguration<OperationSettings
         return "sessionBrowser";
     }
 
-
-    /*********************************************************
-     *                       Settings                        *
-     *********************************************************/
-
-    public InteractiveOptionBroker<SessionInterruptionOption> getDisconnectSession() {
-        return disconnectSession;
-    }
-
-    public InteractiveOptionBroker<SessionInterruptionOption> getKillSession() {
-        return killSession;
-    }
-
-    public boolean isReloadOnFilterChange() {
-        return reloadOnFilterChange;
-    }
-
-    public void setReloadOnFilterChange(boolean reloadOnFilterChange) {
-        this.reloadOnFilterChange = reloadOnFilterChange;
-    }
 
     /****************************************************
      *                   Configuration                  *

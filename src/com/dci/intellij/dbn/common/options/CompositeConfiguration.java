@@ -4,8 +4,14 @@ import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.options.ConfigurationException;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public abstract class CompositeConfiguration<P extends Configuration, E extends CompositeConfigurationEditorForm>
         extends BasicConfiguration<P, E> {
 

@@ -3,11 +3,17 @@ package com.dci.intellij.dbn.object.properties;
 import com.dci.intellij.dbn.data.type.DBDataType;
 import com.dci.intellij.dbn.object.DBType;
 import com.intellij.pom.Navigatable;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class DBDataTypePresentableProperty extends PresentableProperty{
-    private DBDataType dataType;
+    private final DBDataType dataType;
     private String name = "Data type";
 
     public DBDataTypePresentableProperty(String name, DBDataType dataType) {
@@ -17,11 +23,6 @@ public class DBDataTypePresentableProperty extends PresentableProperty{
 
     public DBDataTypePresentableProperty(DBDataType dataType) {
         this.dataType = dataType;
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     @Override

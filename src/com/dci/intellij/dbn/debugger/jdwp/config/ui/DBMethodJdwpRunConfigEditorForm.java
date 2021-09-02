@@ -30,8 +30,12 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.Color;
 
 public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEditorForm<DBMethodJdwpRunConfig>{
     private JPanel headerPanel;
@@ -164,7 +168,7 @@ public class DBMethodJdwpRunConfigEditorForm extends DBProgramRunConfigurationEd
                         if (executionInput != null) {
                             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
                             headerTitle = methodRef.getPath();
-                            headerIcon = methodRef.objectType.getIcon();
+                            headerIcon = methodRef.getObjectType().getIcon();
                             DBMethod method = executionInput.getMethod();
                             if (method != null) {
                                 methodExecutionInputForm = new MethodExecutionInputForm(this, executionInput, false, DBDebuggerType.JDWP);

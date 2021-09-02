@@ -3,6 +3,9 @@ package com.dci.intellij.dbn.object.filter;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +14,9 @@ import java.util.StringTokenizer;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getEnumAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setEnumAttribute;
 
+@Getter
+@Setter
+@EqualsAndHashCode
 public abstract class NameFilterCondition implements PersistentStateElement {
     private ConditionOperator operator = ConditionOperator.EQUAL;
     private String pattern;
@@ -26,18 +32,6 @@ public abstract class NameFilterCondition implements PersistentStateElement {
     @NotNull
     public ConditionOperator getOperator() {
         return CommonUtil.nvl(operator, ConditionOperator.EQUAL);
-    }
-
-    public void setOperator(ConditionOperator operator) {
-        this.operator = operator;
-    }
-
-    public String getPattern() {
-        return pattern;
-    }
-
-    public void setPattern(String pattern) {
-        this.pattern = pattern;
     }
 
     public boolean accepts(String name) {

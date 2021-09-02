@@ -1,5 +1,7 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
+import lombok.SneakyThrows;
+
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -35,7 +37,8 @@ abstract class DBNConnectionBase extends DBNResource<Connection> implements Conn
     }
 
     @Override
-    public DBNPreparedStatement prepareStatement(String sql) throws SQLException {
+    @SneakyThrows
+    public DBNPreparedStatement prepareStatement(String sql) {
         return (DBNPreparedStatement) wrap(inner.prepareStatement(sql));
     }
 
