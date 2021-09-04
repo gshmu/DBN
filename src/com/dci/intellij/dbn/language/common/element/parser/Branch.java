@@ -1,29 +1,16 @@
 package com.dci.intellij.dbn.language.common.element.parser;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+
+@Getter
+@EqualsAndHashCode
 public class Branch {
-    String name;
+    protected String name;
 
     public Branch() {}
 
-    public Branch(String def) {
-        name = def;
+    public Branch(String name) {
+        this.name = name;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Branch branch = (Branch) o;
-        return name.equals(branch.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return name.hashCode();
-    }
-
 }

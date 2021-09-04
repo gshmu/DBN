@@ -5,16 +5,22 @@ import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.object.common.editor.DefaultEditorOption;
 import com.dci.intellij.dbn.object.common.editor.DefaultEditorType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class DatabaseBrowserEditorSettings
         extends BasicProjectConfiguration<DatabaseBrowserSettings, DatabaseBrowserEditorSettingsForm> {
 
-    private List<DefaultEditorOption> options = new ArrayList<DefaultEditorOption>();
+    private List<DefaultEditorOption> options = new ArrayList<>();
 
     public DatabaseBrowserEditorSettings(DatabaseBrowserSettings parent) {
         super(parent);
@@ -32,14 +38,6 @@ public class DatabaseBrowserEditorSettings
     /*********************************************************
      *                        Custom                         *
      *********************************************************/
-    public List<DefaultEditorOption> getOptions() {
-        return options;
-    }
-
-    public void setOptions(List<DefaultEditorOption> options) {
-        this.options = options;
-    }
-
     public DefaultEditorOption getOption(DBObjectType objectType) {
         for (DefaultEditorOption option : options) {
             if (option.getObjectType().matches(objectType)) {
@@ -78,7 +76,7 @@ public class DatabaseBrowserEditorSettings
 
     @Override
     public void readConfiguration(Element element) {
-        List<DefaultEditorOption> newOptions = new ArrayList<DefaultEditorOption>();
+        List<DefaultEditorOption> newOptions = new ArrayList<>();
         List<Element> children = element.getChildren();
         for (Element child : children) {
             String objectTypeName = child.getAttributeValue("name");

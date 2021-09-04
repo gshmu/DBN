@@ -2,13 +2,14 @@ package com.dci.intellij.dbn.language.common.resolve;
 
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.object.common.DBObject;
-import gnu.trove.THashMap;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class UnderlyingObjectResolver {
-    public static Map<String, UnderlyingObjectResolver> RESOLVERS = new THashMap<String, UnderlyingObjectResolver>();
+    public static Map<String, UnderlyingObjectResolver> RESOLVERS = new HashMap<>();
     static {
+        // TODO remove this and register as app component in plugin xml
         AliasObjectResolver.getInstance();
         AssignmentObjectResolver.getInstance();
         LocalDeclarationObjectResolver.getInstance();

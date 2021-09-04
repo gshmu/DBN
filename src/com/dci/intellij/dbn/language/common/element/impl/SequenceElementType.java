@@ -56,12 +56,12 @@ public class SequenceElementType extends ElementTypeBase {
     @Override
     protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
         super.loadDefinition(def);
-        List children = def.getChildren();
+        List<Element> children = def.getChildren();
         this.children = new ElementTypeRef[children.size()];
 
         ElementTypeRef previous = null;
         for (int i = 0; i < children.size(); i++) {
-            Element child = (Element) children.get(i);
+            Element child = children.get(i);
             String type = child.getName();
             ElementTypeBase elementType = getElementBundle().resolveElementDefinition(child, type, this);
             boolean optional = getBooleanAttribute(child, "optional");
@@ -153,7 +153,7 @@ public class SequenceElementType extends ElementTypeBase {
         ElementTypeRef child = children[0];
         while (child != null) {
             ElementTypeBase childElementType = child.elementType;
-            if (childElementType == leafElementType || childElementType.lookupCache.containsLeaf(leafElementType)) {
+            if (childElementType == leafElementType || childElementType.getLookupCache().containsLeaf(leafElementType)) {
                 return child.getIndex();
             }
             child = child.getNext();

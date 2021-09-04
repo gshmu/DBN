@@ -15,7 +15,7 @@ public class SortableTableExportModel implements DataExportModel{
     private final boolean selection;
     private final SortableTable<? extends SortableDataModel> table;
 
-    private final MapLatent<String, String, RuntimeException> columnFriendlyNames = MapLatent.create(key -> {
+    private final MapLatent<String, String> columnFriendlyNames = MapLatent.create(key -> {
         if (StringUtil.isNotEmpty(key)) {
             key = key.trim().toUpperCase();
             if (key.matches("[A-Z][A-Z0-9_]*")) {

@@ -6,19 +6,25 @@ import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBTable;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
 
 import java.util.Iterator;
 
 public class InsertStatementGenerator extends StatementGenerator {
-    private DBTable table;
+    private final DBObjectRef<DBTable> table;
 
     public InsertStatementGenerator(DBTable table) {
-        this.table = table;
+        this.table = DBObjectRef.of(table);
+    }
+
+    public DBTable getTable() {
+        return table.ensure();
     }
 
     @Override
     public StatementGeneratorResult generateStatement(Project project) {
+        DBTable table = getTable();
         CodeStyleCaseSettings styleCaseSettings = DBLCodeStyleManager.getInstance(project).getCodeStyleCaseSettings(SQLLanguage.INSTANCE);
         CodeStyleCaseOption kco = styleCaseSettings.getKeywordCaseOption();
         CodeStyleCaseOption oco = styleCaseSettings.getObjectCaseOption();

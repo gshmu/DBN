@@ -7,12 +7,20 @@ import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
 import com.dci.intellij.dbn.editor.data.state.column.DatasetColumnSetup;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
-import gnu.trove.THashMap;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true)
 public class DatasetEditorState extends SortableDataModelState implements FileEditorState, PersistentStateElement, Cloneable<DatasetEditorState> {
     public static final DatasetEditorState VOID = new DatasetEditorState();
+
     private DatasetColumnSetup columnSetup = new DatasetColumnSetup();
 
     @Override
@@ -38,10 +46,9 @@ public class DatasetEditorState extends SortableDataModelState implements FileEd
 
         Element contentTypesElement = element.getChild("content-types");
         if (contentTypesElement != null) {
-            for (Object o : contentTypesElement.getChildren()) {
-                Element contentTypeElement = (Element) o;
-                String columnName = contentTypeElement.getAttributeValue("column-name");
-                String contentTypeName = contentTypeElement.getAttributeValue("type-name");
+            for (Element child : contentTypesElement.getChildren()) {
+                String columnName = child.getAttributeValue("column-name");
+                String contentTypeName = child.getAttributeValue("type-name");
                 setTextContentType(columnName, contentTypeName);
             }
         }
@@ -81,31 +88,9 @@ public class DatasetEditorState extends SortableDataModelState implements FileEd
         clone.setSortingState(getSortingState());
         clone.columnSetup = columnSetup.clone();
         if (contentTypesMap != null) {
-            clone.contentTypesMap = new THashMap<String, String>(contentTypesMap);
+            clone.contentTypesMap = new HashMap<>(contentTypesMap);
         }
 
         return clone;
-    }
-    /*****************************************************************
-     *                     equals / hashCode                         *
-     *****************************************************************/
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-
-        DatasetEditorState that = (DatasetEditorState) o;
-
-        if (!columnSetup.equals(that.columnSetup)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + columnSetup.hashCode();
-        return result;
     }
 }

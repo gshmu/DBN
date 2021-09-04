@@ -17,8 +17,8 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JTree;
+import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
@@ -90,7 +90,7 @@ class ArgumentValuesTree extends DBNTree{
                     DBObjectRef<DBArgument> argumentRef = (DBObjectRef<DBArgument>) userValue;
                     DBArgument argument = DBObjectRef.get(argumentRef);
                     setIcon(argument == null ? Icons.DBO_ARGUMENT : argument.getIcon());
-                    append(argumentRef.objectName, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+                    append(argumentRef.getObjectName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
                 }
 
                 if (userValue instanceof ArgumentValue) {

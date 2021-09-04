@@ -11,7 +11,7 @@ public enum DriverSource implements Presentable{
         this.name = name;
     }
 
-    private String name;
+    private final String name;
 
     @NotNull
     @Override

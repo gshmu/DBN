@@ -4,9 +4,15 @@ import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.object.DBColumn;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Setter
+@EqualsAndHashCode
 public class DatasetColumnState implements Comparable<DatasetColumnState>, PersistentStateElement {
     private String name;
     private short position = -1;
@@ -48,55 +54,9 @@ public class DatasetColumnState implements Comparable<DatasetColumnState>, Persi
         SettingsSupport.setBooleanAttribute(element, "visible", visible);
     }
 
-    public boolean isVisible() {
-        return visible;
-    }
-
-    public void setVisible(boolean visible) {
-        this.visible = visible;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(short position) {
-        this.position = position;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-
     @Override
     public int compareTo(@NotNull DatasetColumnState remote) {
         return position-remote.position;
-    }
-
-    /*****************************************************************
-     *                     equals / hashCode                         *
-     *****************************************************************/
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        DatasetColumnState that = (DatasetColumnState) o;
-
-        if (position != that.position) return false;
-        if (visible != that.visible) return false;
-        if (!name.equals(that.name)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + position;
-        result = 31 * result + (visible ? 1 : 0);
-        return result;
     }
 
     @Override

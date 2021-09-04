@@ -11,15 +11,21 @@ import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class ConnectionBundleSettings extends BasicProjectConfiguration<ProjectSettings, ConnectionBundleSettingsForm> implements TopLevelConfig {
     public static final ThreadLocalFlag IS_IMPORT_EXPORT_ACTION = new ThreadLocalFlag(false);
-    public List<ConnectionSettings> connections = new ArrayList<>();
+    private final List<ConnectionSettings> connections = new CopyOnWriteArrayList<>();
 
     public ConnectionBundleSettings(ProjectSettings parent) {
         super(parent);
@@ -109,10 +115,9 @@ public class ConnectionBundleSettings extends BasicProjectConfiguration<ProjectS
     public void readConfiguration(Element element) {
         Project project = getProject();
         connections.clear();
-        for (Object o : element.getChildren()) {
-            Element connectionElement = (Element) o;
+        for (Element child : element.getChildren()) {
             ConnectionSettings connection = new ConnectionSettings(this);
-            connection.readConfiguration(connectionElement);
+            connection.readConfiguration(child);
             connections.add(connection);
         }
 

@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.editor.data.options;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorPopupSettingsForm;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = false)
 public class DataEditorPopupSettings extends BasicConfiguration<DataEditorSettings, DataEditorPopupSettingsForm> {
     private boolean active = false;
     private boolean activeIfEmpty = false;

@@ -97,7 +97,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
         DBLanguagePsiFile file = context.getFile();
 
         ElementTypeBundle elementTypeBundle = file.getElementTypeBundle();
-        ElementTypeLookupCache lookupCache = elementTypeBundle.getRootElementType().lookupCache;
+        ElementTypeLookupCache lookupCache = elementTypeBundle.getRootElementType().getLookupCache();
         ElementLookupContext lookupContext = new ElementLookupContext(context.getDatabaseVersion());
         Set<LeafElementType> firstPossibleLeafs = lookupCache.collectFirstPossibleLeafs(lookupContext);
 
@@ -149,7 +149,7 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             BasePsiElement basePsiElement = (BasePsiElement) parent;
             ElementTypeBase elementType = basePsiElement.elementType;
             if (elementType.isWrappingBegin((LeafElementType) element.elementType)) {
-                Set<LeafElementType> candidates = elementType.lookupCache.getFirstPossibleLeafs();
+                Set<LeafElementType> candidates = elementType.getLookupCache().getFirstPossibleLeafs();
                 candidates.forEach(candidate -> context.addCompletionCandidate(candidate));
             }
         }

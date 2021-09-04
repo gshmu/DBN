@@ -6,12 +6,20 @@ import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
 import com.intellij.openapi.fileEditor.FileEditorState;
 import com.intellij.openapi.fileEditor.FileEditorStateLevel;
-import gnu.trove.THashMap;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true)
 public class SessionBrowserState extends SortableDataModelState implements FileEditorState, PersistentStateElement, Cloneable<SessionBrowserState> {
     public static final SessionBrowserState VOID = new SessionBrowserState();
+
     private SessionBrowserFilter filterState = new SessionBrowserFilter();
     private int refreshInterval = 0;
 
@@ -67,38 +75,9 @@ public class SessionBrowserState extends SortableDataModelState implements FileE
         clone.setSortingState(getSortingState().clone());
         clone.filterState = filterState.clone();
         if (contentTypesMap != null) {
-            clone.contentTypesMap = new THashMap<>(contentTypesMap);
+            clone.contentTypesMap = new HashMap<>(contentTypesMap);
         }
 
         return clone;
-    }
-
-    public void setFilterState(SessionBrowserFilter filterState) {
-        this.filterState = filterState;
-    }
-
-    public SessionBrowserFilter getFilterState() {
-        return filterState;
-    }
-
-    /*****************************************************************
-     *                     equals / hashCode                         *
-     *****************************************************************/
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        SessionBrowserState that = (SessionBrowserState) o;
-        if (this.refreshInterval != that.refreshInterval) return false;
-        return filterState.equals(that.filterState);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + filterState.hashCode();
-        return result;
     }
 }

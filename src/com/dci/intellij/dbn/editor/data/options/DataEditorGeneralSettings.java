@@ -4,11 +4,13 @@ import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.options.setting.IntegerSetting;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorGeneralSettingsForm;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
+@EqualsAndHashCode(callSuper = false)
 public class DataEditorGeneralSettings extends BasicConfiguration<DataEditorSettings, DataEditorGeneralSettingsForm> {
     private final IntegerSetting fetchBlockSize = new IntegerSetting("fetch-block-size", 100);
     private final IntegerSetting fetchTimeout = new IntegerSetting("fetch-timeout", 30);

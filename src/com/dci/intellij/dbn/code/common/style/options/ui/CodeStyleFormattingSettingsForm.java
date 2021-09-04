@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.code.common.style.options.ui;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleFormattingSettings;
 import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
+import com.dci.intellij.dbn.common.Pair;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.ComboBox;
@@ -12,21 +13,21 @@ import com.intellij.uiDesigner.core.Spacer;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.util.HashMap;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.getSelection;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.initComboBox;
-import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.setSelection;
+import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 import static com.dci.intellij.dbn.common.ui.GUIUtil.updateBorderTitleForeground;
 
 public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<CodeStyleFormattingSettings> {
     private JPanel mainPanel;
     private JPanel settingsPanel;
     private JCheckBox enableCheckBox;
-    private Map<CodeStyleFormattingOption, JComboBox<CodeStylePreset>> mappings = new HashMap<>();
+    private final List<Pair<CodeStyleFormattingOption, JComboBox<CodeStylePreset>>> mappings = new ArrayList<>();
 
     public CodeStyleFormattingSettingsForm(CodeStyleFormattingSettings settings) {
         super(settings);
@@ -54,7 +55,7 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
                             GridConstraints.SIZEPOLICY_CAN_GROW,
                             GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
 
-            mappings.put(option, comboBox);
+            mappings.add(Pair.of(option, comboBox));
         }
 
         resetFormChanges();
@@ -75,8 +76,8 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
 
     private void enableDisableOptions() {
         boolean selected = enableCheckBox.isSelected();
-        for (JComboBox<CodeStylePreset> optionComboBox : mappings.values()) {
-            optionComboBox.setEnabled(selected);
+        for (Pair<CodeStyleFormattingOption, JComboBox<CodeStylePreset>> mapping : mappings) {
+            mapping.second().setEnabled(selected);
         }
     }
 
@@ -88,8 +89,9 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
 
     @Override
     public void applyFormChanges() throws ConfigurationException {
-        for (CodeStyleFormattingOption option : mappings.keySet()) {
-            JComboBox<CodeStylePreset> comboBox = mappings.get(option);
+        for (Pair<CodeStyleFormattingOption, JComboBox<CodeStylePreset>> mapping : mappings) {
+            CodeStyleFormattingOption option = mapping.first();
+            JComboBox<CodeStylePreset> comboBox = mapping.second();
             option.setPreset(getSelection(comboBox));
         }
         getConfiguration().setEnabled(enableCheckBox.isSelected());
@@ -98,8 +100,9 @@ public class CodeStyleFormattingSettingsForm extends ConfigurationEditorForm<Cod
 
     @Override
     public void resetFormChanges() {
-        for (CodeStyleFormattingOption option : mappings.keySet()) {
-            JComboBox<CodeStylePreset> comboBox = mappings.get(option);
+        for (Pair<CodeStyleFormattingOption, JComboBox<CodeStylePreset>> mapping : mappings) {
+            CodeStyleFormattingOption option = mapping.first();
+            JComboBox<CodeStylePreset> comboBox = mapping.second();
             setSelection(comboBox, option.getPreset());
         }
         enableCheckBox.setSelected(getConfiguration().isEnabled());

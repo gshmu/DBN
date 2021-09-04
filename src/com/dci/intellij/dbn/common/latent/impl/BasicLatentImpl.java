@@ -6,8 +6,8 @@ import lombok.SneakyThrows;
 
 public abstract class BasicLatentImpl<T> implements Latent<T> {
     private T value;
-    private boolean loaded;
-    protected boolean loading;
+    private volatile boolean loaded;
+    protected volatile boolean loading;
 
     protected BasicLatentImpl() {}
 

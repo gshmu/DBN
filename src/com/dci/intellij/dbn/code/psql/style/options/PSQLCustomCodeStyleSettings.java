@@ -4,19 +4,19 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@EqualsAndHashCode(callSuper = false)
 public class PSQLCustomCodeStyleSettings extends CustomCodeStyleSettings {
-    private PSQLCodeStyleSettings codeStyleSettings;
+    private final PSQLCodeStyleSettings codeStyleSettings;
 
     PSQLCustomCodeStyleSettings(CodeStyleSettings container) {
         super("PSQLCodeStyleSettings", container);
         codeStyleSettings = new PSQLCodeStyleSettings(null);
-    }
-
-    public PSQLCodeStyleSettings getCodeStyleSettings() {
-        return codeStyleSettings;
     }
 
     @Override

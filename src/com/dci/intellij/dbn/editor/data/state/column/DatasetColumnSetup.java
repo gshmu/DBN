@@ -5,6 +5,9 @@ import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,13 +16,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
+@Setter
+@EqualsAndHashCode
 public class DatasetColumnSetup implements PersistentStateElement, Cloneable<DatasetColumnSetup> {
     private List<DatasetColumnState> columnStates = new ArrayList<>();
-
-    @NotNull
-    public List<DatasetColumnState> getColumnStates() {
-        return columnStates;
-    }
 
     public void init(@Nullable List<String> columnNames, @NotNull DBDataset dataset) {
         if (columnNames == null) {
@@ -56,15 +57,14 @@ public class DatasetColumnSetup implements PersistentStateElement, Cloneable<Dat
     @Override
     public void readState(Element element) {
         if (element != null) {
-            List<Element> childElements = element.getChildren();
-            for (Element childElement : childElements) {
-                String columnName = childElement.getAttributeValue("name");
+            for (Element child : element.getChildren()) {
+                String columnName = child.getAttributeValue("name");
                 DatasetColumnState columnState = getColumnState(columnName);
                 if (columnState == null) {
-                    columnState = new DatasetColumnState(childElement);
+                    columnState = new DatasetColumnState(child);
                     columnStates.add(columnState);
                 } else {
-                    columnState.readState(childElement);
+                    columnState.readState(child);
                 }
             }
             Collections.sort(columnStates);
@@ -106,21 +106,6 @@ public class DatasetColumnSetup implements PersistentStateElement, Cloneable<Dat
         return columnState == null || columnState.isVisible();
     }
 
-    /*****************************************************************
-     *                     equals / hashCode                         *
-     *****************************************************************/
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        DatasetColumnSetup that = (DatasetColumnSetup) o;
-
-        if (!columnStates.equals(that.columnStates)) return false;
-
-        return true;
-    }
-
     @Override
     public DatasetColumnSetup clone() {
         DatasetColumnSetup clone = new DatasetColumnSetup();
@@ -129,10 +114,5 @@ public class DatasetColumnSetup implements PersistentStateElement, Cloneable<Dat
         }
 
         return clone;
-    }
-
-    @Override
-    public int hashCode() {
-        return columnStates.hashCode();
     }
 }

@@ -10,15 +10,17 @@ import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
+@Getter
 public class IdentifierLookupAdapter extends PsiLookupAdapter {
-    private IdentifierType identifierType;
-    private IdentifierCategory identifierCategory;
-    private DBObjectType objectType;
-    private CharSequence identifierName;
-    private ElementTypeAttribute attribute;
-    private LeafPsiElement lookupIssuer;
+    private final IdentifierType identifierType;
+    private final IdentifierCategory identifierCategory;
+    private final DBObjectType objectType;
+    private final CharSequence identifierName;
+    private final ElementTypeAttribute attribute;
+    private final LeafPsiElement lookupIssuer;
 
     public IdentifierLookupAdapter(
             @Nullable LeafPsiElement lookupIssuer,
@@ -104,26 +106,6 @@ public class IdentifierLookupAdapter extends PsiLookupAdapter {
             return tokenElementType.isIdentifier();
         }
         return true;
-    }
-
-    public IdentifierType getIdentifierType() {
-        return identifierType;
-    }
-
-    public IdentifierCategory getIdentifierCategory() {
-        return identifierCategory;
-    }
-
-    public DBObjectType getObjectType() {
-        return objectType;
-    }
-
-    public CharSequence getIdentifierName() {
-        return identifierName;
-    }
-
-    public ElementTypeAttribute getAttribute() {
-        return attribute;
     }
 
     public String toString() {

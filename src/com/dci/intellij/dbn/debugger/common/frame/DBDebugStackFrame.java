@@ -37,13 +37,13 @@ import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
 import com.intellij.xdebugger.frame.XCompositeNode;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XValueChildrenList;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -135,7 +135,7 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
 
     public void setValue(String variableName, V value) {
         if (valuesMap == null) {
-            valuesMap = new THashMap<>();
+            valuesMap = new HashMap<>();
         }
         valuesMap.put(variableName.toLowerCase(), value);
     }
@@ -148,7 +148,7 @@ public abstract class DBDebugStackFrame<P extends DBDebugProcess, V extends DBDe
 
     @Override
     public void computeChildren(@NotNull XCompositeNode node) {
-        valuesMap = new THashMap<>();
+        valuesMap = new HashMap<>();
         List<DBDebugValue> values = new ArrayList<>();
 
         V frameInfoValue = createSuspendReasonDebugValue();

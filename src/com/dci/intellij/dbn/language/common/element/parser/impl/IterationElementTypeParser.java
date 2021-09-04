@@ -133,7 +133,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
         TokenElementType[] separatorTokens = elementType.separatorTokens;
 
         if (!lenient) {
-            Set<TokenType> expectedTokens = iteratedElementType.lookupCache.collectFirstPossibleTokens(context.reset());
+            Set<TokenType> expectedTokens = iteratedElementType.getLookupCache().collectFirstPossibleTokens(context.reset());
             ParseBuilderErrorHandler.updateBuilderError(expectedTokens, context);
         }
         boolean advanced = false;
@@ -145,7 +145,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
             if (tokenType.isParserLandmark()) {
                 if (separatorTokens != null) {
                     for (TokenElementType separatorToken : separatorTokens) {
-                        if (separatorToken.lookupCache.containsToken(tokenType)) {
+                        if (separatorToken.getLookupCache().containsToken(tokenType)) {
                             builder.markerDone(marker, unknownElementType);
                             return false;
                         }
@@ -157,7 +157,7 @@ public class IterationElementTypeParser extends ElementTypeParser<IterationEleme
                     if (parseNode.elementType instanceof SequenceElementType) {
                         SequenceElementType sequenceElementType = (SequenceElementType) parseNode.elementType;
                         int index = parseNode.getCursorPosition();
-                        if (!iteratedElementType.lookupCache.containsToken(tokenType) && sequenceElementType.containsLandmarkTokenFromIndex(tokenType, index + 1)) {
+                        if (!iteratedElementType.getLookupCache().containsToken(tokenType) && sequenceElementType.containsLandmarkTokenFromIndex(tokenType, index + 1)) {
                             if (advanced || !lenient) {
                                 builder.markerDone(marker, unknownElementType);
                             } else {

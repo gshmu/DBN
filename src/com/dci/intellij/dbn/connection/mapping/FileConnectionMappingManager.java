@@ -62,14 +62,14 @@ import com.intellij.openapi.vfs.VirtualFileMoveEvent;
 import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.IncorrectOperationException;
-import gnu.trove.THashSet;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.common.action.UserDataKeys.*;
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
@@ -84,7 +84,7 @@ import static com.dci.intellij.dbn.connection.ConnectionSelectorOptions.Option.*
 public class FileConnectionMappingManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.FileConnectionMappingManager";
 
-    private final Set<FileConnectionMapping> mappings = new THashSet<>();
+    private final Map<String, FileConnectionMapping> mappings = new ConcurrentHashMap<>();
 
     private FileConnectionMappingManager(@NotNull Project project) {
         super(project);
@@ -120,8 +120,9 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
 
             FileConnectionMapping mapping = lookupMapping(virtualFile);
             if (mapping == null) {
-                mapping = new FileConnectionMapping(virtualFile.getUrl(), connectionId, SessionId.MAIN, currentSchema);
-                mappings.add(mapping);
+                String fileUrl = virtualFile.getUrl();
+                mapping = new FileConnectionMapping(fileUrl, connectionId, SessionId.MAIN, currentSchema);
+                mappings.put(fileUrl, mapping);
                 return true;
             } else {
                 if (mapping.getConnectionId() == null || mapping.getConnectionId() != connectionId) {
@@ -368,31 +369,18 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     }
 
     private FileConnectionMapping lookupMapping(VirtualFile virtualFile) {
-        String fileUrl = virtualFile.getUrl();
-        return lookupMapping(fileUrl);
-    }
-
-    private FileConnectionMapping lookupMapping(String fileUrl) {
-        for (FileConnectionMapping mapping : mappings) {
-            if (fileUrl.equals(mapping.getFileUrl())) {
-                return mapping;
-            }
-        }
-        return null;
+        return mappings.get(virtualFile.getUrl());
     }
 
     private void removeMapping(VirtualFile virtualFile) {
-        FileConnectionMapping mapping = lookupMapping(virtualFile);
-        if (mapping != null) {
-            mappings.remove(mapping);
-        }
+        mappings.remove(virtualFile.getUrl());
     }
 
     public List<VirtualFile> getMappedFiles(ConnectionHandler connectionHandler) {
         List<VirtualFile> list = new ArrayList<>();
 
         LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
-        for (FileConnectionMapping mapping : mappings) {
+        for (FileConnectionMapping mapping : mappings.values()) {
             ConnectionId connectionId = mapping.getConnectionId();
             if (connectionHandler.getConnectionId() == connectionId) {
                 VirtualFile file = localFileSystem.findFileByPath(mapping.getFileUrl());
@@ -835,7 +823,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
         @Override
         public void fileMoved(@NotNull VirtualFileMoveEvent event) {
             String oldFileUrl = event.getOldParent().getUrl() + "/" + event.getFileName();
-            FileConnectionMapping fileConnectionMapping = lookupMapping(oldFileUrl);
+            FileConnectionMapping fileConnectionMapping = mappings.get(oldFileUrl);
             if (fileConnectionMapping != null) {
                 fileConnectionMapping.setFileUrl(event.getFile().getUrl());
             }
@@ -847,7 +835,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
             VirtualFile parent = file.getParent();
             if (file.isInLocalFileSystem() && parent != null) {
                 String oldFileUrl = parent.getUrl() + "/" + event.getOldValue();
-                FileConnectionMapping fileConnectionMapping = lookupMapping(oldFileUrl);
+                FileConnectionMapping fileConnectionMapping = mappings.get(oldFileUrl);
                 if (fileConnectionMapping != null) {
                     fileConnectionMapping.setFileUrl(file.getUrl());
                 }
@@ -861,7 +849,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     private final SessionManagerListener sessionManagerListener = new SessionManagerListener() {
         @Override
         public void sessionDeleted(DatabaseSession session) {
-            for (FileConnectionMapping mapping : mappings) {
+            for (FileConnectionMapping mapping : mappings.values()) {
                 if (session.getId() == mapping.getSessionId()) {
                     mapping.setSessionId(SessionId.MAIN);
                 }
@@ -876,7 +864,7 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     @Override
     public Element getState() {
         Element element = new Element("state");
-        for (FileConnectionMapping mapping : mappings) {
+        for (FileConnectionMapping mapping : mappings.values()) {
             Element mappingElement = new Element("mapping");
             mapping.writeState(mappingElement);
             element.addContent(mappingElement);
@@ -887,14 +875,14 @@ public class FileConnectionMappingManager extends AbstractProjectComponent imple
     @Override
     public void loadState(@NotNull Element element) {
         VirtualFileManager virtualFileManager = VirtualFileManager.getInstance();
-        for (Object child : element.getChildren()) {
-            Element mappingElement = (Element) child;
+        for (Element child : element.getChildren()) {
             FileConnectionMapping mapping = new FileConnectionMapping();
-            mapping.readState(mappingElement);
+            mapping.readState(child);
 
-            VirtualFile virtualFile = virtualFileManager.findFileByUrl(mapping.getFileUrl());
+            String fileUrl = mapping.getFileUrl();
+            VirtualFile virtualFile = virtualFileManager.findFileByUrl(fileUrl);
             if (virtualFile != null && virtualFile.isValid()) {
-                mappings.add(mapping);
+                mappings.put(fileUrl, mapping);
             }
         }
     }

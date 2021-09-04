@@ -22,8 +22,9 @@ import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.ListCellRenderer;
 import java.util.Comparator;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.load.ProgressMonitor.getProgressIndicator;
 
@@ -53,7 +54,7 @@ public class DBObjectLookupModel extends StatefulDisposable.Base implements Choo
         String connectionIdentifier = selectedConnection == null || selectedConnection instanceof VirtualConnectionHandler ?
                 "All Connections" :
                 selectedConnection.getName();
-        return "Enter database object name (" + connectionIdentifier + (selectedSchema == null ? "" : " / " + selectedSchema.objectName) + ")";
+        return "Enter database object name (" + connectionIdentifier + (selectedSchema == null ? "" : " / " + selectedSchema.getObjectName()) + ")";
     }
 
     protected ConnectionHandler getSelectedConnection() {
@@ -147,7 +148,7 @@ public class DBObjectLookupModel extends StatefulDisposable.Base implements Choo
     public Object[] getElementsByName(@NotNull String name, boolean checkBoxState, @NotNull String pattern) {
         return Safe.call(EMPTY_ARRAY, () -> data.elements().
                 stream().
-                filter(object -> object.getName().equals(name)).
+                filter(object -> Objects.equals(object.getName(), name)).
                 sorted(Comparator.comparing(DBObject::getQualifiedName)).
                 toArray());
     }

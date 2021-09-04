@@ -1,19 +1,19 @@
 package com.dci.intellij.dbn.database.common.debug;
 
-import org.jetbrains.annotations.Nullable;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true)
 public class BreakpointInfo extends BasicOperationInfo {
     private Integer breakpointId;
-
-    @Nullable
-    public Integer getBreakpointId() {
-        return breakpointId;
-    }
 
     @Override
     public void registerParameters(CallableStatement statement) throws SQLException {
@@ -30,9 +30,5 @@ public class BreakpointInfo extends BasicOperationInfo {
         }
 
         error = statement.getString(2);
-    }
-
-    public void setBreakpointId(Integer breakpointId) {
-        this.breakpointId = breakpointId;
     }
 }

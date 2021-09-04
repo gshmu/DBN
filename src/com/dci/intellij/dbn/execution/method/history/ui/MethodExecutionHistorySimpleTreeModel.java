@@ -61,7 +61,7 @@ public class MethodExecutionHistorySimpleTreeModel extends MethodExecutionHistor
             if (executionInput.getConnectionHandlerId() == connectionNode.getConnectionHandlerId() &&
                 StringUtil.equalsIgnoreCase(methodRef.getSchemaName(), schemaNode.getName()) &&
                 StringUtil.equalsIgnoreCase(methodRef.getQualifiedObjectName(), methodNode.getName()) &&
-                methodRef.overload == methodNode.getOverload() ) {
+                methodRef.getOverload() == methodNode.getOverload() ) {
 
                 return executionInput;
             }
@@ -76,7 +76,7 @@ public class MethodExecutionHistorySimpleTreeModel extends MethodExecutionHistor
 
     @Override
     public TreePath getTreePath(MethodExecutionInput executionInput) {
-        List<MethodExecutionHistoryTreeNode> path = new ArrayList<MethodExecutionHistoryTreeNode>();
+        List<MethodExecutionHistoryTreeNode> path = new ArrayList<>();
         RootTreeNode root = getRoot();
         if (root != null) {
             ConnectionTreeNode connectionTreeNode = root.getConnectionNode(executionInput);

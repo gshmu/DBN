@@ -20,10 +20,13 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
+import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
 import java.util.Date;
@@ -51,8 +54,8 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
     boolean isUpdating = false;
 
 
-    private Date previewDate = new Date();
-    private double previewNumber = ((double)(System.currentTimeMillis()/1000))/1000;
+    private final Date previewDate = new Date();
+    private final double previewNumber = ((double)(System.currentTimeMillis()/1000))/1000;
 
     public RegionalSettingsEditorForm(RegionalSettings regionalSettings) {
         super(regionalSettings);
@@ -141,6 +144,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
             if (customSettings) {
                 try {
                     formatter = new Formatter(
+                            0,
                             locale,
                             customDateFormatTextField.getText(),
                             customTimeFormatTextField.getText(),
@@ -152,7 +156,7 @@ public class RegionalSettingsEditorForm extends ConfigurationEditorForm<Regional
                     errorLabel.setVisible(true);
                 }
             } else {
-                formatter = new Formatter(locale, dateFormat == null ? DBDateFormat.MEDIUM : dateFormat, numberFormat);
+                formatter = new Formatter(0, locale, dateFormat == null ? DBDateFormat.MEDIUM : dateFormat, numberFormat);
                 customNumberFormatTextField.setText(formatter.getNumberFormatPattern());
                 customDateFormatTextField.setText(formatter.getDateFormatPattern());
                 customTimeFormatTextField.setText(formatter.getTimeFormatPattern());

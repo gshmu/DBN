@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class DBObjectPsiElement implements PsiNamedElement, NavigationItem {
     private final DBObjectRef<?> objectRef;
@@ -41,7 +41,7 @@ public class DBObjectPsiElement implements PsiNamedElement, NavigationItem {
     @Nullable
     @Override
     public String getName() {
-        return objectRef.objectName;
+        return objectRef.getObjectName();
     }
 
     @Nullable
@@ -277,6 +277,6 @@ public class DBObjectPsiElement implements PsiNamedElement, NavigationItem {
 
     @NotNull
     public DBObjectType getObjectType() {
-        return objectRef.objectType;
+        return objectRef.getObjectType();
     }
 }

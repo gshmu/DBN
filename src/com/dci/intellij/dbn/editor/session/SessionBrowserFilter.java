@@ -4,14 +4,17 @@ import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.editor.session.model.SessionBrowserModelRow;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
 public class SessionBrowserFilter implements Filter<SessionBrowserModelRow>, Cloneable<SessionBrowserFilter> {
     private String user;
     private String host;
     private String status;
-
 
     public SessionBrowserFilter() {
     }
@@ -58,6 +61,8 @@ public class SessionBrowserFilter implements Filter<SessionBrowserModelRow>, Clo
         host = null;
         status = null;
     }
+
+
 
     @Override
     public SessionBrowserFilter clone(){

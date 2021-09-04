@@ -52,11 +52,12 @@ import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
 import java.security.SecureRandom;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -72,8 +73,8 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
 
     private static final SecureRandom TMP_FILE_RANDOMIZER = new SecureRandom();
     private final ExecutionManager executionManager;
-    private final Map<VirtualFile, Process> activeProcesses = new HashMap<>();
-    private final Map<DatabaseType, String> recentlyUsedInterfaces = new HashMap<>();
+    private final Map<VirtualFile, Process> activeProcesses = new ConcurrentHashMap<>();
+    private final Map<DatabaseType, String> recentlyUsedInterfaces = new EnumMap<>(DatabaseType.class);
     private boolean clearOutputOption = true;
 
     private ScriptExecutionManager(Project project) {
@@ -401,9 +402,9 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
         clearOutputOption = SettingsSupport.getBooleanAttribute(element, "clear-outputs", clearOutputOption);
         Element interfacesElement = element.getChild("recently-used-interfaces");
         if (interfacesElement != null) {
-            for (Element interfaceElement : interfacesElement.getChildren()) {
-                DatabaseType databaseType = DatabaseType.get(interfaceElement.getAttributeValue("database-type"));
-                String interfaceId = interfaceElement.getAttributeValue("interface-id");
+            for (Element child : interfacesElement.getChildren()) {
+                DatabaseType databaseType = DatabaseType.get(child.getAttributeValue("database-type"));
+                String interfaceId = child.getAttributeValue("interface-id");
                 recentlyUsedInterfaces.put(databaseType, interfaceId);
             }
 

@@ -7,6 +7,7 @@ import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.ConnectionIdProvider;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionSettingsForm;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
@@ -16,6 +17,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoo
 
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = false)
 public class ConnectionSettings extends CompositeProjectConfiguration<ConnectionBundleSettings, ConnectionSettingsForm>
         implements ConnectionRef, ConnectionIdProvider, Cloneable {
 
@@ -94,5 +96,10 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         clone.databaseSettings.setConnectivityStatus(databaseSettings.getConnectivityStatus());
         clone.generateNewId();
         return clone;
+    }
+
+    @Override
+    public String toString() {
+        return connectionId.id();
     }
 }

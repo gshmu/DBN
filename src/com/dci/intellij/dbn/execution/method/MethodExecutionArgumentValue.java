@@ -6,15 +6,20 @@ import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.jdom.CDATA;
 import org.jdom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public class MethodExecutionArgumentValue implements PersistentStateElement, Cloneable<MethodExecutionArgumentValue>, ArgumentValueHolder<String> {
     private String name;
-    private MostRecentStack<String> valueHistory = new MostRecentStack<String>();
+
+    @EqualsAndHashCode.Exclude
+    private MostRecentStack<String> valueHistory = new MostRecentStack<>();
 
     public MethodExecutionArgumentValue(String name) {
         this.name = name;
@@ -25,16 +30,8 @@ public class MethodExecutionArgumentValue implements PersistentStateElement, Clo
     }
 
     public MethodExecutionArgumentValue(MethodExecutionArgumentValue source) {
-        valueHistory.setValues(source.valueHistory.values());
         name = source.name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        valueHistory.setValues(source.valueHistory.values());
     }
 
     public List<String> getValueHistory() {
@@ -60,14 +57,13 @@ public class MethodExecutionArgumentValue implements PersistentStateElement, Clo
             values.add(0, value);
         }
 
-        List<Element> valueElements = element.getChildren();
-        for (Element valueElement : valueElements) {
-            value = SettingsSupport.readCdata(valueElement);
+        for (Element child : element.getChildren()) {
+            value = SettingsSupport.readCdata(child);
             if (StringUtil.isNotEmpty(value)) {
                 values.add(value);
             }
         }
-        valueHistory = new MostRecentStack<String>(values);
+        valueHistory = new MostRecentStack<>(values);
     }
 
     @Override

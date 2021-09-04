@@ -6,19 +6,19 @@ import com.dci.intellij.dbn.common.util.FileUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class StatementExecutionVariablesCache implements PersistentStateElement {
     private final ProjectRef project;
-    private final Map<String, Set<StatementExecutionVariable>> fileVariablesMap = new THashMap<String, Set<StatementExecutionVariable>>();
+    private final Map<String, Set<StatementExecutionVariable>> fileVariablesMap = new HashMap<>();
 
     public StatementExecutionVariablesCache(Project project) {
         this.project = ProjectRef.of(project);
@@ -71,20 +71,18 @@ public class StatementExecutionVariablesCache implements PersistentStateElement 
         Element variablesElement = element.getChild("execution-variables");
         if (variablesElement != null) {
             this.fileVariablesMap.clear();
-            List<Element> fileElements = variablesElement.getChildren();
 
-            for (Element fileElement : fileElements) {
+            for (Element fileElement : variablesElement.getChildren()) {
                 String fileUrl = fileElement.getAttributeValue("file-url");
                 if ( StringUtil.isEmpty(fileUrl)) {
                     // TODO backward compatibility. Do cleanup
                     fileUrl = fileElement.getAttributeValue("path");
                 }
 
-                Set<StatementExecutionVariable> fileVariables = new THashSet<StatementExecutionVariable>();
+                Set<StatementExecutionVariable> fileVariables = new HashSet<>();
                 this.fileVariablesMap.put(fileUrl, fileVariables);
 
-                List<Element> variableElements = fileElement.getChildren();
-                for (Element variableElement : variableElements) {
+                for (Element variableElement : fileElement.getChildren()) {
                     StatementExecutionVariable executionVariable = new StatementExecutionVariable(variableElement);
                     fileVariables.add(executionVariable);
                 }

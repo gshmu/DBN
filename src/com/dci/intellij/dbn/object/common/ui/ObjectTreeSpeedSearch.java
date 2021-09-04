@@ -45,7 +45,7 @@ public class ObjectTreeSpeedSearch extends SpeedSearchBase {
         Object userObject = node.getUserObject();
         if (userObject instanceof DBObjectRef) {
             DBObjectRef objectRef = (DBObjectRef) userObject;
-            return objectRef.objectName;
+            return objectRef.getObjectName();
         }
         return userObject.toString();
     }

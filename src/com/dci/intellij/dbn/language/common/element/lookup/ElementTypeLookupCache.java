@@ -20,14 +20,10 @@ import java.util.Set;
 
 public abstract class ElementTypeLookupCache<T extends ElementTypeBase>/* implements ElementTypeLookupCache<T>*/ {
     private final Latent<Set<TokenType>> nextPossibleTokens = Latent.basic(() -> computeNextPossibleTokens());
-    public final T elementType;
+    protected final T elementType;
 
     ElementTypeLookupCache(T elementType) {
         this.elementType = elementType;
-    }
-
-    public void init() {
-
     }
 
     public void cleanup() {
@@ -126,7 +122,7 @@ public abstract class ElementTypeLookupCache<T extends ElementTypeBase>/* implem
     public void registerLeaf(LeafElementType leaf, ElementTypeBase source) {
         ElementTypeBase parent = elementType.getParent();
         if (parent != null) {
-            parent.lookupCache.registerLeaf(leaf, elementType);
+            parent.getLookupCache().registerLeaf(leaf, elementType);
         }
     }
 

@@ -12,7 +12,9 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -118,7 +120,7 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
     }
 
     private void applySetting(JTextField textField, DDLFileTypeId fileTypeId, AtomicBoolean changed) throws ConfigurationException {
-        DDLFileType ddlFileType = getConfiguration().getDDLFileType(fileTypeId);
+        DDLFileType ddlFileType = getConfiguration().getFileType(fileTypeId);
         boolean valueChanged = ddlFileType.setExtensionsAsString(textField.getText().trim());
         if (valueChanged) {
             changed.set(true);
@@ -140,6 +142,6 @@ public class DDLFileExtensionSettingsForm extends ConfigurationEditorForm<DDLFil
     }
 
     private void resetSetting(JTextField textField, DDLFileTypeId fileTypeId) {
-        textField.setText(getConfiguration().getDDLFileType(fileTypeId).getExtensionsAsString());
+        textField.setText(getConfiguration().getFileType(fileTypeId).getExtensionsAsString());
     }
 }

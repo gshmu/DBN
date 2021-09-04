@@ -4,11 +4,17 @@ import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@EqualsAndHashCode
 public class SortingState implements PersistentStateElement, Cloneable<SortingState> {
     private final List<SortingInstruction> sortingInstructions = new ArrayList<>();
 
@@ -125,10 +131,9 @@ public class SortingState implements PersistentStateElement, Cloneable<SortingSt
     @Override
     public void readState(Element element) {
         if (element != null) {
-            List<Element> columnElements = element.getChildren();
-            for (Element columnElement: columnElements) {
-                String columnName = columnElement.getAttributeValue("name");
-                String sortDirection = columnElement.getAttributeValue("direction");
+            for (Element child:  element.getChildren()) {
+                String columnName = child.getAttributeValue("name");
+                String sortDirection = child.getAttributeValue("direction");
                 SortingInstruction sortingInstruction = addSortingInstruction(columnName, SortDirection.valueOf(sortDirection));
                 sortingInstruction.setIndex(SettingsSupport.getIntegerAttribute(element, "index", 1));
             }
@@ -138,21 +143,5 @@ public class SortingState implements PersistentStateElement, Cloneable<SortingSt
 
     public int size() {
         return sortingInstructions.size();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        SortingState that = (SortingState) o;
-
-        return sortingInstructions.equals(that.sortingInstructions);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return sortingInstructions.hashCode();
     }
 }

@@ -3,8 +3,14 @@ package com.dci.intellij.dbn.code.common.style.options;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.util.NamingUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 
+@Getter
+@Setter
+@EqualsAndHashCode
 public class CodeStyleCaseOption implements PersistentConfiguration {
     private String name;
     private boolean ignoreMixedCase;
@@ -14,21 +20,6 @@ public class CodeStyleCaseOption implements PersistentConfiguration {
         this.name = id;
         this.styleCase = styleCase;
         this.ignoreMixedCase = ignoreMixedCase;
-    }
-
-    public CodeStyleCaseOption() {
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public CodeStyleCase getStyleCase() {
-        return styleCase;
-    }
-
-    public void setStyleCase(CodeStyleCase styleCase) {
-        this.styleCase = styleCase;
     }
 
     public String format(String string) {
