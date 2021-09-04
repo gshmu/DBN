@@ -4,12 +4,16 @@ import com.dci.intellij.dbn.browser.options.ui.DatabaseBrowserFilterSettingsForm
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.object.filter.type.ObjectTypeFilterSettings;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@EqualsAndHashCode(callSuper = false)
 public class DatabaseBrowserFilterSettings
         extends CompositeProjectConfiguration<DatabaseBrowserSettings, DatabaseBrowserFilterSettingsForm> {
 
-    private ObjectTypeFilterSettings objectTypeFilterSettings = new ObjectTypeFilterSettings(this, null);
+    private final ObjectTypeFilterSettings objectTypeFilterSettings = new ObjectTypeFilterSettings(this, null);
 
     DatabaseBrowserFilterSettings(DatabaseBrowserSettings parent) {
         super(parent);
@@ -34,14 +38,6 @@ public class DatabaseBrowserFilterSettings
     @Override
     public String getHelpTopic() {
         return "browserSettings";
-    }
-
-    /*********************************************************
-     *                        Custom                         *
-     *********************************************************/
-
-    public ObjectTypeFilterSettings getObjectTypeFilterSettings() {
-        return objectTypeFilterSettings;
     }
 
     /*********************************************************

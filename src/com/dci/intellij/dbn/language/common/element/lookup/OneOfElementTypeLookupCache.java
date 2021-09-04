@@ -16,13 +16,13 @@ public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheIndexed<O
     @Override
     boolean initAsFirstPossibleLeaf(LeafElementType leaf, ElementTypeBase source) {
         boolean notInitialized = !firstPossibleLeafs.contains(leaf);
-        return notInitialized && (isWrapperBeginLeaf(leaf) || source.lookupCache.couldStartWithLeaf(leaf));
+        return notInitialized && (isWrapperBeginLeaf(leaf) || source.getLookupCache().couldStartWithLeaf(leaf));
     }
 
     @Override
     boolean initAsFirstRequiredLeaf(LeafElementType leaf, ElementTypeBase source) {
         boolean notInitialized = !firstRequiredLeafs.contains(leaf);
-        return notInitialized && source.lookupCache.shouldStartWithLeaf(leaf);
+        return notInitialized && source.getLookupCache().shouldStartWithLeaf(leaf);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheIndexed<O
         ElementTypeRef[] elementTypeRefs = elementType.getChildren();
         for (ElementTypeRef child : elementTypeRefs) {
             if (context.check(child)) {
-                bucket = child.elementType.lookupCache.collectFirstPossibleLeafs(context, bucket);
+                bucket = child.elementType.getLookupCache().collectFirstPossibleLeafs(context, bucket);
             }
         }
         return bucket;
@@ -51,7 +51,7 @@ public class OneOfElementTypeLookupCache extends ElementTypeLookupCacheIndexed<O
         ElementTypeRef[] elementTypeRefs = elementType.getChildren();
         for (ElementTypeRef child : elementTypeRefs) {
             if (context.check(child)) {
-                bucket = child.elementType.lookupCache.collectFirstPossibleTokens(context, bucket);
+                bucket = child.elementType.getLookupCache().collectFirstPossibleTokens(context, bucket);
             }
         }
         return bucket;

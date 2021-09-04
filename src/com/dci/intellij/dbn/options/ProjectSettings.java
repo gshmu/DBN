@@ -24,32 +24,37 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
+@Getter
+@EqualsAndHashCode(callSuper = false)
 public class ProjectSettings
         extends CompositeProjectConfiguration<ProjectConfiguration, ProjectSettingsForm>
         implements SearchableConfigurable.Parent, Cloneable<ProjectSettings> {
 
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    private final @Getter GeneralProjectSettings generalSettings           = new GeneralProjectSettings(this);
-    private final @Getter DatabaseBrowserSettings browserSettings          = new DatabaseBrowserSettings(this);
-    private final @Getter NavigationSettings navigationSettings            = new NavigationSettings(this);
-    private final @Getter DataGridSettings dataGridSettings                = new DataGridSettings(this);
-    private final @Getter DataEditorSettings dataEditorSettings            = new DataEditorSettings(this);
-    private final @Getter CodeEditorSettings codeEditorSettings            = new CodeEditorSettings(this);
-    private final @Getter CodeCompletionSettings codeCompletionSettings    = new CodeCompletionSettings(this);
-    private final @Getter ProjectCodeStyleSettings codeStyleSettings       = new ProjectCodeStyleSettings(this);
-    private final @Getter ExecutionEngineSettings executionEngineSettings  = new ExecutionEngineSettings(this);
-    private final @Getter OperationSettings operationSettings              = new OperationSettings(this);
-    private final @Getter DDLFileSettings ddlFileSettings                  = new DDLFileSettings(this);
-    private final @Getter ConnectionBundleSettings connectionSettings      = new ConnectionBundleSettings(this);
+    private final GeneralProjectSettings generalSettings           = new GeneralProjectSettings(this);
+    private final DatabaseBrowserSettings browserSettings          = new DatabaseBrowserSettings(this);
+    private final NavigationSettings navigationSettings            = new NavigationSettings(this);
+    private final DataGridSettings dataGridSettings                = new DataGridSettings(this);
+    private final DataEditorSettings dataEditorSettings            = new DataEditorSettings(this);
+    private final CodeEditorSettings codeEditorSettings            = new CodeEditorSettings(this);
+    private final CodeCompletionSettings codeCompletionSettings    = new CodeCompletionSettings(this);
+    private final ProjectCodeStyleSettings codeStyleSettings       = new ProjectCodeStyleSettings(this);
+    private final ExecutionEngineSettings executionEngineSettings  = new ExecutionEngineSettings(this);
+    private final OperationSettings operationSettings              = new OperationSettings(this);
+    private final DDLFileSettings ddlFileSettings                  = new DDLFileSettings(this);
+    private final ConnectionBundleSettings connectionSettings      = new ConnectionBundleSettings(this);
 
     public ProjectSettings(Project project) {
         super(project);

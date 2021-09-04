@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.object.filter.type;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.common.filter.Filter;
-import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
@@ -13,45 +12,50 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.filter.type.ui.ObjectTypeFilterSettingsForm;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class ObjectTypeFilterSettings extends BasicProjectConfiguration<ProjectConfiguration, ObjectTypeFilterSettingsForm> {
-    private final Latent<List<ObjectTypeFilterSetting>> objectTypeFilterSettings = Latent.basic(() -> {
-        List<ObjectTypeFilterSetting> objectTypeFilterSettings = new ArrayList<>();
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.SCHEMA));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.USER));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.ROLE));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.PRIVILEGE));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.CHARSET));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.TABLE));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.VIEW));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.MATERIALIZED_VIEW));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.NESTED_TABLE));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.COLUMN));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.INDEX));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.CONSTRAINT));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.DATASET_TRIGGER));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.DATABASE_TRIGGER));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.SYNONYM));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.SEQUENCE));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.PROCEDURE));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.FUNCTION));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.PACKAGE));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.TYPE));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.TYPE_ATTRIBUTE));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.ARGUMENT));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.DIMENSION));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.CLUSTER));
-        objectTypeFilterSettings.add(new ObjectTypeFilterSetting(ObjectTypeFilterSettings.this, DBObjectType.DBLINK));
-        return objectTypeFilterSettings;
-    });
+    private final List<ObjectTypeFilterSetting> settings = Arrays.asList(
+            new ObjectTypeFilterSetting(this, DBObjectType.SCHEMA),
+            new ObjectTypeFilterSetting(this, DBObjectType.USER),
+            new ObjectTypeFilterSetting(this, DBObjectType.ROLE),
+            new ObjectTypeFilterSetting(this, DBObjectType.PRIVILEGE),
+            new ObjectTypeFilterSetting(this, DBObjectType.CHARSET),
+            new ObjectTypeFilterSetting(this, DBObjectType.TABLE),
+            new ObjectTypeFilterSetting(this, DBObjectType.VIEW),
+            new ObjectTypeFilterSetting(this, DBObjectType.MATERIALIZED_VIEW),
+            new ObjectTypeFilterSetting(this, DBObjectType.NESTED_TABLE),
+            new ObjectTypeFilterSetting(this, DBObjectType.COLUMN),
+            new ObjectTypeFilterSetting(this, DBObjectType.INDEX),
+            new ObjectTypeFilterSetting(this, DBObjectType.CONSTRAINT),
+            new ObjectTypeFilterSetting(this, DBObjectType.DATASET_TRIGGER),
+            new ObjectTypeFilterSetting(this, DBObjectType.DATABASE_TRIGGER),
+            new ObjectTypeFilterSetting(this, DBObjectType.SYNONYM),
+            new ObjectTypeFilterSetting(this, DBObjectType.SEQUENCE),
+            new ObjectTypeFilterSetting(this, DBObjectType.PROCEDURE),
+            new ObjectTypeFilterSetting(this, DBObjectType.FUNCTION),
+            new ObjectTypeFilterSetting(this, DBObjectType.PACKAGE),
+            new ObjectTypeFilterSetting(this, DBObjectType.TYPE),
+            new ObjectTypeFilterSetting(this, DBObjectType.TYPE_ATTRIBUTE),
+            new ObjectTypeFilterSetting(this, DBObjectType.ARGUMENT),
+            new ObjectTypeFilterSetting(this, DBObjectType.DIMENSION),
+            new ObjectTypeFilterSetting(this, DBObjectType.CLUSTER),
+            new ObjectTypeFilterSetting(this, DBObjectType.DBLINK));
 
     private final BooleanSetting useMasterSettings = new BooleanSetting("use-master-settings", true);
+
+    @EqualsAndHashCode.Exclude
     private final ConnectionRef connectionRef;
 
     public ObjectTypeFilterSettings(ProjectConfiguration parent, @Nullable ConnectionRef connectionRef) {
@@ -76,22 +80,10 @@ public class ObjectTypeFilterSettings extends BasicProjectConfiguration<ProjectC
         return connectionRef == null ? null : connectionRef.getConnectionId();
     }
 
-    public BooleanSetting getUseMasterSettings() {
-        return useMasterSettings;
-    }
-
     @NotNull
     @Override
     public ObjectTypeFilterSettingsForm createConfigurationEditor() {
         return new ObjectTypeFilterSettingsForm(this);
-    }
-
-    public Filter<BrowserTreeNode> getElementFilter() {
-        return elementFilter;
-    }
-
-    public Filter<DBObjectType> getTypeFilter() {
-        return typeFilter;
     }
 
     private final Filter<BrowserTreeNode> elementFilter = treeNode -> {
@@ -146,10 +138,6 @@ public class ObjectTypeFilterSettings extends BasicProjectConfiguration<ProjectC
         return null;
     }
 
-    public List<ObjectTypeFilterSetting> getSettings() {
-        return objectTypeFilterSettings.get();
-    }
-
     public boolean isSelected(ObjectTypeFilterSetting objectFilterEntry) {
         for (ObjectTypeFilterSetting entry : getSettings()) {
             if (entry.equals(objectFilterEntry)) {
@@ -168,8 +156,7 @@ public class ObjectTypeFilterSettings extends BasicProjectConfiguration<ProjectC
     @Override
     public void readConfiguration(Element element) {
         useMasterSettings.readConfigurationAttribute(element);
-        for (Object o : element.getChildren()) {
-            Element child = (Element) o;
+        for (Element child : element.getChildren()) {
             String typeName = child.getAttributeValue("name");
             DBObjectType objectType = DBObjectType.get(typeName);
             if (objectType != null) {

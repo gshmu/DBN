@@ -52,21 +52,21 @@ wrappedTokenLC.couldStartWithLeaf(leaf));
     public boolean containsToken(TokenType tokenType) {
         return getBeginTokenElement().tokenType == tokenType ||
                 getEndTokenElement().tokenType == tokenType ||
-                elementType.wrappedElement.lookupCache.containsToken(tokenType);
+                elementType.getWrappedElement().getLookupCache().containsToken(tokenType);
     }
 
     @Override
     public boolean containsLeaf(LeafElementType leafElementType) {
         return getBeginTokenElement() == leafElementType ||
                 getEndTokenElement() == leafElementType ||
-                elementType.wrappedElement.lookupCache.containsLeaf(leafElementType);
+                elementType.getWrappedElement().getLookupCache().containsLeaf(leafElementType);
     }
 
     @Override
     public Set<TokenType> getFirstPossibleTokens() {
         Set<TokenType> tokenTypes = initBucket(null);
         tokenTypes.add(getBeginTokenElement().tokenType);
-        elementType.wrappedElement.lookupCache.collectFirstPossibleTokens(tokenTypes);
+        elementType.getWrappedElement().getLookupCache().collectFirstPossibleTokens(tokenTypes);
         return tokenTypes;
     }
 
@@ -79,7 +79,7 @@ wrappedTokenLC.couldStartWithLeaf(leaf));
 
     @Override
     public boolean couldStartWithLeaf(LeafElementType leafElementType) {
-        return getBeginTokenElement() == leafElementType || elementType.wrappedElement.lookupCache.couldStartWithLeaf(leafElementType);
+        return getBeginTokenElement() == leafElementType || elementType.getWrappedElement().getLookupCache().couldStartWithLeaf(leafElementType);
     }
 
     @Override
@@ -89,7 +89,7 @@ wrappedTokenLC.couldStartWithLeaf(leaf));
 
     @Override
     public boolean couldStartWithToken(TokenType tokenType) {
-        return getBeginTokenElement().lookupCache.couldStartWithToken(tokenType) || elementType.wrappedElement.lookupCache.couldStartWithToken(tokenType);
+        return getBeginTokenElement().getLookupCache().couldStartWithToken(tokenType) || elementType.getWrappedElement().getLookupCache().couldStartWithToken(tokenType);
     }
 
     @Override

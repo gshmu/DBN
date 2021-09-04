@@ -18,7 +18,12 @@ import java.io.File;
 import java.net.URL;
 import java.sql.Driver;
 import java.sql.DriverManager;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -45,7 +50,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
     }
 
 
-    private final MapLatent<File, List<Driver>, Exception> driversCache =
+    private final MapLatent<File, List<Driver>> driversCache =
             MapLatent.create(file -> loadDrivers(file));
 
     public static DatabaseDriverManager getInstance() {
@@ -92,7 +97,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
         }
     }
 
-    private List<Driver> loadDrivers(File libraryFile) throws Exception {
+    private List<Driver> loadDrivers(File libraryFile) {
         String taskDescription = ProgressMonitor.getTaskDescription();
         try {
             ProgressMonitor.setTaskDescription("Loading jdbc drivers from " + libraryFile);

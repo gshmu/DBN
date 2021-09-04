@@ -8,11 +8,17 @@ import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class CodeEditorSettings extends CompositeProjectConfiguration<ProjectSettings, CodeEditorSettingsForm> implements TopLevelConfig {
-    private CodeEditorGeneralSettings generalSettings           = new CodeEditorGeneralSettings(this);
-    private CodeEditorConfirmationSettings confirmationSettings = new CodeEditorConfirmationSettings(this);
+    private final CodeEditorGeneralSettings generalSettings           = new CodeEditorGeneralSettings(this);
+    private final CodeEditorConfirmationSettings confirmationSettings = new CodeEditorConfirmationSettings(this);
 
     public CodeEditorSettings(ProjectSettings parent) {
         super(parent);
@@ -47,18 +53,6 @@ public class CodeEditorSettings extends CompositeProjectConfiguration<ProjectSet
     @Override
     public CodeEditorSettings getOriginalSettings() {
         return getInstance(getProject());
-    }
-
-    /*********************************************************
-     *                        Custom                         *
-     *********************************************************/
-
-    public CodeEditorGeneralSettings getGeneralSettings() {
-       return generalSettings;
-    }
-
-    public CodeEditorConfirmationSettings getConfirmationSettings() {
-        return confirmationSettings;
     }
 
     /*********************************************************

@@ -16,7 +16,6 @@ import com.dci.intellij.dbn.language.common.psi.lookup.ObjectLookupAdapter;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,6 +23,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public class StatementExecutionVariablesBundle extends StatefulDisposable.Base i
     public static final Comparator<StatementExecutionVariable> NAME_LENGTH_COMPARATOR = (o1, o2) -> o2.getName().length() - o1.getName().length();
     public static final Comparator<StatementExecutionVariable> OFFSET_COMPARATOR = (o1, o2) -> o1.getOffset() - o2.getOffset();
 
-    private Map<StatementExecutionVariable, String> errorMap;
+    private Map<String, String> errorMap;
     private List<StatementExecutionVariable> variables = new ArrayList<>();
 
     public StatementExecutionVariablesBundle(List<ExecVariablePsiElement> variablePsiElements) {
@@ -177,13 +177,13 @@ public class StatementExecutionVariablesBundle extends StatefulDisposable.Base i
 
     private void addError(StatementExecutionVariable variable, String value) {
         if (errorMap == null) {
-            errorMap = new THashMap<StatementExecutionVariable, String>();
+            errorMap = new HashMap<>();
         }
-        errorMap.put(variable, value);
+        errorMap.put(variable.getName(), value);
     }
 
     public String getError(StatementExecutionVariable variable) {
-        return errorMap == null ? null : errorMap.get(variable);
+        return errorMap == null ? null : errorMap.get(variable.getName());
     }
 
     @Override

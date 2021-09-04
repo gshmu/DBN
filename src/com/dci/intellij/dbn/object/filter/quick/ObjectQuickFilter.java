@@ -92,9 +92,9 @@ public class ObjectQuickFilter implements Filter<DBObject>, Cloneable<ObjectQuic
     @Override
     public void readState(Element element) {
         joinType = ConditionJoinType.valueOf(element.getAttributeValue("join-type"));
-        for (Element conditionElement : element.getChildren()) {
+        for (Element child : element.getChildren()) {
             ObjectQuickFilterCondition condition = new ObjectQuickFilterCondition(this);
-            condition.readState(conditionElement);
+            condition.readState(child);
             conditions.add(condition);
         }
     }

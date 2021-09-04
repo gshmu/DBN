@@ -9,6 +9,8 @@ import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Function;
+
 public interface Safe {
     @NotNull
     static <R, E extends Throwable> R call(@NotNull R defaultValue, @NotNull ThrowableCallable<R, E> callable) throws E{
@@ -52,6 +54,23 @@ public interface Safe {
 
         if (value1 != null) {
             return value1.equals(value2);
+        }
+        return false;
+    }
+
+    static <T> boolean equal(@Nullable T value1, @Nullable T value2, Function<T, ?> valueProvider) {
+        if (value1 == null && value2 == null) {
+            return true;
+        }
+
+        if (value1 == value2) {
+            return true;
+        }
+
+        if (value1 != null) {
+            return equal(
+                    valueProvider.apply(value1),
+                    valueProvider.apply(value2));
         }
         return false;
     }

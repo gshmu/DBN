@@ -3,35 +3,21 @@ package com.dci.intellij.dbn.data.grid.options;
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.data.grid.options.ui.DataGridGeneralSettingsForm;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class DataGridGeneralSettings extends BasicProjectConfiguration<DataGridSettings, DataGridGeneralSettingsForm> {
     private boolean columnTooltipEnabled = true;
     private boolean zoomingEnabled = true;
 
     public DataGridGeneralSettings(DataGridSettings parent) {
         super(parent);
-    }
-
-    /****************************************************
-     *                      Custom                      *
-     ****************************************************/
-
-    public boolean isColumnTooltipEnabled() {
-        return columnTooltipEnabled;
-    }
-
-    public void setColumnTooltipEnabled(boolean columnTooltipEnabled) {
-        this.columnTooltipEnabled = columnTooltipEnabled;
-    }
-
-    public boolean isZoomingEnabled() {
-        return zoomingEnabled;
-    }
-
-    public void setZoomingEnabled(boolean zoomingEnabled) {
-        this.zoomingEnabled = zoomingEnabled;
     }
 
     /****************************************************

@@ -81,7 +81,7 @@ public class QualifiedIdentifierElementTypeParser extends ElementTypeParser<Qual
                 wasSeparator = true;
             } else {
                 if (wasSeparator) {
-                    if (tokenType.isIdentifier() ||  elementType.lookupCache.containsToken(tokenType))
+                    if (tokenType.isIdentifier() ||  elementType.getLookupCache().containsToken(tokenType))
                         chan.add(tokenType); else
                         chan.add(identifier);
                 } else {

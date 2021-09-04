@@ -4,10 +4,16 @@ import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class CodeCompletionSortingItem extends BasicConfiguration<CodeCompletionSortingSettings, ConfigurationEditorForm> {
     private DBObjectType objectType;
     private TokenTypeCategory tokenTypeCategory = TokenTypeCategory.UNKNOWN;
@@ -28,22 +34,12 @@ public class CodeCompletionSortingItem extends BasicConfiguration<CodeCompletion
         return tokenTypeCategory.getName();
     }
 
-    public boolean equals(Object obj) {
-        if (obj instanceof CodeCompletionSortingItem) {
-            CodeCompletionSortingItem remote = (CodeCompletionSortingItem) obj;
-            return
-                remote.objectType == objectType &&
-                remote.tokenTypeCategory == tokenTypeCategory;
-        }
-        return false;
-    }
-
     public String toString() {
         return objectType == null ? tokenTypeCategory.getName() : objectType.getName();
     }
 
-    @Override
     @Nls
+    @Override
     public String getDisplayName() {
         return null;
     }

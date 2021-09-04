@@ -13,33 +13,33 @@ import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
-import gnu.trove.THashSet;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput> implements Cloneable<DBMethodRunConfig> {
-    private Set<MethodExecutionInput> methodSelectionHistory = new THashSet<>();
+    private Map<DBObjectRef<DBMethod>, MethodExecutionInput> methodSelectionHistory = new HashMap<>();
 
     public DBMethodRunConfig(Project project, DBMethodRunConfigFactory factory, String name,DBRunConfigCategory category) {
         super(project, factory, name, category);
     }
 
-    public Set<MethodExecutionInput> getMethodSelectionHistory() {
-        return methodSelectionHistory;
+    public Collection<MethodExecutionInput> getMethodSelectionHistory() {
+        return methodSelectionHistory.values();
     }
 
     @Override
     public void setExecutionInput(MethodExecutionInput executionInput) {
-        MethodExecutionInput currentExecutionInput = getExecutionInput();
-        if (currentExecutionInput != null && !currentExecutionInput.equals(executionInput)) {
-            methodSelectionHistory.add(currentExecutionInput);
+        MethodExecutionInput input = getExecutionInput();
+        if (input != null && !input.equals(executionInput)) {
+            methodSelectionHistory.put(input.getMethodRef(), input);
         }
         super.setExecutionInput(executionInput);
     }
@@ -106,7 +106,7 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
             element.addContent(methodIdentifierElement);
 
             Element methodIdentifierHistoryElement = new Element("method-identifier-history");
-            for (MethodExecutionInput histExecutionInput : methodSelectionHistory) {
+            for (MethodExecutionInput histExecutionInput : methodSelectionHistory.values()) {
                 methodIdentifierElement = new Element("method-identifier");
                 histExecutionInput.getMethodRef().writeState(methodIdentifierElement);
                 methodIdentifierHistoryElement.addContent(methodIdentifierElement);
@@ -131,13 +131,12 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
 
             Element methodIdentifierHistoryElement = element.getChild("method-identifier-history");
             if (methodIdentifierHistoryElement != null) {
-                for (Object o : methodIdentifierHistoryElement.getChildren()) {
-                    methodIdentifierElement = (Element) o;
+                for (Element child : methodIdentifierHistoryElement.getChildren()) {
                     DBObjectRef<DBMethod> methodRef = new DBObjectRef<>();
-                    methodRef.readState(methodIdentifierElement);
+                    methodRef.readState(child);
 
                     MethodExecutionInput executionInput = executionManager.getExecutionInput(methodRef);
-                    methodSelectionHistory.add(executionInput);
+                    methodSelectionHistory.put(methodRef, executionInput);
                 }
             }
         }
@@ -148,7 +147,8 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
         DBMethodRunConfig runConfiguration = (DBMethodRunConfig) super.clone();
         MethodExecutionInput executionInput = getExecutionInput();
         runConfiguration.setExecutionInput(executionInput == null ? null : executionInput.clone());
-        runConfiguration.methodSelectionHistory = new HashSet<>(getMethodSelectionHistory());
+        runConfiguration.methodSelectionHistory = new HashMap<>(methodSelectionHistory);
+
         return runConfiguration;
     }
 
@@ -158,7 +158,7 @@ public abstract class DBMethodRunConfig extends DBRunConfig<MethodExecutionInput
             MethodExecutionInput executionInput = getExecutionInput();
             if (executionInput != null) {
                 setGeneratedName(true);
-                String runnerName = executionInput.getMethodRef().objectName;
+                String runnerName = executionInput.getMethodRef().getObjectName();
                 if (getDebuggerType() == DBDebuggerType.JDWP) {
                     runnerName = runnerName + " (JDWP)";
                 }

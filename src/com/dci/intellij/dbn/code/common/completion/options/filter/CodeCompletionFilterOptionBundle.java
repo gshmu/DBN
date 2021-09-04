@@ -4,16 +4,22 @@ import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CheckedTree
 import com.dci.intellij.dbn.code.common.completion.options.filter.ui.CodeCompletionFilterTreeNode;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.intellij.ui.CheckedTreeNode;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class CodeCompletionFilterOptionBundle implements CheckedTreeNodeProvider, PersistentConfiguration {
-    private final List<CodeCompletionFilterOption> options = new ArrayList<>();
+    @EqualsAndHashCode.Exclude
     private final CodeCompletionFilterSettings filterSettings;
+
+    private final List<CodeCompletionFilterOption> options = new ArrayList<>();
     private final String name;
 
     public CodeCompletionFilterOptionBundle(String name, CodeCompletionFilterSettings filterSettings) {
@@ -23,21 +29,28 @@ public class CodeCompletionFilterOptionBundle implements CheckedTreeNodeProvider
 
     @Override
     public void readConfiguration(Element element) {
-        List children = element.getChildren();
-        for (Object child: children) {
+        for (Element child: element.getChildren()) {
             CodeCompletionFilterOption option = new CodeCompletionFilterOption(filterSettings);
-            Element childElement = (Element) child;
-            if (childElement.getName().equals("filter-element")){
-                option.readConfiguration(childElement);
-                int index = options.indexOf(option);
-                if (index == -1) {
+            if (child.getName().equals("filter-element")){
+                option.readConfiguration(child);
+                CodeCompletionFilterOption local = findOption(option);
+                if (local == null) {
                     options.add(option);
                 } else {
-                    option = options.get(index);
-                    option.readConfiguration(childElement);
+                    local.readConfiguration(child);
                 }
             }
         }
+    }
+
+    private CodeCompletionFilterOption findOption(CodeCompletionFilterOption option) {
+        return options.
+                stream().
+                filter(o ->
+                        o.getObjectType() == option.getObjectType() &&
+                        o.getTokenTypeCategory() == option.getTokenTypeCategory()).
+                findFirst().
+                orElse(null);
     }
 
     @Override

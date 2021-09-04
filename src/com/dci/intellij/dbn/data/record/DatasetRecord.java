@@ -11,9 +11,9 @@ import com.dci.intellij.dbn.editor.data.filter.DatasetFilterInput;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.Disposable;
-import gnu.trove.THashMap;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +21,7 @@ import static com.dci.intellij.dbn.common.util.CollectionUtil.isLast;
 
 public class DatasetRecord implements Disposable {
     private DatasetFilterInput filterInput;
-    private Map<String, Object> values = new THashMap<String, Object>();
+    private Map<String, Object> values = new HashMap<>();
 
     public DatasetRecord(DatasetFilterInput filterInput) throws SQLException {
         this.filterInput = filterInput;

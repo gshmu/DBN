@@ -15,7 +15,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import java.awt.BorderLayout;
 
 
 public class SQLConsoleEditorProvider extends BasicTextEditorProvider implements DumbAware{
@@ -50,10 +50,10 @@ public class SQLConsoleEditorProvider extends BasicTextEditorProvider implements
         editor.getComponent().add(toolbarForm.getComponent(), BorderLayout.NORTH);
 
         Document document = editor.getEditor().getDocument();
-        int documentTracking = document.hashCode();
-        if (document.hashCode() != consoleVirtualFile.getDocumentHashCode()) {
+        int documentSignature = document.hashCode();
+        if (document.hashCode() != consoleVirtualFile.getDocumentSignature()) {
             document.addDocumentListener(consoleVirtualFile);
-            consoleVirtualFile.setDocumentHashCode(documentTracking);
+            consoleVirtualFile.setDocumentSignature(documentSignature);
         }
         return editor;
     }

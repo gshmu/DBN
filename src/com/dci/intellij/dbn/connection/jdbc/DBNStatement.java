@@ -262,7 +262,7 @@ public class DBNStatement<T extends Statement> extends DBNResource<T> implements
     }
 
     @Override
-    public void setFetchSize(int rows) throws SQLException {
+    public void setFetchSize(int rows) {
         Unsafe.silent(() -> inner.setFetchSize(Math.max(rows, 100)));
     }
 

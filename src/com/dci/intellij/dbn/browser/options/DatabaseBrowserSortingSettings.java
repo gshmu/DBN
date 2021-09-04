@@ -6,12 +6,18 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.sorting.DBObjectComparator;
 import com.dci.intellij.dbn.object.common.sorting.SortingType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class DatabaseBrowserSortingSettings
         extends BasicProjectConfiguration<DatabaseBrowserSettings, DatabaseBrowserSortingSettingsForm> {
 
@@ -23,14 +29,6 @@ public class DatabaseBrowserSortingSettings
         comparators.add(DBObjectComparator.get(DBObjectType.FUNCTION, SortingType.NAME));
         comparators.add(DBObjectComparator.get(DBObjectType.PROCEDURE, SortingType.NAME));
         comparators.add(DBObjectComparator.get(DBObjectType.ARGUMENT, SortingType.POSITION));
-    }
-
-    public List<DBObjectComparator> getComparators() {
-        return comparators;
-    }
-
-    public void setComparators(List<DBObjectComparator> comparators) {
-        this.comparators = comparators;
     }
 
     public <T extends DBObject> DBObjectComparator<T> getComparator(DBObjectType objectType) {
@@ -71,10 +69,6 @@ public class DatabaseBrowserSortingSettings
     public String getHelpTopic() {
         return "browserSettings";
     }
-
-    /*********************************************************
-     *                        Custom                         *
-     *********************************************************/
 
     /*********************************************************
      *                     Configuration                     *

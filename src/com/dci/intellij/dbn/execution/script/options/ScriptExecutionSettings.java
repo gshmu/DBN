@@ -8,14 +8,18 @@ import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.script.CmdLineInterface;
 import com.dci.intellij.dbn.execution.script.CmdLineInterfaceBundle;
 import com.dci.intellij.dbn.execution.script.options.ui.ScriptExecutionSettingsForm;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class ScriptExecutionSettings extends BasicProjectConfiguration<ExecutionEngineSettings, ScriptExecutionSettingsForm> implements ExecutionTimeoutSettings, ProjectSupplier {
-    private @Getter @Setter CmdLineInterfaceBundle commandLineInterfaces = new CmdLineInterfaceBundle();
-    private @Getter @Setter int executionTimeout = 300;
+    private CmdLineInterfaceBundle commandLineInterfaces = new CmdLineInterfaceBundle();
+    private int executionTimeout = 300;
 
     public ScriptExecutionSettings(ExecutionEngineSettings parent) {
         super(parent);

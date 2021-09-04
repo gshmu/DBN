@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 public class DatasetJoinBundle {
-    private List<DatasetJoin> joins = new ArrayList<DatasetJoin>();
+    private final List<DatasetJoin> joins = new ArrayList<>();
 
     public DatasetJoinBundle(Set<DBDataset> datasets, boolean lenient) {
         for (DBDataset dataset1 : datasets) {

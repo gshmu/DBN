@@ -111,7 +111,7 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> e
         boolean initAsFirstRequiredLeaf = initAsFirstRequiredLeaf(leaf, source);
 
         // register first possible leafs
-        ElementTypeLookupCache lookupCache = leaf.lookupCache;
+        ElementTypeLookupCache lookupCache = leaf.getLookupCache();
         if (initAsFirstPossibleLeaf) {
             firstPossibleLeafs.add(leaf);
             lookupCache.collectFirstPossibleTokens(firstPossibleTokens);

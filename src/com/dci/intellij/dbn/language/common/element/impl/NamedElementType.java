@@ -11,14 +11,16 @@ import com.dci.intellij.dbn.language.common.psi.RootPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import gnu.trove.THashSet;
+import lombok.Getter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
+@Getter
 public class NamedElementType extends SequenceElementType {
-    private boolean definitionLoaded;
     private final Set<ElementTypeBase> parents;
+    private boolean definitionLoaded;
     private boolean truncateOnExecution;
 
     public NamedElementType(ElementTypeBundle bundle, String id) {
@@ -60,10 +62,6 @@ public class NamedElementType extends SequenceElementType {
         definitionLoaded = true;
     }
 
-    public boolean isDefinitionLoaded() {
-        return definitionLoaded;
-    }
-
     @NotNull
     @Override
     public String getName() {
@@ -72,13 +70,5 @@ public class NamedElementType extends SequenceElementType {
 
     public void addParent(ElementTypeBase parent) {
         parents.add(parent);
-    }
-
-    public Set<ElementTypeBase> getParents() {
-        return parents;
-    }
-
-    public boolean truncateOnExecution() {
-        return truncateOnExecution;
     }
 }

@@ -13,13 +13,17 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
+@Getter
 public class ChameleonTokenType extends SimpleTokenType implements ElementType {
+
     private final DBLanguageDialect injectedLanguage;
+
     public ChameleonTokenType(@Nullable DBLanguageDialect hostLanguage, DBLanguageDialect injectedLanguage) {
         super(injectedLanguage.getID() + " block", hostLanguage);
         this.injectedLanguage = injectedLanguage;
@@ -34,10 +38,6 @@ public class ChameleonTokenType extends SimpleTokenType implements ElementType {
     @Override
     public DBLanguageDialect getLanguageDialect() {
         return (DBLanguageDialect) super.getLanguage();
-    }
-
-    public DBLanguageDialect getInjectedLanguage() {
-        return injectedLanguage;
     }
 
     @NotNull

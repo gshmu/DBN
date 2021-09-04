@@ -6,13 +6,15 @@ import com.dci.intellij.dbn.language.common.psi.ExecutablePsiElement;
 import com.intellij.codeInsight.daemon.impl.ShowIntentionsPass;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
+import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
+@EqualsAndHashCode(callSuper = false)
 public class StatementGutterRenderer extends GutterIconRenderer {
-    private StatementGutterAction action;
+    private final StatementGutterAction action;
     public StatementGutterRenderer(ExecutablePsiElement executablePsiElement) {
         this.action = new StatementGutterAction(executablePsiElement);
     }
@@ -39,20 +41,6 @@ public class StatementGutterRenderer extends GutterIconRenderer {
     @Nullable
     public String getTooltipText() {
         return action.getTooltipText();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof StatementGutterRenderer) {
-            StatementGutterRenderer renderer = (StatementGutterRenderer) obj;
-            return action.equals(renderer.action);
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return action.hashCode();
     }
 
     @NotNull

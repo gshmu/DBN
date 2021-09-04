@@ -25,14 +25,18 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.tree.IElementType;
 import gnu.trove.THashSet;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+@Getter
+@Setter
 public abstract class ElementTypeBase extends IElementType implements ElementType {
     private static final Logger LOGGER = LoggerFactory.createLogger();
     private static final FormattingDefinition STATEMENT_FORMATTING = new FormattingDefinition(null, IndentDefinition.NORMAL, SpacingDefinition.MIN_LINE_BREAK, null);
@@ -46,8 +50,8 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
     private Branch branch;
     private FormattingDefinition formatting;
 
-    public final ElementTypeLookupCache lookupCache = createLookupCache();
-    public final ElementTypeParser parser = createParser();
+    private final ElementTypeLookupCache lookupCache = createLookupCache();
+    private final ElementTypeParser parser = createParser();
     private final ElementTypeBundle bundle;
     private final ElementTypeBase parent;
     private DBObjectType virtualObjectType;
@@ -100,16 +104,6 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
         return branches;
     }
 
-    @Override
-    public int getIdx() {
-        return idx;
-    }
-
-    @Override
-    public WrappingDefinition getWrapping() {
-        return wrapping;
-    }
-
     public boolean isWrappingBegin(LeafElementType elementType) {
         return wrapping != null && wrapping.getBeginElementType() == elementType;
     }
@@ -136,16 +130,6 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
     @Override
     public void setDefaultFormatting(FormattingDefinition defaultFormatting) {
         formatting = FormattingDefinitionFactory.mergeDefinitions(formatting, defaultFormatting);
-    }
-
-    @Override
-    public boolean isScopeDemarcation() {
-        return scopeDemarcation;
-    }
-
-    @Override
-    public boolean isScopeIsolation() {
-        return scopeIsolation;
     }
 
     protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
@@ -208,48 +192,6 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
         scopeIsolation = is(ElementTypeAttribute.SCOPE_ISOLATION);
     }
 
-    @NotNull
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
-    public Icon getIcon() {
-        return icon;
-    }
-
-    @Override
-    public ElementTypeBase getParent() {
-        return parent;
-    }
-
-    @Override
-    public Branch getBranch() {
-        return branch;
-    }
-
-    @Override
-    public ElementTypeLookupCache getLookupCache() {
-        return lookupCache;
-    }
-
-    @Override
-    @NotNull
-    public ElementTypeParser getParser() {
-        return parser;
-    }
-
-
     @Override
     public boolean is(ElementTypeAttribute attribute) {
         return attributes != null && attributes.is(attribute);
@@ -258,11 +200,6 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
     @Override
     public boolean set(ElementTypeAttribute attribute, boolean value) {
         throw new AbstractMethodError("Operation not allowed");
-    }
-
-    @Override
-    public FormattingDefinition getFormatting() {
-        return formatting;
     }
 
     @Override
@@ -287,7 +224,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj);
+        return this == obj;
     }
 
     @Override

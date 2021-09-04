@@ -17,16 +17,18 @@ import com.dci.intellij.dbn.editor.data.ui.table.DatasetEditorTable;
 import com.dci.intellij.dbn.editor.data.ui.table.cell.DatasetTableCellEditor;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
+import java.awt.Rectangle;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
+@Getter
 public class DatasetEditorModelCell
         extends ResultSetDataModelCell<DatasetEditorModelRow, DatasetEditorModel>
         implements ChangeListener {
@@ -254,10 +256,6 @@ public class DatasetEditorModelCell
         this.originalUserValue = value;
     }
 
-    public Object getOriginalUserValue() {
-        return originalUserValue;
-    }
-
     public boolean isEditing() {
         DatasetEditorTable table = getEditorTable();
         return table.isEditing() &&
@@ -308,7 +306,7 @@ public class DatasetEditorModelCell
 
     boolean notifyError(DatasetEditorError error, boolean showPopup) {
         error.setNotified(true);
-        if(!Safe.equal(this.error, error)) {
+        if(!Safe.equal(this.error, error, err -> err.getMessage())) {
             clearError();
             this.error = error;
             notifyCellUpdated();
@@ -337,10 +335,6 @@ public class DatasetEditorModelCell
             error.markDirty();
             error = null;
         }
-    }
-
-    public DatasetEditorError getError() {
-        return error;
     }
 
     public void revertChanges() {

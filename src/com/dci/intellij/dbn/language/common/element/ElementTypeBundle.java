@@ -5,7 +5,20 @@ import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
 import com.dci.intellij.dbn.language.common.TokenTypeBundle;
-import com.dci.intellij.dbn.language.common.element.impl.*;
+import com.dci.intellij.dbn.language.common.element.impl.BasicElementType;
+import com.dci.intellij.dbn.language.common.element.impl.BlockElementType;
+import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
+import com.dci.intellij.dbn.language.common.element.impl.ExecVariableElementType;
+import com.dci.intellij.dbn.language.common.element.impl.IdentifierElementType;
+import com.dci.intellij.dbn.language.common.element.impl.IterationElementType;
+import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
+import com.dci.intellij.dbn.language.common.element.impl.NamedElementType;
+import com.dci.intellij.dbn.language.common.element.impl.OneOfElementType;
+import com.dci.intellij.dbn.language.common.element.impl.QualifiedIdentifierElementType;
+import com.dci.intellij.dbn.language.common.element.impl.SequenceElementType;
+import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
+import com.dci.intellij.dbn.language.common.element.impl.WrapperElementType;
+import com.dci.intellij.dbn.language.common.element.impl.WrappingDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
@@ -26,7 +39,8 @@ import java.util.Set;
 
 public class ElementTypeBundle {
     private static final Logger LOGGER = LoggerFactory.createLogger();
-    private TokenTypeBundle tokenTypeBundle;
+
+    private final TokenTypeBundle tokenTypeBundle;
     private BasicElementType unknownElementType;
     private NamedElementType rootElementType;
 
@@ -52,8 +66,7 @@ public class ElementTypeBundle {
         this.tokenTypeBundle = tokenTypeBundle;
         try {
             Element root = elementTypesDef.getRootElement();
-            for (Object o : root.getChildren()) {
-                Element child = (Element) o;
+            for (Element child : root.getChildren()) {
                 createNamedElementType(child);
             }
 

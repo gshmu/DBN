@@ -7,15 +7,19 @@ import com.dci.intellij.dbn.common.project.ProjectSupplier;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.method.options.ui.MethodExecutionSettingsForm;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class MethodExecutionSettings extends BasicProjectConfiguration<ExecutionEngineSettings, ConfigurationEditorForm> implements ExecutionTimeoutSettings, ProjectSupplier {
-    private @Getter @Setter int executionTimeout = 30;
-    private @Getter @Setter int debugExecutionTimeout = 600;
-    private @Getter @Setter int parameterHistorySize = 10;
+    private int executionTimeout = 30;
+    private int debugExecutionTimeout = 600;
+    private int parameterHistorySize = 10;
 
     public MethodExecutionSettings(ExecutionEngineSettings parent) {
         super(parent);

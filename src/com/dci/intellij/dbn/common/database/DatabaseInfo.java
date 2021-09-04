@@ -6,11 +6,13 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFile;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 public class DatabaseInfo implements Cloneable<DatabaseInfo> {
     public interface Default {
         DatabaseInfo ORACLE   = new DatabaseInfo("oracle", "localhost", "1521", "XE",       DatabaseUrlType.SID);

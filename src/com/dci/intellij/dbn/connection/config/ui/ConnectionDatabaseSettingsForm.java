@@ -37,11 +37,16 @@ import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
@@ -311,7 +316,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         }
 
         configuration.setDriverSource(getSelection(driverSourceComboBox));
-        configuration.updateHashCode();
+        configuration.updateSignature();
     }
 
     @Override

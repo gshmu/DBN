@@ -1,10 +1,14 @@
 package com.dci.intellij.dbn.common.locale;
 
 import com.dci.intellij.dbn.common.locale.options.RegionalSettings;
+import com.dci.intellij.dbn.common.sign.Signed;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.intellij.openapi.project.Project;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
@@ -18,7 +22,10 @@ import java.util.Date;
 import java.util.Locale;
 
 
-public class Formatter implements Cloneable {
+@Getter
+@Setter
+@EqualsAndHashCode
+public class Formatter implements Cloneable, Signed {
     private DateFormat dateFormat;
     private DateFormat timeFormat;
     private DateFormat dateTimeFormat;
@@ -31,10 +38,15 @@ public class Formatter implements Cloneable {
     private String numberFormatPattern;
     private String integerFormatPattern;
 
+    private int signature;
+
+    private static final ThreadLocal<Formatter> localFormatter = new ThreadLocal<>();
+
     private Formatter() {
     }
 
-    public Formatter(@NotNull Locale locale, DBDateFormat dateFormatOption, DBNumberFormat numberFormatOption) {
+    public Formatter(int signature, @NotNull Locale locale, DBDateFormat dateFormatOption, DBNumberFormat numberFormatOption) {
+        this.signature = signature;
         int dFormat = dateFormatOption.getDateFormat();
         dateFormat = SimpleDateFormat.getDateInstance(dFormat, locale);
         timeFormat = SimpleDateFormat.getTimeInstance(dFormat, locale);
@@ -57,7 +69,8 @@ public class Formatter implements Cloneable {
         integerFormatPattern = ((DecimalFormat) integerFormat).toPattern();
     }
 
-    public Formatter(@NotNull Locale locale, String dateFormatPattern, String timeFormatPattern, String numberFormatPattern) {
+    public Formatter(int signature, @NotNull Locale locale, String dateFormatPattern, String timeFormatPattern, String numberFormatPattern) {
+        this.signature = signature;
         if (StringUtil.isEmptyOrSpaces(dateFormatPattern)) throw new IllegalArgumentException("Date format pattern empty.");
         if (StringUtil.isEmptyOrSpaces(timeFormatPattern)) throw new IllegalArgumentException("Time format pattern empty.");
         if (StringUtil.isEmptyOrSpaces(numberFormatPattern)) throw new IllegalArgumentException("Number format pattern empty.");
@@ -84,42 +97,18 @@ public class Formatter implements Cloneable {
         integerFormat.setMaximumFractionDigits(0);
     }
 
+    public static Formatter create(RegionalSettings settings) {
+        return settings.createFormatter();
+    }
+
     public static Formatter getInstance(@NotNull Project project) {
-        return RegionalSettings.getInstance(project).getFormatter();
-    }
-
-    public static ThreadLocal<Formatter> init(@NotNull final Project project) {
-        return new ThreadLocal<Formatter>(){
-            @Override
-            public Formatter get() {
-                Formatter formatter = super.get();
-                if (formatter == null) {
-                    formatter = getInstance(project);
-                    set(formatter);
-                }
-                return formatter;
-            }
-        };
-    }
-
-    public String getDateFormatPattern() {
-        return dateFormatPattern;
-    }
-
-    public String getTimeFormatPattern() {
-        return timeFormatPattern;
-    }
-
-    public String getDatetimeFormatPattern() {
-        return datetimeFormatPattern;
-    }
-
-    public String getNumberFormatPattern() {
-        return numberFormatPattern;
-    }
-
-    public String getIntegerFormatPattern() {
-        return integerFormatPattern;
+        Formatter localFormatter = Formatter.localFormatter.get();
+        Formatter baseFormatter = RegionalSettings.getInstance(project).getBaseFormatter();
+        if (localFormatter == null || localFormatter.getSignature() != baseFormatter.getSignature()) {
+            localFormatter = baseFormatter;
+            Formatter.localFormatter.set(localFormatter);
+        }
+        return localFormatter;
     }
 
     public String formatDate(Date date) {
@@ -201,40 +190,5 @@ public class Formatter implements Cloneable {
         clone.numberFormatPattern = numberFormatPattern;
         clone.integerFormatPattern = integerFormatPattern;
         return clone;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Formatter formatter = (Formatter) o;
-
-        if (dateFormat != null ? !dateFormat.equals(formatter.dateFormat) : formatter.dateFormat != null) return false;
-        if (timeFormat != null ? !timeFormat.equals(formatter.timeFormat) : formatter.timeFormat != null) return false;
-        if (dateTimeFormat != null ? !dateTimeFormat.equals(formatter.dateTimeFormat) : formatter.dateTimeFormat != null) return false;
-        if (numberFormat != null ? !numberFormat.equals(formatter.numberFormat) : formatter.numberFormat != null) return false;
-        if (integerFormat != null ? !integerFormat.equals(formatter.integerFormat) : formatter.integerFormat != null) return false;
-        if (dateFormatPattern != null ? !dateFormatPattern.equals(formatter.dateFormatPattern) : formatter.dateFormatPattern != null) return false;
-        if (timeFormatPattern != null ? !timeFormatPattern.equals(formatter.timeFormatPattern) : formatter.timeFormatPattern != null) return false;
-        if (datetimeFormatPattern != null ? !datetimeFormatPattern.equals(formatter.datetimeFormatPattern) : formatter.datetimeFormatPattern != null) return false;
-        if (numberFormatPattern != null ? !numberFormatPattern.equals(formatter.numberFormatPattern) : formatter.numberFormatPattern != null) return false;
-        return !(integerFormatPattern != null ? !integerFormatPattern.equals(formatter.integerFormatPattern) : formatter.integerFormatPattern != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = dateFormat != null ? dateFormat.hashCode() : 0;
-        result = 31 * result + (timeFormat != null ? timeFormat.hashCode() : 0);
-        result = 31 * result + (dateTimeFormat != null ? dateTimeFormat.hashCode() : 0);
-        result = 31 * result + (numberFormat != null ? numberFormat.hashCode() : 0);
-        result = 31 * result + (integerFormat != null ? integerFormat.hashCode() : 0);
-        result = 31 * result + (dateFormatPattern != null ? dateFormatPattern.hashCode() : 0);
-        result = 31 * result + (timeFormatPattern != null ? timeFormatPattern.hashCode() : 0);
-        result = 31 * result + (datetimeFormatPattern != null ? datetimeFormatPattern.hashCode() : 0);
-        result = 31 * result + (numberFormatPattern != null ? numberFormatPattern.hashCode() : 0);
-        result = 31 * result + (integerFormatPattern != null ? integerFormatPattern.hashCode() : 0);
-        return result;
     }
 }

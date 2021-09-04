@@ -61,7 +61,7 @@ public class DatasetEditorProvider implements FileEditorProvider, NamedComponent
         if (virtualFile instanceof DBEditableObjectVirtualFile) {
             DBEditableObjectVirtualFile editableObjectFile = (DBEditableObjectVirtualFile) virtualFile;
             DBObjectRef<DBSchemaObject> objectRef = editableObjectFile.getObjectRef();
-            DBObjectType objectType = objectRef.objectType;
+            DBObjectType objectType = objectRef.getObjectType();
             if (objectType.isInheriting(DBObjectType.DATASET)) {
                 DatasetEditorState editorState = new DatasetEditorState();
                 editorState.readState(sourceElement);

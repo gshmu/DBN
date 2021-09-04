@@ -31,7 +31,7 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
     public static final String COMPONENT_NAME = "DBNavigator.Project.DatasetFilterManager";
 
     public static final DatasetFilter EMPTY_FILTER = new DatasetEmptyFilter();
-    private Map<ConnectionId, Map<String, DatasetFilterGroup>> filters = new HashMap<>();
+    private final Map<ConnectionId, Map<String, DatasetFilterGroup>> filters = new HashMap<>();
 
     private DatasetFilterManager(Project project) {
         super(project);
@@ -61,7 +61,7 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
             DatasetFilterDialog filterDialog = new DatasetFilterDialog(dataset, filter);
             filterDialog.show();
         } else {
-            filter.setNew(false);
+            filter.setPersisted(true);
             filter.setTemporary(true);
             setActiveFilter(dataset, filter);
             DatasetEditorManager.getInstance(getProject()).reloadEditorData(dataset);
@@ -72,7 +72,7 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
         DatasetFilterGroup filterGroup = getFilterGroup(dataset);
         DatasetBasicFilter filter = filterGroup.createBasicFilter(columnName, columnValue, operator);
 
-        filter.setNew(false);
+        filter.setPersisted(true);
         filter.setTemporary(true);
         setActiveFilter(dataset, filter);
         DatasetEditorManager.getInstance(getProject()).reloadEditorData(dataset);
@@ -93,7 +93,7 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
         }
 
         if (filter != null) {
-            filter.setNew(false);
+            filter.setPersisted(true);
             filter.setTemporary(true);
             setActiveFilter(dataset, filter);
             DatasetEditorManager.getInstance(getProject()).reloadEditorData(dataset);
@@ -196,10 +196,9 @@ public class DatasetFilterManager extends AbstractProjectComponent implements Pe
 
     @Override
     public void loadState(@NotNull Element element) {
-        for (Object object : element.getChildren()) {
-            Element filterListElement = (Element) object;
+        for (Element child : element.getChildren()) {
             DatasetFilterGroup filterGroup = new DatasetFilterGroup(getProject());
-            filterGroup.readConfiguration(filterListElement);
+            filterGroup.readConfiguration(child);
             addFilterGroup(filterGroup);
         }
     }

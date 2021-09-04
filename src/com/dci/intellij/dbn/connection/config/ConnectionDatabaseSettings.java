@@ -6,13 +6,19 @@ import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.dci.intellij.dbn.connection.*;
+import com.dci.intellij.dbn.connection.AuthenticationType;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.ConnectivityStatus;
+import com.dci.intellij.dbn.connection.DatabaseType;
+import com.dci.intellij.dbn.connection.DatabaseUrlPattern;
+import com.dci.intellij.dbn.connection.DatabaseUrlType;
 import com.dci.intellij.dbn.connection.config.file.DatabaseFiles;
 import com.dci.intellij.dbn.connection.config.ui.ConnectionDatabaseSettingsForm;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
@@ -27,17 +33,16 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = false)
 public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSettings, ConnectionDatabaseSettingsForm> {
     public static final Logger LOGGER = LoggerFactory.createLogger();
 
     private String name;
-    private DatabaseType databaseType;
     private String description;
-    private ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
+    private DatabaseType databaseType;
     private DatabaseType resolvedDatabaseType = DatabaseType.GENERIC;
     private DatabaseUrlPattern urlPattern;
     private double databaseVersion = 9999;
-    private int hashCode;
 
     private final DatabaseInfo databaseInfo;
     private DriverSource driverSource;
@@ -46,6 +51,12 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
 
     private ConnectionConfigType configType;
     private final AuthenticationInfo authenticationInfo = new AuthenticationInfo(this, false);
+
+    @EqualsAndHashCode.Exclude
+    private transient ConnectivityStatus connectivityStatus = ConnectivityStatus.UNKNOWN;
+
+    @EqualsAndHashCode.Exclude
+    private transient long signature = 0;
 
     public ConnectionDatabaseSettings(ConnectionSettings parent, @NotNull DatabaseType databaseType, ConnectionConfigType configType) {
         super(parent);
@@ -86,10 +97,6 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
     @Override
     public String getDisplayName() {
         return name;
-    }
-
-    public ConnectionConfigType getConfigType() {
-        return configType;
     }
 
     public void setDatabaseType(DatabaseType databaseType) {
@@ -136,22 +143,8 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
     }
 
 
-    public void updateHashCode() {
-        AuthenticationInfo authenticationInfo = getAuthenticationInfo();
-        hashCode = (name + driver + driverLibrary +
-                databaseInfo.getHost() +
-                databaseInfo.getPort() +
-                databaseInfo.getDatabase() +
-                databaseInfo.getFilesForHash() +
-                databaseInfo.getUrl() +
-                authenticationInfo.getUser() +
-                authenticationInfo.getPassword() +
-                authenticationInfo.getType()).hashCode();
-    }
-
-    @Override
-    public int hashCode() {
-        return hashCode;
+    public void updateSignature() {
+        signature = hashCode();
     }
 
     @Override
@@ -291,7 +284,7 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
                         propertyElement.getAttributeValue("value"));
             }
         }
-        updateHashCode();
+        updateSignature();
     }
 
     @Override

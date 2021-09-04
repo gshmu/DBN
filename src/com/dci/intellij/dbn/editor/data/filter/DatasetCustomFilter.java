@@ -8,12 +8,18 @@ import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetCustomFilterForm;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.intellij.openapi.util.text.StringUtil;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.CDATA;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true)
 public class DatasetCustomFilter extends DatasetFilterImpl {
     private String condition;
 
@@ -55,14 +61,6 @@ public class DatasetCustomFilter extends DatasetFilterImpl {
         buffer.append(condition);
         DatasetFilterUtil.addOrderByClause(dataset, buffer, sortingState);
         return buffer.toString();
-    }
-
-    public String getCondition() {
-        return condition;
-    }
-
-    public void setCondition(String condition) {
-        this.condition = condition;
     }
 
     /*****************************************************

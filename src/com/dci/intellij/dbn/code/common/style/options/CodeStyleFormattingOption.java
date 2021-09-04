@@ -2,16 +2,22 @@ package com.dci.intellij.dbn.code.common.style.options;
 
 import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@EqualsAndHashCode
 public class CodeStyleFormattingOption implements PersistentConfiguration {
     private final List<CodeStylePreset> presets = new ArrayList<>();
-    private CodeStylePreset preset;
     private String name;
-    private final String displayName;
+    private String displayName;
+    private CodeStylePreset preset;
 
     public CodeStyleFormattingOption(String name, String displayName) {
         this.name = name;
@@ -25,27 +31,6 @@ public class CodeStyleFormattingOption implements PersistentConfiguration {
     public void addPreset(CodeStylePreset preset, boolean makeDefault) {
         presets.add(preset);
         if (makeDefault) this.preset = preset;
-    }
-
-
-    public void setPreset(CodeStylePreset preset) {
-        this.preset = preset;
-    }
-
-    public CodeStylePreset getPreset() {
-        return preset;
-    }
-
-    public List<CodeStylePreset> getPresets() {
-        return presets;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDisplayName() {
-        return displayName;
     }
 
     private CodeStylePreset getCodeStylePreset(String id) {

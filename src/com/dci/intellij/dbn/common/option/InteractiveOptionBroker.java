@@ -10,6 +10,9 @@ import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,6 +20,9 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 
+@Getter
+@Setter
+@EqualsAndHashCode
 public class InteractiveOptionBroker<T extends InteractiveOption> implements DialogWrapper.DoNotAskOption, PersistentConfiguration{
     private final String configName;
     private final String title;
@@ -57,11 +63,6 @@ public class InteractiveOptionBroker<T extends InteractiveOption> implements Dia
     @NotNull
     public T get() {
         return CommonUtil.nvl(selectedOption, defaultOption);
-    }
-
-    @NotNull
-    public T getDefaultOption() {
-        return defaultOption;
     }
 
     @Override

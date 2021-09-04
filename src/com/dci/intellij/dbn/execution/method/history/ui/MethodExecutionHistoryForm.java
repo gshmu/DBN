@@ -18,6 +18,7 @@ import com.dci.intellij.dbn.execution.method.MethodExecutionManager;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionHistory;
 import com.dci.intellij.dbn.execution.method.ui.MethodExecutionInputForm;
 import com.dci.intellij.dbn.object.DBMethod;
+import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.options.ConfigId;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
@@ -29,10 +30,11 @@ import com.intellij.ui.GuiUtils;
 import com.intellij.ui.JBSplitter;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JTree;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeSelectionListener;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +47,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl {
     private ChangeListener changeListener;
     private final boolean debug;
 
-    private final Map<MethodExecutionInput, MethodExecutionInputForm> methodExecutionForms = DisposableContainer.map(this);
+    private final Map<DBObjectRef<DBMethod>, MethodExecutionInputForm> methodExecutionForms = DisposableContainer.map(this);
 
     MethodExecutionHistoryForm(MethodExecutionHistoryDialog parent, MethodExecutionInput selectedExecutionInput, boolean debug) {
         super(parent);
@@ -75,7 +77,7 @@ public class MethodExecutionHistoryForm extends DBNFormImpl {
     }
 
     private MethodExecutionHistory getExecutionHistory() {
-        return MethodExecutionManager.getInstance(getProject()).getExecutionHistory();
+        return MethodExecutionManager.getInstance(ensureProject()).getExecutionHistory();
     }
 
     @NotNull
@@ -109,11 +111,12 @@ public class MethodExecutionHistoryForm extends DBNFormImpl {
         if (executionInput != null &&
                 !executionInput.isObsolete() &&
                 !executionInput.isInactive()) {
-            MethodExecutionInputForm methodExecutionInputForm = methodExecutionForms.get(executionInput);
+            DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
+            MethodExecutionInputForm methodExecutionInputForm = methodExecutionForms.get(methodRef);
             if (methodExecutionInputForm == null) {
                 methodExecutionInputForm = new MethodExecutionInputForm(this, executionInput, true, DBDebuggerType.NONE);
                 methodExecutionInputForm.addChangeListener(getChangeListener());
-                methodExecutionForms.put(executionInput, methodExecutionInputForm);
+                methodExecutionForms.put(methodRef, methodExecutionInputForm);
             }
             argumentsPanel.add(methodExecutionInputForm.getComponent(), BorderLayout.CENTER);
         }

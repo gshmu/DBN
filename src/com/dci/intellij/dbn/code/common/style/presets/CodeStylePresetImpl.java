@@ -3,28 +3,21 @@ package com.dci.intellij.dbn.code.common.style.presets;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.intellij.psi.PsiElement;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Getter
+@EqualsAndHashCode
 public abstract class CodeStylePresetImpl implements CodeStylePreset {
-    private String id;
-    private String name;
+    private final String id;
+    private final String name;
 
     protected CodeStylePresetImpl(String id, String name) {
         this.id = id;
         this.name = name;
         //CodeStylePresetsRegister.registerWrapPreset(this);
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    @NotNull
-    public String getName() {
-        return name;
     }
 
     public String toString() {

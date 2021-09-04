@@ -2,13 +2,13 @@ package com.dci.intellij.dbn.common;
 
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.RowIcon;
-import gnu.trove.THashMap;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Icons {
-    private static final Map<String, Icon> REGISTERED_ICONS = new THashMap<String, Icon>();
+    private static final Map<String, Icon> REGISTERED_ICONS = new HashMap<>();
 
     public static final Icon DBN_SPLASH = load("/img/DBN.png");
     public static final Icon DONATE = load("/img/Donate.png");

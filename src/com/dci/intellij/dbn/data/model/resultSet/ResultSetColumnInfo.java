@@ -3,13 +3,18 @@ package com.dci.intellij.dbn.data.model.resultSet;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.data.model.basic.BasicColumnInfo;
 import com.dci.intellij.dbn.data.type.DBDataType;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
+@Getter
+@EqualsAndHashCode(callSuper = true)
 public class ResultSetColumnInfo extends BasicColumnInfo {
-    private int resultSetColumnIndex;
+    private final int resultSetColumnIndex;
+
     public ResultSetColumnInfo(ConnectionHandler connectionHandler, ResultSet resultSet, int columnIndex) throws SQLException {
         super(null, null, columnIndex);
         resultSetColumnIndex = columnIndex + 1;
@@ -23,8 +28,8 @@ public class ResultSetColumnInfo extends BasicColumnInfo {
         dataType = DBDataType.get(connectionHandler, dataTypeName, precision, precision, scale, false);
     }
 
-    public ResultSetColumnInfo(int columnIndex, int resultSetColumnIndex ) {
-        super(null, null, columnIndex);
+    public ResultSetColumnInfo(String name, DBDataType dataType, int columnIndex, int resultSetColumnIndex ) {
+        super(name, dataType, columnIndex);
         this.resultSetColumnIndex = resultSetColumnIndex;
     }
 
@@ -36,10 +41,6 @@ public class ResultSetColumnInfo extends BasicColumnInfo {
         } catch (NumberFormatException e) {
             return 4000;
         }
-    }
-
-    public int getResultSetColumnIndex() {
-        return resultSetColumnIndex;
     }
 
     public String translateName(String name, ConnectionHandler connectionHandler) {

@@ -3,7 +3,9 @@ package com.dci.intellij.dbn.data.grid.options;
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.data.grid.options.ui.DataGridTrackingColumnSettingsForm;
-import gnu.trove.THashSet;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,11 +16,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class DataGridTrackingColumnSettings extends BasicProjectConfiguration<DataGridSettings, DataGridTrackingColumnSettingsForm> {
-    private List<String> columnNames = new ArrayList<>();
-    private Set<String> lookupCache = new THashSet<>();
+    private final List<String> columnNames = new ArrayList<>();
     private boolean showColumns = true;
     private boolean allowEditing = false;
+
+    @EqualsAndHashCode.Exclude
+    private Set<String> lookupCache = new HashSet<>();
+
 
     DataGridTrackingColumnSettings(DataGridSettings parent) {
         super(parent);
@@ -27,10 +35,6 @@ public class DataGridTrackingColumnSettings extends BasicProjectConfiguration<Da
     /****************************************************
      *                      Custom                      *
      ****************************************************/
-
-    public Collection<String> getColumnNames() {
-        return columnNames;
-    }
 
     public void setColumnNames(Collection<String> columnNames) {
         this.columnNames.clear();
@@ -43,22 +47,6 @@ public class DataGridTrackingColumnSettings extends BasicProjectConfiguration<Da
         for (String columnName : columnNames) {
             lookupCache.add(columnName.toUpperCase());
         }
-    }
-
-    public boolean isShowColumns() {
-        return showColumns;
-    }
-
-    public void setShowColumns(boolean showColumns) {
-        this.showColumns = showColumns;
-    }
-
-    public boolean isAllowEditing() {
-        return allowEditing;
-    }
-
-    public void setAllowEditing(boolean allowEditing) {
-        this.allowEditing = allowEditing;
     }
 
     public boolean isTrackingColumn(String columnName) {

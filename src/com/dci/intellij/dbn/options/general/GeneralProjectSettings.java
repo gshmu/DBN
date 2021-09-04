@@ -10,11 +10,15 @@ import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.dci.intellij.dbn.options.general.ui.GeneralProjectSettingsForm;
 import com.intellij.openapi.project.Project;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@EqualsAndHashCode(callSuper = false)
 public class GeneralProjectSettings extends CompositeProjectConfiguration<ProjectSettings, GeneralProjectSettingsForm> implements TopLevelConfig {
-    private RegionalSettings regionalSettings       = new RegionalSettings(this);
-    private EnvironmentSettings environmentSettings = new EnvironmentSettings(this);
+    private final RegionalSettings regionalSettings       = new RegionalSettings(this);
+    private final EnvironmentSettings environmentSettings = new EnvironmentSettings(this);
 
     public GeneralProjectSettings(ProjectSettings parent) {
         super(parent);
@@ -44,17 +48,6 @@ public class GeneralProjectSettings extends CompositeProjectConfiguration<Projec
     @Override
     public GeneralProjectSettings getOriginalSettings() {
         return getInstance(getProject());
-    }
-
-    /*********************************************************
-    *                        Custom                         *
-    *********************************************************/
-    public RegionalSettings getRegionalSettings() {
-        return regionalSettings;
-    }
-
-    public EnvironmentSettings getEnvironmentSettings() {
-        return environmentSettings;
     }
 
     /*********************************************************
