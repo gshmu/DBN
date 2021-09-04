@@ -13,9 +13,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
-import java.awt.*;
+import java.awt.Color;
 
 public class DBNHeaderForm extends DBNFormImpl{
     public static final LineBorder BORDER = new LineBorder(UIUtil.getBoundsColor());
@@ -90,7 +92,7 @@ public class DBNHeaderForm extends DBNFormImpl{
 
         String connectionName = connectionHandler == null ? "UNKNOWN" : connectionHandler.getName();
         objectLabel.setText("[" + connectionName + "] " + objectRef.getQualifiedName());
-        objectLabel.setIcon(objectRef.objectType.getIcon());
+        objectLabel.setIcon(objectRef.getObjectType().getIcon());
         updateBorderAndBackground(objectRef);
     }
 

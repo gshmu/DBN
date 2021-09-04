@@ -8,16 +8,20 @@ import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@EqualsAndHashCode(callSuper = false)
 public class DatabaseBrowserSettings
         extends CompositeProjectConfiguration<ProjectSettings, DatabaseBrowserSettingsForm>
         implements TopLevelConfig {
 
-    private DatabaseBrowserGeneralSettings generalSettings = new DatabaseBrowserGeneralSettings(this);
-    private DatabaseBrowserFilterSettings filterSettings   = new DatabaseBrowserFilterSettings(this);
-    private DatabaseBrowserSortingSettings sortingSettings = new DatabaseBrowserSortingSettings(this);
-    private DatabaseBrowserEditorSettings editorSettings   = new DatabaseBrowserEditorSettings(this);
+    private final DatabaseBrowserGeneralSettings generalSettings = new DatabaseBrowserGeneralSettings(this);
+    private final DatabaseBrowserFilterSettings filterSettings   = new DatabaseBrowserFilterSettings(this);
+    private final DatabaseBrowserSortingSettings sortingSettings = new DatabaseBrowserSortingSettings(this);
+    private final DatabaseBrowserEditorSettings editorSettings   = new DatabaseBrowserEditorSettings(this);
 
     public DatabaseBrowserSettings(ProjectSettings parent) {
         super(parent);
@@ -58,26 +62,6 @@ public class DatabaseBrowserSettings
     @Override
     public DatabaseBrowserSettings getOriginalSettings() {
         return getInstance(getProject());
-    }
-
-    /*********************************************************
-     *                        Custom                         *
-     *********************************************************/
-
-    public DatabaseBrowserGeneralSettings getGeneralSettings() {
-        return generalSettings;
-    }
-
-    public DatabaseBrowserFilterSettings getFilterSettings() {
-        return filterSettings;
-    }
-
-    public DatabaseBrowserSortingSettings getSortingSettings() {
-        return sortingSettings;
-    }
-
-    public DatabaseBrowserEditorSettings getEditorSettings() {
-        return editorSettings;
     }
 
     /*********************************************************

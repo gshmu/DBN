@@ -1,28 +1,25 @@
 package com.dci.intellij.dbn.language.common.element.parser;
 
-public class BranchCheck extends Branch{
-    double version = 0;
-    private Type type;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-    public double getVersion() {
-        return version;
-    }
+@Getter
+@EqualsAndHashCode(callSuper = true)
+public class BranchCheck extends Branch{
+    private double version = 0;
+    private Type type;
 
     public boolean check(Branch branch, double currentVersion) {
         switch (type) {
-            case ALLOWED: return name.equals(branch.getName()) && currentVersion >= version;
-            case FORBIDDEN: return !name.equals(branch.getName()) || currentVersion < version;
+            case ALLOWED: return name.equals(branch.name) && currentVersion >= version;
+            case FORBIDDEN: return !name.equals(branch.name) || currentVersion < version;
         }
         return true;
     }
 
-    public Type getType() {
-        return type;
-    }
-
     @Override
     public String toString() {
-        return name + "@" + version;
+        return getName() + "@" + version;
     }
 
     public enum Type {

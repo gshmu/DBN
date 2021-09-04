@@ -2,6 +2,9 @@ package com.dci.intellij.dbn.common.environment;
 
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.CollectionUtil;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -9,9 +12,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+@Getter
+@Setter
+@EqualsAndHashCode
 public class EnvironmentTypeBundle implements Iterable<EnvironmentType>, Cloneable {
     private final List<EnvironmentType> environmentTypes = new ArrayList<>();
-    public static EnvironmentTypeBundle DEFAULT = new EnvironmentTypeBundle();
+    public static final EnvironmentTypeBundle DEFAULT = new EnvironmentTypeBundle();
 
     private EnvironmentTypeBundle() {
         List<EnvironmentType> environmentTypes = Arrays.asList(
@@ -78,21 +84,5 @@ public class EnvironmentTypeBundle implements Iterable<EnvironmentType>, Cloneab
     @Override
     public EnvironmentTypeBundle clone() {
         return new EnvironmentTypeBundle(this);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof EnvironmentTypeBundle) {
-            EnvironmentTypeBundle bundle = (EnvironmentTypeBundle) obj;
-            if (environmentTypes.size() != bundle.environmentTypes.size()) {
-                return false;
-            }
-            for (int i=0; i<this.environmentTypes.size(); i++) {
-                if (!environmentTypes.get(i).equals(bundle.environmentTypes.get(i))) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 }

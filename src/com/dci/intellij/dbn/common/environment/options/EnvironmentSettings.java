@@ -7,9 +7,15 @@ import com.dci.intellij.dbn.common.environment.options.ui.EnvironmentSettingsFor
 import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class EnvironmentSettings extends BasicProjectConfiguration<GeneralProjectSettings, ConfigurationEditorForm> {
     private EnvironmentTypeBundle environmentTypes = new EnvironmentTypeBundle(EnvironmentTypeBundle.DEFAULT);
     private EnvironmentVisibilitySettings visibilitySettings = new EnvironmentVisibilitySettings();
@@ -24,10 +30,6 @@ public class EnvironmentSettings extends BasicProjectConfiguration<GeneralProjec
         return new EnvironmentSettingsForm(this);
     }
 
-    public EnvironmentTypeBundle getEnvironmentTypes() {
-        return environmentTypes;
-    }
-
     @NotNull
     public EnvironmentType getEnvironmentType(EnvironmentTypeId environmentTypeId) {
         return environmentTypes.getEnvironmentType(environmentTypeId);
@@ -37,14 +39,6 @@ public class EnvironmentSettings extends BasicProjectConfiguration<GeneralProjec
         boolean changed = !this.environmentTypes.equals(environmentTypes);
         this.environmentTypes = new EnvironmentTypeBundle(environmentTypes);
         return changed;
-    }
-
-    public EnvironmentVisibilitySettings getVisibilitySettings() {
-        return visibilitySettings;
-    }
-
-    public void setVisibilitySettings(EnvironmentVisibilitySettings visibilitySettings) {
-        this.visibilitySettings = visibilitySettings;
     }
 
     @Override
@@ -57,9 +51,9 @@ public class EnvironmentSettings extends BasicProjectConfiguration<GeneralProjec
         Element environmentTypesElement = element.getChild("environment-types");
         if (environmentTypesElement != null) {
             environmentTypes.clear();
-            for (Element childElement : environmentTypesElement.getChildren()) {
+            for (Element child : environmentTypesElement.getChildren()) {
                 EnvironmentType environmentType = new EnvironmentType(null);
-                environmentType.readConfiguration(childElement);
+                environmentType.readConfiguration(child);
                 environmentTypes.add(environmentType);
             }
         }

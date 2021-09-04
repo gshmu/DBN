@@ -25,9 +25,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -151,7 +155,7 @@ public class MethodExecutionInputArgumentForm extends DBNFormImpl {
                 if (argument != null) {
                     ConnectionHandler connectionHandler = argument.getConnectionHandler();
                     MethodExecutionManager executionManager = MethodExecutionManager.getInstance(argument.getProject());
-                    MethodExecutionArgumentValue argumentValue = executionManager.getArgumentValuesCache().getArgumentValue(connectionHandler.getConnectionId(), argument.getName(), false);
+                    MethodExecutionArgumentValue argumentValue = executionManager.getArgumentValuesHistory().getArgumentValue(connectionHandler.getConnectionId(), argument.getName(), false);
                     if (argumentValue != null) {
                         List<String> cachedValues = new ArrayList<>(argumentValue.getValueHistory());
                         cachedValues.removeAll(getValues());

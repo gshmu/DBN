@@ -8,10 +8,14 @@ import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@EqualsAndHashCode(callSuper = false)
 public class NavigationSettings extends CompositeProjectConfiguration<ProjectSettings, NavigationSettingsForm> implements TopLevelConfig {
-    private ObjectsLookupSettings objectsLookupSettings = new ObjectsLookupSettings(this);
+    private final ObjectsLookupSettings objectsLookupSettings = new ObjectsLookupSettings(this);
 
     public NavigationSettings(ProjectSettings parent) {
         super(parent);
@@ -48,13 +52,6 @@ public class NavigationSettings extends CompositeProjectConfiguration<ProjectSet
         return getInstance(getProject());
     }
 
-    /*********************************************************
-     *                        Custom                         *
-     *********************************************************/
-
-    public ObjectsLookupSettings getObjectsLookupSettings() {
-        return objectsLookupSettings;
-    }
 
     /*********************************************************
      *                     Configuration                     *

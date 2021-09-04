@@ -77,7 +77,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     private boolean loadingChildren;
     private WeakRef<BasePsiElement> relevantPsiElement;
     private final DBObjectPsiFacade psiFacade;
-    private final MapLatent<DBLanguage, ObjectLookupItemBuilder, RuntimeException> lookupItemBuilder =
+    private final MapLatent<DBLanguage, ObjectLookupItemBuilder> lookupItemBuilder =
             MapLatent.create(key -> new ObjectLookupItemBuilder(getRef(), key));
 
     private final BasicProperty<Boolean> valid = new BasicProperty<Boolean>(true) {
@@ -131,7 +131,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
                 name = relevantPsiElement.getText();
             }
         } else if (objectType == DBObjectType.DATASET) {
-            List<String> tableNames = new ArrayList<String>();
+            List<String> tableNames = new ArrayList<>();
 
             ObjectLookupAdapter lookupAdapter = new ObjectLookupAdapter(null, IdentifierCategory.REFERENCE, DBObjectType.DATASET);
             lookupAdapter.collectInElement(psiElement, basePsiElement -> {
@@ -187,7 +187,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     @NotNull
     public List<DBObject> getChildObjects(DBObjectType objectType) {
         DBObjectList<DBObject> childObjectList = getChildObjectList(objectType);
-        return childObjectList == null ? Collections.<DBObject>emptyList() : childObjectList.getObjects();
+        return childObjectList == null ? Collections.emptyList() : childObjectList.getObjects();
     }
 
     @Override
@@ -325,7 +325,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     @NotNull
     @Override
     public DBObjectType getObjectType() {
-        return objectRef.objectType;
+        return objectRef.getObjectType();
     }
 
     @Override

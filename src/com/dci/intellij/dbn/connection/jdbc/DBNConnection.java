@@ -55,7 +55,7 @@ public class DBNConnection extends DBNConnectionBase {
 
     private final Set<DBNStatement> activeStatements = new HashSet<>();
 
-    private final MapLatent<String, DBNPreparedStatement, SQLException> cachedStatements =
+    private final MapLatent<String, DBNPreparedStatement> cachedStatements =
             MapLatent.create(sql -> {
                 DBNPreparedStatement preparedStatement = prepareStatement(sql);
                 preparedStatement.setCached(true);

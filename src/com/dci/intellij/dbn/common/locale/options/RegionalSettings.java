@@ -8,25 +8,36 @@ import com.dci.intellij.dbn.common.options.BasicProjectConfiguration;
 import com.dci.intellij.dbn.common.options.setting.BooleanSetting;
 import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.options.setting.StringSetting;
+import com.dci.intellij.dbn.common.sign.Signed;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
-public class RegionalSettings extends BasicProjectConfiguration<GeneralProjectSettings, RegionalSettingsEditorForm> {
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
+public class RegionalSettings extends BasicProjectConfiguration<GeneralProjectSettings, RegionalSettingsEditorForm> implements Signed {
     private Locale locale = Locale.getDefault();
     private DBDateFormat dateFormatOption = DBDateFormat.MEDIUM;
     private DBNumberFormat numberFormatOption = DBNumberFormat.UNGROUPED;
 
-    private BooleanSetting useCustomFormats = new BooleanSetting("use-custom-formats", false);
-    private StringSetting customNumberFormat = new StringSetting("custom-number-format", null);
-    private StringSetting customDateFormat = new StringSetting("custom-date-format", null);
-    private StringSetting customTimeFormat = new StringSetting("custom-time-format", null);
+    private final BooleanSetting useCustomFormats = new BooleanSetting("use-custom-formats", false);
+    private final StringSetting customNumberFormat = new StringSetting("custom-number-format", null);
+    private final StringSetting customDateFormat = new StringSetting("custom-date-format", null);
+    private final StringSetting customTimeFormat = new StringSetting("custom-time-format", null);
 
-    private ThreadLocal<Formatter> formatter = new ThreadLocal<Formatter>();
+    @EqualsAndHashCode.Exclude
+    private transient int signature = 0;
+
+    @EqualsAndHashCode.Exclude
+    private Formatter baseFormatter = createFormatter();
 
     public RegionalSettings(GeneralProjectSettings parent) {
         super(parent);
@@ -36,64 +47,20 @@ public class RegionalSettings extends BasicProjectConfiguration<GeneralProjectSe
         return GeneralProjectSettings.getInstance(project).getRegionalSettings();
     }
 
-
-
     @Override
     public void apply() throws ConfigurationException {
-        formatter.set(null);
         super.apply();
+        signature = hashCode();
+        baseFormatter = createFormatter();
     }
 
-    public Formatter getFormatter(){
-        Formatter formatter = this.formatter.get();
-        if (formatter == null) {
-            formatter = useCustomFormats.value() ?
-                    new Formatter(locale, customDateFormat.value(), customTimeFormat.value(), customNumberFormat.value()) :
-                    new Formatter(locale, dateFormatOption, numberFormatOption);
-            this.formatter.set(formatter);
-        }
-        return formatter;
+    public Formatter createFormatter(){
+        return useCustomFormats.value() ?
+                new Formatter(signature, locale, customDateFormat.value(), customTimeFormat.value(), customNumberFormat.value()) :
+                new Formatter(signature, locale, dateFormatOption, numberFormatOption);
     }
 
-    public Locale getLocale() {
-        return locale;
-    }
 
-    public void setLocale(Locale locale) {
-        this.locale = locale;
-    }
-
-    public DBDateFormat getDateFormatOption() {
-        return dateFormatOption;
-    }
-
-    public void setDateFormatOption(DBDateFormat dateFormatOption) {
-        this.dateFormatOption = dateFormatOption;
-    }
-
-    public DBNumberFormat getNumberFormatOption() {
-        return numberFormatOption;
-    }
-
-    public void setNumberFormatOption(DBNumberFormat numberFormatOption) {
-        this.numberFormatOption = numberFormatOption;
-    }
-
-    public BooleanSetting getUseCustomFormats() {
-        return useCustomFormats;
-    }
-
-    public StringSetting getCustomDateFormat() {
-        return customDateFormat;
-    }
-
-    public StringSetting getCustomTimeFormat() {
-        return customTimeFormat;
-    }
-
-    public StringSetting getCustomNumberFormat() {
-        return customNumberFormat;
-    }
 
     /*********************************************************
      *                      Configuration                    *
@@ -111,7 +78,6 @@ public class RegionalSettings extends BasicProjectConfiguration<GeneralProjectSe
 
     @Override
     public void readConfiguration(Element element) {
-        formatter.set(null);
         String localeString = SettingsSupport.getString(element, "locale", Locale.getDefault().toString());
         boolean useSystemLocale = localeString.equals("SYSTEM_DEFAULT");
         if (useSystemLocale) {
@@ -134,6 +100,8 @@ public class RegionalSettings extends BasicProjectConfiguration<GeneralProjectSe
             customDateFormat.readConfiguration(element);
             customTimeFormat.readConfiguration(element);
         }
+        signature = hashCode();
+        baseFormatter = createFormatter();
     }
 
     @Override

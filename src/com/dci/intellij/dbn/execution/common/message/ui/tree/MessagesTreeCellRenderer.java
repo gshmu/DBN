@@ -28,8 +28,9 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import javax.swing.JTree;
+import java.awt.Color;
 
 public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
     public static final JBColor HIGHLIGHT_BACKGROUND = new JBColor(0xE0EFFF, 0x364135);
@@ -85,7 +86,7 @@ public class MessagesTreeCellRenderer extends ColoredTreeCellRenderer {
                 ConnectionHandler connectionHandler;
                 if (object == null) {
                     DBObjectRef<DBSchemaObject> objectRef = compilerMessagesObjectNode.getObjectRef();
-                    icon = objectRef.objectType.getIcon();
+                    icon = objectRef.getObjectType().getIcon();
                     append(objectRef.getPath(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
                     connectionHandler = objectRef.resolveConnectionHandler();
                 } else {

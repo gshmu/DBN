@@ -37,9 +37,9 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
                    NotificationSupport {
     private static final Logger LOGGER = LoggerFactory.createLogger();
 
-    protected static final List EMPTY_CONTENT = java.util.Collections.unmodifiableList(Collections.emptyList());
-    protected static final List EMPTY_DISPOSED_CONTENT = java.util.Collections.unmodifiableList(Collections.emptyList());
-    protected static final List EMPTY_UNTOUCHED_CONTENT = java.util.Collections.unmodifiableList(Collections.emptyList());
+    protected static final List EMPTY_CONTENT = Collections.unmodifiableList(Collections.emptyList());
+    protected static final List EMPTY_DISPOSED_CONTENT = Collections.unmodifiableList(Collections.emptyList());
+    protected static final List EMPTY_UNTOUCHED_CONTENT = Collections.unmodifiableList(Collections.emptyList());
 
     private short changeSignature = 0;
 

@@ -4,13 +4,16 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.filter.ConditionOperator;
 import com.dci.intellij.dbn.object.filter.NameFilterCondition;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 
+@Getter
+@Setter
 public class SimpleNameFilterCondition extends NameFilterCondition implements FilterCondition {
     private CompoundFilterCondition parent;
-    public SimpleNameFilterCondition() {
-    }
 
+    public SimpleNameFilterCondition() {}
 
     public SimpleNameFilterCondition(ConditionOperator operator, String pattern) {
         super(operator, pattern);
@@ -24,16 +27,6 @@ public class SimpleNameFilterCondition extends NameFilterCondition implements Fi
     @Override
     public boolean accepts(DBObject object) {
         return accepts(object.getName());
-    }
-
-    @Override
-    public void setParent(CompoundFilterCondition parent) {
-        this.parent = parent;
-    }
-
-    @Override
-    public CompoundFilterCondition getParent() {
-        return parent;
     }
 
     @Override

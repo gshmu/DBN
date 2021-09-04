@@ -17,7 +17,7 @@ import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.openapi.project.Project;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class TokenLookupItemBuilder extends LookupItemBuilder {
 
@@ -91,7 +91,7 @@ public class TokenLookupItemBuilder extends LookupItemBuilder {
     }
 
     public TokenType getTokenType() {
-        return tokenElementType.tokenType;
+        return tokenElementType.getTokenType();
     }
     public TokenTypeCategory getTokenTypeCategory() {
         return tokenElementType.getTokenTypeCategory();

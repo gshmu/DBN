@@ -155,10 +155,9 @@ public class MethodExecutionHistory implements PersistentStateElement, Disposabl
             groupEntries = SettingsSupport.getBoolean(historyElement, "group-entries", groupEntries);
 
             Element executionInputsElement = historyElement.getChild("execution-inputs");
-            for (Object object : executionInputsElement.getChildren()) {
-                Element configElement = (Element) object;
+            for (Element child : executionInputsElement.getChildren()) {
                 MethodExecutionInput executionInput = new MethodExecutionInput(getProject());
-                executionInput.readConfiguration(configElement);
+                executionInput.readConfiguration(child);
                 if (getExecutionInput(executionInput.getMethodRef(), false) == null) {
                     executionInputs.add(executionInput);
                 }

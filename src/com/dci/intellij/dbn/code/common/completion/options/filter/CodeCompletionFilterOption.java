@@ -6,33 +6,29 @@ import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.ui.CheckedTreeNode;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBooleanAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
 
+@Getter
+@Setter
+@EqualsAndHashCode
 public class CodeCompletionFilterOption implements CheckedTreeNodeProvider, PersistentConfiguration{
-    private CodeCompletionFilterSettings filterSettings;
-    private DBObjectType objectType;
+    @EqualsAndHashCode.Exclude
+    private final CodeCompletionFilterSettings filterSettings;
+
     private TokenTypeCategory tokenTypeCategory = TokenTypeCategory.UNKNOWN;
+    private DBObjectType objectType;
     private boolean selected;
 
     CodeCompletionFilterOption(CodeCompletionFilterSettings filterSettings) {
         this.filterSettings = filterSettings;
-    }
-
-    public CodeCompletionFilterSettings getFilterSettings() {
-        return filterSettings;
-    }
-
-    public DBObjectType getObjectType() {
-        return objectType;
-    }
-
-    public TokenTypeCategory getTokenTypeCategory() {
-        return tokenTypeCategory;
     }
 
     public String getName() {
@@ -43,14 +39,6 @@ public class CodeCompletionFilterOption implements CheckedTreeNodeProvider, Pers
 
     public Icon getIcon() {
         return objectType == null ? null : objectType.getIcon();
-    }
-
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
-
-    public boolean isSelected() {
-        return selected;
     }
 
     @Override
@@ -86,12 +74,5 @@ public class CodeCompletionFilterOption implements CheckedTreeNodeProvider, Pers
     @Override
     public CheckedTreeNode createCheckedTreeNode() {
         return new CodeCompletionFilterTreeNode(this, selected);
-    }
-
-    public boolean equals(Object o) {
-        CodeCompletionFilterOption option = (CodeCompletionFilterOption) o;
-        return
-            option.objectType == objectType &&
-            option.tokenTypeCategory == tokenTypeCategory;
     }
 }

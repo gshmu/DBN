@@ -7,19 +7,23 @@ import com.dci.intellij.dbn.common.project.ProjectSupplier;
 import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.execution.common.options.ExecutionTimeoutSettings;
 import com.dci.intellij.dbn.execution.statement.options.ui.StatementExecutionSettingsForm;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class StatementExecutionSettings extends BasicProjectConfiguration<ExecutionEngineSettings, ConfigurationEditorForm> implements ExecutionTimeoutSettings, ProjectSupplier {
     private static final String REMEMBER_OPTION_HINT = ""/*"\n\n(you can remember your option and change it at any time in Settings > Execution Engine > Statement Execution)"*/;
 
-    private @Getter @Setter int resultSetFetchBlockSize = 100;
-    private @Getter @Setter int executionTimeout = 20;
-    private @Getter @Setter int debugExecutionTimeout = 600;
-    private @Getter @Setter boolean focusResult = false;
-    private @Getter @Setter boolean promptExecution = false;
+    private int resultSetFetchBlockSize = 100;
+    private int executionTimeout = 20;
+    private int debugExecutionTimeout = 600;
+    private boolean focusResult = false;
+    private boolean promptExecution = false;
 
     public StatementExecutionSettings(ExecutionEngineSettings parent) {
         super(parent);

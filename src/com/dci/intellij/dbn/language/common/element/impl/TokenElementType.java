@@ -90,7 +90,7 @@ public class TokenElementType extends LeafElementType implements LookupItemBuild
         if (isIterationSeparator()) {
             if (parent instanceof IterationElementType) {
                 IterationElementType iterationElementType = (IterationElementType) parent;
-                ElementTypeLookupCache lookupCache = iterationElementType.iteratedElementType.lookupCache;
+                ElementTypeLookupCache lookupCache = iterationElementType.getIteratedElementType().getLookupCache();
                 return lookupCache.collectFirstPossibleLeafs(context.reset());
             } else if (parent instanceof QualifiedIdentifierElementType){
                 return super.getNextPossibleLeafs(pathNode, context);
@@ -99,7 +99,7 @@ public class TokenElementType extends LeafElementType implements LookupItemBuild
         if (parent instanceof WrapperElementType) {
             WrapperElementType wrapperElementType = (WrapperElementType) parent;
             if (this.equals(wrapperElementType.getBeginTokenElement())) {
-                ElementTypeLookupCache lookupCache = wrapperElementType.wrappedElement.lookupCache;
+                ElementTypeLookupCache lookupCache = wrapperElementType.getWrappedElement().getLookupCache();
                 return lookupCache.collectFirstPossibleLeafs(context.reset());
             }
         }
@@ -112,7 +112,7 @@ public class TokenElementType extends LeafElementType implements LookupItemBuild
         if (isIterationSeparator()) {
             if (getParent() instanceof IterationElementType) {
                 IterationElementType iterationElementType = (IterationElementType) getParent();
-                return iterationElementType.iteratedElementType.lookupCache.getFirstRequiredLeafs();
+                return iterationElementType.iteratedElementType.getLookupCache().getFirstRequiredLeafs();
             } else if (getParent() instanceof QualifiedIdentifierElementType){
                 return super.getNextRequiredLeafs(pathNode, context);
             }

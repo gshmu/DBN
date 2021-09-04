@@ -5,9 +5,15 @@ import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.connection.operation.options.OperationSettings;
 import com.dci.intellij.dbn.connection.transaction.TransactionOption;
 import com.dci.intellij.dbn.connection.transaction.options.ui.TransactionManagerSettingsForm;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class TransactionManagerSettings extends BasicConfiguration<OperationSettings, TransactionManagerSettingsForm> {
     public static final String REMEMBER_OPTION_HINT = ""/*"\n\n(you can remember your option and change it at any time in Settings > Operations > Transaction Manager)"*/;
 
@@ -86,31 +92,6 @@ public class TransactionManagerSettings extends BasicConfiguration<OperationSett
     @Override
     public String getHelpTopic() {
         return "transactionManager";
-    }
-
-
-    /*********************************************************
-     *                       Settings                        *
-     *********************************************************/
-
-    public InteractiveOptionBroker<TransactionOption> getCloseProject() {
-        return closeProject;
-    }
-
-    public InteractiveOptionBroker<TransactionOption> getToggleAutoCommit() {
-        return toggleAutoCommit;
-    }
-
-    public InteractiveOptionBroker<TransactionOption> getDisconnect() {
-        return disconnect;
-    }
-
-    public InteractiveOptionBroker<TransactionOption> getCommitMultipleChanges() {
-        return commitMultipleChanges;
-    }
-
-    public InteractiveOptionBroker<TransactionOption> getRollbackMultipleChanges() {
-        return rollbackMultipleChanges;
     }
 
     /****************************************************

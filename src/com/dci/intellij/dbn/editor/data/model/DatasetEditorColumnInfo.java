@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.data.model;
 
-import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.util.RefreshableValue;
 import com.dci.intellij.dbn.data.grid.options.DataGridSettings;
@@ -12,19 +11,28 @@ import com.dci.intellij.dbn.editor.data.options.DataEditorSettings;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.openapi.project.Project;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@EqualsAndHashCode(callSuper = true)
 public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
-    private static final List<String> EMPTY_LIST = new ArrayList<String>(0);
+    private static final List<String> EMPTY_LIST = new ArrayList<>(0);
+    private final boolean primaryKey;
+    private final boolean foreignKey;
+
+    @EqualsAndHashCode.Exclude
+    private final DBObjectRef<DBColumn> columnRef;
+
+    @EqualsAndHashCode.Exclude
     private List<String> possibleValues;
-    private DBObjectRef<DBColumn> columnRef;
-    private int columnIndex;
-    private boolean isPrimaryKey;
-    private boolean isForeignKey;
-    private RefreshableValue<Boolean> isTrackingColumn = new RefreshableValue<Boolean>(2000) {
+
+    @EqualsAndHashCode.Exclude
+    private final RefreshableValue<Boolean> trackingColumn = new RefreshableValue<Boolean>(2000) {
         @Override
         protected Boolean load() {
             DBColumn column = getColumn();
@@ -34,44 +42,19 @@ public class DatasetEditorColumnInfo extends ResultSetColumnInfo {
     };
 
     DatasetEditorColumnInfo(DBColumn column, int columnIndex, int resultSetColumnIndex) {
-        super(columnIndex, resultSetColumnIndex);
+        super(column.getName(), column.getDataType(), columnIndex, resultSetColumnIndex);
         this.columnRef = DBObjectRef.of(column);
-        this.columnIndex = columnIndex;
-        this.isPrimaryKey = column.isPrimaryKey();
-        this.isForeignKey = column.isForeignKey();
+        this.primaryKey = column.isPrimaryKey();
+        this.foreignKey = column.isForeignKey();
     }
 
     @NotNull
     public DBColumn getColumn() {
-        return Failsafe.nn(DBObjectRef.get(columnRef));
-    }
-
-    @Override
-    public String getName() {
-        return columnRef.objectName;
-    }
-
-    @Override
-    public int getColumnIndex() {
-        return columnIndex;
-    }
-
-    @Override
-    @NotNull
-    public DBDataType getDataType() {
-        return getColumn().getDataType();
-    }
-
-    public boolean isPrimaryKey() {
-        return isPrimaryKey;
-    }
-
-    public boolean isForeignKey() {
-        return isForeignKey;
+        return DBObjectRef.ensure(columnRef);
     }
 
     public boolean isTrackingColumn() {
-        return isTrackingColumn.get();
+        return trackingColumn.get();
     }
 
     public List<String> getPossibleValues() {

@@ -6,9 +6,11 @@ import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@EqualsAndHashCode
 public class PsiFileRef<T extends PsiFile>{
     private WeakRef<T> psiFileRef;
 

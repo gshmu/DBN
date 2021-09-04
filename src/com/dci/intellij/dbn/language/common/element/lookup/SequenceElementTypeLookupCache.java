@@ -21,7 +21,7 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
         return notInitialized && (
                 isWrapperBeginLeaf(leaf) ||
                     (couldStartWithElement(source) &&
-                     source.lookupCache.couldStartWithLeaf(leaf)));
+                     source.getLookupCache().couldStartWithLeaf(leaf)));
     }
 
     @Override
@@ -29,7 +29,7 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
         boolean notInitialized = !firstRequiredLeafs.contains(leaf);
         return notInitialized &&
                 shouldStartWithElement(source) &&
-                source.lookupCache.shouldStartWithLeaf(leaf);
+                source.getLookupCache().shouldStartWithLeaf(leaf);
     }
 
     private boolean couldStartWithElement(ElementType elementType) {
@@ -80,7 +80,7 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
         ElementTypeRef child = this.elementType.getFirstChild();
         while (child != null) {
             if (context.check(child)) {
-                child.elementType.lookupCache.collectFirstPossibleLeafs(context, bucket);
+                child.elementType.getLookupCache().collectFirstPossibleLeafs(context, bucket);
             }
             if (!child.optional) break;
             child = child.getNext();
@@ -96,7 +96,7 @@ public class SequenceElementTypeLookupCache<T extends SequenceElementType> exten
         ElementTypeRef child = this.elementType.getFirstChild();
         while (child != null) {
             if (context.check(child)) {
-                child.elementType.lookupCache.collectFirstPossibleTokens(context, bucket);
+                child.elementType.getLookupCache().collectFirstPossibleTokens(context, bucket);
             }
             if (!child.optional) break;
             child = child.getNext();

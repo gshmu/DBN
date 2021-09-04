@@ -12,6 +12,9 @@ import com.dci.intellij.dbn.common.options.BasicConfiguration;
 import com.dci.intellij.dbn.language.common.TokenTypeCategory;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,6 +24,10 @@ import java.util.List;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBooleanAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
 
+
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class CodeCompletionSortingSettings extends BasicConfiguration<CodeCompletionSettings, CodeCompletionSortingSettingsForm> {
     private boolean enabled = true;
     private final List<CodeCompletionSortingItem> sortingItems = new ArrayList<>();
@@ -69,19 +76,6 @@ public class CodeCompletionSortingSettings extends BasicConfiguration<CodeComple
             }
         }
         return 0;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-
-    public List<CodeCompletionSortingItem> getSortingItems() {
-        return sortingItems;
     }
 
     @Override

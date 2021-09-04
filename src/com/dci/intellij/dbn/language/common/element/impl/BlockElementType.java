@@ -7,9 +7,11 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionEx
 import com.dci.intellij.dbn.language.common.psi.BlockPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import lombok.Getter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
 public class BlockElementType extends SequenceElementType {
     public static final int INDENT_NONE = 0;
     public static final int INDENT_NORMAL = 1;
@@ -49,10 +51,5 @@ public class BlockElementType extends SequenceElementType {
     @Override
     public String getName() {
         return "block (" + getId() + ")";
-    }
-
-
-    public int getIndent() {
-        return indent;
     }
 }

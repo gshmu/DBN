@@ -19,7 +19,7 @@ public class NamedElementTypeLookupCache extends SequenceElementTypeLookupCache<
         Set<ElementTypeBase> parents = elementType.getParents();
         if (parents != null) {
             for (ElementTypeBase parentElementType: parents) {
-                parentElementType.lookupCache.registerLeaf(leaf, elementType);
+                parentElementType.getLookupCache().registerLeaf(leaf, elementType);
             }
         }
     }

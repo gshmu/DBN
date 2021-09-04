@@ -13,7 +13,7 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -112,7 +112,7 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
         ProgramTreeNode getProgramNode(MethodExecutionInput executionInput) {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
             DBObjectRef<?> programRef = methodRef.getParentRef(DBObjectType.PROGRAM);
-            String programName = programRef.objectName;
+            String programName = programRef.getObjectName();
             if (!isLeaf())
                 for (TreeNode node : getChildren()) {
                     if (node instanceof ProgramTreeNode) {
@@ -149,8 +149,8 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
 
         MethodTreeNode getMethodNode(MethodExecutionInput executionInput) {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
-            String methodName = methodRef.objectName;
-            short overload = methodRef.overload;
+            String methodName = methodRef.getObjectName();
+            short overload = methodRef.getOverload();
             if (!isLeaf())
                 for (TreeNode node : getChildren()) {
                     MethodTreeNode methodNode = (MethodTreeNode) node;
@@ -167,13 +167,13 @@ public abstract class MethodExecutionHistoryTreeModel extends DefaultTreeModel i
 
         MethodTreeNode(MethodExecutionHistoryTreeNode parent, MethodExecutionInput executionInput) {
             super(parent,
-                    getNodeType(executionInput.getMethodRef().objectType),
+                    getNodeType(executionInput.getMethodRef().getObjectType()),
                     getMethodName(executionInput));
             this.executionInput = executionInput;
         }
 
         short getOverload() {
-            return executionInput.getMethodRef().overload;
+            return executionInput.getMethodRef().getOverload();
         }
 
         MethodExecutionInput getExecutionInput() {

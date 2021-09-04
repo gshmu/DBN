@@ -3,12 +3,18 @@ package com.dci.intellij.dbn.connection;
 import com.dci.intellij.dbn.common.Reference;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.language.common.WeakRef;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Getter
+@EqualsAndHashCode
 public class ConnectionHandlerRef implements Reference<ConnectionHandler> {
-    private WeakRef<ConnectionHandler> reference;
     private final ConnectionId connectionId;
+
+    @EqualsAndHashCode.Exclude
+    private WeakRef<ConnectionHandler> reference;
 
     public ConnectionHandlerRef(ConnectionHandler connectionHandler) {
         reference = WeakRef.of(connectionHandler);
@@ -17,10 +23,6 @@ public class ConnectionHandlerRef implements Reference<ConnectionHandler> {
 
     public ConnectionHandlerRef(ConnectionId connectionId) {
         this.connectionId = connectionId;
-    }
-
-    public ConnectionId getConnectionId() {
-        return connectionId;
     }
 
     @NotNull

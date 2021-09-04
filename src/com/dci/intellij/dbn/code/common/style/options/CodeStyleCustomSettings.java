@@ -3,8 +3,12 @@ package com.dci.intellij.dbn.code.common.style.options;
 import com.dci.intellij.dbn.common.options.CompositeConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.jdom.Element;
 
+@Getter
+@EqualsAndHashCode(callSuper = false)
 public abstract class CodeStyleCustomSettings<P extends CodeStyleCustomSettings, T extends CompositeConfigurationEditorForm>
         extends CompositeConfiguration<P, T>{
 
@@ -17,14 +21,6 @@ public abstract class CodeStyleCustomSettings<P extends CodeStyleCustomSettings,
 
     protected abstract CodeStyleCaseSettings createCaseSettings(CodeStyleCustomSettings parent);
     protected abstract CodeStyleFormattingSettings createAttributeSettings(CodeStyleCustomSettings parent);
-
-    public CodeStyleCaseSettings getCaseSettings() {
-        return caseSettings;
-    }
-
-    public CodeStyleFormattingSettings getFormattingSettings() {
-        return formattingSettings;
-    }
 
     /*********************************************************
     *                     Configuration                     *

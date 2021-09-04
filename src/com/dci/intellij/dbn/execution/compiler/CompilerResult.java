@@ -117,7 +117,7 @@ public class CompilerResult implements Disposable, NotificationSupport {
     }
 
     DBObjectType getObjectType() {
-        return objectRef.objectType;
+        return objectRef.getObjectType();
     }
 
     public DBObjectRef<DBSchemaObject> getObjectRef() {

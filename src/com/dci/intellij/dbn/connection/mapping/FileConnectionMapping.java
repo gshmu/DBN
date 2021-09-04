@@ -6,8 +6,14 @@ import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 
+@Getter
+@Setter
+@EqualsAndHashCode
 public class FileConnectionMapping implements PersistentStateElement {
     private String fileUrl = "";
     private ConnectionId connectionId;
@@ -21,53 +27,6 @@ public class FileConnectionMapping implements PersistentStateElement {
         this.connectionId = connectionId;
         this.sessionId = sessionId;
         this.schemaId = schemaId;
-    }
-
-    public String getFileUrl() {
-        return fileUrl;
-    }
-
-    public void setFileUrl(String fileUrl) {
-        this.fileUrl = fileUrl;
-    }
-
-    public ConnectionId getConnectionId() {
-        return connectionId;
-    }
-
-    public void setConnectionId(ConnectionId connectionId) {
-        this.connectionId = connectionId;
-    }
-
-    public SessionId getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(SessionId sessionId) {
-        this.sessionId = sessionId;
-    }
-
-    public SchemaId getSchemaId() {
-        return schemaId;
-    }
-
-    public void setSchemaId(SchemaId schemaId) {
-        this.schemaId = schemaId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof FileConnectionMapping)) return false;
-
-        FileConnectionMapping that = (FileConnectionMapping) o;
-
-        return fileUrl.equals(that.fileUrl);
-    }
-
-    @Override
-    public int hashCode() {
-        return fileUrl.hashCode();
     }
 
     /*********************************************

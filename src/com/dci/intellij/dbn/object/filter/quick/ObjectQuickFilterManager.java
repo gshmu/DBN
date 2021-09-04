@@ -20,12 +20,13 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
-import gnu.trove.THashMap;
+import lombok.Data;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @State(
@@ -35,7 +36,7 @@ import java.util.Map;
 public class ObjectQuickFilterManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
     public static final String COMPONENT_NAME = "DBNavigator.Project.ObjectQuickFilterManager";
 
-    private Map<CacheKey, ObjectQuickFilter> cachedFilters = new THashMap<CacheKey, ObjectQuickFilter>();
+    private final Map<CacheKey, ObjectQuickFilter> cachedFilters = new HashMap<>();
     private ConditionOperator lastUsedOperator = ConditionOperator.EQUAL;
 
     private ObjectQuickFilterManager(Project project) {
@@ -77,13 +78,13 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
         this.lastUsedOperator = lastUsedOperator;
     }
 
-    private class CacheKey implements PersistentStateElement {
+    @Data
+    private static class CacheKey implements PersistentStateElement {
         private ConnectionId connectionId;
         private String schemaName;
         private DBObjectType objectType;
 
-        public CacheKey() {
-        }
+        public CacheKey() {}
 
         public CacheKey(DBObjectList objectList) {
             connectionId = objectList.getConnectionHandler().getConnectionId();
@@ -94,39 +95,6 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
                 schemaName = "";
             }
             objectType = objectList.getObjectType();
-        }
-
-        public ConnectionId getConnectionId() {
-            return connectionId;
-        }
-
-        public String getSchemaName() {
-            return schemaName;
-        }
-
-        public DBObjectType getObjectType() {
-            return objectType;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            CacheKey cacheKey = (CacheKey) o;
-
-            if (!connectionId.equals(cacheKey.connectionId)) return false;
-            if (!schemaName.equals(cacheKey.schemaName)) return false;
-            return objectType == cacheKey.objectType;
-
-        }
-
-        @Override
-        public int hashCode() {
-            int result = connectionId.hashCode();
-            result = 31 * result + schemaName.hashCode();
-            result = 31 * result + objectType.hashCode();
-            return result;
         }
 
         @Override
@@ -190,12 +158,12 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
         Element filtersElement = element.getChild("filters");
         lastUsedOperator = SettingsSupport.getEnum(element, "last-used-operator", lastUsedOperator);
         if (filtersElement != null) {
-            for (Element filterElement : filtersElement.getChildren()) {
+            for (Element child : filtersElement.getChildren()) {
                 CacheKey cacheKey = new CacheKey();
-                cacheKey.readState(filterElement);
+                cacheKey.readState(child);
 
                 ObjectQuickFilter filter = new ObjectQuickFilter(cacheKey.getObjectType());
-                filter.readState(filterElement);
+                filter.readState(child);
 
                 cachedFilters.put(cacheKey, filter);
             }

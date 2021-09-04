@@ -2,6 +2,9 @@ package com.dci.intellij.dbn.code.common.style.options;
 
 import com.dci.intellij.dbn.code.common.style.options.ui.CodeStyleCaseSettingsForm;
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +14,9 @@ import java.util.List;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBooleanAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public abstract class CodeStyleCaseSettings extends BasicConfiguration<CodeStyleCustomSettings, CodeStyleCaseSettingsForm> {
     private final List<CodeStyleCaseOption> options = new ArrayList<>();
     private boolean enabled = true;
@@ -28,14 +34,6 @@ public abstract class CodeStyleCaseSettings extends BasicConfiguration<CodeStyle
     @Override
     public String getDisplayName() {
         return "Case Options";
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     public CodeStyleCaseOption getKeywordCaseOption() {
@@ -83,12 +81,11 @@ public abstract class CodeStyleCaseSettings extends BasicConfiguration<CodeStyle
     @Override
     public void readConfiguration(Element element) {
         enabled = getBooleanAttribute(element, "enabled", enabled);
-        for (Object object : element.getChildren()) {
-            Element optionElement = (Element) object;
-            String name = optionElement.getAttributeValue("name");
+        for (Element child : element.getChildren()) {
+            String name = child.getAttributeValue("name");
             CodeStyleCaseOption option = getCodeStyleCaseOption(name);
             if (option != null) {
-                option.readConfiguration(optionElement);
+                option.readConfiguration(child);
             }
         }
     }

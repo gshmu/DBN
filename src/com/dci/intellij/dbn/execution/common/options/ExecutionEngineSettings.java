@@ -12,12 +12,16 @@ import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@EqualsAndHashCode(callSuper = false)
 public class ExecutionEngineSettings extends CompositeProjectConfiguration<ProjectSettings, ExecutionEngineSettingsForm> implements TopLevelConfig {
-    private StatementExecutionSettings statementExecutionSettings = new StatementExecutionSettings(this);
-    private ScriptExecutionSettings scriptExecutionSettings       = new ScriptExecutionSettings(this);
-    private MethodExecutionSettings methodExecutionSettings       = new MethodExecutionSettings(this);
+    private final StatementExecutionSettings statementExecutionSettings = new StatementExecutionSettings(this);
+    private final ScriptExecutionSettings scriptExecutionSettings       = new ScriptExecutionSettings(this);
+    private final MethodExecutionSettings methodExecutionSettings       = new MethodExecutionSettings(this);
 
     public ExecutionEngineSettings(ProjectSettings parent) {
         super(parent);
@@ -62,21 +66,6 @@ public class ExecutionEngineSettings extends CompositeProjectConfiguration<Proje
     @Override
     public ExecutionEngineSettings getOriginalSettings() {
         return getInstance(getProject());
-    }
-
-    /*********************************************************
-     *                        Custom                         *
-     *********************************************************/
-    public StatementExecutionSettings getStatementExecutionSettings() {
-        return statementExecutionSettings;
-    }
-
-    public ScriptExecutionSettings getScriptExecutionSettings() {
-        return scriptExecutionSettings;
-    }
-
-    public MethodExecutionSettings getMethodExecutionSettings() {
-        return methodExecutionSettings;
     }
 
     /*********************************************************

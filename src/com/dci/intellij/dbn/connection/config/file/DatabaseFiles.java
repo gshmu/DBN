@@ -3,6 +3,8 @@ package com.dci.intellij.dbn.connection.config.file;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.StringUtil;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.jdom.Element;
 
 import java.util.ArrayList;
@@ -10,18 +12,16 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setStringAttribute;
 
+@Getter
+@EqualsAndHashCode
 public class DatabaseFiles implements PersistentConfiguration, Cloneable<DatabaseFiles> {
-    private List<DatabaseFile> files = new ArrayList<DatabaseFile>();
+    private final List<DatabaseFile> files = new ArrayList<>();
 
     public DatabaseFiles() {
     }
 
     public DatabaseFiles(String mainFile) {
         files.add(new DatabaseFile(mainFile, "main"));
-    }
-
-    public List<DatabaseFile> getFiles() {
-        return files;
     }
 
     public int size() {
@@ -60,8 +60,7 @@ public class DatabaseFiles implements PersistentConfiguration, Cloneable<Databas
 
     @Override
     public void readConfiguration(Element element) {
-        List<Element> children = element.getChildren();
-        for (Element child : children) {
+        for (Element child : element.getChildren()) {
             String path = child.getAttributeValue("path");
             String schema = child.getAttributeValue("schema");
             DatabaseFile databaseFile = new DatabaseFile(path, schema);
@@ -90,36 +89,5 @@ public class DatabaseFiles implements PersistentConfiguration, Cloneable<Databas
             databaseFiles.add(file.clone());
         }
         return databaseFiles;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        DatabaseFiles that = (DatabaseFiles) o;
-
-        if (files.size() != that.files.size()) {
-            return false;
-        }
-        for (int i = 0; i < files.size(); i++) {
-            DatabaseFile thisFile = this.files.get(i);
-            DatabaseFile thatFile = that.files.get(i);
-            if (!thisFile.equals(thatFile)) {
-                return false;
-            }
-        }
-
-        return true;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = 0;
-        for (DatabaseFile file : files) {
-            result = 31 * result + file.hashCode();
-        }
-        return result;
     }
 }

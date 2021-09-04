@@ -12,14 +12,20 @@ import com.dci.intellij.dbn.options.ProjectSettings;
 import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.dci.intellij.dbn.options.TopLevelConfig;
 import com.intellij.openapi.project.Project;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class CodeCompletionSettings extends CompositeProjectConfiguration<ProjectSettings, CodeCompletionSettingsForm> implements TopLevelConfig {
-    private CodeCompletionFiltersSettings filterSettings  = new CodeCompletionFiltersSettings(this);
-    private CodeCompletionSortingSettings sortingSettings = new CodeCompletionSortingSettings(this);
-    private CodeCompletionFormatSettings formatSettings   = new CodeCompletionFormatSettings(this);
+    private final CodeCompletionFiltersSettings filterSettings  = new CodeCompletionFiltersSettings(this);
+    private final CodeCompletionSortingSettings sortingSettings = new CodeCompletionSortingSettings(this);
+    private final CodeCompletionFormatSettings formatSettings   = new CodeCompletionFormatSettings(this);
 
     public CodeCompletionSettings(ProjectSettings parent) {
         super(parent);
@@ -53,29 +59,10 @@ public class CodeCompletionSettings extends CompositeProjectConfiguration<Projec
     }
 
     private void loadDefaults() {
-       try {
-           Document document = CommonUtil.loadXmlFile(getClass(), "default-settings.xml");
-           Element root = document.getRootElement();
-           readConfiguration(root);
-       } catch (Exception e) {
-           e.printStackTrace();
-       }
+        Document document = CommonUtil.loadXmlFile(getClass(), "default-settings.xml");
+        Element root = document.getRootElement();
+        readConfiguration(root);
    }
-
-   /*********************************************************
-    *                         Custom                        *
-    *********************************************************/
-    public CodeCompletionFiltersSettings getFilterSettings() {
-        return filterSettings;
-    }
-
-    public CodeCompletionSortingSettings getSortingSettings() {
-        return sortingSettings;
-    }
-
-    public CodeCompletionFormatSettings getFormatSettings() {
-        return formatSettings;
-    }
 
     /*********************************************************
     *                     Configuration                      *

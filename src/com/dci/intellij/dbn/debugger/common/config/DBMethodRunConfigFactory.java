@@ -7,7 +7,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.intellij.execution.configurations.RunConfiguration;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public abstract class DBMethodRunConfigFactory<T extends DBMethodRunConfigType, C extends DBMethodRunConfig> extends DBRunConfigFactory<T, C> {
     protected DBMethodRunConfigFactory(T type, DBDebuggerType debuggerType) {
@@ -23,7 +23,7 @@ public abstract class DBMethodRunConfigFactory<T extends DBMethodRunConfigType, 
         } else {
             DBObjectRef<DBMethod> methodRef = executionInput.getMethodRef();
             DBMethod method = methodRef.get();
-            return method == null ? methodRef.objectType.getIcon() : method.getIcon();
+            return method == null ? methodRef.getObjectType().getIcon() : method.getIcon();
         }
     }
 
