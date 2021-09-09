@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.content.loader;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContent;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
@@ -17,8 +16,8 @@ import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadata;
 import com.dci.intellij.dbn.database.common.metadata.DBObjectMetadataFactory;
 import com.dci.intellij.dbn.environment.Environment;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,13 +31,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 public abstract class DynamicContentResultSetLoader<
                 T extends DynamicContentElement,
                 M extends DBObjectMetadata>
         extends DynamicContentLoaderImpl<T, M>
         implements DynamicContentLoader<T, M> {
-
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private final boolean master;
 
@@ -61,10 +59,10 @@ public abstract class DynamicContentResultSetLoader<
     }
 
     private DebugInfo preLoadContent(DynamicContent<T> dynamicContent) {
-        if (Environment.DEBUG_MODE) {
+        if (Environment.DATABASE_DEBUG_MODE) {
             DebugInfo debugInfo = new DebugInfo();
-            LOGGER.info(
-                    "[DBN-INFO] Loading " + dynamicContent.getContentDescription() +
+            log.info(
+                    "[DBN] Loading " + dynamicContent.getContentDescription() +
                     " (id = " + debugInfo.id + ")");
             return debugInfo;
         }
@@ -73,8 +71,8 @@ public abstract class DynamicContentResultSetLoader<
 
     private void postLoadContent(DynamicContent<T> dynamicContent, DebugInfo debugInfo) {
         if (debugInfo != null) {
-            LOGGER.info(
-                    "[DBN-INFO] Done loading " + dynamicContent.getContentDescription() +
+            log.info(
+                    "[DBN] Done loading " + dynamicContent.getContentDescription() +
                     " (id = " + debugInfo.id + ") - " +
                     (System.currentTimeMillis() - debugInfo.startTimestamp) + "ms"   );
         }
@@ -102,7 +100,7 @@ public abstract class DynamicContentResultSetLoader<
                             DynamicContentType<?> contentType = dynamicContent.getContentType();
                             M metadata = DBObjectMetadataFactory.INSTANCE.create(contentType, resultSet);
 
-                            boolean addDelay = Environment.isSlowDatabaseModeEnabled();
+                            boolean addDelay = Environment.DATABASE_LAGGING_MODE;
                             if (addDelay) Thread.sleep(500);
                             LoaderCache loaderCache = new LoaderCache();
                             int count = 0;
@@ -117,7 +115,7 @@ public abstract class DynamicContentResultSetLoader<
                                 } catch (ProcessCanceledException e) {
                                     return;
                                 } catch (RuntimeException e) {
-                                    LOGGER.warn("Failed to create element", e);
+                                    log.warn("Failed to create element", e);
                                 }
 
                                 dynamicContent.checkDisposed();
@@ -125,7 +123,7 @@ public abstract class DynamicContentResultSetLoader<
                                     if (list == null) {
                                         list = dynamicContent.isMutable() ?
                                                 CollectionUtil.createConcurrentList() :
-                                                new ArrayList<T>();
+                                                new ArrayList<>();
                                     }
                                     list.add(element);
                                     if (count % 10 == 0) {

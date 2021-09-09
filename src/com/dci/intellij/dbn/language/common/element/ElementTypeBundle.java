@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.language.common.element;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -23,10 +22,10 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinition;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ide.CopyPasteManager;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
+import lombok.extern.slf4j.Slf4j;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
@@ -37,9 +36,8 @@ import java.io.StringWriter;
 import java.util.Map;
 import java.util.Set;
 
+@Slf4j
 public class ElementTypeBundle {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
-
     private final TokenTypeBundle tokenTypeBundle;
     private BasicElementType unknownElementType;
     private NamedElementType rootElementType;
@@ -52,11 +50,11 @@ public class ElementTypeBundle {
 
 
     private static class Builder {
-        private Set<LeafElementType> leafElementTypes = new THashSet<>();
-        private Set<WrapperElementType> wrapperElementTypes = new THashSet<>();
-        private Set<ElementType> wrappedElementTypes = new THashSet<>();
+        private final Set<LeafElementType> leafElementTypes = new THashSet<>();
+        private final Set<WrapperElementType> wrapperElementTypes = new THashSet<>();
+        private final Set<ElementType> wrappedElementTypes = new THashSet<>();
         //private Set<OneOfElementType> oneOfElementTypes = new THashSet<OneOfElementType>();
-        private Set<ElementType> allElementTypes = new THashSet<>();
+        private final Set<ElementType> allElementTypes = new THashSet<>();
         private boolean rewriteIndexes;
     }
 
@@ -135,7 +133,7 @@ public class ElementTypeBundle {
     private void createNamedElementType(Element def) throws ElementTypeDefinitionException {
         String id = determineMandatoryAttribute(def, "id", "Invalid definition of named element type.");
         String languageId = def.getAttributeValue("language");
-        LOGGER.debug("Updating complex element definition '" + id + '\'');
+        log.debug("Updating complex element definition '" + id + '\'');
         NamedElementType elementType = getNamedElementType(id, null);
         elementType.loadDefinition(def);
         if (elementType.is(ElementTypeAttribute.ROOT)) {
@@ -163,29 +161,29 @@ public class ElementTypeBundle {
         ElementTypeBase result;
         if (ElementTypeDefinition.SEQUENCE.is(type)){
             result = new SequenceElementType(this, parent, createId(), def);
-            LOGGER.debug("Created sequence element definition");
+            log.debug("Created sequence element definition");
 
         } else if (ElementTypeDefinition.BLOCK.is(type)) {
             result = new BlockElementType(this, parent, createId(), def);
-            LOGGER.debug("Created iteration element definition");
+            log.debug("Created iteration element definition");
 
         } else if (ElementTypeDefinition.ITERATION.is(type)) {
             result = new IterationElementType(this, parent, createId(), def);
-            LOGGER.debug("Created iteration element definition");
+            log.debug("Created iteration element definition");
 
         } else if (ElementTypeDefinition.ONE_OF.is(type)) {
             result = new OneOfElementType(this, parent, createId(), def);
             //builder.oneOfElementTypes.add((OneOfElementType) result);
-            LOGGER.debug("Created one-of element definition");
+            log.debug("Created one-of element definition");
 
         } else if (ElementTypeDefinition.QUALIFIED_IDENTIFIER.is(type)) {
             result =  new QualifiedIdentifierElementType(this, parent, createId(), def);
-            LOGGER.debug("Created qualified identifier element definition");
+            log.debug("Created qualified identifier element definition");
 
         } else if (ElementTypeDefinition.WRAPPER.is(type)) {
             result = new WrapperElementType(this, parent, createId(), def);
             builder.wrapperElementTypes.add((WrapperElementType) result);
-            LOGGER.debug("Created wrapper element definition");
+            log.debug("Created wrapper element definition");
 
         } else if (ElementTypeDefinition.ELEMENT.is(type)) {
             String id = determineMandatoryAttribute(def, "ref-id", "Invalid reference to element.");
@@ -251,7 +249,7 @@ public class ElementTypeBundle {
                     elementType = new NamedElementType(this, id);
                     namedElementTypes.put(id, elementType);
                     builder.allElementTypes.add(elementType);
-                    LOGGER.debug("Created named element type '" + id + '\'');
+                    log.debug("Created named element type '" + id + '\'');
                 }
             }
         }

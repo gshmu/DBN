@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.common.content;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.dependency.ContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.dependency.VoidContentDependencyAdapter;
 import com.dci.intellij.dbn.common.content.loader.DynamicContentLoader;
@@ -19,8 +18,8 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.GenericDatabaseElement;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,11 +30,11 @@ import java.util.List;
 
 import static com.dci.intellij.dbn.common.content.DynamicContentStatus.*;
 
+@Slf4j
 public abstract class DynamicContentImpl<T extends DynamicContentElement>
         extends DisposablePropertyHolder<DynamicContentStatus>
         implements DynamicContent<T>,
                    NotificationSupport {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     protected static final List EMPTY_CONTENT = Collections.unmodifiableList(Collections.emptyList());
     protected static final List EMPTY_DISPOSED_CONTENT = Collections.unmodifiableList(Collections.emptyList());
@@ -306,7 +305,7 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
 
         } catch (Throwable e) {
             // any other exception: log error
-            LOGGER.error("Failed to load content", e);
+            log.error("Failed to load content", e);
             elements = EMPTY_CONTENT;
             set(DIRTY, true);
         }

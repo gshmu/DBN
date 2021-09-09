@@ -1,15 +1,15 @@
 package com.dci.intellij.dbn.debugger.jdwp;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.intellij.openapi.diagnostic.Logger;
 import com.sun.jdi.Location;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
-public interface DBJdwpDebugUtil {
-    Logger LOGGER = LoggerFactory.createLogger();
+@Slf4j
+public final class DBJdwpDebugUtil {
+    private DBJdwpDebugUtil() {}
 
     @Nullable
-    default String getOwnerName(@Nullable Location location) {
+    public static String getOwnerName(@Nullable Location location) {
         try {
             if (location != null) {
                 String sourceUrl = location.sourcePath();
@@ -17,7 +17,7 @@ public interface DBJdwpDebugUtil {
                 return sourcePath.getProgramOwner();
             }
         } catch (Exception e) {
-            LOGGER.error("Failed to resolve owner name", e);
+            log.error("Failed to resolve owner name", e);
         }
 
         return null;

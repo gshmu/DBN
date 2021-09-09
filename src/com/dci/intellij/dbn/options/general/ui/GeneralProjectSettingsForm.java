@@ -6,14 +6,14 @@ import com.dci.intellij.dbn.environment.Environment;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 
 public class GeneralProjectSettingsForm extends CompositeConfigurationEditorForm<GeneralProjectSettings> {
     private JPanel mainPanel;
-    private JLabel debugInfoLabel;
-    private JCheckBox enableDebugCheckBox;
     private JPanel localeSettingsPanel;
     private JPanel environmentSettingsPanel;
     private JCheckBox enableDeveloperCheckBox;
@@ -21,10 +21,8 @@ public class GeneralProjectSettingsForm extends CompositeConfigurationEditorForm
 
     public GeneralProjectSettingsForm(GeneralProjectSettings generalSettings) {
         super(generalSettings);
-        debugInfoLabel.setIcon(Icons.COMMON_WARNING);
-        debugInfoLabel.setText("NOTE: Active debug mode considerably slows down your system.");
         developerInfoLabel.setIcon(Icons.COMMON_WARNING);
-        developerInfoLabel.setText("NOTE: Developer mode enables actions that may compromise your system stability and database integrity.");
+        developerInfoLabel.setText("NOTE: Developer mode enables actions that may compromise your system stability and data integrity.");
         resetFormChanges();
 
         registerComponent(mainPanel);
@@ -37,7 +35,6 @@ public class GeneralProjectSettingsForm extends CompositeConfigurationEditorForm
     protected ActionListener createActionListener() {
         return e -> {
             getConfiguration().setModified(true);
-            debugInfoLabel.setVisible(enableDebugCheckBox.isSelected());
             developerInfoLabel.setVisible(enableDeveloperCheckBox.isSelected());
         };
     }
@@ -50,14 +47,11 @@ public class GeneralProjectSettingsForm extends CompositeConfigurationEditorForm
 
     @Override
     public void applyFormChanges() {
-        Environment.DEBUG_MODE = enableDebugCheckBox.isSelected();
-        Environment.DEVELOPER_MODE = enableDeveloperCheckBox.isSelected();
+        Environment.updateDeveloperMode(enableDeveloperCheckBox.isSelected());
     }
 
     @Override
     public void resetFormChanges() {
-        enableDebugCheckBox.setSelected(Environment.DEBUG_MODE);
-        debugInfoLabel.setVisible(enableDebugCheckBox.isSelected());
         enableDeveloperCheckBox.setSelected(Environment.DEVELOPER_MODE);
         developerInfoLabel.setVisible(enableDeveloperCheckBox.isSelected());
     }

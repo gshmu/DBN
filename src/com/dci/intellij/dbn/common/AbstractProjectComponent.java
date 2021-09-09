@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.common;
 import com.dci.intellij.dbn.common.component.LegacyComponent;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.project.ProjectUtil;
 import com.intellij.openapi.application.ApplicationManager;
@@ -14,7 +13,6 @@ import com.intellij.openapi.project.ProjectManagerListener;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractProjectComponent extends StatefulDisposable.Base implements
-        SettingsSupport,
         ProjectComponent,
         ProjectManagerListener,
         StatefulDisposable,
