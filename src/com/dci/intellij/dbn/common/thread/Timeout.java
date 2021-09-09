@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -39,9 +40,9 @@ public final class Timeout {
                 future.cancel(true);
                 return defaultValue;
             }
-        } catch (ExecutionException e) {
+        } catch (ExecutionException | RejectedExecutionException e) {
             Throwable exception = CommonUtil.nvl(e.getCause(), e);
-            log.error("Timeout operation failed. Returning default " + defaultValue, exception);
+            log.warn("Timeout operation failed. Returning default " + defaultValue, exception);
             return defaultValue;
         }
     }
@@ -67,9 +68,9 @@ public final class Timeout {
                 future.cancel(true);
             }
 
-        } catch (ExecutionException e) {
+        } catch (ExecutionException | RejectedExecutionException e) {
             Throwable exception = CommonUtil.nvl(e.getCause(), e);
-            log.error("Timeout operation failed.", exception);
+            log.warn("Timeout operation failed.", exception);
         }
     }
 
