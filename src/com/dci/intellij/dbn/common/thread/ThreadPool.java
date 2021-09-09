@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.common.thread;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -14,8 +13,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ThreadPool {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
+@Slf4j
+public final class ThreadPool {
     private static final Map<String, AtomicInteger> THREAD_COUNTERS = new ConcurrentHashMap<>();
 
     private static final ExecutorService DATABASE_INTERFACE_EXECUTOR = newThreadPool("DBN - Database Interface Thread", true,  10, 100);
@@ -27,21 +26,22 @@ public class ThreadPool {
     private static final ExecutorService CODE_COMPLETION_EXECUTOR    = newThreadPool("DBN - Code Completion Thread",    true,  10, 100);
     private static final ExecutorService OBJECT_LOOKUP_EXECUTOR      = newThreadPool("DBN - Object Lookup Thread",      true,  10, 100);
 
+    private ThreadPool() {}
 
     @NotNull
     private static ThreadFactory createThreadFactory(String name, boolean daemon) {
         return runnable -> {
             AtomicInteger index = THREAD_COUNTERS.computeIfAbsent(name, s -> new AtomicInteger(0));
             String indexedName = name + " (" + index.incrementAndGet() + ")";
-            LOGGER.info("Creating thread \"" + indexedName + "\"");
+            log.info("Creating thread \"" + indexedName + "\"");
             Thread thread = new Thread(() -> {
                     try {
                         runnable.run();
                     } catch (StackOverflowError e) {
-                        LOGGER.error("Failed to execute task", e);
+                        log.error("Failed to execute task", e);
                     } catch (ProcessCanceledException ignore) {
                     } catch (Throwable t) {
-                        LOGGER.warn(name + " - Execution failed: " + t.getMessage());
+                        log.warn(name + " - Execution failed: " + t.getMessage());
                     }
                 }, name);
             thread.setPriority(Thread.MIN_PRIORITY);

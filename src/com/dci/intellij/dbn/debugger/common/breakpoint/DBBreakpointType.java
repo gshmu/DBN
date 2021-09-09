@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.debugger.common.breakpoint;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
@@ -14,7 +13,6 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.vfs.file.DBSourceCodeVirtualFile;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -26,13 +24,14 @@ import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 
+@Slf4j
 public class DBBreakpointType extends XLineBreakpointType<XBreakpointProperties> {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     public DBBreakpointType() {
         super("db-program", "DB-Program Breakpoint");
@@ -139,7 +138,7 @@ public class DBBreakpointType extends XLineBreakpointType<XBreakpointProperties>
                 Constructor constructor = propertiesClass.getConstructor(ConnectionHandler.class);
                 return (XBreakpointProperties) constructor.newInstance(connectionHandler);
             } catch (Exception e) {
-                LOGGER.error("Error creating JDWP breakpoints properties", e);
+                log.error("Error creating JDWP breakpoints properties", e);
             }
         }
 

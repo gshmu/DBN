@@ -1,18 +1,17 @@
 package com.dci.intellij.dbn.database.postgres;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
-import com.intellij.openapi.diagnostic.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 
+@Slf4j
 public class PostgresMessageParserInterface implements DatabaseMessageParserInterface {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     @Override
     @Nullable
@@ -42,7 +41,7 @@ public class PostgresMessageParserInterface implements DatabaseMessageParserInte
             Method method = e.getClass().getMethod("getSQLState");
             return (String) method.invoke(e);
         } catch (Exception ex) {
-            LOGGER.error("Could not get exception SQLState", ex);
+            log.error("Could not get exception SQLState", ex);
         }
         return "";
     }

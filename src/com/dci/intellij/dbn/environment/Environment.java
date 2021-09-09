@@ -1,16 +1,18 @@
 package com.dci.intellij.dbn.environment;
 
-public class Environment {
+public final class Environment {
     public static boolean DEVELOPER_MODE = false;
-    public static boolean DEBUG_MODE = false;
-    public static boolean SLOW_DB_SIMULATION = false;
+    public static boolean PARSER_DEBUG_MODE = false;
+    public static boolean DATABASE_DEBUG_MODE = false;
+    public static boolean DATABASE_LAGGING_MODE = false;
 
 
-    public static boolean isSlowDatabaseModeEnabled() {
-        return Environment.DEVELOPER_MODE && Environment.SLOW_DB_SIMULATION;
-    }
-
-    public static void setSlowDatabaseModeEnabled(boolean slowDatabaseModeEnabled) {
-        Environment.SLOW_DB_SIMULATION = slowDatabaseModeEnabled;
+    public static void updateDeveloperMode(boolean state) {
+        DEVELOPER_MODE = state;
+        if (!state) {
+            PARSER_DEBUG_MODE = false;
+            DATABASE_DEBUG_MODE = false;
+            DATABASE_LAGGING_MODE = false;
+        }
     }
 }

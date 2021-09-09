@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
@@ -16,7 +15,7 @@ import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseMessageParserInterface;
 import com.dci.intellij.dbn.driver.DatabaseDriverManager;
 import com.dci.intellij.dbn.driver.DriverSource;
-import com.intellij.openapi.diagnostic.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,10 +28,11 @@ import java.sql.SQLRecoverableException;
 import java.sql.Savepoint;
 import java.util.Collection;
 
-import static com.dci.intellij.dbn.environment.Environment.DEBUG_MODE;
+import static com.dci.intellij.dbn.environment.Environment.DATABASE_DEBUG_MODE;
 
-public class ResourceUtil {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
+@Slf4j
+public final class ResourceUtil {
+    private ResourceUtil() {}
 
     public static boolean isClosed(ResultSet resultSet) throws SQLException {
         try {
@@ -46,12 +46,12 @@ public class ResourceUtil {
         if (statement != null) {
             try {
                 long start = System.currentTimeMillis();
-                if (DEBUG_MODE) LOGGER.debug("Cancelling statement (" + statement + ")");
+                if (DATABASE_DEBUG_MODE) log.info("[DBN] Cancelling " + statement);
                 statement.cancel();
-                if (DEBUG_MODE) LOGGER.debug("Done cancelling statement (" + statement + ") - " + (System.currentTimeMillis() - start) + "ms");
+                if (DATABASE_DEBUG_MODE) log.info("[DBN] Done cancelling " + statement + " - " + (System.currentTimeMillis() - start) + "ms");
             } catch (SQLRecoverableException ignore) {
             } catch (Throwable e) {
-                LOGGER.warn("Failed to cancel statement (" + statement + "): " + e.getMessage());
+                log.warn("Failed to cancel statement (" + statement + "): " + e.getMessage());
             } finally {
                 close(statement);
             }
@@ -62,12 +62,12 @@ public class ResourceUtil {
         if (resource != null) {
             try {
                 long start = System.currentTimeMillis();
-                if (DEBUG_MODE) LOGGER.debug("Closing resource (" + resource + ")");
+                if (DATABASE_DEBUG_MODE) log.info("[DBN] Closing " + resource);
                 resource.close();
-                if (DEBUG_MODE) LOGGER.debug("Done closing resource (" + resource + ") - " + (System.currentTimeMillis() - start) + "ms");
+                if (DATABASE_DEBUG_MODE) log.info("[DBN] Done closing " + resource + " - " + (System.currentTimeMillis() - start) + "ms");
             } catch (SQLRecoverableException ignore) {
             } catch (Throwable e) {
-                LOGGER.warn("Failed to close resource (" + resource + ")", e);
+                log.warn("Failed to close " + resource, e);
             }
         }
     }
@@ -209,7 +209,7 @@ public class ResourceUtil {
             commit(connection);
         } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
-            LOGGER.warn("Commit failed", e);
+            log.warn("Commit failed", e);
         }
     }
 
@@ -232,7 +232,7 @@ public class ResourceUtil {
             rollback(connection);
         } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
-            LOGGER.warn("Rollback failed", e);
+            log.warn("Rollback failed", e);
         }
 
     }
@@ -255,7 +255,7 @@ public class ResourceUtil {
             rollback(connection, savepoint);
         } catch (SQLRecoverableException ignore) {
         } catch (SQLException e) {
-            LOGGER.warn("Savepoint rollback failed", e);
+            log.warn("Savepoint rollback failed", e);
         }
     }
 
@@ -326,7 +326,7 @@ public class ResourceUtil {
             }
         } catch (SQLRecoverableException ignore) {
         } catch (Exception e) {
-            LOGGER.warn("Unable to set auto-commit to " + autoCommit +". Maybe your database does not support transactions...", e);
+            log.warn("Unable to set auto-commit to " + autoCommit +". Maybe your database does not support transactions...", e);
             sentWarningNotification(
                     NotificationGroup.CONNECTION,
                     "Failed to change auto-commit status for",

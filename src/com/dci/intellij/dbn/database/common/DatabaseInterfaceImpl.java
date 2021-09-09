@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.database.common;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
@@ -9,7 +8,6 @@ import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.common.statement.CallableStatementOutput;
 import com.dci.intellij.dbn.database.common.statement.StatementExecutionProcessor;
-import com.intellij.openapi.diagnostic.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -22,8 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DatabaseInterfaceImpl implements DatabaseInterface{
-    private static final Logger LOGGER = LoggerFactory.createLogger();
-
     private final String fileName;
     private final DatabaseInterfaceProvider provider;
     protected Map<String, StatementExecutionProcessor> processors = new HashMap<>();

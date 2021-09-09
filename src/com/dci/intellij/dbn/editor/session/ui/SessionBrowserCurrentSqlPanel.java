@@ -38,9 +38,11 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
     private JPanel actionsPanel;
@@ -53,6 +55,8 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
     private Document document;
     private EditorEx viewer;
     private Object selectedSessionId;
+
+    private final AtomicReference<Thread> refreshHandle = new AtomicReference<>();
 
 
     SessionBrowserCurrentSqlPanel(DBNComponent parent, SessionBrowser sessionBrowser) {
@@ -102,7 +106,7 @@ public class SessionBrowserCurrentSqlPanel extends DBNFormImpl {
                 String schemaName = selectedRow.getSchema();
                 Project project = sessionBrowser.getProject();
 
-                Background.run(() -> {
+                Background.run(refreshHandle, () -> {
                     ConnectionHandler connectionHandler = getConnectionHandler();
                     DBSchema schema = null;
                     if (StringUtil.isNotEmpty(schemaName)) {

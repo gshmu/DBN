@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
@@ -14,7 +13,6 @@ import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.ssh.SshTunnelConnector;
 import com.dci.intellij.dbn.connection.ssh.SshTunnelManager;
 import com.dci.intellij.dbn.connection.ssl.SslConnectionManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,8 +25,6 @@ import java.util.Map;
 import java.util.Properties;
 
 class Connector {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
-
     private final SessionId sessionId;
     private final AuthenticationInfo authenticationInfo;
     private final ConnectionSettings connectionSettings;

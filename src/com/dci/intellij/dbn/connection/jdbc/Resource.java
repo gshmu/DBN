@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.common.property.PropertyHolder;
 
 public interface Resource extends PropertyHolder<ResourceStatus> {
     ResourceType getResourceType();
+    String getResourceId();
 
     void statusChanged(ResourceStatus status);
 
@@ -17,6 +18,11 @@ public interface Resource extends PropertyHolder<ResourceStatus> {
 
         public Wrapper(T inner) {
             this.inner = inner;
+        }
+
+        @Override
+        public String getResourceId() {
+            return inner.getResourceId();
         }
 
         @Override
