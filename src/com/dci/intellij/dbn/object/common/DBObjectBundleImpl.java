@@ -278,6 +278,11 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     }
 
     @Override
+    public List<DBConsole> getConsoles() {
+        return getConnectionHandler().getConsoleBundle().getConsoles();
+    }
+
+    @Override
     public List<DBSchema> getSchemas() {
         return Failsafe.nn(schemas).getAllElements();
     }
@@ -631,6 +636,7 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Override
     @Nullable
     public DBObject getObject(DBObjectType objectType, String name, short overload) {
+        if (objectType == CONSOLE) return getConnectionHandler().getConsoleBundle().getConsole(name);
         if (objectType == SCHEMA) return getSchema(name);
         if (objectType == USER) return getUser(name);
         if (objectType == ROLE) return getRole(name);

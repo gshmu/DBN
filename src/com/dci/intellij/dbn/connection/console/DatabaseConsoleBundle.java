@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class DatabaseConsoleBundle extends StatefulDisposable.Base {
@@ -35,7 +36,7 @@ public class DatabaseConsoleBundle extends StatefulDisposable.Base {
     }
 
     public Set<String> getConsoleNames() {
-        Set<String> consoleNames = new HashSet<String>();
+        Set<String> consoleNames = new HashSet<>();
         for (DBConsole console : consoles) {
             consoleNames.add(console.getName());
         }
@@ -55,7 +56,7 @@ public class DatabaseConsoleBundle extends StatefulDisposable.Base {
     @Nullable
     public DBConsole getConsole(String name) {
         for (DBConsole console : consoles) {
-            if (console.getName().equals(name)) {
+            if (Objects.equals(console.getName(), name)) {
                 return console;
             }
         }
