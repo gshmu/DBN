@@ -1,14 +1,13 @@
 package com.dci.intellij.dbn.common.thread;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.connection.transaction.ConnectionSavepoint;
 import com.dci.intellij.dbn.database.DatabaseFeature;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
@@ -24,8 +23,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 
+@Slf4j
 public abstract class CancellableDatabaseCall<T> implements Callable<T> {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private final long startTimestamp = System.currentTimeMillis();
     private final ThreadInfo invoker = ThreadMonitor.current();
@@ -105,7 +104,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
                         try {
                             CancellableDatabaseCall.this.cancel();
                         } catch (Exception e) {
-                            LOGGER.warn("Error cancelling operation", e);
+                            log.warn("Error cancelling operation", e);
                         }
                         cancelCheckTimer.cancel();
                     } else {
@@ -168,7 +167,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
         try {
             cancel();
         } catch (Exception ce) {
-            LOGGER.warn("Error cancelling operation", ce);
+            log.warn("Error cancelling operation", ce);
         }
         throw new SQLTimeoutException("Operation has timed out (" + timeout + "s). Check timeout settings");
     }
@@ -185,7 +184,7 @@ public abstract class CancellableDatabaseCall<T> implements Callable<T> {
         try {
             cancel();
         } catch (Exception e) {
-            LOGGER.error("Failed to cancel database call", e);
+            log.error("Failed to cancel database call", e);
         }
     }
 

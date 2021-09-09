@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.latent.MapLatent;
@@ -17,12 +16,12 @@ import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.SchemaId;
 import com.dci.intellij.dbn.connection.SessionId;
 import com.dci.intellij.dbn.connection.transaction.PendingTransactionBundle;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.CallableStatement;
@@ -37,11 +36,10 @@ import java.util.Set;
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.RESERVED;
 
+@Slf4j
 @Getter
 @Setter
 public class DBNConnection extends DBNConnectionBase {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
-
     private final ProjectRef project;
     private final String name;
     private final ConnectionType type;
@@ -78,7 +76,7 @@ public class DBNConnection extends DBNConnectionBase {
     private final ResourceStatusAdapter<DBNConnection> valid =
             new ResourceStatusAdapterImpl<DBNConnection>(this,
                     ResourceStatus.VALID,
-                    ResourceStatus.VALID_SETTING,
+                    ResourceStatus.VALID_APPLYING,
                     ResourceStatus.VALID_CHECKING,
                     TimeUtil.Millis.TEN_SECONDS,
                     Boolean.TRUE,
@@ -96,7 +94,7 @@ public class DBNConnection extends DBNConnectionBase {
     private final ResourceStatusAdapter<DBNConnection> autoCommit =
             new ResourceStatusAdapterImpl<DBNConnection>(this,
                     ResourceStatus.AUTO_COMMIT,
-                    ResourceStatus.AUTO_COMMIT_SETTING,
+                    ResourceStatus.AUTO_COMMIT_APPLYING,
                     ResourceStatus.AUTO_COMMIT_CHECKING,
                     TimeUtil.Millis.TEN_SECONDS,
                     Boolean.FALSE,
@@ -110,7 +108,7 @@ public class DBNConnection extends DBNConnectionBase {
                             inner.setAutoCommit(value);
                         }
                     } catch (Throwable e){
-                        LOGGER.warn("Unable to set auto-commit to " + value+". Maybe your database does not support transactions...", e);
+                        log.warn("Unable to set auto-commit to " + value + ". Maybe your database does not support transactions...", e);
                     }
                 }
 
@@ -135,7 +133,7 @@ public class DBNConnection extends DBNConnectionBase {
     }
 
 
-    public DBNPreparedStatement prepareStatementCached(String sql) throws SQLException {
+    public DBNPreparedStatement prepareStatementCached(String sql) {
         try {
             return cachedStatements.get(sql);
         } finally {
@@ -334,9 +332,9 @@ public class DBNConnection extends DBNConnectionBase {
         } else if (status == RESERVED) {
             if (value) {
                 if (isActive()) {
-                    LOGGER.warn("Reserving active connection");
+                    log.warn("Reserving active connection");
                 } else if (isReserved()) {
-                    LOGGER.warn("Reserving already reserved connection");
+                    log.warn("Reserving already reserved connection");
                 }
             }
             changed = reserved.set(value);

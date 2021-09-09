@@ -6,21 +6,21 @@ public enum ResourceStatus implements Property {
     // shared
     CLOSED,
     CLOSED_CHECKING,
-    CLOSED_SETTING,
+    CLOSED_APPLYING,
 
     VALID,
-    VALID_SETTING,
     VALID_CHECKING,
+    VALID_APPLYING,
 
     // statement
     CANCELLED,
-    CANCELLED_SETTING,
     CANCELLED_CHECKING,
+    CANCELLED_APPLYING,
 
     // connection
     AUTO_COMMIT,
-    AUTO_COMMIT_SETTING,
     AUTO_COMMIT_CHECKING,
+    AUTO_COMMIT_APPLYING,
 
     ACTIVE,
     RESERVED,

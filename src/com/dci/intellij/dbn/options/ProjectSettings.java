@@ -4,9 +4,9 @@ import com.dci.intellij.dbn.browser.options.DatabaseBrowserSettings;
 import com.dci.intellij.dbn.code.common.completion.options.CodeCompletionSettings;
 import com.dci.intellij.dbn.code.common.style.options.ProjectCodeStyleSettings;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.options.CompositeProjectConfiguration;
 import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.ConfigurationHandle;
 import com.dci.intellij.dbn.common.options.ProjectConfiguration;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
@@ -19,7 +19,6 @@ import com.dci.intellij.dbn.execution.common.options.ExecutionEngineSettings;
 import com.dci.intellij.dbn.navigation.options.NavigationSettings;
 import com.dci.intellij.dbn.options.general.GeneralProjectSettings;
 import com.dci.intellij.dbn.options.ui.ProjectSettingsForm;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
@@ -40,8 +39,6 @@ import javax.swing.JPanel;
 public class ProjectSettings
         extends CompositeProjectConfiguration<ProjectConfiguration, ProjectSettingsForm>
         implements SearchableConfigurable.Parent, Cloneable<ProjectSettings> {
-
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private final GeneralProjectSettings generalSettings           = new GeneralProjectSettings(this);
     private final DatabaseBrowserSettings browserSettings          = new DatabaseBrowserSettings(this);
@@ -165,14 +162,14 @@ public class ProjectSettings
     @Override
     public ProjectSettings clone() {
         try {
-            IS_TRANSITORY.set(true);
+            ConfigurationHandle.setTransitory(true);
             Element element = new Element("project-settings");
             writeConfiguration(element);
             ProjectSettings projectSettings = new ProjectSettings(getProject());
             projectSettings.readConfiguration(element);
             return projectSettings;
         } finally {
-            IS_TRANSITORY.set(false);
+            ConfigurationHandle.setTransitory(false);
         }
     }
 }

@@ -1,9 +1,8 @@
 package com.dci.intellij.dbn.data.value;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
 import javax.sql.rowset.serial.SerialBlob;
@@ -17,9 +16,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 
+@Slf4j
 public class BlobValue extends LargeObjectValue {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
-
     private Blob blob;
     private InputStream inputStream;
 
@@ -140,7 +138,7 @@ public class BlobValue extends LargeObjectValue {
                 inputStream.close();
                 inputStream = null;
             } catch (IOException e) {
-                LOGGER.error("Could not close BLOB input stream.", e);
+                log.error("Could not close BLOB input stream.", e);
             }
         }
     }

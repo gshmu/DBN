@@ -1,8 +1,6 @@
 package com.dci.intellij.dbn.common.util;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
-import com.intellij.openapi.diagnostic.Logger;
 import org.jdom.Document;
 import org.jdom.adapters.XML4JDOMAdapter;
 import org.jdom.input.DOMBuilder;
@@ -17,8 +15,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.function.Supplier;
 
-public class CommonUtil {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
+public final class CommonUtil {
+    private CommonUtil() {}
 
     public static boolean isPluginCall() {
         for (StackTraceElement stackTraceElement : Thread.currentThread().getStackTrace()) {
@@ -118,7 +116,7 @@ public class CommonUtil {
         try {
             return new DOMBuilder().build(new XML4JDOMAdapter().getDocument(inputStream, false));
         } catch (Exception e) {
-            //LOGGER.warn(e);
+            //log.warn(e);
         }
         return null;
     }

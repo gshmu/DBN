@@ -13,6 +13,8 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public final class Progress {
 
     private Progress() {}
@@ -27,6 +29,33 @@ public final class Progress {
                             invoker,
                             ThreadProperty.PROGRESS,
                             () -> Safe.run(() -> runnable.run(indicator)));
+                }
+            });
+        }
+    }
+
+    public static void background(Project project, String title, AtomicReference<Thread> handle, ProgressRunnable runnable) {
+        if (Failsafe.check(project)) {
+            Thread current = handle.get();
+            if (current != null) {
+                current.interrupt();
+            }
+            ThreadInfo invoker = ThreadMonitor.current();
+            start(new Task.Backgroundable(Failsafe.nd(project), title, false, PerformInBackgroundOption.ALWAYS_BACKGROUND) {
+                @Override
+                public void run(@NotNull ProgressIndicator indicator) {
+                    ThreadMonitor.run(
+                            invoker,
+                            ThreadProperty.PROGRESS,
+                            () -> Safe.run(() -> {
+                                try {
+                                    handle.set(Thread.currentThread());
+                                    runnable.run(indicator);
+                                } finally {
+                                    handle.set(null);
+                                }
+
+                            }));
                 }
             });
         }

@@ -19,10 +19,10 @@ import com.sun.jdi.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.List;
 
-public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess, DBJdwpDebugValue> implements DBJdwpDebugUtil {
+public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess, DBJdwpDebugValue> {
     private long childrenComputed = 0;
     private JavaStackFrame underlyingFrame;
 
@@ -53,7 +53,7 @@ public class DBJdwpDebugStackFrame extends DBDebugStackFrame<DBJdwpDebugProcess,
         int lineNumber = location == null ? 0 : location.lineNumber() - 1;
 
         DBJdwpDebugProcess debugProcess = getDebugProcess();
-        if (debugProcess.isDeclaredBlock(location) || getOwnerName(location) == null) {
+        if (debugProcess.isDeclaredBlock(location) || DBJdwpDebugUtil.getOwnerName(location) == null) {
             ExecutionInput executionInput = debugProcess.getExecutionInput();
             if (executionInput instanceof StatementExecutionInput) {
                 StatementExecutionInput statementExecutionInput = (StatementExecutionInput) executionInput;

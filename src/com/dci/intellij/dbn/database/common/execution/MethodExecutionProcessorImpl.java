@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.database.common.execution;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.locale.Formatter;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
@@ -24,7 +23,6 @@ import com.dci.intellij.dbn.execution.method.result.MethodExecutionResult;
 import com.dci.intellij.dbn.object.DBArgument;
 import com.dci.intellij.dbn.object.DBMethod;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,7 +33,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public abstract class MethodExecutionProcessorImpl implements MethodExecutionProcessor {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
     private final DBObjectRef<DBMethod> method;
 
     protected MethodExecutionProcessorImpl(DBMethod method) {

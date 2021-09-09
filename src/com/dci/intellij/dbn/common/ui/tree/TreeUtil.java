@@ -1,26 +1,26 @@
 package com.dci.intellij.dbn.common.ui.tree;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.Dispatch;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.speedSearch.SpeedSearchUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JTree;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import java.awt.*;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class TreeUtil {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
-
+@Slf4j
+public final class TreeUtil {
     public static void applySpeedSearchHighlighting(
             @NotNull JComponent tree,
             @NotNull SimpleColoredComponent coloredComponent,
@@ -29,12 +29,12 @@ public class TreeUtil {
         try {
             SpeedSearchUtil.applySpeedSearchHighlighting(tree, coloredComponent, true, selected);
         } catch (Throwable e) {
-            LOGGER.warn("Error applying speed search highlighting");
+            log.warn("Error applying speed search highlighting");
         }
     }
 
     public static TreePath createTreePath(TreeNode treeNode) {
-        List<TreeNode> list =  new ArrayList<TreeNode>();
+        List<TreeNode> list = new ArrayList<>();
         list.add(treeNode);
         TreeNode parent = treeNode.getParent();
         while (parent != null) {

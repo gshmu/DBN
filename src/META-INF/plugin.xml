@@ -287,9 +287,12 @@
             <action class="com.dci.intellij.dbn.menu.action.PendingTransactionsOpenAction" text="Open Transactions" id="DBNavigator.Actions.MainMenu.PendingTransactions"/>
             <separator/>
             <group id="DBNavigator.ActionGroup.Development" text="Development" popup="true">
+                <action id="DBNavigator.Actions.MainMenu.ParserDebugMode" class="com.dci.intellij.dbn.menu.action.developer.ParserDebugToggleAction" text="Enable Parser Debug Mode"/>
+                <action id="DBNavigator.Actions.MainMenu.DatabaseDebugMode" class="com.dci.intellij.dbn.menu.action.developer.DatabaseDebugToggleAction" text="Enable Database Debug Mode"/>
+                <action id="DBNavigator.Actions.MainMenu.DevelopmentSlowDatabase" class="com.dci.intellij.dbn.menu.action.developer.SimulateSlowDatabaseAction" text="Enable Lagging Database Simulation"/>
+                <separator/>
                 <action id="DBNavigator.Actions.MainMenu.DevelopmentReset" class="com.dci.intellij.dbn.menu.action.MetaDataDefinitionReloadAction" text="Reload Metadata Definitions"/>
-                <action id="DBNavigator.Actions.MainMenu.DevelopmentSlowDatabase" class="com.dci.intellij.dbn.menu.action.SimulateSlowDatabaseAction" text="Simulate Slow Database Connection"/>
-                <action class="com.dci.intellij.dbn.menu.action.DiagnosticsMonitorOpenAction" text="Diagnostics Monitor" id="DBNavigator.Actions.MainMenu.DiagnosticsMonitor"/>
+                <action  id="DBNavigator.Actions.MainMenu.DiagnosticsMonitor" class="com.dci.intellij.dbn.menu.action.DiagnosticsMonitorOpenAction" text="Diagnostics Monitor..."/>
             </group>
             <group id="DBNavigator.ActionGroup.ImportExportSettings" text="Default Settings" popup="true">
                 <action id="DBNavigator.Actions.MainMenu.OpenDefaultSettings" class="com.dci.intellij.dbn.menu.action.ProjectDefaultSettingsOpenAction" text="Open Default Settings..."/>

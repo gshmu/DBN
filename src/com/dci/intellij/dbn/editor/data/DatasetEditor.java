@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.data;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.action.Lookup;
 import com.dci.intellij.dbn.common.dispose.DisposableUserDataHolderBase;
@@ -50,7 +49,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorLocation;
@@ -60,11 +58,12 @@ import com.intellij.openapi.fileEditor.FileEditorStateLevel;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 import java.beans.PropertyChangeListener;
 import java.sql.SQLException;
 import java.util.List;
@@ -74,14 +73,13 @@ import static com.dci.intellij.dbn.editor.data.DatasetLoadInstruction.*;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.INSERTING;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.MODIFIED;
 
+@Slf4j
 public class DatasetEditor extends DisposableUserDataHolderBase implements
         FileEditor,
         FileConnectionMappingProvider,
         ConnectionProvider,
         DataProvider,
         StatefulDisposable {
-
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private static final DatasetLoadInstructions COL_VISIBILITY_STATUS_CHANGE_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(USE_CURRENT_FILTER, PRESERVE_CHANGES, DELIBERATE_ACTION, REBUILD);
     private static final DatasetLoadInstructions CON_STATUS_CHANGE_LOAD_INSTRUCTIONS = new DatasetLoadInstructions(USE_CURRENT_FILTER);
@@ -329,7 +327,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
                                 dataLoadError = e.getMessage();
                                 handleLoadError(e, instructions);
                             } catch (Exception e) {
-                                LOGGER.error("Error loading table data", e);
+                                log.error("Error loading table data", e);
                             } finally {
                                 status.set(LOADED, true);
                                 editorForm.hideLoadingHint();

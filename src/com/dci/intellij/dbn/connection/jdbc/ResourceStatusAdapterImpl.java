@@ -1,13 +1,12 @@
 package com.dci.intellij.dbn.connection.jdbc;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.ThreadMonitor;
 import com.dci.intellij.dbn.common.thread.Timeout;
 import com.dci.intellij.dbn.common.util.ExceptionUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.environment.Environment;
 import com.dci.intellij.dbn.language.common.WeakRef;
-import com.intellij.openapi.diagnostic.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,9 +14,8 @@ import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.util.concurrent.atomic.AtomicReference;
 
+@Slf4j
 public abstract class ResourceStatusAdapterImpl<T extends Resource> implements ResourceStatusAdapter<T> {
-    protected static final Logger LOGGER = LoggerFactory.createLogger();
-
     private final WeakRef<T> resource;
     private final ResourceStatus subject;
     private final ResourceStatus changing;
@@ -105,7 +103,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
         } catch (SQLRecoverableException e){
             fail();
         } catch (Exception e){
-            LOGGER.warn("Failed to check resource " + subject + " status", e);
+            log.warn("Failed to check resource " + subject + " status", e);
             fail();
         } finally {
             set(checking, false);
@@ -154,10 +152,10 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
                 return terminalStatus == null ? value() : terminalStatus;
             } catch (AbstractMethodError e) {
                 // not implemented (??) TODO suggest using built in drivers
-                LOGGER.warn("Functionality not supported by jdbc driver", e);
+                log.warn("Functionality not supported by jdbc driver", e);
                 return value();
             } catch (RuntimeException t){
-                LOGGER.warn("Failed to invoke jdbc utility", t);
+                log.warn("Failed to invoke jdbc utility", t);
                 return terminalStatus == null ? value() : terminalStatus;
             }
         });
@@ -178,20 +176,20 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
 
         SQLException exception = Timeout.call(10, null, daemon, () -> {
             try {
-                if (Environment.DEBUG_MODE)
-                    LOGGER.info("Started changing " + resourceType + " resource " + subject + " status to " + value);
+                if (Environment.DATABASE_DEBUG_MODE)
+                    log.info("[DBN] Applying status " +  subject + " = " + value + " for " + resource);
 
                 changeInner(value);
                 set(subject, value);
             } catch (Throwable e) {
-                LOGGER.warn("Failed to change " + resourceType + " resource " + subject + " status to " + value + ": " + e.getMessage());
+                log.warn("[DBN] Failed to apply status " + subject + " = " + value + " for " + resource + ": " + e.getMessage());
                 fail();
                 return ExceptionUtil.toSqlException(e);
             } finally {
                 set(changing, false);
 
-                if (Environment.DEBUG_MODE)
-                    LOGGER.info("Done changing " + resourceType + " resource " + subject + " status to " + value);
+                if (Environment.DATABASE_DEBUG_MODE)
+                    log.info("[DBN] Done applying status " + subject + " = "  + value +  " for " + resource);
             }
             return null;
         });

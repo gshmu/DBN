@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdwp.frame;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.debugger.jdwp.DBJdwpDebugUtil;
 import com.dci.intellij.dbn.debugger.jdwp.process.DBJdwpDebugProcess;
 import com.dci.intellij.dbn.execution.ExecutionInput;
@@ -12,7 +11,6 @@ import com.intellij.debugger.PositionManager;
 import com.intellij.debugger.SourcePosition;
 import com.intellij.debugger.engine.DebugProcess;
 import com.intellij.debugger.requests.ClassPrepareRequestor;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.sun.jdi.AbsentInformationException;
@@ -25,10 +23,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class DBJdwpDebugPositionManager implements PositionManager, DBJdwpDebugUtil {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
+public class DBJdwpDebugPositionManager implements PositionManager {
 
-    private DebugProcess process;
+    private final DebugProcess process;
 
     DBJdwpDebugPositionManager(@NotNull DebugProcess process) {
         this.process = process;
@@ -40,7 +37,7 @@ public class DBJdwpDebugPositionManager implements PositionManager, DBJdwpDebugU
         location = check(location);
         int lineNumber = location.lineNumber() - 1;
 
-        String ownerName = getOwnerName(location);
+        String ownerName = DBJdwpDebugUtil.getOwnerName(location);
         VirtualFile virtualFile = getDebugProcess().getVirtualFile(location);
         if (virtualFile != null) {
             PsiFile psiFile = PsiUtil.getPsiFile(getDebugProcess().getProject(), virtualFile);

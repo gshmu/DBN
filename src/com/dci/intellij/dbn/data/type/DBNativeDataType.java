@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.data.type;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.content.DynamicContentElement;
 import com.dci.intellij.dbn.common.content.DynamicContentType;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
@@ -8,16 +7,22 @@ import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.jdbc.DBNCallableStatement;
 import com.dci.intellij.dbn.data.value.ValueAdapter;
 import com.dci.intellij.dbn.database.common.util.DataTypeParseAdapter;
-import com.intellij.openapi.diagnostic.Logger;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
 
+@Slf4j
 @Getter
 public class DBNativeDataType extends StatefulDisposable.Base implements DynamicContentElement{
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private final DataTypeDefinition definition;
 
@@ -48,7 +53,7 @@ public class DBNativeDataType extends StatefulDisposable.Base implements Dynamic
         return getGenericDataType().isLOB();
     }
 
-    public Object getValueFromResultSet(ResultSet resultSet, int columnIndex) throws SQLException {
+    public Object getValueFromResultSet(ResultSet resultSet, int columnIndex) {
         // FIXME: add support for stream updatable types
 
         GenericDataType genericDataType = definition.getGenericDataType();
@@ -113,7 +118,7 @@ public class DBNativeDataType extends StatefulDisposable.Base implements Dynamic
                         clazz == Time.class ? new Time(longValue) :
                         clazz == Timestamp.class ? new Timestamp(longValue) : null;
                 } else {
-                    LOGGER.error("Error resolving result-set value for " + objectClass + " \"" + object + "\". (data type definition " + definition + ')', e);
+                    log.error("Error resolving result-set value for " + objectClass + " \"" + object + "\". (data type definition " + definition + ')', e);
                     return object;
                 }
             } catch (Throwable e1) {
@@ -152,7 +157,7 @@ public class DBNativeDataType extends StatefulDisposable.Base implements Dynamic
                 //if(clazz == Array.class) resultSet.updateArray(columnIndex, (Array) value); else
                         resultSet.updateObject(columnIndex, value);
             } else {
-                throw new SQLException("Can not convert \"" + value.toString() + "\" into " + definition.getName());
+                throw new SQLException("Can not convert \"" + value + "\" into " + definition.getName());
             }
         }
     }
@@ -209,7 +214,7 @@ public class DBNativeDataType extends StatefulDisposable.Base implements Dynamic
                 if(clazz == Boolean.class) preparedStatement.setBoolean(parameterIndex, (Boolean) value); else
                         preparedStatement.setObject(parameterIndex, value);
             } else {
-                throw new SQLException("Can not convert \"" + value.toString() + "\" into " + definition.getName());
+                throw new SQLException("Can not convert \"" + value + "\" into " + definition.getName());
             }
         }
     }
