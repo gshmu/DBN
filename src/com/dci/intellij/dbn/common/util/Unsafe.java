@@ -20,6 +20,14 @@ public final class Unsafe {
         }
     }
 
+    public static <T> T silent(T defaultValue, ThrowableCallable<T, Throwable> callable) {
+        try {
+            return callable.call();
+        } catch (Throwable t) {
+            return defaultValue;
+        }
+    }
+
     public static void warned(ThrowableRunnable<Throwable> runnable) {
         try {
             runnable.run();
