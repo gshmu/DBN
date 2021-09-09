@@ -13,6 +13,7 @@ import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.object.DBCharset;
+import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.object.DBPrivilege;
 import com.dci.intellij.dbn.object.DBRole;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -29,7 +30,7 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,6 +39,11 @@ public class DBVirtualObjectBundle extends BrowserTreeNodeBase implements DBObje
 
     public DBVirtualObjectBundle(@NotNull VirtualConnectionHandler connectionHandler) {
         this.connectionHandler = connectionHandler;
+    }
+
+    @Override
+    public List<DBConsole> getConsoles() {
+        return Collections.emptyList();
     }
 
     @Override

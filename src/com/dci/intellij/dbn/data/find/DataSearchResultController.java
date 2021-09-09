@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.data.find;
 
+import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.thread.Background;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.GUIUtil;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -111,6 +113,8 @@ public class DataSearchResultController {
                     }
                 }
                 searchResult.setMatches(matches);
+            } catch (ConcurrentModificationException e){
+                throw AlreadyDisposedException.INSTANCE;
             } finally {
                 searchResult.stopUpdating();
             }

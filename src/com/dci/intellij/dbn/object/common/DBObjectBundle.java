@@ -10,6 +10,7 @@ import com.dci.intellij.dbn.data.type.DBNativeDataType;
 import com.dci.intellij.dbn.database.DatabaseObjectIdentifier;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.object.DBCharset;
+import com.dci.intellij.dbn.object.DBConsole;
 import com.dci.intellij.dbn.object.DBPrivilege;
 import com.dci.intellij.dbn.object.DBRole;
 import com.dci.intellij.dbn.object.DBSchema;
@@ -27,6 +28,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public interface DBObjectBundle extends BrowserTreeNode, StatefulDisposable {
+    List<DBConsole> getConsoles();
+
     List<DBSchema> getSchemas();
 
     List<SchemaId> getSchemaIds();
