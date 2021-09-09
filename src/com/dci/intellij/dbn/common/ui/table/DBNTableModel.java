@@ -8,4 +8,8 @@ public interface DBNTableModel<R> extends TableModel, StatefulDisposable {
     default String getPresentableValue(R rowObject, int column) {
         throw new UnsupportedOperationException();
     };
+
+    default Object getValue(R rowObject, int column) {
+        throw new UnsupportedOperationException();
+    };
 }

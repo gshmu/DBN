@@ -1,12 +1,11 @@
 package com.dci.intellij.dbn.code.common.color;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,8 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public abstract class DBLColorSettingsPage implements ColorSettingsPage {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private String demoText;
     protected final List<AttributesDescriptor> attributeDescriptors = new ArrayList<AttributesDescriptor>();
@@ -32,7 +31,7 @@ public abstract class DBLColorSettingsPage implements ColorSettingsPage {
             try (InputStream inputStream = getClass().getResourceAsStream(demoTextFileName)) {
                 demoText = CommonUtil.readInputStream(inputStream);
             } catch (IOException e) {
-                LOGGER.error("Failed to load file " + demoTextFileName, e);
+                log.error("Failed to load file " + demoTextFileName, e);
             }
         }
         return demoText.replace("\r\n", "\n");

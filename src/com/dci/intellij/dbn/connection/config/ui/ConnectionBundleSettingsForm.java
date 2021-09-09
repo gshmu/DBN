@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.action.DataKeys;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.DisposableContainer;
@@ -24,7 +23,6 @@ import com.dci.intellij.dbn.connection.config.tns.TnsName;
 import com.dci.intellij.dbn.driver.DriverSource;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.ui.GuiUtils;
@@ -32,6 +30,7 @@ import com.intellij.ui.ListUtil;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.ui.UIUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.ArrayUtils;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -54,8 +53,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<ConnectionBundleSettings> implements ListSelectionListener {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
     private static final String BLANK_PANEL_ID = "BLANK_PANEL";
 
     private JPanel mainPanel;
@@ -271,7 +270,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
             CopyPasteManager copyPasteManager = CopyPasteManager.getInstance();
             copyPasteManager.setContents(new StringSelection(xmlString));
         } catch (Exception ex) {
-            LOGGER.error("Could not copy database configuration to clipboard", ex);
+            log.error("Could not copy database configuration to clipboard", ex);
         }
     }
 
@@ -310,7 +309,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
                 }
             }
         } catch (Exception ex) {
-            LOGGER.error("Could not paste database configuration from clipboard", ex);
+            log.error("Could not paste database configuration from clipboard", ex);
         }
     }
 
@@ -318,7 +317,7 @@ public class ConnectionBundleSettingsForm extends ConfigurationEditorForm<Connec
         ConnectionBundleSettings connectionBundleSettings = getConfiguration();
         ConnectionListModel model = (ConnectionListModel) connectionsList.getModel();
         int index = connectionsList.getModel().getSize();
-        List<Integer> selectedIndexes = new ArrayList<Integer>();
+        List<Integer> selectedIndexes = new ArrayList<>();
 
         for (TnsName tnsName : tnsNames) {
             ConnectionSettings connectionSettings = new ConnectionSettings(connectionBundleSettings, DatabaseType.ORACLE, ConnectionConfigType.BASIC);

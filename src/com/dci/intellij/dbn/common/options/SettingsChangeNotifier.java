@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.common.options;
 
 public abstract class SettingsChangeNotifier {
     private SettingsChangeNotifier() {
-        Configuration.registerChangeNotifier(this);
+        ConfigurationHandle.registerChangeNotifier(this);
     }
 
     public abstract void notifyChanges();

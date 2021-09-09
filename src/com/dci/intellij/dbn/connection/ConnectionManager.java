@@ -3,7 +3,6 @@ package com.dci.intellij.dbn.connection;
 import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.browser.DatabaseBrowserManager;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.database.AuthenticationInfo;
 import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
@@ -40,13 +39,13 @@ import com.dci.intellij.dbn.vfs.DatabaseFileManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import lombok.extern.slf4j.Slf4j;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -69,8 +68,8 @@ import static com.dci.intellij.dbn.connection.transaction.TransactionAction.acti
     name = ConnectionManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
 )
+@Slf4j
 public class ConnectionManager extends AbstractProjectComponent implements PersistentStateComponent<Element> {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     public static final String COMPONENT_NAME = "DBNavigator.Project.ConnectionManager";
 
@@ -459,7 +458,7 @@ public class ConnectionManager extends AbstractProjectComponent implements Persi
                 List<ConnectionHandler> connectionHandlers = getConnectionHandlers();
                 connectionHandlers.forEach(connectionHandler -> resolveIdleStatus(connectionHandler));
             } catch (Exception e){
-                LOGGER.error("Failed to release idle connections", e);
+                log.error("Failed to release idle connections", e);
             }
         }
 

@@ -39,6 +39,19 @@ public class MetadataDiagnosticsTableModel extends DiagnosticsTableModel {
     }
 
     @Override
+    public Object getValue(DiagnosticEntry entry, int column) {
+        switch (column) {
+            case 0: return entry.getIdentifier();
+            case 1: return entry.getInvocationCount();
+            case 2: return entry.getFailureCount();
+            case 3: return entry.getTimeoutCount();
+            case 4: return entry.getAverageExecutionTime();
+            case 5: return entry.getTotalExecutionTime();
+        }
+        return "";
+    }
+
+    @Override
     public String getPresentableValue(DiagnosticEntry entry, int column) {
         switch (column) {
             case 0: return entry.getIdentifier();

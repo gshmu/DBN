@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.database.oracle;
 
+import com.dci.intellij.dbn.code.common.style.DBLCodeStyleManager;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseOption;
 import com.dci.intellij.dbn.code.common.style.options.CodeStyleCaseSettings;
 import com.dci.intellij.dbn.code.psql.style.options.PSQLCodeStyleSettings;
-import com.dci.intellij.dbn.code.sql.style.options.SQLCodeStyleSettings;
 import com.dci.intellij.dbn.connection.jdbc.DBNConnection;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
 import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
@@ -11,6 +11,7 @@ import com.dci.intellij.dbn.database.common.DatabaseDDLInterfaceImpl;
 import com.dci.intellij.dbn.ddl.options.DDLFileSettings;
 import com.dci.intellij.dbn.editor.DBContentType;
 import com.dci.intellij.dbn.editor.code.content.SourceCodeContent;
+import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.factory.ArgumentFactoryInput;
 import com.dci.intellij.dbn.object.factory.MethodFactoryInput;
 import com.intellij.openapi.project.Project;
@@ -29,7 +30,7 @@ public class OracleDDLInterface extends DatabaseDDLInterfaceImpl {
         boolean useQualified = ddlFileSettings.getGeneralSettings().isUseQualifiedObjectNames();
         boolean makeRerunnable = ddlFileSettings.getGeneralSettings().isMakeScriptsRerunnable();
 
-        CodeStyleCaseSettings styleCaseSettings = SQLCodeStyleSettings.getInstance(project).getCaseSettings();
+        CodeStyleCaseSettings styleCaseSettings = DBLCodeStyleManager.getInstance(project).getCodeStyleCaseSettings(SQLLanguage.INSTANCE);
         CodeStyleCaseOption kco = styleCaseSettings.getKeywordCaseOption();
         CodeStyleCaseOption oco = styleCaseSettings.getObjectCaseOption();
 

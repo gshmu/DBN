@@ -12,11 +12,17 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectReferenceLookupAdapter;
+import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.lang.parameterInfo.*;
+import com.intellij.lang.parameterInfo.CreateParameterInfoContext;
+import com.intellij.lang.parameterInfo.ParameterInfoContext;
+import com.intellij.lang.parameterInfo.ParameterInfoHandler;
+import com.intellij.lang.parameterInfo.ParameterInfoUIContext;
+import com.intellij.lang.parameterInfo.UpdateParameterInfoContext;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -208,7 +214,8 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
 
     @Override
     public void updateUI(BasePsiElement handlerPsiElement, @NotNull ParameterInfoUIContext context) {
-        SQLCodeStyleSettings codeStyleSettings = SQLCodeStyleSettings.getInstance(handlerPsiElement.getProject());
+        Project project = handlerPsiElement.getProject();
+        SQLCodeStyleSettings codeStyleSettings = SQLLanguage.INSTANCE.getCodeStyleSettings(project);
         CodeStyleCaseSettings caseSettings = codeStyleSettings.getCaseSettings();
         CodeStyleCaseOption datatypeCaseOption = caseSettings.getDatatypeCaseOption();
         CodeStyleCaseOption objectCaseOption = caseSettings.getObjectCaseOption();

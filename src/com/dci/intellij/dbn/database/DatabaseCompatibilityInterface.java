@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.database;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.DatabaseAttachmentHandler;
@@ -9,16 +8,15 @@ import com.dci.intellij.dbn.editor.session.SessionStatus;
 import com.dci.intellij.dbn.language.common.QuoteDefinition;
 import com.dci.intellij.dbn.language.common.QuotePair;
 import com.dci.intellij.dbn.object.common.DBObject;
-import com.intellij.openapi.diagnostic.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 
+@Slf4j
 public abstract class DatabaseCompatibilityInterface implements DatabaseInterface{
-    private static final Logger LOGGER = LoggerFactory.createLogger();
-
     private final DatabaseInterfaceProvider provider;
 
     public DatabaseCompatibilityInterface(DatabaseInterfaceProvider parent) {
@@ -80,7 +78,7 @@ public abstract class DatabaseCompatibilityInterface implements DatabaseInterfac
                 return loader.call();
             }
         } catch (SQLFeatureNotSupportedException | AbstractMethodError e) {
-            LOGGER.warn("JDBC feature not supported " + feature + " (" + e.getMessage() + ")");
+            log.warn("JDBC feature not supported " + feature + " (" + e.getMessage() + ")");
             compatibility.markUnsupported(feature);
         }
         return null;

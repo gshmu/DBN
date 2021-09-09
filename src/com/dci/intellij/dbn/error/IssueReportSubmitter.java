@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.error;
 
 import com.dci.intellij.dbn.DatabaseNavigator;
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -20,15 +19,15 @@ import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.ErrorReportSubmitter;
 import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.diagnostic.SubmittedReportInfo;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Consumer;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import java.awt.Component;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Calendar;
@@ -41,8 +40,8 @@ import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 import static com.intellij.openapi.diagnostic.SubmittedReportInfo.SubmissionStatus.FAILED;
 import static com.intellij.openapi.diagnostic.SubmittedReportInfo.SubmissionStatus.NEW_ISSUE;
 
+@Slf4j
 abstract class IssueReportSubmitter extends ErrorReportSubmitter {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private static final String ENCODING = "UTF-8";
     private static final String LINE_DELIMITER = "\n__________________________________________________________________\n";
@@ -167,7 +166,7 @@ abstract class IssueReportSubmitter extends ErrorReportSubmitter {
 
                     String errorMessage = result.getErrorMessage();
                     if (StringUtil.isEmpty(errorMessage)) {
-                        LOGGER.info("Error report submitted, response: " + result);
+                        log.info("Error report submitted, response: " + result);
 
                         String ticketId = result.getTicketId();
                         String ticketUrl = getTicketUrl(ticketId);

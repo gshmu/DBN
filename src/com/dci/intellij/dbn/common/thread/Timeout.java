@@ -1,10 +1,9 @@
 package com.dci.intellij.dbn.common.thread;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.routine.ThrowableRunnable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.intellij.openapi.diagnostic.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -12,11 +11,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public interface Timeout {
-    Logger LOGGER = LoggerFactory.createLogger();
+@Slf4j
+public final class Timeout {
+    private Timeout() {}
 
-
-    static <T> T call(long seconds, T defaultValue, boolean daemon, ThrowableCallable<T, Throwable> callable) {
+    public static <T> T call(long seconds, T defaultValue, boolean daemon, ThrowableCallable<T, Throwable> callable) {
         try {
             ThreadInfo invoker = ThreadMonitor.current();
             ExecutorService executorService = ThreadPool.timeoutExecutor(daemon);
@@ -29,7 +28,7 @@ public interface Timeout {
                                     defaultValue,
                                     callable);
                         } catch (Throwable e) {
-                            LOGGER.error("Timeout operation failed. Returning default " + defaultValue, e);
+                            log.error("Timeout operation failed. Returning default " + defaultValue, e);
                             return defaultValue;
 
                         }
@@ -42,12 +41,12 @@ public interface Timeout {
             }
         } catch (ExecutionException e) {
             Throwable exception = CommonUtil.nvl(e.getCause(), e);
-            LOGGER.error("Timeout operation failed. Returning default " + defaultValue, exception);
+            log.error("Timeout operation failed. Returning default " + defaultValue, exception);
             return defaultValue;
         }
     }
 
-    static void run(long seconds, boolean daemon, ThrowableRunnable<Throwable> runnable) {
+    public static void run(long seconds, boolean daemon, ThrowableRunnable<Throwable> runnable) {
         try {
             ThreadInfo invoker = ThreadMonitor.current();
             ExecutorService executorService = ThreadPool.timeoutExecutor(daemon);
@@ -59,7 +58,7 @@ public interface Timeout {
                                     ThreadProperty.TIMEOUT,
                                     runnable);
                         } catch (Throwable e) {
-                            LOGGER.error("Timeout operation failed.", e);
+                            log.error("Timeout operation failed.", e);
                         }
                     });
             try {
@@ -70,7 +69,7 @@ public interface Timeout {
 
         } catch (ExecutionException e) {
             Throwable exception = CommonUtil.nvl(e.getCause(), e);
-            LOGGER.error("Timeout operation failed.", exception);
+            log.error("Timeout operation failed.", exception);
         }
     }
 

@@ -1,8 +1,7 @@
 package com.dci.intellij.dbn.data.value;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.data.type.GenericDataType;
-import com.intellij.openapi.diagnostic.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
@@ -15,8 +14,8 @@ import java.sql.SQLException;
 import java.util.EnumMap;
 import java.util.Map;
 
+@Slf4j
 public abstract class ValueAdapter<T> {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     public abstract GenericDataType getGenericDataType();
     public abstract @Nullable T read() throws SQLException;
@@ -77,7 +76,7 @@ public abstract class ValueAdapter<T> {
         if (e instanceof SQLException) {
             throw (SQLException) e;
         } else {
-            LOGGER.error("Error creating value adapter for generic type " + genericDataType.name() + '.', e);
+            log.error("Error creating value adapter for generic type " + genericDataType.name() + '.', e);
             throw new SQLException("Error creating value adapter for generic type " + genericDataType.name() + '.', e);
         }
     }

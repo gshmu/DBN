@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class CmdLineInterface extends CommonUtil implements Cloneable<CmdLineInterface>, PersistentConfiguration, Presentable {
+public class CmdLineInterface implements Cloneable<CmdLineInterface>, PersistentConfiguration, Presentable {
     public static final String DEFAULT_ID = "DEFAULT";
 
     private DatabaseType databaseType;

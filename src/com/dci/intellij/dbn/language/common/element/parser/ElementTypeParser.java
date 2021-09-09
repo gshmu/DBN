@@ -31,13 +31,13 @@ public abstract class ElementTypeParser<T extends ElementTypeBase> {
     }
 
     public void logBegin(ParserBuilder builder, boolean optional, int depth) {
-        if (Environment.DEBUG_MODE) {
+        if (Environment.PARSER_DEBUG_MODE) {
             ElementTypeLogger.logBegin(elementType, builder, optional, depth);
         }
     }
 
     public void logEnd(ParseResultType resultType, int depth) {
-        if (Environment.DEBUG_MODE) {
+        if (Environment.PARSER_DEBUG_MODE) {
             ElementTypeLogger.logEnd(elementType, resultType, depth);
         }
     }

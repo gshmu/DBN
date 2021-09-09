@@ -1,6 +1,6 @@
 package com.dci.intellij.dbn.connection.config.ui;
 
-import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.ConfigurationHandle;
 import com.dci.intellij.dbn.common.ui.DBNContentWithHeaderForm;
 import com.dci.intellij.dbn.common.ui.DBNForm;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -14,7 +14,7 @@ import com.dci.intellij.dbn.options.ProjectSettingsManager;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Action;
 
 public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHeaderForm> {
     private final ConnectionHandlerRef connectionHandler;
@@ -65,7 +65,7 @@ public class ConnectionFilterSettingsDialog extends DBNDialog<DBNContentWithHead
             // !!workaround!! apply settings is normally cascaded from top level settings
             configurationEditor.applyFormChanges();
             filterSettings.apply();
-            Configuration.notifyChanges();
+            ConfigurationHandle.notifyChanges();
             super.doOKAction();
         } catch (ConfigurationException e) {
             MessageUtil.showErrorDialog(getProject(), "Configuration error", e.getMessage());

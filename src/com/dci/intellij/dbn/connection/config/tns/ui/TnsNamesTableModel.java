@@ -64,6 +64,23 @@ public class TnsNamesTableModel extends StatefulDisposable.Base implements DBNRe
     }
 
     @Override
+    public Object getValue(TnsName tnsName, int column) {
+        switch (column) {
+            case 0: return tnsName.getName();
+            case 1: return tnsName.getProtocol();
+            case 2: return tnsName.getHost();
+            case 3: return tnsName.getPort();
+            case 4: return tnsName.getSid();
+            case 5: return tnsName.getServiceName();
+            case 6: return tnsName.getGlobalName();
+            case 7: return tnsName.getFailover();
+            case 8: return tnsName.getFailoverType();
+            case 9: return tnsName.getFailoverMethod();
+            default: return "";
+        }
+    }
+
+    @Override
     public String getPresentableValue(TnsName tnsName, int column) {
         switch (column) {
             case 0: return tnsName.getName();

@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.common.options;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.dci.intellij.dbn.options.TopLevelConfig;
@@ -12,15 +11,16 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import javax.swing.JComponent;
 
 public abstract class BasicConfiguration<P extends Configuration, E extends ConfigurationEditorForm>
-        implements Configuration<P, E>, SettingsSupport {
+        extends AbstractConfiguration<P, E> {
 
     private E configurationEditorForm;
 
     private boolean modified = false;
-    private final boolean transitory = IS_TRANSITORY.get();
+    private final boolean transitory = ConfigurationHandle.isTransitory();
     private final WeakRef<P> parent;
 
     public BasicConfiguration(P parent) {
@@ -82,7 +82,7 @@ public abstract class BasicConfiguration<P extends Configuration, E extends Conf
     }
 
     private static Boolean isResetting() {
-        return IS_RESETTING.get();
+        return ConfigurationHandle.isResetting();
     }
 
     @Override
@@ -111,19 +111,19 @@ public abstract class BasicConfiguration<P extends Configuration, E extends Conf
             }
 
             // Notify only when all changes are set
-            Configuration.notifyChanges();
+            ConfigurationHandle.notifyChanges();
         }
     }
 
     @Override
     public void reset() {
         try {
-            IS_RESETTING.set(true);
+            ConfigurationHandle.setResetting(true);
             if (configurationEditorForm != null)
             configurationEditorForm.resetFormChanges();
         } finally {
             modified = false;
-            IS_RESETTING.set(false);
+            ConfigurationHandle.setResetting(false);
         }
     }
 

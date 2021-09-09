@@ -14,7 +14,7 @@ public final class ConnectionId extends PseudoConstant<ConnectionId> {
     public static final ConnectionId UNKNOWN_CONNECTION = get("unknown-connection");
     public static final ConnectionId DISPOSED_CONNECTION = get("disposed-connection");
 
-    public ConnectionId(String id) {
+    private ConnectionId(String id) {
         super(id);
     }
 

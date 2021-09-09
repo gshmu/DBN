@@ -21,7 +21,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ObjectPropertiesForm extends DBNFormImpl {
     private JPanel mainPanel;
@@ -31,6 +35,8 @@ public class ObjectPropertiesForm extends DBNFormImpl {
     private JScrollPane objectPropertiesScrollPane;
     private JPanel closeActionPanel;
     private DBObjectRef<?> object;
+
+    private final AtomicReference<Thread> refreshHandle = new AtomicReference<>();
 
     public ObjectPropertiesForm(DBNForm parent) {
         super(parent);
@@ -78,27 +84,25 @@ public class ObjectPropertiesForm extends DBNFormImpl {
         DBObject localObject = getObject();
         if (!object.equals(localObject)) {
             this.object = DBObjectRef.of(object);
-
             Project project = object.getProject();
-            Progress.background(project, "Rendering object properties", false,
-                    (progress) -> {
-                        ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
-                        Disposer.register(ObjectPropertiesForm.this, tableModel);
+            Progress.background(project, "Rendering object properties", refreshHandle, progress -> {
+                ObjectPropertiesTableModel tableModel = new ObjectPropertiesTableModel(object.getPresentableProperties());
+                Disposer.register(ObjectPropertiesForm.this, tableModel);
 
-                        Dispatch.run(() -> {
-                            objectLabel.setText(object.getName());
-                            objectLabel.setIcon(object.getIcon());
-                            objectTypeLabel.setText(NamingUtil.capitalize(object.getTypeName()) + ":");
+                Dispatch.run(() -> {
+                    objectLabel.setText(object.getName());
+                    objectLabel.setIcon(object.getIcon());
+                    objectTypeLabel.setText(NamingUtil.capitalize(object.getTypeName()) + ":");
 
+                    ObjectPropertiesTableModel oldTableModel = (ObjectPropertiesTableModel) objectPropertiesTable.getModel();
+                    objectPropertiesTable.setModel(tableModel);
+                    ((DBNTable<?>) objectPropertiesTable).accommodateColumnsSize();
 
-                            ObjectPropertiesTableModel oldTableModel = (ObjectPropertiesTableModel) objectPropertiesTable.getModel();
-                            objectPropertiesTable.setModel(tableModel);
-                            ((DBNTable<?>) objectPropertiesTable).accommodateColumnsSize();
+                    GUIUtil.repaint(mainPanel);
+                    SafeDisposer.dispose(oldTableModel);
+                });
 
-                            GUIUtil.repaint(mainPanel);
-                            SafeDisposer.dispose(oldTableModel);
-                        });
-                    });
+            });
         }
     }
 

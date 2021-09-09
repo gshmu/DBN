@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.execution.compiler;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.message.MessageType;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
@@ -13,7 +12,6 @@ import com.dci.intellij.dbn.object.common.DBSchemaObject;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class CompilerResult implements Disposable, NotificationSupport {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private final DBObjectRef<DBSchemaObject> objectRef;
     private final List<CompilerMessage> compilerMessages = new ArrayList<>();

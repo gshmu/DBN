@@ -3,12 +3,19 @@ package com.dci.intellij.dbn.connection.jdbc;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.common.util.Traceable;
+import com.dci.intellij.dbn.environment.Environment;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
+@Getter
+@Slf4j
 public abstract class DBNResource<T> extends ResourceStatusHolder implements Resource{
     private final long initTimestamp = System.currentTimeMillis();
-    private final ResourceType type;
+    private final ResourceType resourceType;
+    private final String resourceId = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
     protected T inner;
 
     private ResourceStatusAdapter<CloseableResource> closed;
@@ -16,20 +23,19 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
 
     protected Traceable traceable = new Traceable();
 
-
     DBNResource(T inner, ResourceType type) {
         if (inner instanceof DBNResource) {
             throw new IllegalArgumentException("Resource already wrapped");
         }
 
         this.inner = inner;
-        this.type = type;
+        this.resourceType = type;
 
         if (this instanceof CloseableResource) {
             CloseableResource closeable = (CloseableResource) this;
             closed = new ResourceStatusAdapterImpl<CloseableResource>(closeable,
                     ResourceStatus.CLOSED,
-                    ResourceStatus.CLOSED_SETTING,
+                    ResourceStatus.CLOSED_APPLYING,
                     ResourceStatus.CLOSED_CHECKING,
                     TimeUtil.Millis.FIVE_SECONDS,
                     Boolean.FALSE,
@@ -47,10 +53,10 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
         }
 
         if (this instanceof CancellableResource) {
-            final CancellableResource cancellable = (CancellableResource) this;
+            CancellableResource cancellable = (CancellableResource) this;
             cancelled = new ResourceStatusAdapterImpl<CancellableResource>(cancellable,
                     ResourceStatus.CANCELLED,
-                    ResourceStatus.CANCELLED_SETTING,
+                    ResourceStatus.CANCELLED_APPLYING,
                     ResourceStatus.CANCELLED_CHECKING,
                     TimeUtil.Millis.FIVE_SECONDS,
                     Boolean.FALSE,
@@ -68,25 +74,19 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
 
             };
         }
+
+        if (Environment.DATABASE_DEBUG_MODE) log.info("[DBN] Created " + this);
     }
 
     @Override
     public String toString() {
+        String string = resourceType + " (" + resourceId + ")";
         String suffix = super.toString();
-        return StringUtil.isEmpty(suffix) ? type.name() : type + " - " + suffix + "";
+        return StringUtil.isEmpty(suffix) ? string : string + " - " + suffix + "";
     }
 
     @Override
     public void statusChanged(ResourceStatus status) {
-    }
-
-    @Override
-    public ResourceType getResourceType() {
-        return type;
-    }
-
-    public long getInitTimestamp() {
-        return initTimestamp;
     }
 
     public boolean isClosed() {
