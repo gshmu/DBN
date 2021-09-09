@@ -471,7 +471,39 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
         if (o == null || getClass() != o.getClass()) return false;
 
         DBObjectRef<?> that = (DBObjectRef<?>) o;
-        return this.serializeFull().equals(that.serializeFull());
+        return deepEqual(this, that);
+    }
+
+    private static boolean deepEqual(DBObjectRef local, DBObjectRef remote) {
+        if (local == null && remote == null) {
+            return true;
+        }
+
+        if (local == null || remote == null) {
+            return false;
+        }
+
+        if (local == remote) {
+            return true;
+        }
+
+        if (local.getObjectType() != remote.getObjectType()) {
+            return false;
+        }
+
+        if (!local.getObjectName().equals(remote.getObjectName())) {
+            return false;
+        }
+
+        if (local.getOverload() != remote.getOverload()) {
+            return false;
+        }
+
+        if (local.getConnectionId() != remote.getConnectionId()) {
+            return false;
+        }
+
+        return deepEqual(local.getParent(), remote.getParent());
     }
 
     @Override
@@ -482,14 +514,9 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     @Override
     public int hashCode() {
         if (hashCode == -1) {
-            hashCode = serializeFull().hashCode();
+            hashCode = (getConnectionId() + PS + serialize()).hashCode();
         }
         return hashCode;
-    }
-
-    @NotNull
-    private String serializeFull() {
-        return getConnectionId() + PS + serialize();
     }
 
     /*

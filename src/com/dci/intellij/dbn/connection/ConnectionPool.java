@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.connection;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
@@ -15,10 +14,10 @@ import com.dci.intellij.dbn.connection.jdbc.IntervalLoader;
 import com.dci.intellij.dbn.connection.jdbc.ResourceStatus;
 import com.dci.intellij.dbn.language.common.WeakRef;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,13 +31,11 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-public class ConnectionPool extends StatefulDisposable.Base implements NotificationSupport, Disposable {
-
-    private static final Logger LOGGER = LoggerFactory.createLogger();
+@Slf4j
+public final class ConnectionPool extends StatefulDisposable.Base implements NotificationSupport, Disposable {
     private static final ConnectionPoolCleanTask POOL_CLEANER_TASK = new ConnectionPoolCleanTask();
     private int peakPoolSize = 0;
 
-    protected final Logger log = Logger.getInstance(getClass().getName());
     private final ConnectionHandlerRef connectionHandler;
 
     private final List<DBNConnection> poolConnections = ContainerUtil.createLockFreeCopyOnWriteList();
@@ -249,7 +246,7 @@ public class ConnectionPool extends StatefulDisposable.Base implements Notificat
         ConnectionHandler connectionHandler = getConnectionHandler();
         ConnectionHandlerStatusHolder connectionStatus = connectionHandler.getConnectionStatus();
         String connectionName = connectionHandler.getName();
-        LOGGER.debug("[DBN-INFO] Attempt to create new pool connection for '" + connectionName + "'");
+        log.debug("[DBN] Attempt to create new pool connection for '" + connectionName + "'");
         DBNConnection connection = ResourceUtil.connect(connectionHandler, SessionId.POOL);
 
         ResourceUtil.setAutoCommit(connection, true);
@@ -275,7 +272,7 @@ public class ConnectionPool extends StatefulDisposable.Base implements Notificat
         poolConnections.add(connection);
         int size = poolConnections.size();
         if (size > peakPoolSize) peakPoolSize = size;
-        LOGGER.debug("[DBN-INFO] Pool connection for '" + connectionName + "' created. Pool size = " + getSize());
+        log.debug("[DBN] Pool connection for '" + connectionName + "' created. Pool size = " + getSize());
         return connection;
     }
 
@@ -291,7 +288,7 @@ public class ConnectionPool extends StatefulDisposable.Base implements Notificat
                     dropConnection(connection);
                 }
             } else {
-                LOGGER.error("Trying to release non-POOL connection: " + connection.getType(), new IllegalArgumentException("No POOL connection"));
+                log.error("Trying to release non-POOL connection: " + connection.getType(), new IllegalArgumentException("No POOL connection"));
             }
 
         }
@@ -387,7 +384,7 @@ public class ConnectionPool extends StatefulDisposable.Base implements Notificat
                 }
             } catch (ProcessCanceledException ignore) {
             } catch (Exception e) {
-                LOGGER.error("Failed to clean connection pool", e);
+                log.error("Failed to clean connection pool", e);
             }
         }
     }

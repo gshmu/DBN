@@ -1,20 +1,20 @@
 package com.dci.intellij.dbn.connection.config;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.StringUtil;
-import com.intellij.openapi.diagnostic.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Base64;
 
-public class PasswordUtil {
-    public static final Logger LOGGER = LoggerFactory.createLogger();
+@Slf4j
+public final class PasswordUtil {
+    private PasswordUtil() {}
 
     public static String encodePassword(String password) {
         try {
             password = StringUtil.isEmpty(password) ? "" : new String(Base64.getEncoder().encode(nvl(password).getBytes()));
         } catch (Exception e) {
             // any exception would break the logic storing the connection settings
-            LOGGER.error("Error encoding password", e);
+            log.error("Error encoding password", e);
         }
         return password;
     }

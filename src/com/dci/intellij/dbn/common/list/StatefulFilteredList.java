@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.common.util.CollectionUtil;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -20,12 +21,17 @@ final class StatefulFilteredList<T> extends FilteredListBase<T> {
             () -> base.stream().filter(t -> filter.accepts(t)).collect(Collectors.toList()));
 
 
-    protected StatefulFilteredList(Filter<T> filter, List<T> base) {
+    StatefulFilteredList(Filter<T> filter, List<T> base) {
         super(filter, base);
     }
 
-    protected StatefulFilteredList(Filter<T> filter) {
+    StatefulFilteredList(Filter<T> filter) {
         super(filter);
+    }
+
+    @Override
+    List<T> initBase(List<T> source) {
+        return source == null ? new ArrayList<>() : source;
     }
 
     @Override

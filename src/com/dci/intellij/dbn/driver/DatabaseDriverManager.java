@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.driver;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.component.ApplicationComponent;
 import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
@@ -8,8 +7,8 @@ import com.dci.intellij.dbn.common.util.FileUtil;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.DatabaseType;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,8 +38,8 @@ import java.util.jar.JarFile;
  * <li>Reload JDBC driver libraries</li>
  * </ol>
  */
+@Slf4j
 public class DatabaseDriverManager implements ApplicationComponent {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private static final Map<DatabaseType, String> BUNDLED_LIBS = new HashMap<>();
     static {
@@ -78,7 +77,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
 
             return driversCache.get(libraryFile);
         } catch (Exception e) {
-            LOGGER.warn("failed to load drivers from library " + libraryFile, e);
+            log.warn("failed to load drivers from library " + libraryFile, e);
             throw e;
         }
     }
@@ -93,7 +92,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
                 }
             }
         } catch (Throwable t) {
-            LOGGER.warn("Failed to dispose class loader", t);
+            log.warn("Failed to dispose class loader", t);
         }
     }
 
@@ -154,12 +153,12 @@ public class DatabaseDriverManager implements ApplicationComponent {
                             drivers.add(driver);
                         }
                     } catch (Throwable t) {
-                        LOGGER.debug("Failed to load driver " + className + " from library " + libraryFile, t);
+                        log.debug("Failed to load driver " + className + " from library " + libraryFile, t);
                     }
                 }
             }
         } catch (Throwable t) {
-            LOGGER.debug("Failed to load drivers from library " + libraryFile, t);
+            log.debug("Failed to load drivers from library " + libraryFile, t);
         }
         return drivers;
     }
@@ -179,7 +178,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
 
     public File getInternalDriverLibrary(DatabaseType databaseType) throws Exception{
         String driverLibrary = BUNDLED_LIBS.get(databaseType);
-        LOGGER.info("Loading driver library " + driverLibrary);
+        log.info("Loading driver library " + driverLibrary);
 
         File deploymentRoot = FileUtil.getPluginDeploymentRoot();
         return FileUtil.findFileRecursively(deploymentRoot, driverLibrary);

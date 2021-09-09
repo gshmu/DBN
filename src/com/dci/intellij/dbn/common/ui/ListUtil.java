@@ -1,16 +1,16 @@
 package com.dci.intellij.dbn.common.ui;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.SelectFromListDialog;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.util.List;
 import java.util.Set;
 
-public class ListUtil {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
+@Slf4j
+public final class ListUtil {
+    private ListUtil() {}
 
     public static void notifyListDataListeners(Object source, Set<ListDataListener> listDataListeners, int fromIndex, int toIndex, int eventType) {
         try {
@@ -23,7 +23,7 @@ public class ListUtil {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Error notifying actions model listeners", e);
+            log.error("Error notifying actions model listeners", e);
         }
     }
 

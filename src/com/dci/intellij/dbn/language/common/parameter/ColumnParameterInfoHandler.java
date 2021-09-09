@@ -12,11 +12,17 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.language.common.psi.lookup.ObjectReferenceLookupAdapter;
+import com.dci.intellij.dbn.language.sql.SQLLanguage;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.lang.parameterInfo.*;
+import com.intellij.lang.parameterInfo.CreateParameterInfoContext;
+import com.intellij.lang.parameterInfo.ParameterInfoContext;
+import com.intellij.lang.parameterInfo.ParameterInfoHandler;
+import com.intellij.lang.parameterInfo.ParameterInfoUIContext;
+import com.intellij.lang.parameterInfo.UpdateParameterInfoContext;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -208,52 +214,54 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
 
     @Override
     public void updateUI(BasePsiElement handlerPsiElement, @NotNull ParameterInfoUIContext context) {
-        SQLCodeStyleSettings codeStyleSettings = SQLCodeStyleSettings.getInstance(handlerPsiElement.getProject());
-        CodeStyleCaseSettings caseSettings = codeStyleSettings.getCaseSettings();
-        CodeStyleCaseOption datatypeCaseOption = caseSettings.getDatatypeCaseOption();
-        CodeStyleCaseOption objectCaseOption = caseSettings.getObjectCaseOption();
+        if (handlerPsiElement.isValid()) {
+            Project project = handlerPsiElement.getProject();
+            SQLCodeStyleSettings codeStyleSettings = SQLLanguage.INSTANCE.getCodeStyleSettings(project);
+            CodeStyleCaseSettings caseSettings = codeStyleSettings.getCaseSettings();
+            CodeStyleCaseOption datatypeCaseOption = caseSettings.getDatatypeCaseOption();
+            CodeStyleCaseOption objectCaseOption = caseSettings.getObjectCaseOption();
 
 
-        context.setUIComponentEnabled(true);
-        StringBuilder text = new StringBuilder();
-        int highlightStartOffset = 0;
-        int highlightEndOffset = 0;
-        int index = 0;
-        int currentIndex = context.getCurrentParameterIndex();
-        BasePsiElement iterationPsiElement = handlerPsiElement.findFirstPsiElement(IterationElementType.class);
-        if (iterationPsiElement != null) {
-            IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.elementType;
-            PsiElement child = iterationPsiElement.getFirstChild();
-            while (child != null) {
-                if (child instanceof BasePsiElement) {
-                    BasePsiElement basePsiElement = (BasePsiElement) child;
-                    if (basePsiElement.elementType  == iterationElementType.iteratedElementType) {
-                        boolean highlight = index == currentIndex || (index == 0 && currentIndex == -1);
-                        if (highlight) {
-                            highlightStartOffset = text.length();
-                        }
-                        if (text.length() > 0) {
-                            text.append(", ");
-                        }
-                        text.append(datatypeCaseOption.format(basePsiElement.getText()));
-                        DBObject object = basePsiElement.getUnderlyingObject();
-                        if (object instanceof DBColumn) {
-                            DBColumn column = (DBColumn) object;
-                            String columnType = column.getDataType().getName();
-                            text.append(" ");
-                            text.append(objectCaseOption.format(columnType));
-                        }
+            context.setUIComponentEnabled(true);
+            StringBuilder text = new StringBuilder();
+            int highlightStartOffset = 0;
+            int highlightEndOffset = 0;
+            int index = 0;
+            int currentIndex = context.getCurrentParameterIndex();
+            BasePsiElement iterationPsiElement = handlerPsiElement.findFirstPsiElement(IterationElementType.class);
+            if (iterationPsiElement != null && iterationPsiElement.isValid()) {
+                IterationElementType iterationElementType = (IterationElementType) iterationPsiElement.elementType;
+                PsiElement child = iterationPsiElement.getFirstChild();
+                while (child != null) {
+                    if (child instanceof BasePsiElement) {
+                        BasePsiElement basePsiElement = (BasePsiElement) child;
+                        if (basePsiElement.elementType  == iterationElementType.iteratedElementType) {
+                            boolean highlight = index == currentIndex || (index == 0 && currentIndex == -1);
+                            if (highlight) {
+                                highlightStartOffset = text.length();
+                            }
+                            if (text.length() > 0) {
+                                text.append(", ");
+                            }
+                            text.append(datatypeCaseOption.format(basePsiElement.getText()));
+                            DBObject object = basePsiElement.getUnderlyingObject();
+                            if (object instanceof DBColumn) {
+                                DBColumn column = (DBColumn) object;
+                                String columnType = column.getDataType().getName();
+                                text.append(" ");
+                                text.append(objectCaseOption.format(columnType));
+                            }
 
-                        if (highlight) {
-                            highlightEndOffset = text.length();
+                            if (highlight) {
+                                highlightEndOffset = text.length();
+                            }
+                            index++;
                         }
-                        index++;
                     }
-                }
 
-                child = child.getNextSibling();
+                    child = child.getNextSibling();
+                }
             }
-        }
 
 
 
@@ -275,11 +283,12 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                 index++;
             }
         }*/
-        boolean disable = highlightEndOffset == 0 && currentIndex > -1 && text.length() > 0;
-        if (text.length() == 0) {
-            text.append("<no parameters>");
+            boolean disable = highlightEndOffset == 0 && currentIndex > -1 && text.length() > 0;
+            if (text.length() == 0) {
+                text.append("<no parameters>");
+            }
+            context.setupUIComponentPresentation(text.toString(), highlightStartOffset, highlightEndOffset, disable, false, false, context.getDefaultParameterColor());
         }
-        context.setupUIComponentPresentation(text.toString(), highlightStartOffset, highlightEndOffset, disable, false, false, context.getDefaultParameterColor());
     }
 
     @Override

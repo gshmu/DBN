@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.data.grid.color;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -9,9 +8,11 @@ import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ui.UIUtil;
 
-import java.awt.*;
+import java.awt.Color;
 
-public class BasicTableTextAttributes extends CommonUtil implements DataGridTextAttributes {
+import static com.dci.intellij.dbn.common.util.CommonUtil.nvln;
+
+public class BasicTableTextAttributes implements DataGridTextAttributes {
     private final SimpleTextAttributes plainData;
     private final SimpleTextAttributes plainDataModified;
     private final SimpleTextAttributes plainDataAtCaretRow;

@@ -1,13 +1,11 @@
 package com.dci.intellij.dbn.database.generic;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.routine.ThrowableCallable;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.common.util.CachedResultSet;
 import com.dci.intellij.dbn.database.common.util.CachedResultSetRow;
 import com.dci.intellij.dbn.database.common.util.WrappedCachedResultSet;
-import com.intellij.openapi.diagnostic.Logger;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,10 +19,11 @@ import java.util.Map;
 
 import static java.sql.DatabaseMetaData.*;
 
-public interface GenericMetadataTranslators {
-    Logger LOGGER = LoggerFactory.createLogger();
 
-    Latent<Map<Integer, String>> DATA_TYPE_NAMES = Latent.basic(() -> initDataTypeNames());
+public class GenericMetadataTranslators {
+    private GenericMetadataTranslators() {}
+
+    public static final Latent<Map<Integer, String>> DATA_TYPE_NAMES = Latent.basic(() -> initDataTypeNames());
 
     @NotNull
     @SneakyThrows
@@ -47,7 +46,7 @@ public interface GenericMetadataTranslators {
      *  - from {@link java.sql.DatabaseMetaData#getSchemas(String, String)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBSchemaMetadataImpl}
      */
-    abstract class SchemasResultSet extends WrappedCachedResultSet {
+    public static abstract class SchemasResultSet extends WrappedCachedResultSet {
         SchemasResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
@@ -73,7 +72,7 @@ public interface GenericMetadataTranslators {
      *  - from {@link java.sql.DatabaseMetaData#getTables(String, String, String, String[])}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBTableMetadataImpl}
      */
-    class TablesResultSet extends WrappedCachedResultSet {
+    public static class TablesResultSet extends WrappedCachedResultSet {
         TablesResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
@@ -97,7 +96,7 @@ public interface GenericMetadataTranslators {
      *  - from {@link java.sql.DatabaseMetaData#getTables(String, String, String, String[])}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBViewMetadataImpl}
      */
-    class ViewsResultSet extends WrappedCachedResultSet {
+    public static class ViewsResultSet extends WrappedCachedResultSet {
         ViewsResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
@@ -128,7 +127,7 @@ public interface GenericMetadataTranslators {
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBDataTypeMetadataImpl}
      */
 
-    abstract class DataTypeResultSet extends WrappedCachedResultSet {
+    public static abstract class DataTypeResultSet extends WrappedCachedResultSet {
         DataTypeResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
@@ -177,7 +176,7 @@ public interface GenericMetadataTranslators {
      *            and {@link com.dci.intellij.dbn.database.common.metadata.impl.DBDataTypeMetadataImpl}
      *
      */
-    abstract class ColumnsResultSet extends DataTypeResultSet {
+    public static abstract class ColumnsResultSet extends DataTypeResultSet {
         ColumnsResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
@@ -230,7 +229,7 @@ public interface GenericMetadataTranslators {
      *  - from {@link java.sql.DatabaseMetaData#getIndexInfo(String, String, String, boolean, boolean)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBIndexMetadataImpl}
      */
-    class IndexesResultSet extends WrappedCachedResultSet {
+    public static class IndexesResultSet extends WrappedCachedResultSet {
         IndexesResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
@@ -262,7 +261,7 @@ public interface GenericMetadataTranslators {
      *  - from {@link java.sql.DatabaseMetaData#getIndexInfo(String, String, String, boolean, boolean)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBIndexColumnMetadataImpl}
      */
-    class IndexColumnResultSet extends WrappedCachedResultSet {
+    public static class IndexColumnResultSet extends WrappedCachedResultSet {
         IndexColumnResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
@@ -288,7 +287,7 @@ public interface GenericMetadataTranslators {
      *  - from {@link java.sql.DatabaseMetaData#getPrimaryKeys(String, String, String)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBConstraintMetadataImpl}
      */
-    class PrimaryKeysResultSet extends WrappedCachedResultSet {
+    public static class PrimaryKeysResultSet extends WrappedCachedResultSet {
         PrimaryKeysResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
@@ -323,7 +322,7 @@ public interface GenericMetadataTranslators {
      *  - from {@link java.sql.DatabaseMetaData#getPrimaryKeys(String, String, String)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBConstraintColumnMetadataImpl}
      */
-    class PrimaryKeyRelationsResultSet extends WrappedCachedResultSet {
+    public static class PrimaryKeyRelationsResultSet extends WrappedCachedResultSet {
         PrimaryKeyRelationsResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
@@ -356,7 +355,7 @@ public interface GenericMetadataTranslators {
      *  - from {@link java.sql.DatabaseMetaData#getImportedKeys(String, String, String)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBConstraintMetadataImpl}
      */
-    class ForeignKeysResultSet extends WrappedCachedResultSet {
+    public static class ForeignKeysResultSet extends WrappedCachedResultSet {
         ForeignKeysResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
@@ -393,7 +392,7 @@ public interface GenericMetadataTranslators {
      *  - from {@link java.sql.DatabaseMetaData#getImportedKeys(String, String, String)}
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBConstraintColumnMetadataImpl}
      */
-    class ForeignKeyRelationsResultSet extends WrappedCachedResultSet {
+    public static class ForeignKeyRelationsResultSet extends WrappedCachedResultSet {
         ForeignKeyRelationsResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
@@ -429,7 +428,7 @@ public interface GenericMetadataTranslators {
      *            and {@link com.dci.intellij.dbn.database.common.metadata.impl.DBFunctionMetadataImpl}
      *            and {@link com.dci.intellij.dbn.database.common.metadata.impl.DBMethodMetadataImpl}
      */
-    abstract class MethodsResultSet extends WrappedCachedResultSet {
+    public static abstract class MethodsResultSet extends WrappedCachedResultSet {
         MethodsResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
@@ -469,7 +468,7 @@ public interface GenericMetadataTranslators {
      *  - comply with {@link com.dci.intellij.dbn.database.common.metadata.impl.DBArgumentMetadataImpl}
      *            and {@link com.dci.intellij.dbn.database.common.metadata.impl.DBDataTypeMetadataImpl}
      */
-    abstract class MethodArgumentsResultSet extends DataTypeResultSet {
+    public static abstract class MethodArgumentsResultSet extends DataTypeResultSet {
         MethodArgumentsResultSet(@Nullable CachedResultSet inner) {
             super(inner);
         }
