@@ -3,7 +3,7 @@ package com.dci.intellij.dbn.connection.config.ui;
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.ConfigurationHandle;
 import com.dci.intellij.dbn.common.options.ui.CompositeConfigurationEditorForm;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.ui.DBNHeaderForm;
@@ -32,8 +32,13 @@ import com.intellij.ui.tabs.TabInfo;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -114,7 +119,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
     public ConnectionSettings getTemporaryConfig() throws ConfigurationException {
         try {
-            Configuration.IS_TRANSITORY.set(true);
+            ConfigurationHandle.setTransitory(true);
 
             GUIUtil.stopTableCellEditing(mainPanel);
             ConnectionSettings configuration = getConfiguration();
@@ -151,7 +156,7 @@ public class ConnectionSettingsForm extends CompositeConfigurationEditorForm<Con
 
             return clone;
         } finally {
-            Configuration.IS_TRANSITORY.set(false);
+            ConfigurationHandle.setTransitory(false);
         }
     }
 

@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.common.environment;
 
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.ui.Presentable;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.common.util.CommonUtil;
@@ -25,7 +24,7 @@ import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoo
 @Getter
 @Setter
 @EqualsAndHashCode
-public class EnvironmentType implements Cloneable<EnvironmentType>, PersistentConfiguration, Presentable, SettingsSupport {
+public class EnvironmentType implements Cloneable<EnvironmentType>, PersistentConfiguration, Presentable {
 
     private static final Color DEFAULT_REGULAR_COLOR = Color.LIGHT_GRAY;
     private static final Color DEFAULT_DARK_COLOR = Color.DARK_GRAY;

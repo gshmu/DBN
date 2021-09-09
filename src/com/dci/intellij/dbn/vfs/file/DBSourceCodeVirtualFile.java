@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.vfs.file;
 
 import com.dci.intellij.dbn.common.DevNullStreams;
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
@@ -26,7 +25,6 @@ import com.dci.intellij.dbn.vfs.DBParseableVirtualFile;
 import com.dci.intellij.dbn.vfs.DatabaseFileViewProvider;
 import com.intellij.lang.Language;
 import com.intellij.notebook.editor.BackedVirtualFile;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
@@ -35,6 +33,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,9 +43,8 @@ import java.sql.Timestamp;
 
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
 
+@Slf4j
 public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBParseableVirtualFile, ConnectionProvider, DocumentListener, BackedVirtualFile {
-
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private SourceCodeContent originalContent = new SourceCodeContent();
     private SourceCodeContent localContent = new SourceCodeContent();
@@ -139,7 +137,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
                             }
 
                         } catch (SQLException e) {
-                            LOGGER.warn("Error refreshing source content state", e);
+                            log.warn("Error refreshing source content state", e);
                         } finally {
                             set(REFRESHING, false);
                         }

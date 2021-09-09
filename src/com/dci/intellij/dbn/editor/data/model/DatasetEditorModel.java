@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.data.model;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.dispose.AlreadyDisposedException;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
@@ -33,13 +32,13 @@ import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBConstraint;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.sql.ResultSet;
@@ -53,11 +52,10 @@ import static com.dci.intellij.dbn.connection.ConnectionProperty.RS_TYPE_FORWARD
 import static com.dci.intellij.dbn.connection.ConnectionProperty.RS_TYPE_SCROLL_INSENSITIVE;
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
+@Slf4j
 public class DatasetEditorModel
         extends ResultSetDataModel<DatasetEditorModelRow, DatasetEditorModelCell>
         implements ListSelectionListener {
-
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private final boolean isResultSetUpdatable;
     private final WeakRef<DatasetEditor> datasetEditor;
@@ -186,7 +184,7 @@ public class DatasetEditorModel
                             ResultSet.CONCUR_UPDATABLE);
 
                 } catch (Throwable e) {
-                    LOGGER.warn("Failed to create SCROLL_INSENSITIVE statement: " + e.getMessage());
+                    log.warn("Failed to create SCROLL_INSENSITIVE statement: " + e.getMessage());
                 }
             }
 
@@ -196,7 +194,7 @@ public class DatasetEditorModel
                             ResultSet.TYPE_FORWARD_ONLY,
                             ResultSet.CONCUR_READ_ONLY);
                 } catch (Throwable e) {
-                    LOGGER.warn("Failed to create FORWARD_ONLY statement: " + e.getMessage());
+                    log.warn("Failed to create FORWARD_ONLY statement: " + e.getMessage());
                 }
             }
 

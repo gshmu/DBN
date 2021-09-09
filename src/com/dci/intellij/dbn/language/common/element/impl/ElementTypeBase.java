@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinitionFac
 import com.dci.intellij.dbn.code.common.style.formatting.IndentDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.SpacingDefinition;
 import com.dci.intellij.dbn.common.Icons;
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.DBLanguage;
 import com.dci.intellij.dbn.language.common.DBLanguageDialect;
@@ -22,11 +21,11 @@ import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttributeHolder;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeDefinitionException;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.tree.IElementType;
 import gnu.trove.THashSet;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,10 +34,10 @@ import javax.swing.Icon;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+@Slf4j
 @Getter
 @Setter
 public abstract class ElementTypeBase extends IElementType implements ElementType {
-    private static final Logger LOGGER = LoggerFactory.createLogger();
     private static final FormattingDefinition STATEMENT_FORMATTING = new FormattingDefinition(null, IndentDefinition.NORMAL, SpacingDefinition.MIN_LINE_BREAK, null);
 
     private final int idx;
@@ -86,7 +85,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
         this.bundle = bundle;
         this.parent = parent;
         if (StringUtil.isNotEmpty(def.getAttributeValue("exit")) && !(parent instanceof SequenceElementType)) {
-            LOGGER.warn('[' + getLanguageDialect().getID() + "] Invalid element attribute 'exit'. (id=" + this.id + "). Attribute is only allowed for direct child of sequence element");
+            log.warn('[' + getLanguageDialect().getID() + "] Invalid element attribute 'exit'. (id=" + this.id + "). Attribute is only allowed for direct child of sequence element");
         }
         loadDefinition(def);
     }
@@ -260,7 +259,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
         if (StringUtil.isNotEmpty(attributeValue)) {
             if (attributeValue.equals("true")) return true;
             if (attributeValue.equals("false")) return false;
-            LOGGER.warn('[' + getLanguageDialect().getID() + "] Invalid element boolean attribute '" + attributeName + "' (id=" + this.id + "). Expected 'true' or 'false'");
+            log.warn('[' + getLanguageDialect().getID() + "] Invalid element boolean attribute '" + attributeName + "' (id=" + this.id + "). Expected 'true' or 'false'");
         }
         return false;
     }

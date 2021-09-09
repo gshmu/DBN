@@ -11,9 +11,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
 
-public interface Safe {
+public final class Safe {
+    private Safe() {}
+
     @NotNull
-    static <R, E extends Throwable> R call(@NotNull R defaultValue, @NotNull ThrowableCallable<R, E> callable) throws E{
+    public static <R, E extends Throwable> R call(@NotNull R defaultValue, @NotNull ThrowableCallable<R, E> callable) throws E{
         try {
             return callable.call();
         } catch (ProcessCanceledException e){
@@ -21,7 +23,7 @@ public interface Safe {
         }
     }
 
-    static void run(@NotNull Runnable runnable){
+    public static void run(@NotNull Runnable runnable){
         try {
             runnable.run();
         } catch (ProcessCanceledException ignore){}
@@ -29,7 +31,7 @@ public interface Safe {
 
 
     @Nullable
-    static <R, S, E extends Throwable> R call(@Nullable S target, @NotNull ParametricCallable<S, R, E> callable) throws E{
+    public static <R, S, E extends Throwable> R call(@Nullable S target, @NotNull ParametricCallable<S, R, E> callable) throws E{
         if (target == null) {
             return null;
         } else {
@@ -37,13 +39,13 @@ public interface Safe {
         }
     }
 
-    static <S, E extends Throwable> void run(@Nullable S target, @NotNull ParametricRunnable<S, E> runnable) throws E{
+    public static <S, E extends Throwable> void run(@Nullable S target, @NotNull ParametricRunnable<S, E> runnable) throws E{
         if (target != null) {
             runnable.run(target);
         }
     }
 
-    static <T> boolean equal(@Nullable T value1, @Nullable T value2) {
+    public static <T> boolean equal(@Nullable T value1, @Nullable T value2) {
         if (value1 == null && value2 == null) {
             return true;
         }
@@ -58,7 +60,7 @@ public interface Safe {
         return false;
     }
 
-    static <T> boolean equal(@Nullable T value1, @Nullable T value2, Function<T, ?> valueProvider) {
+    public static <T> boolean equal(@Nullable T value1, @Nullable T value2, Function<T, ?> valueProvider) {
         if (value1 == null && value2 == null) {
             return true;
         }
@@ -75,7 +77,7 @@ public interface Safe {
         return false;
     }
 
-    static <T extends Comparable<T>> int compare(@Nullable T value1, @Nullable T value2) {
+    public static <T extends Comparable<T>> int compare(@Nullable T value1, @Nullable T value2) {
         if (value1 == null && value2 == null) {
             return 0;
         }
@@ -90,7 +92,7 @@ public interface Safe {
         return value1.compareTo(value2);
     }
 
-    static void queueRequest(@NotNull Alarm alarm, int delayMillis, boolean cancelRequests, @NotNull Runnable runnable) {
+    public static void queueRequest(@NotNull Alarm alarm, int delayMillis, boolean cancelRequests, @NotNull Runnable runnable) {
         Dispatch.runConditional(() -> {
             if (!alarm.isDisposed()) {
                 if (cancelRequests) {

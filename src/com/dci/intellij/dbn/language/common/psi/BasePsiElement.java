@@ -63,7 +63,7 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.Set;
 
 public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDelegatePsiElement implements ItemPresentation, FormattingProviderPsiElement {
@@ -186,11 +186,13 @@ public abstract class BasePsiElement<T extends ElementTypeBase> extends ASTDeleg
 
     @NotNull
     public DBLanguagePsiFile getFile() {
-        PsiElement parent = getParent();
-        while (parent != null && !(parent instanceof DBLanguagePsiFile)) {
-            parent = parent.getParent();
-        }
-        return Failsafe.nn((DBLanguagePsiFile) parent);
+        return Read.conditional(() -> {
+            PsiElement parent = getParent();
+            while (parent != null && !(parent instanceof DBLanguagePsiFile)) {
+                parent = parent.getParent();
+            }
+            return Failsafe.nn((DBLanguagePsiFile) parent);
+        });
     }
 
     @Nullable

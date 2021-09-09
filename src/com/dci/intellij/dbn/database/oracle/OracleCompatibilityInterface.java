@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.database.oracle;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.DatabaseFeature;
 import com.dci.intellij.dbn.database.DatabaseInterfaceProvider;
@@ -8,12 +7,11 @@ import com.dci.intellij.dbn.database.DatabaseObjectTypeId;
 import com.dci.intellij.dbn.editor.session.SessionStatus;
 import com.dci.intellij.dbn.language.common.QuoteDefinition;
 import com.dci.intellij.dbn.language.common.QuotePair;
-import com.intellij.openapi.diagnostic.Logger;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface {
     public static final QuoteDefinition IDENTIFIER_QUOTE_DEFINITION = new QuoteDefinition(new QuotePair('"', '"'));
-
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     public OracleCompatibilityInterface(DatabaseInterfaceProvider parent) {
         super(parent);
@@ -68,7 +66,7 @@ public class OracleCompatibilityInterface extends DatabaseCompatibilityInterface
         try{
             return SessionStatus.valueOf(statusName);
         } catch (Exception e) {
-            LOGGER.error("Invalid session status " + statusName, e);
+            log.error("Invalid session status " + statusName, e);
             return SessionStatus.INACTIVE;
         }
     }

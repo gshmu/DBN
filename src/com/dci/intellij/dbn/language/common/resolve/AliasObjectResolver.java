@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.language.common.resolve;
 
-import com.dci.intellij.dbn.common.LoggerFactory;
 import com.dci.intellij.dbn.language.common.DBLanguagePsiFile;
 import com.dci.intellij.dbn.language.common.psi.BasePsiElement;
 import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
@@ -8,12 +7,12 @@ import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.DBObjectPsiElement;
 import com.intellij.openapi.diagnostic.Attachment;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
+@Slf4j
 public class AliasObjectResolver extends UnderlyingObjectResolver{
-    private static final Logger LOGGER = LoggerFactory.createLogger();
 
     private static final AliasObjectResolver INSTANCE = new AliasObjectResolver();
 
@@ -30,7 +29,7 @@ public class AliasObjectResolver extends UnderlyingObjectResolver{
     protected DBObject resolve(IdentifierPsiElement identifierPsiElement, int recursionCheck) {
         if (recursionCheck > 10) {
             DBLanguagePsiFile psiFile = identifierPsiElement.getFile();
-            LOGGER.error("Recursive alias lookup", new Attachment(psiFile.getVirtualFile().getPath(), psiFile.getText()));
+            log.error("Recursive alias lookup {}", new Attachment(psiFile.getVirtualFile().getPath(), psiFile.getText()));
             return null;
         }
 

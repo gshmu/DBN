@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.session.color;
 
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.TextAttributesUtil;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributes;
 import com.dci.intellij.dbn.data.grid.color.DataGridTextAttributesKeys;
@@ -10,9 +9,9 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.ui.SimpleTextAttributes;
 
-import java.awt.*;
+import java.awt.Color;
 
-public class SessionBrowserTextAttributes extends CommonUtil implements DataGridTextAttributes {
+public class SessionBrowserTextAttributes implements DataGridTextAttributes {
     private final SimpleTextAttributes activeSession;
     private final SimpleTextAttributes inactiveSession;
     private final SimpleTextAttributes cachedSession;

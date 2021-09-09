@@ -6,7 +6,7 @@ import com.dci.intellij.dbn.common.database.DatabaseInfo;
 import com.dci.intellij.dbn.common.environment.EnvironmentType;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.message.MessageType;
-import com.dci.intellij.dbn.common.options.Configuration;
+import com.dci.intellij.dbn.common.options.ConfigurationHandle;
 import com.dci.intellij.dbn.common.options.SettingsChangeNotifier;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorUtil;
@@ -311,7 +311,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
         String oldUserName = authenticationInfo.getUser();
         String oldPassword = authenticationInfo.getPassword();
         authenticationSettingsForm.applyFormChanges(authenticationInfo);
-        if (!Configuration.IS_TRANSITORY.get()) {
+        if (!ConfigurationHandle.isTransitory()) {
             authenticationInfo.updateKeyChain(oldUserName, oldPassword);
         }
 

@@ -23,7 +23,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
 
     protected abstract T[] properties();
 
-    protected void replace(PropertyHolderImpl<T> source) {
+    protected synchronized void replace(PropertyHolderImpl<T> source) {
         this.computed = source.computed;
     }
 
@@ -77,7 +77,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
         return false;
     }
 
-    public void reset() {
+    public synchronized void reset() {
         computed = 0;
         for (T property : properties()) {
             if (property.implicit()) {
