@@ -25,7 +25,8 @@ public abstract class PseudoConstant<T extends PseudoConstant<T>> implements Con
         this.id = id.intern();
         if (!INTERNAL_OPERATION.get()) {
             // register the pseudo constant if initialised over constructor
-            Map<String, T> registry = getRegistry(getClass());
+            Class<T> clazz = (Class<T>) getClass();
+            Map<String, T> registry = getRegistry(clazz);
             registry.putIfAbsent(id, (T) this);
         }
     }
