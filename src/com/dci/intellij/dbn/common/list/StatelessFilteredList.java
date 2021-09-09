@@ -11,15 +11,23 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class StatelessFilteredList<T> extends FilteredListBase<T> {
 
-    protected StatelessFilteredList(Filter<T> filter, List<T> base) {
+    StatelessFilteredList(Filter<T> filter, List<T> base) {
         super(filter, base);
     }
 
-    protected StatelessFilteredList(Filter<T> filter) {
+    StatelessFilteredList(Filter<T> filter) {
         super(filter);
+    }
+
+    @Override
+    List<T> initBase(List<T> source) {
+        return source == null ?
+                new CopyOnWriteArrayList<>() :
+                new CopyOnWriteArrayList<>(source);
     }
 
     @Override
