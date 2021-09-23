@@ -10,7 +10,7 @@ import java.util.List;
 
 public class TreeNavigationHistory implements Disposable{
     private final List<BrowserTreeNode> history = new ArrayList<>();
-    private int offset;
+    private transient int offset;
 
     public synchronized void add(BrowserTreeNode treeNode) {
         offset = Math.min(offset, history.size() -1);
