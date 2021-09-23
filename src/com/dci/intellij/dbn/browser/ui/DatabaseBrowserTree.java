@@ -37,6 +37,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ui.tree.TreeUtil;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,21 +54,20 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.concurrent.atomic.AtomicReference;
 
+@Getter
 public final class DatabaseBrowserTree extends DBNTree {
-    private BrowserTreeNode targetSelection;
-    private JPopupMenu popupMenu;
     private final TreeNavigationHistory navigationHistory = new TreeNavigationHistory();
-    private final AtomicReference<Thread> scrollHandle = new AtomicReference<>();
+    private transient BrowserTreeNode targetSelection;
+    private transient boolean listenersEnabled = true;
 
     public DatabaseBrowserTree(@NotNull DBNComponent parent, @Nullable ConnectionHandler connectionHandler) {
         super(parent, createModel(parent.ensureProject(), connectionHandler));
         BrowserTreeModel treeModel = getModel();
 
-        addKeyListener(keyListener);
-        addMouseListener(mouseListener);
-        addTreeSelectionListener(treeSelectionListener);
+        addKeyListener(createKeyListener());
+        addMouseListener(createMouseListener());
+        addTreeSelectionListener(createTreeSelectionListener());
 
         setToggleClickCount(0);
         setRootVisible(treeModel instanceof TabbedBrowserTreeModel);
@@ -96,10 +96,6 @@ public final class DatabaseBrowserTree extends DBNTree {
         return (BrowserTreeModel) super.getModel();
     }
 
-    public TreeNavigationHistory getNavigationHistory() {
-        return navigationHistory;
-    }
-
     public void expandConnectionManagers() {
         Dispatch.run(() -> {
             ConnectionManager connectionManager = ConnectionManager.getInstance(ensureProject());
@@ -124,33 +120,35 @@ public final class DatabaseBrowserTree extends DBNTree {
 
     public void scrollToSelectedElement() {
         if (ensureProject().isOpen() && targetSelection != null) {
-            Background.run(scrollHandle, () -> {
+            Background.run(() -> {
                 BrowserTreeNode targetSelection = this.targetSelection;
                 if (targetSelection != null) {
                     targetSelection = (BrowserTreeNode) targetSelection.getUndisposedElement();
-                    TreePath treePath = DatabaseBrowserUtils.createTreePath(targetSelection);
-                    if (treePath != null) {
-                        for (Object object : treePath.getPath()) {
-                            BrowserTreeNode treeNode = (BrowserTreeNode) object;
-                            if (!Failsafe.check(treeNode)) {
-                                this.targetSelection = null;
-                                return;
-                            }
+                    if (targetSelection != null) {
+                        TreePath treePath = DatabaseBrowserUtils.createTreePath(targetSelection);
+                        if (treePath != null) {
+                            for (Object object : treePath.getPath()) {
+                                BrowserTreeNode treeNode = (BrowserTreeNode) object;
+                                if (!Failsafe.check(treeNode)) {
+                                    this.targetSelection = null;
+                                    return;
+                                }
 
 
-                            if (treeNode.equals(targetSelection)) {
-                                break;
+                                if (treeNode.equals(targetSelection)) {
+                                    break;
+                                }
+
+                                if (!treeNode.isLeaf() && !treeNode.isTreeStructureLoaded()) {
+                                    selectPath(DatabaseBrowserUtils.createTreePath(treeNode));
+                                    treeNode.getChildren();
+                                    return;
+                                }
                             }
 
-                            if (!treeNode.isLeaf() && !treeNode.isTreeStructureLoaded()) {
-                                selectPath(DatabaseBrowserUtils.createTreePath(treeNode));
-                                treeNode.getChildren();
-                                return;
-                            }
+                            this.targetSelection = null;
+                            selectPath(treePath);
                         }
-
-                        this.targetSelection = null;
-                        selectPath(treePath);
                     }
                 }
             });
@@ -162,10 +160,6 @@ public final class DatabaseBrowserTree extends DBNTree {
     public BrowserTreeNode getSelectedNode() {
         TreePath selectionPath = getSelectionPath();
         return selectionPath == null ? null : (BrowserTreeNode) selectionPath.getLastPathComponent();
-    }
-
-    public BrowserTreeNode getTargetSelection() {
-        return targetSelection;
     }
 
     private void selectPath(TreePath treePath) {
@@ -216,8 +210,6 @@ public final class DatabaseBrowserTree extends DBNTree {
             listenersEnabled = true;
         }
     }
-
-    private boolean listenersEnabled = true;
 
     public void expandAll() {
         BrowserTreeNode root = getModel().getRoot();
@@ -315,85 +307,89 @@ public final class DatabaseBrowserTree extends DBNTree {
     /********************************************************
      *                 TreeSelectionListener                *
      ********************************************************/
-    private final TreeSelectionListener treeSelectionListener = new TreeSelectionListener() {
-        @Override
-        public void valueChanged(TreeSelectionEvent e) {
-            if (Failsafe.check(this) && listenersEnabled) {
-                Object object = e.getPath().getLastPathComponent();
-                if (object instanceof BrowserTreeNode) {
-                    BrowserTreeNode treeNode = (BrowserTreeNode) object;
-                    if (targetSelection == null || treeNode.equals(targetSelection)) {
-                        navigationHistory.add(treeNode);
+    private TreeSelectionListener createTreeSelectionListener() {
+        return new TreeSelectionListener() {
+            @Override
+            public void valueChanged(TreeSelectionEvent e) {
+                if (Failsafe.check(this) && listenersEnabled) {
+                    Object object = e.getPath().getLastPathComponent();
+                    if (object instanceof BrowserTreeNode) {
+                        BrowserTreeNode treeNode = (BrowserTreeNode) object;
+                        if (targetSelection == null || treeNode.equals(targetSelection)) {
+                            navigationHistory.add(treeNode);
+                        }
                     }
-                }
 
-                ProjectEvents.notify(ensureProject(),
-                        BrowserTreeEventListener.TOPIC,
-                        (listener) -> listener.selectionChanged());
+                    ProjectEvents.notify(ensureProject(),
+                            BrowserTreeEventListener.TOPIC,
+                            (listener) -> listener.selectionChanged());
+                }
             }
-        }
-    };
+        };
+    }
 
     /********************************************************
      *                      MouseListener                   *
      ********************************************************/
-    private final MouseListener mouseListener = new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent event) {
-            if (event.getButton() == MouseEvent.BUTTON1) {
-                DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(ensureProject());
-                if (browserManager.getAutoscrollToEditor().value() || event.getClickCount() > 1) {
+    private MouseListener createMouseListener() {
+        return new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                if (event.getButton() == MouseEvent.BUTTON1) {
+                    DatabaseBrowserManager browserManager = DatabaseBrowserManager.getInstance(ensureProject());
+                    if (browserManager.getAutoscrollToEditor().value() || event.getClickCount() > 1) {
+                        TreePath path = getPathForLocation(event.getX(), event.getY());
+                        processSelectEvent(event, path, event.getClickCount() > 1);
+                    }
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent event) {
+                if (event.getButton() == MouseEvent.BUTTON3) {
                     TreePath path = getPathForLocation(event.getX(), event.getY());
-                    processSelectEvent(event, path, event.getClickCount() > 1);
-                }
-            }
-        }
+                    if (path != null) {
+                        BrowserTreeNode lastPathEntity = (BrowserTreeNode) path.getLastPathComponent();
+                        if (lastPathEntity.isDisposed()) return;
 
-        @Override
-        public void mouseReleased(MouseEvent event) {
-            if (event.getButton() == MouseEvent.BUTTON3) {
-                TreePath path = getPathForLocation(event.getX(), event.getY());
-                if (path != null) {
-                    BrowserTreeNode lastPathEntity = (BrowserTreeNode) path.getLastPathComponent();
-                    if (lastPathEntity.isDisposed()) return;
+                        ActionGroup actionGroup = null;
+                        if (lastPathEntity instanceof DBObjectList) {
+                            DBObjectList<?> objectList = (DBObjectList<?>) lastPathEntity;
+                            actionGroup = new ObjectListActionGroup(objectList);
+                        } else if (lastPathEntity instanceof DBObject) {
+                            DBObject object = (DBObject) lastPathEntity;
+                            actionGroup = new ObjectActionGroup(object);
+                        } else if (lastPathEntity instanceof DBObjectBundle) {
+                            DBObjectBundle objectsBundle = (DBObjectBundle) lastPathEntity;
+                            ConnectionHandler connectionHandler = objectsBundle.getConnectionHandler();
+                            actionGroup = new ConnectionActionGroup(connectionHandler);
+                        }
 
-                    ActionGroup actionGroup = null;
-                    if (lastPathEntity instanceof DBObjectList) {
-                        DBObjectList<?> objectList = (DBObjectList<?>) lastPathEntity;
-                        actionGroup = new ObjectListActionGroup(objectList);
-                    } else if (lastPathEntity instanceof DBObject) {
-                        DBObject object = (DBObject) lastPathEntity;
-                        actionGroup = new ObjectActionGroup(object);
-                    } else if (lastPathEntity instanceof DBObjectBundle) {
-                        DBObjectBundle objectsBundle = (DBObjectBundle) lastPathEntity;
-                        ConnectionHandler connectionHandler = objectsBundle.getConnectionHandler();
-                        actionGroup = new ConnectionActionGroup(connectionHandler);
-                    }
-
-                    if (actionGroup != null) {
-                        ActionPopupMenu actionPopupMenu = ActionUtil.createActionPopupMenu(DatabaseBrowserTree.this, "", actionGroup);
-                        popupMenu = actionPopupMenu.getComponent();
-                        popupMenu.show(DatabaseBrowserTree.this, event.getX(), event.getY());
-                    } else {
-                        popupMenu = null;
+                        if (actionGroup != null) {
+                            ActionPopupMenu actionPopupMenu = ActionUtil.createActionPopupMenu(DatabaseBrowserTree.this, "", actionGroup);
+                            JPopupMenu popupMenu = actionPopupMenu.getComponent();
+                            popupMenu.show(DatabaseBrowserTree.this, event.getX(), event.getY());
+                        }
                     }
                 }
             }
-        }
-    };
+        };
+    }
 
     /********************************************************
      *                      KeyListener                     *
      ********************************************************/
-    private final KeyListener keyListener = new KeyAdapter() {
-        @Override
-        public void keyPressed(KeyEvent e) {
-            if (e.getKeyCode() == 10) {  // ENTER
-                TreePath path = getSelectionPath();
-                processSelectEvent(e, path, true);
+    private KeyListener createKeyListener() {
+        return new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == 10) {  // ENTER
+                    TreePath path = getSelectionPath();
+                    processSelectEvent(e, path, true);
+                }
             }
-        }
-    };
+        };
+    }
 
     /********************************************************
      *                    Disposable                        *

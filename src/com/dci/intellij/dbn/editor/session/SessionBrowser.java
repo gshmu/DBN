@@ -35,7 +35,8 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
@@ -148,7 +149,7 @@ public class SessionBrowser extends DisposableUserDataHolderBase implements File
         SessionBrowserTable editorTable = getEditorTable();
         GUIUtil.repaint(editorTable);
         editorTable.accommodateColumnsSize();
-        editorTable.restoreSelection();
+        //editorTable.restoreSelection();
     }
 
     void refreshLoadTimestamp() {
