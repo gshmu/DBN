@@ -21,6 +21,7 @@ public interface GenericDatabaseElement extends ConnectionProvider, StatefulDisp
 
     @Nullable GenericDatabaseElement getParentElement();
 
+    @Nullable
     GenericDatabaseElement getUndisposedElement();
 
     @Nullable
