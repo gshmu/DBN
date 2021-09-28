@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getEnumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setEnumAttribute;
 
 @Getter
@@ -80,7 +80,7 @@ public class DDLFileExtensionSettings extends BasicProjectConfiguration<DDLFileS
     @Override
     public void readConfiguration(Element element) {
         for (Element child : element.getChildren()) {
-            DDLFileTypeId fileTypeId = getEnumAttribute(child, "file-type-id", DDLFileTypeId.class);
+            DDLFileTypeId fileTypeId = enumAttribute(child, "file-type-id", DDLFileTypeId.class);
             String extensions = child.getAttributeValue("extensions");
 
             DDLFileType fileType = getFileType(fileTypeId);

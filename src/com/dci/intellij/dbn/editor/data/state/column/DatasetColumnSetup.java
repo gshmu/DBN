@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -58,7 +60,7 @@ public class DatasetColumnSetup implements PersistentStateElement, Cloneable<Dat
     public void readState(Element element) {
         if (element != null) {
             for (Element child : element.getChildren()) {
-                String columnName = child.getAttributeValue("name");
+                String columnName = stringAttribute(child, "name");
                 DatasetColumnState columnState = getColumnState(columnName);
                 if (columnState == null) {
                     columnState = new DatasetColumnState(child);

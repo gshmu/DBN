@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.data.state.column;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.object.DBColumn;
@@ -9,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Getter
 @Setter
@@ -42,16 +43,16 @@ public class DatasetColumnState implements Comparable<DatasetColumnState>, Persi
 
     @Override
     public void readState(Element element) {
-        name = element.getAttributeValue("name");
-        position = SettingsSupport.getShortAttribute(element, "position", (short) -1);
-        visible = SettingsSupport.getBooleanAttribute(element, "visible", true);
+        name = stringAttribute(element, "name");
+        position = shortAttribute(element, "position", (short) -1);
+        visible = booleanAttribute(element, "visible", true);
     }
 
     @Override
     public void writeState(Element element) {
         element.setAttribute("name", name);
-        SettingsSupport.setIntegerAttribute(element, "position", position);
-        SettingsSupport.setBooleanAttribute(element, "visible", visible);
+        setIntegerAttribute(element, "position", position);
+        setBooleanAttribute(element, "visible", visible);
     }
 
     @Override

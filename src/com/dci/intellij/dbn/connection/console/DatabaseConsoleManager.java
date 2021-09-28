@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.thread.Dispatch;
 import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.MessageUtil;
@@ -37,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @State(
     name = DatabaseConsoleManager.COMPONENT_NAME,
@@ -185,28 +185,28 @@ public class DatabaseConsoleManager extends AbstractProjectComponent implements 
     public void loadState(@NotNull Element element) {
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         for (Element connectionElement : element.getChildren()) {
-            ConnectionId connectionId = ConnectionId.get(connectionElement.getAttributeValue("id"));
+            ConnectionId connectionId = connectionIdAttribute(connectionElement, "id");
             ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
 
             if (connectionHandler != null) {
                 DatabaseConsoleBundle consoleBundle = connectionHandler.getConsoleBundle();
                 for (Element consoleElement : connectionElement.getChildren()) {
-                    String consoleName = consoleElement.getAttributeValue("name");
+                    String consoleName = stringAttribute(consoleElement, "name");
 
                     // schema
-                    String schema = consoleElement.getAttributeValue("schema");
+                    String schema = stringAttribute(consoleElement, "schema");
 
                     // session
-                    String session = consoleElement.getAttributeValue("session");
+                    String session = stringAttribute(consoleElement, "session");
                     DatabaseSessionBundle sessionBundle = connectionHandler.getSessionBundle();
                     DatabaseSession databaseSession = StringUtil.isEmpty(session) ?
                             sessionBundle.getMainSession() :
                             sessionBundle.getSession(session);
 
 
-                    DBConsoleType consoleType = SettingsSupport.getEnumAttribute(consoleElement, "type", DBConsoleType.class);
+                    DBConsoleType consoleType = enumAttribute(consoleElement, "type", DBConsoleType.class);
 
-                    String consoleText = SettingsSupport.readCdata(consoleElement);
+                    String consoleText = readCdata(consoleElement);
 
                     DBConsole console = consoleBundle.getConsole(consoleName, consoleType, true);
                     DBConsoleVirtualFile virtualFile = console.getVirtualFile();

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBooleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
 
 
@@ -99,7 +99,7 @@ public class CodeCompletionSortingSettings extends BasicConfiguration<CodeComple
 
     @Override
     public void readConfiguration(Element element) {
-        enabled = getBooleanAttribute(element, "enabled", enabled);
+        enabled = booleanAttribute(element, "enabled", enabled);
         for (Element child : element.getChildren()) {
             CodeCompletionSortingItem sortingItem = new CodeCompletionSortingItem(this);
             sortingItem.readConfiguration(child);

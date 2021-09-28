@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.DatabaseNavigator;
 import com.dci.intellij.dbn.common.AbstractProjectComponent;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.routine.ParametricRunnable;
 import com.dci.intellij.dbn.common.thread.CancellableDatabaseCall;
 import com.dci.intellij.dbn.common.thread.Progress;
@@ -62,6 +61,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 import static com.dci.intellij.dbn.execution.ExecutionStatus.EXECUTING;
 
 @State(
@@ -384,7 +384,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     @Override
     public Element getState() {
         Element element = new Element("state");
-        SettingsSupport.setBooleanAttribute(element, "clear-outputs", clearOutputOption);
+        setBooleanAttribute(element, "clear-outputs", clearOutputOption);
         Element interfacesElement = new Element("recently-used-interfaces");
         element.addContent(interfacesElement);
         for (DatabaseType databaseType : recentlyUsedInterfaces.keySet()) {
@@ -399,12 +399,12 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     @Override
     public void loadState(@NotNull Element element) {
         recentlyUsedInterfaces.clear();
-        clearOutputOption = SettingsSupport.getBooleanAttribute(element, "clear-outputs", clearOutputOption);
+        clearOutputOption = booleanAttribute(element, "clear-outputs", clearOutputOption);
         Element interfacesElement = element.getChild("recently-used-interfaces");
         if (interfacesElement != null) {
             for (Element child : interfacesElement.getChildren()) {
-                DatabaseType databaseType = DatabaseType.get(child.getAttributeValue("database-type"));
-                String interfaceId = child.getAttributeValue("interface-id");
+                DatabaseType databaseType = enumAttribute(child, "database-type", DatabaseType.class);
+                String interfaceId = stringAttribute(child, "interface-id");
                 recentlyUsedInterfaces.put(databaseType, interfaceId);
             }
 

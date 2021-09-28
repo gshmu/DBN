@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.code.common.style.formatting;
 
 import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.intellij.formatting.Wrap;
 import org.jdom.Element;
+
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAttribute;
 
 public enum WrapDefinition implements FormattingAttribute<Wrap>{
     NONE    (new Loader(){
@@ -36,6 +37,6 @@ public enum WrapDefinition implements FormattingAttribute<Wrap>{
     }
 
     public static WrapDefinition get(Element element) {
-        return SettingsSupport.getEnumAttribute(element, "formatting-wrap", WrapDefinition.class);
+        return enumAttribute(element, "formatting-wrap", WrapDefinition.class);
     }
 }

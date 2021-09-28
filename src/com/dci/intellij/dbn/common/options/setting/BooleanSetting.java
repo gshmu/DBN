@@ -3,7 +3,9 @@ package com.dci.intellij.dbn.common.options.setting;
 import com.dci.intellij.dbn.common.options.PersistentConfiguration;
 import org.jdom.Element;
 
-import javax.swing.*;
+import javax.swing.JToggleButton;
+
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 public class BooleanSetting extends Setting<Boolean, JToggleButton> implements PersistentConfiguration {
     public BooleanSetting(String name, Boolean value) {
@@ -12,20 +14,20 @@ public class BooleanSetting extends Setting<Boolean, JToggleButton> implements P
     
     @Override
     public void readConfiguration(Element parent) {
-        setValue(SettingsSupport.getBoolean(parent, getName(), this.value()));
+        setValue(getBoolean(parent, getName(), this.value()));
     }
 
     public void readConfigurationAttribute(Element parent) {
-        setValue(SettingsSupport.getBooleanAttribute(parent, getName(), this.value()));
+        setValue(booleanAttribute(parent, getName(), this.value()));
     }
 
     @Override
     public void writeConfiguration(Element parent) {
-        SettingsSupport.setBoolean(parent, getName(), this.value());
+        setBoolean(parent, getName(), this.value());
     }
 
     public void writeConfigurationAttribute(Element parent) {
-        SettingsSupport.setBooleanAttribute(parent, getName(), this.value());
+        setBooleanAttribute(parent, getName(), this.value());
     }
 
 

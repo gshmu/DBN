@@ -13,8 +13,7 @@ import org.jdom.Element;
 
 import javax.swing.Icon;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBooleanAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Getter
 @Setter
@@ -44,15 +43,15 @@ public class CodeCompletionFilterOption implements CheckedTreeNodeProvider, Pers
     @Override
     public void readConfiguration(Element element) {
         if (element != null) {
-            String filterElementType = element.getAttributeValue("type");
-            if (filterElementType.equals("OBJECT")) {
-                String objectTypeName = element.getAttributeValue("id");
+            String filterElementType = stringAttribute(element, "type");
+            if ("OBJECT".equals(filterElementType)) {
+                String objectTypeName = stringAttribute(element, "id");
                 objectType = DBObjectType.get(objectTypeName);
             } else {
-                String tokenTypeName = element.getAttributeValue("id");
+                String tokenTypeName = stringAttribute(element, "id");
                 tokenTypeCategory = TokenTypeCategory.getCategory(tokenTypeName);
             }
-            selected = getBooleanAttribute(element, "selected", selected);
+            selected = booleanAttribute(element, "selected", selected);
         }
 
     }

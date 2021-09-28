@@ -13,6 +13,6 @@ public class DBSequenceMetadataImpl extends DBObjectMetadataBase implements DBSe
     }
 
     public String getSequenceName() throws SQLException {
-        return resultSet.getString("SEQUENCE_NAME");
+        return getString("SEQUENCE_NAME");
     }
 }

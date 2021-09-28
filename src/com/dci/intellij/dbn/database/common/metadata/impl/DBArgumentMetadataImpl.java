@@ -17,27 +17,27 @@ public class DBArgumentMetadataImpl extends DBObjectMetadataBase implements DBAr
 
     @Override
     public String getArgumentName() throws SQLException {
-        return resultSet.getString("ARGUMENT_NAME");
+        return getString("ARGUMENT_NAME");
     }
 
     @Override
     public String getProgramName() throws SQLException {
-        return resultSet.getString("PROGRAM_NAME");
+        return getString("PROGRAM_NAME");
     }
 
     @Override
     public String getMethodName() throws SQLException {
-        return resultSet.getString("METHOD_NAME");
+        return getString("METHOD_NAME");
     }
 
     @Override
     public String getMethodType() throws SQLException {
-        return resultSet.getString("METHOD_TYPE");
+        return getString("METHOD_TYPE");
     }
 
     @Override
     public String getInOut() throws SQLException {
-        return resultSet.getString("IN_OUT");
+        return getString("IN_OUT");
     }
 
     @Override

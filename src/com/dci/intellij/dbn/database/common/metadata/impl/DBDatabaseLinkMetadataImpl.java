@@ -12,14 +12,14 @@ public class DBDatabaseLinkMetadataImpl extends DBObjectMetadataBase implements 
     }
 
     public String getDblinkName() throws SQLException {
-        return resultSet.getString("DBLINK_NAME");
+        return getString("DBLINK_NAME");
     }
 
     public String getUserName() throws SQLException {
-        return resultSet.getString("USER_NAME");
+        return getString("USER_NAME");
     }
 
     public String getHost() throws SQLException {
-        return resultSet.getString("HOST");
+        return getString("HOST");
     }
 }

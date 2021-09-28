@@ -16,6 +16,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.Icon;
 import java.util.UUID;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class CmdLineInterface implements Cloneable<CmdLineInterface>, PersistentConfiguration, Presentable {
@@ -84,11 +87,11 @@ public class CmdLineInterface implements Cloneable<CmdLineInterface>, Persistent
 
     @Override
     public void readConfiguration(Element element) {
-        id = element.getAttributeValue("id");
+        id = stringAttribute(element, "id");
         if (StringUtil.isEmpty(id)) id = UUID.randomUUID().toString();
-        name = element.getAttributeValue("name");
-        executablePath = element.getAttributeValue("executable-path");
-        databaseType = DatabaseType.get(element.getAttributeValue("database-type"));
+        name = stringAttribute(element, "name");
+        executablePath = stringAttribute(element, "executable-path");
+        databaseType = enumAttribute(element, "database-type", DatabaseType.class);
     }
 
     @Override

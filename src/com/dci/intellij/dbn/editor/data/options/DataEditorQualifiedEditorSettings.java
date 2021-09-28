@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.data.options;
 
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.editor.text.TextContentType;
 import com.dci.intellij.dbn.editor.data.options.ui.DataEditorQualifiedEditorSettingsForm;
@@ -15,6 +14,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Getter
 @Setter
@@ -98,13 +99,13 @@ public class DataEditorQualifiedEditorSettings extends BasicConfiguration<DataEd
 
     @Override
     public void readConfiguration(Element element) {
-        textLengthThreshold = SettingsSupport.getIntegerAttribute(element, "text-length-threshold", textLengthThreshold);
+        textLengthThreshold = integerAttribute(element, "text-length-threshold", textLengthThreshold);
         Element contentTypes = element.getChild("content-types");
         for (Element child : contentTypes.getChildren()) {
-            String name = child.getAttributeValue("name");
+            String name = stringAttribute(child, "name");
             TextContentType contentType = getContentType(name);
             if (contentType != null) {
-                boolean enabled = Boolean.parseBoolean(child.getAttributeValue("enabled"));
+                boolean enabled = booleanAttribute(child, "enabled", true);
                 contentType.setSelected(enabled);
             }
         }
@@ -112,7 +113,7 @@ public class DataEditorQualifiedEditorSettings extends BasicConfiguration<DataEd
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsSupport.setIntegerAttribute(element, "text-length-threshold", textLengthThreshold);
+        setIntegerAttribute(element, "text-length-threshold", textLengthThreshold);
         Element contentTypes = new Element("content-types");
         element.addContent(contentTypes);
         for (TextContentType contentType : getContentTypes()) {

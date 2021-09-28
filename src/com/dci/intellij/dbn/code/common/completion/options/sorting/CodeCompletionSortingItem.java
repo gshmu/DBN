@@ -11,6 +11,8 @@ import org.jdom.Element;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
@@ -60,12 +62,12 @@ public class CodeCompletionSortingItem extends BasicConfiguration<CodeCompletion
 
     @Override
     public void readConfiguration(Element element) {
-        String sortingItemType = element.getAttributeValue("type");
-        if (sortingItemType.equals("OBJECT")) {
-            String objectTypeName = element.getAttributeValue("id");
+        String sortingItemType = stringAttribute(element, "type");
+        if ("OBJECT".equals(sortingItemType)) {
+            String objectTypeName = stringAttribute(element, "id");
             objectType = DBObjectType.get(objectTypeName);
         } else {
-            String tokenTypeName = element.getAttributeValue("id");
+            String tokenTypeName = stringAttribute(element, "id");
             tokenTypeCategory = TokenTypeCategory.getCategory(tokenTypeName);
         }
     }

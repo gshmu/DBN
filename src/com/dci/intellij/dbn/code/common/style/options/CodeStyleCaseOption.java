@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -43,8 +45,8 @@ public class CodeStyleCaseOption implements PersistentConfiguration {
      *********************************************************/
     @Override
     public void readConfiguration(Element element) {
-        name = element.getAttributeValue("name");
-        String style = element.getAttributeValue("value");
+        name = stringAttribute(element, "name");
+        String style = stringAttribute(element, "value");
         styleCase =
                 style.equals("upper") ? CodeStyleCase.UPPER :
                 style.equals("lower") ? CodeStyleCase.LOWER :

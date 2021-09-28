@@ -12,18 +12,18 @@ public class DBSchemaMetadataImpl extends DBObjectMetadataBase implements DBSche
     }
 
     public String getSchemaName() throws SQLException {
-        return resultSet.getString("SCHEMA_NAME");
+        return getString("SCHEMA_NAME");
     }
 
     public boolean isPublic() throws SQLException {
-        return resultSet.getString("IS_PUBLIC").equals("Y");
+        return getString("IS_PUBLIC").equals("Y");
     }
 
     public boolean isSystem() throws SQLException {
-        return resultSet.getString("IS_SYSTEM").equals("Y");
+        return getString("IS_SYSTEM").equals("Y");
     }
 
     public boolean isEmpty() throws SQLException {
-        return resultSet.getString("IS_EMPTY").equals("Y");
+        return getString("IS_EMPTY").equals("Y");
     }
 }

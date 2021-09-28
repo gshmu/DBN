@@ -74,7 +74,10 @@ public class StringUtil extends com.intellij.openapi.util.text.StringUtil {
         return false;
     }
 
-
+    public static boolean equalsIgnoreCase(@Nullable CharSequence s1, @Nullable CharSequence s2) {
+        // assuming most of the strings in DBN are .intern() "==" may speed up the evaluation (??)
+        return s1 == s2 || com.intellij.openapi.util.text.StringUtil.equalsIgnoreCase(s1, s2);
+    }
 
     public static boolean isInteger(@Nullable String string) {
         try {

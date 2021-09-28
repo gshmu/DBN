@@ -12,6 +12,6 @@ public class DBFunctionMetadataImpl extends DBMethodMetadataImpl implements DBFu
 
     @Override
     public String getFunctionName() throws SQLException {
-        return resultSet.getString("FUNCTION_NAME");
+        return getString("FUNCTION_NAME");
     }
 }

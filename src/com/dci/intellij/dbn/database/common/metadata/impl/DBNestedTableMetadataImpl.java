@@ -14,21 +14,21 @@ public class DBNestedTableMetadataImpl extends DBObjectMetadataBase implements D
 
     @Override
     public String getNestedTableName() throws SQLException {
-        return resultSet.getString("NESTED_TABLE_NAME");
+        return getString("NESTED_TABLE_NAME");
     }
 
     @Override
     public String getTableName() throws SQLException {
-        return resultSet.getString("TABLE_NAME");
+        return getString("TABLE_NAME");
     }
 
     @Override
     public String getDataTypeName() throws SQLException {
-        return resultSet.getString("DATA_TYPE_NAME");
+        return getString("DATA_TYPE_NAME");
     }
 
     @Override
     public String getDataTypeOwner() throws SQLException {
-        return resultSet.getString("DATA_TYPE_OWNER");
+        return getString("DATA_TYPE_OWNER");
     }
 }

@@ -8,7 +8,6 @@ import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.environment.EnvironmentManager;
 import com.dci.intellij.dbn.common.environment.options.listener.EnvironmentManagerListener;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.util.EditorUtil;
 import com.dci.intellij.dbn.editor.code.SourceCodeEditor;
 import com.dci.intellij.dbn.editor.code.SourceCodeManagerAdapter;
@@ -38,6 +37,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @State(
     name = EditorStateManager.COMPONENT_NAME,
@@ -165,8 +166,8 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
         for (DBObjectType objectType : lastUsedEditorProviders.keySet()) {
             Element objectTypeElement = new Element("object-type");
             EditorProviderId editorProviderId = lastUsedEditorProviders.get(objectType);
-            SettingsSupport.setEnumAttribute(objectTypeElement, "object-type", objectType);
-            SettingsSupport.setEnumAttribute(objectTypeElement, "editor-provider", editorProviderId);
+            setEnumAttribute(objectTypeElement, "object-type", objectType);
+            setEnumAttribute(objectTypeElement, "editor-provider", editorProviderId);
             editorProvidersElement.addContent(objectTypeElement);
         }
         return element;
@@ -178,8 +179,8 @@ public class EditorStateManager extends AbstractProjectComponent implements Pers
         Element editorProvidersElement = element.getChild("last-used-providers");
         if (editorProvidersElement != null) {
             for (Element child : editorProvidersElement.getChildren()) {
-                DBObjectType objectType = SettingsSupport.getEnumAttribute(child, "object-type", DBObjectType.class);
-                EditorProviderId editorProviderId = SettingsSupport.getEnumAttribute(child, "editor-provider", EditorProviderId.class);
+                DBObjectType objectType = DBObjectType.get(stringAttribute(child, "object-type"));
+                EditorProviderId editorProviderId = enumAttribute(child, "editor-provider", EditorProviderId.class);
                 lastUsedEditorProviders.put(objectType, editorProviderId);
             }
         }

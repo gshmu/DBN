@@ -1,9 +1,10 @@
 package com.dci.intellij.dbn.code.common.style.formatting;
 
 import com.dci.intellij.dbn.code.common.style.presets.CodeStylePreset;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.intellij.formatting.Spacing;
 import org.jdom.Element;
+
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAttribute;
 
 public enum SpacingDefinition implements FormattingAttribute<Spacing>{
     NO_SPACE  (new Loader(){
@@ -49,7 +50,7 @@ public enum SpacingDefinition implements FormattingAttribute<Spacing>{
 
     public static SpacingDefinition get(Element element, boolean before) {
         return before ?
-                SettingsSupport.getEnumAttribute(element, "formatting-spacing-before", SpacingDefinition.class) :
-                SettingsSupport.getEnumAttribute(element, "formatting-spacing-after", SpacingDefinition.class);
+                enumAttribute(element, "formatting-spacing-before", SpacingDefinition.class) :
+                enumAttribute(element, "formatting-spacing-after", SpacingDefinition.class);
     }
 }

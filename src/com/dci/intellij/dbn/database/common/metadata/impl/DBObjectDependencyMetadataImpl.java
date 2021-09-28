@@ -14,16 +14,16 @@ public class DBObjectDependencyMetadataImpl extends DBObjectMetadataBase impleme
 
     @Override
     public String getObjectName() throws SQLException {
-        return resultSet.getString("OBJECT_NAME");
+        return getString("OBJECT_NAME");
     }
 
     @Override
     public String getObjectOwner() throws SQLException {
-        return resultSet.getString("OBJECT_OWNER");
+        return getString("OBJECT_OWNER");
     }
 
     @Override
     public String getObjectType() throws SQLException {
-        return resultSet.getString("OBJECT_TYPE");
+        return getString("OBJECT_TYPE");
     }
 }

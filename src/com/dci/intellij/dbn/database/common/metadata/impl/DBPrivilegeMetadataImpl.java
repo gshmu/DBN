@@ -12,6 +12,6 @@ public class DBPrivilegeMetadataImpl extends DBObjectMetadataBase implements DBP
     }
 
     public String getPrivilegeName() throws SQLException {
-        return resultSet.getString("PRIVILEGE_NAME");
+        return getString("PRIVILEGE_NAME");
     }
 }

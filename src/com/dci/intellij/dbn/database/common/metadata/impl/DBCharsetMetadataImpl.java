@@ -14,7 +14,7 @@ public class DBCharsetMetadataImpl extends DBObjectMetadataBase implements DBCha
 
     @Override
     public String getCharsetName() throws SQLException {
-        return resultSet.getString("CHARSET_NAME");
+        return getString("CHARSET_NAME");
     }
 
     @Override

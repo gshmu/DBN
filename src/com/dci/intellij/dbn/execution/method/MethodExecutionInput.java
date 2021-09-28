@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 public class MethodExecutionInput extends LocalExecutionInput implements Comparable<MethodExecutionInput>, Cloneable<MethodExecutionInput> {
     private DBObjectRef<DBMethod> method;
 
@@ -243,7 +245,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
     public void readConfiguration(Element element) {
         super.readConfiguration(element);
         method.readState(element);
-        targetSchemaId = SchemaId.get(element.getAttributeValue("execution-schema"));;
+        targetSchemaId = SchemaId.get(stringAttribute(element, "execution-schema"));;
         Element argumentsElement = element.getChild("argument-actions");
         if (argumentsElement != null) {
             for (Element valueElement : argumentsElement.getChildren()) {

@@ -1,9 +1,9 @@
 package com.dci.intellij.dbn.generator;
 
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.object.DBColumn;
 import com.dci.intellij.dbn.object.DBDataset;
 import com.dci.intellij.dbn.object.lookup.DBObjectRef;
-import com.intellij.openapi.util.text.StringUtil;
 
 import java.util.HashMap;
 import java.util.Map;

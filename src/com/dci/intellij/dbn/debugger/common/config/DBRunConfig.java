@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.debugger.common.config;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.PresentableConnectionProvider;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
@@ -20,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Getter
 @Setter
@@ -57,15 +58,15 @@ public abstract class DBRunConfig<I extends ExecutionInput> extends RunConfigura
     @Override
     public void writeExternal(@NotNull Element element) throws WriteExternalException {
         super.writeExternal(element);
-        SettingsSupport.setEnum(element, "category", category);
-        SettingsSupport.setBoolean(element, "compile-dependencies", compileDependencies);
+        setEnum(element, "category", category);
+        setBoolean(element, "compile-dependencies", compileDependencies);
     }
 
     @Override
     public void readExternal(@NotNull Element element) throws InvalidDataException {
         super.readExternal(element);
-        category = SettingsSupport.getEnum(element, "category", category);
-        compileDependencies = SettingsSupport.getBoolean(element, "compile-dependencies", compileDependencies);
+        category = getEnum(element, "category", category);
+        compileDependencies = getBoolean(element, "compile-dependencies", compileDependencies);
     }
 
     public abstract List<DBMethod> getMethods();

@@ -1,11 +1,16 @@
 package com.dci.intellij.dbn.common.options.setting;
 
 import com.dci.intellij.dbn.common.util.StringUtil;
+import com.dci.intellij.dbn.connection.ConnectionId;
+import com.dci.intellij.dbn.connection.SchemaId;
+import com.dci.intellij.dbn.connection.SessionId;
 import lombok.extern.slf4j.Slf4j;
 import org.jdom.Content;
 import org.jdom.Element;
 import org.jdom.Text;
 import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
 
 @Slf4j
 public final class SettingsSupport {
@@ -58,7 +63,7 @@ public final class SettingsSupport {
 
     public static String getStringValue(Element element) {
         if (element != null) {
-            String value = element.getAttributeValue("value");
+            String value = stringAttribute(element, "value");
             if (StringUtil.isNotEmptyOrSpaces(value)) {
                 return value;
             }
@@ -66,14 +71,19 @@ public final class SettingsSupport {
         return null;
     }
 
-    public static boolean getBooleanAttribute(Element element, String attributeName, boolean value) {
-        String attributeValue = element.getAttributeValue(attributeName);
-        return StringUtil.isEmptyOrSpaces(attributeValue) ? value : Boolean.parseBoolean(attributeValue);
+    public static String stringAttribute(Element element, String name) {
+        String attributeValue = element.getAttributeValue(name);
+        return StringUtil.isEmptyOrSpaces(attributeValue) ? attributeValue : attributeValue.intern();
     }
 
-    public static short getShortAttribute(Element element, String attributeName, short defaultValue) {
+    public static boolean booleanAttribute(Element element, String attributeName, boolean defaultValue) {
+        String attributeValue = stringAttribute(element, attributeName);
+        return StringUtil.isEmptyOrSpaces(attributeValue) ? defaultValue : Boolean.parseBoolean(attributeValue);
+    }
+
+    public static short shortAttribute(Element element, String attributeName, short defaultValue) {
         try {
-            String attributeValue = element.getAttributeValue(attributeName);
+            String attributeValue = stringAttribute(element, attributeName);
             if (StringUtil.isEmpty(attributeValue)) {
                 return defaultValue;
             }
@@ -84,9 +94,9 @@ public final class SettingsSupport {
         }
     }
 
-    public static int getIntegerAttribute(Element element, String attributeName, int defaultValue) {
+    public static int integerAttribute(Element element, String attributeName, int defaultValue) {
         try {
-            String attributeValue = element.getAttributeValue(attributeName);
+            String attributeValue = stringAttribute(element, attributeName);
             if (StringUtil.isEmpty(attributeValue)) {
                 return defaultValue;
             }
@@ -105,9 +115,9 @@ public final class SettingsSupport {
         }
     */
 
-    public static  <T extends Enum<T>> T getEnumAttribute(Element element, String attributeName, Class<T> enumClass) {
+    public static <T extends Enum<T>> T enumAttribute(Element element, String attributeName, Class<T> enumClass) {
         try {
-            String attributeValue = element.getAttributeValue(attributeName);
+            String attributeValue = stringAttribute(element, attributeName);
             return StringUtil.isEmpty(attributeValue) ? null : T.valueOf(enumClass, attributeValue);
         } catch (Exception e) {
             log.warn("Failed to read ENUM config (" + attributeName + "): " + e.getMessage());
@@ -115,14 +125,27 @@ public final class SettingsSupport {
         }
     }
 
-    public static  <T extends Enum<T>> T getEnumAttribute(Element element, String attributeName, @NotNull T defaultValue) {
+    public static <T extends Enum<T>> T enumAttribute(Element element, String attributeName, @NotNull T defaultValue) {
         try {
-            String attributeValue = element.getAttributeValue(attributeName);
+            String attributeValue = stringAttribute(element, attributeName);
             return StringUtil.isEmpty(attributeValue) ? defaultValue : T.valueOf((Class<T>) defaultValue.getClass(), attributeValue);
         } catch (Exception e) {
             log.warn("Failed to read ENUM config (" + attributeName + "): " + e.getMessage());
             return defaultValue;
         }
+    }
+
+    public static ConnectionId connectionIdAttribute(Element element, String name) {
+        return ConnectionId.get(stringAttribute(element, name));
+    }
+
+    public static SessionId sessionIdAttribute(Element element, String name, SessionId defaultSessionId) {
+        SessionId sessionId = SessionId.get(stringAttribute(element, name));
+        return nvl(sessionId, defaultSessionId);
+    }
+
+    public static SchemaId schemaIdAttribute(Element element, String name) {
+        return SchemaId.get(stringAttribute(element, name));
     }
 
     public static String readCdata(Element parent) {
