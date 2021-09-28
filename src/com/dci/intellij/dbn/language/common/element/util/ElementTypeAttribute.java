@@ -41,12 +41,6 @@ public enum ElementTypeAttribute implements Property{
     private final String name;
     private final String description;
     private final boolean specific;
-    private final long index = Property.idx(this);
-
-    @Override
-    public long index() {
-        return index;
-    }
 
     ElementTypeAttribute(String name, String description) {
         this(name, description, false);

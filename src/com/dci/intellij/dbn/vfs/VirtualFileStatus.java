@@ -14,7 +14,6 @@ public enum VirtualFileStatus implements Property{
     SAVING,
     REFRESHING;
 
-    private final long index = Property.idx(this);
     private final boolean implicit;
     private final PropertyGroup group;
 
@@ -25,11 +24,6 @@ public enum VirtualFileStatus implements Property{
 
     VirtualFileStatus() {
         this(null, false);
-    }
-
-    @Override
-    public long index() {
-        return index;
     }
 
     @Override

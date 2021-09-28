@@ -10,18 +10,12 @@ public enum DBObjectStatus implements Property {
     DEBUG(true, true),
     COMPILING(false, false);
 
-    private final long index = Property.idx(this);
     private final boolean propagable;
     private final boolean defaultValue;
 
     DBObjectStatus(boolean propagable, boolean defaultValue) {
         this.propagable = propagable;
         this.defaultValue = defaultValue;
-    }
-
-    @Override
-    public long index() {
-        return index;
     }
 
     public boolean isPropagable() {

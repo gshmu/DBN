@@ -12,11 +12,4 @@ public enum DBDebugProcessStatus implements Property{
     PROCESS_TERMINATED,
     PROCESS_STOPPED_NORMALLY,
     DEBUGGER_STOPPING;
-
-    private final long index = Property.idx(this);
-
-    @Override
-    public long index() {
-        return index;
-    }
 }

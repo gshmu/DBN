@@ -14,13 +14,5 @@ public class ConnectionSelectorOptions extends PropertyHolderImpl<ConnectionSele
         SHOW_VIRTUAL_CONNECTIONS,
         SHOW_CREATE_CONNECTION,
         PROMPT_SCHEMA_SELECTION;
-
-        private final long index = Property.idx(this);
-
-        @Override
-        public long index() {
-            return index;
-        }
-
     }
 }
