@@ -6,12 +6,4 @@ public enum DatasetEditorStatus implements Property {
     CONNECTED,
     LOADING,
     LOADED;
-
-
-    private final long index = Property.idx(this);
-
-    @Override
-    public long index() {
-        return index;
-    }
 }

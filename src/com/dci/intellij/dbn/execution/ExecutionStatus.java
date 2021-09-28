@@ -7,11 +7,4 @@ public enum ExecutionStatus implements Property {
     PROMPTED,
     EXECUTING,
     CANCELLED;
-
-    private final long index = Property.idx(this);
-
-    @Override
-    public long index() {
-        return index;
-    }
 }

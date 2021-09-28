@@ -7,12 +7,4 @@ public enum DatasetLoadInstruction implements Property {
     PRESERVE_CHANGES,
     DELIBERATE_ACTION,
     REBUILD;
-
-
-    private final long index = Property.idx(this);
-
-    @Override
-    public long index() {
-        return index;
-    }
 }

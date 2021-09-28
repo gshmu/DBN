@@ -22,11 +22,4 @@ public enum ThreadProperty implements Property{
     public boolean propagatable() {
         return propagatable;
     }
-
-    private final long index = Property.idx(this);
-
-    @Override
-    public long index() {
-        return index;
-    }
 }

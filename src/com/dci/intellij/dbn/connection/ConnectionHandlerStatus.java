@@ -9,11 +9,4 @@ public enum ConnectionHandlerStatus implements Property {
     ACTIVE,
     VALID,
     BUSY;
-
-    private final long index = Property.idx(this);
-
-    @Override
-    public long index() {
-        return index;
-    }
 }
