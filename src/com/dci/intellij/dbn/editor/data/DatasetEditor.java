@@ -376,7 +376,7 @@ public class DatasetEditor extends DisposableUserDataHolderBase implements
 
                     MessageUtil.showErrorDialog(project, "Error", message, options, 0,
                             (option) -> {
-                                DatasetLoadInstructions instructions = instr.clone();
+                                DatasetLoadInstructions instructions = DatasetLoadInstructions.clone(instr);
                                 instructions.setDeliberateAction(true);
 
                                 if (option == 0) {

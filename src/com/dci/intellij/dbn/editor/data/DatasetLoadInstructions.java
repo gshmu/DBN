@@ -4,10 +4,17 @@ import com.dci.intellij.dbn.common.property.PropertyHolderImpl;
 
 public class DatasetLoadInstructions extends PropertyHolderImpl<DatasetLoadInstruction>{
 
+
     public DatasetLoadInstructions(DatasetLoadInstruction ... instructions) {
         for (DatasetLoadInstruction instruction : instructions) {
             set(instruction, true);
         }
+    }
+
+    public static DatasetLoadInstructions clone(DatasetLoadInstructions source) {
+        DatasetLoadInstructions instructions = new DatasetLoadInstructions();
+        instructions.computed(source.computed());
+        return instructions;
     }
 
     @Override
@@ -45,10 +52,5 @@ public class DatasetLoadInstructions extends PropertyHolderImpl<DatasetLoadInstr
 
     public void setRebuild(boolean value) {
         set(DatasetLoadInstruction.REBUILD, value);
-    }
-
-    @Override
-    public DatasetLoadInstructions clone() {
-        return (DatasetLoadInstructions) super.clone();
     }
 }

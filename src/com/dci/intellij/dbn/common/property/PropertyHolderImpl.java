@@ -1,10 +1,8 @@
 package com.dci.intellij.dbn.common.property;
 
-import com.dci.intellij.dbn.common.util.Cloneable;
-import lombok.SneakyThrows;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>, Cloneable<PropertyHolder<T>> {
+public abstract class PropertyHolderImpl<T extends Property> implements PropertyHolder<T> {
     private long computed = 0L;
 
     @SafeVarargs
@@ -39,7 +37,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
     }
 
     private boolean set(T property) {
-        long alternative = this.computed;
+        long computed = this.computed;
         PropertyGroup group = property.group();
         if (group != null) {
             for (T prop : properties()) {
@@ -51,11 +49,11 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
         }
 
         this.computed |= (1L << property.ordinal());
-        return alternative != this.computed;
+        return computed != this.computed;
     }
 
     private boolean unset(T property) {
-        long alternative = this.computed;
+        long computed = this.computed;
         this.computed &= ~(1L << property.ordinal());
 
         PropertyGroup group = property.group();
@@ -69,7 +67,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
             }
         }
 
-        return alternative != this.computed;
+        return computed != this.computed;
     }
 
     public void reset() {
@@ -79,6 +77,10 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
                 set(property);
             }
         }
+    }
+
+    public long computed() {
+        return computed;
     }
 
     public void computed(long computed) {
@@ -118,11 +120,5 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
             }
         }
         return builder.toString();
-    }
-
-    @Override
-    @SneakyThrows
-    public PropertyHolder<T> clone() {
-        return (PropertyHolder<T>) super.clone();
     }
 }
