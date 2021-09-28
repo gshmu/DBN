@@ -293,7 +293,8 @@
             <separator/>
             <group id="DBNavigator.ActionGroup.Development" text="Development" popup="true">
                 <action id="DBNavigator.Actions.MainMenu.ParserDebugMode" class="com.dci.intellij.dbn.menu.action.developer.ParserDebugToggleAction" text="Enable Parser Debug Mode"/>
-                <action id="DBNavigator.Actions.MainMenu.DatabaseDebugMode" class="com.dci.intellij.dbn.menu.action.developer.DatabaseDebugToggleAction" text="Enable Database Debug Mode"/>
+                <action id="DBNavigator.Actions.MainMenu.DatabaseAccessDebugMode" class="com.dci.intellij.dbn.menu.action.developer.DatabaseAccessDebugToggleAction" text="Enable Database Access Debug Mode"/>
+                <action id="DBNavigator.Actions.MainMenu.DatabaseResourceDebugMode" class="com.dci.intellij.dbn.menu.action.developer.DatabaseResourceDebugToggleAction" text="Enable Database Resources Debug Mode"/>
                 <action id="DBNavigator.Actions.MainMenu.DevelopmentSlowDatabase" class="com.dci.intellij.dbn.menu.action.developer.SimulateSlowDatabaseAction" text="Enable Lagging Database Simulation"/>
                 <separator/>
                 <action id="DBNavigator.Actions.MainMenu.DevelopmentReset" class="com.dci.intellij.dbn.menu.action.MetaDataDefinitionReloadAction" text="Reload Metadata Definitions"/>

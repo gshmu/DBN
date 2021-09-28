@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import static com.dci.intellij.dbn.environment.Environment.DATABASE_DEBUG_MODE;
+import static com.dci.intellij.dbn.environment.Environment.DATABASE_ACCESS_DEBUG_MODE;
 
 @Slf4j
 public class StatementExecutionProcessor {
@@ -124,7 +124,7 @@ public class StatementExecutionProcessor {
                         String statementText = null;
                         try {
                             activityTrace.init();
-                            if (DATABASE_DEBUG_MODE) {
+                            if (DATABASE_ACCESS_DEBUG_MODE) {
                                 statementText = statementDefinition.prepareStatementText(arguments);
                                 log.info("[DBN] Executing statement: " + statementText);
                             }
@@ -158,7 +158,7 @@ public class StatementExecutionProcessor {
                         } catch (SQLException exception) {
                             ResourceUtil.close(statement);
                             String message = exception.getMessage();
-                            if (DATABASE_DEBUG_MODE) log.warn("[DBN] Error executing statement: " + statementText + "\nCause: " + message);
+                            if (DATABASE_ACCESS_DEBUG_MODE) log.warn("[DBN] Error executing statement: " + statementText + "\nCause: " + message);
 
                             boolean isModelException = interfaceProvider.getMessageParserInterface().isModelException(exception);
                             SQLException traceException =
@@ -214,7 +214,7 @@ public class StatementExecutionProcessor {
                 context,
                 () -> {
                     String statementText = statementDefinition.prepareStatementText(arguments);
-                    if (DATABASE_DEBUG_MODE) log.info("[DBN] Executing statement: " + statementText);
+                    if (DATABASE_ACCESS_DEBUG_MODE) log.info("[DBN] Executing statement: " + statementText);
 
                     CallableStatement statement = connection.prepareCall(statementText);
                     context.setStatement(statement);
@@ -225,7 +225,7 @@ public class StatementExecutionProcessor {
                         if (outputReader != null) outputReader.read(statement);
                         return outputReader;
                     } catch (SQLException exception) {
-                        if (DATABASE_DEBUG_MODE)
+                        if (DATABASE_ACCESS_DEBUG_MODE)
                             log.warn("[DBN] Error executing statement: " + statementText + "\nCause: " + exception.getMessage());
 
                         throw exception;
@@ -261,7 +261,7 @@ public class StatementExecutionProcessor {
                 context,
                 () -> {
                     String statementText = statementDefinition.prepareStatementText(arguments);
-                    if (DATABASE_DEBUG_MODE) log.info("[DBN] Executing statement: " + statementText);
+                    if (DATABASE_ACCESS_DEBUG_MODE) log.info("[DBN] Executing statement: " + statementText);
 
                     Statement statement = connection.createStatement();
                     context.setStatement(statement);
@@ -269,7 +269,7 @@ public class StatementExecutionProcessor {
                         statement.setQueryTimeout(timeout);
                         statement.executeUpdate(statementText);
                     } catch (SQLException exception) {
-                        if (DATABASE_DEBUG_MODE)
+                        if (DATABASE_ACCESS_DEBUG_MODE)
                             log.warn("[DBN] Error executing statement: " + statementText + "\nCause: " + exception.getMessage());
 
                         throw exception;
@@ -305,7 +305,7 @@ public class StatementExecutionProcessor {
         return StatementExecutor.execute(context,
                 () -> {
                     String statementText = statementDefinition.prepareStatementText(arguments);
-                    if (DATABASE_DEBUG_MODE) log.info("[DBN] Executing statement: " + statementText);
+                    if (DATABASE_ACCESS_DEBUG_MODE) log.info("[DBN] Executing statement: " + statementText);
 
                     Statement statement = connection.createStatement();
                     context.setStatement(statement);
@@ -313,7 +313,7 @@ public class StatementExecutionProcessor {
                         statement.setQueryTimeout(timeout);
                         return statement.execute(statementText);
                     } catch (SQLException exception) {
-                        if (DATABASE_DEBUG_MODE)
+                        if (DATABASE_ACCESS_DEBUG_MODE)
                             log.warn("[DBN] Error executing statement: " + statementText + "\nCause: " + exception.getMessage());
 
                         throw exception;

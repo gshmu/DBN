@@ -28,7 +28,7 @@ import java.sql.SQLRecoverableException;
 import java.sql.Savepoint;
 import java.util.Collection;
 
-import static com.dci.intellij.dbn.environment.Environment.DATABASE_DEBUG_MODE;
+import static com.dci.intellij.dbn.environment.Environment.DATABASE_RESOURCE_DEBUG_MODE;
 
 @Slf4j
 public final class ResourceUtil {
@@ -46,9 +46,9 @@ public final class ResourceUtil {
         if (statement != null) {
             try {
                 long start = System.currentTimeMillis();
-                if (DATABASE_DEBUG_MODE) log.info("[DBN] Cancelling " + statement);
+                if (DATABASE_RESOURCE_DEBUG_MODE) log.info("[DBN] Cancelling " + statement);
                 statement.cancel();
-                if (DATABASE_DEBUG_MODE) log.info("[DBN] Done cancelling " + statement + " - " + (System.currentTimeMillis() - start) + "ms");
+                if (DATABASE_RESOURCE_DEBUG_MODE) log.info("[DBN] Done cancelling " + statement + " - " + (System.currentTimeMillis() - start) + "ms");
             } catch (SQLRecoverableException ignore) {
             } catch (Throwable e) {
                 log.warn("Failed to cancel statement (" + statement + "): " + e.getMessage());
@@ -62,9 +62,9 @@ public final class ResourceUtil {
         if (resource != null) {
             try {
                 long start = System.currentTimeMillis();
-                if (DATABASE_DEBUG_MODE) log.info("[DBN] Closing " + resource);
+                if (DATABASE_RESOURCE_DEBUG_MODE) log.info("[DBN] Closing " + resource);
                 resource.close();
-                if (DATABASE_DEBUG_MODE) log.info("[DBN] Done closing " + resource + " - " + (System.currentTimeMillis() - start) + "ms");
+                if (DATABASE_RESOURCE_DEBUG_MODE) log.info("[DBN] Done closing " + resource + " - " + (System.currentTimeMillis() - start) + "ms");
             } catch (SQLRecoverableException ignore) {
             } catch (Throwable e) {
                 log.warn("Failed to close " + resource, e);
