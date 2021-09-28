@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
@@ -46,7 +48,7 @@ public class ObjectNameFilter extends CompoundFilterCondition {
     @Override
     public void readConfiguration(Element element) {
         super.readConfiguration(element);
-        objectType = DBObjectType.get(element.getAttributeValue("object-type"));
+        objectType = DBObjectType.get(stringAttribute(element, "object-type"));
     }
 
     @Override

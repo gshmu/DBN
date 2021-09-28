@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DBTypeAttributeMetadataImpl extends DBObjectMetadataBase implements DBTypeAttributeMetadata {
-    private DBDataTypeMetadata dataType;
+    private final DBDataTypeMetadata dataType;
 
     public DBTypeAttributeMetadataImpl(ResultSet resultSet) {
         super(resultSet);
@@ -17,12 +17,12 @@ public class DBTypeAttributeMetadataImpl extends DBObjectMetadataBase implements
 
     @Override
     public String getAttributeName() throws SQLException {
-        return resultSet.getString("ATTRIBUTE_NAME");
+        return getString("ATTRIBUTE_NAME");
     }
 
     @Override
     public String getTypeName() throws SQLException {
-        return resultSet.getString("TYPE_NAME");
+        return getString("TYPE_NAME");
     }
 
     @Override

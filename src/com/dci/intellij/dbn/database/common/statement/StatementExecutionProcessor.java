@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 import static com.dci.intellij.dbn.environment.Environment.DATABASE_ACCESS_DEBUG_MODE;
 
 @Slf4j
@@ -44,9 +46,9 @@ public class StatementExecutionProcessor {
 
     public StatementExecutionProcessor(Element element, DatabaseInterfaceProvider interfaceProvider) {
         this.interfaceProvider = interfaceProvider;
-        this.id = element.getAttributeValue("id");
-        this.query = Boolean.parseBoolean(element.getAttributeValue("is-query"));
-        this.prepared = Boolean.parseBoolean(element.getAttributeValue("is-prepared-statement"));
+        this.id = stringAttribute(element, "id");
+        this.query = booleanAttribute(element, "is-query", false);
+        this.prepared = booleanAttribute(element, "is-prepared-statement", false);
         String customTimeout = element.getAttributeValue("timeout");
         if (StringUtil.isNotEmpty(customTimeout)) {
             timeout = Integer.parseInt(customTimeout);

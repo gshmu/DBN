@@ -18,6 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
+
 @Slf4j
 @Getter
 public class SimpleTokenType extends IElementType implements TokenType {
@@ -55,28 +57,25 @@ public class SimpleTokenType extends IElementType implements TokenType {
     }*/
 
     public SimpleTokenType(Element element, Language language, boolean register) {
-        super(element.getAttributeValue("id").intern(), language, register);
+        super(stringAttribute(element, "id"), language, register);
         idx = INDEXER.incrementAndGet();
-        id = element.getAttributeValue("id").intern();
-        value = StringUtil.intern(element.getAttributeValue("value"));
-        description = StringUtil.intern(element.getAttributeValue("description"));
+        id = stringAttribute(element, "id");
+        value = stringAttribute(element, "value");
+        description = stringAttribute(element, "description");
 
         if (register) {
             int count = REGISTERED_COUNT.incrementAndGet();
             log.info("Registering element " + id + " for language " + language.getID() + " (" + count + ")");
         }
 
-        String indexString = element.getAttributeValue("index");
-        if (StringUtil.isNotEmptyOrSpaces(indexString)) {
-            lookupIndex = Integer.parseInt(indexString);
-        }
+        lookupIndex = integerAttribute(element, "index", lookupIndex);
 
-        String type = element.getAttributeValue("type");
+        String type = stringAttribute(element, "type");
         category = TokenTypeCategory.getCategory(type);
-        isSuppressibleReservedWord = isReservedWord() && !Boolean.parseBoolean(element.getAttributeValue("reserved"));
+        isSuppressibleReservedWord = isReservedWord() && !booleanAttribute(element, "reserved", false);
         hashCode = (language.getDisplayName() + id).hashCode();
 
-        String objectType = element.getAttributeValue("objectType");
+        String objectType = stringAttribute(element, "objectType");
         if (StringUtil.isNotEmpty(objectType)) {
             this.objectType = DBObjectType.get(objectType);
         }

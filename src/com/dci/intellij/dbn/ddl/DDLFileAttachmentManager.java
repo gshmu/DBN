@@ -59,6 +59,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 import static com.dci.intellij.dbn.common.util.MessageUtil.options;
 
 @State(
@@ -478,10 +479,10 @@ public class DDLFileAttachmentManager extends AbstractProjectComponent implement
     public void loadState(@NotNull Element element) {
         VirtualFileManager virtualFileManager = VirtualFileManager.getInstance();
         for (Element child : element.getChildren()) {
-            String fileUrl = child.getAttributeValue("file-url");
+            String fileUrl = stringAttribute(child, "file-url");
             if (StringUtil.isEmpty(fileUrl)) {
                 // TODO backward compatibility. Do cleanup
-                fileUrl = child.getAttributeValue("file");
+                fileUrl = stringAttribute(child, "file");
             }
 
             if (StringUtil.isNotEmpty(fileUrl)) {

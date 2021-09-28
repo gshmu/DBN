@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.editor.code.options;
 
 import com.dci.intellij.dbn.common.options.BasicConfiguration;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.project.ProjectSupplier;
 import com.dci.intellij.dbn.editor.code.options.ui.CodeEditorGeneralSettingsForm;
 import com.intellij.openapi.project.Project;
@@ -10,6 +9,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoolean;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoolean;
 
 @Getter
 @Setter
@@ -58,17 +60,17 @@ public class CodeEditorGeneralSettings
 
     @Override
     public void readConfiguration(Element element) {
-        showObjectsNavigationGutter = SettingsSupport.getBoolean(element, "show-object-navigation-gutter", showObjectsNavigationGutter);
-        showSpecDeclarationNavigationGutter = SettingsSupport.getBoolean(element, "show-spec-declaration-navigation-gutter", showSpecDeclarationNavigationGutter);
-        enableSpellchecking = SettingsSupport.getBoolean(element, "enable-spellchecking", enableSpellchecking);
-        enableReferenceSpellchecking = SettingsSupport.getBoolean(element, "enable-reference-spellchecking", enableReferenceSpellchecking);
+        showObjectsNavigationGutter = getBoolean(element, "show-object-navigation-gutter", showObjectsNavigationGutter);
+        showSpecDeclarationNavigationGutter = getBoolean(element, "show-spec-declaration-navigation-gutter", showSpecDeclarationNavigationGutter);
+        enableSpellchecking = getBoolean(element, "enable-spellchecking", enableSpellchecking);
+        enableReferenceSpellchecking = getBoolean(element, "enable-reference-spellchecking", enableReferenceSpellchecking);
     }
 
     @Override
     public void writeConfiguration(Element element) {
-        SettingsSupport.setBoolean(element, "show-object-navigation-gutter", showObjectsNavigationGutter);
-        SettingsSupport.setBoolean(element, "show-spec-declaration-navigation-gutter", showSpecDeclarationNavigationGutter);
-        SettingsSupport.setBoolean(element, "enable-spellchecking", enableSpellchecking);
-        SettingsSupport.setBoolean(element, "enable-reference-spellchecking", enableReferenceSpellchecking);
+        setBoolean(element, "show-object-navigation-gutter", showObjectsNavigationGutter);
+        setBoolean(element, "show-spec-declaration-navigation-gutter", showSpecDeclarationNavigationGutter);
+        setBoolean(element, "enable-spellchecking", enableSpellchecking);
+        setBoolean(element, "enable-reference-spellchecking", enableReferenceSpellchecking);
     }
 }

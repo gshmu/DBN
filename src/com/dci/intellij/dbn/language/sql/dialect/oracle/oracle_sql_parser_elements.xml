@@ -2362,7 +2362,7 @@
         <element ref-id="parameter_type_iteration" />
         <token id="000001313" optional="true" type-id="KW_FORCE" />
     </element-def>
-    <element-def description="" id="parameter_type_iteration">
+    <element-def description="Parameter types" id="parameter_type_iteration">
         <wrapper id="000001314" template="PARENTHESES">
             <iteration id="000001315" separator="CHR_COMMA">
                 <element ref-id="parameter_type" />

@@ -13,7 +13,8 @@ import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBooleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
 
 @Getter
 @Setter
@@ -66,9 +67,9 @@ public class ConnectionSettings extends CompositeProjectConfiguration<Connection
         if (ConnectionBundleSettings.IS_IMPORT_EXPORT_ACTION.get()) {
             generateNewId();
         } else {
-            connectionId = ConnectionId.get(element.getAttributeValue("id"));
+            connectionId = connectionIdAttribute(element, "id");
         }
-        active = getBooleanAttribute(element, "active", active);
+        active = booleanAttribute(element, "active", active);
         super.readConfiguration(element);
     }
 

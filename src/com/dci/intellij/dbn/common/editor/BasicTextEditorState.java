@@ -22,6 +22,9 @@ import lombok.Data;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.integerAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @Data
 public class BasicTextEditorState implements FileEditorState {
     private int line;
@@ -37,11 +40,11 @@ public class BasicTextEditorState implements FileEditorState {
     }
 
     public void readState(@NotNull Element sourceElement, final Project project, final VirtualFile virtualFile) {
-        line = Integer.parseInt(sourceElement.getAttributeValue("line"));
-        column = Integer.parseInt(sourceElement.getAttributeValue("column"));
-        selectionStart = Integer.parseInt(sourceElement.getAttributeValue("selection-start"));
-        selectionEnd = Integer.parseInt(sourceElement.getAttributeValue("selection-end"));
-        verticalScrollProportion = Float.parseFloat(sourceElement.getAttributeValue("vertical-scroll-proportion"));
+        line = integerAttribute(sourceElement, "line", 0);
+        column = integerAttribute(sourceElement, "column", 0);
+        selectionStart = integerAttribute(sourceElement, "selection-start", 0);
+        selectionEnd = integerAttribute(sourceElement, "selection-end", 0);
+        verticalScrollProportion = Float.parseFloat(stringAttribute(sourceElement, "vertical-scroll-proportion"));
 
         Element foldingElement = sourceElement.getChild("folding");
         if (foldingElement != null) {

@@ -22,15 +22,15 @@ public class DBDataTypeMetadataImpl extends DBObjectMetadataBase implements DBDa
     }
 
     public String getDataTypeName() throws SQLException {
-        return resultSet.getString(prefix + "DATA_TYPE_NAME");
+        return getString(prefix + "DATA_TYPE_NAME");
     }
 
     public String getDataTypeOwner() throws SQLException {
-        return resultSet.getString(prefix + "DATA_TYPE_OWNER");
+        return getString(prefix + "DATA_TYPE_OWNER");
     }
 
     public String getDataTypeProgram() throws SQLException {
-        return resultSet.getString(prefix + "DATA_TYPE_PACKAGE");
+        return getString(prefix + "DATA_TYPE_PACKAGE");
     }
 
     public long getDataLength() throws SQLException {
@@ -46,7 +46,7 @@ public class DBDataTypeMetadataImpl extends DBObjectMetadataBase implements DBDa
     }
 
     public boolean isSet() throws SQLException {
-        return "Y".equals(resultSet.getString(prefix + "IS_SET"));
+        return "Y".equals(getString(prefix + "IS_SET"));
     }
 
     public DBDataTypeMetadataImpl collection() {

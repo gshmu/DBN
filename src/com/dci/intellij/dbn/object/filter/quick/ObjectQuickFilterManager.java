@@ -29,6 +29,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @State(
     name = ObjectQuickFilterManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
@@ -99,9 +102,9 @@ public class ObjectQuickFilterManager extends AbstractProjectComponent implement
 
         @Override
         public void readState(Element element) {
-            connectionId = ConnectionId.get(element.getAttributeValue("connection-id"));
-            schemaName = element.getAttributeValue("schema");
-            objectType = DBObjectType.get(element.getAttributeValue("object-type"));
+            connectionId = connectionIdAttribute(element, "connection-id");
+            schemaName = stringAttribute(element, "schema");
+            objectType = DBObjectType.get(stringAttribute(element, "object-type"));
         }
 
         @Override

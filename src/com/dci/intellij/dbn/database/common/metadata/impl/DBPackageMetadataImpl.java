@@ -12,6 +12,6 @@ public class DBPackageMetadataImpl extends DBProgramMetadataImpl implements DBPa
     }
 
     public String getPackageName() throws SQLException {
-        return resultSet.getString("PACKAGE_NAME");
+        return getString("PACKAGE_NAME");
     }
 }

@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBoolean;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBoolean;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Getter
 @Setter
@@ -53,8 +52,8 @@ public class ConnectionPropertiesSettings extends BasicProjectConfiguration<Conn
         if (propertiesElement != null) {
             for (Element propertyElement : propertiesElement.getChildren()) {
                 properties.put(
-                        propertyElement.getAttributeValue("key"),
-                        propertyElement.getAttributeValue("value"));
+                        stringAttribute(propertyElement, "key"),
+                        stringAttribute(propertyElement, "value"));
             }
         }
         getParent().getDatabaseSettings().updateSignature();

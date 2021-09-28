@@ -13,11 +13,11 @@ public class DBTableMetadataImpl extends DBObjectMetadataBase implements DBTable
     }
 
     public String getTableName() throws SQLException {
-        return resultSet.getString("TABLE_NAME");
+        return getString("TABLE_NAME");
     }
 
     public boolean isTemporary() throws SQLException {
-        return resultSet.getString("IS_TEMPORARY").equals("Y");
+        return getString("IS_TEMPORARY").equals("Y");
     }
 
 }

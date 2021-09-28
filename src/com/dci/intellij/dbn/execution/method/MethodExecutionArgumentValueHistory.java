@@ -8,6 +8,9 @@ import org.jdom.Element;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 public class MethodExecutionArgumentValueHistory implements PersistentStateElement {
     private final Map<ConnectionId, Map<String, MethodExecutionArgumentValue>> argumentValues = new HashMap<>();
 
@@ -52,9 +55,9 @@ public class MethodExecutionArgumentValueHistory implements PersistentStateEleme
         if (argumentValuesElement != null) {
             this.argumentValues.clear();
             for (Element argumentValueElement : argumentValuesElement.getChildren()) {
-                ConnectionId connectionId = ConnectionId.get(argumentValueElement.getAttributeValue("connection-id"));
+                ConnectionId connectionId = connectionIdAttribute(argumentValueElement, "connection-id");
                 for (Element argumentElement : argumentValueElement.getChildren()) {
-                    String name = argumentElement.getAttributeValue("name");
+                    String name = stringAttribute(argumentElement, "name");
                     MethodExecutionArgumentValue argumentValue = getArgumentValue(connectionId, name, true);
                     argumentValue.readState(argumentElement);
                 }

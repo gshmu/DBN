@@ -20,7 +20,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBooleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
 
 @Getter
@@ -116,8 +116,8 @@ public class ConnectionFilterSettings extends CompositeProjectConfiguration<Conn
 
     @Override
     public void readConfiguration(Element element) {
-        hideEmptySchemas = getBooleanAttribute(element, "hide-empty-schemas", hideEmptySchemas);
-        hidePseudoColumns = getBooleanAttribute(element, "hide-pseudo-columns", hidePseudoColumns);
+        hideEmptySchemas = booleanAttribute(element, "hide-empty-schemas", hideEmptySchemas);
+        hidePseudoColumns = booleanAttribute(element, "hide-pseudo-columns", hidePseudoColumns);
         super.readConfiguration(element);
     }
 

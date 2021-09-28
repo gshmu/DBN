@@ -22,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
@@ -157,10 +159,10 @@ public class ObjectTypeFilterSettings extends BasicProjectConfiguration<ProjectC
     public void readConfiguration(Element element) {
         useMasterSettings.readConfigurationAttribute(element);
         for (Element child : element.getChildren()) {
-            String typeName = child.getAttributeValue("name");
+            String typeName = stringAttribute(child, "name");
             DBObjectType objectType = DBObjectType.get(typeName);
             if (objectType != null) {
-                boolean enabled = Boolean.parseBoolean(child.getAttributeValue("enabled"));
+                boolean enabled = Boolean.parseBoolean(stringAttribute(child, "enabled"));
                 setVisible(objectType, enabled);
             }
         }

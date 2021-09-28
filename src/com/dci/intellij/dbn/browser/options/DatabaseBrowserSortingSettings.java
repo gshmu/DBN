@@ -15,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
@@ -79,8 +81,8 @@ public class DatabaseBrowserSortingSettings
         List<DBObjectComparator> newComparators = new ArrayList<DBObjectComparator>();
         List<Element> children = element.getChildren();
         for (Element child : children) {
-            String objectTypeName = child.getAttributeValue("name");
-            String sortingTypeName = child.getAttributeValue("sorting-type");
+            String objectTypeName = stringAttribute(child, "name");
+            String sortingTypeName = stringAttribute(child, "sorting-type");
             DBObjectType objectType = DBObjectType.get(objectTypeName);
             SortingType sortingType = SortingType.valueOf(sortingTypeName);
             DBObjectComparator comparator = DBObjectComparator.get(objectType, sortingType);

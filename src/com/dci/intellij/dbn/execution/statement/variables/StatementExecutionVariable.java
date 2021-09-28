@@ -12,6 +12,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.StringTokenizer;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @Getter
 @Setter
 public class StatementExecutionVariable extends VariableValueProvider implements Comparable<StatementExecutionVariable>, PersistentStateComponent<Element>{
@@ -87,8 +90,8 @@ public class StatementExecutionVariable extends VariableValueProvider implements
 
     @Override
     public void loadState(Element state) {
-        name = state.getAttributeValue("name");
-        dataType = GenericDataType.valueOf(state.getAttributeValue("dataType"));
+        name = stringAttribute(state, "name");
+        dataType = enumAttribute(state, "dataType", GenericDataType.class);
         String variableValues = state.getAttributeValue("values");
         StringTokenizer valuesTokenizer = new StringTokenizer(variableValues, ",");
 

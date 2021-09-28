@@ -3,10 +3,10 @@ package com.dci.intellij.dbn.data.model.basic;
 
 import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.data.model.ColumnInfo;
 import com.dci.intellij.dbn.data.model.DataModelHeader;
 import com.dci.intellij.dbn.data.type.DBDataType;
-import com.intellij.openapi.util.text.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;

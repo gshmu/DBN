@@ -14,6 +14,8 @@ import org.jdom.Element;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @Data
 public class MethodExecutionArgumentValue implements PersistentStateElement, Cloneable<MethodExecutionArgumentValue>, ArgumentValueHolder<String> {
     private String name;
@@ -50,7 +52,7 @@ public class MethodExecutionArgumentValue implements PersistentStateElement, Clo
 
     @Override
     public void readState(Element element) {
-        name = element.getAttributeValue("name");
+        name = stringAttribute(element, "name");
         List<String> values = new ArrayList<String>();
         String value = CommonUtil.nullIfEmpty(element.getAttributeValue("value"));
         if (StringUtil.isNotEmpty(value)) {

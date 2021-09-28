@@ -9,6 +9,7 @@ import com.dci.intellij.dbn.common.content.loader.DynamicContentResultSetLoader;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.ui.tree.TreeEventType;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ResourceUtil;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -52,7 +53,6 @@ import com.dci.intellij.dbn.object.common.list.DBObjectRelationListContainer;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatus;
 import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

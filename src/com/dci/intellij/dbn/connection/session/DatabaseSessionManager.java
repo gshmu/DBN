@@ -24,6 +24,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
 @State(
     name = DatabaseSessionManager.COMPONENT_NAME,
@@ -149,14 +151,14 @@ public class DatabaseSessionManager extends AbstractProjectComponent implements 
     public void loadState(@NotNull Element element) {
         ConnectionManager connectionManager = ConnectionManager.getInstance(getProject());
         for (Element connectionElement : element.getChildren()) {
-            ConnectionId connectionId = ConnectionId.get(connectionElement.getAttributeValue("id"));
+            ConnectionId connectionId = connectionIdAttribute(connectionElement, "id");
             ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
 
             if (connectionHandler != null) {
                 DatabaseSessionBundle sessionBundle = connectionHandler.getSessionBundle();
                 for (Element sessionElement : connectionElement.getChildren()) {
-                    String sessionName = sessionElement.getAttributeValue("name");
-                    SessionId sessionId = SessionId.get(sessionElement.getAttributeValue("id"));
+                    String sessionName = stringAttribute(sessionElement, "name");
+                    SessionId sessionId = SessionId.get(stringAttribute(sessionElement, "id"));
                     sessionBundle.addSession(sessionId, sessionName);
                 }
             }

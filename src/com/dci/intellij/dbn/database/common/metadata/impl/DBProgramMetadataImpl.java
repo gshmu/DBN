@@ -13,18 +13,18 @@ public abstract class DBProgramMetadataImpl extends DBObjectMetadataBase impleme
     }
 
     public String getSpecValid() throws SQLException {
-        return resultSet.getString("IS_SPEC_VALID");
+        return getString("IS_SPEC_VALID");
     }
 
     public String getBodyValid() throws SQLException {
-        return resultSet.getString("IS_BODY_VALID");
+        return getString("IS_BODY_VALID");
     }
 
     public String getSpecDebug() throws SQLException {
-        return resultSet.getString("IS_SPEC_DEBUG");
+        return getString("IS_SPEC_DEBUG");
     }
 
     public String getBodyDebug() throws SQLException {
-        return resultSet.getString("IS_BODY_DEBUG");
+        return getString("IS_BODY_DEBUG");
     }
 }

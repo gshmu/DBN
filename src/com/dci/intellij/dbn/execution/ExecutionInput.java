@@ -103,8 +103,8 @@ public abstract class ExecutionInput extends StatefulDisposable.Base implements 
 
     @Override
     public void readConfiguration(Element element) {
-        executionTimeout.set(SettingsSupport.getIntegerAttribute(element, "execution-timeout", executionTimeout.get()));
-        debugExecutionTimeout.set(SettingsSupport.getIntegerAttribute(element, "debug-execution-timeout", debugExecutionTimeout.get()));
+        executionTimeout.set(SettingsSupport.integerAttribute(element, "execution-timeout", executionTimeout.get()));
+        debugExecutionTimeout.set(SettingsSupport.integerAttribute(element, "debug-execution-timeout", debugExecutionTimeout.get()));
     }
 
     @Override

@@ -13,6 +13,6 @@ public class DBDimensionMetadataImpl extends DBObjectMetadataBase implements DBD
 
     @Override
     public String getDimensionName() throws SQLException {
-        return resultSet.getString("DIMENSION_NAME");
+        return getString("DIMENSION_NAME");
     }
 }

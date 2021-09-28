@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.browser.DatabaseBrowserUtils;
 import com.dci.intellij.dbn.browser.model.BrowserTreeNode;
 import com.dci.intellij.dbn.browser.ui.HtmlToolTipBuilder;
 import com.dci.intellij.dbn.common.Icons;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.database.DatabaseCompatibilityInterface;
 import com.dci.intellij.dbn.database.common.metadata.def.DBUserMetadata;
@@ -24,11 +25,10 @@ import com.dci.intellij.dbn.object.common.list.loader.DBObjectListFromRelationLi
 import com.dci.intellij.dbn.object.common.property.DBObjectProperty;
 import com.dci.intellij.dbn.object.type.DBObjectRelationType;
 import com.dci.intellij.dbn.object.type.DBObjectType;
-import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +70,7 @@ public class DBUserImpl extends DBObjectImpl<DBUserMetadata> implements DBUser {
 
     @Override
     protected void initProperties() {
-        properties.set(ROOT_OBJECT, true);;
+        properties.set(ROOT_OBJECT, true);
     }
 
     @NotNull
