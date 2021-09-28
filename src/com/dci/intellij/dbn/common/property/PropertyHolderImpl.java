@@ -5,7 +5,7 @@ import lombok.SneakyThrows;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class PropertyHolderImpl<T extends Property> implements PropertyHolder<T>, Cloneable<PropertyHolder<T>> {
-    private volatile long computed = 0;
+    private long computed = 0L;
 
     @SafeVarargs
     public PropertyHolderImpl(T ... properties) {
@@ -23,7 +23,7 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
 
     protected abstract T[] properties();
 
-    protected synchronized void replace(PropertyHolderImpl<T> source) {
+    protected void replace(PropertyHolderImpl<T> source) {
         this.computed = source.computed;
     }
 
@@ -34,50 +34,45 @@ public abstract class PropertyHolderImpl<T extends Property> implements Property
                 unset(property);
     }
 
-    @Override
     public final boolean is(T property) {
-        long idx = property.index();
-        return (computed & idx) == idx;
+        return (computed & (1L << property.ordinal())) != 0;
     }
 
-    private synchronized boolean set(T property) {
-        if (isNot(property)) {
-            PropertyGroup group = property.group();
-            if (group != null) {
-                for (T prop : properties()) {
-                    if (is(prop)) {
-                        computed -= prop.index();
-                        break;
-                    }
+    private boolean set(T property) {
+        long alternative = this.computed;
+        PropertyGroup group = property.group();
+        if (group != null) {
+            for (T prop : properties()) {
+                if (is(prop)) {
+                    this.computed |= (1L << prop.ordinal());
+                    break;
                 }
             }
-
-            computed += property.index();
-            return true;
         }
-        return false;
+
+        this.computed |= (1L << property.ordinal());
+        return alternative != this.computed;
     }
 
-    private synchronized boolean unset(T property) {
-        if (is(property)) {
-            computed -= property.index();
+    private boolean unset(T property) {
+        long alternative = this.computed;
+        this.computed &= ~(1L << property.ordinal());
 
-            PropertyGroup group = property.group();
-            if (group != null) {
-                // set implicit property
-                for (T prop : properties()) {
-                    if (prop.group() == group && prop.implicit() && prop != property && !is(prop)) {
-                        computed += prop.index();
-                        break;
-                    }
+        PropertyGroup group = property.group();
+        if (group != null) {
+            // set implicit property
+            for (T prop : properties()) {
+                if (prop.group() == group && prop.implicit() && prop != property) {
+                    this.computed &= ~(1L << prop.ordinal());
+                    break;
                 }
             }
-            return true;
         }
-        return false;
+
+        return alternative != this.computed;
     }
 
-    public synchronized void reset() {
+    public void reset() {
         computed = 0;
         for (T property : properties()) {
             if (property.implicit()) {

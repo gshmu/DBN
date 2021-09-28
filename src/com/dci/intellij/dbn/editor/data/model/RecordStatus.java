@@ -14,11 +14,4 @@ public enum RecordStatus implements Property {
     DIRTY,
     DISPOSED,
     ;
-
-    private final long index = Property.idx(this);
-
-    @Override
-    public long index() {
-        return index;
-    }
 }

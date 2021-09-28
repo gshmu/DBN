@@ -17,11 +17,4 @@ public enum DynamicContentStatus implements Property {
     REFRESHING,
     LOADING,
     LOADING_IN_BACKGROUND;
-
-    private final long index = Property.idx(this);
-
-    @Override
-    public long index() {
-        return index;
-    }
 }

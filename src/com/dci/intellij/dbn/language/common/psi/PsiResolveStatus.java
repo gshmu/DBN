@@ -8,11 +8,4 @@ public enum PsiResolveStatus implements Property{
     RESOLVING_OBJECT_TYPE,
     CONNECTION_VALID,
     CONNECTION_ACTIVE;
-
-    private final long index = Property.idx(this);
-
-    @Override
-    public long index() {
-        return index;
-    }
 }

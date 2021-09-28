@@ -27,11 +27,4 @@ public enum ResourceStatus implements Property {
     COMMITTING,
     ROLLING_BACK,
     RESOLVING_TRANSACTION;
-
-    private final long index = Property.idx(this);
-
-    @Override
-    public long index() {
-        return index;
-    }
 }

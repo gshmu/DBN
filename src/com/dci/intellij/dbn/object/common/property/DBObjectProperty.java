@@ -50,11 +50,4 @@ public enum DBObjectProperty implements Property {
     // other
     TREE_LOADED // belongs to DBObjectStatus (here for optimization reasons)
     ;
-
-    private final long index = Property.idx(this);
-
-    @Override
-    public long index() {
-        return index;
-    }
 }

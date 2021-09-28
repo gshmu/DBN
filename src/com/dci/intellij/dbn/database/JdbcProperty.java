@@ -26,13 +26,6 @@ public enum JdbcProperty implements Property {
     CATALOG_AS_OWNER("Catalog as owner", false),
     ;
 
-    private final long index = Property.idx(this);
-
-    @Override
-    public long index() {
-        return index;
-    }
-
     private final String description;
     private final boolean feature;
 
