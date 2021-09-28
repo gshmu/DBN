@@ -13,6 +13,9 @@ import org.jetbrains.annotations.Nullable;
 import java.sql.SQLException;
 import java.sql.SQLRecoverableException;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Slf4j
 public abstract class ResourceStatusAdapterImpl<T extends Resource> implements ResourceStatusAdapter<T> {
@@ -23,6 +26,8 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
     private final Boolean terminalStatus;
     private final long checkInterval;
     private long checkTimestamp;
+
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     ResourceStatusAdapterImpl(T resource, ResourceStatus subject, ResourceStatus changing, ResourceStatus checking, long checkInterval, @NotNull Boolean initialStatus, @Nullable Boolean terminalStatus) {
         this.resource = WeakRef.of(resource);
@@ -36,11 +41,14 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
 
     @Override
     public final boolean get() {
-        if (canCheck()) {
-            synchronized (this) {
+        Lock readLock = this.lock.readLock();
+        if (readLock.tryLock()) {
+            try {
                 if (canCheck()) {
                     check();
                 }
+            } finally {
+                readLock.unlock();
             }
         }
         return value();
@@ -48,12 +56,15 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
 
     @Override
     public final void set(boolean value) throws SQLException {
-        if (canChange(value)) {
-            synchronized (this) {
+        Lock writeLock = this.lock.writeLock();
+        if (writeLock.tryLock()) {
+            try {
                 if (canChange(value)) {
                     set(changing, true);
                     changeControlled(value);
                 }
+            } finally {
+                writeLock.unlock();
             }
         }
     }
