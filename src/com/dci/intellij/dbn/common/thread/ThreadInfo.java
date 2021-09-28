@@ -11,11 +11,6 @@ public class ThreadInfo extends PropertyHolderImpl<ThreadProperty> {
     }
 
     @Override
-    public ThreadInfo clone() {
-        return (ThreadInfo) super.clone();
-    }
-
-    @Override
     public void merge(@Nullable PropertyHolder<ThreadProperty> source) {
         if (source != null) {
             for (ThreadProperty property : properties()) {
