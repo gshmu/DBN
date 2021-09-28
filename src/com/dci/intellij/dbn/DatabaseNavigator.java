@@ -73,7 +73,8 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
         Element element = new Element("state");
         setBoolean(element, "developer-mode", Environment.DEVELOPER_MODE);
         setBoolean(element, "parser-debug-mode", Environment.PARSER_DEBUG_MODE);
-        setBoolean(element, "database-debug-mode", Environment.DATABASE_DEBUG_MODE);
+        setBoolean(element, "database-access-debug-mode", Environment.DATABASE_ACCESS_DEBUG_MODE);
+        setBoolean(element, "database-resource-debug-mode", Environment.DATABASE_RESOURCE_DEBUG_MODE);
         setBoolean(element, "database-lagging-mode", Environment.DATABASE_LAGGING_MODE);
         setBoolean(element, "show-plugin-conflict-dialog", showPluginConflictDialog);
         return element;
@@ -83,7 +84,8 @@ public class DatabaseNavigator implements ApplicationComponent, PersistentStateC
     public void loadState(@NotNull Element element) {
         Environment.DEVELOPER_MODE = getBoolean(element, "developer-mode", false);
         Environment.PARSER_DEBUG_MODE = getBoolean(element, "parser-debug-mode", false);
-        Environment.DATABASE_DEBUG_MODE = getBoolean(element, "database-debug-mode", false);
+        Environment.DATABASE_ACCESS_DEBUG_MODE = getBoolean(element, "database-access-debug-mode", false);
+        Environment.DATABASE_RESOURCE_DEBUG_MODE = getBoolean(element, "database-resource-debug-mode", false);
         Environment.DATABASE_LAGGING_MODE = getBoolean(element, "database-lagging-mode", false);
         showPluginConflictDialog = getBoolean(element, "show-plugin-conflict-dialog", true);
     }
