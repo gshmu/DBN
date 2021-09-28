@@ -187,7 +187,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
 
         SQLException exception = Timeout.call(10, null, daemon, () -> {
             try {
-                if (Environment.DATABASE_DEBUG_MODE)
+                if (Environment.DATABASE_RESOURCE_DEBUG_MODE)
                     log.info("[DBN] Applying status " +  subject + " = " + value + " for " + resource);
 
                 changeInner(value);
@@ -199,7 +199,7 @@ public abstract class ResourceStatusAdapterImpl<T extends Resource> implements R
             } finally {
                 set(changing, false);
 
-                if (Environment.DATABASE_DEBUG_MODE)
+                if (Environment.DATABASE_RESOURCE_DEBUG_MODE)
                     log.info("[DBN] Done applying status " + subject + " = "  + value +  " for " + resource);
             }
             return null;

@@ -75,7 +75,7 @@ public abstract class DBNResource<T> extends ResourceStatusHolder implements Res
             };
         }
 
-        if (Environment.DATABASE_DEBUG_MODE) log.info("[DBN] Created " + this);
+        if (Environment.DATABASE_RESOURCE_DEBUG_MODE) log.info("[DBN] Created " + this);
     }
 
     @Override
