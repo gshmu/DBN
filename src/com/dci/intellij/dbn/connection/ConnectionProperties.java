@@ -19,9 +19,4 @@ public class ConnectionProperties extends PropertyHolderImpl<ConnectionProperty>
     protected ConnectionProperty[] properties() {
         return ConnectionProperty.values();
     }
-
-    @Override
-    public ConnectionProperties clone() {
-        return (ConnectionProperties) super.clone();
-    }
 }

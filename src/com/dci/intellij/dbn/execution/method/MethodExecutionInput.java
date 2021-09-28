@@ -281,7 +281,7 @@ public class MethodExecutionInput extends LocalExecutionInput implements Compara
         MethodExecutionInput clone = new MethodExecutionInput(getProject());
         clone.method = method;
         clone.targetSchemaId = targetSchemaId;
-        clone.setOptions(getOptions().clone());
+        clone.setOptions(ExecutionOptions.clone(getOptions()));
         clone.argumentValueHistory = new HashMap<>();
         for (MethodExecutionArgumentValue executionVariable : argumentValueHistory.values()) {
             clone.argumentValueHistory.put(
