@@ -2,7 +2,7 @@ package com.dci.intellij.dbn.object.filter;
 
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.intellij.openapi.util.text.StringUtil;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.StringTokenizer;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getEnumAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setEnumAttribute;
 
 @Getter
@@ -67,7 +67,7 @@ public abstract class NameFilterCondition implements PersistentStateElement {
 
     @Override
     public void readState(Element element) {
-        operator = getEnumAttribute(element, "operator", ConditionOperator.class);
+        operator = enumAttribute(element, "operator", ConditionOperator.class);
         pattern = element.getAttributeValue("pattern");
     }
 

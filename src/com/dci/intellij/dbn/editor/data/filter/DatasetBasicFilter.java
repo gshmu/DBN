@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.editor.data.filter;
 
 import com.dci.intellij.dbn.common.Icons;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.options.ui.ConfigurationEditorForm;
 import com.dci.intellij.dbn.data.sorting.SortingState;
 import com.dci.intellij.dbn.editor.data.filter.ui.DatasetBasicFilterForm;
@@ -16,6 +15,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAttribute;
 
 @Getter
 @Setter
@@ -134,7 +135,7 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
    @Override
    public void readConfiguration(Element element) {
        super.readConfiguration(element);
-       joinType = SettingsSupport.getEnumAttribute(element, "join-type", ConditionJoinType.class);
+       joinType = enumAttribute(element, "join-type", ConditionJoinType.AND);
        for (Element child : element.getChildren()) {
            DatasetBasicFilterCondition condition = new DatasetBasicFilterCondition(this);
            condition.readConfiguration(child);

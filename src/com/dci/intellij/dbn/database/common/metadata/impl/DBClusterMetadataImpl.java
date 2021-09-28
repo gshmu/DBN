@@ -14,6 +14,6 @@ public class DBClusterMetadataImpl extends DBObjectMetadataBase implements DBClu
 
     @Override
     public String getClusterName() throws SQLException {
-        return resultSet.getString("CLUSTER_NAME");
+        return getString("CLUSTER_NAME");
     }
 }

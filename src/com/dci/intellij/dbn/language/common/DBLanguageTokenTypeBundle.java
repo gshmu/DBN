@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 public abstract class DBLanguageTokenTypeBundle {
     protected final Logger log = Logger.getInstance(getClass().getName());
     private final Language language;
@@ -77,7 +79,7 @@ public abstract class DBLanguageTokenTypeBundle {
         List<SimpleTokenType> characterList = new ArrayList<>();
         List<SimpleTokenType> operatorList = new ArrayList<>();
         for (Element o : tokenDefs.getChildren()) {
-            String tokenTypeId = o.getAttributeValue("id").intern();
+            String tokenTypeId = stringAttribute(o, "id");
             SimpleTokenType tokenType = new SimpleTokenType(o, language, isRegisteredToken(tokenSetIds, tokenTypeId));
             log.debug("Creating token type '" + tokenType.getId() + "'");
             tokenTypes.put(tokenType.getId(), tokenType);
@@ -183,7 +185,7 @@ public abstract class DBLanguageTokenTypeBundle {
     private Map<String, Set<String>> parseTokenSets(Element tokenSetDefs) {
         Map<String, Set<String>> tokenSetDef = new HashMap<>();
         for (Element o : tokenSetDefs.getChildren()) {
-            String tokenSetId = o.getAttributeValue("id").intern();
+            String tokenSetId = stringAttribute(o, "id");
             Set<String> tokenIds = new HashSet<>();
 
             for (String tokenId : o.getText().split(",")) {

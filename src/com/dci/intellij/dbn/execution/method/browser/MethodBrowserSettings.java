@@ -16,6 +16,9 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 public class MethodBrowserSettings implements PersistentConfiguration {
     private ConnectionId connectionId;
     private String schemaName;
@@ -76,8 +79,8 @@ public class MethodBrowserSettings implements PersistentConfiguration {
 
     @Override
     public void readConfiguration(Element element) {
-        connectionId = ConnectionId.get(element.getAttributeValue("connection-id"));
-        schemaName = element.getAttributeValue("schema");
+        connectionId = connectionIdAttribute(element, "connection-id");
+        schemaName = stringAttribute(element, "schema");
 
         Element methodElement = element.getChild("selected-method");
         if (methodElement != null) {

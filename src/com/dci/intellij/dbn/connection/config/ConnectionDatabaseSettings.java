@@ -279,8 +279,8 @@ public class ConnectionDatabaseSettings extends BasicConfiguration<ConnectionSet
             for (Element propertyElement : propertiesElement.getChildren()) {
                 Map<String, String> properties = getParent().getPropertiesSettings().getProperties();
                 properties.put(
-                        propertyElement.getAttributeValue("key"),
-                        propertyElement.getAttributeValue("value"));
+                        stringAttribute(propertyElement, "key"),
+                        stringAttribute(propertyElement, "value"));
             }
         }
         updateSignature();

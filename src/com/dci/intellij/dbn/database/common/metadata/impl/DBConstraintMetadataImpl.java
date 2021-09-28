@@ -14,38 +14,38 @@ public class DBConstraintMetadataImpl extends DBObjectMetadataBase implements DB
 
     @Override
     public String getConstraintName() throws SQLException {
-        return resultSet.getString("CONSTRAINT_NAME");
+        return getString("CONSTRAINT_NAME");
     }
 
     @Override
     public String getDatasetName() throws SQLException {
-        return resultSet.getString("DATASET_NAME");
+        return getString("DATASET_NAME");
     }
 
     @Override
     public String getConstraintType() throws SQLException {
-        return resultSet.getString("CONSTRAINT_TYPE");
+        return getString("CONSTRAINT_TYPE");
     }
 
 
     @Override
     public String getCheckCondition() throws SQLException {
-        return resultSet.getString("CHECK_CONDITION");
+        return getString("CHECK_CONDITION");
     }
 
     @Override
     public String getFkConstraintOwner() throws SQLException {
-        return resultSet.getString("FK_CONSTRAINT_OWNER");
+        return getString("FK_CONSTRAINT_OWNER");
     }
 
     @Override
     public String getFkConstraintName() throws SQLException {
-        return resultSet.getString("FK_CONSTRAINT_NAME");
+        return getString("FK_CONSTRAINT_NAME");
     }
 
     @Override
     public boolean isEnabled() throws SQLException {
-        return "Y".equals(resultSet.getString("IS_ENABLED"));
+        return "Y".equals(getString("IS_ENABLED"));
     }
 
 

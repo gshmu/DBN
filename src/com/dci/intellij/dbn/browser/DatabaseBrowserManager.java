@@ -56,6 +56,9 @@ import javax.swing.tree.TreePath;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @State(
     name = DatabaseBrowserManager.COMPONENT_NAME,
     storages = @Storage(DatabaseNavigator.STORAGE_FILE)
@@ -405,7 +408,7 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
             ConnectionManager connectionManager = ConnectionManager.getInstance(project);
 
             connectionElements.forEach(connectionElement -> {
-                ConnectionId connectionId = ConnectionId.get(connectionElement.getAttributeValue("connection-id"));
+                ConnectionId connectionId = connectionIdAttribute(connectionElement, "connection-id");
                 ConnectionHandler connectionHandler = connectionManager.getConnectionHandler(connectionId);
                 if (connectionHandler != null) {
                     ConnectionDetailSettings settings = connectionHandler.getSettings().getDetailSettings();
@@ -414,13 +417,13 @@ public class DatabaseBrowserManager extends AbstractProjectComponent implements 
                         List<Element> schemaElements = connectionElement.getChildren();
 
                         schemaElements.forEach(schemaElement -> {
-                            String schemaName = schemaElement.getAttributeValue("name");
+                            String schemaName = stringAttribute(schemaElement, "name");
                             DBSchema schema = objectBundle.getSchema(schemaName);
                             if (schema != null) {
                                 Progress.background(project,
                                         connectionHandler.getMetaLoadTitle(), true,
                                         (progress) -> {
-                                            String objectTypesAttr = schemaElement.getAttributeValue("object-types");
+                                            String objectTypesAttr = stringAttribute(schemaElement, "object-types");
                                             List<DBObjectType> objectTypes = DBObjectType.fromCsv(objectTypesAttr);
 
                                             objectTypes.forEach(objectType -> {

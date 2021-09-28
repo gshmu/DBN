@@ -13,26 +13,26 @@ public class DBGrantedRoleMetadataImpl extends DBObjectMetadataBase implements D
 
     @Override
     public String getGrantedRoleName() throws SQLException {
-        return resultSet.getString("GRANTED_ROLE_NAME");
+        return getString("GRANTED_ROLE_NAME");
     }
 
     @Override
     public String getRoleName() throws SQLException {
-        return resultSet.getString("ROLE_NAME");
+        return getString("ROLE_NAME");
     }
 
     @Override
     public String getUserName() throws SQLException {
-        return resultSet.getString("USER_NAME");
+        return getString("USER_NAME");
     }
 
     @Override
     public boolean isAdminOption() throws SQLException {
-        return resultSet.getString("IS_ADMIN_OPTION").equals("Y");
+        return getString("IS_ADMIN_OPTION").equals("Y");
     }
 
     @Override
     public boolean isDefaultRole() throws SQLException {
-        return resultSet.getString("IS_DEFAULT_ROLE").equals("Y");
+        return getString("IS_DEFAULT_ROLE").equals("Y");
     }
 }

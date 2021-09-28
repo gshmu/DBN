@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 import static com.dci.intellij.dbn.vfs.DatabaseFileSystem.PS;
 
 @Getter
@@ -95,7 +97,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     }
 
     public static <T extends DBObject> DBObjectRef<T> from(Element element) {
-        String objectRefDefinition = element.getAttributeValue("object-ref");
+        String objectRefDefinition = stringAttribute(element, "object-ref");
         if (StringUtil.isNotEmpty(objectRefDefinition)) {
             DBObjectRef<T> objectRef = new DBObjectRef<>();
             objectRef.readState(element);
@@ -107,7 +109,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
     @Override
     public void readState(Element element) {
         if (element != null) {
-            ConnectionId connectionId = ConnectionId.get(element.getAttributeValue("connection-id"));
+            ConnectionId connectionId = connectionIdAttribute(element, "connection-id");
             String objectIdentifier = element.getAttributeValue("object-ref");
             deserialize(connectionId, objectIdentifier);
         }
@@ -138,7 +140,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
                     } else {
                         this.parent = objectRef;
                         this.objectType = objectType;
-                        this.objectName = token;
+                        this.objectName = token.intern();
                     }
                     objectType = null;
                 }
@@ -172,7 +174,7 @@ public class DBObjectRef<T extends DBObject> implements Comparable, Reference<T>
                 }
                 this.parent = objectRef;
                 this.objectType = objectType;
-                this.objectName = objectName;
+                this.objectName = objectName.intern();
             }
         }
 

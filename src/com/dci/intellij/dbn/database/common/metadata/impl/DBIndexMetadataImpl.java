@@ -13,19 +13,19 @@ public class DBIndexMetadataImpl extends DBObjectMetadataBase implements DBIndex
     }
 
     public String getIndexName() throws SQLException {
-        return resultSet.getString("INDEX_NAME");
+        return getString("INDEX_NAME");
     }
 
     public String getTableName() throws SQLException {
-        return resultSet.getString("TABLE_NAME");
+        return getString("TABLE_NAME");
     }
 
     public boolean isUnique() throws SQLException {
-        return resultSet.getString("IS_UNIQUE").equals("Y");
+        return getString("IS_UNIQUE").equals("Y");
     }
 
     public boolean isValid() throws SQLException {
-        return resultSet.getString("IS_VALID").equals("Y");
+        return getString("IS_VALID").equals("Y");
     }
 
 }

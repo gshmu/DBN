@@ -36,6 +36,8 @@ import java.io.StringWriter;
 import java.util.Map;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @Slf4j
 public class ElementTypeBundle {
     private final TokenTypeBundle tokenTypeBundle;
@@ -132,7 +134,7 @@ public class ElementTypeBundle {
 
     private void createNamedElementType(Element def) throws ElementTypeDefinitionException {
         String id = determineMandatoryAttribute(def, "id", "Invalid definition of named element type.");
-        String languageId = def.getAttributeValue("language");
+        String languageId = stringAttribute(def, "language");
         log.debug("Updating complex element definition '" + id + '\'');
         NamedElementType elementType = getNamedElementType(id, null);
         elementType.loadDefinition(def);
@@ -150,7 +152,7 @@ public class ElementTypeBundle {
 
 
     public static String determineMandatoryAttribute(Element def, String attribute, String message) throws ElementTypeDefinitionException {
-        String value = def.getAttributeValue(attribute);
+        String value = stringAttribute(def, attribute);
         if (value == null) {
             throw new ElementTypeDefinitionException(message + "Missing '" + attribute + "' attribute.");
         }

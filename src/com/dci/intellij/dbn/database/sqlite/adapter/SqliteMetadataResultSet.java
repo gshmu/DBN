@@ -2,9 +2,9 @@ package com.dci.intellij.dbn.database.sqlite.adapter;
 
 import com.dci.intellij.dbn.common.cache.Cache;
 import com.dci.intellij.dbn.common.dispose.StatefulDisposable;
+import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.database.DatabaseInterface;
 import com.dci.intellij.dbn.database.common.util.ResultSetStub;
-import com.intellij.openapi.util.text.StringUtil;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

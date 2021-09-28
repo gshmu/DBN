@@ -14,41 +14,42 @@ public class DBTriggerMetadataImpl extends DBObjectMetadataBase implements DBTri
 
     @Override
     public String getTriggerName() throws SQLException {
-        return resultSet.getString("TRIGGER_NAME");
+        return getString("TRIGGER_NAME");
     }
 
     @Override
     public String getDatasetName() throws SQLException {
-        return resultSet.getString("DATASET_NAME");
+        return getString("DATASET_NAME");
     }
 
     @Override
     public String getTriggerType() throws SQLException {
-        return resultSet.getString("TRIGGER_TYPE");
+        return getString("TRIGGER_TYPE");
     }
 
     @Override
     public String getTriggeringEvent() throws SQLException {
-        return resultSet.getString("TRIGGERING_EVENT");
+        return getString("TRIGGERING_EVENT");
     }
 
     @Override
     public boolean isForEachRow() throws SQLException {
-        return resultSet.getString("IS_FOR_EACH_ROW").equals("Y");
+        return getString("IS_FOR_EACH_ROW").equals("Y");
     }
 
     @Override
     public boolean isEnabled() throws SQLException {
-        return resultSet.getString("IS_ENABLED").equals("Y");
+        return getString("IS_ENABLED").equals("Y");
     }
 
     @Override
     public boolean isValid() throws SQLException {
-        return resultSet.getString("IS_VALID").equals("Y");
+        return getString("IS_VALID").equals("Y");
     }
 
     @Override
     public boolean isDebug() throws SQLException {
-        return resultSet.getString("IS_DEBUG").equals("Y");
+        return getString("IS_DEBUG").equals("Y");
     }
+
 }

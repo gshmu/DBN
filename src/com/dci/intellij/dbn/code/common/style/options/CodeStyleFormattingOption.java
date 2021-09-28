@@ -10,6 +10,8 @@ import org.jdom.Element;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -45,8 +47,8 @@ public class CodeStyleFormattingOption implements PersistentConfiguration {
      *********************************************************/
     @Override
     public void readConfiguration(Element element) {
-        name = element.getAttributeValue("name");
-        String presetId = element.getAttributeValue("value");
+        name = stringAttribute(element, "name");
+        String presetId = stringAttribute(element, "value");
         CodeStylePreset newPreset = getCodeStylePreset(presetId);
         if (newPreset != null) preset = newPreset;
     }

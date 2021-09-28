@@ -13,15 +13,15 @@ public class DBIndexColumnMetadataImpl extends DBObjectMetadataBase implements D
     }
 
     public String getIndexName() throws SQLException {
-        return resultSet.getString("INDEX_NAME");
+        return getString("INDEX_NAME");
     }
 
     @Override
     public String getColumnName() throws SQLException {
-        return resultSet.getString("COLUMN_NAME");
+        return getString("COLUMN_NAME");
     }
 
     public String getTableName() throws SQLException {
-        return resultSet.getString("TABLE_NAME");
+        return getString("TABLE_NAME");
     }
 }

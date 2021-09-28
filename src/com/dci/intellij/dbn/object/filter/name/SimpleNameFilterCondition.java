@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAttribute;
+
 @Getter
 @Setter
 public class SimpleNameFilterCondition extends NameFilterCondition implements FilterCondition {
@@ -48,7 +50,7 @@ public class SimpleNameFilterCondition extends NameFilterCondition implements Fi
      *********************************************************/
     @Override
     public void readConfiguration(Element element) {
-        setOperator(ConditionOperator.valueOf(element.getAttributeValue("operator")));
+        setOperator(enumAttribute(element, "operator", ConditionOperator.class));
         setPattern(element.getAttributeValue("text"));
     }
 

@@ -13,16 +13,16 @@ public class DBConstraintColumnMetadataImpl extends DBObjectMetadataBase impleme
     }
 
     public String getConstraintName() throws SQLException {
-        return resultSet.getString("CONSTRAINT_NAME");
+        return getString("CONSTRAINT_NAME");
     }
 
     @Override
     public String getColumnName() throws SQLException {
-        return resultSet.getString("COLUMN_NAME");
+        return getString("COLUMN_NAME");
     }
 
     public String getDatasetName() throws SQLException {
-        return resultSet.getString("DATASET_NAME");
+        return getString("DATASET_NAME");
     }
 
     public short getPosition() throws SQLException {

@@ -13,6 +13,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @Getter
 @Setter
 public abstract class DatasetFilterImpl extends BasicConfiguration<DatasetFilterGroup, ConfigurationEditorForm> implements DatasetFilter {
@@ -87,10 +90,10 @@ public abstract class DatasetFilterImpl extends BasicConfiguration<DatasetFilter
      ****************************************************/
     @Override
     public void readConfiguration(Element element) {
-        id = element.getAttributeValue("id");
-        name = element.getAttributeValue("name");
-        temporary = Boolean.parseBoolean(element.getAttributeValue("temporary"));
-        customNamed = Boolean.parseBoolean(element.getAttributeValue("custom-name"));
+        id = stringAttribute(element, "id");
+        name = stringAttribute(element, "name");
+        temporary = booleanAttribute(element, "temporary", false);
+        customNamed = booleanAttribute(element, "custom-name", false);
         persisted = true;
     }
 

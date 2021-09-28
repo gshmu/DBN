@@ -13,6 +13,6 @@ public class DBRoleMetadataImpl extends DBObjectMetadataBase implements DBRoleMe
 
     @Override
     public String getRoleName() throws SQLException {
-        return resultSet.getString("ROLE_NAME");
+        return getString("ROLE_NAME");
     }
 }

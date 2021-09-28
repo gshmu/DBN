@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBooleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
 
 @Getter
@@ -40,7 +40,7 @@ public class ObjectQuickFilterCondition extends NameFilterCondition implements P
     @Override
     public void readState(Element element) {
         super.readState(element);
-        active = getBooleanAttribute(element, "active", true);
+        active = booleanAttribute(element, "active", true);
     }
 
     @Override

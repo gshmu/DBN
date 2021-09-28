@@ -21,6 +21,9 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.StringTokenizer;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
@@ -167,10 +170,10 @@ public class DatasetBasicFilterCondition extends BasicConfiguration<DatasetBasic
 
     @Override
     public void readConfiguration(Element element) {
-       columnName = element.getAttributeValue("column");
-       operator = ConditionOperator.get(element.getAttributeValue("operator"));
+       columnName = stringAttribute(element, "column");
+       operator = ConditionOperator.get(stringAttribute(element, "operator"));
        value = element.getAttributeValue("value");
-       active = Boolean.parseBoolean(element.getAttributeValue("active"));
+       active = booleanAttribute(element, "active", true);
     }
 
     @Override

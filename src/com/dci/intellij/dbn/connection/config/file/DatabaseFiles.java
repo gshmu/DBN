@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setStringAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
 @Getter
 @EqualsAndHashCode
@@ -61,8 +62,8 @@ public class DatabaseFiles implements PersistentConfiguration, Cloneable<Databas
     @Override
     public void readConfiguration(Element element) {
         for (Element child : element.getChildren()) {
-            String path = child.getAttributeValue("path");
-            String schema = child.getAttributeValue("schema");
+            String path = stringAttribute(child, "path");
+            String schema = stringAttribute(child, "schema");
             DatabaseFile databaseFile = new DatabaseFile(path, schema);
             files.add(databaseFile);
         }

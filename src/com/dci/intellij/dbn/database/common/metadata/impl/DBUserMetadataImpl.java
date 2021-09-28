@@ -13,14 +13,14 @@ public class DBUserMetadataImpl extends DBObjectMetadataBase implements DBUserMe
     }
 
     public String getUserName() throws SQLException {
-        return resultSet.getString("USER_NAME");
+        return getString("USER_NAME");
     }
 
     public boolean isExpired() throws SQLException {
-        return resultSet.getString("IS_EXPIRED").equals("Y");
+        return getString("IS_EXPIRED").equals("Y");
     }
 
     public boolean isLocked() throws SQLException {
-        return resultSet.getString("IS_LOCKED").equals("Y");
+        return getString("IS_LOCKED").equals("Y");
     }
 }

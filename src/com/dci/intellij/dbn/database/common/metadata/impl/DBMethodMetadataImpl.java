@@ -13,17 +13,17 @@ public abstract class DBMethodMetadataImpl extends DBObjectMetadataBase implemen
 
     @Override
     public boolean isDeterministic() throws SQLException {
-        return resultSet.getString("IS_DETERMINISTIC").equals("Y");
+        return getString("IS_DETERMINISTIC").equals("Y");
     }
 
     @Override
     public boolean isValid() throws SQLException {
-        return resultSet.getString("IS_VALID").equals("Y");
+        return getString("IS_VALID").equals("Y");
     }
 
     @Override
     public boolean isDebug() throws SQLException {
-        return resultSet.getString("IS_DEBUG").equals("Y");
+        return getString("IS_DEBUG").equals("Y");
     }
 
     @Override
@@ -38,16 +38,16 @@ public abstract class DBMethodMetadataImpl extends DBObjectMetadataBase implemen
 
     @Override
     public String getLanguage() throws SQLException {
-        return resultSet.getString("LANGUAGE");
+        return getString("LANGUAGE");
     }
 
     @Override
     public String getTypeName() throws SQLException {
-        return resultSet.getString("TYPE_NAME");
+        return getString("TYPE_NAME");
     }
 
     @Override
     public String getPackageName() throws SQLException {
-        return resultSet.getString("PACKAGE_NAME");
+        return getString("PACKAGE_NAME");
     }
 }

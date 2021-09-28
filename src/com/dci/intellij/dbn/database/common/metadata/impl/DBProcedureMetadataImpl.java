@@ -12,6 +12,6 @@ public class DBProcedureMetadataImpl extends DBMethodMetadataImpl implements DBP
 
     @Override
     public String getProcedureName() throws SQLException {
-        return resultSet.getString("PROCEDURE_NAME");
+        return getString("PROCEDURE_NAME");
     }
 }

@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.debugger.jdwp.config;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.debugger.DBDebuggerType;
 import com.dci.intellij.dbn.debugger.DatabaseDebuggerManager;
 import com.dci.intellij.dbn.debugger.common.config.DBRunConfigCategory;
@@ -18,6 +17,9 @@ import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.util.Range;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.integerAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setIntegerAttribute;
 
 public class DBStatementJdwpRunConfig extends DBStatementRunConfig implements DBJdwpRunConfig {
     private Range<Integer> tcpPortRange = new Range<Integer>(4000, 4999);
@@ -62,8 +64,8 @@ public class DBStatementJdwpRunConfig extends DBStatementRunConfig implements DB
         super.readExternal(element);
         Element rangeElement = element.getChild("tcp-port-range");
         if (rangeElement != null) {
-            int fromPortNumber = SettingsSupport.getIntegerAttribute(rangeElement, "from-number", tcpPortRange.getFrom());
-            int toPortNumber = SettingsSupport.getIntegerAttribute(rangeElement, "to-number", tcpPortRange.getTo());
+            int fromPortNumber = integerAttribute(rangeElement, "from-number", tcpPortRange.getFrom());
+            int toPortNumber = integerAttribute(rangeElement, "to-number", tcpPortRange.getTo());
             tcpPortRange = new Range<Integer>(fromPortNumber, toPortNumber);
         }
     }
@@ -73,7 +75,7 @@ public class DBStatementJdwpRunConfig extends DBStatementRunConfig implements DB
         super.writeExternal(element);
         Element rangeElement = new Element("tcp-port-range");
         element.addContent(rangeElement);
-        SettingsSupport.setIntegerAttribute(rangeElement, "from-number", tcpPortRange.getFrom());
-        SettingsSupport.setIntegerAttribute(rangeElement, "to-number", tcpPortRange.getTo());
+        setIntegerAttribute(rangeElement, "from-number", tcpPortRange.getFrom());
+        setIntegerAttribute(rangeElement, "to-number", tcpPortRange.getTo());
     }
 }

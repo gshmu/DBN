@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
@@ -79,8 +81,8 @@ public class DatabaseBrowserEditorSettings
         List<DefaultEditorOption> newOptions = new ArrayList<>();
         List<Element> children = element.getChildren();
         for (Element child : children) {
-            String objectTypeName = child.getAttributeValue("name");
-            String editorTypeName = child.getAttributeValue("editor-type");
+            String objectTypeName = stringAttribute(child, "name");
+            String editorTypeName = stringAttribute(child, "editor-type");
             DBObjectType objectType = DBObjectType.get(objectTypeName);
             DefaultEditorType editorType = DefaultEditorType.valueOf(editorTypeName);
 

@@ -13,26 +13,26 @@ public class DBSynonymMetadataImpl extends DBObjectMetadataBase implements DBSyn
     }
 
     public String getSynonymName() throws SQLException {
-        return resultSet.getString("SYNONYM_NAME");
+        return getString("SYNONYM_NAME");
     }
 
     @Override
     public String getUnderlyingObjectOwner() throws SQLException {
-        return resultSet.getString("OBJECT_OWNER");
+        return getString("OBJECT_OWNER");
     }
 
     @Override
     public String getUnderlyingObjectName() throws SQLException {
-        return resultSet.getString("OBJECT_NAME");
+        return getString("OBJECT_NAME");
     }
 
     @Override
     public String getUnderlyingObjectType() throws SQLException {
-        return resultSet.getString("OBJECT_TYPE");
+        return getString("OBJECT_TYPE");
     }
 
     @Override
     public boolean isValid() throws SQLException {
-        return resultSet.getString("IS_VALID").equals("Y");
+        return getString("IS_VALID").equals("Y");
     }
 }

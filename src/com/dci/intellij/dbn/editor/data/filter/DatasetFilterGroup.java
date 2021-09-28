@@ -28,6 +28,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.connectionIdAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -126,7 +129,7 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
                 return filter;
             }
         }
-        if (filterId.equals(DatasetFilterManager.EMPTY_FILTER.getId())) {
+        if (DatasetFilterManager.EMPTY_FILTER.getId().equals(filterId)) {
             return DatasetFilterManager.EMPTY_FILTER;            
         }
         return null;
@@ -273,21 +276,21 @@ public class DatasetFilterGroup extends BasicProjectConfiguration<ProjectConfigu
 
     @Override
     public void readConfiguration(Element element) {
-        connectionId = ConnectionId.get(element.getAttributeValue("connection-id"));
-        datasetName = element.getAttributeValue("dataset");
+        connectionId = connectionIdAttribute(element, "connection-id");
+        datasetName = stringAttribute(element, "dataset");
         for (Element child : element.getChildren()){
-            String type = child.getAttributeValue("type");
-            if (type.equals("basic")) {
+            String type = stringAttribute(child, "type");
+            if ("basic".equals(type)) {
                 DatasetFilter filter = new DatasetBasicFilter(this, null);
                 filters.add(filter);
                 filter.readConfiguration(child);
-            } else if (type.equals("custom")) {
+            } else if ("custom".equals(type)) {
                 DatasetFilter filter = new DatasetCustomFilter(this, null);
                 filters.add(filter);
                 filter.readConfiguration(child);
             }
         }
-        String activeFilterId = element.getAttributeValue("active-filter-id");
+        String activeFilterId = stringAttribute(element, "active-filter-id");
         activeFilter = getFilter(activeFilterId);
     }
 

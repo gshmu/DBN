@@ -16,31 +16,31 @@ public class DBColumnMetadataImpl extends DBObjectMetadataBase implements DBColu
     }
 
     public String getColumnName() throws SQLException {
-        return resultSet.getString("COLUMN_NAME");
+        return getString("COLUMN_NAME");
     }
 
     public String getDatasetName() throws SQLException {
-        return resultSet.getString("DATASET_NAME");
+        return getString("DATASET_NAME");
     }
 
     public boolean isPrimaryKey() throws SQLException {
-        return "Y".equals(resultSet.getString("IS_PRIMARY_KEY"));
+        return "Y".equals(getString("IS_PRIMARY_KEY"));
     }
 
     public boolean isForeignKey() throws SQLException {
-        return "Y".equals(resultSet.getString("IS_FOREIGN_KEY"));
+        return "Y".equals(getString("IS_FOREIGN_KEY"));
     }
 
     public boolean isUniqueKey() throws SQLException {
-        return "Y".equals(resultSet.getString("IS_UNIQUE_KEY"));
+        return "Y".equals(getString("IS_UNIQUE_KEY"));
     }
 
     public boolean isNullable() throws SQLException {
-        return "Y".equals(resultSet.getString("IS_NULLABLE"));
+        return "Y".equals(getString("IS_NULLABLE"));
     }
 
     public boolean isHidden() throws SQLException {
-        return "Y".equals(resultSet.getString("IS_HIDDEN"));
+        return "Y".equals(getString("IS_HIDDEN"));
     }
 
     public short getPosition() throws SQLException {

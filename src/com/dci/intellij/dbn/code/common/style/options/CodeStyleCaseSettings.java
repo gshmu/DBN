@@ -11,8 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.getBooleanAttribute;
-import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.setBooleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Getter
 @Setter
@@ -80,9 +79,9 @@ public abstract class CodeStyleCaseSettings extends BasicConfiguration<CodeStyle
 
     @Override
     public void readConfiguration(Element element) {
-        enabled = getBooleanAttribute(element, "enabled", enabled);
+        enabled = booleanAttribute(element, "enabled", enabled);
         for (Element child : element.getChildren()) {
-            String name = child.getAttributeValue("name");
+            String name = stringAttribute(child, "name");
             CodeStyleCaseOption option = getCodeStyleCaseOption(name);
             if (option != null) {
                 option.readConfiguration(child);

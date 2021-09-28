@@ -1,6 +1,5 @@
 package com.dci.intellij.dbn.editor.data.state;
 
-import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
 import com.dci.intellij.dbn.common.util.Cloneable;
 import com.dci.intellij.dbn.data.model.sortable.SortableDataModelState;
@@ -14,6 +13,8 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Getter
 @Setter
@@ -34,8 +35,8 @@ public class DatasetEditorState extends SortableDataModelState implements FileEd
 
     @Override
     public void readState(@NotNull Element element) {
-        setRowCount(SettingsSupport.getIntegerAttribute(element, "row-count", 100));
-        setReadonly(SettingsSupport.getBooleanAttribute(element, "readonly", false));
+        setRowCount(integerAttribute(element, "row-count", 100));
+        setReadonly(booleanAttribute(element, "readonly", false));
 
         Element columnsElement = element.getChild("columns");
         columnSetup.readState(columnsElement);
@@ -47,8 +48,8 @@ public class DatasetEditorState extends SortableDataModelState implements FileEd
         Element contentTypesElement = element.getChild("content-types");
         if (contentTypesElement != null) {
             for (Element child : contentTypesElement.getChildren()) {
-                String columnName = child.getAttributeValue("column-name");
-                String contentTypeName = child.getAttributeValue("type-name");
+                String columnName = stringAttribute(child, "column-name");
+                String contentTypeName = stringAttribute(child, "type-name");
                 setTextContentType(columnName, contentTypeName);
             }
         }

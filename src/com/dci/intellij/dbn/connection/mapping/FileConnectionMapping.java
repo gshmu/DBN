@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.connection.mapping;
 
 import com.dci.intellij.dbn.common.state.PersistentStateElement;
-import com.dci.intellij.dbn.common.util.CommonUtil;
 import com.dci.intellij.dbn.common.util.VirtualFileUtil;
 import com.dci.intellij.dbn.connection.ConnectionId;
 import com.dci.intellij.dbn.connection.SchemaId;
@@ -10,6 +9,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
+
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
 @Getter
 @Setter
@@ -34,18 +35,18 @@ public class FileConnectionMapping implements PersistentStateElement {
      *********************************************/
     @Override
     public void readState(Element element) {
-        fileUrl = element.getAttributeValue("file-url");
+        fileUrl = stringAttribute(element, "file-url");
 
         if (fileUrl == null) {
             // TODO backward compatibility. Do cleanup
-            fileUrl = element.getAttributeValue("file-path");
+            fileUrl = stringAttribute(element, "file-path");
         }
 
         fileUrl = VirtualFileUtil.ensureFileUrl(fileUrl);
 
-        connectionId = ConnectionId.get(element.getAttributeValue("connection-id"));
-        sessionId = CommonUtil.nvl(SessionId.get(element.getAttributeValue("session-id")), sessionId);
-        schemaId = SchemaId.get(element.getAttributeValue("current-schema"));
+        connectionId = connectionIdAttribute(element, "connection-id");
+        sessionId = sessionIdAttribute(element, "session-id", sessionId);
+        schemaId = schemaIdAttribute(element, "current-schema");
     }
 
     @Override

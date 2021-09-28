@@ -16,7 +16,7 @@ public class SortingInstruction implements Cloneable<SortingInstruction> {
     private SortDirection direction;
 
     public SortingInstruction(String columnName, SortDirection direction) {
-        this.columnName = columnName;
+        this.columnName = columnName.intern();
         this.direction = direction;
     }
 
