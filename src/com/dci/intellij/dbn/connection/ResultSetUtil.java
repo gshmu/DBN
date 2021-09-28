@@ -86,7 +86,7 @@ public class ResultSetUtil extends StatefulDisposable.Base {
         ResultSetMetaData metaData = resultSet.getMetaData();
         int columnCount = metaData.getColumnCount();
         for (int i=0; i<columnCount; i++) {
-            columnNames.add(metaData.getColumnName(i+1));
+            columnNames.add(metaData.getColumnName(i+1).intern());
         }
         return columnNames;
     }
