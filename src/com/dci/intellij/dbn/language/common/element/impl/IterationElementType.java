@@ -31,7 +31,7 @@ public class IterationElementType extends ElementTypeBase {
         if (separatorTokens != null) {
             Set<TokenType> nextPossibleTokens = createLookupCache().getNextPossibleTokens();
             for (TokenElementType separatorToken : separatorTokens) {
-                if (nextPossibleTokens.contains(separatorToken.tokenType)) {
+                if (nextPossibleTokens.contains(separatorToken.getTokenType())) {
                     return true;
                 }
             }
@@ -140,7 +140,7 @@ public class IterationElementType extends ElementTypeBase {
     public boolean isSeparator(TokenType tokenType) {
         if (separatorTokens != null) {
             for (TokenElementType separatorToken: separatorTokens) {
-                if (separatorToken.tokenType == tokenType) return true;
+                if (separatorToken.getTokenType() == tokenType) return true;
             }
         }
         return false;

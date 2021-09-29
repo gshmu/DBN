@@ -72,7 +72,10 @@ public class CodeCompletionProvider extends CompletionProvider<CompletionParamet
             int caretOffset = parameters.getOffset();
             if (file.findElementAt(caretOffset) instanceof PsiComment) return;
 
-            LeafPsiElement leafBeforeCaret = PsiUtil.lookupLeafBeforeOffset(file, caretOffset);
+            LeafPsiElement leafAtOffset = caretOffset == 0 ? null : PsiUtil.lookupLeafAtOffset(file, caretOffset-1);
+            LeafPsiElement leafBeforeCaret = leafAtOffset == null || leafAtOffset.isCharacterToken() ?
+                    PsiUtil.lookupLeafBeforeOffset(file, caretOffset) :
+                    PsiUtil.lookupLeafBeforeOffset(file, leafAtOffset.getTextOffset());
 
 
             int invocationCount = parameters.getInvocationCount();

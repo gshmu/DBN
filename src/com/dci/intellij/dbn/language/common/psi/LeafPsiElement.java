@@ -181,4 +181,8 @@ public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiE
     public boolean isScopeBoundary() {
         return false;
     }
+
+    public boolean isCharacterToken() {
+        return false;
+    }
 }

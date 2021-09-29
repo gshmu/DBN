@@ -66,7 +66,7 @@ public class QualifiedIdentifierVariant implements Comparable{
 
     public boolean containsNonIdentifierTokens() {
         for (int i=0; i<matchedTokens; i++) {
-            if (!leafs[i].tokenType.isIdentifier()) {
+            if (!leafs[i].getTokenType().isIdentifier()) {
                 return true;
             }
         }
@@ -94,7 +94,7 @@ public class QualifiedIdentifierVariant implements Comparable{
                 buffer.append(identifierElementType.getObjectTypeName());
             } else if (leaf instanceof TokenElementType) {
                 TokenElementType tokenElementType = (TokenElementType) leaf;
-                buffer.append(tokenElementType.tokenType.getValue());
+                buffer.append(tokenElementType.getTokenType().getValue());
             }
             if (leaf != leafs[leafs.length-1]) {
                 buffer.append('.');

@@ -92,7 +92,7 @@ public class WrapperElementType extends ElementTypeBase {
     }
 
     public boolean isStrong() {
-        if (getBeginTokenElement().tokenType.isReservedWord()) {
+        if (getBeginTokenElement().getTokenType().isReservedWord()) {
             return true;
         }
         if (getParent() instanceof SequenceElementType) {

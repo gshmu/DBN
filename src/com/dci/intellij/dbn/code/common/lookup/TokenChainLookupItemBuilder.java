@@ -14,11 +14,11 @@ import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.openapi.project.Project;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class TokenChainLookupItemBuilder extends LookupItemBuilder {
 
-    private TokenElementType tokenElementType;
+    private final TokenElementType tokenElementType;
 
     public TokenChainLookupItemBuilder(TokenElementType tokenElementType) {
         this.tokenElementType = tokenElementType;
@@ -31,13 +31,13 @@ public class TokenChainLookupItemBuilder extends LookupItemBuilder {
 
     @Override
     public boolean isBold() {
-        return tokenElementType.tokenType.isKeyword();
+        return tokenElementType.getTokenType().isKeyword();
     }
 
     @Override
     public CharSequence getText(CodeCompletionContext completionContext) {
         Project project = completionContext.getParameters().getOriginalFile().getProject();
-        TokenType tokenType = tokenElementType.tokenType;
+        TokenType tokenType = tokenElementType.getTokenType();
         String text = tokenType.getValue();
 
         DBLanguage language = tokenElementType.getLanguage();
@@ -92,7 +92,7 @@ public class TokenChainLookupItemBuilder extends LookupItemBuilder {
     }
 
     public TokenType getTokenType() {
-        return tokenElementType.tokenType;
+        return tokenElementType.getTokenType();
     }
     public TokenTypeCategory getTokenTypeCategory() {
         return tokenElementType.getTokenTypeCategory();

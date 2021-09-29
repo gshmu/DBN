@@ -37,8 +37,8 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
         // parse begin token
         ParseResult beginTokenResult = beginTokenElement.getParser().parse(node, optional, depth + 1, context);
 
-        TokenType beginTokenType = beginTokenElement.tokenType;
-        TokenType endTokenType = endTokenElement.tokenType;
+        TokenType beginTokenType = beginTokenElement.getTokenType();
+        TokenType endTokenType = endTokenElement.getTokenType();
         boolean isStrong = elementType.isStrong();
 
         boolean beginMatched = beginTokenResult.isMatch() || (builder.lookBack(1) == beginTokenType && !builder.isExplicitRange(beginTokenType));
@@ -80,7 +80,7 @@ public class WrapperElementTypeParser extends ElementTypeParser<WrapperElementTy
         ParsePathNode parent = node.parent;
         while (parent != null && parent.getCursorPosition() == 0) {
             WrappingDefinition parentWrapping = parent.elementType.getWrapping();
-            if (parentWrapping != null && parentWrapping.getBeginElementType().tokenType == tokenType) {
+            if (parentWrapping != null && parentWrapping.getBeginElementType().getTokenType() == tokenType) {
                 return true;
             }
             parent = parent.parent;

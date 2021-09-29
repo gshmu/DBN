@@ -109,7 +109,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
 
     @Override
     public boolean isWrappingBegin(TokenType tokenType) {
-        return wrapping != null && wrapping.getBeginElementType().tokenType == tokenType;
+        return wrapping != null && wrapping.getBeginElementType().getTokenType() == tokenType;
     }
 
     public boolean isWrappingEnd(LeafElementType elementType) {
@@ -118,7 +118,7 @@ public abstract class ElementTypeBase extends IElementType implements ElementTyp
 
     @Override
     public boolean isWrappingEnd(TokenType tokenType) {
-        return wrapping != null && wrapping.getEndElementType().tokenType == tokenType;
+        return wrapping != null && wrapping.getEndElementType().getTokenType() == tokenType;
     }
 
     protected abstract ElementTypeLookupCache createLookupCache();

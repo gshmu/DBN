@@ -34,13 +34,13 @@ public class TokenLookupItemBuilder extends LookupItemBuilder {
 
     @Override
     public boolean isBold() {
-        return tokenElementType.tokenType.isKeyword();
+        return tokenElementType.getTokenType().isKeyword();
     }
 
     @Override
     public CharSequence getText(CodeCompletionContext completionContext) {
         String text = tokenElementType.getText();
-        TokenType tokenType = tokenElementType.tokenType;
+        TokenType tokenType = tokenElementType.getTokenType();
         if (StringUtil.isEmpty(text)) {
             text = tokenType.getValue();
         }
