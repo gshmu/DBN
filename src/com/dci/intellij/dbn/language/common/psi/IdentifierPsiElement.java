@@ -42,6 +42,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.Icon;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
+
 public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElementType> {
     private PsiResolveResult ref;
     private final RecursivityGate underlyingObjectResolver = new RecursivityGate(3);
@@ -505,10 +507,8 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
             return null;
         }
 
-        if (ref == null) {
-            ref = new PsiResolveResult(this);
-            //getNode().putUserData(PsiResolveResult.DATA_KEY, ref);
-        }
+        ref = nvl(ref, () -> new PsiResolveResult(this));
+
         if (ThreadMonitor.isDispatchThread()) {
             return ref.getReferencedElement();
         }
@@ -531,6 +531,16 @@ public abstract class IdentifierPsiElement extends LeafPsiElement<IdentifierElem
             }
         }
         return ref.getReferencedElement();
+    }
+
+    public void resolveAs(DBObject object) {
+        ref = nvl(ref, () -> new PsiResolveResult(this));
+        try {
+            ref.preResolve(this);
+            ref.setReferencedElement(DBObjectPsiFacade.asPsiElement(object));
+        } finally {
+            ref.postResolve(false);
+        }
     }
 
     @Override
