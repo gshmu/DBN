@@ -133,7 +133,7 @@ public class FormattingBlock implements Block {
                 if (parentPsiElement != null && parentPsiElement.elementType instanceof WrapperElementType) {
                     WrapperElementType wrapperElementType = (WrapperElementType) parentPsiElement.elementType;
                     SharedTokenTypeBundle sharedTokenTypes = parentPsiElement.getLanguage().getSharedTokenTypes();
-                    if (wrapperElementType.getBeginTokenElement().tokenType == sharedTokenTypes.getChrLeftParenthesis()) {
+                    if (wrapperElementType.getBeginTokenElement().getTokenType() == sharedTokenTypes.getChrLeftParenthesis()) {
                         //FormattingBlock parentStatementBlock = getParentBlock(this, ElementTypeAttribute.STATEMENT);
                         //Indent parentStatementIndent = parentStatementBlock.getIndent();
                         //return Indent.getIndent(Indent.Type.SPACES, -1, false, false);

@@ -13,7 +13,7 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class TokenPsiElement extends LeafPsiElement<TokenElementType> {
     public TokenPsiElement(ASTNode astNode, TokenElementType elementType) {
@@ -109,6 +109,11 @@ public class TokenPsiElement extends LeafPsiElement<TokenElementType> {
     }
 
     public TokenType getTokenType() {
-        return elementType.tokenType;
+        return elementType.getTokenType();
+    }
+
+    @Override
+    public boolean isCharacterToken() {
+        return getTokenType().isCharacter();
     }
 }

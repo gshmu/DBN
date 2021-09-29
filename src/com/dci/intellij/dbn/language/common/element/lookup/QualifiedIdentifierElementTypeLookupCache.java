@@ -53,7 +53,7 @@ public class QualifiedIdentifierElementTypeLookupCache extends ElementTypeLookup
         bucket = initBucket(bucket);
         for (LeafElementType[] elementTypes : elementType.getVariants()) {
             // variants already consider optional leafs
-            bucket.add(elementTypes[0].tokenType);
+            bucket.add(elementTypes[0].getTokenType());
         }
 
         return bucket;

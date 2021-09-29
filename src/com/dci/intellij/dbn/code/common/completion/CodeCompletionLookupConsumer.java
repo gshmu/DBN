@@ -63,7 +63,7 @@ public class CodeCompletionLookupConsumer implements CancellableConsumer<Object>
                         CodeCompletionFilterSettings filterSettings = context.getCodeCompletionFilterSettings();
                         TokenTypeCategory tokenTypeCategory = tokenElementType.getTokenTypeCategory();
                         if (tokenTypeCategory == TokenTypeCategory.OBJECT) {
-                            TokenType tokenType = tokenElementType.tokenType;
+                            TokenType tokenType = tokenElementType.getTokenType();
                             DBObjectType objectType = tokenType.getObjectType();
                             if (objectType != null) {
                                 if (filterSettings.acceptsRootObject(objectType)) {

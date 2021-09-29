@@ -168,7 +168,7 @@ public class CodeCompletionContext {
         if (leaf instanceof TokenElementType) {
             TokenElementType tokenElementType = (TokenElementType) leaf;
             String text = tokenElementType.getText();
-            String id = tokenElementType.tokenType.getId();
+            String id = tokenElementType.getTokenType().getId();
             return StringUtil.isEmpty(text) ? id : id + text;
         } else if (leaf instanceof IdentifierElementType){
             IdentifierElementType identifierElementType = (IdentifierElementType) leaf;

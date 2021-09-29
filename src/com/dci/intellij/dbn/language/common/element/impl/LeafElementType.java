@@ -27,8 +27,7 @@ import java.util.Set;
 @Getter
 @Setter
 public abstract class LeafElementType extends ElementTypeBase {
-    public TokenType tokenType;
-
+    private TokenType tokenType;
     private boolean optional;
 
     LeafElementType(ElementTypeBundle bundle, ElementTypeBase parent, String id, Element def) throws ElementTypeDefinitionException {
@@ -192,7 +191,7 @@ public abstract class LeafElementType extends ElementTypeBase {
                 }
             } else if (elementType instanceof WrapperElementType) {
                 WrapperElementType wrapperElementType = (WrapperElementType) elementType;
-                return wrapperElementType.getEndTokenElement().tokenType == tokenType;
+                return wrapperElementType.getEndTokenElement().getTokenType() == tokenType;
             }
 
             position = pathNode.getIndexInParent() + 1;

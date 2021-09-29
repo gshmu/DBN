@@ -16,6 +16,8 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.dci.intellij.dbn.common.util.CommonUtil.nvl;
+
 public abstract class AbstractMethodExecutionIntentionAction extends GenericIntentionAction implements HighPriorityAction {
     private DBObjectRef<DBMethod> lastChecked;
     public static final ObjectLookupAdapter METHOD_LOOKUP_ADAPTER = new ObjectLookupAdapter(null, IdentifierCategory.DEFINITION, DBObjectType.METHOD);
@@ -51,7 +53,16 @@ public abstract class AbstractMethodExecutionIntentionAction extends GenericInte
                 if (underlyingObject.getObjectType().isParentOf(DBObjectType.METHOD) && editor != null) {
                     BasePsiElement psiElement = PsiUtil.lookupLeafAtOffset(psiFile, editor.getCaretModel().getOffset());
                     if (psiElement != null) {
-                        BasePsiElement methodPsiElement = METHOD_LOOKUP_ADAPTER.findInParentScopeOf(psiElement);
+                        BasePsiElement methodPsiElement = null;
+                        if (psiElement instanceof IdentifierPsiElement) {
+                            IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) psiElement;
+                            DBObjectType objectType = identifierPsiElement.getObjectType();
+                            if (identifierPsiElement.isDefinition() && objectType.getGenericType() == DBObjectType.METHOD) {
+                                methodPsiElement = identifierPsiElement;
+                            }
+                        }
+
+                        methodPsiElement = nvl(methodPsiElement, () -> METHOD_LOOKUP_ADAPTER.findInParentScopeOf(psiElement));
                         if (methodPsiElement instanceof IdentifierPsiElement) {
                             IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) methodPsiElement;
                             DBObject object = identifierPsiElement.getUnderlyingObject();

@@ -53,7 +53,7 @@ public class QualifiedIdentifierElementTypeParser extends ElementTypeParser<Qual
             if (matchedTokens > 0) {
                 if (variant.isIncomplete()) {
                     Set<TokenType> expected = new THashSet<>();
-                    expected.add(separatorToken.tokenType);
+                    expected.add(separatorToken.getTokenType());
                     ParseBuilderErrorHandler.updateBuilderError(expected, context);
                     return stepOut(node, context, depth, ParseResultType.PARTIAL_MATCH, matchedTokens);
                 } else {
@@ -66,7 +66,7 @@ public class QualifiedIdentifierElementTypeParser extends ElementTypeParser<Qual
     }
 
     private QualifiedIdentifierVariant getMostProbableParseVariant(@NotNull ParserBuilder builder) {
-        TokenType separatorToken = elementType.getSeparatorToken().tokenType;
+        TokenType separatorToken = elementType.getSeparatorToken().getTokenType();
         SharedTokenTypeBundle sharedTokenTypes = getSharedTokenTypes();
         TokenType identifier = sharedTokenTypes.getIdentifier();
 
@@ -100,7 +100,7 @@ public class QualifiedIdentifierElementTypeParser extends ElementTypeParser<Qual
             if (elementTypes.length <= chan.size()) {
                 int matchedTokens = 0;
                 for (int i=0; i<elementTypes.length; i++) {
-                    if (elementTypes[i].tokenType.matches(chan.get(i))) {
+                    if (elementTypes[i].getTokenType().matches(chan.get(i))) {
                         matchedTokens++;
                     }
                 }

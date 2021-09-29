@@ -123,7 +123,7 @@ public class ParserBuilder {
             WrappingDefinition wrapping = node.elementType.getWrapping();
             if (wrapping != null) {
                 TokenElementType beginElementType = wrapping.getBeginElementType();
-                TokenType beginTokenType = beginElementType.tokenType;
+                TokenType beginTokenType = beginElementType.getTokenType();
                 while(builder.getTokenType() == beginTokenType) {
                     PsiBuilder.Marker beginTokenMarker = builder.mark();
                     advanceLexer(node, false);
@@ -154,7 +154,7 @@ public class ParserBuilder {
                 WrappingDefinition wrapping = node.elementType.getWrapping();
                 if (wrapping != null) {
                     TokenElementType endElementType = wrapping.getEndElementType();
-                    TokenType endTokenType = endElementType.tokenType;
+                    TokenType endTokenType = endElementType.getTokenType();
                     while (builder.getTokenType() == endTokenType && !isExplicitRange(endTokenType)) {
                         PsiBuilder.Marker endTokenMarker = builder.mark();
                         advanceLexer(node, false);

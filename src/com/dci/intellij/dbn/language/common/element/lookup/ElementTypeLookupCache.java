@@ -69,7 +69,7 @@ public abstract class ElementTypeLookupCache<T extends ElementTypeBase>/* implem
                 TokenElementType[] separatorTokens = iteration.separatorTokens;
                 if (separatorTokens != null) {
                     for (TokenElementType separatorToken : separatorTokens) {
-                        nextPossibleTokens.add(separatorToken.tokenType);
+                        nextPossibleTokens.add(separatorToken.getTokenType());
                     }
                 }
             }
@@ -114,7 +114,7 @@ public abstract class ElementTypeLookupCache<T extends ElementTypeBase>/* implem
         WrappingDefinition wrapping = elementType.getWrapping();
         if (wrapping != null) {
             bucket = initBucket(bucket);
-            bucket.add(wrapping.getBeginElementType().tokenType);
+            bucket.add(wrapping.getBeginElementType().getTokenType());
         }
         return bucket;
     }

@@ -4,6 +4,7 @@ import com.dci.intellij.dbn.code.common.lookup.CodeCompletionLookupItem;
 import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
 import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
+import com.dci.intellij.dbn.object.common.DBObject;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.openapi.editor.CaretModel;
@@ -19,11 +20,11 @@ public class BasicInsertHandler implements InsertHandler<CodeCompletionLookupIte
         Object lookupElementObject = lookupElement.getObject();
         if (lookupElementObject instanceof TokenElementType) {
             TokenElementType tokenElementType = (TokenElementType) lookupElementObject;
-            if(tokenElementType.tokenType.isReservedWord()) {
+            if(tokenElementType.getTokenType().isReservedWord()) {
                 Editor editor = insertionContext.getEditor();
                 CaretModel caretModel = editor.getCaretModel();
 
-                LeafPsiElement leafPsiElement = PsiUtil.lookupLeafAtOffset(insertionContext.getFile(), insertionContext.getTailOffset());
+                LeafPsiElement leafPsiElement = PsiUtil.lookupLeafBeforeOffset(insertionContext.getFile(), insertionContext.getTailOffset());
                 if (leafPsiElement == null || leafPsiElement.getTextOffset() != caretModel.getOffset()) {
                     if (completionChar == '\t' || completionChar == '\u0000' || completionChar == '\n') {
                         insertionContext.getDocument().insertString(insertionContext.getTailOffset(), " ");
@@ -31,6 +32,10 @@ public class BasicInsertHandler implements InsertHandler<CodeCompletionLookupIte
                     }
                 }
             }
+        } else if (lookupElementObject instanceof DBObject) {
+            LeafPsiElement leafPsiElement = PsiUtil.lookupLeafAtOffset(insertionContext.getFile(), insertionContext.getTailOffset());
+
+
         }
 
 /*        if (completionChar == ' ' || completionChar == '\t' || completionChar == '\u0000') {
