@@ -21,7 +21,11 @@ import com.dci.intellij.dbn.object.common.DBObject;
 import com.dci.intellij.dbn.object.common.list.DBObjectList;
 import com.dci.intellij.dbn.object.type.DBObjectType;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.lang.parameterInfo.*;
+import com.intellij.lang.parameterInfo.CreateParameterInfoContext;
+import com.intellij.lang.parameterInfo.ParameterInfoContext;
+import com.intellij.lang.parameterInfo.ParameterInfoHandler;
+import com.intellij.lang.parameterInfo.ParameterInfoUIContext;
+import com.intellij.lang.parameterInfo.UpdateParameterInfoContext;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -125,7 +129,7 @@ public class MethodParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                     ElementType elementType = PsiUtil.getElementType(paramPsiElement);
                     if (elementType instanceof TokenElementType) {
                         TokenElementType tokenElementType = (TokenElementType) elementType;
-                        if (iterationElementType.isSeparator(tokenElementType.tokenType)){
+                        if (iterationElementType.isSeparator(tokenElementType.getTokenType())){
                             if (paramPsiElement.getTextOffset() >= offset) {
                                 break;
                             }

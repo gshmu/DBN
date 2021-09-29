@@ -2,6 +2,8 @@ package com.dci.intellij.dbn.language.common.element.impl;
 
 import lombok.Getter;
 
+import java.util.Objects;
+
 @Getter
 public class WrappingDefinition {
     private final TokenElementType beginElementType;
@@ -18,8 +20,8 @@ public class WrappingDefinition {
         if (obj instanceof WrappingDefinition) {
             WrappingDefinition definition = (WrappingDefinition) obj;
             return
-                this.beginElementType.tokenType.equals(definition.beginElementType.tokenType) &&
-                this.endElementType.tokenType.equals(definition.endElementType.tokenType);
+                Objects.equals(this.beginElementType.getTokenType(), definition.beginElementType.getTokenType()) &&
+                Objects.equals(this.endElementType.getTokenType(), definition.endElementType.getTokenType());
         }
         return false;
     }

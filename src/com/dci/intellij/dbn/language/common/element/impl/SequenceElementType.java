@@ -146,7 +146,7 @@ public class SequenceElementType extends ElementTypeBase {
         WrappingDefinition wrapping = getWrapping();
         if (wrapping != null && leafElementType instanceof TokenElementType) {
             TokenElementType tokenElementType = (TokenElementType) leafElementType;
-            if (wrapping.getEndElementType().tokenType == tokenElementType.tokenType) {
+            if (wrapping.getEndElementType().getTokenType() == tokenElementType.getTokenType()) {
                 return children.length-1;
             }
         }
@@ -166,7 +166,7 @@ public class SequenceElementType extends ElementTypeBase {
         WrappingDefinition wrapping = getWrapping();
         if (wrapping != null && elementType instanceof TokenElementType) {
             TokenElementType tokenElementType = (TokenElementType) elementType;
-            if (wrapping.getEndElementType().tokenType == tokenElementType.tokenType) {
+            if (wrapping.getEndElementType().getTokenType() == tokenElementType.getTokenType()) {
                 return children.length-1;
             }
         }

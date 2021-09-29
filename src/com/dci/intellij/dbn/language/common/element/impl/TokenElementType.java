@@ -81,7 +81,7 @@ public class TokenElementType extends LeafElementType implements LookupItemBuild
     @NotNull
     @Override
     public String getName() {
-        return "token (" + getId() + " - " + tokenType.getId() + ")";
+        return "token (" + getId() + " - " + getTokenType().getId() + ")";
     }
 
     @Override
@@ -138,7 +138,7 @@ public class TokenElementType extends LeafElementType implements LookupItemBuild
     public boolean isSameAs(LeafElementType elementType) {
         if (elementType instanceof TokenElementType) {
             TokenElementType token = (TokenElementType) elementType;
-            return token.tokenType == tokenType;
+            return token.getTokenType() == getTokenType();
         }
         return false;
     }
@@ -150,11 +150,11 @@ public class TokenElementType extends LeafElementType implements LookupItemBuild
     }
 
     public String toString() {
-        return tokenType.getId() + " (" + getId() + ")";
+        return getTokenType().getId() + " (" + getId() + ")";
     }
 
     public boolean isCharacter() {
-        return tokenType.isCharacter();
+        return getTokenType().isCharacter();
     }
 
     @Override
@@ -167,7 +167,7 @@ public class TokenElementType extends LeafElementType implements LookupItemBuild
     }
 
     public TokenTypeCategory getTokenTypeCategory() {
-        return flavor == null ? tokenType.getCategory() : flavor;
+        return flavor == null ? getTokenType().getCategory() : flavor;
     }
 
     public List<TokenElementTypeChain> getPossibleTokenChains() {
@@ -186,7 +186,7 @@ public class TokenElementType extends LeafElementType implements LookupItemBuild
             for (LeafElementType nextPossibleLeaf : nextPossibleLeafs) {
                 if (nextPossibleLeaf instanceof TokenElementType) {
                     TokenElementType nextTokenElementType = (TokenElementType) nextPossibleLeaf;
-                    if (nextTokenElementType.tokenType.isKeyword()) {
+                    if (nextTokenElementType.getTokenType().isKeyword()) {
                         TokenElementTypeChain tokenElementTypeChain = chain.createVariant(nextTokenElementType);
                         if (possibleTokenChains == null) possibleTokenChains = new ArrayList<>();
                         possibleTokenChains.add(tokenElementTypeChain);

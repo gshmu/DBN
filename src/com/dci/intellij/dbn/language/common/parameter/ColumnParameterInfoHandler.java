@@ -71,7 +71,7 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                     ElementType elementType = PsiUtil.getElementType(paramPsiElement);
                     if (elementType instanceof TokenElementType) {
                         TokenElementType tokenElementType = (TokenElementType) elementType;
-                        if (iterationElementType.isSeparator(tokenElementType.tokenType)){
+                        if (iterationElementType.isSeparator(tokenElementType.getTokenType())){
                             if (paramPsiElement.getTextOffset() >= offset) {
                                 break;
                             }
@@ -146,7 +146,7 @@ public class ColumnParameterInfoHandler implements ParameterInfoHandler<BasePsiE
                     ElementType elementType = PsiUtil.getElementType(paramPsiElement);
                     if (elementType instanceof TokenElementType) {
                         TokenElementType tokenElementType = (TokenElementType) elementType;
-                        if (iterationElementType.isSeparator(tokenElementType.tokenType)){
+                        if (iterationElementType.isSeparator(tokenElementType.getTokenType())){
                             if (paramPsiElement.getTextOffset() >= offset) {
                                 break;
                             }

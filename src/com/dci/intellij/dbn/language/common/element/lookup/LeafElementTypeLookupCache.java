@@ -41,7 +41,7 @@ public abstract class LeafElementTypeLookupCache<T extends LeafElementType> exte
 
     @Override
     public boolean couldStartWithToken(TokenType tokenType) {
-        return elementType.tokenType == tokenType;
+        return elementType.getTokenType() == tokenType;
     }
 
     @Override

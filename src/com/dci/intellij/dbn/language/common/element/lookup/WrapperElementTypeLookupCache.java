@@ -44,14 +44,14 @@ wrappedTokenLC.couldStartWithLeaf(leaf));
     public Set<TokenType> collectFirstPossibleTokens(ElementLookupContext context, @Nullable Set<TokenType> bucket) {
         bucket = super.collectFirstPossibleTokens(context, bucket);
         bucket = initBucket(bucket);
-        bucket.add(elementType.getBeginTokenElement().tokenType);
+        bucket.add(elementType.getBeginTokenElement().getTokenType());
         return bucket;
     }
 
     @Override
     public boolean containsToken(TokenType tokenType) {
-        return getBeginTokenElement().tokenType == tokenType ||
-                getEndTokenElement().tokenType == tokenType ||
+        return getBeginTokenElement().getTokenType() == tokenType ||
+                getEndTokenElement().getTokenType() == tokenType ||
                 elementType.getWrappedElement().getLookupCache().containsToken(tokenType);
     }
 
@@ -65,7 +65,7 @@ wrappedTokenLC.couldStartWithLeaf(leaf));
     @Override
     public Set<TokenType> getFirstPossibleTokens() {
         Set<TokenType> tokenTypes = initBucket(null);
-        tokenTypes.add(getBeginTokenElement().tokenType);
+        tokenTypes.add(getBeginTokenElement().getTokenType());
         elementType.getWrappedElement().getLookupCache().collectFirstPossibleTokens(tokenTypes);
         return tokenTypes;
     }
@@ -73,7 +73,7 @@ wrappedTokenLC.couldStartWithLeaf(leaf));
     @Override
     public Set<TokenType> getFirstRequiredTokens() {
         Set<TokenType> tokenTypes = initBucket(null);
-        tokenTypes.add(getBeginTokenElement().tokenType);
+        tokenTypes.add(getBeginTokenElement().getTokenType());
         return tokenTypes;
     }
 
@@ -118,7 +118,7 @@ wrappedTokenLC.couldStartWithLeaf(leaf));
 
     @Override
     public boolean isFirstRequiredToken(TokenType tokenType) {
-        return getBeginTokenElement().tokenType == tokenType;
+        return getBeginTokenElement().getTokenType() == tokenType;
     }
 
     private TokenElementType getBeginTokenElement() {

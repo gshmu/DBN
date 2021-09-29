@@ -133,7 +133,7 @@ public abstract class ElementTypeLookupCacheIndexed<T extends ElementTypeBase> e
                 allPossibleTokens.put(sharedTokenTypes.getIdentifier());
                 allPossibleTokens.put(sharedTokenTypes.getQuotedIdentifier());
             } else {
-                allPossibleTokens.put(leaf.tokenType);
+                allPossibleTokens.put(leaf.getTokenType());
             }
         }
 

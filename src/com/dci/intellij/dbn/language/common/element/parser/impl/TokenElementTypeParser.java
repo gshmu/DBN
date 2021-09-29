@@ -25,7 +25,7 @@ public class TokenElementTypeParser extends ElementTypeParser<TokenElementType> 
         logBegin(builder, optional, depth);
 
         TokenType tokenType = builder.getTokenType();
-        if (tokenType == elementType.tokenType || isDummyToken(builder.getTokenText())) {
+        if (tokenType == elementType.getTokenType() || isDummyToken(builder.getTokenText())) {
 
             String text = elementType.getText();
             if (StringUtil.isNotEmpty(text) && StringUtil.equalsIgnoreCase(builder.getTokenText(), text)) {

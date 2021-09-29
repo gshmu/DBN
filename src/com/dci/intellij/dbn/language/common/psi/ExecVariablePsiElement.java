@@ -12,7 +12,7 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 public class ExecVariablePsiElement extends LeafPsiElement<ExecVariableElementType> {
     public ExecVariablePsiElement(ASTNode astNode, ExecVariableElementType elementType) {
@@ -58,7 +58,7 @@ public class ExecVariablePsiElement extends LeafPsiElement<ExecVariableElementTy
      *********************************************************/
     @Override
     public String getPresentableText() {
-        return elementType.tokenType.getValue();
+        return elementType.getTokenType().getValue();
     }
 
     @Override
