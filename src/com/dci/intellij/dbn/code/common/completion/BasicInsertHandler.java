@@ -2,6 +2,7 @@ package com.dci.intellij.dbn.code.common.completion;
 
 import com.dci.intellij.dbn.code.common.lookup.CodeCompletionLookupItem;
 import com.dci.intellij.dbn.language.common.element.impl.TokenElementType;
+import com.dci.intellij.dbn.language.common.psi.IdentifierPsiElement;
 import com.dci.intellij.dbn.language.common.psi.LeafPsiElement;
 import com.dci.intellij.dbn.language.common.psi.PsiUtil;
 import com.dci.intellij.dbn.object.common.DBObject;
@@ -33,9 +34,12 @@ public class BasicInsertHandler implements InsertHandler<CodeCompletionLookupIte
                 }
             }
         } else if (lookupElementObject instanceof DBObject) {
-            LeafPsiElement leafPsiElement = PsiUtil.lookupLeafAtOffset(insertionContext.getFile(), insertionContext.getTailOffset());
-
-
+            DBObject object = (DBObject) lookupElementObject;
+            LeafPsiElement leafPsiElement = PsiUtil.lookupLeafBeforeOffset(insertionContext.getFile(), insertionContext.getTailOffset());
+            if (leafPsiElement instanceof IdentifierPsiElement) {
+                IdentifierPsiElement identifierPsiElement = (IdentifierPsiElement) leafPsiElement;
+                identifierPsiElement.resolveAs(object);
+            }
         }
 
 /*        if (completionChar == ' ' || completionChar == '\t' || completionChar == '\u0000') {
