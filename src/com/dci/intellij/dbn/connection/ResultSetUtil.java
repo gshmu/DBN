@@ -10,14 +10,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.util.ExceptionUtil.toSqlException;
+
 public class ResultSetUtil extends StatefulDisposable.Base {
     public static void insertRow(ResultSet resultSet) throws SQLException {
         try {
             resultSet.insertRow();
         } catch (Throwable e) {
-            throw e instanceof SQLException ?
-                    (SQLException) e :
-                    new SQLException("Error inserting row: [" + e.getClass().getSimpleName() + "] " + e.getMessage());
+            throw toSqlException(e, "Error inserting row");
         }
     }
 
@@ -25,18 +25,14 @@ public class ResultSetUtil extends StatefulDisposable.Base {
         try {
             resultSet.moveToInsertRow();
         } catch (Throwable e) {
-            throw e instanceof SQLException ?
-                    (SQLException) e :
-                    new SQLException("Error selecting insert row: [" + e.getClass().getSimpleName() + "] " + e.getMessage());
+            throw toSqlException(e, "Error selecting insert row");
         }
     }
     public static void moveToCurrentRow(ResultSet resultSet) throws SQLException {
         try {
             resultSet.moveToCurrentRow();
         } catch (Throwable e) {
-            throw e instanceof SQLException ?
-                    (SQLException) e :
-                    new SQLException("Error selecting current row: [" + e.getClass().getSimpleName() + "] " + e.getMessage());
+            throw toSqlException(e, "Error selecting current row");
         }
     }
 
@@ -44,9 +40,7 @@ public class ResultSetUtil extends StatefulDisposable.Base {
         try {
             resultSet.deleteRow();
         } catch (Throwable e) {
-            throw e instanceof SQLException ?
-                    (SQLException) e :
-                    new SQLException("Error deleting row: [" + e.getClass().getSimpleName() + "] " + e.getMessage());
+            throw toSqlException(e, "Error deleting row");
         }
     }
 
@@ -55,9 +49,7 @@ public class ResultSetUtil extends StatefulDisposable.Base {
         try {
             resultSet.refreshRow();
         } catch (Throwable e) {
-            throw e instanceof SQLException ?
-                    (SQLException) e :
-                    new SQLException("Error refreshing row: [" + e.getClass().getSimpleName() + "] " + e.getMessage());
+            throw toSqlException(e, "Error refreshing row");
         }
     }
 
@@ -65,9 +57,7 @@ public class ResultSetUtil extends StatefulDisposable.Base {
         try {
             resultSet.updateRow();
         } catch (Throwable e) {
-            throw e instanceof SQLException ?
-                    (SQLException) e :
-                    new SQLException("Error updating row: [" + e.getClass().getSimpleName() + "] " + e.getMessage());
+            throw toSqlException(e, "Error updating row");
         }
     }
 
@@ -75,9 +65,7 @@ public class ResultSetUtil extends StatefulDisposable.Base {
         try {
             resultSet.absolute(row);
         } catch (Throwable e) {
-            throw e instanceof SQLException ?
-                    (SQLException) e :
-                    new SQLException("Error selecting row: [" + e.getClass().getSimpleName() + "] " + e.getMessage());
+            throw toSqlException(e, "Error selecting row");
         }
     }
 
