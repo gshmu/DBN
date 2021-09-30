@@ -400,9 +400,9 @@ public abstract class DynamicContentImpl<T extends DynamicContentElement>
         return null;
     }
 
-    protected boolean matchElement(T element, String name, short overload) {
+    private boolean matchElement(T element, String name, short overload) {
         return (overload == 0 || overload == element.getOverload()) &&
-                (element.getName() == name || StringUtil.equalsIgnoreCase(element.getName(), name));
+                StringUtil.equalsIgnoreCase(element.getName(), name);
     }
 
     @Override

@@ -50,6 +50,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class DataSearchComponent extends DBNFormImpl implements SelectionListener, DataSearchResultListener, DataModelListener {
@@ -284,7 +285,7 @@ public class DataSearchComponent extends DBNFormImpl implements SelectionListene
 
         String stringToFind = findModel.getStringToFind();
 
-        if (!StringUtil.equals(stringToFind, searchField.getText())) {
+        if (!Objects.equals(stringToFind, searchField.getText())) {
             searchField.setText(stringToFind);
         }
 
