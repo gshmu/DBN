@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.editor.code.content;
 
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.util.CommonUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
 import com.intellij.diff.comparison.ByWord;
 import com.intellij.diff.comparison.ComparisonPolicy;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -12,6 +11,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker.END_OFFSET_IDENTIFIER;
 import static com.dci.intellij.dbn.editor.code.content.GuardedBlockMarker.START_OFFSET_IDENTIFIER;
@@ -56,7 +56,7 @@ public class SourceCodeContent{
             } catch (Exception ignore) {
             }
         }
-        return StringUtil.equals(text, content.text);
+        return Objects.equals(text, content.text);
     }
 
     public long length() {

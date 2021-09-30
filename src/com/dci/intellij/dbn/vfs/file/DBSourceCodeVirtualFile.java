@@ -5,7 +5,6 @@ import com.dci.intellij.dbn.common.thread.Synchronized;
 import com.dci.intellij.dbn.common.thread.Write;
 import com.dci.intellij.dbn.common.util.ChangeTimestamp;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
-import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
 import com.dci.intellij.dbn.connection.ConnectionProvider;
 import com.dci.intellij.dbn.connection.session.DatabaseSession;
@@ -40,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.vfs.VirtualFileStatus.*;
 
@@ -286,7 +286,7 @@ public class DBSourceCodeVirtualFile extends DBContentVirtualFile implements DBP
     @Override
     public void documentChanged(@NotNull DocumentEvent event) {
         CharSequence newContent = event.getDocument().getCharsSequence();
-        if (isNot(MODIFIED) && !StringUtil.equals(originalContent.getText(), newContent)) {
+        if (isNot(MODIFIED) && !Objects.equals(originalContent.getText(), newContent)) {
             set(MODIFIED, true);
         }
         localContent.setText(newContent);

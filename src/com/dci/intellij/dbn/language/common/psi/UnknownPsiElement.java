@@ -1,7 +1,6 @@
 package com.dci.intellij.dbn.language.common.psi;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingAttributes;
-import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.ElementTypeBase;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -11,6 +10,8 @@ import com.intellij.lang.ASTNode;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public class UnknownPsiElement extends BasePsiElement<ElementTypeBase> {
     public UnknownPsiElement(ASTNode astNode, ElementTypeBase elementType) {
@@ -51,7 +52,7 @@ public class UnknownPsiElement extends BasePsiElement<ElementTypeBase> {
         if (matchType == MatchType.SOFT) {
             return remote instanceof UnknownPsiElement;
         } else {
-            return getTextLength() == remote.getTextLength() && StringUtil.equals(getText(), remote.getText());
+            return getTextLength() == remote.getTextLength() && Objects.equals(getText(), remote.getText());
         }
     }
 
