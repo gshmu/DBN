@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -191,7 +192,7 @@ public class DatabaseDriverManager implements ApplicationComponent {
         if (libraryFile.exists()) {
             List<Driver> drivers = loadDrivers(libraryFile, false);
             for (Driver driver : drivers) {
-                if (driver.getClass().getName().equals(className)) {
+                if (Objects.equals(driver.getClass().getName(), className)) {
                     return driver;
                 }
             }

@@ -15,6 +15,7 @@ import com.dci.intellij.dbn.object.common.status.DBObjectStatusHolder;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.*;
 
@@ -52,12 +53,12 @@ public abstract class DBProgramImpl<M extends DBProgramMetadata, P extends DBPro
         DBObjectStatusHolder objectStatus = getStatus();
 
         boolean specPresent = specValidString != null;
-        boolean specValid = !specPresent || specValidString.equals("Y");
-        boolean specDebug = !specPresent || specDebugString.equals("Y");
+        boolean specValid = !specPresent || Objects.equals(specValidString, "Y");
+        boolean specDebug = !specPresent || Objects.equals(specDebugString, "Y");
 
         boolean bodyPresent = bodyValidString != null;
-        boolean bodyValid = !bodyPresent || bodyValidString.equals("Y");
-        boolean bodyDebug = !bodyPresent || bodyDebugString.equals("Y");
+        boolean bodyValid = !bodyPresent || Objects.equals(bodyValidString, "Y");
+        boolean bodyDebug = !bodyPresent || Objects.equals(bodyDebugString, "Y");
 
         objectStatus.set(DBContentType.CODE_SPEC, DBObjectStatus.PRESENT, specPresent);
         objectStatus.set(DBContentType.CODE_SPEC, DBObjectStatus.VALID, specValid);
@@ -81,22 +82,22 @@ public abstract class DBProgramImpl<M extends DBProgramMetadata, P extends DBPro
 
     @Override
     public F getFunction(String name, short overload) {
-        for (F function : functions.getObjects()){
-            if (function.getName().equals(name) && function.getOverload() == overload) {
-                return function;
-            }
-        }
-        return null;
+        return functions
+                .getObjects()
+                .stream()
+                .filter(function -> Objects.equals(function.getName(), name) && function.getOverload() == overload)
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
     public P getProcedure(String name, short overload) {
-        for (P procedure : procedures.getObjects()){
-            if (procedure.getName().equals(name) && procedure.getOverload() == overload) {
-                return procedure;
-            }
-        }
-        return null;
+        return procedures
+                .getObjects()
+                .stream()
+                .filter(procedure -> Objects.equals(procedure.getName(), name) && procedure.getOverload() == overload)
+                .findFirst()
+                .orElse(null);
     }
 
     @Override

@@ -13,6 +13,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.util.Objects;
 
 
 public class HTMLDataExportProcessor extends DataExportProcessor{
@@ -74,10 +75,11 @@ public class HTMLDataExportProcessor extends DataExportProcessor{
 
         @Override
         public boolean isDataFlavorSupported(DataFlavor flavor) {
+            String mimeType = flavor.getMimeType();
             return
-                    "text/html".equals(flavor.getMimeType()) ||
-                    "text/rtf".equals(flavor.getMimeType()) ||
-                    "text/plain".equals(flavor.getMimeType());
+                    Objects.equals(mimeType, "text/html") ||
+                    Objects.equals(mimeType, "text/rtf") ||
+                    Objects.equals(mimeType, "text/plain");
         }
 
         @Override

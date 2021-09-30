@@ -11,6 +11,8 @@ import org.jdom.Element;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
 @Getter
@@ -63,7 +65,7 @@ public class CodeCompletionSortingItem extends BasicConfiguration<CodeCompletion
     @Override
     public void readConfiguration(Element element) {
         String sortingItemType = stringAttribute(element, "type");
-        if ("OBJECT".equals(sortingItemType)) {
+        if (Objects.equals(sortingItemType, "OBJECT")) {
             String objectTypeName = stringAttribute(element, "id");
             objectType = DBObjectType.get(objectTypeName);
         } else {

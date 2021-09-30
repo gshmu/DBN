@@ -12,6 +12,7 @@ import lombok.Setter;
 import org.jdom.Element;
 
 import javax.swing.Icon;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
@@ -44,7 +45,7 @@ public class CodeCompletionFilterOption implements CheckedTreeNodeProvider, Pers
     public void readConfiguration(Element element) {
         if (element != null) {
             String filterElementType = stringAttribute(element, "type");
-            if ("OBJECT".equals(filterElementType)) {
+            if (Objects.equals("OBJECT", filterElementType)) {
                 String objectTypeName = stringAttribute(element, "id");
                 objectType = DBObjectType.get(objectTypeName);
             } else {

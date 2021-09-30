@@ -9,9 +9,9 @@ import com.dci.intellij.dbn.common.ui.table.IndexTableGutter;
 import com.dci.intellij.dbn.common.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
-import java.awt.*;
+import java.awt.Component;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class EditableStringList extends DBNEditableTable<EditableStringList.EditableListModel> {
     private final boolean sorted;
@@ -161,7 +162,7 @@ public class EditableStringList extends DBNEditableTable<EditableStringList.Edit
             boolean change = true;
             if (rowIndex < data.size()) {
                 String currentValue = data.get(rowIndex);
-                if (currentValue.equals(value)) {
+                if (Objects.equals(currentValue, value)) {
                     change = false;
                 }
             }

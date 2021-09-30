@@ -50,6 +50,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.ui.ComboBoxUtil.*;
 
@@ -143,7 +144,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
                 String file = databaseFileSettingsForm.getMainFilePath();
                 DatabaseInfo defaults = newUrlPattern.getDefaultInfo();
                 DatabaseInfo oldDefaults = oldUrlPattern == null ? null : oldUrlPattern.getDefaultInfo();
-                if (StringUtil.isEmpty(file) || (oldDefaults != null && oldDefaults.getFiles().getMainFile().getPath().equals(file))) {
+                if (StringUtil.isEmpty(file) || (oldDefaults != null && Objects.equals(oldDefaults.getFiles().getMainFile().getPath(), file))) {
                     databaseFileSettingsForm.setMainFilePath(defaults.getFiles().getMainFile().getPath());
                 }
             } else {
@@ -153,14 +154,14 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
 
                 DatabaseInfo defaults = newUrlPattern.getDefaultInfo();
                 DatabaseInfo oldDefaults = oldUrlPattern == null ? null : oldUrlPattern.getDefaultInfo();
-                if (StringUtil.isEmpty(host) || (oldDefaults != null && oldDefaults.getHost().equals(host))) {
+                if (StringUtil.isEmpty(host) || (oldDefaults != null && Objects.equals(oldDefaults.getHost(), host))) {
                     hostTextField.setText(defaults.getHost());
                 }
 
-                if (StringUtil.isEmpty(port) || (oldDefaults != null && oldDefaults.getPort().equals(port))) {
+                if (StringUtil.isEmpty(port) || (oldDefaults != null && Objects.equals(oldDefaults.getPort(), port))) {
                     portTextField.setText(defaults.getPort());
                 }
-                if (StringUtil.isEmpty(database) || (oldDefaults != null && oldDefaults.getDatabase().equals(database))) {
+                if (StringUtil.isEmpty(database) || (oldDefaults != null && Objects.equals(oldDefaults.getDatabase(), database))) {
                     databaseTextField.setText(defaults.getDatabase());
                 }
                 DatabaseUrlType[] urlTypes = newDatabaseType.getUrlTypes();
@@ -336,7 +337,7 @@ public class ConnectionDatabaseSettingsForm extends ConfigurationEditorForm<Conn
             }
         }
 
-        boolean nameChanged = !nameTextField.getText().equals(configuration.getName());
+        boolean nameChanged = !Objects.equals(nameTextField.getText(), configuration.getName());
 
         DatabaseInfo databaseInfo = configuration.getDatabaseInfo();
         DatabaseUrlType urlType = getSelection(urlTypeComboBox);

@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class StatementExecutionVariablesBundle extends StatefulDisposable.Base implements StatefulDisposable {
     public static final Comparator<StatementExecutionVariable> NAME_COMPARATOR = (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName());
@@ -63,7 +64,7 @@ public class StatementExecutionVariablesBundle extends StatefulDisposable.Base i
     }
 
     private void uniqueAddVariable(List<StatementExecutionVariable> variables, StatementExecutionVariable variable) {
-        if (variables.stream().noneMatch(var -> var.getName().equals(variable.getName()))) {
+        if (variables.stream().noneMatch(var -> Objects.equals(var.getName(), variable.getName()))) {
             variables.add(variable);
         }
     }

@@ -21,13 +21,19 @@ import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -79,7 +85,7 @@ public class StatementExecutionVariableValueForm extends DBNFormImpl {
                 VirtualFile virtualFile = executionProcessor.getVirtualFile();
                 Set<StatementExecutionVariable> variables = variablesCache.getVariables(virtualFile);
                 for (StatementExecutionVariable executionVariable : variables) {
-                    if (executionVariable.getName().equals(variable.getName())) {
+                    if (Objects.equals(executionVariable.getName(), variable.getName())) {
                         Iterable<String> valueHistory = executionVariable.getValueHistory();
                         for (String value : valueHistory) {
                             values.add(value);

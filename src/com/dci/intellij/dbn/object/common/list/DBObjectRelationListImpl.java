@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class DBObjectRelationListImpl<T extends DBObjectRelation> extends DynamicContentImpl<T> implements DBObjectRelationList<T>{
     private final DBObjectRelationType objectRelationType;
@@ -74,7 +75,7 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
     public List<DBObjectRelation> getRelationBySourceName(String sourceName) {
         List<DBObjectRelation> objectRelations = new ArrayList<DBObjectRelation>();
         for (DBObjectRelation objectRelation : getAllElements()) {
-            if (objectRelation.getSourceObject().getName().equals(sourceName)) {
+            if (Objects.equals(objectRelation.getSourceObject().getName(), sourceName)) {
                 objectRelations.add(objectRelation);
             }
         }
@@ -85,7 +86,7 @@ public class DBObjectRelationListImpl<T extends DBObjectRelation> extends Dynami
     public List<DBObjectRelation> getRelationByTargetName(String targetName) {
         List<DBObjectRelation> objectRelations = new ArrayList<DBObjectRelation>();
         for (DBObjectRelation objectRelation : getAllElements()) {
-            if (objectRelation.getTargetObject().getName().equals(targetName)) {
+            if (Objects.equals(objectRelation.getTargetObject().getName(), targetName)) {
                 objectRelations.add(objectRelation);
             }
         }

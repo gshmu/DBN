@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
@@ -208,7 +209,7 @@ public class SimpleTokenType extends IElementType implements TokenType {
         if (obj instanceof SimpleTokenType) {
             SimpleTokenType simpleTokenType = (SimpleTokenType) obj;
             return simpleTokenType.getLanguage().equals(getLanguage()) &&
-                    simpleTokenType.id.equals(id);
+                    Objects.equals(simpleTokenType.id, id);
         }
         return false;
     }

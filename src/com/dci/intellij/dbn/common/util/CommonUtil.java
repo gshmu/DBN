@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public final class CommonUtil {
@@ -33,7 +34,7 @@ public final class CommonUtil {
             for (int i = 3; i < stackTraceElements.length; i++) {
                 StackTraceElement stackTraceElement = stackTraceElements[i];
                 String className = stackTraceElement.getClassName();
-                if (clazz.getName().equals(className) /*|| clazz.isAssignableFrom(Class.forName(className))*/) {
+                if (Objects.equals(clazz.getName(), className) /*|| clazz.isAssignableFrom(Class.forName(className))*/) {
                     return true;
                 }
             }
@@ -49,9 +50,9 @@ public final class CommonUtil {
             for (int i = 3; i < stackTraceElements.length; i++) {
                 StackTraceElement stackTraceElement = stackTraceElements[i];
                 String className = stackTraceElement.getClassName();
-                if (clazz.getName().equals(className) /*|| clazz.isAssignableFrom(Class.forName(className))*/) {
+                if (Objects.equals(clazz.getName(), className) /*|| clazz.isAssignableFrom(Class.forName(className))*/) {
                     String methName = stackTraceElement.getMethodName();
-                    if (methodName.equals(methName)) {
+                    if (Objects.equals(methodName, methName)) {
                         return true;
                     }
                 }

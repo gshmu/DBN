@@ -34,22 +34,22 @@ public class DBTriggerMetadataImpl extends DBObjectMetadataBase implements DBTri
 
     @Override
     public boolean isForEachRow() throws SQLException {
-        return getString("IS_FOR_EACH_ROW").equals("Y");
+        return isYesFlag("IS_FOR_EACH_ROW");
     }
 
     @Override
     public boolean isEnabled() throws SQLException {
-        return getString("IS_ENABLED").equals("Y");
+        return isYesFlag("IS_ENABLED");
     }
 
     @Override
     public boolean isValid() throws SQLException {
-        return getString("IS_VALID").equals("Y");
+        return isYesFlag("IS_VALID");
     }
 
     @Override
     public boolean isDebug() throws SQLException {
-        return getString("IS_DEBUG").equals("Y");
+        return isYesFlag("IS_DEBUG");
     }
 
 }

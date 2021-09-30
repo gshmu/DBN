@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSetRow;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.database.sqlite.adapter.rs.SqliteConstraintInfoResultSetStub.SqliteConstraintsLoader.*;
 
@@ -69,13 +70,13 @@ public abstract class SqliteConstraintsResultSet extends SqliteConstraintInfoRes
     public String getString(String columnLabel) throws SQLException {
         Constraint element = current();
         return
-            columnLabel.equals("DATASET_NAME") ? element.datasetName :
-            columnLabel.equals("CONSTRAINT_NAME") ? element.constraintName :
-            columnLabel.equals("CONSTRAINT_TYPE") ? element.constraintType :
-            columnLabel.equals("CHECK_CONDITION") ? element.checkCondition :
-            columnLabel.equals("FK_CONSTRAINT_OWNER") ? element.fkConstraintOwner :
-            columnLabel.equals("FK_CONSTRAINT_NAME") ? element.fkConstraintName :
-            columnLabel.equals("IS_ENABLED") ? "Y" : null;
+            Objects.equals(columnLabel, "DATASET_NAME") ? element.datasetName :
+            Objects.equals(columnLabel, "CONSTRAINT_NAME") ? element.constraintName :
+            Objects.equals(columnLabel, "CONSTRAINT_TYPE") ? element.constraintType :
+            Objects.equals(columnLabel, "CHECK_CONDITION") ? element.checkCondition :
+            Objects.equals(columnLabel, "FK_CONSTRAINT_OWNER") ? element.fkConstraintOwner :
+            Objects.equals(columnLabel, "FK_CONSTRAINT_NAME") ? element.fkConstraintName :
+            Objects.equals(columnLabel, "IS_ENABLED") ? "Y" : null;
     }
 
     static class Constraint implements SqliteMetadataResultSetRow<Constraint> {

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -75,7 +76,7 @@ public class DataEditorQualifiedEditorSettings extends BasicConfiguration<DataEd
     public TextContentType getContentType(String name) {
         if (StringUtil.isNotEmpty(name)) {
             for (TextContentType contentType : contentTypes) {
-                if (contentType.getName().equals(name)) {
+                if (Objects.equals(contentType.getName(), name)) {
                     return contentType;
                 }
             }

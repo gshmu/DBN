@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.database.common.util.WrappedResultSet;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,8 +18,8 @@ public class SqliteTriggersResultSet extends WrappedResultSet {
 
     @Override
     public String getString(String columnLabel) throws SQLException {
-        boolean isType = columnLabel.equals("TRIGGER_TYPE");
-        boolean isEvent = columnLabel.equals("TRIGGERING_EVENT");
+        boolean isType = Objects.equals(columnLabel, "TRIGGER_TYPE");
+        boolean isEvent = Objects.equals(columnLabel, "TRIGGERING_EVENT");
         if (isType || isEvent) {
             String sourceCode = inner.getString("SOURCE_CODE");
 

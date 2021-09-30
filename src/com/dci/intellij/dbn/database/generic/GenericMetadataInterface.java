@@ -18,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.database.common.util.CachedResultSet.Condition;
 import static com.dci.intellij.dbn.database.generic.GenericMetadataLoaders.*;
@@ -31,10 +32,10 @@ public class GenericMetadataInterface extends DatabaseMetadataInterfaceImpl {
     // TODO review (ORACLE behavior - package methods come back with FUNCTION_CAT / PROCEDURE_CAT as package name)
     //  filtering them out for now
 
-    private static final ResultSetCondition IS_FUNCTION = rs -> "FUNCTION".equals(resolveMethodType(rs, FUNCTIONS));
-    private static final ResultSetCondition IS_FUNCTION_P = rs -> "FUNCTION".equals(resolveMethodType(rs, PROCEDURES));
-    private static final ResultSetCondition IS_PROCEDURE = rs -> "PROCEDURE".equals(resolveMethodType(rs, PROCEDURES));
-    private static final ResultSetCondition IS_PROCEDURE_F = rs -> "PROCEDURE".equals(resolveMethodType(rs, FUNCTIONS));
+    private static final ResultSetCondition IS_FUNCTION    = rs -> Objects.equals("FUNCTION", resolveMethodType(rs, FUNCTIONS));
+    private static final ResultSetCondition IS_FUNCTION_P  = rs -> Objects.equals("FUNCTION", resolveMethodType(rs, PROCEDURES));
+    private static final ResultSetCondition IS_PROCEDURE   = rs -> Objects.equals("PROCEDURE", resolveMethodType(rs, PROCEDURES));
+    private static final ResultSetCondition IS_PROCEDURE_F = rs -> Objects.equals("PROCEDURE", resolveMethodType(rs, FUNCTIONS));
 
     private static final Columns IDX_IDENTIFIER = () -> new String[]{
             "TABLE_CAT",

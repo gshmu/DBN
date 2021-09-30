@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.database.sqlite.adapter.SqliteMetadataResultSetRow;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.RawIndexInfo;
 
@@ -52,10 +53,10 @@ public abstract class SqliteIndexesResultSet extends SqliteDatasetInfoResultSetS
     public String getString(String columnLabel) throws SQLException {
         Index index = current();
         return
-                columnLabel.equals("TABLE_NAME") ? index.tableName :
-                columnLabel.equals("INDEX_NAME") ? index.indexName :
-                columnLabel.equals("IS_UNIQUE") ? toFlag(index.unique) :
-                columnLabel.equals("IS_VALID") ? "Y" : null;
+            Objects.equals(columnLabel, "TABLE_NAME") ? index.tableName :
+            Objects.equals(columnLabel, "INDEX_NAME") ? index.indexName :
+            Objects.equals(columnLabel, "IS_UNIQUE") ? toFlag(index.unique) :
+            Objects.equals(columnLabel, "IS_VALID") ? "Y" : null;
     }
 
 

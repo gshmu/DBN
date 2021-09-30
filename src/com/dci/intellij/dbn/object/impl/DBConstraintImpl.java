@@ -29,11 +29,12 @@ import com.dci.intellij.dbn.object.type.DBObjectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.DISABLEABLE;
 import static com.dci.intellij.dbn.object.common.property.DBObjectProperty.SCHEMA_OBJECT;
@@ -59,12 +60,12 @@ public class DBConstraintImpl extends DBSchemaObjectImpl<DBConstraintMetadata> i
         String typeString = metadata.getConstraintType();
         constraintType = // TODO move to metadata interface
             typeString == null ? DBConstraintType.UNKNOWN :
-            typeString.equals("CHECK")? DBConstraintType.CHECK :
-            typeString.equals("UNIQUE") ? DBConstraintType.UNIQUE_KEY :
-            typeString.equals("PRIMARY KEY") ? DBConstraintType.PRIMARY_KEY :
-            typeString.equals("FOREIGN KEY") ? DBConstraintType.FOREIGN_KEY :
-            typeString.equals("VIEW CHECK") ? DBConstraintType.VIEW_CHECK :
-            typeString.equals("VIEW READONLY") ? DBConstraintType.VIEW_READONLY : DBConstraintType.UNKNOWN;
+            Objects.equals(typeString, "CHECK")? DBConstraintType.CHECK :
+            Objects.equals(typeString, "UNIQUE") ? DBConstraintType.UNIQUE_KEY :
+            Objects.equals(typeString, "PRIMARY KEY") ? DBConstraintType.PRIMARY_KEY :
+            Objects.equals(typeString, "FOREIGN KEY") ? DBConstraintType.FOREIGN_KEY :
+            Objects.equals(typeString, "VIEW CHECK") ? DBConstraintType.VIEW_CHECK :
+            Objects.equals(typeString, "VIEW READONLY") ? DBConstraintType.VIEW_READONLY : DBConstraintType.UNKNOWN;
 
         if (checkCondition == null && constraintType == DBConstraintType.CHECK) checkCondition = "";
 

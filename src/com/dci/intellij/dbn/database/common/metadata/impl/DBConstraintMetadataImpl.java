@@ -45,7 +45,7 @@ public class DBConstraintMetadataImpl extends DBObjectMetadataBase implements DB
 
     @Override
     public boolean isEnabled() throws SQLException {
-        return "Y".equals(getString("IS_ENABLED"));
+        return isYesFlag("IS_ENABLED");
     }
 
 

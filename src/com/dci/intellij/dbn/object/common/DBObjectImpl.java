@@ -75,6 +75,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.util.CollectionUtil.*;
 
@@ -389,7 +390,7 @@ public abstract class DBObjectImpl<M extends DBObjectMetadata> extends BrowserTr
     public static DBObject getObjectByName(List<? extends DBObject> objects, String name) {
         if (objects != null) {
             for (DBObject object : objects) {
-                if (object.getName().equals(name)) {
+                if (Objects.equals(object.getName(), name)) {
                     return object;
                 }
             }

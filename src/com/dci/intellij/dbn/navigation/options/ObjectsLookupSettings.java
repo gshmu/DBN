@@ -16,6 +16,9 @@ import javax.swing.Icon;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.booleanAttribute;
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
@@ -98,10 +101,10 @@ public class ObjectsLookupSettings extends BasicProjectConfiguration<NavigationS
     public void readConfiguration(Element element) {
         Element visibleObjectsElement = element.getChild("lookup-objects");
         for (Element child : visibleObjectsElement.getChildren()) {
-            String typeName = child.getAttributeValue("name");
+            String typeName = stringAttribute(child, "name");
             DBObjectType objectType = DBObjectType.get(typeName);
             if (objectType != null) {
-                boolean enabled = Boolean.parseBoolean(child.getAttributeValue("enabled"));
+                boolean enabled = booleanAttribute(child, "enabled", false);
                 ObjectTypeEntry objectTypeEntry = getObjectTypeEntry(objectType);
                 if (objectTypeEntry != null) {
                     objectTypeEntry.setSelected(enabled);

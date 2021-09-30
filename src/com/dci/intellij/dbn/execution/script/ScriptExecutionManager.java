@@ -55,6 +55,7 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -324,7 +325,7 @@ public class ScriptExecutionManager extends AbstractProjectComponent implements 
     public CmdLineInterface getRecentInterface(DatabaseType databaseType) {
         String id = recentlyUsedInterfaces.get(databaseType);
         if (id != null) {
-            if (id.equals(CmdLineInterface.DEFAULT_ID)) {
+            if (Objects.equals(id, CmdLineInterface.DEFAULT_ID)) {
                 return CmdLineInterface.getDefault(databaseType);
             }
 

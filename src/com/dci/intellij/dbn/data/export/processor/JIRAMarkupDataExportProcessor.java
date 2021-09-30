@@ -14,6 +14,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.util.Objects;
 
 
 public class JIRAMarkupDataExportProcessor extends DataExportProcessor{
@@ -72,7 +73,7 @@ public class JIRAMarkupDataExportProcessor extends DataExportProcessor{
 
         @Override
         public boolean isDataFlavorSupported(DataFlavor flavor) {
-            return "text/plain".equals(flavor.getMimeType());
+            return Objects.equals(flavor.getMimeType(), "text/plain");
         }
 
         @NotNull

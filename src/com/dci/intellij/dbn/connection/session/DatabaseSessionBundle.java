@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -86,12 +87,7 @@ public class DatabaseSessionBundle extends StatefulDisposable.Base implements Di
 
     @Nullable
     public DatabaseSession getSession(String name) {
-        for (DatabaseSession session : sessions) {
-            if (session.getName().equals(name)) {
-                return session;
-            }
-        }
-        return null;
+        return sessions.stream().filter(session -> Objects.equals(session.getName(), name)).findFirst().orElse(null);
     }
 
     @NotNull

@@ -3,6 +3,8 @@ package com.dci.intellij.dbn.language.common.element.parser;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+import java.util.Objects;
+
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public class BranchCheck extends Branch{
@@ -11,8 +13,8 @@ public class BranchCheck extends Branch{
 
     public boolean check(Branch branch, double currentVersion) {
         switch (type) {
-            case ALLOWED: return name.equals(branch.name) && currentVersion >= version;
-            case FORBIDDEN: return !name.equals(branch.name) || currentVersion < version;
+            case ALLOWED: return Objects.equals(name, branch.name) && currentVersion >= version;
+            case FORBIDDEN: return !Objects.equals(name, branch.name) || currentVersion < version;
         }
         return true;
     }

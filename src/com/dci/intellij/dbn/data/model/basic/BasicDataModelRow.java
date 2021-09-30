@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class BasicDataModelRow<
         M extends BasicDataModel<? extends BasicDataModelRow<M, C>, C>,
@@ -52,7 +53,7 @@ public class BasicDataModelRow<
     @Override
     public final C getCell(String columnName) {
         for (C cell : cells) {
-            if (cell.getColumnInfo().getName().equals(columnName)) {
+            if (Objects.equals(cell.getColumnInfo().getName(), columnName)) {
                 return cell;
             }
         }

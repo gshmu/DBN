@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.enumAttribute;
 
@@ -63,12 +64,7 @@ public class DatasetBasicFilter extends DatasetFilterImpl {
     }
 
     public boolean containsConditionForColumn(String columnName) {
-        for (DatasetBasicFilterCondition condition : conditions) {
-            if (condition.getColumnName().equals(columnName)) {
-                return true;
-            }
-        }
-        return false;
+        return conditions.stream().anyMatch(condition -> Objects.equals(condition.getColumnName(), columnName));
     }
 
     @Override

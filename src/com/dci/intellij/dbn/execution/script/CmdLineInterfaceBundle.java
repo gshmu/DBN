@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -43,13 +44,12 @@ public class CmdLineInterfaceBundle implements Cloneable<CmdLineInterfaceBundle>
 
     @Nullable
     public CmdLineInterface getInterface(String id) {
-        for (CmdLineInterface cmdLineInterface : interfaces) {
-            if (cmdLineInterface.getId().equals(id)) {
-                return cmdLineInterface;
-            }
-        }
+        return interfaces
+                .stream()
+                .filter(cli -> Objects.equals(cli.getId(), id))
+                .findFirst()
+                .orElse(null);
 
-        return null;
     }
 
     public CmdLineInterface remove(int index) {

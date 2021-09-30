@@ -30,10 +30,11 @@ import com.sun.tools.jdi.ObjectReferenceImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class DBJdwpNodeRenderer extends NodeRendererImpl {
     public DBJdwpNodeRenderer() {
@@ -78,7 +79,7 @@ public class DBJdwpNodeRenderer extends NodeRendererImpl {
     public boolean isExpandable(Value value, EvaluationContext evaluationContext, NodeDescriptor parentDescriptor) {
         List<Field> fields = getFields(value);
         for (Field field : fields) {
-            if (field.name().equals("_type")) {
+            if (Objects.equals(field.name(), "_type")) {
                 return true;
             }
         }
@@ -96,7 +97,7 @@ public class DBJdwpNodeRenderer extends NodeRendererImpl {
 
         String typeLength = null;
         for (Field field : fields) {
-            if (field.name().equals("_value")) {
+            if (Objects.equals(field.name(), "_value")) {
                 Value fieldValue = value.getValue(field);
                 stringValue = fieldValue == null ? " null" : fieldValue.toString();
 
@@ -106,7 +107,7 @@ public class DBJdwpNodeRenderer extends NodeRendererImpl {
                                     typeLength = fieldValue.toString();
                                 }
                             }*/
-            else if (field.name().equals("_type")) {
+            else if (Objects.equals(field.name(), "_type")) {
                 Value fieldValue = value.getValue(field);
                 if  (fieldValue != null) {
                     typeName = fieldValue.toString();

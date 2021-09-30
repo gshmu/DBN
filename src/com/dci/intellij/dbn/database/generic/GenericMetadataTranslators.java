@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.sql.DatabaseMetaData.*;
 
@@ -208,7 +209,7 @@ public class GenericMetadataTranslators {
                                     inner.getString("COLUMN_NAME")));
 
                 case "IS_NULLABLE": {
-                    boolean nullable = "YES".equals(inner.getString("IS_NULLABLE"));
+                    boolean nullable = Objects.equals("YES", inner.getString("IS_NULLABLE"));
                     return literalBoolean(nullable);
                 }
                 case "IS_HIDDEN": return literalBoolean(false);

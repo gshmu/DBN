@@ -10,6 +10,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -45,7 +46,7 @@ public abstract class PseudoConstant<T extends PseudoConstant<T>> implements Con
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PseudoConstant that = (PseudoConstant) o;
-        return id.equals(that.id);
+        return Objects.equals(id, that.id);
 
     }
 

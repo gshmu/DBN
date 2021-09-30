@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.TableNames
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 /**
  * DATASET_NAME
@@ -35,7 +36,7 @@ public abstract class SqliteDatasetNamesResultSet extends SqliteMetadataResultSe
     @Override
     public String getString(String columnLabel) throws SQLException {
         Dataset element = current();
-        if (columnLabel.equals("DATASET_NAME")) {
+        if (Objects.equals(columnLabel, "DATASET_NAME")) {
             return element.datasetName;
         }
         return null;

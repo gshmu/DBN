@@ -5,7 +5,8 @@ import com.dci.intellij.dbn.common.ui.Presentable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import java.util.Objects;
 
 public enum DatasetFilterType implements Presentable{
     NONE("None", Icons.DATASET_FILTER_EMPTY, Icons.DATASET_FILTER_EMPTY),
@@ -41,7 +42,7 @@ public enum DatasetFilterType implements Presentable{
 
     public static DatasetFilterType get(String name) {
         for (DatasetFilterType datasetFilterType : DatasetFilterType.values()) {
-            if (datasetFilterType.name.equals(name) || datasetFilterType.name().equals(name)) {
+            if (Objects.equals(datasetFilterType.name, name) || Objects.equals(datasetFilterType.name(), name)) {
                 return datasetFilterType;
             }
         }

@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.language.common.element.impl;
 
 import com.dci.intellij.dbn.code.common.style.formatting.FormattingDefinition;
 import com.dci.intellij.dbn.code.common.style.formatting.SpacingDefinition;
-import com.dci.intellij.dbn.common.util.StringUtil;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.lookup.IdentifierElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.IdentifierElementTypeParser;
@@ -20,6 +19,8 @@ import com.intellij.psi.PsiElement;
 import lombok.Getter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
 @Getter
 public class IdentifierElementType extends LeafElementType {
@@ -72,7 +73,7 @@ public class IdentifierElementType extends LeafElementType {
         referenceable = getBooleanAttribute(def, "referenceable");
         localReference = getBooleanAttribute(def, "local");
 
-        underlyingObjectResolverId = StringUtil.intern(def.getAttributeValue("underlying-object-resolver"));
+        underlyingObjectResolverId = stringAttribute(def, "underlying-object-resolver");
 
         if (isDefinition()) {
             setDefaultFormatting(FORMATTING);

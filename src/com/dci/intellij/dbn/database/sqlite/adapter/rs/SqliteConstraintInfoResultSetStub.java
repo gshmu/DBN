@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.dci.intellij.dbn.database.sqlite.adapter.SqliteRawMetaData.*;
@@ -103,7 +104,7 @@ public abstract class SqliteConstraintInfoResultSetStub<T extends SqliteMetadata
             }
 
             for (RawIndexInfo.Row row : indexInfo.getRows()) {
-                if (row.getUnique() == 1 && !"pk".equals(row.getOrigin())) {
+                if (row.getUnique() == 1 && !Objects.equals(row.getOrigin(), "pk")) {
                     String indexId = "UQ" + row.getSeq();
                     String indexName = row.getName();
                     RawIndexDetailInfo detailInfo = getIndexDetailInfo(indexName);

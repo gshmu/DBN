@@ -25,8 +25,8 @@ public final class FileUtil {
         for (String part : parts) {
             final String trimmed = part.trim();
             if (trimmed.length() == 0) continue;
-            if (".".equals(trimmed)) continue;
-            if ("..".equals(trimmed)) {
+            if (Objects.equals(trimmed, ".")) continue;
+            if (Objects.equals(trimmed, "..")) {
                 point = point.getParentFile();
                 if (point == null) return null;
                 continue;
@@ -88,7 +88,7 @@ public final class FileUtil {
     public static File findFileRecursively(File directory, String fileName) {
         File[] files = CommonUtil.nvl(directory.listFiles(), new File[0]);
         return Arrays.stream(files).
-                filter(f -> !f.isDirectory() && f.getName().equals(fileName)).
+                filter(f -> !f.isDirectory() && Objects.equals(f.getName(), fileName)).
                 findFirst().
                 orElseGet(() -> Arrays.stream(files).
                         filter(f -> f.isDirectory()).

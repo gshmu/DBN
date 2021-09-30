@@ -13,6 +13,8 @@ import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class DBMethodJdbcRunner extends DBProgramRunner<MethodExecutionInput> {
     public static final String RUNNER_ID = "DBNMethodRunner";
 
@@ -24,7 +26,7 @@ public class DBMethodJdbcRunner extends DBProgramRunner<MethodExecutionInput> {
 
     @Override
     public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
-        if (DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)) {
+        if (Objects.equals(executorId, DefaultDebugExecutor.EXECUTOR_ID)) {
             if (profile instanceof DBMethodJdbcRunConfig) {
                 DBMethodJdbcRunConfig runConfiguration = (DBMethodJdbcRunConfig) profile;
                 return runConfiguration.getCategory() == DBRunConfigCategory.CUSTOM && runConfiguration.getMethod() != null;

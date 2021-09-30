@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 public class MySqlArgumentsResultSet extends StatefulDisposable.Base implements ResultSetStub {
     private class Argument {
@@ -43,7 +44,7 @@ public class MySqlArgumentsResultSet extends StatefulDisposable.Base implements 
                 String methodType = resultSet.getString("METHOD_TYPE");
                 boolean betweenBrackets = false;
                 boolean typePostfixSet = false;
-                short argumentPosition = (short) (methodType.equals("FUNCTION") ? 0 : 1);
+                short argumentPosition = (short) (Objects.equals(methodType, "FUNCTION") ? 0 : 1);
 
                 Argument argument = null;
 
@@ -67,7 +68,7 @@ public class MySqlArgumentsResultSet extends StatefulDisposable.Base implements 
                     }
 
                     // found open bracket => set betweenBrackets flag
-                    if (token.equals("(")) {
+                    if (Objects.equals(token, "(")) {
                         if (betweenBrackets) throwParseException(argumentsString, token, "Bracket already opened.");
                         if (argument.dataTypeName == null) throwParseException(argumentsString, token, "Data type not set yet.");
                         betweenBrackets = true;
@@ -75,7 +76,7 @@ public class MySqlArgumentsResultSet extends StatefulDisposable.Base implements 
                     }
 
                     // found close bracket => reset betweenBrackets flag
-                    if (token.equals(")")) {
+                    if (Objects.equals(token, ")")) {
                         if (!betweenBrackets) throwParseException(argumentsString, token, "No opened bracket.");
                         if (argument.dataPrecision == null && argument.dataScale == null) throwParseException(argumentsString, token, "Data precision and scale are not set yet.");
                         betweenBrackets = false;
@@ -83,7 +84,7 @@ public class MySqlArgumentsResultSet extends StatefulDisposable.Base implements 
                     }
 
                     // found comma token
-                    if (token.equals(",")) {
+                    if (Objects.equals(token, ",")) {
                         if (betweenBrackets) {
                             // between brackets
                             if (argument.dataPrecision == null) throwParseException(argumentsString, token, "Data precision is not set yet.");
@@ -166,29 +167,29 @@ public class MySqlArgumentsResultSet extends StatefulDisposable.Base implements 
     @Override
     public String getString(String columnLabel) throws SQLException {
         return
-            columnLabel.equals("ARGUMENT_NAME") ? currentArgument.name :
-            columnLabel.equals("METHOD_NAME") ? currentArgument.methodName :
-            columnLabel.equals("METHOD_TYPE") ? currentArgument.methodType :        
-            columnLabel.equals("IN_OUT") ? currentArgument.inOut :        
-            columnLabel.equals("DATA_TYPE_NAME") ? currentArgument.dataTypeName : null;
+            Objects.equals(columnLabel, "ARGUMENT_NAME") ? currentArgument.name :
+            Objects.equals(columnLabel, "METHOD_NAME") ? currentArgument.methodName :
+            Objects.equals(columnLabel, "METHOD_TYPE") ? currentArgument.methodType :
+            Objects.equals(columnLabel, "IN_OUT") ? currentArgument.inOut :
+            Objects.equals(columnLabel, "DATA_TYPE_NAME") ? currentArgument.dataTypeName : null;
     }
 
     @Override
     public int getInt(String columnLabel) throws SQLException {
         return
-            columnLabel.equals("POSITION") ? currentArgument.position :
-            columnLabel.equals("SEQUENCE") ? currentArgument.position :
-            columnLabel.equals("DATA_PRECISION") ? (currentArgument.dataPrecision == null ? 0 : currentArgument.dataPrecision) :
-            columnLabel.equals("DATA_SCALE") ? (currentArgument.dataScale == null ? 0 : currentArgument.dataScale) : 0;
+            Objects.equals(columnLabel, "POSITION") ? currentArgument.position :
+            Objects.equals(columnLabel, "SEQUENCE") ? currentArgument.position :
+            Objects.equals(columnLabel, "DATA_PRECISION") ? (currentArgument.dataPrecision == null ? 0 : currentArgument.dataPrecision) :
+            Objects.equals(columnLabel, "DATA_SCALE") ? (currentArgument.dataScale == null ? 0 : currentArgument.dataScale) : 0;
     }
 
     @Override
     public short getShort(String columnLabel) throws SQLException {
         return
-                columnLabel.equals("POSITION") ? currentArgument.position :
-                (short) (columnLabel.equals("SEQUENCE") ? currentArgument.position :
-                columnLabel.equals("DATA_PRECISION") ? (currentArgument.dataPrecision == null ? 0 : currentArgument.dataPrecision) :
-                columnLabel.equals("DATA_SCALE") ? (currentArgument.dataScale == null ? 0 : currentArgument.dataScale) : 0);
+                Objects.equals(columnLabel, "POSITION") ? currentArgument.position :
+                (short) (Objects.equals(columnLabel, "SEQUENCE") ? currentArgument.position :
+                            Objects.equals(columnLabel, "DATA_PRECISION") ? (currentArgument.dataPrecision == null ? 0 : currentArgument.dataPrecision) :
+                            Objects.equals(columnLabel, "DATA_SCALE") ? (currentArgument.dataScale == null ? 0 : currentArgument.dataScale) : 0);
     }
 
     @Override

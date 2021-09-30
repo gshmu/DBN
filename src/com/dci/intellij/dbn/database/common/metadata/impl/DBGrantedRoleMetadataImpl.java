@@ -28,11 +28,11 @@ public class DBGrantedRoleMetadataImpl extends DBObjectMetadataBase implements D
 
     @Override
     public boolean isAdminOption() throws SQLException {
-        return getString("IS_ADMIN_OPTION").equals("Y");
+        return isYesFlag("IS_ADMIN_OPTION");
     }
 
     @Override
     public boolean isDefaultRole() throws SQLException {
-        return getString("IS_DEFAULT_ROLE").equals("Y");
+        return isYesFlag("IS_DEFAULT_ROLE");
     }
 }
