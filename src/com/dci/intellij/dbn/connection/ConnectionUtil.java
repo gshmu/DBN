@@ -19,7 +19,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.Driver;
 import java.sql.SQLException;
 
-public class ConnectionUtil extends ResourceUtil{
+public class ConnectionUtil {
     private ConnectionUtil() {}
 
 
