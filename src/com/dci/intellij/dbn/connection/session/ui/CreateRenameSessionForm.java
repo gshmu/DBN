@@ -13,9 +13,13 @@ import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.util.Objects;
 import java.util.Set;
 
 public class CreateRenameSessionForm extends DBNFormImpl{
@@ -68,7 +72,7 @@ public class CreateRenameSessionForm extends DBNFormImpl{
 
 
                 errorLabel.setVisible(errorText != null);
-                parent.getOKAction().setEnabled(errorText == null && (session == null || !session.getName().equals(text)));
+                parent.getOKAction().setEnabled(errorText == null && (session == null || !Objects.equals(session.getName(), text)));
                 if (errorText != null) {
                     errorLabel.setText(errorText);
                 }

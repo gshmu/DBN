@@ -33,6 +33,6 @@ public class DBSynonymMetadataImpl extends DBObjectMetadataBase implements DBSyn
 
     @Override
     public boolean isValid() throws SQLException {
-        return getString("IS_VALID").equals("Y");
+        return isYesFlag("IS_VALID");
     }
 }

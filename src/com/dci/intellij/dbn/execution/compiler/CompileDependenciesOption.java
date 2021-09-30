@@ -3,6 +3,9 @@ package com.dci.intellij.dbn.execution.compiler;
 import com.dci.intellij.dbn.common.option.InteractiveOption;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public enum CompileDependenciesOption implements InteractiveOption {
     YES("Yes", true),
     NO("No", true),
@@ -34,10 +37,9 @@ public enum CompileDependenciesOption implements InteractiveOption {
 
 
     public static CompileDependenciesOption get(String name) {
-        for (CompileDependenciesOption compileDependenciesOption : CompileDependenciesOption.values()) {
-            if (compileDependenciesOption.name.equals(name) || compileDependenciesOption.name().equals(name)) {
-                return compileDependenciesOption;
-            }
-        }
-        return null;
+        return Arrays
+                .stream(CompileDependenciesOption.values())
+                .filter(option -> Objects.equals(option.name, name) || Objects.equals(option.name(), name))
+                .findFirst()
+                .orElse(null);
     }}

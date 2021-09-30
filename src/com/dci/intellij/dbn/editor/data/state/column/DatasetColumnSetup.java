@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
@@ -49,7 +50,7 @@ public class DatasetColumnSetup implements PersistentStateElement, Cloneable<Dat
 
     public DatasetColumnState getColumnState(String columnName) {
         for (DatasetColumnState columnsState : columnStates) {
-            if (columnName.equals(columnsState.getName())) {
+            if (Objects.equals(columnName, columnsState.getName())) {
                 return columnsState;
             }
         }

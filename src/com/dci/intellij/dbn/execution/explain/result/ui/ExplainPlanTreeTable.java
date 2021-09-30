@@ -55,6 +55,7 @@ import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineMetrics;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class ExplainPlanTreeTable extends TreeTable implements StatefulDisposable {
     private static final int MAX_TREE_COLUMN_WIDTH = 900;
@@ -147,7 +148,7 @@ public class ExplainPlanTreeTable extends TreeTable implements StatefulDisposabl
                 String options = entry.getOperationOptions();
                 append(operation, selected ? selectedCellAttributes.derive(SimpleTextAttributes.STYLE_BOLD, null, null, null) : operationAttributes);
                 if (StringUtil.isNotEmpty(options)) {
-                    SimpleTextAttributes regularAttributes = options.equals("FULL") ?
+                    SimpleTextAttributes regularAttributes = Objects.equals(options, "FULL") ?
                             SimpleTextAttributes.ERROR_ATTRIBUTES :
                             SimpleTextAttributes.GRAYED_ATTRIBUTES;
                     append(" (" + options.toLowerCase() + ")", selected ? selectedCellAttributes : regularAttributes);

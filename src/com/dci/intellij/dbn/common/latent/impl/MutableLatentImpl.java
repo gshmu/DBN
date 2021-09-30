@@ -5,6 +5,8 @@ import com.dci.intellij.dbn.common.latent.Latent;
 import com.dci.intellij.dbn.common.latent.Loader;
 import lombok.SneakyThrows;
 
+import java.util.Objects;
+
 public abstract class MutableLatentImpl<T, M> extends BasicLatentImpl<T> implements Latent<T> {
     private M mutable;
 
@@ -20,7 +22,7 @@ public abstract class MutableLatentImpl<T, M> extends BasicLatentImpl<T> impleme
     protected boolean shouldLoad(){
         return super.shouldLoad() ||
                 mutable == null ||
-                !mutable.equals(getMutableLoader().load());
+                !Objects.equals(mutable, getMutableLoader().load());
     }
 
     @Override

@@ -16,6 +16,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 public class QualifiedIdentifierElementType extends ElementTypeBase {
     private final TokenElementType separatorToken;
     private final List<LeafElementType[]> variants = new ArrayList<>();
@@ -37,7 +39,7 @@ public class QualifiedIdentifierElementType extends ElementTypeBase {
             }
             variants.addAll(childVariants);
         }
-        String separatorId = def.getAttributeValue("separator");
+        String separatorId = stringAttribute(def, "separator");
         separatorToken = new TokenElementType(bundle, this, separatorId, TokenElementType.SEPARATOR);
     }
 

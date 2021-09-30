@@ -9,6 +9,7 @@ import org.jdom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
@@ -37,7 +38,7 @@ public class CodeStyleFormattingOption implements PersistentConfiguration {
 
     private CodeStylePreset getCodeStylePreset(String id) {
         for (CodeStylePreset preset : presets) {
-            if (preset.getId().equals(id)) return preset;
+            if (Objects.equals(preset.getId(), id)) return preset;
         }
         return null;
     }

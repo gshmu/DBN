@@ -1,5 +1,6 @@
 package com.dci.intellij.dbn.language.common.element.impl;
 
+import com.dci.intellij.dbn.common.options.setting.SettingsSupport;
 import com.dci.intellij.dbn.language.common.element.ElementTypeBundle;
 import com.dci.intellij.dbn.language.common.element.lookup.BlockElementTypeLookupCache;
 import com.dci.intellij.dbn.language.common.element.parser.impl.BlockElementTypeParser;
@@ -10,6 +11,8 @@ import com.intellij.psi.PsiElement;
 import lombok.Getter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 @Getter
 public class BlockElementType extends SequenceElementType {
@@ -36,9 +39,9 @@ public class BlockElementType extends SequenceElementType {
     @Override
     protected void loadDefinition(Element def) throws ElementTypeDefinitionException {
         super.loadDefinition(def);
-        String indentString = def.getAttributeValue("indent");
+        String indentString = SettingsSupport.stringAttribute(def, "indent");
         if (indentString != null) {
-            indent = "NORMAL".equals(indentString) ? INDENT_NORMAL : INDENT_NONE;
+            indent = Objects.equals(indentString, "NORMAL") ? INDENT_NORMAL : INDENT_NONE;
         }
     }
 

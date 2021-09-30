@@ -6,6 +6,7 @@ import com.dci.intellij.dbn.object.lookup.DBObjectRef;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class AliasBundle {
     private final Map<DBObjectRef, String> aliases = new HashMap<>();
@@ -23,7 +24,7 @@ public class AliasBundle {
 
     private String getNextAvailable(String alias) {
         for (String availableAlias : aliases.values()) {
-            if (alias.equals(availableAlias)) {
+            if (Objects.equals(alias, availableAlias)) {
                 alias = NamingUtil.getNextNumberedName(alias, false);
             }
         }

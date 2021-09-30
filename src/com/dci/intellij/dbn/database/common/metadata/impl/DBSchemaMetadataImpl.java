@@ -16,14 +16,16 @@ public class DBSchemaMetadataImpl extends DBObjectMetadataBase implements DBSche
     }
 
     public boolean isPublic() throws SQLException {
-        return getString("IS_PUBLIC").equals("Y");
+        return isYesFlag("IS_PUBLIC");
     }
 
     public boolean isSystem() throws SQLException {
-        return getString("IS_SYSTEM").equals("Y");
+        return isYesFlag("IS_SYSTEM");
     }
 
     public boolean isEmpty() throws SQLException {
-        return getString("IS_EMPTY").equals("Y");
+        return isYesFlag("IS_EMPTY");
     }
+
 }
+

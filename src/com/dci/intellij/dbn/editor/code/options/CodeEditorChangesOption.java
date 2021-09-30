@@ -3,6 +3,8 @@ package com.dci.intellij.dbn.editor.code.options;
 import com.dci.intellij.dbn.common.option.InteractiveOption;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public enum CodeEditorChangesOption implements InteractiveOption {
     ASK("Ask"),
     SAVE("Save"),
@@ -36,7 +38,7 @@ public enum CodeEditorChangesOption implements InteractiveOption {
 
     public static CodeEditorChangesOption get(String name) {
         for (CodeEditorChangesOption option : CodeEditorChangesOption.values()) {
-            if (option.name.equals(name) || option.name().equals(name)) {
+            if (Objects.equals(option.name, name) || Objects.equals(option.name(), name)) {
                 return option;
             }
         }

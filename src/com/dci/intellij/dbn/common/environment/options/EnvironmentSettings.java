@@ -13,6 +13,8 @@ import lombok.Setter;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
@@ -36,7 +38,7 @@ public class EnvironmentSettings extends BasicProjectConfiguration<GeneralProjec
     }
 
     public boolean setEnvironmentTypes(EnvironmentTypeBundle environmentTypes) {
-        boolean changed = !this.environmentTypes.equals(environmentTypes);
+        boolean changed = !Objects.equals(this.environmentTypes, environmentTypes);
         this.environmentTypes = new EnvironmentTypeBundle(environmentTypes);
         return changed;
     }

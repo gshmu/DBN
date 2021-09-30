@@ -440,7 +440,7 @@ public enum DBObjectType implements DynamicContentType<DBObjectType> {
 
     public static DBObjectType forName(String name) {
         for (DBObjectType objectType : values()) {
-            if (objectType.getName().equals(name)) {
+            if (Objects.equals(objectType.getName(), name)) {
                 return objectType;
             }
         }

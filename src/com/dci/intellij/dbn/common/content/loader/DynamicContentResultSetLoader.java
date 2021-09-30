@@ -29,6 +29,7 @@ import java.sql.SQLTimeoutException;
 import java.sql.SQLTransientConnectionException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -168,11 +169,11 @@ public abstract class DynamicContentResultSetLoader<
                 });
     }
 
-    public class LoaderCache {
+    public static class LoaderCache {
         private String name;
         private DBObject object;
         public DBObject getObject(String name) {
-            if (name.equals(this.name)) {
+            if (Objects.equals(name, this.name)) {
                 return object;
             }
             return null;

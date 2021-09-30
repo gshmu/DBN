@@ -8,6 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -27,9 +29,9 @@ public class SessionBrowserFilter implements Filter<SessionBrowserModelRow>, Clo
 
     @Override
     public boolean accepts(SessionBrowserModelRow row) {
-        if (StringUtil.isNotEmpty(user) && !user.equals(row.getUser())) return false;
-        if (StringUtil.isNotEmpty(host) && !host.equals(row.getHost())) return false;
-        if (StringUtil.isNotEmpty(status) && !status.equals(row.getStatus())) return false;
+        if (StringUtil.isNotEmpty(user) && !Objects.equals(user, row.getUser())) return false;
+        if (StringUtil.isNotEmpty(host) && !Objects.equals(host, row.getHost())) return false;
+        if (StringUtil.isNotEmpty(status) && !Objects.equals(status, row.getStatus())) return false;
         return true;
     }
 

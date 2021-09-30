@@ -17,6 +17,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
+
 public class OneOfElementType extends ElementTypeBase {
     protected final ElementTypeRef[] children;
     private final boolean sortable;
@@ -33,8 +35,8 @@ public class OneOfElementType extends ElementTypeBase {
             Element child = children.get(i);
             String type = child.getName();
             ElementTypeBase elementType = bundle.resolveElementDefinition(child, type, this);
-            double version = Double.parseDouble(CommonUtil.nvl(child.getAttributeValue("version"), "0"));
-            Set<BranchCheck> branchChecks = parseBranchChecks(child.getAttributeValue("branch-check"));
+            double version = Double.parseDouble(CommonUtil.nvl(stringAttribute(child, "version"), "0"));
+            Set<BranchCheck> branchChecks = parseBranchChecks(stringAttribute(child, "branch-check"));
 
             this.children[i] = new ElementTypeRef(previous, this, elementType, false, version, branchChecks);
             previous = this.children[i];

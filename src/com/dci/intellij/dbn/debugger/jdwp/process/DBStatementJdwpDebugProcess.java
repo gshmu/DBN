@@ -14,8 +14,9 @@ import com.sun.jdi.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.Icon;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class DBStatementJdwpDebugProcess extends DBJdwpDebugProcess<StatementExecutionInput> {
     DBStatementJdwpDebugProcess(@NotNull XDebugSession session, @NotNull DebuggerSession debuggerSession, ConnectionHandler connectionHandler, int tcpPort) {
@@ -41,7 +42,7 @@ public class DBStatementJdwpDebugProcess extends DBJdwpDebugProcess<StatementExe
                 sourceUrl = location.sourcePath();
                 DBJdwpSourcePath sourcePath = DBJdwpSourcePath.from(sourceUrl);
                 String programType = sourcePath.getProgramType();
-                if (programType.equals("Block")) {
+                if (Objects.equals(programType, "Block")) {
                     StatementExecutionProcessor executionProcessor = getExecutionProcessor();
                     if (executionProcessor != null) {
                         return executionProcessor.getVirtualFile();

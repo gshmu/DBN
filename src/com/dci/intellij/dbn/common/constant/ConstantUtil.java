@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class ConstantUtil {
     public static List<String> getIdList(Class<? extends Constant> constantClass) {
@@ -32,7 +33,7 @@ public abstract class ConstantUtil {
         T[] allConstants = constantClass.getEnumConstants();
         for(String id : ids) {
             for (T t : allConstants) {
-                if (t.id().equals(id)) {
+                if (Objects.equals(t.id(), id)) {
                     constants.add(t);
                     break;
                 }
@@ -71,7 +72,7 @@ public abstract class ConstantUtil {
     public static <T extends Constant> T get(T[] constants, String id) {
         if (StringUtil.isNotEmpty(id)){
             for (T constant : constants) {
-                if (constant.id().equals(id)) {
+                if (Objects.equals(constant.id(), id)) {
                     return constant;
                 }
             }

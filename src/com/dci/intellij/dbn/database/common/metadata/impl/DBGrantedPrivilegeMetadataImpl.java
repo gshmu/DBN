@@ -28,6 +28,6 @@ public class DBGrantedPrivilegeMetadataImpl extends DBObjectMetadataBase impleme
 
     @Override
     public boolean isAdminOption() throws SQLException {
-        return getString("IS_ADMIN_OPTION").equals("Y");
+        return isYesFlag("IS_ADMIN_OPTION");
     }
 }

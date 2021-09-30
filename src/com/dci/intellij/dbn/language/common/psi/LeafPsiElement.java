@@ -190,4 +190,9 @@ public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiE
     public boolean isToken(TokenType tokenType) {
         return false;
     }
+
+    @Override
+    public PsiElement getFirstChild() {
+        return null;
+    }
 }

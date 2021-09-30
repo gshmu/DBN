@@ -5,6 +5,7 @@ import com.dci.intellij.dbn.database.common.metadata.def.DBTypeMetadata;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class DBTypeMetadataImpl extends DBProgramMetadataImpl implements DBTypeMetadata {
     private final DBDataTypeMetadata dataType;
@@ -32,7 +33,7 @@ public class DBTypeMetadataImpl extends DBProgramMetadataImpl implements DBTypeM
 
     public boolean isCollection() throws SQLException {
         String typeCode = getTypeCode();
-        return "COLLECTION".equals(typeCode);
+        return Objects.equals(typeCode, "COLLECTION");
     }
 
     @Override

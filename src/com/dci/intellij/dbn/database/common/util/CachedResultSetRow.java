@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.database.common.util.CachedResultSet.Columns;
 
@@ -64,7 +65,7 @@ public class CachedResultSetRow {
     void normalize(CachedResultSet.Mapper<String> columnMapper) {
         for (String columnName : new HashSet<>(values.keySet())) {
             String newColumnName = columnMapper.map(columnName);
-            if (newColumnName != null && !newColumnName.equals(columnName)) {
+            if (newColumnName != null && !Objects.equals(newColumnName, columnName)) {
                 Object columnValue = values.remove(columnName);
                 values.put(newColumnName, columnValue);
             }

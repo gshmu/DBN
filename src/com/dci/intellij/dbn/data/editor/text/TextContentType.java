@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.Icon;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -23,7 +24,7 @@ public class TextContentType implements Selectable<TextContentType> {
     private boolean selected = true;
 
     public TextContentType(String name, FileType fileType) {
-        this.name = name;
+        this.name = name.intern();
         this.fileType = fileType;
     }
 
@@ -31,7 +32,7 @@ public class TextContentType implements Selectable<TextContentType> {
     public static TextContentType create(String name, String fileTypeName) {
         FileType fileType = FileTypeManager.getInstance().getStdFileType(fileTypeName);
         // if returned expected file type
-        if (fileType.getName().equals(fileTypeName)) {
+        if (Objects.equals(fileType.getName(), fileTypeName)) {
             return new TextContentType(name, fileType);
         }
         return null;

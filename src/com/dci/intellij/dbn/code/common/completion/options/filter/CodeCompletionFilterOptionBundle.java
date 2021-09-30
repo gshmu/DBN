@@ -11,6 +11,7 @@ import org.jdom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -31,7 +32,7 @@ public class CodeCompletionFilterOptionBundle implements CheckedTreeNodeProvider
     public void readConfiguration(Element element) {
         for (Element child: element.getChildren()) {
             CodeCompletionFilterOption option = new CodeCompletionFilterOption(filterSettings);
-            if (child.getName().equals("filter-element")){
+            if (Objects.equals(child.getName(), "filter-element")){
                 option.readConfiguration(child);
                 CodeCompletionFilterOption local = findOption(option);
                 if (local == null) {

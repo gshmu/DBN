@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.*;
 
@@ -58,7 +59,7 @@ public abstract class CodeStyleCaseSettings extends BasicConfiguration<CodeStyle
 
     private CodeStyleCaseOption getCodeStyleCaseOption(String name) {
         for (CodeStyleCaseOption option : options) {
-            if (option.getName().equals(name)) return option;
+            if (Objects.equals(option.getName(), name)) return option;
         }
         return null;
     }

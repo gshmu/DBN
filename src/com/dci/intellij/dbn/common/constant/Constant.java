@@ -1,6 +1,8 @@
 package com.dci.intellij.dbn.common.constant;
 
 
+import java.util.Objects;
+
 public interface Constant<T extends Constant<T>> {
     default String id() {
         if (this instanceof Enum) {
@@ -11,7 +13,7 @@ public interface Constant<T extends Constant<T>> {
     }
 
     default boolean is(String id){
-        return id().equals(id);
+        return Objects.equals(id(), id);
     }
 
     default boolean isOneOf(T... constants){return ConstantUtil.isOneOf(this, constants);}

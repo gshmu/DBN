@@ -12,6 +12,8 @@ import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class DBStatementJdwpRunner extends DBProgramRunner<StatementExecutionInput> {
     public static final String RUNNER_ID = "DBNStatementJdwpRunner";
 
@@ -23,7 +25,7 @@ public class DBStatementJdwpRunner extends DBProgramRunner<StatementExecutionInp
 
     @Override
     public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
-        if (DefaultDebugExecutor.EXECUTOR_ID.equals(executorId)) {
+        if (Objects.equals(executorId, DefaultDebugExecutor.EXECUTOR_ID)) {
             if (profile instanceof DBStatementJdwpRunConfig) {
                 DBStatementJdwpRunConfig runConfiguration = (DBStatementJdwpRunConfig) profile;
                 return runConfiguration.canRun() && runConfiguration.getExecutionInput() != null;

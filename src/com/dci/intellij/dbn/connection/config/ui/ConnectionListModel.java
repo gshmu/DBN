@@ -4,11 +4,12 @@ import com.dci.intellij.dbn.connection.config.ConnectionBundleSettings;
 import com.dci.intellij.dbn.connection.config.ConnectionSettings;
 import com.dci.intellij.dbn.data.sorting.SortDirection;
 
-import javax.swing.*;
+import javax.swing.DefaultListModel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class ConnectionListModel extends DefaultListModel<ConnectionSettings> {
     public ConnectionListModel(ConnectionBundleSettings connectionBundleSettings) {
@@ -21,7 +22,7 @@ public class ConnectionListModel extends DefaultListModel<ConnectionSettings> {
     public ConnectionSettings getConnectionConfig(String name) {
         for (int i=0; i< getSize(); i++){
             ConnectionSettings connectionSettings = (ConnectionSettings) getElementAt(i);
-            if (connectionSettings.getDatabaseSettings().getName().equals(name)) {
+            if (Objects.equals(connectionSettings.getDatabaseSettings().getName(), name)) {
                 return connectionSettings;
             }
         }

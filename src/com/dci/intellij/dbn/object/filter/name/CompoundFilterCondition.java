@@ -13,6 +13,9 @@ import org.jdom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static com.dci.intellij.dbn.common.options.setting.SettingsSupport.stringAttribute;
 
 @Getter
 @Setter
@@ -176,12 +179,12 @@ public class CompoundFilterCondition implements Filter<DBObject>, FilterConditio
      *********************************************************/
     @Override
     public void readConfiguration(Element element) {
-        String joinTypeString = element.getAttributeValue("join-type");
+        String joinTypeString = stringAttribute(element,"join-type");
         joinType = StringUtil.isEmptyOrSpaces(joinTypeString) ? ConditionJoinType.AND : ConditionJoinType.valueOf(joinTypeString);
         for (Element child : element.getChildren()) {
             FilterCondition condition =
-                    child.getName().equals("simple-condition") ? new SimpleNameFilterCondition() :
-                    child.getName().equals("compound-condition") ? new CompoundFilterCondition() : null;
+                    Objects.equals(child.getName(), "simple-condition") ? new SimpleNameFilterCondition() :
+                    Objects.equals(child.getName(), "compound-condition") ? new CompoundFilterCondition() : null;
             if (condition != null) {
                 condition.readConfiguration(child);
                 condition.setParent(this);

@@ -9,6 +9,8 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class ProjectSettingsOpenAction extends DumbAwareProjectAction {
 
     @Override
@@ -20,7 +22,7 @@ public class ProjectSettingsOpenAction extends DumbAwareProjectAction {
     @Override
     protected void update(@NotNull AnActionEvent e, @NotNull Project project) {
         Presentation presentation = e.getPresentation();
-        if (e.getPlace().equals(ActionPlaces.MAIN_MENU)) {
+        if (Objects.equals(e.getPlace(), ActionPlaces.MAIN_MENU)) {
             presentation.setIcon(null);
             presentation.setText("Settings...");
         }

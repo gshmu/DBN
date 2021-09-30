@@ -24,23 +24,23 @@ public class DBColumnMetadataImpl extends DBObjectMetadataBase implements DBColu
     }
 
     public boolean isPrimaryKey() throws SQLException {
-        return "Y".equals(getString("IS_PRIMARY_KEY"));
+        return isYesFlag("IS_PRIMARY_KEY");
     }
 
     public boolean isForeignKey() throws SQLException {
-        return "Y".equals(getString("IS_FOREIGN_KEY"));
+        return isYesFlag("IS_FOREIGN_KEY");
     }
 
     public boolean isUniqueKey() throws SQLException {
-        return "Y".equals(getString("IS_UNIQUE_KEY"));
+        return isYesFlag("IS_UNIQUE_KEY");
     }
 
     public boolean isNullable() throws SQLException {
-        return "Y".equals(getString("IS_NULLABLE"));
+        return isYesFlag("IS_NULLABLE");
     }
 
     public boolean isHidden() throws SQLException {
-        return "Y".equals(getString("IS_HIDDEN"));
+        return isYesFlag("IS_HIDDEN");
     }
 
     public short getPosition() throws SQLException {

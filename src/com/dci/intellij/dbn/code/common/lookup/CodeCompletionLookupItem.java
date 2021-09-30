@@ -8,7 +8,8 @@ import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.lookup.LookupItem;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.Icon;
+import java.util.Objects;
 
 
 public class CodeCompletionLookupItem extends LookupItem {
@@ -56,7 +57,7 @@ public class CodeCompletionLookupItem extends LookupItem {
     public boolean equals(Object o) {
         if (o instanceof CodeCompletionLookupItem) {
             CodeCompletionLookupItem lookupItem = (CodeCompletionLookupItem) o;
-            return lookupItem.getLookupString().equals(getLookupString());
+            return Objects.equals(lookupItem.getLookupString(), getLookupString());
         }
 
         return false;

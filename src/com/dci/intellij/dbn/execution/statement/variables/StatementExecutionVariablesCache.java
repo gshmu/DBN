@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class StatementExecutionVariablesCache implements PersistentStateElement {
@@ -40,7 +41,7 @@ public class StatementExecutionVariablesCache implements PersistentStateElement 
         if (virtualFile != null) {
             Set<StatementExecutionVariable> variables = getVariables(virtualFile);
             for (StatementExecutionVariable variable : variables) {
-                if (variable.getName().equals(executionVariable.getName())) {
+                if (Objects.equals(variable.getName(), executionVariable.getName())) {
                     variable.setValue(executionVariable.getValue());
                     return;
                 }

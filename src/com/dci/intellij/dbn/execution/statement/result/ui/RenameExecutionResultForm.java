@@ -12,9 +12,14 @@ import com.intellij.ui.JBColor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.util.Objects;
 
 public class RenameExecutionResultForm extends DBNFormImpl{
     private JPanel headerPanel;
@@ -64,7 +69,7 @@ public class RenameExecutionResultForm extends DBNFormImpl{
 
 
                 errorLabel.setVisible(errorText != null);
-                parent.getOKAction().setEnabled(errorText == null && (!executionResult.getName().equals(text)));
+                parent.getOKAction().setEnabled(errorText == null && (!Objects.equals(executionResult.getName(), text)));
                 if (errorText != null) {
                     errorLabel.setText(errorText);
                 }

@@ -25,6 +25,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.Rectangle;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.editor.data.model.RecordStatus.*;
 
@@ -154,7 +155,7 @@ public class DatasetEditorModelCell
             Formatter formatter = getFormatter();
             String formattedValue1 = formatter.formatObject(userValue);
             String formattedValue2 = formatter.formatObject(newUserValue);
-            return !formattedValue1.equals(formattedValue2);
+            return !Objects.equals(formattedValue1, formattedValue2);
         }
         
         return !Safe.equal(userValue, newUserValue);

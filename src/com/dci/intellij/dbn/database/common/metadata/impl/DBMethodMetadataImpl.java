@@ -13,17 +13,17 @@ public abstract class DBMethodMetadataImpl extends DBObjectMetadataBase implemen
 
     @Override
     public boolean isDeterministic() throws SQLException {
-        return getString("IS_DETERMINISTIC").equals("Y");
+        return isYesFlag("IS_DETERMINISTIC");
     }
 
     @Override
     public boolean isValid() throws SQLException {
-        return getString("IS_VALID").equals("Y");
+        return isYesFlag("IS_VALID");
     }
 
     @Override
     public boolean isDebug() throws SQLException {
-        return getString("IS_DEBUG").equals("Y");
+        return isYesFlag("IS_DEBUG");
     }
 
     @Override

@@ -68,6 +68,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
 
 import static com.dci.intellij.dbn.common.message.MessageCallback.conditional;
 import static com.dci.intellij.dbn.common.navigation.NavigationInstruction.*;
@@ -491,7 +492,7 @@ public class SourceCodeManager extends AbstractProjectComponent implements Persi
 
             if (StringUtil.equalsIgnoreCase(text(psiElement), schemaName)) {
                 psiElement = PsiUtil.getNextLeaf(psiElement) ;
-                if (psiElement == null || !psiElement.getText().equals(".")) {
+                if (psiElement == null || !Objects.equals(psiElement.getText(), ".")) {
                     return false;
                 } else {
                     psiElement = PsiUtil.getNextLeaf(psiElement);

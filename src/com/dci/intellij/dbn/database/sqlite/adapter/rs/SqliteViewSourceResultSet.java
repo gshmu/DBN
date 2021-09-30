@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +18,7 @@ public class SqliteViewSourceResultSet extends WrappedResultSet {
 
     @Override
     public String getString(String columnLabel) throws SQLException {
-        if (columnLabel.equals("SOURCE_CODE")) {
+        if (Objects.equals(columnLabel, "SOURCE_CODE")) {
             String sourceCode = inner.getString("SOURCE_CODE");
 
             Matcher m = DDL_STUB_REGEX.matcher(sourceCode);
