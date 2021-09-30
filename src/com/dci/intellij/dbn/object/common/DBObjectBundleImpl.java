@@ -19,7 +19,6 @@ import com.dci.intellij.dbn.common.dispose.SafeDisposer;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
 import com.dci.intellij.dbn.common.filter.Filter;
 import com.dci.intellij.dbn.common.latent.Latent;
-import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.load.ProgressMonitor;
 import com.dci.intellij.dbn.common.notification.NotificationGroup;
 import com.dci.intellij.dbn.common.notification.NotificationSupport;
@@ -107,8 +106,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static com.dci.intellij.dbn.object.type.DBObjectRelationType.*;
@@ -136,22 +137,10 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     private final DBObjectRelationListContainer objectRelationLists;
     private final long configSignature;
 
-    private final MapLatent<DBObjectRef<?>, LookupItemBuilder> sqlLookupItemBuilders =
-            MapLatent.create((objectRef) ->
-                    new ObjectLookupItemBuilder(objectRef, SQLLanguage.INSTANCE));
-
-    private final MapLatent<DBObjectRef<?>, LookupItemBuilder> psqlLookupItemBuilders =
-            MapLatent.create((objectRef) ->
-                    new ObjectLookupItemBuilder(objectRef, PSQLLanguage.INSTANCE));
-
-    private final MapLatent<DBObjectRef<?>, DBObjectPsiFacade> objectPsiFacades =
-            MapLatent.create((objectRef) ->
-                    new DBObjectPsiFacade(objectRef));
-
-    private final MapLatent<DBObjectRef<?>, DBObjectVirtualFile<?>> virtualFiles =
-            MapLatent.create((objectRef) ->
-                    new DBObjectVirtualFile<>(getProject(), objectRef));
-
+    private final Map<DBObjectRef<?>, LookupItemBuilder> sqlLookupItemBuilders = new ConcurrentHashMap<>();
+    private final Map<DBObjectRef<?>, LookupItemBuilder> psqlLookupItemBuilders = new ConcurrentHashMap<>();
+    private final Map<DBObjectRef<?>, DBObjectPsiFacade> objectPsiFacades = new ConcurrentHashMap<>();
+    private final Map<DBObjectRef<?>, DBObjectVirtualFile<?>> virtualFiles = new ConcurrentHashMap<>();
 
     private final PsiFile fakeObjectFile;
 
@@ -238,22 +227,22 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     @Override
     public LookupItemBuilder getLookupItemBuilder(DBObjectRef<?> objectRef, DBLanguage<?> language) {
         if (language == SQLLanguage.INSTANCE) {
-            return sqlLookupItemBuilders.get(objectRef);
+            return sqlLookupItemBuilders.computeIfAbsent(objectRef, ref ->  new ObjectLookupItemBuilder(ref, SQLLanguage.INSTANCE));
         }
         if (language == PSQLLanguage.INSTANCE) {
-            return psqlLookupItemBuilders.get(objectRef);
+            return psqlLookupItemBuilders.computeIfAbsent(objectRef, ref -> new ObjectLookupItemBuilder(ref, PSQLLanguage.INSTANCE));
         }
         return null;
     }
 
     @Override
     public DBObjectPsiFacade getObjectPsiFacade(DBObjectRef<?> objectRef) {
-        return objectPsiFacades.get(objectRef);
+        return objectPsiFacades.computeIfAbsent(objectRef, ref -> new DBObjectPsiFacade(ref));
     }
 
     @Override
     public DBObjectVirtualFile<?> getObjectVirtualFile(DBObjectRef<?> objectRef) {
-        return virtualFiles.get(objectRef);
+        return virtualFiles.computeIfAbsent(objectRef, ref -> new DBObjectVirtualFile<>(getProject(), ref));
     }
 
     @Override
@@ -978,10 +967,10 @@ public class DBObjectBundleImpl extends BrowserTreeNodeBase implements DBObjectB
     public void disposeInner() {
         SafeDisposer.dispose(objectLists, false, true);
         SafeDisposer.dispose(objectRelationLists, false, true);
-        sqlLookupItemBuilders.reset();
-        psqlLookupItemBuilders.reset();
-        objectPsiFacades.reset();
-        virtualFiles.reset();
+        sqlLookupItemBuilders.clear();
+        psqlLookupItemBuilders.clear();
+        objectPsiFacades.clear();
+        virtualFiles.clear();
         nullify();
     }
 }

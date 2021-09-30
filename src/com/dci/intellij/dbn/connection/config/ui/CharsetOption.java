@@ -15,7 +15,7 @@ public class CharsetOption implements Presentable {
         }
     }
 
-    private Charset charset;
+    private final Charset charset;
     public CharsetOption(Charset charset) {
         this.charset = charset;
     }

@@ -4,7 +4,6 @@ import com.dci.intellij.dbn.code.common.lookup.LookupItemBuilder;
 import com.dci.intellij.dbn.code.common.lookup.ObjectLookupItemBuilder;
 import com.dci.intellij.dbn.common.content.DynamicContentStatus;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
-import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.property.BasicProperty;
 import com.dci.intellij.dbn.common.thread.Read;
 import com.dci.intellij.dbn.common.util.DocumentUtil;
@@ -55,6 +54,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     private static final PsiLookupAdapter CHR_STAR_LOOKUP_ADAPTER = new PsiLookupAdapter() {
@@ -77,8 +78,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
     private boolean loadingChildren;
     private WeakRef<BasePsiElement> relevantPsiElement;
     private final DBObjectPsiFacade psiFacade;
-    private final MapLatent<DBLanguage, ObjectLookupItemBuilder> lookupItemBuilder =
-            MapLatent.create(key -> new ObjectLookupItemBuilder(getRef(), key));
+    private final Map<String, ObjectLookupItemBuilder> lookupItemBuilder = new ConcurrentHashMap<>();
 
     private final BasicProperty<Boolean> valid = new BasicProperty<Boolean>(true) {
         @Override
@@ -170,7 +170,7 @@ public class DBVirtualObject extends DBObjectImpl implements PsiReference {
 
     @NotNull
     public LookupItemBuilder getLookupItemBuilder(DBLanguage language) {
-        return lookupItemBuilder.get(language);
+        return lookupItemBuilder.computeIfAbsent(language.getID(), key -> new ObjectLookupItemBuilder(getRef(), language));
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.dci.intellij.dbn.connection.jdbc;
 
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.common.event.ProjectEvents;
-import com.dci.intellij.dbn.common.latent.MapLatent;
 import com.dci.intellij.dbn.common.project.ProjectRef;
 import com.dci.intellij.dbn.common.util.TimeUtil;
 import com.dci.intellij.dbn.connection.ConnectionCache;
@@ -29,9 +28,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.ACTIVE;
 import static com.dci.intellij.dbn.connection.jdbc.ResourceStatus.RESERVED;
@@ -52,14 +54,7 @@ public class DBNConnection extends DBNConnectionBase {
     private SchemaId currentSchema;
 
     private final Set<DBNStatement> activeStatements = new HashSet<>();
-
-    private final MapLatent<String, DBNPreparedStatement> cachedStatements =
-            MapLatent.create(sql -> {
-                DBNPreparedStatement preparedStatement = prepareStatement(sql);
-                preparedStatement.setCached(true);
-                preparedStatement.setFetchSize(10000);
-                return preparedStatement;
-            });
+    private final Map<String, DBNPreparedStatement> cachedStatements = new ConcurrentHashMap<>();
 
     private final IncrementalResourceStatusAdapter<DBNConnection> active =
             IncrementalResourceStatusAdapter.create(
@@ -134,11 +129,12 @@ public class DBNConnection extends DBNConnectionBase {
 
 
     public DBNPreparedStatement prepareStatementCached(String sql) {
-        try {
-            return cachedStatements.get(sql);
-        } finally {
-            //System.out.println(getName() + " - " + cachedStatements.hitCount());
-        }
+        return cachedStatements.computeIfAbsent(sql, key -> {
+            DBNPreparedStatement preparedStatement = prepareStatement(key);
+            preparedStatement.setCached(true);
+            preparedStatement.setFetchSize(10000);
+            return preparedStatement;
+        });
     }
 
     @Override
@@ -164,7 +160,7 @@ public class DBNConnection extends DBNConnectionBase {
         activeStatements.remove(statement);
         if (statement.isCached() && statement instanceof DBNPreparedStatement) {
             DBNPreparedStatement preparedStatement = (DBNPreparedStatement) statement;
-            cachedStatements.removeValue(preparedStatement);
+            cachedStatements.values().removeIf(v -> v == preparedStatement);
         }
 
         updateLastAccess();
@@ -281,8 +277,8 @@ public class DBNConnection extends DBNConnectionBase {
         try {
             super.close();
             updateLastAccess();
-            Collection<DBNPreparedStatement> statements = cachedStatements.values();
-            cachedStatements.reset();
+            List<DBNPreparedStatement> statements = new ArrayList<>(cachedStatements.values());
+            cachedStatements.clear();
             ResourceUtil.close(statements);
         } finally {
             resetDataChanges();
