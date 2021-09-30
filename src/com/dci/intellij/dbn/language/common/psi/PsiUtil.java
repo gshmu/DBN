@@ -170,7 +170,7 @@ public class PsiUtil {
         while (element != null && !(element instanceof PsiFile)) {
             if (element instanceof BasePsiElement) {
                 BasePsiElement basePsiElement = (BasePsiElement) element;
-                if (basePsiElement.elementType.is(typeAttribute)) {
+                if (basePsiElement.getElementType().is(typeAttribute)) {
                     return basePsiElement;
                 }
             }
@@ -345,7 +345,7 @@ public class PsiUtil {
     public static ElementType getElementType(PsiElement psiElement) {
         if (psiElement instanceof BasePsiElement) {
             BasePsiElement basePsiElement = (BasePsiElement) psiElement;
-            return basePsiElement.elementType;
+            return basePsiElement.getElementType();
         }
         return null;
     }

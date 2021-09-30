@@ -36,7 +36,7 @@ public abstract class CodeStylePresetImpl implements CodeStylePreset {
     protected static ElementType getParentElementType(PsiElement psiElement) {
         BasePsiElement parentPsiElement = getParentPsiElement(psiElement);
         if (parentPsiElement != null) {
-            return parentPsiElement.elementType;
+            return parentPsiElement.getElementType();
         }
         return null;
     }

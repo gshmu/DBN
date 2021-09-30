@@ -3,6 +3,7 @@ package com.dci.intellij.dbn.language.common.psi;
 import com.dci.intellij.dbn.common.consumer.SetCollector;
 import com.dci.intellij.dbn.common.dispose.Failsafe;
 import com.dci.intellij.dbn.connection.ConnectionHandler;
+import com.dci.intellij.dbn.language.common.TokenType;
 import com.dci.intellij.dbn.language.common.element.ElementType;
 import com.dci.intellij.dbn.language.common.element.impl.LeafElementType;
 import com.dci.intellij.dbn.language.common.element.util.ElementTypeAttribute;
@@ -153,12 +154,12 @@ public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiE
 
     @Override
     public BasePsiElement findPsiElementByAttribute(ElementTypeAttribute attribute) {
-        return elementType.is(attribute) ? this : null;
+        return getElementType().is(attribute) ? this : null;
     }
 
     @Override
     public BasePsiElement findFirstPsiElement(ElementTypeAttribute attribute) {
-        if (elementType.is(attribute)) {
+        if (getElementType().is(attribute)) {
             return this;
         }
         return null;
@@ -166,7 +167,7 @@ public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiE
 
     @Override
     public BasePsiElement findFirstPsiElement(Class<? extends ElementType> clazz) {
-        if (elementType.getClass().isAssignableFrom(clazz)) {
+        if (getElementType().getClass().isAssignableFrom(clazz)) {
             return this;
         }
         return null;
@@ -183,6 +184,10 @@ public abstract class LeafPsiElement<T extends LeafElementType> extends BasePsiE
     }
 
     public boolean isCharacterToken() {
+        return false;
+    }
+
+    public boolean isToken(TokenType tokenType) {
         return false;
     }
 }

@@ -33,8 +33,8 @@ public class ExecutablePsiElement extends NamedPsiElement implements Cloneable<E
         }
         BasePsiElement basePsiElement = (BasePsiElement) lastChild;
         String text = getText();
-        if (basePsiElement != null && basePsiElement.elementType instanceof NamedElementType) {
-            NamedElementType namedElementType = (NamedElementType) basePsiElement.elementType;
+        if (basePsiElement != null && basePsiElement.getElementType() instanceof NamedElementType) {
+            NamedElementType namedElementType = (NamedElementType) basePsiElement.getElementType();
             if (namedElementType.isTruncateOnExecution()) {
                 return text.substring(0, text.length() - basePsiElement.getTextLength());
             }
